@@ -144,8 +144,14 @@ export default function HoldingsClient({
   const handleAdd = async (form: FormData) => {
     setError(null);
     setAdding(true);
+    const rawTicker = String(form.get("ticker") ?? "").trim().toUpperCase();
+    if (!/^[A-Z0-9]{1,10}(\.[A-Z]{1,5})?$/.test(rawTicker)) {
+      setError("Enter a valid ticker (e.g. BHP.AX or AAPL).");
+      setAdding(false);
+      return;
+    }
     const body = {
-      ticker: String(form.get("ticker") ?? "").trim().toUpperCase(),
+      ticker: rawTicker,
       exchange: String(form.get("exchange") ?? ""),
       shares: Number(form.get("shares") ?? 0),
       cost_basis_per_share_cents: Math.round(Number(form.get("costPerShare") ?? 0) * 100),
@@ -340,7 +346,7 @@ export default function HoldingsClient({
           <label>
             <span className="block text-xs font-medium text-slate-700 mb-1">Shares</span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               name="shares"
               required
               min="0"
@@ -351,7 +357,7 @@ export default function HoldingsClient({
           <label>
             <span className="block text-xs font-medium text-slate-700 mb-1">Cost / share (AUD)</span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               name="costPerShare"
               required
               min="0"
@@ -391,7 +397,8 @@ export default function HoldingsClient({
             <button
               type="submit"
               disabled={adding}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50"
+              aria-busy={adding}
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {adding ? "Adding…" : "Add holding"}
             </button>
@@ -408,7 +415,11 @@ export default function HoldingsClient({
       <section>
         <h2 className="text-base font-semibold text-slate-900 mb-3">Your holdings</h2>
         {items.length === 0 ? (
-          <p className="text-sm text-slate-500 italic">No holdings yet — add your first above.</p>
+          <div className="text-center py-10 border border-dashed border-slate-200 rounded-xl bg-slate-50">
+            <p className="text-3xl mb-3" aria-hidden="true">📊</p>
+            <p className="font-semibold text-slate-700 text-sm">No holdings tracked yet</p>
+            <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">Add your first holding above to track performance and see fee comparisons across brokers.</p>
+          </div>
         ) : (
           <ul className="divide-y divide-slate-200 border border-slate-200 rounded-xl">
             {items.map((h) => (
@@ -441,16 +452,25 @@ export default function HoldingsClient({
                       />
                     </>
                   ) : (
-                    <div className="text-sm text-slate-400">—</div>
+                    <div
+                      className="text-sm text-slate-400"
+                      title="Price unavailable — may be invalid ticker, unsupported exchange, or temporary data issue."
+                    >
+                      —
+                    </div>
                   )}
                   <div className="text-[11px] text-slate-500 mt-0.5">
                     cost {fmtCents(h.shares * h.costBasisPerShareCents)}
                   </div>
                   {h.currentPriceSource === "stale" && (
                     <div
-                      className="text-[10px] text-amber-700 mt-0.5"
+                      className="inline-flex items-center gap-1 text-[10px] text-amber-700 mt-0.5"
                       title="Latest live fetch failed; showing the most recent cached price."
                     >
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                        <path d="M5 1L9 9H1L5 1Z" fill="#d97706" />
+                        <path d="M5 4v2M5 7.5v.5" stroke="white" strokeWidth="0.8" strokeLinecap="round" />
+                      </svg>
                       stale price
                     </div>
                   )}
@@ -458,7 +478,7 @@ export default function HoldingsClient({
                     type="button"
                     onClick={() => void handleDelete(h.id)}
                     disabled={deletingId === h.id}
-                    className="text-xs text-red-700 hover:text-red-900 mt-1 disabled:opacity-50"
+                    className="text-xs text-red-700 hover:text-red-900 mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {deletingId === h.id ? "Removing…" : "Remove"}
                   </button>

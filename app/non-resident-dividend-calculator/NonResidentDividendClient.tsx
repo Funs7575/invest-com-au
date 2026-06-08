@@ -171,7 +171,7 @@ export default function NonResidentDividendClient() {
                 <span className="text-slate-500">$</span>
                 <input
                   id="dividend"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={dividend}
                   onChange={(e) => setDividend(e.target.value)}
                   min={0}
@@ -241,7 +241,7 @@ export default function NonResidentDividendClient() {
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Dividend withholding tax calculation breakdown">
                 <tbody className="divide-y divide-slate-100">
                   <tr>
                     <td className="px-4 py-2 text-slate-600">Gross dividend</td>

@@ -21,6 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Digital Infrastructure Investment Opportunities Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/digital-infrastructure/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Digital Infrastructure Investment Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

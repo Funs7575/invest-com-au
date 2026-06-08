@@ -40,12 +40,12 @@ export default async function ComparisonExportPage({
       </div>
 
       {/* Comparison Table */}
-      <table className="w-full border-collapse text-[13px]">
+      <table className="w-full border-collapse text-[13px]" aria-label="Broker cost comparison">
         <thead>
           <tr className="bg-slate-50 border-b-2 border-slate-200">
-            <th className="text-left px-3 py-2.5 font-semibold text-slate-600">Feature</th>
+            <th scope="col" className="text-left px-3 py-2.5 font-semibold text-slate-600">Feature</th>
             {brokers.map((b) => (
-              <th key={b.slug} className="text-center px-3 py-2.5 font-bold" style={{ color: b.color }}>{b.name}</th>
+              <th scope="col" key={b.slug} className="text-center px-3 py-2.5 font-bold" style={{ color: b.color }}>{b.name}</th>
             ))}
           </tr>
         </thead>

@@ -165,11 +165,11 @@ export default function HecsHelpPage() {
               Rates apply to your total <strong>repayment income</strong> (not just your salary &#8212; see below). The rate applies to your entire repayment income once you cross a band &#8212; it is not marginal like income tax.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="HECS-HELP repayment rates by income band 2024–25">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Repayment income</th>
-                    <th className="px-4 py-3 text-right font-extrabold text-slate-700">Repayment rate</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Repayment income</th>
+                    <th scope="col" className="px-4 py-3 text-right font-extrabold text-slate-700">Repayment rate</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
@@ -458,7 +458,7 @@ export default function HecsHelpPage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-white overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-50 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
                   </summary>
                   <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
                 </details>

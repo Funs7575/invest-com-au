@@ -92,7 +92,7 @@ export default async function StartupPortalPage() {
           </div>
           <StatusBadge status={profile.status} />
         </div>
-        <nav className="max-w-5xl mx-auto px-4 sm:px-6 flex gap-1 pb-0">
+        <nav aria-label="Portal navigation" className="max-w-5xl mx-auto px-4 sm:px-6 flex gap-1 pb-0">
           {NAV.map((n) => (
             <Link
               key={n.href}

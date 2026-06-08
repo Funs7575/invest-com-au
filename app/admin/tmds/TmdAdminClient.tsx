@@ -190,7 +190,7 @@ export default function TmdAdminClient({ initialItems }: Props) {
         <p className="text-sm text-slate-500">No TMDs on file yet.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden">
+          <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden" aria-label="Target market determinations">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
                 <th className="text-left px-3 py-2">Type</th>

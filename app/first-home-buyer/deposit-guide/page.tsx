@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: `${SITE_URL}/first-home-buyer/deposit-guide`,
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("First Home Deposit Guide")}&sub=${encodeURIComponent("How Much · Save Faster · LMI vs LVR · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };
@@ -245,13 +246,13 @@ export default function DepositGuidePage() {
               In practice, the right deposit depends on your situation. For a $750,000 property:
             </p>
             <div className="overflow-x-auto mb-4">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="Deposit size, LMI, and loan size for a $750,000 property" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Deposit size</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Deposit amount</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">LMI payable?</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Loan size</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Deposit size</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Deposit amount</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">LMI payable?</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Loan size</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -307,13 +308,13 @@ export default function DepositGuidePage() {
             </p>
             <h3 className="text-lg font-semibold text-slate-900 mb-3">Indicative LMI cost table</h3>
             <div className="overflow-x-auto mb-3">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="Indicative LMI cost by LVR and purchase price" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">LVR (deposit)</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$500K purchase</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$750K purchase</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$1M purchase</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">LVR (deposit)</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$500K purchase</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$750K purchase</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$1M purchase</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -522,13 +523,13 @@ export default function DepositGuidePage() {
               reaching an $80,000 target — not accounting for interest earned on the balance:
             </p>
             <div className="overflow-x-auto mb-4">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="Deposit savings timeline by weekly saving rate" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Savings rate</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">After 12 months</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">After 24 months</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Time to $80K</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Savings rate</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">After 12 months</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">After 24 months</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Time to $80K</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -623,12 +624,12 @@ export default function DepositGuidePage() {
               additional costs upfront — they can add 4–8% of the purchase price in total:
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="Additional purchase costs beyond the deposit" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Cost</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Typical range</th>
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Notes</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Cost</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Typical range</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Notes</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -683,12 +684,12 @@ export default function DepositGuidePage() {
               verify current thresholds with your state revenue office.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="First home buyer stamp duty concessions and FHOG by state" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">State</th>
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Stamp duty concession</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">FHOG (new builds)</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">State</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Stamp duty concession</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">FHOG (new builds)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -800,7 +801,7 @@ export default function DepositGuidePage() {
                 >
                   <summary className="flex items-center justify-between cursor-pointer px-5 py-4 text-slate-900 font-semibold text-sm hover:bg-slate-50 transition-colors list-none">
                     <span>{item.q}</span>
-                    <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                    <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                       &#x25BE;
                     </span>
                   </summary>

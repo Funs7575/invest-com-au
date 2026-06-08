@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import AnnualReportClient from "./AnnualReportClient";
 
@@ -99,18 +100,42 @@ export default async function AnnualReportPage() {
     { name: `State of Investing ${CURRENT_YEAR}` },
   ]);
 
+  const annualFaqs = [
+    {
+      q: `What does the State of Investing in Australia ${CURRENT_YEAR} report cover?`,
+      a: `The ${SITE_NAME} State of Investing report is an annual deep-dive into Australia's investment platform landscape. It covers broker fee trends (ASX brokerage, FX rates, inactivity fees), platform category breakdowns (share traders, savings accounts, robo-advisors, crypto), new market entrants, CHESS sponsorship rates, and analysis of what's changed for Australian investors over the year. Data is sourced from ${stats.totalBrokers}+ actively tracked Australian brokers.`,
+    },
+    {
+      q: "Is this report independent? Who publishes it?",
+      a: `The State of Investing in Australia report is published by the ${SITE_NAME} editorial team — independent financial journalists and analysts. The report is not sponsored by any broker or financial institution; our editorial findings are not influenced by commercial relationships. Invest.com.au earns affiliate commissions from broker sign-ups (disclosed separately), but this does not affect the accuracy or conclusions of this annual data report.`,
+    },
+    {
+      q: "How often is this report updated?",
+      a: `The State of Investing in Australia is updated annually. Underlying broker data — including fees, platform types, and ratings — is maintained and updated throughout the year on Invest.com.au. The annual report consolidates the year's key changes and trend data into a single summary. Check the date on the current edition for the latest publication.`,
+    },
+    {
+      q: "Is this report financial advice?",
+      a: "No. The State of Investing in Australia report is general information only. It is intended to provide factual market context for Australian investors and does not constitute personal financial advice. Before making any investment decision, consider your own circumstances and, where appropriate, seek advice from an AFSL-licensed financial adviser.",
+    },
+  ];
+  const annualFaqLd = faqJsonLd(annualFaqs);
+
   return (
     <div className="bg-white min-h-screen">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(annualFaqLd) }}
+      />
 
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 40%, white 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
         <div className="container-custom max-w-5xl relative py-12 md:py-20">
-          <nav className="text-xs text-slate-400 mb-6 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white">Home</Link>
             <span className="text-slate-600">/</span>
             <Link href="/reports" className="hover:text-white">Reports</Link>
@@ -304,6 +329,28 @@ export default async function AnnualReportPage() {
                 while others have introduced zero-brokerage tiers to compete with fintech challengers.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* FAQ accordion */}
+        <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 mb-10">
+          <h3 className="font-extrabold text-slate-900 text-lg mb-4">About this report</h3>
+          <div className="divide-y divide-slate-100">
+            {annualFaqs.map(({ q, a }) => (
+              <details key={q} className="group py-3">
+                <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                  {q}
+                  <svg
+                    className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                    aria-hidden="true"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="mt-2 text-sm text-slate-600 leading-relaxed">{a}</p>
+              </details>
+            ))}
           </div>
         </div>
 

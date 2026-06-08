@@ -107,10 +107,10 @@ export default function HubHero({
                   />
                 </dd>
                 {stat.subtitle && (
-                  <p className="text-[10px] text-slate-400 mt-0.5">{stat.subtitle}</p>
+                  <dd className="text-[10px] text-slate-400 mt-0.5">{stat.subtitle}</dd>
                 )}
                 {stat.source && (
-                  <p className="text-[10px] text-slate-400 mt-0.5">
+                  <dd className="text-[10px] text-slate-400 mt-0.5">
                     Source:{" "}
                     <a
                       href={stat.source}
@@ -120,7 +120,7 @@ export default function HubHero({
                     >
                       attribution
                     </a>
-                  </p>
+                  </dd>
                 )}
               </div>
             ))}

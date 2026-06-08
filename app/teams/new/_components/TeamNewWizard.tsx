@@ -16,21 +16,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { BRIEF_TEMPLATES, BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
-import { TEAM_CATEGORIES } from "@/lib/api-schemas";
+import { TEAM_CATEGORIES, TEAM_CATEGORY_LABELS as CATEGORY_LABELS, type TeamCategory } from "@/lib/api-schemas";
 import { SQUAD_MEMBER_ROLES, type SquadMemberRole } from "@/lib/squad-creation";
-
-type TeamCategory = (typeof TEAM_CATEGORIES)[number];
-
-const CATEGORY_LABELS: Record<TeamCategory, string> = {
-  smsf_property: "SMSF Property",
-  foreign_investor: "Foreign Investor",
-  expat: "Expat Investor",
-  commercial_property: "Commercial Property",
-  business_acquisition: "Business Acquisition",
-  due_diligence: "Opportunity / Due Diligence",
-  retirement: "Retirement",
-  custom: "General / Custom",
-};
 
 interface InviteRow {
   email: string;
@@ -63,9 +50,10 @@ export default function TeamNewWizard() {
 
   const step1Valid = name.trim().length >= 2 && name.length <= 80 && description.length <= 500;
   const step2Valid = templates.length >= 1;
+  const filledInvites = invites.filter((i) => i.email.trim().length > 0);
   const step3Valid =
-    invites.length <= 6 &&
-    invites.every((i) => /.+@.+\..+/.test(i.email));
+    filledInvites.length <= 6 &&
+    filledInvites.every((i) => /.+@.+\..+/.test(i.email));
 
   const canSubmit = step1Valid && step2Valid && step3Valid && !submitting;
 
@@ -103,9 +91,7 @@ export default function TeamNewWizard() {
           description: description.trim() || undefined,
           team_category: category,
           accepted_brief_templates: templates,
-          invites: invites
-            .map((i) => ({ email: i.email.trim(), role: i.role }))
-            .filter((i) => i.email.length > 0),
+          invites: filledInvites.map((i) => ({ email: i.email.trim(), role: i.role })),
         }),
       });
       const json = (await res.json()) as
@@ -188,7 +174,7 @@ export default function TeamNewWizard() {
       </ol>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
+        <div role="alert" className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
           {error}
         </div>
       )}
@@ -205,7 +191,13 @@ export default function TeamNewWizard() {
               className="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
               placeholder="e.g. SMSF Property Specialists Sydney"
             />
-            <span className="text-xs text-slate-500">{name.length}/80</span>
+            <span className="text-xs text-slate-500">
+              {name.trim().length < 2 && name.length > 0 ? (
+                <span className="text-amber-600">Minimum 2 characters</span>
+              ) : (
+                `${name.length}/80`
+              )}
+            </span>
           </label>
           <label className="block">
             <span className="text-sm font-semibold text-slate-700">Category</span>
@@ -241,7 +233,8 @@ export default function TeamNewWizard() {
       {step === 2 && (
         <div className="space-y-3">
           <p className="text-sm text-slate-600">
-            Match Requests matching your selected templates will route to this squad.
+            Match Requests matching your selected templates will route to this squad.{" "}
+            <span className="font-medium text-amber-700">Select at least one to continue.</span>
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {BRIEF_TEMPLATES.map((t) => {
@@ -280,7 +273,7 @@ export default function TeamNewWizard() {
           {invites.map((inv, idx) => (
             <div key={idx} className="flex flex-wrap items-center gap-2">
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={inv.email}
                 onChange={(e) => updateInvite(idx, { email: e.target.value })}
                 placeholder="colleague@firm.com.au"
@@ -321,9 +314,41 @@ export default function TeamNewWizard() {
       )}
 
       {step === 4 && (
-        <div className="space-y-4 text-sm">
+        <div className="space-y-5 text-sm">
+          {/* ADV-020: Public preview card */}
           <div>
-            <p className="text-xs uppercase tracking-widest text-slate-500">Basics</p>
+            <p className="text-xs uppercase tracking-widest text-slate-500 mb-2">Public preview</p>
+            <div className="border border-indigo-200 rounded-xl overflow-hidden">
+              <div className="bg-gradient-to-br from-indigo-600 to-violet-700 text-white px-5 py-4">
+                <p className="text-[0.65rem] font-bold uppercase tracking-widest text-indigo-200 mb-1">Pro Squad · {summary.categoryLabel}</p>
+                <h3 className="text-lg font-extrabold">{summary.name || <span className="opacity-50 italic">Squad name</span>}</h3>
+                {summary.description && <p className="text-sm text-indigo-100 mt-1 line-clamp-2">{summary.description}</p>}
+              </div>
+              <div className="bg-white px-5 py-3">
+                <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-2">Handles</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {summary.templates.slice(0, 4).map((t) => (
+                    <span key={t} className="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full font-medium">{t}</span>
+                  ))}
+                  {summary.templates.length > 4 && (
+                    <span className="text-xs bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full">+{summary.templates.length - 4} more</span>
+                  )}
+                  {summary.templates.length === 0 && <span className="text-xs text-slate-400 italic">No scope selected yet</span>}
+                </div>
+                <div className="mt-3 flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 text-xs text-slate-500">
+                    <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" /></svg>
+                    {summary.invites.length + 1} member{summary.invites.length !== 0 ? "s" : ""}
+                  </span>
+                  <span className="text-xs text-slate-300">·</span>
+                  <span className="text-xs text-amber-600 font-semibold">Pending review</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-xs uppercase tracking-widest text-slate-500 mb-1">Basics</p>
             <p className="font-semibold text-slate-900">{summary.name}</p>
             <p className="text-slate-600">{summary.categoryLabel}</p>
             {summary.description && (
@@ -331,7 +356,7 @@ export default function TeamNewWizard() {
             )}
           </div>
           <div>
-            <p className="text-xs uppercase tracking-widest text-slate-500">
+            <p className="text-xs uppercase tracking-widest text-slate-500 mb-1">
               Bundled scope
             </p>
             <ul className="list-disc ml-5 text-slate-700">
@@ -341,7 +366,7 @@ export default function TeamNewWizard() {
             </ul>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-widest text-slate-500">
+            <p className="text-xs uppercase tracking-widest text-slate-500 mb-1">
               Invites ({summary.invites.length})
             </p>
             {summary.invites.length === 0 ? (
@@ -368,7 +393,7 @@ export default function TeamNewWizard() {
           type="button"
           disabled={step === 1}
           onClick={() => setStep((s) => (s > 1 ? ((s - 1) as 1 | 2 | 3 | 4) : s))}
-          className="text-sm text-slate-600 hover:text-slate-900 disabled:opacity-40"
+          className="text-sm text-slate-600 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           ← Back
         </button>
@@ -381,7 +406,7 @@ export default function TeamNewWizard() {
               (step === 3 && !step3Valid)
             }
             onClick={() => setStep((s) => ((s + 1) as 1 | 2 | 3 | 4))}
-            className="bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-semibold px-5 py-2 rounded-lg text-sm"
+            className="bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-5 py-2 rounded-lg text-sm"
           >
             Next →
           </button>
@@ -390,7 +415,7 @@ export default function TeamNewWizard() {
             type="button"
             disabled={!canSubmit}
             onClick={handleSubmit}
-            className="bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-900 font-bold px-5 py-2 rounded-lg text-sm"
+            className="bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 font-bold px-5 py-2 rounded-lg text-sm"
           >
             {submitting ? "Submitting…" : "Submit for verification"}
           </button>

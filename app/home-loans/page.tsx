@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import HubPage from "@/components/HubPage";
 import HubServiceGrid from "@/components/HubServiceGrid";
@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     title: `Home Loans Australia (${CURRENT_YEAR})`,
     description: HOME_LOANS_HUB_CONFIG.metaDescription,
     url: `${SITE_URL}/home-loans`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Home Loans Australia")}&sub=${encodeURIComponent("Compare Rates · Calculator · Mortgage Brokers · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -52,8 +53,15 @@ export default async function HomeLoansHubPage() {
   const articles = await fetchHomeLoanArticles();
   const deepDives = HOME_LOANS_HUB_CONFIG.deepDives ?? [];
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Home Loans" },
+  ]);
+
   return (
-    <HubPage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <HubPage
       config={HOME_LOANS_HUB_CONFIG}
       serviceGrid={
         <HubServiceGrid
@@ -156,5 +164,6 @@ export default async function HomeLoansHubPage() {
         </section>
       )}
     </HubPage>
+    </>
   );
 }

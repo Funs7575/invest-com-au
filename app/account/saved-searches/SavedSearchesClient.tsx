@@ -60,6 +60,7 @@ export default function SavedSearchesClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<number | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -107,7 +108,7 @@ export default function SavedSearchesClient() {
   };
 
   const remove = async (id: number) => {
-    if (!confirm("Delete this saved search?")) return;
+    setPendingDeleteId(null);
     setBusyId(id);
     try {
       const res = await fetch(`/api/saved-searches/${id}`, { method: "DELETE" });
@@ -124,7 +125,7 @@ export default function SavedSearchesClient() {
     return (
       <div className="py-16">
         <div className="container-custom max-w-2xl">
-          <div className="animate-pulse space-y-4">
+          <div className="animate-pulse space-y-4" aria-busy="true" aria-label="Loading saved searches…">
             <div className="h-8 bg-slate-200 rounded w-56" />
             <div className="h-24 bg-slate-100 rounded-xl" />
             <div className="h-24 bg-slate-100 rounded-xl" />
@@ -158,7 +159,7 @@ export default function SavedSearchesClient() {
         </div>
 
         {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+          <div role="alert" className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
             {error}
             <button
               onClick={() => setError(null)}
@@ -202,22 +203,39 @@ export default function SavedSearchesClient() {
                       <p className="text-xs text-slate-500">{meta.label}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => remove(row.id)}
-                    disabled={busy}
-                    className="p-1.5 text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50"
-                    aria-label="Delete saved search"
-                    title="Delete"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  </button>
+                  {pendingDeleteId === row.id ? (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-red-600 font-medium">Delete?</span>
+                      <button
+                        onClick={() => remove(row.id)}
+                        disabled={busy}
+                        aria-busy={busy}
+                        className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+                      >Yes</button>
+                      <button
+                        onClick={() => setPendingDeleteId(null)}
+                        className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+                      >No</button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setPendingDeleteId(row.id)}
+                      disabled={busy}
+                      aria-busy={busy}
+                      className="p-1.5 text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      aria-label="Delete saved search"
+                      title="Delete"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between gap-3">
@@ -229,7 +247,7 @@ export default function SavedSearchesClient() {
                         updateFrequency(row.id, e.target.value as Frequency)
                       }
                       disabled={busy}
-                      className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white disabled:opacity-50"
+                      className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value="off">Off</option>
                       <option value="daily">Daily</option>

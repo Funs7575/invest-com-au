@@ -167,8 +167,8 @@ export default function MarketplaceSettingsPage() {
         </p>
       </header>
 
-      {err && <p className="text-sm text-red-600">{err}</p>}
-      {savedAt && <p className="text-xs text-emerald-700">Saved.</p>}
+      {err && <p role="alert" className="text-sm text-red-600">{err}</p>}
+      {savedAt && <p role="status" className="text-xs text-emerald-700">Saved.</p>}
 
       {/* Analytics */}
       {analytics && (
@@ -279,6 +279,7 @@ export default function MarketplaceSettingsPage() {
             type="button"
             onClick={newTemplate}
             disabled={saving || settings.bid_templates.length >= 5}
+            aria-busy={saving}
             className="text-xs font-semibold text-emerald-700 hover:text-emerald-900 disabled:text-slate-400"
           >
             + Add template

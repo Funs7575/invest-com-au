@@ -85,7 +85,7 @@ function FeeComparisonTable({ rows }: { rows: BrokerFeeRow[] }) {
 
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-200">
-      <table className="w-full text-sm">
+      <table className="w-full text-sm" aria-label="Pro member rates by platform">
         <thead>
           <tr className="bg-slate-50 border-b border-slate-200">
             <th
@@ -279,7 +279,7 @@ function LoanRateSummaryCard({ summary }: { summary: LoanRateSummary }) {
 
       {/* Full rate table */}
       <div className="overflow-x-auto rounded-xl border border-slate-200">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Full brokerage rate schedule">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200">
               <th

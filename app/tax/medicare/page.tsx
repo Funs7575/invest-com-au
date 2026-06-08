@@ -8,12 +8,13 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Medicare Levy & Surcharge Australia (${CURRENT_YEAR}) — Investor's Guide`,
-  description: `How the Medicare Levy (2%) and Medicare Levy Surcharge (1–1.5%) work in Australia, the 2024–25 income thresholds, why negative gearing doesn't cut your surcharge, and how to avoid the MLS. ${UPDATED_LABEL}.`,
+  description: `Medicare Levy (2%) and Medicare Levy Surcharge (1–1.5%): 2025–26 thresholds, how to avoid the MLS, and why negative gearing won't reduce it. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Medicare Levy & Medicare Levy Surcharge Australia (${CURRENT_YEAR})`,
     description:
       "The Medicare Levy vs the Medicare Levy Surcharge explained — 2024–25 thresholds, the negative gearing trap, and how high earners avoid the surcharge with basic hospital cover.",
     url: `${SITE_URL}/tax/medicare`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Medicare Levy & Surcharge Australia")}&sub=${encodeURIComponent("2% Levy · MLS Thresholds · Hospital Cover · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/medicare` },
@@ -145,7 +146,7 @@ export default function MedicarePage() {
       {/* ─── Hero ─── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/tax" className="hover:text-slate-900">Tax</Link>
@@ -245,13 +246,13 @@ export default function MedicarePage() {
               </p>
             </div>
             <div className="mt-5 overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Medicare Levy low-income thresholds 2024–25">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-3 px-4 text-xs font-bold">Category</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">No levy (below)</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Reduced levy</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Full 2% levy (above)</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Category</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">No levy (below)</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Reduced levy</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Full 2% levy (above)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -304,12 +305,12 @@ export default function MedicarePage() {
             <div className="grid md:grid-cols-2 gap-5">
               <div className="overflow-x-auto">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Singles</p>
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-sm border-collapse" aria-label="Medicare Levy Surcharge income tiers for singles 2024–25">
                   <thead>
                     <tr className="bg-slate-800 text-white">
-                      <th className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
-                      <th className="text-center py-2.5 px-3 text-xs font-bold">Surcharge income</th>
-                      <th className="text-center py-2.5 px-3 text-xs font-bold">Rate</th>
+                      <th scope="col" className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
+                      <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Surcharge income</th>
+                      <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Rate</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
@@ -325,12 +326,12 @@ export default function MedicarePage() {
               </div>
               <div className="overflow-x-auto">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Families</p>
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-sm border-collapse" aria-label="Medicare Levy Surcharge income tiers for families 2024–25">
                   <thead>
                     <tr className="bg-slate-800 text-white">
-                      <th className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
-                      <th className="text-center py-2.5 px-3 text-xs font-bold">Surcharge income</th>
-                      <th className="text-center py-2.5 px-3 text-xs font-bold">Rate</th>
+                      <th scope="col" className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
+                      <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Surcharge income</th>
+                      <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Rate</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
@@ -487,13 +488,13 @@ export default function MedicarePage() {
               </p>
             </div>
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Private Health Insurance Rebate percentages by income tier and age">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-2.5 px-3 text-xs font-bold">Income tier (singles)</th>
-                    <th className="text-center py-2.5 px-3 text-xs font-bold">Under 65</th>
-                    <th className="text-center py-2.5 px-3 text-xs font-bold">Age 65&ndash;69</th>
-                    <th className="text-center py-2.5 px-3 text-xs font-bold">Age 70+</th>
+                    <th scope="col" className="text-left py-2.5 px-3 text-xs font-bold">Income tier (singles)</th>
+                    <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Under 65</th>
+                    <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Age 65&ndash;69</th>
+                    <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Age 70+</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -599,7 +600,7 @@ export default function MedicarePage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

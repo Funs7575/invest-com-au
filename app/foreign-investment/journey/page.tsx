@@ -12,10 +12,30 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { COUNTRY_CONFIGS } from "@/lib/foreign-investment-country-data";
 import { getIntentCountry } from "@/lib/intent-context-server";
 import { intentCountryMeta } from "@/lib/intent-context";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
+
+const FI_JOURNEY_FAQS = [
+  {
+    q: "Can a foreigner invest in Australia without FIRB approval?",
+    a: "It depends on the investment type. Foreign persons can generally invest in Australian shares, ETFs, managed funds, and government bonds without FIRB approval (subject to individual company ownership thresholds). FIRB approval is required for purchasing Australian residential real estate (with very limited exceptions), acquiring a substantial interest in an Australian business above the relevant monetary threshold, and certain sensitive sector investments. Rules vary by country of residence and whether a free trade agreement applies.",
+  },
+  {
+    q: "Do I need to pay Australian tax if I invest in Australian shares as a non-resident?",
+    a: "Generally yes, on Australian-source income. Dividends paid by Australian companies to non-residents are subject to withholding tax, typically at 30% (or a lower Double Taxation Agreement rate, e.g. 15% for US residents). Capital gains on Australian shares are generally exempt for non-residents under Section 855-10 of the Income Tax Assessment Act 1997, unless the company is 'land-rich'. Your home country may also tax the income — check the relevant DTA.",
+  },
+  {
+    q: "What is the FIRB approval process and how long does it take?",
+    a: "The Foreign Investment Review Board (FIRB) reviews foreign investment proposals that require notification or approval under the Foreign Acquisitions and Takeovers Act 1975. Applications are submitted through the ATO's foreign investment portal. The standard review period is 30 days, extendable to 90 days. Residential real estate purchases typically take 30–90 days. Complex business acquisitions may take longer. FIRB charges application fees based on the value of the investment.",
+  },
+  {
+    q: "Which Australian investments are open to all foreign investors without restrictions?",
+    a: "Foreign investors can freely purchase: listed Australian shares (subject to company-specific thresholds); units in listed managed investment schemes and ETFs; Australian government bonds; corporate bonds; and term deposits at Australian banks. Bank accounts can generally be opened with standard identification. Superannuation is generally only accessible if you have worked in Australia and hold a valid visa — you cannot open a new super account from offshore.",
+  },
+];
 
 export const metadata: Metadata = {
   title: `Cross-Border Investing Journey — Step-by-Step Guide for Foreign Investors (${CURRENT_YEAR})`,
@@ -26,6 +46,7 @@ export const metadata: Metadata = {
     description:
       "Country-specific step-by-step guide: FIRB eligibility, DTA tax rates, investment options, FX, pension transfer, and specialist advisor referral.",
     url: `${SITE_URL}/foreign-investment/journey`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Foreign Investment Journey Australia")}&sub=${encodeURIComponent("Step-by-Step · FIRB · Visas · Tax · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/foreign-investment/journey` },
@@ -39,6 +60,7 @@ export default async function JourneyIndexPage() {
     redirect(`/foreign-investment/journey/${meta.slug}`);
   }
 
+  const faqLd = faqJsonLd(FI_JOURNEY_FAQS);
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Foreign Investment", url: `${SITE_URL}/foreign-investment` },
@@ -53,13 +75,16 @@ export default async function JourneyIndexPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
 
       <ForeignInvestmentNav current="" />
 
       {/* ── Hero ────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 py-10 md:py-16">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -133,6 +158,24 @@ export default async function JourneyIndexPage() {
             </Link>{" "}
             for DTA rates and rules for all countries.
           </p>
+        </div>
+      </section>
+
+      {/* ── FAQ ──────────────────────────────────────────────────────── */}
+      <section className="py-12 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-6">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {FI_JOURNEY_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 

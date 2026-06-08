@@ -22,7 +22,7 @@ export default async function EmailSuppressionDrillDown() {
           <h2 className="text-sm font-bold text-slate-900">Suppression list</h2>
           <p className="text-xs text-slate-500">Emails on this list are skipped by every transactional send helper. Top 200 by recency.</p>
         </header>
-        <table className="w-full text-xs">
+        <table className="w-full text-xs" aria-label="Email suppression list">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
               <th className="px-4 py-2 text-left font-semibold text-slate-600">Email</th>

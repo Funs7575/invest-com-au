@@ -129,7 +129,7 @@ export default function SavedComparisonsClient() {
     return (
       <div className="py-16">
         <div className="container-custom max-w-2xl">
-          <div className="animate-pulse space-y-4">
+          <div className="animate-pulse space-y-4" aria-busy="true" aria-label="Loading saved comparisons…">
             <div className="h-8 bg-slate-200 rounded w-56" />
             <div className="h-24 bg-slate-100 rounded-xl" />
             <div className="h-24 bg-slate-100 rounded-xl" />
@@ -159,7 +159,7 @@ export default function SavedComparisonsClient() {
         </div>
 
         {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+          <div role="alert" className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
             {error}
             <button
               onClick={() => setError(null)}
@@ -207,11 +207,13 @@ export default function SavedComparisonsClient() {
                         maxLength={100}
                         disabled={renameLoading}
                         aria-invalid={!!renameError}
+                        aria-describedby={renameError ? "saved-rename-error" : undefined}
                       />
                       <button
                         type="submit"
                         disabled={renameLoading || !editName.trim()}
-                        className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
+                        aria-busy={renameLoading}
+                        className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {renameLoading ? "Saving..." : "Save"}
                       </button>
@@ -224,7 +226,7 @@ export default function SavedComparisonsClient() {
                       </button>
                     </div>
                     {renameError && (
-                      <p role="alert" className="text-xs text-red-600">{renameError}</p>
+                      <p id="saved-rename-error" role="alert" className="text-xs text-red-600">{renameError}</p>
                     )}
                   </form>
                 ) : (
@@ -292,7 +294,7 @@ export default function SavedComparisonsClient() {
                     <button
                       onClick={() => handleDelete(comparison.id)}
                       disabled={deleteLoading}
-                      className="px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                      className="px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {deleteLoading ? "Deleting..." : "Delete"}
                     </button>

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -169,7 +170,7 @@ export default function DownsizerContributionPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link><span>/</span>
             <Link href="/retirement" className="hover:text-white">Retirement</Link><span>/</span>
             <span className="text-slate-200 font-medium">Downsizer Contribution</span>
@@ -268,12 +269,12 @@ export default function DownsizerContributionPage() {
             it does not consume your non-concessional cap and has no TSB gate.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Downsizer contribution vs standard non-concessional contribution comparison">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Standard non-concessional</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide">Downsizer contribution</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Standard non-concessional</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide">Downsizer contribution</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -458,7 +459,7 @@ export default function DownsizerContributionPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4 bg-white">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">&#9662;</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -466,6 +467,16 @@ export default function DownsizerContributionPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Maximise your downsizer contribution strategy"
+        subheading="Downsizer contributions interact with transfer balance cap, total super balance, and Age Pension eligibility. A super specialist can model the full impact for your situation."
+        intent={{ need: "retirement", context: ["downsizer_contribution", "super_strategy"] }}
+        source="retirement_downsizer_contribution"
+        ctaLabel="Find a super specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

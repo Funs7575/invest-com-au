@@ -216,7 +216,7 @@ export default function DividendETFPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>
@@ -283,14 +283,14 @@ export default function DividendETFPage() {
             sub="Ticker, fee, indicative yield, and franking. Figures are approximate and change over time — always verify with the ETF provider."
           />
           <div className="mt-8 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <table className="w-full min-w-[680px] border-collapse text-sm">
+            <table className="w-full min-w-[680px] border-collapse text-sm" aria-label="Australian dividend ETFs comparison">
               <thead>
                 <tr className="border-b-2 border-slate-200 text-left">
-                  <th className="py-3 pr-4 font-bold text-slate-900">ETF</th>
-                  <th className="py-3 px-4 font-bold text-slate-900">MER</th>
-                  <th className="py-3 px-4 font-bold text-slate-900">Indicative yield</th>
-                  <th className="py-3 px-4 font-bold text-slate-900">Franking</th>
-                  <th className="py-3 pl-4 font-bold text-slate-900">Notes</th>
+                  <th scope="col" className="py-3 pr-4 font-bold text-slate-900">ETF</th>
+                  <th scope="col" className="py-3 px-4 font-bold text-slate-900">MER</th>
+                  <th scope="col" className="py-3 px-4 font-bold text-slate-900">Indicative yield</th>
+                  <th scope="col" className="py-3 px-4 font-bold text-slate-900">Franking</th>
+                  <th scope="col" className="py-3 pl-4 font-bold text-slate-900">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -541,7 +541,7 @@ export default function DividendETFPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

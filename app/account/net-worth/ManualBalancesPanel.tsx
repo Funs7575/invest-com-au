@@ -163,13 +163,13 @@ export default function ManualBalancesPanel({
 
           <div>
             <label className="block text-xs font-medium text-slate-700 mb-1" htmlFor="mb-amount">
-              Amount (AUD)
+              Amount (AUD, e.g. 25000)
             </label>
             <input
               id="mb-amount"
               type="text"
               inputMode="decimal"
-              placeholder="e.g. 25000"
+              placeholder="25000"
               value={form.amount}
               onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white"
@@ -201,7 +201,8 @@ export default function ManualBalancesPanel({
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 py-2 bg-violet-700 hover:bg-violet-800 text-white text-sm font-medium rounded-lg disabled:opacity-50"
+              aria-busy={saving}
+              className="flex-1 py-2 bg-violet-700 hover:bg-violet-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? "Saving…" : "Save balance"}
             </button>
@@ -242,10 +243,10 @@ export default function ManualBalancesPanel({
                   onClick={() => void handleDelete(b.id)}
                   disabled={deletingId === b.id}
                   aria-label={`Delete ${b.label}`}
-                  className="text-slate-400 hover:text-red-600 transition-colors disabled:opacity-40"
+                  className="text-slate-400 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {deletingId === b.id ? (
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg aria-hidden="true" className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>

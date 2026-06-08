@@ -9,13 +9,14 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Transition to Retirement (TTR) Pension Guide Australia (${CURRENT_YEAR}) — Strategy, Tax & Rules`,
   description:
-    "Complete guide to transition to retirement (TTR) pensions in Australia. Salary sacrifice + TTR tax strategy, 4–10% drawdown rules, preservation age, earnings tax at 15%, and when to convert to retirement phase. Updated 2025–26.",
+    "Transition to retirement (TTR) pensions: TTR tax strategy, 4–10% drawdown, preservation age, and when to convert to retirement phase. Updated 2026.",
   alternates: { canonical: `${SITE_URL}/super/transition-to-retirement` },
   openGraph: {
     title: `Transition to Retirement (TTR) Pension Guide Australia (${CURRENT_YEAR})`,
     description:
       "How TTR pensions work: income boost and tax minimisation strategies, 4–10% drawdown, preservation age, 15% earnings tax, and converting to retirement phase.",
     url: `${SITE_URL}/super/transition-to-retirement`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Transition to Retirement Pension")}&sub=${encodeURIComponent("TTR Strategy · Tax Savings · Drawdown Rules · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };
@@ -228,12 +229,12 @@ export default function TransitionToRetirementPage() {
             <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
               <h3 className="font-extrabold text-slate-900 mb-4">Example: age 60, $120K salary, $400K TSB</h3>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="TTR strategy tax minimisation worked example">
                   <thead>
                     <tr className="border-b border-slate-200">
-                      <th className="text-left py-2 pr-4 font-bold text-slate-700">Item</th>
-                      <th className="text-right py-2 pr-4 font-bold text-slate-700">Without TTR strategy</th>
-                      <th className="text-right py-2 font-bold text-blue-700">With TTR strategy</th>
+                      <th scope="col" className="text-left py-2 pr-4 font-bold text-slate-700">Item</th>
+                      <th scope="col" className="text-right py-2 pr-4 font-bold text-slate-700">Without TTR strategy</th>
+                      <th scope="col" className="text-right py-2 font-bold text-blue-700">With TTR strategy</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -362,11 +363,11 @@ export default function TransitionToRetirementPage() {
               up to 60 for those born from 1 July 1964 onwards.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Preservation age by date of birth">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Date of birth</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Preservation age</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Date of birth</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Preservation age</th>
                   </tr>
                 </thead>
                 <tbody>

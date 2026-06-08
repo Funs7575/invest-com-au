@@ -31,6 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         "Explore private credit investment opportunities in Australia. Senior secured, mezzanine, P2P lending and more.",
       url: `${SITE_URL}/invest/private-credit/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Private Credit Opportunities")}&sub=${encodeURIComponent("Yield · Security · Terms · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

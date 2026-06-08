@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -66,7 +67,7 @@ export default function AnnuitiesVsAbpPage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link><span>/</span>
             <Link href="/retirement" className="hover:text-slate-900">Retirement</Link><span>/</span>
             <span className="text-slate-900 font-medium">Annuity vs ABP</span>
@@ -88,12 +89,12 @@ export default function AnnuitiesVsAbpPage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Head-to-head comparison</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Lifetime annuity vs account-based pension head-to-head comparison">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifetime annuity</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Account-based pension</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifetime annuity</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Account-based pension</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -134,7 +135,7 @@ export default function AnnuitiesVsAbpPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">▾</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -142,6 +143,16 @@ export default function AnnuitiesVsAbpPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Compare annuities vs account-based pension with expert advice"
+        subheading="Longevity risk, sequencing risk, and Centrelink treatment differ significantly between annuities and ABPs. A financial planner can model the right mix for your income needs."
+        intent={{ need: "retirement", context: ["annuities", "account_based_pension", "retirement_income"] }}
+        source="retirement_annuities_vs_abp"
+        ctaLabel="Find a retirement income specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

@@ -201,7 +201,7 @@ function RadarChart({
 
 function PercentileBar({
   value,
-  color,
+  color: _color,
   label,
   rank,
   total,
@@ -276,10 +276,11 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
         {/* Broker selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">
+            <label htmlFor="bench-platform" className="block text-sm font-semibold text-slate-700 mb-1">
               Select Platform
             </label>
             <select
+              id="bench-platform"
               value={selectedSlug}
               onChange={(e) => handleSelect(e.target.value)}
               className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
@@ -293,10 +294,11 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">
+            <label htmlFor="bench-compare" className="block text-sm font-semibold text-slate-700 mb-1">
               Compare With
             </label>
             <select
+              id="bench-compare"
               value={compareSlug}
               onChange={(e) => setCompareSlug(e.target.value)}
               className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
@@ -439,20 +441,21 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
             </p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Overall leaderboard — brokers ranked by average percentile">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600">
                     #
                   </th>
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600">
                     Platform
                   </th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600">
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600">
                     Overall
                   </th>
                   {DIMENSIONS.map((d) => (
                     <th
+              scope="col"
                       key={d.key}
                       className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell"
                     >

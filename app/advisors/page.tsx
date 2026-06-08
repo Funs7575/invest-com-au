@@ -5,10 +5,32 @@ import type { Professional, AdvisorFirm } from "@/lib/types";
 import type { Metadata } from "next";
 import AdvisorsClient, { type ExpertTeamCard } from "./AdvisorsClient";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
-import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 import NextActions from "@/components/NextActions";
+import { faqJsonLd } from "@/lib/schema-markup";
+import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
+
+const ADVISOR_FAQS = [
+  {
+    q: "How do I find a financial advisor in Australia?",
+    a: "Start by clarifying what you need: SMSF setup, retirement planning, tax minimisation, property investment, or estate planning. Then verify the advisor holds an Australian Financial Services Licence (AFSL) or is an authorised representative of a licence holder — you can check ASIC's Financial Advisers Register at moneysmart.gov.au. On this platform, every listed advisor has been verified against ASIC's register. Use the filters to narrow by speciality, state, and fee model (fee-for-service vs commission).",
+  },
+  {
+    q: "What does a financial advisor cost in Australia?",
+    a: "Financial advisor fees in Australia typically range from $2,500–$5,000 for an initial statement of advice, and $1,500–$3,500 per year for ongoing advice relationships. Hourly rates run $200–$500/hour. Since the Future of Financial Advice (FOFA) reforms, advisors must charge fees transparently — commissions on investments are banned (though life insurance commissions continue). Fee-for-service advisors charge you directly; some advisors still receive trailing commissions on legacy products. Always ask for a fee disclosure statement before engaging.",
+  },
+  {
+    q: "What is the difference between a financial planner and a financial advisor?",
+    a: "In Australia, both titles are used interchangeably under the Corporations Act, which regulates anyone providing 'personal financial product advice'. Historically, 'financial planner' implied holistic life-goals planning while 'financial advisor' implied more investment-specific work — but this distinction is not enforced in law. More meaningful distinctions: whether the advisor is 'independently licensed' (not owned by or aligned to a product manufacturer), whether they're a Certified Financial Planner (CFP), and whether they operate under a fee-for-service or commission model.",
+  },
+  {
+    q: "Do I need a financial advisor or can I DIY?",
+    a: "DIY investing is appropriate if your situation is straightforward: you have a single accumulation-phase super account, a simple share portfolio, no business interests, and no complex tax position. You need professional advice when: establishing an SMSF (complex compliance, trustee obligations), structuring a property portfolio with debt across multiple entities, planning retirement income from multiple sources, dealing with an inheritance, business succession, or divorce. The threshold is usually: complex structure + significant assets + time-sensitive decisions. The cost of a mistake in these situations far exceeds an advisor's fee.",
+  },
+];
+
+const advisorFaqLd = faqJsonLd(ADVISOR_FAQS);
 
 const log = logger("advisors-page");
 
@@ -109,6 +131,9 @@ export default function AdvisorsPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      {advisorFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(advisorFaqLd) }} />
+      )}
       {/* DirectoryBanners now render inside AdvisorsClient, in the canonical slot
           directly below the shared DirectoryHero (passed in as a prop). */}
       <Suspense fallback={<AdvisorsLoading />}>
@@ -119,6 +144,24 @@ export default function AdvisorsPage() {
         <NextActions surface="advisors" />
       </Suspense>
       <HomeToolsStrip />
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {ADVISOR_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }

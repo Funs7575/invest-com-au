@@ -289,7 +289,7 @@ export default function FirbFeeEstimatorClient() {
                 <span className="text-slate-500">$</span>
                 <input
                   id="value-aud"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={valueAud}
                   onChange={(e) => setValueAud(e.target.value)}
                   min={0}

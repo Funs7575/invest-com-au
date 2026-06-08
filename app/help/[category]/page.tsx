@@ -24,6 +24,7 @@ export async function generateMetadata(
       title: `${cat.title} | Help Centre`,
       description: cat.description,
       url: absoluteUrl(`/help/${cat.slug}`),
+      images: [{ url: `/api/og?title=${encodeURIComponent(cat.title)}&sub=${encodeURIComponent("Help Centre · Invest.com.au")}`, width: 1200, height: 630 }],
     },
   };
 }
@@ -52,7 +53,7 @@ export default async function HelpCategoryPage(
         {/* Header */}
         <div className="bg-slate-900 text-white py-8 md:py-12 px-4">
           <div className="container-custom max-w-3xl">
-            <nav className="text-xs text-slate-400 mb-3">
+            <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="mx-1.5">/</span>
               <Link href="/help" className="hover:text-white">Help Centre</Link>

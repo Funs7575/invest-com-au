@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { KindMembership, WorkspaceKind } from "@/lib/account-kinds";
 
 interface Props {
@@ -56,6 +57,7 @@ const KIND_META: Record<
 };
 
 export default function SelectWorkspaceClient({ memberships }: Props) {
+  const router = useRouter();
   const [selecting, setSelecting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,7 +75,8 @@ export default function SelectWorkspaceClient({ memberships }: Props) {
         throw new Error(body.error ?? "Could not switch workspace.");
       }
       const body = (await res.json()) as { redirect: string };
-      window.location.href = body.redirect;
+      router.push(body.redirect);
+      router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not switch workspace.");
       setSelecting(null);
@@ -91,7 +94,7 @@ export default function SelectWorkspaceClient({ memberships }: Props) {
             type="button"
             onClick={() => void choose(m.kind)}
             disabled={selecting !== null}
-            className={`w-full text-left border-2 ${meta.tone} rounded-xl p-5 transition-colors disabled:opacity-50`}
+            className={`w-full text-left border-2 ${meta.tone} rounded-xl p-5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <div className="flex items-start gap-4">
               <span className="text-3xl shrink-0" aria-hidden>{meta.icon}</span>

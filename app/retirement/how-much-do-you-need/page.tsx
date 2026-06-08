@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -198,7 +199,7 @@ export default function HowMuchRetirementPage() {
       {/* ── Hero ── */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/retirement" className="hover:text-slate-900">Retirement</Link>
@@ -243,13 +244,13 @@ export default function HowMuchRetirementPage() {
             more — add $300,000–$500,000 to cover housing costs.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="ASFA Retirement Standard benchmarks by lifestyle">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifestyle</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Annual spend</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Super needed</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">What it covers</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifestyle</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Annual spend</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Super needed</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">What it covers</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -284,13 +285,13 @@ export default function HowMuchRetirementPage() {
             reduces how much you need to pull from super.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-5">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Safe withdrawal rate examples by starting super balance">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Starting balance</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At 4% (conservative)</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At 5% (with Age Pension)</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Context</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Starting balance</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At 4% (conservative)</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At 5% (with Age Pension)</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Context</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -448,12 +449,12 @@ export default function HowMuchRetirementPage() {
             ASFA benchmarks are averages. Your personal number depends on these factors.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Key variables that affect how much retirement savings you need">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Variable</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Impact</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Why it matters</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Variable</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Impact</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Why it matters</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -492,13 +493,13 @@ export default function HowMuchRetirementPage() {
             sacrifice to get your real projected balance.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Superannuation balance projection to age 67 by current age">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Age now</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Benchmark balance today</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At age 67 (compounding only)</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Note</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Age now</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Benchmark balance today</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At age 67 (compounding only)</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Note</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -787,7 +788,7 @@ export default function HowMuchRetirementPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">
                     ▾
                   </span>
                 </summary>
@@ -797,6 +798,16 @@ export default function HowMuchRetirementPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get a personalised retirement savings plan"
+        subheading="How much you need depends on your lifestyle, super balance, Age Pension eligibility, and drawdown strategy. A financial planner can build a retirement projection specific to your situation."
+        intent={{ need: "retirement", context: ["retirement_savings", "retirement_planning"] }}
+        source="retirement_how_much_do_you_need"
+        ctaLabel="Find a retirement planner"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* ── Related guides ── */}
       <section className="py-8 border-b border-slate-100">

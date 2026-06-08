@@ -121,7 +121,8 @@ export default function LedgerHistoryTable({ summary }: Props) {
             type="button"
             onClick={loadMore}
             disabled={loading}
-            className="text-xs font-semibold text-violet-700 hover:text-violet-900 disabled:opacity-50"
+            aria-busy={loading}
+            className="text-xs font-semibold text-violet-700 hover:text-violet-900 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Loading…" : "Load more"}
           </button>

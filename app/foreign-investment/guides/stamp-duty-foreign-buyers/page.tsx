@@ -6,6 +6,28 @@ import { FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const STAMP_DUTY_FAQS = [
+  {
+    q: "What is the foreign buyer stamp duty surcharge in Australia?",
+    a: "Australian states and territories impose a surcharge on top of ordinary stamp duty when a 'foreign person' (non-citizen, non-permanent resident) buys residential property. Rates vary by state: NSW 8%, VIC 8%, QLD 7%, WA 7%, SA 7%, ACT 0% (surcharge abolished), TAS 3%. The surcharge applies to the full dutiable value of the property and is paid in addition to the standard stamp duty rate. Some states also impose a separate annual land tax surcharge on foreign-owned property.",
+  },
+  {
+    q: "Who is considered a 'foreign person' for stamp duty purposes?",
+    a: "Each state has its own definition, but generally a 'foreign person' includes: non-citizens (including temporary residents on most visa types), non-permanent residents, foreign corporations (majority foreign-owned), and foreign trusts. Australian citizens living overseas are typically not considered foreign persons. New Zealand citizens with a Special Category Visa are treated differently in some states. Permanent residents (holders of a permanent visa) are generally not subject to the foreign buyer surcharge, though some states have specific rules — check the relevant state revenue office for your situation.",
+  },
+  {
+    q: "Can I avoid the foreign buyer stamp duty surcharge?",
+    a: "Legally, there is no way to avoid the surcharge if you are a foreign person purchasing residential property in Australia. However, there are some nuances: (1) the surcharge may not apply to primary production land, commercial property, or company title in some states; (2) some states exempt purchases under certain thresholds or for certain visa classes; (3) the South Australian government announced a targeted exemption for investors in large-scale build-to-rent projects; (4) if your circumstances change and you obtain permanent residency before settlement, you may be eligible for a refund — check with the relevant state revenue office. Consult a stamp duty specialist before proceeding.",
+  },
+  {
+    q: "Is foreign buyer stamp duty the same as FIRB?",
+    a: "No. They are separate and both may apply. FIRB (Foreign Investment Review Board) approval is a federal government process — it determines whether you are permitted to purchase the property at all. Stamp duty (including the foreign buyer surcharge) is a state government tax imposed when the transfer of property occurs. A foreign buyer typically needs both: FIRB approval before signing a contract, and then pays the stamp duty surcharge (plus FIRB application fee) on or around settlement. FIRB fees are charged by the federal government; stamp duty is charged by the state in which the property is located.",
+  },
+];
+
+const stampDutyFaqLd = faqJsonLd(STAMP_DUTY_FAQS);
 
 export const metadata: Metadata = {
   title: "Foreign Buyer Stamp Duty by State (2026)",
@@ -53,11 +75,14 @@ export default function StampDutyForeignBuyersPage() {
           ),
         }}
       />
+      {stampDutyFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(stampDutyFaqLd) }} />
+      )}
 
       {/* ── Hero ── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -122,13 +147,13 @@ export default function StampDutyForeignBuyersPage() {
             sub="Rates current as at March 2026. Check your state revenue office for most recent rates."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Foreign buyer stamp duty surcharges — all states and territories">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-start">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Stamp Duty Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden lg:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Stamp Duty Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden lg:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -171,17 +196,17 @@ export default function StampDutyForeignBuyersPage() {
             sub="Surcharge only — add standard state stamp duty on top for total stamp duty cost."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Foreign buyer surcharge cost examples by state and property price">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-start">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Rate</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Rate</th>
                   {PRICE_EXAMPLES.map((p) => (
-                    <th key={p} className="px-3 py-3 font-semibold text-slate-600 text-xs text-right hidden sm:table-cell">
+                    <th scope="col" key={p} className="px-3 py-3 font-semibold text-slate-600 text-xs text-right hidden sm:table-cell">
                       ${(p / 1_000_000).toFixed(p < 1_000_000 ? 1 : 1)}M
                     </th>
                   ))}
-                  <th className="px-3 py-3 font-semibold text-slate-600 text-xs text-right sm:hidden">$1M</th>
+                  <th scope="col" className="px-3 py-3 font-semibold text-slate-600 text-xs text-right sm:hidden">$1M</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -344,7 +369,22 @@ export default function StampDutyForeignBuyersPage() {
           heading="Find a conveyancer or buyer's agent"
         />
 
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <div className="mt-8 space-y-3">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          {STAMP_DUTY_FAQS.map((faq) => (
+            <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+              <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                {faq.q}
+                <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+              </summary>
+              <div className="px-5 pb-4">
+                <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-6">
           <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_BUYER_STAMP_DUTY_WARNING}</p>
         </div>
       </div>

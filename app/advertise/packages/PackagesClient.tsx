@@ -110,9 +110,9 @@ export default function PackagesClient() {
     <div className="max-w-2xl mx-auto">
       {/* Tier Selection */}
       <div className="mb-8">
-        <label className="block text-sm font-bold text-slate-900 mb-3">
+        <p className="block text-sm font-bold text-slate-900 mb-3">
           1. Choose your tier
-        </label>
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {TIERS.map((t) => (
             <button
@@ -137,10 +137,11 @@ export default function PackagesClient() {
       {/* Category Picker (only for Category Sponsor) */}
       {selectedTier === "category_sponsor" && (
         <div className="mb-8">
-          <label className="block text-sm font-bold text-slate-900 mb-3">
+          <label htmlFor="pkg-category" className="block text-sm font-bold text-slate-900 mb-3">
             2. Select a category
           </label>
           <select
+            id="pkg-category"
             value={categorySlug}
             onChange={(e) => setCategorySlug(e.target.value)}
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
@@ -157,9 +158,9 @@ export default function PackagesClient() {
 
       {/* Duration Picker */}
       <div className="mb-8">
-        <label className="block text-sm font-bold text-slate-900 mb-3">
+        <p className="block text-sm font-bold text-slate-900 mb-3">
           {selectedTier === "category_sponsor" ? "3" : "2"}. Choose duration
-        </label>
+        </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {DURATIONS.map((d) => (
             <button
@@ -235,6 +236,7 @@ export default function PackagesClient() {
           <input
             id="company-name"
             type="text"
+            autoComplete="organization"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             placeholder="e.g. CommSec, Stake, SelfWealth"
@@ -250,7 +252,8 @@ export default function PackagesClient() {
           </label>
           <input
             id="contact-email"
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+            autoComplete="email"
             value={contactEmail}
             onChange={(e) => setContactEmail(e.target.value)}
             placeholder="partnerships@yourcompany.com.au"
@@ -261,7 +264,7 @@ export default function PackagesClient() {
 
       {/* Error */}
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+        <div role="alert" className="mb-4 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -323,7 +326,8 @@ export default function PackagesClient() {
               </label>
               <input
                 id="contact-email-2"
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+                autoComplete="email"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
                 placeholder="you@company.com.au"

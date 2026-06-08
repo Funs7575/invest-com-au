@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -92,7 +93,7 @@ export default function GlobalPropertyPage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link><span>/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link><span>/</span>
             <span className="text-slate-900 font-medium">Foreign Property</span>
@@ -152,7 +153,7 @@ export default function GlobalPropertyPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">▾</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -160,6 +161,15 @@ export default function GlobalPropertyPage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Get specialist advice on international property investment"
+        subheading="Buying property abroad involves FIRB approvals, dual taxation treaties, foreign mortgage structuring, and capital gains on disposal. A specialist adviser experienced with cross-border investment can map the full tax and legal picture."
+        intent={{ need: "planning", context: ["international_property", "foreign_investment", "international_tax"] }}
+        source="global_investing_property"
+        ctaLabel="Find an international investment adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

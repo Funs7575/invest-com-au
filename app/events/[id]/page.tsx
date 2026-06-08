@@ -151,7 +151,9 @@ export async function generateMetadata({
     openGraph: {
       title: data.title as string,
       description,
+      images: [{ url: `/api/og?title=${encodeURIComponent(data.title as string)}&sub=${encodeURIComponent("Event · " + (data.event_type as string) + " · Register Now")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

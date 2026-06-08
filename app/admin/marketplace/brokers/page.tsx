@@ -29,13 +29,13 @@ export default function AdminBrokersPage() {
   const [adjustAmount, setAdjustAmount] = useState("");
   const [adjustDescription, setAdjustDescription] = useState("");
   const [adjusting, setAdjusting] = useState(false);
+  const [adjustError, setAdjustError] = useState<string | null>(null);
 
   // Available broker slugs for invite dropdown
   const [brokerSlugs, setBrokerSlugs] = useState<string[]>([]);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // eslint-disable-next-line react-hooks/immutability -- pre-existing pattern; loadData is a stable data-loader declared immediately below
+  useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
     const supabase = createClient();
@@ -103,7 +103,7 @@ export default function AdminBrokersPage() {
     const supabase = createClient();
 
     // Create an auth user with a temporary password (broker will reset)
-    const tempPassword = `Broker${Date.now()}!${Math.random().toString(36).slice(2, 8)}`;
+    const _tempPassword = `Broker${Date.now()}!${Math.random().toString(36).slice(2, 8)}`; // reserved for future auth creation flow
 
     // We need the admin client for user creation — use an API call
     // For now, insert the broker_accounts row directly (admin can set up auth separately)
@@ -142,6 +142,7 @@ export default function AdminBrokersPage() {
 
   const handleAdjustment = async () => {
     if (!adjustSlug || !adjustAmount || !adjustDescription) return;
+    setAdjustError(null);
     setAdjusting(true);
 
     const amountCents = Math.round(parseFloat(adjustAmount) * 100);
@@ -162,18 +163,19 @@ export default function AdminBrokersPage() {
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        alert(data.error || "Adjustment failed");
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        setAdjustError(data.error || "Adjustment failed");
+      } else {
+        setAdjustSlug(null);
+        setAdjustAmount("");
+        setAdjustDescription("");
+        await loadData();
       }
     } catch {
-      alert("Network error");
+      setAdjustError("Network error");
     }
 
-    setAdjustSlug(null);
-    setAdjustAmount("");
-    setAdjustDescription("");
     setAdjusting(false);
-    await loadData();
   };
 
   return (
@@ -205,7 +207,7 @@ export default function AdminBrokersPage() {
                 className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
               />
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 placeholder="Email Address"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
@@ -266,7 +268,7 @@ export default function AdminBrokersPage() {
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
                 <input
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.01"
                   placeholder="Amount (negative to debit)"
                   value={adjustAmount}
@@ -291,12 +293,15 @@ export default function AdminBrokersPage() {
                 {adjusting ? "Processing..." : "Apply Adjustment"}
               </button>
               <button
-                onClick={() => setAdjustSlug(null)}
+                onClick={() => { setAdjustSlug(null); setAdjustError(null); }}
                 className="px-4 py-2 text-slate-600 text-sm rounded-lg hover:bg-slate-100 transition-colors"
               >
                 Cancel
               </button>
             </div>
+            {adjustError && (
+              <p role="alert" className="text-xs text-red-700 bg-red-50 border border-red-100 rounded px-3 py-2">{adjustError}</p>
+            )}
           </div>
         )}
 
@@ -314,7 +319,7 @@ export default function AdminBrokersPage() {
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Broker portal accounts">
                 <thead>
                   <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                     <th className="px-5 py-3 text-left">Name</th>

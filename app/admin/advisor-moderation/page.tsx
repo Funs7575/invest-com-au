@@ -12,6 +12,7 @@ export default function AdvisorModerationPage() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [acting, setActing] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -28,6 +29,7 @@ export default function AdvisorModerationPage() {
   }, [supabase]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- pre-existing pattern, refactor is post-launch hub-data-fetch redesign
     loadData();
   }, [loadData]);
 
@@ -50,9 +52,7 @@ export default function AdvisorModerationPage() {
 
   const handleAction = async (ids: number[], action: "approve" | "reject") => {
     if (ids.length === 0) return;
-    const label = action === "approve" ? "approve" : "reject";
-    if (!confirm(`${label.charAt(0).toUpperCase() + label.slice(1)} ${ids.length} advisor(s)?`)) return;
-
+    setActionError(null);
     setActing(true);
     try {
       const res = await fetch("/api/admin/advisor-moderation", {
@@ -63,11 +63,11 @@ export default function AdvisorModerationPage() {
       if (res.ok) {
         loadData();
       } else {
-        const err = await res.json();
-        alert(err.error || "Action failed");
+        const err = await res.json() as { error?: string };
+        setActionError(err.error || "Action failed");
       }
     } catch {
-      alert("Network error");
+      setActionError("Network error");
     }
     setActing(false);
   };
@@ -80,6 +80,10 @@ export default function AdvisorModerationPage() {
           Review and approve or reject pending advisor signup requests.
         </p>
       </div>
+
+      {actionError && (
+        <p role="alert" className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{actionError}</p>
+      )}
 
       {/* Bulk actions bar */}
       {selected.size > 0 && (
@@ -120,7 +124,7 @@ export default function AdvisorModerationPage() {
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Pending advisor signups">
             <thead className="bg-slate-50 text-left">
               <tr>
                 <th className="px-4 py-3 w-10">

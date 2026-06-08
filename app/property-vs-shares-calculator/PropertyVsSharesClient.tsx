@@ -167,13 +167,14 @@ export default function PropertyVsSharesClient() {
               <h2 className="font-bold text-slate-900">Your Scenario</h2>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="pvs-deposit" className="block text-xs font-semibold text-slate-600 mb-1">
                   Deposit / cash to invest
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="pvs-deposit"
+                    type="number" inputMode="decimal"
                     min={1000}
                     step={5000}
                     value={deposit}
@@ -186,11 +187,12 @@ export default function PropertyVsSharesClient() {
               <p className="text-[0.69rem] font-bold uppercase tracking-wider text-blue-600 pt-1">🏠 Property</p>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Purchase price</label>
+                <label htmlFor="pvs-property-value" className="block text-xs font-semibold text-slate-600 mb-1">Purchase price</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="pvs-property-value"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={25000}
                     value={propertyValue}
@@ -204,10 +206,11 @@ export default function PropertyVsSharesClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Annual capital growth</label>
+                <label htmlFor="pvs-property-growth" className="block text-xs font-semibold text-slate-600 mb-1">Annual capital growth</label>
                 <div className="relative">
                   <input
-                    type="number"
+                    id="pvs-property-growth"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={20}
                     step={0.5}
@@ -220,10 +223,11 @@ export default function PropertyVsSharesClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Gross rental yield</label>
+                <label htmlFor="pvs-rental-yield" className="block text-xs font-semibold text-slate-600 mb-1">Gross rental yield</label>
                 <div className="relative">
                   <input
-                    type="number"
+                    id="pvs-rental-yield"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={15}
                     step={0.25}
@@ -236,12 +240,13 @@ export default function PropertyVsSharesClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="pvs-holding-costs" className="block text-xs font-semibold text-slate-600 mb-1">
                   Holding costs (rates, maintenance, insurance)
                 </label>
                 <div className="relative">
                   <input
-                    type="number"
+                    id="pvs-holding-costs"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={10}
                     step={0.25}
@@ -256,13 +261,14 @@ export default function PropertyVsSharesClient() {
               <p className="text-[0.69rem] font-bold uppercase tracking-wider text-emerald-600 pt-1">📈 Shares</p>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="pvs-shares-return" className="block text-xs font-semibold text-slate-600 mb-1">
                   Expected annual return
                   <span className="text-slate-400 font-normal ml-1">dividends + growth</span>
                 </label>
                 <div className="relative">
                   <input
-                    type="number"
+                    id="pvs-shares-return"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={30}
                     step={0.5}
@@ -275,10 +281,11 @@ export default function PropertyVsSharesClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Time period</label>
+                <label htmlFor="pvs-years" className="block text-xs font-semibold text-slate-600 mb-1">Time period</label>
                 <div className="relative">
                   <input
-                    type="number"
+                    id="pvs-years"
+                    type="number" inputMode="decimal"
                     min={1}
                     max={40}
                     step={1}

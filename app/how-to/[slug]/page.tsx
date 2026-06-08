@@ -141,7 +141,7 @@ export default async function HowToGuidePage({
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-3xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -275,9 +275,9 @@ export default async function HowToGuidePage({
                               {broker.asx_fee
                                 ? `ASX: ${broker.asx_fee}`
                                 : PLATFORM_TYPE_LABELS[broker.platform_type]}
-                              {broker.rating
-                                ? ` · ${renderStars(broker.rating)} ${broker.rating}/5`
-                                : ""}
+                              {broker.rating && (
+                                <>{" · "}<span aria-hidden="true">{renderStars(broker.rating)}</span>{" "}<span aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span></>
+                              )}
                             </p>
                           </div>
                           <a

@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `First Home Super Saver (FHSS) Scheme Guide — ${CURRENT_YEAR} | invest.com.au`,
-  description: `Complete FHSS guide for Australian first home buyers: how it works, $15k/year limit, $50k lifetime cap, tax savings, concessional vs non-concessional contributions, the 7-step process, and key gotchas. ${UPDATED_LABEL}.`,
+  description: `FHSS guide: $15k/year and $50k lifetime cap, tax savings, contribution types, and the 7-step claim process. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `First Home Super Saver (FHSS) Scheme Guide (${CURRENT_YEAR})`,
     description:
@@ -246,7 +247,7 @@ export default function FhssGuidePage() {
       {/* Hero */}
       <section className="bg-slate-900 py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link>
             <span>/</span>
             <Link href="/first-home-buyer" className="hover:text-white">First Home Buyer</Link>
@@ -341,14 +342,14 @@ export default function FhssGuidePage() {
             Based on a 32.5% marginal tax bracket (income approx. $45,001&ndash;$135,000 in 2025&ndash;26).
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Tax comparison of FHSS scheme vs regular savings account" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Savings method</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Contribution tax</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Earnings tax</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Withdrawal tax</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide whitespace-nowrap">Net outcome</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Savings method</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Contribution tax</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Earnings tax</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Withdrawal tax</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide whitespace-nowrap">Net outcome</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -485,11 +486,11 @@ export default function FhssGuidePage() {
             as FHSS-eligible. Here is how the numbers stack up.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table aria-label="FHSS worked example: Sophie 3 years at $85,000 salary" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Item</th>
-                  <th className="text-right px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Amount</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Item</th>
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -585,7 +586,7 @@ export default function FhssGuidePage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4 bg-white">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">&#9662;</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -593,6 +594,15 @@ export default function FhssGuidePage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Get financial advice on using the FHSS scheme"
+        subheading="The FHSS scheme interacts with super contributions caps, concessional tax rates, and your withdrawal window. A financial adviser can model your contributions strategy and help you avoid common mistakes that delay or reduce your release amount."
+        intent={{ need: "mortgage", context: ["fhss", "first_home_buyer", "super_strategy"] }}
+        source="first_home_buyer_fhss"
+        ctaLabel="Find a financial adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related links */}
       <section className="py-8 border-b border-slate-100">

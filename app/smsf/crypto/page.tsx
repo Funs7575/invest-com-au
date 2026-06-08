@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import { createClient } from "@/lib/supabase/server";
 import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
 import type { Broker } from "@/lib/types";
@@ -12,7 +13,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Crypto in Your SMSF: ATO Rules, Tax & Compliance ${CURRENT_YEAR} | Invest.com.au`,
   description:
-    "Can your SMSF legally hold Bitcoin and other crypto? ATO says yes — if you pass the sole purpose test, document your investment strategy, and keep proper records. 15% tax in accumulation, 0% in pension phase.",
+    "SMSF crypto: hold Bitcoin legally if you pass the sole purpose test. 15% tax in accumulation, 0% in pension phase. Compliance requirements.",
   alternates: { canonical: `${SITE_URL}/smsf/crypto` },
   openGraph: {
     title: `Crypto in Your SMSF: ATO Rules, Tax & Compliance ${CURRENT_YEAR}`,
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
       "ATO compliance rules, tax treatment, custody requirements, and record-keeping for cryptocurrency held inside an SMSF.",
     url: `${SITE_URL}/smsf/crypto`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Crypto in Your SMSF — ATO Rules")}&sub=${encodeURIComponent("Bitcoin · Tax · Custody · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -748,6 +750,15 @@ export default async function SmsfCryptoPage() {
             </div>
           </div>
         </section>
+
+        <HubAdvisorCTA
+          heading="Get SMSF advice on crypto compliance"
+          subheading="SMSF crypto holdings must meet ATO's sole-purpose test, SMSF investment strategy, and valuation rules. An SMSF specialist can review your fund's structure before your next audit."
+          intent={{ need: "smsf", context: ["smsf_crypto", "smsf_compliance"] }}
+          source="smsf_crypto"
+          ctaLabel="Find an SMSF specialist"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* ── Related links ── */}
         <section className="py-10 bg-white border-t border-slate-200">

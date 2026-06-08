@@ -15,6 +15,28 @@ import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarket
 import EnergyPriceWidget from "@/components/commodities/EnergyPriceWidget";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const OIL_GAS_FAQS = [
+  {
+    q: "How do I invest in Australian oil and gas companies?",
+    a: "Australians can invest in oil and gas through: (1) ASX shares — Woodside Energy (WDS) is Australia's largest LNG producer; Santos (STO) is the second-largest; Viva Energy (VEA) and Ampol (ALD) operate refinery and fuel distribution infrastructure. (2) ETFs — BetaShares Global Energy Companies ETF (FUEL) and the unlisted iShares Energy ETF provide global oil and gas exposure, including Australian majors. (3) Crude oil ETF — BetaShares Crude Oil ETF (OOO) tracks WTI crude oil futures. (4) Direct project equity — unlisted oil and gas project deals (LNG royalties, exploration JVs) available to wholesale investors via the marketplace above. Note that fossil fuel investments carry both price risk and energy transition risk.",
+  },
+  {
+    q: "Do Australian oil and gas stocks pay dividends?",
+    a: "Yes — Australia's major oil and gas companies pay substantial dividends, often with franking credits. Woodside Energy (WDS) targets a 50–80% payout ratio and has paid fully franked dividends; at current oil prices, the forward dividend yield is approximately 5–8% p.a. Santos (STO) typically pays 40–50% of free cash flow as dividends. Ampol (ALD) and Viva Energy (VEA) pay dividends linked to refining margins and fuel distribution profitability. Franking credits (from corporate tax paid at 30%) reduce the effective tax rate for Australian resident investors, making the after-tax yield higher than the headline rate.",
+  },
+  {
+    q: "How is oil and gas investment taxed in Australia?",
+    a: "Oil and gas investments are subject to standard capital gains tax (50% discount for assets held 12+ months) and dividend tax rules for shares and ETFs. At the company level, oil and gas producers pay the 30% corporate tax rate plus the Petroleum Resource Rent Tax (PRRT) — a 40% profits-based tax on offshore petroleum production (onshore exempt). PRRT is deductible for corporate tax, so it doesn't stack to 70%. For non-residents: ASX oil and gas share sales are generally CGT-exempt (not Taxable Australian Property for sub-10% portfolio holdings), but direct interests in Australian petroleum tenements are TAP and subject to Australian CGT on disposal.",
+  },
+  {
+    q: "Do foreign investors need FIRB approval to invest in Australian oil and gas?",
+    a: "Foreign investors need FIRB approval for direct investment in Australian petroleum tenements, exploration licences, and significant business acquisitions. The national-interest test applies to all fossil fuel infrastructure acquisitions. Portfolio share purchases below 10% in ASX-listed oil and gas companies are generally FIRB-exempt. State-owned enterprises (SOEs) from non-agreement countries face stricter scrutiny — Chinese and Russian SOEs have faced refusals in resource acquisitions. US, UK, and Japanese investors benefit from bilateral investment protections that streamline FIRB review. Always seek FIRB advice before acquiring direct interests in petroleum licences or production assets.",
+  },
+];
+
+const oilGasFaqLd = faqJsonLd(OIL_GAS_FAQS);
 
 export const revalidate = 1800;
 
@@ -28,6 +50,7 @@ export const metadata: Metadata = {
     description:
       "ASX-listed majors, refineries, LNG royalties, ETFs, and FIRB rules for international investors.",
     url: `${SITE_URL}/invest/oil-gas`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Oil & Gas")}&sub=${encodeURIComponent("ASX Stocks · LNG · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -94,6 +117,9 @@ export default async function OilGasPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {oilGasFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(oilGasFaqLd) }} />
+      )}
 
       <EnergyPriceWidget snapshots={priceSnapshots} />
 
@@ -247,7 +273,7 @@ export default async function OilGasPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6" role="tablist">
+          <nav aria-label="Ways to invest" className="flex flex-wrap gap-2 mb-6">
             {WAYS_TO_INVEST.map((w, i) => (
               <a
                 key={w.id}
@@ -264,7 +290,7 @@ export default async function OilGasPage() {
                 {w.label}
               </a>
             ))}
-          </div>
+          </nav>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {WAYS_TO_INVEST.map((w, i) => (
@@ -557,6 +583,26 @@ export default async function OilGasPage() {
             >
               Download report &rarr;
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="max-w-3xl mx-auto px-4 container-custom">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {OIL_GAS_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

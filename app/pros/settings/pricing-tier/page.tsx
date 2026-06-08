@@ -49,7 +49,7 @@ export default async function ProsPricingTierPage() {
 
   return (
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
-      <nav className="text-xs text-slate-500 mb-4">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
         <Link href="/account" className="hover:underline">
           Account
         </Link>

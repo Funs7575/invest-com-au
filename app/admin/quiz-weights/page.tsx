@@ -42,6 +42,7 @@ export default function QuizWeightsPage() {
   const [modified, setModified] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showSimulator, setShowSimulator] = useState(false);
   const [simWeights, setSimWeights] = useState<Record<string, number>>({
@@ -55,7 +56,9 @@ export default function QuizWeightsPage() {
   const [simResults, setSimResults] = useState<SimResult[]>([]);
 
   useEffect(() => {
+     
     fetchWeights();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchWeights() {
@@ -99,8 +102,9 @@ export default function QuizWeightsPage() {
 
     if (error) {
       log.error("Error saving weight", { error: error.message });
-      alert("Error saving: " + error.message);
+      setSaveError("Error saving: " + error.message);
     } else {
+      setSaveError(null);
       setSavedId(id);
       setTimeout(() => setSavedId(null), 2000);
       setModified((prev) => {
@@ -193,6 +197,10 @@ export default function QuizWeightsPage() {
           </div>
         </div>
 
+        {saveError && (
+          <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{saveError}</p>
+        )}
+
         {/* Quiz Simulator */}
         {showSimulator && (
           <div className="bg-white border border-slate-200 rounded-lg p-6">
@@ -201,9 +209,10 @@ export default function QuizWeightsPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
               {WEIGHT_FIELDS.map((f) => (
                 <div key={f.key}>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">{f.label} (0-3)</label>
+                  <label htmlFor={`qw-sim-${f.key}`} className="block text-xs font-medium text-slate-500 mb-1">{f.label} (0-3)</label>
                   <input
-                    type="number"
+                    id={`qw-sim-${f.key}`}
+                    type="number" inputMode="decimal"
                     min="0"
                     max="3"
                     step="0.5"
@@ -258,7 +267,7 @@ export default function QuizWeightsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Quiz broker weights">
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 whitespace-nowrap">
@@ -292,7 +301,7 @@ export default function QuizWeightsPage() {
                       {WEIGHT_FIELDS.map((f) => (
                         <td key={f.key} className="px-4 py-3">
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             step="1"
                             value={row[f.key] as number}
                             onChange={(e) =>

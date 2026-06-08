@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     title: `Capital Gains Tax Australia (${CURRENT_YEAR}) — Complete CGT Guide`,
     description: "CGT explained for Australian investors: 50% discount, cost base, capital losses, shares, property, and crypto.",
     url: absoluteUrl("/tax/capital-gains"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Capital Gains Tax Australia")}&sub=${encodeURIComponent("50% Discount · Cost Base · Capital Losses · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: absoluteUrl("/tax/capital-gains") },
@@ -347,7 +348,7 @@ export default async function CapitalGainsTaxPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/tax" className="hover:text-slate-900">Tax Strategy</Link>
@@ -400,13 +401,13 @@ export default async function CapitalGainsTaxPage() {
         <div className="container-custom">
           <SectionHeading eyebrow="CGT Rates" title="Effective CGT Rates by Tax Bracket" sub="How the 50% CGT discount affects your effective capital gains tax rate (FY2025–26, excluding 2% Medicare Levy)." />
           <div className="mt-6 overflow-x-auto max-w-3xl">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Effective CGT rates by income bracket">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Taxable Income</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Marginal Rate</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">CGT Rate (&lt;12 months)</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">CGT Rate (12+ months)</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable Income</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Marginal Rate</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">CGT Rate (&lt;12 months)</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">CGT Rate (12+ months)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -544,7 +545,7 @@ export default async function CapitalGainsTaxPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -586,7 +587,7 @@ export default async function CapitalGainsTaxPage() {
                   <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                     <div>
                       <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                      <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600">{(Number(b.rating) || 0).toFixed(1)}</span></p>
+                      <p className="text-xs"><span className="text-amber-600" aria-hidden="true">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600" aria-label={`${(Number(b.rating) || 0).toFixed(1)} out of 5 stars`}>{(Number(b.rating) || 0).toFixed(1)}</span></p>
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                     </div>
                     <div className="mt-auto">

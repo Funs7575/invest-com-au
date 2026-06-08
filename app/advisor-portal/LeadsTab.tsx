@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
 import type { Advisor, Stats, Lead, CategoryPricing, DisputeModal, FirmMemberOption } from "./types";
 import { logger } from "@/lib/logger";
@@ -9,12 +10,12 @@ import { logger } from "@/lib/logger";
 const log = logger("advisor-portal-leads");
 
 const PIPELINE_STAGES = [
-  { value: "new", label: "New", color: "text-amber-700 bg-amber-50 border-amber-200" },
-  { value: "contacted", label: "Contacted", color: "text-blue-700 bg-blue-50 border-blue-200" },
-  { value: "proposal_sent", label: "Proposal Sent", color: "text-violet-700 bg-violet-50 border-violet-200" },
-  { value: "negotiating", label: "Negotiating", color: "text-orange-700 bg-orange-50 border-orange-200" },
-  { value: "won", label: "Won", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
-  { value: "lost", label: "Lost", color: "text-red-600 bg-red-50 border-red-200" },
+  { value: "new", label: "New Lead", color: "text-amber-700 bg-amber-50 border-amber-200", description: "Just received, not yet reviewed" },
+  { value: "contacted", label: "Contacted", color: "text-blue-700 bg-blue-50 border-blue-200", description: "You've reached out, awaiting reply" },
+  { value: "proposal_sent", label: "Proposal Sent", color: "text-violet-700 bg-violet-50 border-violet-200", description: "SOA or quote sent" },
+  { value: "negotiating", label: "Negotiating", color: "text-orange-700 bg-orange-50 border-orange-200", description: "In active discussion on terms" },
+  { value: "won", label: "Won", color: "text-emerald-700 bg-emerald-50 border-emerald-200", description: "Client engaged" },
+  { value: "lost", label: "Lost", color: "text-red-600 bg-red-50 border-red-200", description: "Not proceeding" },
 ] as const;
 
 type LeadStatusFilter = "all" | "new" | "contacted" | "converted" | "lost";
@@ -51,12 +52,17 @@ export default function LeadsTab({
   const [firmLeads, setFirmLeads] = useState<Lead[]>([]);
   const [firmMembers, setFirmMembers] = useState<FirmMemberOption[]>([]);
   const [firmLoading, setFirmLoading] = useState(false);
+  const [notesFeedback, setNotesFeedback] = useState<{id: number; status: "saving" | "saved"} | null>(null);
   const [firmError, setFirmError] = useState<string | null>(null);
   const [reassigning, setReassigning] = useState<number | null>(null);
+  const [topupError, setTopupError] = useState<string | null>(null);
+  const [reviewRequestErrors, setReviewRequestErrors] = useState<Record<number, string>>({});
 
   useEffect(() => {
     if (!firmView || !isFirmAdmin) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronous setup before async fetch; no cascade risk
     setFirmLoading(true);
+     
     setFirmError(null);
     fetch("/api/advisor-portal/firm-leads")
       .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
@@ -169,7 +175,7 @@ export default function LeadsTab({
       {firmView && isFirmAdmin && (
         <div className="mb-6">
           {firmLoading && <p className="text-sm text-slate-500 py-8 text-center">Loading team leads…</p>}
-          {firmError && <p className="text-sm text-red-600 py-4">{firmError}</p>}
+          {firmError && <p role="alert" className="text-sm text-red-600 py-4">{firmError}</p>}
           {!firmLoading && !firmError && (
             <div className="space-y-2">
               <p className="text-sm text-slate-500 mb-3">{firmLeads.length} leads across {firmMembers.length} team member{firmMembers.length !== 1 ? "s" : ""}</p>
@@ -211,21 +217,68 @@ export default function LeadsTab({
       <p className="text-sm text-slate-500 mb-4">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
 
       {/* Lead pricing & credit balance */}
+      {(() => {
+        const freeLeadsTotal = categoryPricing?.free_trial_leads || 2;
+        const freeLeadsUsed = advisor?.free_leads_used ?? 0;
+        const freeLeadsLeft = freeLeadsTotal - freeLeadsUsed;
+        const onFreeTrial = advisor?.free_leads_used !== undefined && freeLeadsLeft > 0;
+        const balanceCents = advisor?.credit_balance_cents || 0;
+        const pricePerLead = ((advisor?.lead_price_cents || categoryPricing?.price_cents || 4900) / 100).toFixed(0);
+        const creditsRemaining = balanceCents > 0 ? Math.floor(balanceCents / (advisor?.lead_price_cents || categoryPricing?.price_cents || 4900)) : 0;
+
+        type AccountState = "free-trial" | "active" | "low" | "empty";
+        const accountState: AccountState = onFreeTrial
+          ? "free-trial"
+          : balanceCents === 0
+            ? "empty"
+            : creditsRemaining <= 2
+              ? "low"
+              : "active";
+
+        const statusConfig = {
+          "free-trial": {
+            dot: "bg-emerald-500",
+            text: "text-emerald-700",
+            label: `Free trial · ${freeLeadsLeft} free lead${freeLeadsLeft !== 1 ? "s" : ""} remaining`,
+            detail: `After your trial, leads are deducted from your credit balance at $${pricePerLead}/lead.`,
+          },
+          "active": {
+            dot: "bg-emerald-500",
+            text: "text-emerald-700",
+            label: `Active · ${creditsRemaining} credit${creditsRemaining !== 1 ? "s" : ""} remaining`,
+            detail: `Each enquiry costs $${pricePerLead} and is exclusive to you.`,
+          },
+          "low": {
+            dot: "bg-amber-400",
+            text: "text-amber-700",
+            label: `Low credits · ${creditsRemaining} remaining — top up soon`,
+            detail: `Each enquiry costs $${pricePerLead}. Top up below to avoid interruption.`,
+          },
+          "empty": {
+            dot: "bg-red-500",
+            text: "text-red-700",
+            label: "Account paused — credit balance empty",
+            detail: "Top up below to resume receiving leads.",
+          },
+        } as const;
+
+        const cfg = statusConfig[accountState];
+
+        return (
       <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5">
         <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-xs font-bold text-violet-800 mb-1">Your Lead Account</h3>
-            <p className="text-xs text-violet-600">
-              {advisor?.free_leads_used !== undefined && advisor.free_leads_used < (categoryPricing?.free_trial_leads || 2)
-                ? <>You have <strong>{(categoryPricing?.free_trial_leads || 2) - (advisor.free_leads_used || 0)} free leads</strong> remaining. After that, leads are deducted from your credit balance at ${((advisor?.lead_price_cents || categoryPricing?.price_cents || 4900) / 100).toFixed(0)}/lead.</>
-                : (advisor?.credit_balance_cents || 0) > 0
-                  ? <>Leads are deducted from your credit balance. Each enquiry is exclusive to you.</>
-                  : <>Your credit balance is empty. <strong>Top up to continue receiving leads.</strong></>
-              }
-            </p>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xs font-bold text-violet-800 mb-1.5">Your Lead Account</h3>
+            {/* Primary status line — colour-coded for at-a-glance reading */}
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${cfg.dot}`} aria-hidden="true" />
+              <span className={`text-sm font-semibold ${cfg.text}`}>{cfg.label}</span>
+            </div>
+            {/* Supporting detail in muted text */}
+            <p className="text-xs text-violet-500 leading-relaxed">{cfg.detail}</p>
           </div>
-          <div className="text-right shrink-0 ml-3">
-            <span className="text-lg font-extrabold text-violet-900">${((advisor?.credit_balance_cents || 0) / 100).toFixed(0)}</span>
+          <div className="text-right shrink-0 ml-4">
+            <span className="text-lg font-extrabold text-violet-900">${(balanceCents / 100).toFixed(0)}</span>
             <span className="text-[0.6rem] text-violet-500 block">credit balance</span>
           </div>
         </div>
@@ -241,6 +294,7 @@ export default function LeadsTab({
               type="button"
               tabIndex={0}
               onClick={async () => {
+                setTopupError(null);
                 try {
                   const res = await fetch("/api/advisor-auth/topup", {
                     method: "POST",
@@ -249,9 +303,9 @@ export default function LeadsTab({
                   });
                   const data = await res.json();
                   if (data.url) window.location.href = data.url;
-                  else alert(data.error || "Failed to create checkout session. Please try again.");
+                  else setTopupError(data.error || "Failed to create checkout session. Please try again.");
                 } catch (err) {
-                  alert("Something went wrong. Please check you&apos;re logged in and try again.");
+                  setTopupError("Something went wrong. Please check you're logged in and try again.");
                   log.error("topup checkout failed", { err: err instanceof Error ? err.message : String(err) });
                 }
               }}
@@ -272,14 +326,19 @@ export default function LeadsTab({
             </button>
           ))}
         </div>
+        {topupError && (
+          <p role="alert" className="mt-2 text-xs text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{topupError}</p>
+        )}
       </div>
+        );
+      })()}
 
       {/* Search & Filter Bar */}
       <div className="flex gap-2 mb-4 flex-wrap">
         <div className="relative flex-1 min-w-45">
           <Icon name="search" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
-            type="text"
+            type="search" enterKeyHint="search"
             value={leadSearch}
             onChange={(e) => onLeadSearchChange(e.target.value)}
             placeholder="Search by name, email or phone..."
@@ -321,6 +380,7 @@ export default function LeadsTab({
             }`}
           >
             {hotLeadsOnly ? "🔥" : ""} Hot leads only{stats ? ` (${stats.hotLeadsCount})` : ""}
+            <InfoTip text="Quality score 70+ — investors who provided more detail and showed higher intent." />
           </button>
         </div>
       </div>
@@ -370,11 +430,11 @@ export default function LeadsTab({
                   value={lead.pipeline_stage ?? "new"}
                   disabled={pipelineUpdating === lead.id}
                   onChange={(e) => updatePipeline(lead.id, { pipeline_stage: e.target.value })}
-                  className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50"
+                  className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label="Pipeline stage"
                 >
                   {PIPELINE_STAGES.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
+                    <option key={s.value} value={s.value} title={s.description}>{s.label}</option>
                   ))}
                 </select>
                 <div className="flex items-center gap-1">
@@ -390,7 +450,7 @@ export default function LeadsTab({
                           : null,
                       })
                     }
-                    className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50"
+                    className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Next follow-up date"
                   />
                 </div>
@@ -417,33 +477,39 @@ export default function LeadsTab({
                   <span className="text-[0.56rem] text-emerald-600 font-semibold">Free trial lead</span>
                 )}
                 {lead.status === "new" && (
-                  <button onClick={() => onUpdateLeadStatus(lead.id, "contacted")} className="text-xs font-semibold text-blue-600 hover:text-blue-800 px-2 py-1 border border-blue-200 rounded-lg hover:bg-blue-50">Mark Contacted</button>
+                  <button onClick={() => onUpdateLeadStatus(lead.id, "contacted")} className="text-xs font-semibold text-blue-600 hover:text-blue-800 px-3 py-1.5 border border-blue-200 rounded-lg hover:bg-blue-50">Mark Contacted</button>
                 )}
                 {(lead.status === "new" || lead.status === "contacted") && (
-                  <button onClick={() => onUpdateLeadStatus(lead.id, "converted")} className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-2 py-1 border border-emerald-200 rounded-lg hover:bg-emerald-50">Mark Converted</button>
+                  <button onClick={() => onUpdateLeadStatus(lead.id, "converted")} className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50">Mark Converted</button>
                 )}
                 {lead.status !== "lost" && lead.status !== "converted" && (
-                  <button onClick={() => onUpdateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-2 py-1 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
+                  <button onClick={() => onUpdateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-3 py-1.5 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
                 )}
                 {lead.status === "converted" && (
                   lead.review_requested_at
                     ? <span className="text-[0.56rem] text-slate-400 px-1.5 py-0.5">Review requested {new Date(lead.review_requested_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
-                    : <button
-                        onClick={async () => {
-                          const res = await fetch("/api/advisor-auth/request-review", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ leadId: lead.id }),
-                          });
-                          if (res.ok) {
-                            onLeadsUpdate((prev) => prev.map((l) => l.id === lead.id ? { ...l, review_requested_at: new Date().toISOString() } : l));
-                          } else {
-                            const d = await res.json();
-                            alert(d.error || "Failed to send review request.");
-                          }
-                        }}
-                        className="text-xs font-semibold text-violet-600 hover:text-violet-800 px-2 py-1 border border-violet-200 rounded-lg hover:bg-violet-50"
-                      >Request Review</button>
+                    : <>
+                        <button
+                          onClick={async () => {
+                            setReviewRequestErrors(prev => { const n = { ...prev }; delete n[lead.id]; return n; });
+                            const res = await fetch("/api/advisor-auth/request-review", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ leadId: lead.id }),
+                            });
+                            if (res.ok) {
+                              onLeadsUpdate((prev) => prev.map((l) => l.id === lead.id ? { ...l, review_requested_at: new Date().toISOString() } : l));
+                            } else {
+                              const d = await res.json();
+                              setReviewRequestErrors(prev => ({ ...prev, [lead.id]: d.error || "Failed to send review request." }));
+                            }
+                          }}
+                          className="text-xs font-semibold text-violet-600 hover:text-violet-800 px-2 py-1 border border-violet-200 rounded-lg hover:bg-violet-50"
+                        >Request Review</button>
+                        {reviewRequestErrors[lead.id] && (
+                          <span role="alert" className="text-[0.6rem] text-red-600">{reviewRequestErrors[lead.id]}</span>
+                        )}
+                      </>
                 )}
                 {(() => {
                   const daysSince = Math.floor((Date.now() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24));
@@ -463,13 +529,25 @@ export default function LeadsTab({
                     </button>
                   );
                 })()}
-                <input
-                  type="text"
-                  placeholder="Add a note..."
-                  defaultValue={lead.advisor_notes || ""}
-                  onBlur={(e) => onUpdateLeadNotes(lead.id, e.target.value)}
-                  className="flex-1 min-w-30 text-xs px-2 py-1 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400"
-                />
+                <div className="flex-1 min-w-30 flex items-center gap-1">
+                  <input
+                    type="text"
+                    placeholder="Add a note..."
+                    defaultValue={lead.advisor_notes || ""}
+                    onBlur={async (e) => {
+                      setNotesFeedback({ id: lead.id, status: "saving" });
+                      await onUpdateLeadNotes(lead.id, e.target.value);
+                      setNotesFeedback({ id: lead.id, status: "saved" });
+                      setTimeout(() => setNotesFeedback(null), 2000);
+                    }}
+                    className="flex-1 text-xs px-2 py-1 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400"
+                  />
+                  {notesFeedback?.id === lead.id && (
+                    <span className={`text-[0.6rem] font-semibold shrink-0 ${notesFeedback.status === "saved" ? "text-emerald-600" : "text-slate-400"}`}>
+                      {notesFeedback.status === "saving" ? "Saving…" : "Saved"}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}

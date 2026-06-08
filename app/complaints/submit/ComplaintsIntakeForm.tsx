@@ -135,7 +135,7 @@ export default function ComplaintsIntakeForm() {
           </label>
           <input
             id="c-email"
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -222,7 +222,8 @@ export default function ComplaintsIntakeForm() {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-full py-3 rounded bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50"
+        aria-busy={status === "sending"}
+        className="w-full py-3 rounded bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {status === "sending" ? "Submitting…" : "Submit complaint"}
       </button>

@@ -40,6 +40,8 @@ export default function QuizQuestionsPage() {
   const [sortKey, setSortKey] = useState<string>("");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
@@ -109,8 +111,9 @@ export default function QuizQuestionsPage() {
   }
 
   async function handleSave() {
+    setFormError(null);
     if (!form.question_text.trim()) {
-      alert("Question text is required.");
+      setFormError("Question text is required.");
       return;
     }
 
@@ -119,7 +122,7 @@ export default function QuizQuestionsPage() {
     );
 
     if (validOptions.length === 0) {
-      alert("At least one option with both label and key is required.");
+      setFormError("At least one option with both label and key is required.");
       return;
     }
 
@@ -141,7 +144,7 @@ export default function QuizQuestionsPage() {
 
       if (error) {
         log.error("Error updating question", { error: error.message });
-        alert("Error updating: " + error.message);
+        setFormError("Error updating: " + error.message);
       } else {
         setShowForm(false);
         setEditingId(null);
@@ -154,7 +157,7 @@ export default function QuizQuestionsPage() {
 
       if (error) {
         log.error("Error creating question", { error: error.message });
-        alert("Error creating: " + error.message);
+        setFormError("Error creating: " + error.message);
       } else {
         setShowForm(false);
         fetchQuestions();
@@ -193,10 +196,11 @@ export default function QuizQuestionsPage() {
 
   async function handleDelete(id: number) {
     setSaving(true);
+    setDeleteError(null);
     const { error } = await supabase.from("quiz_questions").delete().eq("id", id);
     if (error) {
       log.error("Error deleting question", { error: error.message });
-      alert("Error deleting: " + error.message);
+      setDeleteError("Error deleting: " + error.message);
     } else {
       setDeleteConfirmId(null);
       fetchQuestions();
@@ -241,7 +245,7 @@ export default function QuizQuestionsPage() {
         </div>
 
         <input
-          type="text"
+          type="search" enterKeyHint="search"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -257,11 +261,12 @@ export default function QuizQuestionsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-1">
+                <label htmlFor="qq-order-index" className="block text-sm font-medium text-slate-600 mb-1">
                   Order Index
                 </label>
                 <input
-                  type="number"
+                  id="qq-order-index"
+                  type="number" inputMode="decimal"
                   value={form.order_index}
                   onChange={(e) =>
                     setForm((prev) => ({
@@ -289,10 +294,11 @@ export default function QuizQuestionsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">
+              <label htmlFor="qq-question-text" className="block text-sm font-medium text-slate-600 mb-1">
                 Question Text
               </label>
               <textarea
+                id="qq-question-text"
                 value={form.question_text}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, question_text: e.target.value }))
@@ -307,7 +313,7 @@ export default function QuizQuestionsPage() {
             {/* Options Editor */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-medium text-slate-600">Options</label>
+                <span className="text-sm font-medium text-slate-600">Options</span>
                 <button
                   onClick={handleAddOption}
                   className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-300 transition-colors border border-slate-300"
@@ -364,6 +370,9 @@ export default function QuizQuestionsPage() {
               </div>
             </div>
 
+            {formError && (
+              <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{formError}</p>
+            )}
             <div className="flex items-center gap-3 pt-2">
               <button
                 onClick={handleSave}
@@ -386,6 +395,10 @@ export default function QuizQuestionsPage() {
           </div>
         )}
 
+        {deleteError && (
+          <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{deleteError}</p>
+        )}
+
         {/* Questions Table */}
         <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
           {loading ? (
@@ -402,7 +415,7 @@ export default function QuizQuestionsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Quiz questions">
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-16 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("order_index")}>

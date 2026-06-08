@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     description:
       "Late-stage private placements before IPO — sophisticated and wholesale investor only. Requirements, structures, platforms and risks.",
     url: `${SITE_URL}/invest/pre-ipo`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Pre-IPO Investing Australia")}&sub=${encodeURIComponent("Access Before Listing · Risks · Platforms · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -268,7 +269,7 @@ export default function PreIpoPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6" role="tablist">
+          <nav aria-label="Ways to invest" className="flex flex-wrap gap-2 mb-6">
             {SECTIONS.map((s, i) => (
               <a
                 key={s.id}
@@ -285,7 +286,7 @@ export default function PreIpoPage() {
                 {s.label}
               </a>
             ))}
-          </div>
+          </nav>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {SECTIONS.map((s, i) => (

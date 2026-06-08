@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `CHESS vs Custodial for International Shares (${CURRENT_YEAR}) — Australian Investor Guide`,
-  description: `Understand the difference between direct ownership (CHESS-equivalent) and custodial models when buying international shares from Australia. Covers broker failure risk, CGT implications, SIPC, ASIC RG 212, and which Australian brokers use each model. ${UPDATED_LABEL}.`,
+  description: `CHESS vs custodial for international shares: broker failure risk, CGT implications, and which Australian brokers use each model. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `CHESS vs Custodial for International Shares (${CURRENT_YEAR})`,
     description:
@@ -204,7 +204,7 @@ export default function ChessVsCustodialPage() {
       <section className="relative bg-white border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-xs text-slate-600 mb-5 flex flex-wrap items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-600 mb-5 flex flex-wrap items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -330,12 +330,12 @@ export default function ChessVsCustodialPage() {
             Eight factors that matter
           </p>
           <div className="overflow-x-auto -mx-4 md:mx-0">
-            <table className="w-full min-w-[640px] border-collapse text-sm">
+            <table className="w-full min-w-[640px] border-collapse text-sm" aria-label="Direct ownership vs custodial — international shares side-by-side comparison">
               <thead>
                 <tr className="bg-slate-100 text-left">
-                  <th className="px-4 py-3 font-bold text-slate-900 rounded-tl-xl">Aspect</th>
-                  <th className="px-4 py-3 font-bold text-slate-900">Direct ownership</th>
-                  <th className="px-4 py-3 font-bold text-slate-900 rounded-tr-xl">Custodial</th>
+                  <th scope="col" className="px-4 py-3 font-bold text-slate-900 rounded-tl-xl">Aspect</th>
+                  <th scope="col" className="px-4 py-3 font-bold text-slate-900">Direct ownership</th>
+                  <th scope="col" className="px-4 py-3 font-bold text-slate-900 rounded-tr-xl">Custodial</th>
                 </tr>
               </thead>
               <tbody>

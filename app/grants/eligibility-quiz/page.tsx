@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description: "Personalised grant eligibility — 5 questions, estimated dollar values.",
     url: `${SITE_URL}/grants/eligibility-quiz`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Australian Grants Eligibility Quiz")}&sub=${encodeURIComponent("5 Questions · Personalised Results · R&D · Export · State Grants")}`, width: 1200, height: 630 }],
   },
 };
 

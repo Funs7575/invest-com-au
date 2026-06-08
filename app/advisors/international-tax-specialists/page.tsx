@@ -58,6 +58,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "International Tax Specialists",
     description: PAGE_DESCRIPTION,
+    images: [{ url: `/api/og?title=${encodeURIComponent("International Tax Specialists Australia")}&sub=${encodeURIComponent("Foreign Income · Expats · DTAs · Withholding Tax · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: "/advisors/international-tax-specialists" },

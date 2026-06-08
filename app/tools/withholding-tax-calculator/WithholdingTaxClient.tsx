@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { formatAud } from "@/lib/first-home-buyer/state-grants";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 interface CountryOption {
   code: string;
@@ -200,7 +201,7 @@ export default function WithholdingTaxClient() {
                 ))}
               </select>
               {countriesError && (
-                <p className="text-xs text-rose-700 mt-1">{countriesError}</p>
+                <p role="alert" className="text-xs text-rose-700 mt-1">{countriesError}</p>
               )}
             </div>
 
@@ -241,7 +242,7 @@ export default function WithholdingTaxClient() {
                 <span className="text-slate-500">$</span>
                 <input
                   id="wht-amount"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   min={0}
@@ -278,7 +279,7 @@ export default function WithholdingTaxClient() {
                 </>
               )}
               {ratesError && (
-                <p className="text-xs text-rose-700 mt-2">{ratesError}</p>
+                <p role="alert" className="text-xs text-rose-700 mt-2">{ratesError}</p>
               )}
             </div>
           </div>
@@ -297,16 +298,16 @@ export default function WithholdingTaxClient() {
             </p>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Withholding tax rates by income type">
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
-                    <th className="text-left px-4 py-3 font-bold text-slate-700">
+                    <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">
                       Income type
                     </th>
-                    <th className="text-left px-4 py-3 font-bold text-slate-700">
+                    <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">
                       Rate
                     </th>
-                    <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
+                    <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
                       Notes
                     </th>
                   </tr>
@@ -346,6 +347,13 @@ export default function WithholdingTaxClient() {
               <Icon name="arrow-right" size={14} />
             </Link>
           </div>
+
+          <CalculatorLeadCapture
+            calcSlug="withholding-tax-calculator"
+            calcTitle="withholding tax"
+            need="tax"
+            contextKeys={["withholding-tax", "non-resident", "foreign-investment"]}
+          />
 
           <p className="text-[11px] text-slate-500 leading-relaxed mt-6">
             <strong>General information only.</strong> Rates shown apply to

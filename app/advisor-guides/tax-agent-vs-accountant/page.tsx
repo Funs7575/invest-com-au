@@ -8,7 +8,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: `Tax Agent vs Accountant for Investors: Which Do You Need? (${CURRENT_YEAR})`,
-  description: "Should you use a specialist tax agent or a general accountant for your investment tax? We compare qualifications, costs, and when each makes sense for Australian investors.",
+  description: "Specialist tax agent or general accountant for investments? Compare qualifications, costs, and when each is right for Australian investors.",
   openGraph: {
     title: "Tax Agent vs Accountant for Investors",
     description: "Investment tax specialist vs general accountant: costs, capabilities, and when each is the right choice for your tax return.",
@@ -54,7 +54,7 @@ export default function TaxAgentVsAccountantPage() {
 
       <article className="py-5 md:py-12">
         <div className="container-custom max-w-3xl">
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-1.5 md:mx-2">/</span>
             <Link href="/advisors" className="hover:text-slate-900">Advisors</Link>
@@ -142,7 +142,7 @@ export default function TaxAgentVsAccountantPage() {
                 <details key={i} className="bg-white border border-slate-200 rounded-lg group">
                   <summary className="px-3.5 py-3 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50 transition-colors list-none flex items-center justify-between">
                     {faq.q}
-                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">&#x25BE;</span>
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">&#x25BE;</span>
                   </summary>
                   <p className="px-3.5 pb-3 text-xs md:text-sm text-slate-600 leading-relaxed">{faq.a}</p>
                 </details>

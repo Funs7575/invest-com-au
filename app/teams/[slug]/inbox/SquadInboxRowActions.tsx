@@ -111,7 +111,7 @@ export default function SquadInboxRowActions({
             type="button"
             onClick={() => postDecision("snoozed")}
             disabled={pending}
-            className="text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md px-2 py-1.5 disabled:opacity-50"
+            className="text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-md px-2 py-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Hide from inbox for 7 days"
           >
             😴 Snooze 7d
@@ -122,7 +122,7 @@ export default function SquadInboxRowActions({
             type="button"
             onClick={clearSnooze}
             disabled={pending}
-            className="text-amber-700 hover:bg-amber-50 rounded-md px-2 py-1.5 disabled:opacity-50"
+            className="text-amber-700 hover:bg-amber-50 rounded-md px-2 py-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             ↩ Un-snooze
           </button>
@@ -131,7 +131,7 @@ export default function SquadInboxRowActions({
           type="button"
           onClick={() => postDecision("not_for_us")}
           disabled={pending}
-          className="text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-md px-2 py-1.5 disabled:opacity-50"
+          className="text-slate-600 hover:text-rose-700 hover:bg-rose-50 rounded-md px-2 py-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
           title="Permanently hide from this team's inbox"
         >
           ✕ Not for us
@@ -141,7 +141,7 @@ export default function SquadInboxRowActions({
             type="button"
             onClick={() => setReferOpen((s) => !s)}
             disabled={pending}
-            className="text-slate-600 hover:text-violet-700 hover:bg-violet-50 rounded-md px-2 py-1.5 disabled:opacity-50"
+            className="text-slate-600 hover:text-violet-700 hover:bg-violet-50 rounded-md px-2 py-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Forward this brief to another verified squad"
           >
             ↗ Refer to another team
@@ -186,7 +186,7 @@ export default function SquadInboxRowActions({
               type="button"
               onClick={submitReferral}
               disabled={!referTarget || pending}
-              className="rounded-md bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-xs font-semibold px-3 py-1.5"
+              className="rounded-md bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold px-3 py-1.5"
             >
               {pending ? "Sending…" : "Send referral"}
             </button>

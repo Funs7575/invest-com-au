@@ -138,7 +138,7 @@ export default async function NonResidentBrokersPage() {
       {/* ── Hero ── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/compare" className="hover:text-slate-900">Compare</Link>
@@ -315,7 +315,7 @@ export default async function NonResidentBrokersPage() {
                               </Link>
                             </div>
                             {provider.rating && (
-                              <span className="text-sm font-bold text-amber-700 ml-auto shrink-0">{renderStars(provider.rating)} {provider.rating.toFixed(1)}/5</span>
+                              <span className="text-sm font-bold text-amber-700 ml-auto shrink-0"><span aria-hidden="true">{renderStars(provider.rating)}</span> <span aria-label={`${provider.rating.toFixed(1)} out of 5 stars`}>{provider.rating.toFixed(1)}/5</span></span>
                             )}
                           </div>
 

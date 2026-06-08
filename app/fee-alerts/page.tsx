@@ -125,7 +125,7 @@ export default function FeeAlertsPage() {
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-slate-700">Fee Alerts</span>
@@ -181,7 +181,8 @@ export default function FeeAlertsPage() {
                 {/* Email input */}
                 <div className="flex gap-2 mb-4">
                   <input
-                    type="email"
+                    type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
@@ -192,9 +193,9 @@ export default function FeeAlertsPage() {
 
                 {/* Broker multi-select */}
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-slate-300 mb-2">
+                  <p className="block text-xs font-semibold text-slate-300 mb-2">
                     Brokers to watch <span className="text-slate-500 font-normal">(leave empty for all)</span>
-                  </label>
+                  </p>
                   <div className="relative">
                     <button
                       type="button"
@@ -234,7 +235,7 @@ export default function FeeAlertsPage() {
 
                 {/* Frequency toggle */}
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-slate-300 mb-2">Frequency</label>
+                  <p className="block text-xs font-semibold text-slate-300 mb-2">Frequency</p>
                   <div className="flex gap-2">
                     {(["instant", "weekly"] as Frequency[]).map((f) => (
                       <button
@@ -255,7 +256,7 @@ export default function FeeAlertsPage() {
 
                 {/* Alert type */}
                 <div className="mb-5">
-                  <label className="block text-xs font-semibold text-slate-300 mb-2">Alert type</label>
+                  <p className="block text-xs font-semibold text-slate-300 mb-2">Alert type</p>
                   <div className="flex gap-2 flex-wrap">
                     {(Object.entries(ALERT_TYPE_LABELS) as [AlertType, string][]).map(([value, label]) => (
                       <button
@@ -278,11 +279,12 @@ export default function FeeAlertsPage() {
                 <button
                   onClick={subscribe}
                   disabled={status === "sending" || !email}
-                  className="w-full px-5 py-2.5 bg-amber-500 text-slate-900 font-semibold rounded-lg text-sm hover:bg-amber-600 disabled:opacity-50 transition-colors"
+                  aria-busy={status === "sending"}
+                  className="w-full px-5 py-2.5 bg-amber-500 text-slate-900 font-semibold rounded-lg text-sm hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {status === "sending" ? "Subscribing..." : "Subscribe to Alerts"}
                 </button>
-                {status === "error" && <p className="text-xs text-red-400 mt-2">Something went wrong. Please try again.</p>}
+                {status === "error" && <p role="alert" className="text-xs text-red-400 mt-2">Something went wrong. Please try again.</p>}
               </>
             )}
           </div>

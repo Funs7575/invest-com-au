@@ -220,6 +220,7 @@ export default function QuestionCaptureForm({ category: initialCategory = "gener
       <button
         type="submit"
         disabled={submitting}
+        aria-busy={submitting}
         className="w-full rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-bold text-slate-900 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60 transition-colors"
         data-testid="qq-submit-btn"
       >

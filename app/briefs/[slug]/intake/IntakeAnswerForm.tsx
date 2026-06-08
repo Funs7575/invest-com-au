@@ -72,7 +72,7 @@ export default function IntakeAnswerForm({ slug, questions }: FormProps) {
           Confirm the email you used on the brief
         </span>
         <input
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -128,7 +128,7 @@ export default function IntakeAnswerForm({ slug, questions }: FormProps) {
       </ul>
 
       {error && (
-        <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
           {error}
         </p>
       )}
@@ -136,7 +136,7 @@ export default function IntakeAnswerForm({ slug, questions }: FormProps) {
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-slate-900 disabled:opacity-60"
+        className="rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-slate-900 disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {submitting ? "Sending…" : "Submit answers"}
       </button>

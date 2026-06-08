@@ -64,6 +64,23 @@ export default function NegativeGearingCalculatorClient() {
     });
   }, [propertyValue, rentalIncome, interest, otherCosts, marginalRate, growthRate, setPersistedInputs]);
 
+  const isModified =
+    propertyValue !== 850000 ||
+    rentalIncome !== 28000 ||
+    interest !== 35000 ||
+    otherCosts !== 7000 ||
+    marginalRate !== 0.37 ||
+    growthRate !== 4;
+
+  const handleReset = () => {
+    setPropertyValue(850000);
+    setRentalIncome(28000);
+    setInterest(35000);
+    setOtherCosts(7000);
+    setMarginalRate(0.37);
+    setGrowthRate(4);
+  };
+
   const calc = useMemo(() => {
     const totalCosts = interest + otherCosts;
     const annualLoss = totalCosts - rentalIncome;
@@ -84,19 +101,19 @@ export default function NegativeGearingCalculatorClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Property value (AUD)</span>
-              <input type="number" min={0} step={50_000} value={propertyValue} onChange={(e) => setPropertyValue(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              <input type="number" inputMode="decimal" min={0} step={50_000} value={propertyValue} onChange={(e) => setPropertyValue(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Annual rental income</span>
-              <input type="number" min={0} step={500} value={rentalIncome} onChange={(e) => setRentalIncome(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              <input type="number" inputMode="decimal" min={0} step={500} value={rentalIncome} onChange={(e) => setRentalIncome(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Annual mortgage interest</span>
-              <input type="number" min={0} step={500} value={interest} onChange={(e) => setInterest(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              <input type="number" inputMode="decimal" min={0} step={500} value={interest} onChange={(e) => setInterest(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Other annual costs (rates, insurance, maintenance)</span>
-              <input type="number" min={0} step={500} value={otherCosts} onChange={(e) => setOtherCosts(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              <input type="number" inputMode="decimal" min={0} step={500} value={otherCosts} onChange={(e) => setOtherCosts(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Your marginal tax rate</span>
@@ -113,6 +130,17 @@ export default function NegativeGearingCalculatorClient() {
             </label>
           </div>
         </div>
+
+        {isModified && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleReset}
+              className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+            >
+              Reset to defaults
+            </button>
+          </div>
+        )}
 
         <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6">
           <h3 className="text-lg font-extrabold mb-4">Annual outcome</h3>

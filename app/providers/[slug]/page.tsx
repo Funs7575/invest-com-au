@@ -25,7 +25,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${org.name} — Training Provider`,
       description: org.bio?.slice(0, 160) ?? "",
       url: `/providers/${slug}`,
+      images: [{ url: `/api/og?title=${encodeURIComponent(org.name)}&sub=${encodeURIComponent("CPD Training Provider · Australian Financial Professionals")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

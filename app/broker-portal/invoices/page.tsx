@@ -155,15 +155,15 @@ export default function InvoicesPage() {
           </div>
         ) : (
           <div className="overflow-x-auto portal-table-stagger">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Invoice history">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                  <th className="px-5 py-3 text-left">Invoice #</th>
-                  <th className="px-5 py-3 text-left">Date</th>
-                  <th className="px-5 py-3 text-left">Description</th>
-                  <th className="px-5 py-3 text-right">Amount</th>
-                  <th className="px-5 py-3 text-left">Status</th>
-                  <th className="px-5 py-3 text-right">Actions</th>
+                  <th scope="col" className="px-5 py-3 text-left">Invoice #</th>
+                  <th scope="col" className="px-5 py-3 text-left">Date</th>
+                  <th scope="col" className="px-5 py-3 text-left">Description</th>
+                  <th scope="col" className="px-5 py-3 text-right">Amount</th>
+                  <th scope="col" className="px-5 py-3 text-left">Status</th>
+                  <th scope="col" className="px-5 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

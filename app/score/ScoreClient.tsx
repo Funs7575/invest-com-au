@@ -416,7 +416,7 @@ export default function ScoreClient() {
               </p>
               <div className="flex gap-2 max-w-md mx-auto">
                 <input
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   placeholder="you@example.com"
                   aria-label="Email address"
                   value={email}
@@ -427,6 +427,7 @@ export default function ScoreClient() {
                 <button
                   onClick={handleEmailCapture}
                   disabled={emailSubmitting || !email.includes("@")}
+                  aria-busy={emailSubmitting}
                   className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                 >
                   {emailSubmitting ? "Sending..." : "Send Report"}
@@ -582,7 +583,14 @@ export default function ScoreClient() {
               {Math.round(progress)}%
             </span>
           </div>
-          <div className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
+          <div
+            className="h-1.5 w-full rounded-full bg-slate-200 overflow-hidden"
+            role="progressbar"
+            aria-valuenow={Math.round(progress)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Quiz progress"
+          >
             <div
               className="h-full rounded-full bg-blue-600 transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}

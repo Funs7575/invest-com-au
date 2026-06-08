@@ -128,6 +128,7 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
       aria-label={saved ? "Remove bookmark" : "Save for later"}
       aria-pressed={saved}
       disabled={busy}
+      aria-busy={busy}
       className={
         className ||
         "inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-amber-600 transition-colors"

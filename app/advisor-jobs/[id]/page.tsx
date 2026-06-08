@@ -21,6 +21,13 @@ const JOB_TYPE_LABELS: Record<string, string> = {
   casual: "Casual",
 };
 
+const EMPLOYMENT_TYPE_MAP: Record<string, string> = {
+  full_time: "FULL_TIME",
+  part_time: "PART_TIME",
+  contract: "CONTRACTOR",
+  casual: "PART_TIME",
+};
+
 interface JobRow {
   id: string;
   title: string;
@@ -91,11 +98,41 @@ export default async function JobDetailPage({ params }: PageProps) {
     { name: job.title },
   ]);
 
+  const jobPostingLd = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.title,
+    description: job.description,
+    datePosted: new Date(job.created_at).toISOString().split("T")[0],
+    employmentType: EMPLOYMENT_TYPE_MAP[job.type] ?? "OTHER",
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: job.location,
+        addressCountry: "AU",
+      },
+    },
+    ...(firm ? {
+      hiringOrganization: {
+        "@type": "Organization",
+        name: firm.firm_name,
+        ...(firm.logo_url ? { logo: firm.logo_url } : {}),
+      },
+    } : {}),
+    directApply: true,
+    url: absoluteUrl(`/advisor-jobs/${job.id}`),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingLd) }}
       />
 
       <div className="bg-white min-h-screen">

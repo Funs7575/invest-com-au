@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Super Insurance Australia (${CURRENT_YEAR}) — Life, TPD & Income Protection`,
   description:
-    "Complete guide to insurance through superannuation in Australia. Default cover, life insurance, TPD definitions, income protection waiting periods, MySuper reforms, premium costs, consolidation warnings, and death benefit nominations. Updated 2026.",
+    "Super insurance guide: default cover, life insurance, TPD definitions, income protection, MySuper reforms, and death benefit nominations. Updated 2026.",
   alternates: { canonical: `${SITE_URL}/super/insurance` },
   openGraph: {
     title: `Super Insurance Guide Australia (${CURRENT_YEAR})`,
@@ -371,12 +371,12 @@ export default function SuperInsurancePage() {
             <div className="rounded-xl border border-slate-200 bg-white p-5 mb-4">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Illustrative example</p>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Long-run cost of super insurance premiums">
                   <thead>
                     <tr className="bg-slate-900 text-white">
-                      <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Annual premium</th>
-                      <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Years invested</th>
-                      <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-red-300">Balance reduction at 7% p.a.</th>
+                      <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Annual premium</th>
+                      <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Years invested</th>
+                      <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-red-300">Balance reduction at 7% p.a.</th>
                     </tr>
                   </thead>
                   <tbody>

@@ -142,7 +142,7 @@ export default async function NetWorthPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <nav className="text-xs text-slate-500 mb-3">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
         <Link href="/account" className="hover:text-slate-900">
           ← My account
         </Link>
@@ -174,7 +174,9 @@ export default async function NetWorthPage() {
           </p>
           <p className="mt-1 text-2xl font-bold text-slate-900">{fmt(portfolioValueCents)}</p>
           <p className="mt-1 text-xs text-slate-500">
-            {pricedHoldings} of {holdings.length} holdings priced
+            <span title="Shows how many of your holdings have current price data. Holdings without price data use the purchase price for valuation.">
+              {pricedHoldings} of {holdings.length} holdings priced
+            </span>
             {portfolioCostBasisCents > 0 && (
               <>
                 {" "}· Cost basis {fmt(portfolioCostBasisCents)} (
@@ -241,9 +243,10 @@ export default async function NetWorthPage() {
                     <div
                       className="h-full bg-violet-500"
                       style={{ width: `${pct}%` }}
-                      aria-label={`${pct.toFixed(0)}% of target`}
+                      aria-hidden
                     />
                   </div>
+                  <p className="mt-1 text-[11px] text-slate-400" aria-label={`${pct.toFixed(0)}% of target`}>{pct.toFixed(0)}%{pct === 0 ? " — add funds to start tracking progress" : " complete"}</p>
                   {g.target_date && (
                     <p className="mt-2 text-xs text-slate-400">
                       Target: {new Date(g.target_date).toLocaleDateString("en-AU")}

@@ -213,7 +213,7 @@ export default function ConstructionLoansPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-900 to-slate-700 text-white py-14">
         <div className="container-custom">
-          <nav className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>
@@ -267,12 +267,12 @@ export default function ConstructionLoansPage() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Construction Loan vs Standard Home Loan</h2>
           <p className="text-sm text-slate-500 mb-6">The key structural differences between the two loan types.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Construction loan vs standard home loan comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Feature</th>
-                  <th className="text-left px-5 py-3 text-blue-300">Construction loan</th>
-                  <th className="text-left px-5 py-3 text-slate-300">Standard home loan</th>
+                  <th scope="col" className="text-left px-5 py-3">Feature</th>
+                  <th scope="col" className="text-left px-5 py-3 text-blue-300">Construction loan</th>
+                  <th scope="col" className="text-left px-5 py-3 text-slate-300">Standard home loan</th>
                 </tr>
               </thead>
               <tbody>
@@ -297,12 +297,12 @@ export default function ConstructionLoansPage() {
             Funds are released in 5 stages as construction progresses. Before each drawdown, your lender sends an independent inspector to verify that the stage is genuinely complete.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Construction stages and drawdown percentages" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Stage</th>
-                  <th className="text-left px-5 py-3">Work completed</th>
-                  <th className="text-left px-5 py-3">Typical % drawn</th>
+                  <th scope="col" className="text-left px-5 py-3">Stage</th>
+                  <th scope="col" className="text-left px-5 py-3">Work completed</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical % drawn</th>
                 </tr>
               </thead>
               <tbody>
@@ -357,11 +357,11 @@ export default function ConstructionLoansPage() {
             The construction loan covers the builder&apos;s contract price — but there are significant costs outside the contract that borrowers frequently underestimate.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 max-w-3xl">
-            <table className="w-full text-sm">
+            <table aria-label="Construction costs beyond the loan" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Cost</th>
-                  <th className="text-left px-5 py-3">Typical amount</th>
+                  <th scope="col" className="text-left px-5 py-3">Cost</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical amount</th>
                 </tr>
               </thead>
               <tbody>
@@ -451,7 +451,7 @@ export default function ConstructionLoansPage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-50 bg-white">
                   {faq.q}
-                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
                 </summary>
                 <div className="px-5 pb-4 pt-1 text-sm text-slate-600 leading-relaxed bg-white">{faq.a}</div>
               </details>

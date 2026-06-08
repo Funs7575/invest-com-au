@@ -52,7 +52,7 @@ export async function generateMetadata({
     title: `${title} | ${SITE_NAME}`,
     description,
     alternates: { canonical: absoluteUrl(`/how-to-invest-in/${vertical}`) },
-    openGraph: { title, description, url: absoluteUrl(`/how-to-invest-in/${vertical}`), type: "article" },
+    openGraph: { title, description, url: absoluteUrl(`/how-to-invest-in/${vertical}`), type: "article", images: [{ url: `/api/og?title=${encodeURIComponent("How to Invest in " + cat.label)}&sub=${encodeURIComponent("Step-by-Step · Tax · Risks · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
     twitter: { card: "summary_large_image" },
   };
 }
@@ -220,7 +220,7 @@ export default async function HowToInvestPage({
                   <details key={i} className="group rounded-lg border border-slate-200 bg-white">
                     <summary className="cursor-pointer px-4 py-3 font-semibold text-sm md:text-base text-slate-900 flex items-center justify-between gap-2">
                       {f.question}
-                      <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform"><Icon name="chevron-down" size={16} /></span>
+                      <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true"><Icon name="chevron-down" size={16} /></span>
                     </summary>
                     <p className="px-4 pb-4 text-sm text-slate-700 leading-relaxed">{f.answer}</p>
                   </details>

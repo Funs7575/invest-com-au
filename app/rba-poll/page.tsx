@@ -2,11 +2,33 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 import PollWidget from "./PollWidget";
 
 export const dynamic = "force-dynamic";
+
+const RBA_POLL_FAQS = [
+  {
+    q: "How does the RBA Rate Prediction work?",
+    a: "Before each scheduled Reserve Bank of Australia (RBA) board meeting, you can cast a prediction: will the RBA hike, hold, or cut the cash rate? Once the RBA announces its decision, your prediction is marked correct or incorrect. Your accuracy score is the percentage of correct predictions across all meetings you've participated in. The leaderboard ranks users by accuracy, with ties broken by participation count.",
+  },
+  {
+    q: "When does the RBA meet to set the cash rate?",
+    a: "The RBA Board meets eight times per year, roughly every six weeks. Meeting dates are set in advance by the RBA and published on the RBA website. The cash rate decision is announced at 2:30 PM AEST on the Tuesday of each meeting. This page lists the next scheduled meeting date and current community consensus on the likely outcome.",
+  },
+  {
+    q: "What is the current RBA cash rate?",
+    a: "The current RBA cash rate is shown on the prediction widget above, updated after each meeting. The cash rate is the interest rate that banks pay to borrow overnight funds from the RBA — changes flow through to mortgage rates, savings rates, and the broader economy within days. This prediction tool tracks community forecasts; for the official cash rate, see the RBA website.",
+  },
+  {
+    q: "Are predictions personal financial advice?",
+    a: "No. Community predictions are for educational and entertainment purposes only. The RBA Rate Prediction is a community forecasting game — it does not constitute financial advice. Past prediction accuracy does not indicate future accuracy, and the community consensus is not a reliable indicator of the actual RBA decision. Do not make financial decisions based on this tool.",
+  },
+];
+
+const rbaFaqLd = faqJsonLd(RBA_POLL_FAQS);
 
 const breadcrumbLd = breadcrumbJsonLd([
   { name: "Invest.com.au", url: absoluteUrl("/") },
@@ -20,6 +42,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "RBA Rate Prediction — Invest.com.au",
     description: "Will the RBA hike, hold, or cut? Cast your prediction and see how the community calls it.",
+    images: [{ url: `/api/og?title=${encodeURIComponent("RBA Rate Prediction")}&sub=${encodeURIComponent("Hike · Hold · Cut · Community Forecasts · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -153,6 +176,9 @@ export default async function RbaPollPage() {
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
       <JsonLd data={breadcrumbLd} />
+      {rbaFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rbaFaqLd) }} />
+      )}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">RBA Rate Prediction</h1>
         <p className="text-slate-600 mt-2">
@@ -277,6 +303,21 @@ export default async function RbaPollPage() {
           </div>
         </div>
       </div>
+
+      <section className="mt-10">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {RBA_POLL_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       <footer className="mt-8 pt-4 border-t border-slate-200">
         <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>

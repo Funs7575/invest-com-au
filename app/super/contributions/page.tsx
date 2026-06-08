@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (${CURRENT_YEAR})`,
   description:
-    "Complete guide to super contributions in Australia. Concessional cap $30,000, non-concessional cap $120,000, carry-forward rules, salary sacrifice, government co-contribution, and Division 296. Updated 2024-25 figures.",
+    "Super contributions: $30k concessional, $120k non-concessional, carry-forward rules, salary sacrifice, and government co-contribution. Updated 2025–26.",
   openGraph: {
     title: `Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (${CURRENT_YEAR})`,
     description:
@@ -317,16 +317,16 @@ export default function SuperContributionsPage() {
             sub="The two main contribution types — understand which applies to you and when each makes sense."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Concessional vs non-concessional contributions comparison">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-44">
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-44">
                     Feature
                   </th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">
                     Concessional (pre-tax)
                   </th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">
                     Non-Concessional (after-tax)
                   </th>
                 </tr>
@@ -360,19 +360,19 @@ export default function SuperContributionsPage() {
             sub="From mandatory employer SG to government co-contributions — which types apply to you."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="All super contribution types 2024–25">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                  <th scope="col" className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
                     Type
                   </th>
-                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                  <th scope="col" className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
                     Amount / Rate
                   </th>
-                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                  <th scope="col" className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
                     Tax treatment
                   </th>
-                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                  <th scope="col" className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
                     Key notes
                   </th>
                 </tr>

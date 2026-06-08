@@ -54,7 +54,7 @@ export default function BuyersAgentVsDiyPage() {
 
       <article className="py-5 md:py-12">
         <div className="container-custom max-w-3xl">
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-1.5 md:mx-2">/</span>
             <Link href="/advisors" className="hover:text-slate-900">Advisors</Link>
@@ -182,7 +182,7 @@ export default function BuyersAgentVsDiyPage() {
                 <details key={i} className="bg-white border border-slate-200 rounded-lg group">
                   <summary className="px-3.5 py-3 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50 transition-colors list-none flex items-center justify-between">
                     {faq.q}
-                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">&#x25BE;</span>
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">&#x25BE;</span>
                   </summary>
                   <p className="px-3.5 pb-3 text-xs md:text-sm text-slate-600 leading-relaxed">{faq.a}</p>
                 </details>

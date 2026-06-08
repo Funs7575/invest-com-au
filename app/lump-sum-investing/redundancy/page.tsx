@@ -3,6 +3,7 @@ import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl, breadcrumbJsonLd } 
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import Link from "next/link";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
       "Genuine vs non-genuine redundancy, the tax-free threshold, ETP caps, the super top-up and the cash buffer that comes first.",
     url: `${SITE_URL}/lump-sum-investing/redundancy`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investing Redundancy Pay Australia")}&sub=${encodeURIComponent("ETP Tax · Super · Where to Invest · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -241,12 +243,12 @@ export default function RedundancyPage() {
               less than the headline figure.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm" aria-label="Redundancy payment components and how each is taxed">
                 <thead className="bg-slate-100 text-slate-700">
                   <tr>
-                    <th className="px-4 py-3 font-bold">Component</th>
-                    <th className="px-4 py-3 font-bold">What it is</th>
-                    <th className="px-4 py-3 font-bold">How it&apos;s taxed</th>
+                    <th scope="col" className="px-4 py-3 font-bold">Component</th>
+                    <th scope="col" className="px-4 py-3 font-bold">What it is</th>
+                    <th scope="col" className="px-4 py-3 font-bold">How it&apos;s taxed</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -445,12 +447,12 @@ export default function RedundancyPage() {
               your debts, how long your job search might take, and your time horizon.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm" aria-label="Where a redundancy payout can go — investment options, best use and watch-outs">
                 <thead className="bg-slate-100 text-slate-700">
                   <tr>
-                    <th className="px-4 py-3 font-bold">Option</th>
-                    <th className="px-4 py-3 font-bold">Best for</th>
-                    <th className="px-4 py-3 font-bold">Watch out for</th>
+                    <th scope="col" className="px-4 py-3 font-bold">Option</th>
+                    <th scope="col" className="px-4 py-3 font-bold">Best for</th>
+                    <th scope="col" className="px-4 py-3 font-bold">Watch out for</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -668,6 +670,16 @@ export default function RedundancyPage() {
             </div>
           </div>
         </section>
+
+        {/* ─── Advisor CTA ───────────────────────────────────── */}
+        <HubAdvisorCTA
+          heading="Get financial advice on your redundancy payout"
+          subheading="ETP tax calculations, super concessional contributions, income test impacts, and investment strategy for a lump sum all benefit from professional advice. A financial planner can model your net position."
+          intent={{ need: "planning", context: ["redundancy", "lump_sum", "tax"] }}
+          source="lump_sum_redundancy"
+          ctaLabel="Find a financial planner"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* ─── General advice warning ───────────────────────── */}
         <section className="py-10 bg-slate-50 border-t border-slate-200">

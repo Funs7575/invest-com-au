@@ -16,6 +16,7 @@ export const metadata: Metadata = {
       "Grossing-up formula, SMSF refunds, ETF franking pass-through, DRP treatment, and tax return reporting — plain-English guide for Australian investors.",
     url: `${SITE_URL}/dividends/franking-credits`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Franking Credits Australia")}&sub=${encodeURIComponent("Dividend Imputation · Cash Refunds · SMSF · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };
@@ -360,15 +361,15 @@ export default function FrankingCreditsPage() {
             Tax impact for a 32.5% marginal-rate investor — $1,000 dividend
           </h3>
           <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Tax impact of franking credits — $1,000 dividend at 32.5% marginal rate by franking level">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="px-4 py-3 text-left font-bold text-xs">Dividend type</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Cash received</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Franking credit</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Grossed-up income</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Tax at 32.5%</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Net tax outcome</th>
+                  <th scope="col" className="px-4 py-3 text-left font-bold text-xs">Dividend type</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Cash received</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Franking credit</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Grossed-up income</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Tax at 32.5%</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Net tax outcome</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -721,7 +722,7 @@ export default function FrankingCreditsPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-3">
                   <span>{faq.q}</span>
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
                     &#9660;
                   </span>
                 </summary>

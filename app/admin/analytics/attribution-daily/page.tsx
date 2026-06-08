@@ -33,6 +33,7 @@ export default async function AdminAttributionDailyPage() {
   if (!guard.ok) redirect("/admin");
 
   const supabase = createAdminClient();
+  // eslint-disable-next-line react-hooks/purity -- async server component, not a React render
   const since = new Date(Date.now() - 30 * 86_400_000)
     .toISOString()
     .slice(0, 10);
@@ -190,7 +191,7 @@ export default async function AdminAttributionDailyPage() {
               Recent rollup rows (per vertical)
             </h2>
             <div className="overflow-x-auto">
-              <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden">
+              <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden" aria-label="Attribution rollup rows by vertical">
                 <thead className="bg-slate-50 text-slate-600">
                   <tr>
                     <th className="text-left px-3 py-2">Date</th>

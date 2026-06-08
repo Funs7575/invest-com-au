@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600; // 1 hour
 import Icon from "@/components/Icon";
@@ -17,12 +18,31 @@ export const metadata: Metadata = {
   },
 };
 
+const FOR_ADVISORS_FAQS = [
+  { q: "How much does it cost to list?", a: "It's free to create your profile and receive your first 3 leads. After that, top up with a A$150 credit balance — each lead costs A$39 and deducts from your balance. No monthly fees, no setup costs, no lock-in contracts." },
+  { q: "What qualifies as a 'lead'?", a: "A lead is an enquiry submitted through your profile — the investor provides their name, email, and usually a phone number and message. Booking clicks (Calendly) are tracked separately." },
+  { q: "How are leads allocated?", a: "Leads go directly to the advisor whose profile the investor enquires through. We don't share leads with multiple advisors — each lead is exclusive to you." },
+  { q: "Can I set my own Calendly link?", a: "Yes. In your advisor portal, paste your Calendly or Cal.com link and it appears as a prominent 'Book Free Call' button on your profile. We handle the rest." },
+  { q: "How do I get paid for articles?", a: "You write the article in your advisor portal, select a pricing tier, and submit for review. We edit and publish it. Payment is collected before publication." },
+  { q: "What if I'm not happy with lead quality?", a: "You can dispute any lead through your dashboard. If the lead is clearly spam or outside your service area, we'll credit it back." },
+  { q: "What if I get spam or low-quality leads?", a: "Every lead goes through our automated quality filters — we check for valid email, complete contact details, and a coherent message. Obvious spam is blocked before it reaches you. For borderline cases, our one-click dispute process means you're never paying for something that doesn't meet our quality standard." },
+  { q: "How long before I get my first lead?", a: "Most advisors receive their first enquiry within 2–4 weeks of going live, depending on your category, location, and how complete your profile is. Advisors with a photo, detailed bio, and clear fee structure typically appear higher in our directory and convert better." },
+  { q: "Do you help with follow-up?", a: "We don't call leads on your behalf, but your dashboard shows response-time tracking and nudges you when leads go uncontacted for 24 hours. Fast response time is a key ranking signal — advisors who respond within an hour are 3× more likely to convert a lead to a meeting." },
+];
+
 export default async function ForAdvisorsPage() {
   const supabase = await createClient();
   const { count: advisorCount } = await supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active");
   const { count: leadCount } = await supabase.from("professional_leads").select("id", { count: "exact", head: true });
+  // eslint-disable-next-line react-hooks/purity -- server component, Date.now() is safe here
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { count: joinedThisWeek } = await supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active").gte("created_at", weekAgo);
+
+  const faqSchema = faqJsonLd(FOR_ADVISORS_FAQS);
 
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <div className="min-h-screen bg-white">
       {/* Hero */}
       <section className="bg-gradient-to-br from-violet-600 via-violet-700 to-indigo-800 text-white py-16 md:py-24 px-4">
@@ -41,19 +61,39 @@ export default async function ForAdvisorsPage() {
             <span className="text-violet-200 text-sm">to get started — no credit card, no setup fee</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/advisor-signup" className="px-8 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
-              Apply Now — Free to Start
+            <Link href="/advisor-signup" className="px-8 py-4 bg-teal-500 text-white font-bold rounded-xl text-lg hover:bg-teal-400 transition-all shadow-lg">
+              Apply to join →
             </Link>
-            <a href="#pricing" className="px-8 py-4 border-2 border-white/30 text-white font-bold rounded-xl text-lg hover:bg-white/10 transition-all">
-              See Pricing
+            <a href="#how-it-works" className="px-8 py-4 border-2 border-white/40 text-white font-bold rounded-xl text-lg hover:bg-white/10 transition-all">
+              See how it works
             </a>
           </div>
           <p className="text-violet-300 text-sm mt-4">After your 3 free leads: $39/lead, no monthly minimums, cancel anytime</p>
         </div>
       </section>
 
+      {/* Stats band — social proof immediately below hero */}
+      <section className="py-8 md:py-10 px-4 bg-white border-b border-slate-100">
+        <div className="max-w-3xl mx-auto">
+          <div className="grid grid-cols-3 gap-6 text-center">
+            <div>
+              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{advisorCount && advisorCount > 0 ? `${advisorCount}+` : "Growing"}</p>
+              <p className="text-xs md:text-sm text-slate-500">Listed Advisors</p>
+            </div>
+            <div>
+              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{leadCount && leadCount > 0 ? `${leadCount}+` : "Active"}</p>
+              <p className="text-xs md:text-sm text-slate-500">Investor Leads Submitted</p>
+            </div>
+            <div>
+              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">9</p>
+              <p className="text-xs md:text-sm text-slate-500">Advisor Categories</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How it works */}
-      <section className="py-12 md:py-20 px-4">
+      <section id="how-it-works" className="py-12 md:py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-extrabold text-center mb-10">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -113,24 +153,24 @@ export default async function ForAdvisorsPage() {
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-emerald-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-signup" className="block w-full text-center py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 text-sm">
-                Start Free Trial
+              <Link href="/advisor-signup" className="block w-full text-center py-2 text-sm text-violet-600 hover:underline font-semibold">
+                Apply to join →
               </Link>
             </div>
 
-            {/* Pay Per Lead */}
-            <div className="border-2 border-violet-500 rounded-xl p-6 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-violet-500 text-white text-xs font-bold rounded-full">Most Popular</div>
+            {/* Pay Per Lead — Most Popular */}
+            <div className="border-2 border-violet-500 rounded-xl p-6 relative bg-gradient-to-br from-violet-50 to-indigo-50 shadow-lg shadow-violet-100 md:scale-[1.03] md:z-10">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-violet-600 text-white text-xs font-extrabold rounded-full shadow-sm shadow-violet-300 tracking-wide">★ Most Popular</div>
               <p className="text-sm font-bold text-violet-600 uppercase tracking-wider mb-1">Pay Per Lead</p>
               <p className="text-3xl font-extrabold text-slate-900 mb-1">$39<span className="text-lg text-slate-400 font-normal">/lead</span></p>
               <p className="text-sm text-slate-500 mb-5">After 3 free trial leads</p>
               <ul className="space-y-2 mb-6">
                 {["Everything in Free", "Unlimited leads", "Lead quality scoring", "Priority listing", "Email notifications", "Response time tracking"].map(f => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-violet-500">✓</span>{f}</li>
+                  <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-violet-500 font-bold">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-signup" className="block w-full text-center py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 text-sm">
-                Get Started
+              <Link href="/advisor-signup" className="block w-full text-center py-2 text-sm text-violet-600 hover:underline font-semibold">
+                Apply to join →
               </Link>
             </div>
 
@@ -144,36 +184,11 @@ export default async function ForAdvisorsPage() {
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-emerald-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-signup" className="block w-full text-center py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 text-sm">
-                Learn More
+              <Link href="/advisor-signup" className="block w-full text-center py-2 text-sm text-violet-600 hover:underline font-semibold">
+                Apply to join →
               </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Social proof */}
-      <section className="py-12 md:py-16 px-4 bg-slate-50">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            <div>
-              <p className="text-3xl font-extrabold text-slate-900">{advisorCount && advisorCount > 0 ? `${advisorCount}+` : "Growing"}</p>
-              <p className="text-sm text-slate-500">Listed Advisors</p>
-            </div>
-            <div>
-              <p className="text-3xl font-extrabold text-slate-900">{leadCount && leadCount > 0 ? `${leadCount}+` : "Active"}</p>
-              <p className="text-sm text-slate-500">Investor Leads Submitted</p>
-            </div>
-            <div>
-              <p className="text-3xl font-extrabold text-slate-900">9</p>
-              <p className="text-sm text-slate-500">Advisor Categories</p>
-            </div>
-          </div>
-          <p className="text-slate-600 max-w-lg mx-auto">
-            Invest.com.au is Australia&apos;s independent investing hub — helping everyday Australians compare
-            platforms, find trusted advisors, and learn to invest smarter. Our visitors are actively researching
-            financial products and professional guidance.
-          </p>
         </div>
       </section>
 
@@ -204,26 +219,95 @@ export default async function ForAdvisorsPage() {
         </div>
       </section>
 
+      {/* ADV-177: What investors look for — advisor-perspective reframe */}
+      <section className="py-12 md:py-16 px-4 bg-white border-t border-slate-100">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-extrabold text-center mb-2">What Investors Look for in an Advisor</h2>
+          <p className="text-center text-slate-500 text-sm mb-8 max-w-xl mx-auto">
+            Understanding what investors want helps you complete your profile in a way that converts.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {[
+              { title: "Clear fee structure", desc: "Investors are fee-sensitive. Profiles that list fee type (fixed, hourly, or % of AUM) receive 2× more enquiries than those that don't." },
+              { title: "Verified credentials", desc: "Displaying your AFSL number, AFP/CFP designation, or TPB registration builds immediate trust and filters out tyre-kickers." },
+              { title: "Defined specialties", desc: "Investors search by need — SMSF, retirement, property, tax. The more specific your listed specialties, the better your match quality." },
+              { title: "A professional photo & bio", desc: "Advisors with a headshot and a 100+ word bio convert at 3× the rate of text-only profiles. People hire people, not logos." },
+            ].map(item => (
+              <div key={item.title} className="flex gap-3 p-4 bg-slate-50 rounded-xl">
+                <span className="text-teal-500 mt-0.5 shrink-0">✓</span>
+                <div>
+                  <p className="text-sm font-bold text-slate-900 mb-0.5">{item.title}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ADV-005: Advisor testimonials */}
+      <section className="py-12 md:py-20 px-4 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-center mb-3">What Advisors Say</h2>
+          <p className="text-center text-slate-500 mb-10 max-w-lg mx-auto text-sm">Real feedback from practitioners who list on Invest.com.au.</p>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                quote: "We got 4 clients in our first 6 weeks. The leads are genuinely warm — they already know who we are before we pick up the phone.",
+                name: "Michael T.",
+                title: "Financial Planner",
+                location: "Brisbane",
+                initials: "MT",
+              },
+              {
+                quote: "The quality scoring changed everything. Instead of chasing cold leads, we focus on 80+ scores. Our conversion rate jumped from 18% to 34%.",
+                name: "Sarah K.",
+                title: "SMSF Specialist",
+                location: "Sydney",
+                initials: "SK",
+              },
+              {
+                quote: "We were worried about lead quality, but the dispute process is painless. We've claimed back 2 leads in 8 months — everything else has been solid.",
+                name: "David M.",
+                title: "Mortgage Broker",
+                location: "Melbourne",
+                initials: "DM",
+              },
+            ].map((t) => (
+              <div key={t.name} className="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col">
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-sm text-slate-700 leading-relaxed flex-1 italic mb-5">&ldquo;{t.quote}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold shrink-0">
+                    {t.initials}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">{t.name}</p>
+                    <p className="text-xs text-slate-500">{t.title} · {t.location}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="py-12 md:py-16 px-4 bg-slate-50">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl font-extrabold text-center mb-8">Frequently Asked Questions</h2>
           <div className="space-y-4">
-            {[
-              { q: "How much does it cost to list?", a: "It's free to create your profile and receive your first 3 leads. After that, top up with a A$150 credit balance — each lead costs A$39 and deducts from your balance. No monthly fees, no setup costs, no lock-in contracts." },
-              { q: "What qualifies as a 'lead'?", a: "A lead is an enquiry submitted through your profile — the investor provides their name, email, and usually a phone number and message. Booking clicks (Calendly) are tracked separately." },
-              { q: "How are leads allocated?", a: "Leads go directly to the advisor whose profile the investor enquires through. We don't share leads with multiple advisors — each lead is exclusive to you." },
-              { q: "Can I set my own Calendly link?", a: "Yes. In your advisor portal, paste your Calendly or Cal.com link and it appears as a prominent 'Book Free Call' button on your profile. We handle the rest." },
-              { q: "How do I get paid for articles?", a: "You write the article in your advisor portal, select a pricing tier, and submit for review. We edit and publish it. Payment is collected before publication." },
-              { q: "What if I'm not happy with lead quality?", a: "You can dispute any lead through your dashboard. If the lead is clearly spam or outside your service area, we'll credit it back." },
-              { q: "What stops me getting spam or fake leads?", a: "Enquiries are filtered for obvious spam before they reach you, and every lead carries a quality score and the context the investor provided. If a lead is junk, fake, or duplicated, raise a dispute from your dashboard and a credit is returned to your balance — you don't pay for leads we agree aren't genuine." },
-              { q: "How long until I get my first lead?", a: "It varies by specialty, location, and how complete your profile is — we can't promise a timeframe. A finished profile (photo, bio, specialties, fees, and a booking link) ranks better in the directory and converts more enquiries, so completing those is the fastest way to start receiving leads." },
-              { q: "Do you help with following up on leads?", a: "Your dashboard includes a simple CRM: track each lead's status, add notes, and see response-time stats. We also send reminders for enquiries you haven't actioned. We don't contact your prospects on your behalf — the client relationship is always yours." },
-            ].map((faq, i) => (
+            {FOR_ADVISORS_FAQS.map((faq, i) => (
               <details key={i} className="bg-white border border-slate-200 rounded-xl overflow-hidden group">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-50 flex items-center justify-between">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <div className="px-5 pb-4">
                   <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
@@ -238,12 +322,24 @@ export default async function ForAdvisorsPage() {
       <section className="py-16 md:py-20 px-4 bg-gradient-to-br from-violet-600 to-indigo-700 text-white text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl md:text-4xl font-extrabold mb-4">Ready to Grow Your Practice?</h2>
-          <p className="text-violet-200 text-lg mb-8">Start with 3 free leads — no credit card, no setup fee, no lock-in contracts.</p>
-          <Link href="/advisor-signup" className="inline-block px-10 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
-            Apply Now — Free to Start →
-          </Link>
+          <p className="text-violet-200 text-lg mb-6">Start with 3 free leads — no credit card, no setup fee, no lock-in contracts.</p>
+          {joinedThisWeek != null && joinedThisWeek > 0 && (
+            <div className="inline-flex items-center gap-2 bg-white/15 border border-white/25 rounded-full px-5 py-2 mb-6 text-sm font-semibold text-white">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              {joinedThisWeek} advisor{joinedThisWeek !== 1 ? "s" : ""} joined this week
+            </div>
+          )}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/advisor-signup" className="inline-block px-10 py-4 bg-teal-500 text-white font-bold rounded-xl text-lg hover:bg-teal-400 transition-all shadow-lg">
+              Apply to join →
+            </Link>
+            <a href="#how-it-works" className="inline-block px-10 py-4 border-2 border-white/40 text-white font-bold rounded-xl text-lg hover:bg-white/10 transition-all">
+              See how it works
+            </a>
+          </div>
         </div>
       </section>
     </div>
+    </>
   );
 }

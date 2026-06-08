@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Work From Home Tax Deductions Australia (${CURRENT_YEAR}) — 67c Fixed Rate & Actual Cost`,
-  description: `How to claim working from home deductions in Australia. 67 cents per hour fixed rate method, actual cost method, equipment depreciation, sole trader rules, and ATO record-keeping requirements. ${UPDATED_LABEL}.`,
+  description: `Working from home deductions: 67c/hr fixed rate, actual cost method, equipment depreciation, and ATO record-keeping. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Work From Home Tax Deductions Australia (${CURRENT_YEAR})`,
     description:
@@ -264,16 +264,16 @@ export default function WorkFromHomePage() {
 
             {/* Methods comparison table */}
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Work from home deduction methods comparison: fixed rate vs actual cost">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 w-1/3">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 w-1/3">
                       Expense item
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700 w-1/3">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700 w-1/3">
                       Fixed rate (67c/hr)
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 w-1/3">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 w-1/3">
                       Actual cost method
                     </th>
                   </tr>
@@ -637,14 +637,14 @@ export default function WorkFromHomePage() {
 
             {/* Depreciation table */}
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Home office asset depreciation rates and effective life">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Asset</th>
-                    <th className="px-4 py-3 text-center font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Asset</th>
+                    <th scope="col" className="px-4 py-3 text-center font-extrabold text-slate-700">
                       Effective life
                     </th>
-                    <th className="px-4 py-3 text-center font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-center font-extrabold text-slate-700">
                       Annual deduction rate
                     </th>
                   </tr>
@@ -998,7 +998,7 @@ export default function WorkFromHomePage() {
                 >
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                       &#9660;
                     </span>
                   </summary>

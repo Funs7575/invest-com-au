@@ -37,6 +37,8 @@ export default function AdminAdvisorArticlesPage() {
   const [busy, setBusy] = useState(false);
   const [modLog, setModLog] = useState<ModLog[]>([]);
   const [tab, setTab] = useState<"review" | "edit" | "log">("review");
+  const [rejecting, setRejecting] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   // Edit state
   const [editTitle, setEditTitle] = useState("");
@@ -54,10 +56,13 @@ export default function AdminAdvisorArticlesPage() {
     setLoading(false);
   }, [filter]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetchArticles is async; setState runs after await, not synchronously
   useEffect(() => { fetchArticles(); }, [fetchArticles]);
 
   const selectArticle = useCallback(async (a: Article) => {
     setSelected(a);
+    setRejecting(false);
+    setRejectionReason("");
     setAdminNotes(a.admin_notes || "");
     setEditTitle(a.title); setEditContent(a.content); setEditExcerpt(a.excerpt || "");
     setEditMetaTitle(a.meta_title || ""); setEditMetaDesc(a.meta_description || "");
@@ -162,7 +167,7 @@ export default function AdminAdvisorArticlesPage() {
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-slate-100">
                 <h2 className="text-base font-bold text-slate-900 truncate">{selected.title}</h2>
-                <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600"><Icon name="x" size={18} /></button>
+                <button onClick={() => setSelected(null)} aria-label="Close" className="text-slate-400 hover:text-slate-600"><Icon name="x" size={18} /></button>
               </div>
 
               {/* Tabs */}
@@ -221,8 +226,8 @@ export default function AdminAdvisorArticlesPage() {
 
                     {/* Admin notes */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Admin Notes <span className="font-normal text-slate-400">(visible to advisor)</span></label>
-                      <textarea value={adminNotes} onChange={e => setAdminNotes(e.target.value)} rows={2} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Feedback for the advisor..." />
+                      <label htmlFor="aa-admin-notes" className="block text-xs font-bold text-slate-700 mb-1">Admin Notes <span className="font-normal text-slate-400">(visible to advisor)</span></label>
+                      <textarea id="aa-admin-notes" value={adminNotes} onChange={e => setAdminNotes(e.target.value)} rows={2} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Feedback for the advisor..." />
                     </div>
 
                     {/* Action buttons */}
@@ -231,9 +236,21 @@ export default function AdminAdvisorArticlesPage() {
                         <>
                           <button onClick={() => doAction("approve", { admin_notes: adminNotes })} disabled={busy} className="px-3 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 disabled:opacity-50">✓ Approve</button>
                           <button onClick={() => doAction("request_revision", { admin_notes: adminNotes || "Please revise" })} disabled={busy} className="px-3 py-2 bg-orange-500 text-white text-xs font-bold rounded-lg hover:bg-orange-600 disabled:opacity-50">↻ Request Revision</button>
-                          <button onClick={() => { const r = prompt("Rejection reason:"); if (r) doAction("reject", { rejection_reason: r }); }} disabled={busy} className="px-3 py-2 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-600 disabled:opacity-50">✗ Reject</button>
+                          <button onClick={() => setRejecting(true)} disabled={busy || rejecting} className="px-3 py-2 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-600 disabled:opacity-50">✗ Reject</button>
                         </>
                       )}
+                    </div>
+                    {rejecting && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
+                        <label htmlFor="aa-rejection-reason" className="block text-xs font-semibold text-red-800 mb-1">Rejection reason <span className="font-normal text-red-600">(emailed to advisor)</span></label>
+                        <textarea id="aa-rejection-reason" value={rejectionReason} onChange={e => setRejectionReason(e.target.value)} rows={2} className="w-full px-2.5 py-1.5 border border-red-200 rounded text-xs bg-white" placeholder="e.g. Article contains promotional language and does not meet editorial standards." maxLength={500} />
+                        <div className="flex gap-2 mt-2 justify-end">
+                          <button type="button" onClick={() => { setRejecting(false); setRejectionReason(""); }} className="text-xs px-3 py-1.5 text-slate-600 hover:text-slate-900 font-semibold">Cancel</button>
+                          <button type="button" onClick={() => { void doAction("reject", { rejection_reason: rejectionReason }); setRejecting(false); setRejectionReason(""); }} disabled={busy || !rejectionReason.trim()} className="text-xs px-3 py-1.5 bg-red-600 text-white font-bold rounded hover:bg-red-700 disabled:opacity-50">Confirm rejection</button>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex flex-wrap gap-2">
                       {selected.status === "approved" && selected.payment_status === "unpaid" && (
                         <>
                           <div className="flex items-center gap-1.5">
@@ -258,33 +275,33 @@ export default function AdminAdvisorArticlesPage() {
                   <div className="space-y-3">
                     <p className="text-xs text-slate-500">Edit the article content before publishing. Changes are saved separately from status actions.</p>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Title</label>
-                      <input value={editTitle} onChange={e => setEditTitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                      <label htmlFor="aa-title" className="block text-xs font-bold text-slate-700 mb-1">Title</label>
+                      <input id="aa-title" value={editTitle} onChange={e => setEditTitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Excerpt</label>
-                      <textarea value={editExcerpt} onChange={e => setEditExcerpt(e.target.value)} rows={2} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                      <label htmlFor="aa-excerpt" className="block text-xs font-bold text-slate-700 mb-1">Excerpt</label>
+                      <textarea id="aa-excerpt" value={editExcerpt} onChange={e => setEditExcerpt(e.target.value)} rows={2} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                     </div>
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="text-xs font-bold text-slate-700">Content (Markdown)</label>
+                        <label htmlFor="aa-content" className="text-xs font-bold text-slate-700">Content (Markdown)</label>
                         <span className="text-[0.62rem] text-slate-400">{wordCount(editContent)} words</span>
                       </div>
-                      <textarea value={editContent} onChange={e => setEditContent(e.target.value)} rows={14} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg font-mono resize-vertical" />
+                      <textarea id="aa-content" value={editContent} onChange={e => setEditContent(e.target.value)} rows={14} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg font-mono resize-vertical" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">Meta Title <span className="font-normal text-slate-400">(SEO)</span></label>
-                        <input value={editMetaTitle} onChange={e => setEditMetaTitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
+                        <label htmlFor="aa-meta-title" className="block text-xs font-bold text-slate-700 mb-1">Meta Title <span className="font-normal text-slate-400">(SEO)</span></label>
+                        <input id="aa-meta-title" value={editMetaTitle} onChange={e => setEditMetaTitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">Meta Description</label>
-                        <input value={editMetaDesc} onChange={e => setEditMetaDesc(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
+                        <label htmlFor="aa-meta-desc" className="block text-xs font-bold text-slate-700 mb-1">Meta Description</label>
+                        <input id="aa-meta-desc" value={editMetaDesc} onChange={e => setEditMetaDesc(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Related Broker Slugs <span className="font-normal text-slate-400">(comma-separated, shows on those broker pages)</span></label>
-                      <input value={editRelatedBrokers} onChange={e => setEditRelatedBrokers(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. selfwealth, stake, superhero" />
+                      <label htmlFor="aa-related-brokers" className="block text-xs font-bold text-slate-700 mb-1">Related Broker Slugs <span className="font-normal text-slate-400">(comma-separated, shows on those broker pages)</span></label>
+                      <input id="aa-related-brokers" value={editRelatedBrokers} onChange={e => setEditRelatedBrokers(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. selfwealth, stake, superhero" />
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" checked={editFeatured} onChange={e => setEditFeatured(e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { marginalRate } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── ETP tax constants (FY2025-26) ───────────────────────────────────────────
 
@@ -79,11 +80,31 @@ function pct(n: number) {
   return (n * 100).toFixed(1) + "%";
 }
 
+const ETP_DEFAULTS = {
+  totalPayout: 150_000,
+  yearsOfService: 8,
+  atOrAbove60: false,
+  annualIncome: 90_000,
+};
+
 export default function ETPCalculatorClient() {
-  const [totalPayout, setTotalPayout] = useState(150_000);
-  const [yearsOfService, setYearsOfService] = useState(8);
-  const [atOrAbove60, setAtOrAbove60] = useState(false);
-  const [annualIncome, setAnnualIncome] = useState(90_000);
+  const [totalPayout, setTotalPayout] = useState(ETP_DEFAULTS.totalPayout);
+  const [yearsOfService, setYearsOfService] = useState(ETP_DEFAULTS.yearsOfService);
+  const [atOrAbove60, setAtOrAbove60] = useState(ETP_DEFAULTS.atOrAbove60);
+  const [annualIncome, setAnnualIncome] = useState(ETP_DEFAULTS.annualIncome);
+
+  const isModified =
+    totalPayout !== ETP_DEFAULTS.totalPayout ||
+    yearsOfService !== ETP_DEFAULTS.yearsOfService ||
+    atOrAbove60 !== ETP_DEFAULTS.atOrAbove60 ||
+    annualIncome !== ETP_DEFAULTS.annualIncome;
+
+  function handleReset() {
+    setTotalPayout(ETP_DEFAULTS.totalPayout);
+    setYearsOfService(ETP_DEFAULTS.yearsOfService);
+    setAtOrAbove60(ETP_DEFAULTS.atOrAbove60);
+    setAnnualIncome(ETP_DEFAULTS.annualIncome);
+  }
 
   const result = useMemo(
     () => calcETP(totalPayout, yearsOfService, atOrAbove60),
@@ -118,7 +139,7 @@ export default function ETPCalculatorClient() {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
             <input
               id="etp-total-payout"
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               max={2_000_000}
               step={1000}
@@ -138,7 +159,7 @@ export default function ETPCalculatorClient() {
           </label>
           <input
             id="etp-years"
-            type="number"
+            type="number" inputMode="decimal"
             min={0}
             max={50}
             step={1}
@@ -159,7 +180,7 @@ export default function ETPCalculatorClient() {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
             <input
               id="etp-annual-income"
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               max={2_000_000}
               step={1000}
@@ -173,10 +194,10 @@ export default function ETPCalculatorClient() {
           </p>
         </div>
 
-        <div>
-          <span className="block text-sm font-medium text-gray-700 mb-2">
+        <fieldset>
+          <legend className="block text-sm font-medium text-gray-700 mb-2">
             Your age at time of payment
-          </span>
+          </legend>
           <div className="flex gap-4">
             {[false, true].map((val) => (
               <label key={String(val)} className="flex items-center gap-2 cursor-pointer">
@@ -196,8 +217,21 @@ export default function ETPCalculatorClient() {
           <p className="text-xs text-gray-500 mt-1">
             Determines ETP concessional rate: 17% (60+) or 32% (under 60)
           </p>
-        </div>
+        </fieldset>
       </section>
+
+      {/* Reset button */}
+      {isModified && (
+        <div className="flex justify-end mb-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+          >
+            Reset to defaults
+          </button>
+        </div>
+      )}
 
       {/* Results */}
       <section className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mb-6">
@@ -280,6 +314,13 @@ export default function ETPCalculatorClient() {
           <span className="text-xs text-gray-500 mt-0.5">ETP, super strategy, rebuild plan</span>
         </Link>
       </div>
+
+      <CalculatorLeadCapture
+        calcSlug="etp-calculator"
+        calcTitle="ETP tax"
+        need="tax"
+        contextKeys={["etp", "redundancy", "termination"]}
+      />
 
       <p className="text-xs text-gray-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </main>

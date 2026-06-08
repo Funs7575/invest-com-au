@@ -64,10 +64,10 @@ export default function WidgetBuilderTab() {
         {/* Controls */}
         <div className="space-y-4">
           {/* Widget type */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+          <fieldset>
+            <legend className="block text-xs font-semibold text-slate-700 mb-1.5">
               Comparison type
-            </label>
+            </legend>
             <div className="grid grid-cols-1 gap-2">
               {WIDGET_CATALOGUE.map((entry) => (
                 <label
@@ -95,18 +95,19 @@ export default function WidgetBuilderTab() {
                 </label>
               ))}
             </div>
-          </div>
+          </fieldset>
 
           {/* Theme */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <span id="widget-theme-label" className="block text-xs font-semibold text-slate-700 mb-1.5">
               Theme
-            </label>
-            <div className="flex gap-2">
+            </span>
+            <div role="group" aria-labelledby="widget-theme-label" className="flex gap-2">
               {THEMES.map((t) => (
                 <button
                   key={t}
                   type="button"
+                  aria-pressed={theme === t}
                   onClick={() => setTheme(t)}
                   className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors capitalize ${
                     theme === t
@@ -122,14 +123,15 @@ export default function WidgetBuilderTab() {
 
           {/* Display type */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <span id="widget-layout-label" className="block text-xs font-semibold text-slate-700 mb-1.5">
               Layout
-            </label>
-            <div className="flex gap-2">
+            </span>
+            <div role="group" aria-labelledby="widget-layout-label" className="flex gap-2">
               {TYPES.map((t) => (
                 <button
                   key={t}
                   type="button"
+                  aria-pressed={displayType === t}
                   onClick={() => setDisplayType(t)}
                   className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors capitalize ${
                     displayType === t
@@ -145,14 +147,15 @@ export default function WidgetBuilderTab() {
 
           {/* Limit */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <span id="widget-rows-label" className="block text-xs font-semibold text-slate-700 mb-1.5">
               Rows to show
-            </label>
-            <div className="flex gap-2">
+            </span>
+            <div role="group" aria-labelledby="widget-rows-label" className="flex gap-2">
               {LIMITS.map((l) => (
                 <button
                   key={l}
                   type="button"
+                  aria-pressed={limit === l}
                   onClick={() => setLimit(l)}
                   className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${
                     limit === l

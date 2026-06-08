@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     title: `Australian Livestock & Pastoral Investment (${CURRENT_YEAR})`,
     description: "Cattle stations, sheep properties, returns, FIRB rules and ASX-listed access.",
     url: `${SITE_URL}/invest/livestock`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Livestock Investment Australia")}&sub=${encodeURIComponent("Cattle · Sheep · Managed Schemes · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

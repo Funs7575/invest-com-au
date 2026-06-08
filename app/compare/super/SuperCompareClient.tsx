@@ -266,24 +266,30 @@ export default function SuperCompareClient() {
 
         {/* ─── Desktop table ─── */}
         <div className="hidden md:block border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Super fund comparison">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-left">
                 <th
+                  scope="col"
+                  aria-sort={sortKey === "name" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   className="px-4 py-3 font-semibold text-slate-700 cursor-pointer select-none"
                   onClick={() => handleSort("name")}
                 >
                   Fund {sortIndicator("name")}
                 </th>
-                <th className="px-4 py-3 font-semibold text-slate-700">Type</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-slate-700">Type</th>
                 <th
+                  scope="col"
+                  aria-sort={sortKey === "balanced_fee_pct" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   className="px-4 py-3 font-semibold text-slate-700 cursor-pointer select-none"
                   onClick={() => handleSort("balanced_fee_pct")}
                 >
                   Balanced Fee % {sortIndicator("balanced_fee_pct")}
                 </th>
-                <th className="px-4 py-3 font-semibold text-slate-700 text-center">Insurance</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-slate-700 text-center">Insurance</th>
                 <th
+                  scope="col"
+                  aria-sort={sortKey === "investment_options" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   className="px-4 py-3 font-semibold text-slate-700 cursor-pointer select-none"
                   onClick={() => handleSort("investment_options")}
                 >

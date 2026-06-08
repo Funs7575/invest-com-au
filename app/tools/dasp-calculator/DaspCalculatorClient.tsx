@@ -32,6 +32,7 @@ import {
   DASP_WARNING,
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 function fmt(n: number): string {
   return new Intl.NumberFormat("en-AU", {
@@ -73,7 +74,7 @@ function NumericInput({ label, id, value, onChange, hint }: NumericInputProps) {
         </span>
         <input
           id={id}
-          type="number"
+          type="number" inputMode="decimal"
           min="0"
           step="100"
           value={value}
@@ -86,12 +87,32 @@ function NumericInput({ label, id, value, onChange, hint }: NumericInputProps) {
   );
 }
 
+const DASP_DEFAULTS = {
+  taxed: "50000",
+  untaxed: "",
+  taxFree: "",
+  isWhm: false,
+};
+
 export default function DaspCalculatorClient() {
-  const [taxed, setTaxed] = useState("50000");
-  const [untaxed, setUntaxed] = useState("");
-  const [taxFree, setTaxFree] = useState("");
-  const [isWhm, setIsWhm] = useState(false);
+  const [taxed, setTaxed] = useState(DASP_DEFAULTS.taxed);
+  const [untaxed, setUntaxed] = useState(DASP_DEFAULTS.untaxed);
+  const [taxFree, setTaxFree] = useState(DASP_DEFAULTS.taxFree);
+  const [isWhm, setIsWhm] = useState(DASP_DEFAULTS.isWhm);
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const isModified =
+    taxed !== DASP_DEFAULTS.taxed ||
+    untaxed !== DASP_DEFAULTS.untaxed ||
+    taxFree !== DASP_DEFAULTS.taxFree ||
+    isWhm !== DASP_DEFAULTS.isWhm;
+
+  function handleReset() {
+    setTaxed(DASP_DEFAULTS.taxed);
+    setUntaxed(DASP_DEFAULTS.untaxed);
+    setTaxFree(DASP_DEFAULTS.taxFree);
+    setIsWhm(DASP_DEFAULTS.isWhm);
+  }
 
   const result = useMemo(() => {
     return computeDasp({
@@ -201,17 +222,30 @@ export default function DaspCalculatorClient() {
             )}
           </div>
 
+          {/* Reset button */}
+          {isModified && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset to defaults
+              </button>
+            </div>
+          )}
+
           {/* Rate reference */}
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
             <p className="text-[0.65rem] font-extrabold text-slate-500 uppercase tracking-wide mb-2">
               ATO DASP withholding rates (on or after 1 July 2017){/* // dated-ok — fixed legislative DASP rate-change date, never changes */}
             </p>
-            <table className="w-full text-xs">
+            <table className="w-full text-xs" aria-label="DASP tax calculation">
               <thead>
                 <tr className="border-b border-slate-200">
-                  <th className="text-left pb-1 font-semibold text-slate-500">Component</th>
-                  <th className="text-right pb-1 font-semibold text-slate-500">Standard</th>
-                  <th className="text-right pb-1 font-semibold text-amber-600">WHM</th>
+                  <th scope="col" className="text-left pb-1 font-semibold text-slate-500">Component</th>
+                  <th scope="col" className="text-right pb-1 font-semibold text-slate-500">Standard</th>
+                  <th scope="col" className="text-right pb-1 font-semibold text-amber-600">WHM</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -353,6 +387,13 @@ export default function DaspCalculatorClient() {
           )}
         </div>
       </div>
+
+      <CalculatorLeadCapture
+        calcSlug="dasp-calculator"
+        calcTitle="DASP"
+        need="tax"
+        contextKeys={["dasp", "super", "departing-australia"]}
+      />
 
       {/* Disclaimer */}
       <div className="mt-8 pt-6 border-t border-slate-200">

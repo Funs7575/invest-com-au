@@ -42,7 +42,7 @@ export default async function DisputesDrillDown() {
           <p className="text-xs text-slate-500">Last 50 disputes, newest first. Override reverses the auto-verdict + moves any credit both ways.</p>
         </header>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-xs" aria-label="Automation disputes">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
                 <th className="px-4 py-2 text-left font-semibold text-slate-600">ID</th>

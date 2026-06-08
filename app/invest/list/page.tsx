@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Reach qualified Australian and international investors. List businesses, property, mining, farmland, energy projects, franchises, funds, and startups.",
     url: `${SITE_URL}/invest/list`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("All Investment Types Australia")}&sub=${encodeURIComponent("Compare Options · Risk · Return · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -59,7 +60,7 @@ export default function ListInvestmentPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>

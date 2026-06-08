@@ -24,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Venture Capital Investment Opportunities — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/venture-capital/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Venture Capital Investment Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

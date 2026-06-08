@@ -44,7 +44,9 @@ export default function DealOfMonthPage() {
   const [clearConfirmSlug, setClearConfirmSlug] = useState<string | null>(null);
 
   useEffect(() => {
+     
     fetchBrokers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchBrokers() {
@@ -207,8 +209,9 @@ export default function DealOfMonthPage() {
                         <p className="font-bold text-slate-900">{broker.name}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-slate-600 mb-1">Deal Text *</label>
+                        <label htmlFor="dom-edit-deal-text" className="block text-xs font-medium text-slate-600 mb-1">Deal Text *</label>
                         <input
+                          id="dom-edit-deal-text"
                           type="text"
                           value={editDealText}
                           onChange={(e) => setEditDealText(e.target.value)}
@@ -218,8 +221,9 @@ export default function DealOfMonthPage() {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-medium text-slate-600 mb-1">Expiry Date</label>
+                          <label htmlFor="dom-edit-expiry" className="block text-xs font-medium text-slate-600 mb-1">Expiry Date</label>
                           <input
+                            id="dom-edit-expiry"
                             type="date"
                             value={editDealExpiry}
                             onChange={(e) => setEditDealExpiry(e.target.value)}
@@ -227,8 +231,9 @@ export default function DealOfMonthPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-medium text-slate-600 mb-1">Category</label>
+                          <label htmlFor="dom-edit-category" className="block text-xs font-medium text-slate-600 mb-1">Category</label>
                           <select
+                            id="dom-edit-category"
                             value={editDealCategory}
                             onChange={(e) => setEditDealCategory(e.target.value)}
                             className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
@@ -240,8 +245,9 @@ export default function DealOfMonthPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-slate-600 mb-1">Terms / Fine Print</label>
+                        <label htmlFor="dom-edit-terms" className="block text-xs font-medium text-slate-600 mb-1">Terms / Fine Print</label>
                         <textarea
+                          id="dom-edit-terms"
                           value={editDealTerms}
                           onChange={(e) => setEditDealTerms(e.target.value)}
                           placeholder="T&Cs summary..."
@@ -250,8 +256,9 @@ export default function DealOfMonthPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-slate-600 mb-1">Source</label>
+                        <label htmlFor="dom-edit-source" className="block text-xs font-medium text-slate-600 mb-1">Source</label>
                         <input
+                          id="dom-edit-source"
                           type="text"
                           value={editDealSource}
                           onChange={(e) => setEditDealSource(e.target.value)}
@@ -333,8 +340,9 @@ export default function DealOfMonthPage() {
             <h2 className="text-lg font-semibold text-slate-900 mb-4">Add New Deal</h2>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Broker *</label>
+                <label htmlFor="dom-new-broker" className="block text-xs font-medium text-slate-600 mb-1">Broker *</label>
                 <select
+                  id="dom-new-broker"
                   value={newDealSlug}
                   onChange={(e) => setNewDealSlug(e.target.value)}
                   className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
@@ -346,8 +354,9 @@ export default function DealOfMonthPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Deal Text *</label>
+                <label htmlFor="dom-new-deal-text" className="block text-xs font-medium text-slate-600 mb-1">Deal Text *</label>
                 <input
+                  id="dom-new-deal-text"
                   type="text"
                   value={newDealText}
                   onChange={(e) => setNewDealText(e.target.value)}
@@ -357,8 +366,9 @@ export default function DealOfMonthPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Expiry Date</label>
+                  <label htmlFor="dom-new-expiry" className="block text-xs font-medium text-slate-600 mb-1">Expiry Date</label>
                   <input
+                    id="dom-new-expiry"
                     type="date"
                     value={newDealExpiry}
                     onChange={(e) => setNewDealExpiry(e.target.value)}
@@ -366,8 +376,9 @@ export default function DealOfMonthPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Category</label>
+                  <label htmlFor="dom-new-category" className="block text-xs font-medium text-slate-600 mb-1">Category</label>
                   <select
+                    id="dom-new-category"
                     value={newDealCategory}
                     onChange={(e) => setNewDealCategory(e.target.value)}
                     className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
@@ -379,8 +390,9 @@ export default function DealOfMonthPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Terms / Fine Print</label>
+                <label htmlFor="dom-new-terms" className="block text-xs font-medium text-slate-600 mb-1">Terms / Fine Print</label>
                 <textarea
+                  id="dom-new-terms"
                   value={newDealTerms}
                   onChange={(e) => setNewDealTerms(e.target.value)}
                   placeholder="T&Cs summary..."
@@ -389,8 +401,9 @@ export default function DealOfMonthPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Source</label>
+                <label htmlFor="dom-new-source" className="block text-xs font-medium text-slate-600 mb-1">Source</label>
                 <input
+                  id="dom-new-source"
                   type="text"
                   value={newDealSource}
                   onChange={(e) => setNewDealSource(e.target.value)}

@@ -25,6 +25,7 @@ export default function CompoundInterestClient() {
   const [years, setYears] = useState(20);
   const [monthly, setMonthly] = useState(200);
   const [freq, setFreq] = useState(12);
+  const [savedFlash, setSavedFlash] = useState(false);
 
   // Cross-calc persistence (CMP W2 Phase 1).
   const {
@@ -110,14 +111,24 @@ export default function CompoundInterestClient() {
           {/* Inputs */}
           <div className="lg:col-span-2 space-y-5">
             <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-5">
-              <h2 className="font-bold text-slate-900">Your Investment</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="font-bold text-slate-900">Your Investment</h2>
+                <button
+                  type="button"
+                  onClick={() => { setPrincipal(10_000); setRate(7); setYears(20); setMonthly(200); setFreq(12); }}
+                  className="text-xs text-slate-400 hover:text-slate-600 underline"
+                >
+                  Reset to defaults
+                </button>
+              </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Initial investment</label>
+                <label htmlFor="ci-principal" className="block text-xs font-semibold text-slate-600 mb-1">Initial investment</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="ci-principal"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={principal}
@@ -128,11 +139,12 @@ export default function CompoundInterestClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Monthly contribution</label>
+                <label htmlFor="ci-monthly" className="block text-xs font-semibold text-slate-600 mb-1">Monthly contribution</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="ci-monthly"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={50}
                     value={monthly}
@@ -143,10 +155,11 @@ export default function CompoundInterestClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Annual interest rate</label>
+                <label htmlFor="ci-rate" className="block text-xs font-semibold text-slate-600 mb-1">Annual interest rate</label>
                 <div className="relative">
                   <input
-                    type="number"
+                    id="ci-rate"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={50}
                     step={0.5}
@@ -159,10 +172,11 @@ export default function CompoundInterestClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Investment period</label>
+                <label htmlFor="ci-years" className="block text-xs font-semibold text-slate-600 mb-1">Investment period</label>
                 <div className="relative">
                   <input
-                    type="number"
+                    id="ci-years"
+                    type="number" inputMode="decimal"
                     min={1}
                     max={60}
                     step={1}
@@ -175,7 +189,7 @@ export default function CompoundInterestClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-2">Compounding frequency</label>
+                <p className="block text-xs font-semibold text-slate-600 mb-2">Compounding frequency</p>
                 <div className="grid grid-cols-3 gap-1.5">
                   {FREQ_OPTIONS.map((o) => (
                     <button
@@ -193,8 +207,9 @@ export default function CompoundInterestClient() {
             </div>
           </div>
 
-          {/* Results */}
+          {/* Results — ADV-138: id anchor so the save button is directly linkable */}
           <div
+            id="ci-results"
             className="lg:col-span-3 space-y-4"
             role="region"
             aria-live="polite"
@@ -212,18 +227,23 @@ export default function CompoundInterestClient() {
                   <span className="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
                     {result.effectiveRate.toFixed(2)}% effective
                   </span>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
+                    {/* ADV-138: id anchor so mobile users can deep-link to save */}
                     <button
-                      onClick={() =>
+                      id="ci-save"
+                      onClick={() => {
                         addEntry(
                           { principal, rate, years, monthly, freq },
                           `$${principal.toLocaleString("en-AU")} at ${rate}% for ${years} yrs`,
                           `→ ${fmt(result.finalAmount)}`,
-                        )
-                      }
-                      className="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+                        );
+                        setSavedFlash(true);
+                        setTimeout(() => setSavedFlash(false), 2000);
+                      }}
+                      disabled={savedFlash}
+                      className="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors disabled:opacity-60"
                     >
-                      Save
+                      {savedFlash ? "Saved ✓" : "Save"}
                     </button>
                     <CalculatorShareButton
                       calculatorKey="compound_interest_calculator"

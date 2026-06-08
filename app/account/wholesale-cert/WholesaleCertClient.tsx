@@ -180,10 +180,10 @@ export default function WholesaleCertClient({ existing }: Props) {
           </h2>
 
           {/* What type */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-2">
+          <fieldset>
+            <legend className="block text-xs font-semibold text-slate-600 mb-2">
               Certification type
-            </label>
+            </legend>
             <div className="space-y-2">
               <label className="flex items-start gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:border-violet-300 transition-colors has-[:checked]:border-violet-500 has-[:checked]:bg-violet-50">
                 <input
@@ -221,11 +221,11 @@ export default function WholesaleCertClient({ existing }: Props) {
                 </div>
               </label>
             </div>
-          </div>
+          </fieldset>
 
           {/* Evidence upload */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-2">
+            <label htmlFor="wc-evidence-doc" className="block text-xs font-semibold text-slate-600 mb-2">
               Evidence document
               <span className="text-slate-400 font-normal ml-1">(PDF, JPG, or PNG · max 10 MB)</span>
             </label>
@@ -243,6 +243,7 @@ export default function WholesaleCertClient({ existing }: Props) {
               )}
             </div>
             <input
+              id="wc-evidence-doc"
               ref={fileRef}
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
@@ -252,7 +253,7 @@ export default function WholesaleCertClient({ existing }: Props) {
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            <p role="alert" className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
               {error}
             </p>
           )}
@@ -275,6 +276,7 @@ export default function WholesaleCertClient({ existing }: Props) {
           <button
             type="submit"
             disabled={submitting || !file}
+            aria-busy={submitting}
             className="w-full bg-violet-600 hover:bg-violet-700 disabled:bg-violet-300 text-white font-semibold text-sm py-2.5 rounded-lg transition-colors"
           >
             {submitting ? "Submitting…" : "Submit for review"}

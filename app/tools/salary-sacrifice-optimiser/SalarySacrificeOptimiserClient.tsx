@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { incomeTax, marginalRate as marginalRateOf } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── FY2025-26 tax constants ──────────────────────────────────────────────────
 
@@ -84,13 +85,14 @@ export default function SalarySacrificeOptimiserClient() {
         <h2 className="text-base font-bold text-slate-900">Your details (FY2025-26)</h2>
 
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+          <label htmlFor="ss-gross-salary" className="block text-sm font-semibold text-slate-700 mb-1.5">
             Gross annual salary
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">$</span>
             <input
-              type="number"
+              id="ss-gross-salary"
+              type="number" inputMode="decimal"
               min={0}
               step={5000}
               value={grossSalary}
@@ -102,13 +104,14 @@ export default function SalarySacrificeOptimiserClient() {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+          <label htmlFor="ss-sacrifice-amount" className="block text-sm font-semibold text-slate-700 mb-1.5">
             Annual salary sacrifice (pre-tax)
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">$</span>
             <input
-              type="number"
+              id="ss-sacrifice-amount"
+              type="number" inputMode="decimal"
               min={0}
               step={500}
               value={sacrificeAmount}
@@ -242,6 +245,13 @@ export default function SalarySacrificeOptimiserClient() {
           </div>
         </div>
       )}
+
+      <CalculatorLeadCapture
+        calcSlug="salary-sacrifice-optimiser"
+        calcTitle="salary sacrifice"
+        need="tax"
+        contextKeys={["salary-sacrifice", "super-contribution", "tax"]}
+      />
 
       <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </div>

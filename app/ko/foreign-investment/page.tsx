@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { absoluteUrl, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { getForeignInvestmentDict } from "@/lib/i18n/dictionaries";
 import { BCP47_TAG } from "@/lib/i18n/locales";
 import ForeignInvestmentLocalizedPage from "@/components/ForeignInvestmentLocalizedPage";
@@ -25,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: dict.meta.description,
       locale: BCP47_TAG.ko,
       url: `${SITE_URL}/ko/foreign-investment`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Foreign Investment in Australia — Korean Guide")}&sub=${encodeURIComponent("FIRB · Property · SIV · Tax · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

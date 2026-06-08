@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     title: `Franking Credits Australia (${CURRENT_YEAR}) — Complete Guide`,
     description: "How franking credits work, who benefits most, and how to maximise them through shares, ETFs, and super.",
     url: `${SITE_URL}/tax/franking-credits`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Franking Credits Australia")}&sub=${encodeURIComponent("Dividend Imputation · Cash Refunds · Super · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/franking-credits` },
@@ -331,14 +332,14 @@ export default async function FrankingCreditsPage() {
             sub="Based on $1,000 cash dividend, fully franked (corporate rate 30%). Figures approximate — does not include Medicare Levy."
           />
           <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Franking credit benefit by income tax bracket">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Tax bracket</th>
-                  <th className="text-right p-3 text-xs font-bold">Grossed-up income</th>
-                  <th className="text-right p-3 text-xs font-bold">Tax on grossed-up</th>
-                  <th className="text-right p-3 text-xs font-bold">Franking credit</th>
-                  <th className="text-right p-3 text-xs font-bold">Net position</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Tax bracket</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Grossed-up income</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Tax on grossed-up</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Franking credit</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Net position</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -385,13 +386,13 @@ export default async function FrankingCreditsPage() {
           </div>
 
           <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Typical franking percentages and credits per $1,000 dividend by company">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Company</th>
-                  <th className="text-center p-3 text-xs font-bold">Typical franking</th>
-                  <th className="text-left p-3 text-xs font-bold">Reason</th>
-                  <th className="text-right p-3 text-xs font-bold">Credit per $1,000 dividend</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Company</th>
+                  <th scope="col" className="text-center p-3 text-xs font-bold">Typical franking</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Reason</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Credit per $1,000 dividend</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -501,13 +502,13 @@ export default async function FrankingCreditsPage() {
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Franking ratios by ETF">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">ETF</th>
-                  <th className="text-left p-3 text-xs font-bold">Exposure</th>
-                  <th className="text-center p-3 text-xs font-bold">Franking ratio</th>
-                  <th className="text-left p-3 text-xs font-bold">Notes</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">ETF</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Exposure</th>
+                  <th scope="col" className="text-center p-3 text-xs font-bold">Franking ratio</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -697,7 +698,7 @@ export default async function FrankingCreditsPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -742,7 +743,7 @@ export default async function FrankingCreditsPage() {
                   <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                     <div>
                       <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                      <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600">{(Number(b.rating) || 0).toFixed(1)}</span></p>
+                      <p className="text-xs"><span className="text-amber-600" aria-hidden="true">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600" aria-label={`${(Number(b.rating) || 0).toFixed(1)} out of 5 stars`}>{(Number(b.rating) || 0).toFixed(1)}</span></p>
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                     </div>
                     <div className="mt-auto">

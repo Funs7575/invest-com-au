@@ -10,8 +10,30 @@ import {
   type Listing,
   type ListingKind,
 } from "@/lib/listings";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 300;
+
+const LISTINGS_FAQS = [
+  {
+    q: "What types of investment listings are on this page?",
+    a: "Invest.com.au hosts owner-listed investment opportunities across four categories: (1) Property — residential, commercial, and development sites offered by private vendors; (2) Businesses — established businesses and franchises seeking buyers or co-investors; (3) Syndicates — equity or debt syndicate opportunities put together by professional promoters; and (4) Other — agricultural assets, managed schemes, and alternative investments that don't fit the above. All listings are submitted by owners directly and reviewed by Invest.com.au's admin team before publication.",
+  },
+  {
+    q: "Are listings on this page genuine investment opportunities?",
+    a: "Listings are admin-reviewed for completeness and basic plausibility before they go live — we check that contact details are valid and the listing description is coherent. However, Invest.com.au does not verify or endorse the financial merits of any listing. Every listing carries a risk that the investment does not perform as described. Always engage a licensed financial adviser, accountant, and solicitor before committing funds. For syndicate and managed scheme listings, verify that the promoter holds the appropriate AFSL before investing.",
+  },
+  {
+    q: "How do I post my own listing?",
+    a: "Click 'Post a listing' at the top of this page. You'll need a free Invest.com.au account. Fill in the listing details — type, asking price or price-on-request, location, description, and contact method. Your listing is held for admin review and typically goes live within 1 business day. Listings are free to post during the current beta period. If your listing involves a managed investment scheme, syndicate, or requires an AFSL to promote, you are solely responsible for ensuring your listing complies with the Corporations Act 2001.",
+  },
+  {
+    q: "How can I get matched to a professional for due diligence?",
+    a: "Each listing has a 'Get Matched' button that connects you to relevant professionals — licensed financial advisers for investment strategy, accountants for tax implications, conveyancers or solicitors for property, and business brokers for business acquisitions. Matching is free. You describe your situation and we introduce you to verified professionals who can assess the opportunity. This is the most important step: do not commit funds to any listing without professional due diligence.",
+  },
+];
+
+const listingsFaqLd = faqJsonLd(LISTINGS_FAQS);
 
 export const metadata: Metadata = {
   title: `Australian Investment Listings (${CURRENT_YEAR}) — Invest.com.au`,
@@ -55,6 +77,12 @@ export default async function ListingsBrowsePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {listingsFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(listingsFaqLd) }}
+        />
+      )}
 
       <section className="bg-slate-900 text-white">
         <div className="max-w-5xl mx-auto px-4 py-12 sm:py-16">
@@ -152,6 +180,23 @@ export default async function ListingsBrowsePage({
           )}
         </div>
       </section>
+
+      <div className="border-t border-slate-200 bg-white">
+        <div className="max-w-5xl mx-auto px-4 py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {LISTINGS_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
     </>
   );
 }

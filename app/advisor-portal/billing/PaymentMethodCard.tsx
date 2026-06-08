@@ -19,8 +19,10 @@ interface Props {
  */
 export default function PaymentMethodCard({ summary }: Props) {
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function openPortal() {
+    setError(null);
     setBusy(true);
     try {
       const res = await fetch("/api/advisor-auth/billing-portal", { method: "POST" });
@@ -28,40 +30,45 @@ export default function PaymentMethodCard({ summary }: Props) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || "Could not open billing portal.");
+        setError(data.error || "Could not open billing portal.");
       }
     } catch (err) {
       log.error("billing portal open failed", {
         err: err instanceof Error ? err.message : String(err),
       });
-      alert("Could not open billing portal. Try again or contact support.");
+      setError("Could not open billing portal. Try again or contact support.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6 flex items-center justify-between gap-4">
-      <div>
-        <h3 className="text-sm font-bold text-slate-900 mb-1">
-          {summary.has_payment_method ? "Card on file" : "No card on file"}
-        </h3>
-        <p className="text-xs text-slate-500">
-          {summary.has_payment_method
-            ? "Used for top-ups, subscriptions, and self-service refunds."
-            : summary.has_stripe_customer
-              ? "Add a card via the portal to enable subscription features."
-              : "Make your first top-up to set up Stripe billing."}
-        </p>
+    <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h3 className="text-sm font-bold text-slate-900 mb-1">
+            {summary.has_payment_method ? "Card on file" : "No card on file"}
+          </h3>
+          <p className="text-xs text-slate-500">
+            {summary.has_payment_method
+              ? "Used for top-ups, subscriptions, and self-service refunds."
+              : summary.has_stripe_customer
+                ? "Add a card via the portal to enable subscription features."
+                : "Make your first top-up to set up Stripe billing."}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={openPortal}
+          disabled={busy || !summary.has_stripe_customer}
+          className="shrink-0 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors"
+        >
+          {busy ? "Opening…" : summary.has_payment_method ? "Update card" : "Manage billing"}
+        </button>
       </div>
-      <button
-        type="button"
-        onClick={openPortal}
-        disabled={busy || !summary.has_stripe_customer}
-        className="bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-bold px-4 py-2 rounded-lg transition-colors"
-      >
-        {busy ? "Opening…" : summary.has_payment_method ? "Update card" : "Manage billing"}
-      </button>
+      {error && (
+        <p role="alert" className="mt-3 text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{error}</p>
+      )}
     </div>
   );
 }

@@ -369,6 +369,7 @@ export default function AdvertiserIntelligencePage() {
   const [notifBroker, setNotifBroker] = useState<string | null>(null);
 
   const daysNum = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : 90;
+  // eslint-disable-next-line react-hooks/purity -- date calculation, not inside a hook
   const dateFrom = new Date(Date.now() - daysNum * 86400000).toISOString().slice(0, 10);
 
   const loadData = useCallback(async () => {
@@ -776,7 +777,7 @@ export default function AdvertiserIntelligencePage() {
             {/* ─── Tab 2: Broker Scorecard ─── */}
             {activeTab === "scorecard" && (
               <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Broker scorecard">
                   <thead>
                     <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                       {[
@@ -1115,7 +1116,7 @@ export default function AdvertiserIntelligencePage() {
 
                 {heatmapData.size > 0 ? (
                   <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
-                    <table className="w-full text-xs">
+                    <table className="w-full text-xs" aria-label="Broker intelligence heatmap">
                       <thead>
                         <tr className="bg-slate-50">
                           <th className="px-4 py-3 text-left text-slate-500 font-medium sticky left-0 bg-slate-50 z-10 whitespace-nowrap">

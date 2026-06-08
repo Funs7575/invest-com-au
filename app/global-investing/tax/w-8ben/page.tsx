@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `W-8BEN Form for Australians (${CURRENT_YEAR}) — Reduce US Withholding Tax to 15%`,
-  description: `Complete guide to the W-8BEN form for Australian investors. Certify your non-US status, claim the Australia-US tax treaty rate of 15% on dividends (vs 30% default), and correctly apply your Foreign Income Tax Offset (FITO). ${UPDATED_LABEL}.`,
+  description: `W-8BEN for Australian investors: certify non-US status, claim the 15% AU-US treaty dividend rate, and apply your FITO correctly. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `W-8BEN Form for Australians (${CURRENT_YEAR})`,
     description:
@@ -142,7 +142,7 @@ export default function W8BENPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-600 mb-5 flex items-center gap-1.5" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-600 mb-5 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link>
@@ -261,12 +261,12 @@ export default function W8BENPage() {
             payment. They are deducted before the funds reach your brokerage account.
           </p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="US withholding tax rates for Australian investors by income type">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-700">Income type</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-700">Rate</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-700">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-700">Income type</th>
+                  <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-700">Rate</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-700">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -625,7 +625,7 @@ export default function W8BENPage() {
                 combined), valid W-8BEN lodged with broker.
               </p>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs">
+                <table className="w-full text-xs" aria-label="FITO worked example — $1,000 gross US dividend tax calculation">
                   <tbody className="divide-y divide-amber-200">
                     {[
                       { label: "Gross US dividend declared", value: "$1,000", note: "Declare this in your AU return — not the net amount" },
@@ -808,7 +808,7 @@ export default function W8BENPage() {
               >
                 <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none hover:bg-slate-50 transition-colors">
                   <span className="text-sm font-semibold text-slate-900">{faq.q}</span>
-                  <span className="flex-shrink-0 w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold flex items-center justify-center group-open:rotate-180 transition-transform">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold flex items-center justify-center group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#x2303;
                   </span>
                 </summary>

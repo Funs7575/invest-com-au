@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "VGS vs IVV vs NDQ — complete guide to global ETFs on the ASX: MER comparison, hedged vs unhedged, tax treatment and how to build a simple global portfolio.",
     url: `${SITE_URL}/global-investing/etfs`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Global ETFs for Australian Investors")}&sub=${encodeURIComponent("VGS · VDHG · IVV · Currency Risk · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   alternates: { canonical: `${SITE_URL}/global-investing/etfs` },
 };
@@ -281,16 +282,16 @@ export default function GlobalInvestingEtfsPage() {
                 ASX vs global sector breakdown (approximate)
               </h3>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="ASX vs global market sector breakdown by weight">
                   <thead>
                     <tr className="border-b border-white/20">
-                      <th className="text-left py-2 font-bold text-slate-300">
+                      <th scope="col" className="text-left py-2 font-bold text-slate-300">
                         Sector
                       </th>
-                      <th className="text-right py-2 font-bold text-slate-300">
+                      <th scope="col" className="text-right py-2 font-bold text-slate-300">
                         ASX 200
                       </th>
-                      <th className="text-right py-2 font-bold text-slate-300">
+                      <th scope="col" className="text-right py-2 font-bold text-slate-300">
                         MSCI World (VGS)
                       </th>
                     </tr>
@@ -346,22 +347,22 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Global ETF comparison — ASX-listed ETFs, index, MER and currency hedging">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Ticker
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 hidden lg:table-cell">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 hidden lg:table-cell">
                       Index Tracked
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       MER
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Hedged?
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">
                       Key Exposure
                     </th>
                   </tr>
@@ -429,16 +430,16 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Hedged vs unhedged global ETFs — feature comparison">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Feature
                     </th>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Unhedged (e.g., VGS, IVV)
                     </th>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Hedged (e.g., VGAD, IHVV)
                     </th>
                   </tr>
@@ -658,16 +659,16 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Tax treatment of global ETF distribution components">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Distribution component
                     </th>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Tax treatment
                     </th>
-                    <th className="text-left p-4 font-bold text-slate-700 hidden md:table-cell">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700 hidden md:table-cell">
                       Example ETF
                     </th>
                   </tr>
@@ -778,19 +779,19 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="MER impact on long-term returns — terminal value of $10,000 at 7% gross return">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       ETF (MER)
                     </th>
-                    <th className="text-right p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-right p-4 font-bold text-slate-700">
                       10 years
                     </th>
-                    <th className="text-right p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-right p-4 font-bold text-slate-700">
                       20 years
                     </th>
-                    <th className="text-right p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-right p-4 font-bold text-slate-700">
                       30 years
                     </th>
                   </tr>
@@ -1027,19 +1028,19 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Thematic and sector global ETFs on the ASX">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Ticker
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Theme
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       MER
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">
                       Risk note
                     </th>
                   </tr>

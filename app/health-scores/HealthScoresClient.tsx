@@ -151,10 +151,11 @@ export default function HealthScoresClient({
 
         {/* Broker selector */}
         <div className="mb-8">
-          <label className="block text-sm font-semibold text-slate-700 mb-1">
+          <label htmlFor="hs-platform" className="block text-sm font-semibold text-slate-700 mb-1">
             Select Platform
           </label>
           <select
+            id="hs-platform"
             value={selectedSlug}
             onChange={(e) => {
               setSelectedSlug(e.target.value);
@@ -267,15 +268,15 @@ export default function HealthScoresClient({
             <p className="text-xs text-slate-500">All platforms ranked by overall health score</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Safety leaderboard — brokers ranked by health score">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">#</th>
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">Platform</th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600">Score</th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600 hidden sm:table-cell">AFSL</th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell">Regulatory</th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell">Stability</th>
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600">#</th>
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600">Platform</th>
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600">Score</th>
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600 hidden sm:table-cell">AFSL</th>
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell">Regulatory</th>
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell">Stability</th>
                 </tr>
               </thead>
               <tbody>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, absoluteUrl, SITE_URL, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 300; // 5 min ISR
 
@@ -23,6 +24,27 @@ interface Session {
   rsvp_count: number;
   professionals: { name: string; slug: string; type: string; headshot_url: string | null } | null;
 }
+
+const OFFICE_HOURS_FAQS = [
+  {
+    q: "What is Advisor Office Hours?",
+    a: "Office Hours is a live Q&A format where verified Australian financial advisers host public sessions — typically 30–60 minutes — during which the audience can submit questions, upvote what matters most, and read the adviser's answers in real time. Sessions are announced in advance and free to attend. Published transcripts remain accessible after the session ends. It is a way to hear general-information responses from real licensed professionals at scale, without a one-on-one consultation.",
+  },
+  {
+    q: "Are answers in Office Hours sessions personal financial advice?",
+    a: "No. Answers given during Office Hours sessions are general information — the adviser answers in the context of a broad audience and cannot take into account your individual financial situation, tax position, or objectives. Do not treat any Office Hours answer as advice tailored to your situation. If an adviser's response resonates, book a private consultation with them directly from their profile to discuss your specific circumstances. Their AFSL number and registration details are shown on their profile page.",
+  },
+  {
+    q: "How do I submit a question for an upcoming session?",
+    a: "Click on an upcoming session to open its page. You can submit your question in the question box and upvote questions already submitted by other attendees. The adviser typically answers the highest-voted questions during the session. You don't need to be logged in to upvote, but you do need a free Invest.com.au account to submit a new question. Questions are reviewed to ensure they are general in nature before the session goes live.",
+  },
+  {
+    q: "I'm an adviser — how do I host an Office Hours session?",
+    a: "Verified advisers with an approved profile on Invest.com.au can schedule Office Hours sessions from the Advisor Portal (/advisor-portal). Sessions must comply with ASIC's guidance on adviser-hosted educational content — answers must be clearly framed as general information, not personal advice. If you don't have a profile yet, apply at /advisor-apply. We review all session applications before publishing them to the calendar.",
+  },
+];
+
+const officeHoursFaqLd = faqJsonLd(OFFICE_HOURS_FAQS);
 
 const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
   upcoming:   { label: "Upcoming",   cls: "bg-indigo-100 text-indigo-700 border-indigo-200" },
@@ -91,6 +113,12 @@ export default async function OfficeHoursPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
         />
       )}
+      {officeHoursFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(officeHoursFaqLd) }}
+        />
+      )}
 
       <header className="mb-8">
         <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Advisor Office Hours</h1>
@@ -128,10 +156,14 @@ export default async function OfficeHoursPage() {
       )}
 
       {sessions.length === 0 && (
-        <div className="text-center py-16 text-slate-400">
+        <div className="text-center py-16 text-slate-500">
           <p className="text-4xl mb-3" aria-hidden>🎙️</p>
-          <p className="font-semibold text-slate-600">No sessions scheduled yet</p>
-          <p className="text-sm mt-1">Check back soon — advisors will be scheduling sessions regularly.</p>
+          <p className="font-semibold text-slate-700 mb-1">No sessions scheduled yet</p>
+          <p className="text-sm text-slate-500 mb-5">Advisors will be scheduling sessions regularly — check back soon.</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/advisors" className="text-sm font-semibold text-teal-700 hover:underline">Find an advisor →</Link>
+            <Link href="/get-matched" className="text-sm font-semibold text-teal-700 hover:underline">Get matched →</Link>
+          </div>
         </div>
       )}
 
@@ -141,6 +173,21 @@ export default async function OfficeHoursPage() {
           your own circumstances before making investment decisions.
         </p>
       </footer>
+
+      <section className="mt-10 border-t border-slate-200 pt-8">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {OFFICE_HOURS_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

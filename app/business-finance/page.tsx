@@ -5,7 +5,6 @@ import { Suspense } from "react";
 import Icon from "@/components/Icon";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import {
-  CURRENT_YEAR,
   ORGANIZATION_JSONLD,
   SITE_NAME,
   SITE_URL,
@@ -127,7 +126,7 @@ export default function BusinessFinancePage() {
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="mb-3 text-xs text-slate-500 md:mb-6 md:text-sm">
+          <nav aria-label="Breadcrumb" className="mb-3 text-xs text-slate-500 md:mb-6 md:text-sm">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-1.5">/</span>
             <span className="text-slate-700">Business Finance</span>

@@ -7,6 +7,28 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const CALCULATORS_FAQS = [
+  {
+    q: "What is a brokerage fee and how is it calculated?",
+    a: "A brokerage fee is the commission charged by a trading platform each time you buy or sell a security. For Australian brokers, fees fall into two models: flat fees (e.g. $9.50 per trade regardless of size) and percentage fees (e.g. 0.10% of the trade value, typically with a minimum of $5–$10). On smaller trades (under $5,000), flat-fee brokers are usually cheaper. On larger trades, percentage-fee brokers can be cheaper once the flat-fee cap kicks in. The trade-cost calculator above lets you compare exact fees across all major Australian brokers for any trade size.",
+  },
+  {
+    q: "How do I calculate capital gains tax on Australian shares?",
+    a: "Australian CGT is calculated as: capital gain = sale proceeds minus cost base (purchase price plus brokerage on both sides). If you held the asset for 12 months or more, you apply the 50% CGT discount — halving the gain before adding it to your taxable income. You then pay tax at your marginal income tax rate on the discounted gain. Inside super, the tax rate is 15% with a one-third discount (10% effective). In SMSF pension phase, gains are tax-free. The CGT estimator on this page models all of these scenarios and shows the actual after-tax proceeds.",
+  },
+  {
+    q: "What is CHESS sponsorship and why does it matter?",
+    a: "CHESS (Clearing House Electronic Subregister System) is ASX's central share registry. CHESS sponsorship means your shares are registered directly in your name on the ASX register — you own them outright. Non-CHESS (custodian) models hold shares in the broker's name on your behalf. CHESS sponsorship matters because: your shares survive broker insolvency (they're yours in the registry), you receive corporate actions directly, and you can transfer to any other CHESS broker without selling. Most full-service and mid-tier Australian brokers offer CHESS; many low-cost international platforms do not.",
+  },
+  {
+    q: "What is the difference between FX fee and market spread?",
+    a: "When you buy US shares in AUD, the broker converts your dollars to USD. They make money in two ways: an explicit FX fee (e.g. '0.60% currency conversion fee') and/or a spread — the difference between the interbank exchange rate and the rate they give you. Brokers that advertise 'no FX fee' often embed a wider spread instead. For example, if the real AUD/USD rate is 0.6500 and the broker gives you 0.6440, they've taken a 60 pip spread worth ~0.92% on $1,000. The FX cost calculator on this page factors in both the stated fee and the indicative spread to give you a realistic comparison.",
+  },
+];
+
+const calcFaqLd = faqJsonLd(CALCULATORS_FAQS);
 
 export const revalidate = 1800;
 
@@ -103,6 +125,9 @@ export default async function CalculatorsPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calcJsonLd) }} />
+      {calcFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calcFaqLd) }} />
+      )}
       <Suspense fallback={<CalculatorsLoading />}>
         <CalculatorsClient brokers={brokers} />
       </Suspense>
@@ -117,6 +142,20 @@ export default async function CalculatorsPage() {
           subtitle="Answer 5-7 quick questions — we'll match you to the right platform, opportunity, or verified pro for your situation."
         />
         <ComplianceFooter variant="calculator" />
+        <div className="mt-8 space-y-3">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          {CALCULATORS_FAQS.map((faq) => (
+            <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+              <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                {faq.q}
+                <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+              </summary>
+              <div className="px-5 pb-4">
+                <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </div>
+            </details>
+          ))}
+        </div>
       </div>
     </>
   );

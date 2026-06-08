@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description: "Answer 3 questions and find the right financial professional for your situation.",
     images: [{ url: "/api/og?title=Find+Your+Advisor&subtitle=3+questions.+Instant+match.&type=default", width: 1200, height: 630 }],
   },
-  twitter: { card: "summary" },
+  twitter: { card: "summary_large_image" },
   alternates: { canonical: "/find-advisor" },
 };
 

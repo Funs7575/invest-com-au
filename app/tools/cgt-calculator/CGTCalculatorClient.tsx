@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { incomeTax } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── ATO resident rates 2024-25 (Stage 3) ────────────────────────────────────
 
@@ -29,16 +30,40 @@ function fmt(n: number): string {
   }).format(n);
 }
 
+// ─── Default values ───────────────────────────────────────────────────────────
+
+const DEFAULTS = {
+  purchasePrice: "50000",
+  salePrice: "80000",
+  purchaseCosts: "1000",
+  saleCosts: "500",
+  heldOver12Months: true,
+  annualIncome: 90_000,
+  assetType: "shares" as const,
+};
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function CGTCalculatorClient() {
-  const [purchasePrice, setPurchasePrice] = useState("50000");
-  const [salePrice, setSalePrice] = useState("80000");
-  const [purchaseCosts, setPurchaseCosts] = useState("1000");
-  const [saleCosts, setSaleCosts] = useState("500");
-  const [heldOver12Months, setHeldOver12Months] = useState(true);
-  const [annualIncome, setAnnualIncome] = useState(90_000);
-  const [assetType, setAssetType] = useState<"shares" | "property" | "crypto" | "other">("shares");
+  const [purchasePrice, setPurchasePrice] = useState(DEFAULTS.purchasePrice);
+  const [salePrice, setSalePrice] = useState(DEFAULTS.salePrice);
+  const [purchaseCosts, setPurchaseCosts] = useState(DEFAULTS.purchaseCosts);
+  const [saleCosts, setSaleCosts] = useState(DEFAULTS.saleCosts);
+  const [heldOver12Months, setHeldOver12Months] = useState(DEFAULTS.heldOver12Months);
+  const [annualIncome, setAnnualIncome] = useState(DEFAULTS.annualIncome);
+  const [assetType, setAssetType] = useState<"shares" | "property" | "crypto" | "other">(DEFAULTS.assetType);
+  const [updatedFlash, setUpdatedFlash] = useState(false);
+  const isFirstRender = useRef(true);
+
+  function resetToDefaults() {
+    setPurchasePrice(DEFAULTS.purchasePrice);
+    setSalePrice(DEFAULTS.salePrice);
+    setPurchaseCosts(DEFAULTS.purchaseCosts);
+    setSaleCosts(DEFAULTS.saleCosts);
+    setHeldOver12Months(DEFAULTS.heldOver12Months);
+    setAnnualIncome(DEFAULTS.annualIncome);
+    setAssetType(DEFAULTS.assetType);
+  }
 
   const r = useMemo(() => {
     const purchase = parseFloat(purchasePrice.replace(/,/g, "")) || 0;
@@ -71,15 +96,31 @@ export default function CGTCalculatorClient() {
 
   const showResults = r.proceeds > 0 && r.costBase > 0;
 
+  useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    const t1 = setTimeout(() => setUpdatedFlash(true), 0);
+    const t2 = setTimeout(() => setUpdatedFlash(false), 1500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [purchasePrice, salePrice, purchaseCosts, saleCosts, heldOver12Months, annualIncome, assetType]);
+
   return (
     <div className="space-y-6">
       {/* Inputs */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
-        <h2 className="text-base font-bold text-slate-900">Asset details</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-slate-900">Asset details</h2>
+          <button
+            type="button"
+            onClick={resetToDefaults}
+            className="text-xs font-semibold text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 rounded-lg px-3 py-1.5 transition-colors bg-white hover:bg-slate-50"
+          >
+            Reset
+          </button>
+        </div>
 
         {/* Asset type */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">Asset type</label>
+          <p className="block text-sm font-semibold text-slate-700 mb-2">Asset type</p>
           <div className="grid grid-cols-4 gap-1.5">
             {(["shares", "property", "crypto", "other"] as const).map((t) => (
               <button
@@ -99,11 +140,12 @@ export default function CGTCalculatorClient() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Purchase price</label>
+            <label htmlFor="cgt-purchase-price" className="block text-sm font-semibold text-slate-700 mb-1.5">Purchase price</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
-                type="number" min={0} step={1000}
+                id="cgt-purchase-price"
+                type="number" inputMode="decimal" min={0} step={1000}
                 value={purchasePrice}
                 onChange={(e) => setPurchasePrice(e.target.value)}
                 className="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -111,11 +153,12 @@ export default function CGTCalculatorClient() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Sale price</label>
+            <label htmlFor="cgt-sale-price" className="block text-sm font-semibold text-slate-700 mb-1.5">Sale price</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
-                type="number" min={0} step={1000}
+                id="cgt-sale-price"
+                type="number" inputMode="decimal" min={0} step={1000}
                 value={salePrice}
                 onChange={(e) => setSalePrice(e.target.value)}
                 className="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -123,14 +166,15 @@ export default function CGTCalculatorClient() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="cgt-purchase-costs" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Purchase costs
               <span className="text-slate-400 font-normal ml-1">(stamp duty, brokerage)</span>
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
-                type="number" min={0} step={100}
+                id="cgt-purchase-costs"
+                type="number" inputMode="decimal" min={0} step={100}
                 value={purchaseCosts}
                 onChange={(e) => setPurchaseCosts(e.target.value)}
                 className="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -138,14 +182,15 @@ export default function CGTCalculatorClient() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="cgt-sale-costs" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Sale costs
               <span className="text-slate-400 font-normal ml-1">(agent fees, brokerage)</span>
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
-                type="number" min={0} step={100}
+                id="cgt-sale-costs"
+                type="number" inputMode="decimal" min={0} step={100}
                 value={saleCosts}
                 onChange={(e) => setSaleCosts(e.target.value)}
                 className="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -169,9 +214,9 @@ export default function CGTCalculatorClient() {
 
         {/* Income */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
+          <p className="block text-sm font-semibold text-slate-700 mb-2">
             Your other annual income (for marginal rate)
-          </label>
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {INCOME_PRESETS.map((p) => (
               <button
@@ -193,6 +238,15 @@ export default function CGTCalculatorClient() {
       {/* Results */}
       {showResults && (
         <div className="space-y-4">
+          <span
+            role="status"
+            aria-live="polite"
+            className={`inline-block text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5 transition-opacity duration-500 ${
+              updatedFlash ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            ● Updated
+          </span>
           {r.isLoss ? (
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-700">
               <strong>Capital loss:</strong> This asset returned a loss of {fmt(-r.grossGain)}. Capital losses can
@@ -314,6 +368,13 @@ export default function CGTCalculatorClient() {
           </div>
         </div>
       )}
+
+      <CalculatorLeadCapture
+        calcSlug="cgt-calculator"
+        calcTitle="CGT"
+        need="tax"
+        contextKeys={["cgt", "capital-gains", "investment"]}
+      />
 
       <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </div>

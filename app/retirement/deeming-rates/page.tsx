@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -99,7 +100,7 @@ export default function DeemingRatesPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link><span>/</span>
             <Link href="/retirement" className="hover:text-white">Retirement</Link><span>/</span>
             <Link href="/retirement/age-pension" className="hover:text-white">Age Pension</Link><span>/</span>
@@ -173,14 +174,14 @@ export default function DeemingRatesPage() {
             rate above it. The thresholds differ for singles and couples.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Centrelink deeming rates 2024–25">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Tier</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Asset threshold</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Deeming rate</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Deemed income on $100k</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Deemed income on $500k</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Tier</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Asset threshold</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Deeming rate</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Deemed income on $100k</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Deemed income on $500k</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -379,7 +380,7 @@ export default function DeemingRatesPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">▾</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -387,6 +388,16 @@ export default function DeemingRatesPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Model how deeming affects your Age Pension entitlement"
+        subheading="Deeming rates affect your pension by treating financial assets as earning a notional income. A licensed financial planner can model whether restructuring your assets improves your entitlement."
+        intent={{ need: "retirement", context: ["deeming_rates", "centrelink", "age_pension"] }}
+        source="retirement_deeming_rates"
+        ctaLabel="Find a retirement planner"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

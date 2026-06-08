@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Home Care vs Residential Aged Care — Which Is Better? (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Comparing home care vs residential aged care for Australians: care complexity suitability, costs, safety, family burden, transition timing, and when to move from home care to residential. ${UPDATED_LABEL}.`,
+  description: `Home care vs residential aged care in Australia: suitability, costs, safety triggers, family burden, timing, and transition checklist. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Home Care vs Residential Aged Care (${CURRENT_YEAR})`,
     description: "When to stay at home vs move to residential care: suitability, costs, safety triggers, family burden, and transition planning for Australian families.",
@@ -76,7 +77,7 @@ export default function HomeVsResidentialPage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link><span>/</span>
             <Link href="/aged-care" className="hover:text-slate-900">Aged Care</Link><span>/</span>
             <span className="text-slate-900 font-medium">Home vs Residential</span>
@@ -98,12 +99,12 @@ export default function HomeVsResidentialPage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Home care vs residential: key factors</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Home care vs residential aged care key factors" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Factor</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Home care</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Residential care</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Factor</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Home care</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Residential care</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -145,7 +146,7 @@ export default function HomeVsResidentialPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">▾</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -153,6 +154,16 @@ export default function HomeVsResidentialPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get personalised aged care planning advice"
+        subheading="Choosing between home care and residential aged care involves medical, financial, and family considerations. An aged care financial specialist can model the full cost and Centrelink impact."
+        intent={{ need: "aged_care", context: ["home_vs_residential", "aged_care_planning"] }}
+        source="aged_care_home_vs_residential"
+        ctaLabel="Find an aged care financial specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

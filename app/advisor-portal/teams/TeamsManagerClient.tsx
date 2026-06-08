@@ -197,7 +197,7 @@ export default function TeamsManagerClient() {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -219,10 +219,11 @@ export default function TeamsManagerClient() {
         {creating && (
           <div className="border border-slate-200 rounded-xl p-4 mb-4 space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="tm-name" className="block text-xs font-semibold text-slate-700 mb-1">
                 Team name
               </label>
               <input
+                id="tm-name"
                 value={newTeam.name}
                 onChange={(e) => setNewTeam({ ...newTeam, name: e.target.value })}
                 className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm"
@@ -230,10 +231,11 @@ export default function TeamsManagerClient() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="tm-category" className="block text-xs font-semibold text-slate-700 mb-1">
                   Category
                 </label>
                 <select
+                  id="tm-category"
                   value={newTeam.team_category}
                   onChange={(e) =>
                     setNewTeam({ ...newTeam, team_category: e.target.value })
@@ -249,10 +251,11 @@ export default function TeamsManagerClient() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="tm-type" className="block text-xs font-semibold text-slate-700 mb-1">
                   Type
                 </label>
                 <select
+                  id="tm-type"
                   value={newTeam.team_type}
                   onChange={(e) =>
                     setNewTeam({ ...newTeam, team_type: e.target.value })
@@ -269,10 +272,11 @@ export default function TeamsManagerClient() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="tm-description" className="block text-xs font-semibold text-slate-700 mb-1">
                 Public description
               </label>
               <textarea
+                id="tm-description"
                 rows={3}
                 value={newTeam.description}
                 onChange={(e) =>
@@ -282,10 +286,11 @@ export default function TeamsManagerClient() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="tm-disclosure" className="block text-xs font-semibold text-slate-700 mb-1">
                 Disclosure
               </label>
               <textarea
+                id="tm-disclosure"
                 rows={2}
                 value={newTeam.disclosure}
                 onChange={(e) =>
@@ -295,9 +300,9 @@ export default function TeamsManagerClient() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <p className="block text-xs font-semibold text-slate-700 mb-1">
                 Accepted brief templates
-              </label>
+              </p>
               <div className="flex flex-wrap gap-2">
                 {BRIEF_TEMPLATES.map((t) => {
                   const checked = newTeam.accepted_brief_templates.includes(t);
@@ -425,7 +430,8 @@ export default function TeamsManagerClient() {
               </h3>
               <div className="flex items-center gap-2 mb-2">
                 <input
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+                  autoComplete="email"
                   placeholder="email@example.com"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}

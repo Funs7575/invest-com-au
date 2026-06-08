@@ -148,7 +148,8 @@ export default function SharesightConnectButton({ initialStatus }: Props) {
             type="button"
             onClick={handleSync}
             disabled={busy !== null}
-            className="text-sm font-medium text-emerald-700 hover:text-emerald-900 underline underline-offset-2 disabled:opacity-50"
+            aria-busy={busy === "sync"}
+            className="text-sm font-medium text-emerald-700 hover:text-emerald-900 underline underline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {busy === "sync" ? "Syncing…" : "Sync Sharesight now"}
           </button>
@@ -156,7 +157,8 @@ export default function SharesightConnectButton({ initialStatus }: Props) {
             type="button"
             onClick={handleDisconnect}
             disabled={busy !== null}
-            className="text-sm text-slate-600 hover:text-slate-800 underline underline-offset-2 disabled:opacity-50"
+            aria-busy={busy === "disconnect"}
+            className="text-sm text-slate-600 hover:text-slate-800 underline underline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {busy === "disconnect" ? "Disconnecting…" : "Disconnect"}
           </button>
@@ -176,7 +178,7 @@ export default function SharesightConnectButton({ initialStatus }: Props) {
       )}
 
       {error && (
-        <p className="text-xs text-rose-700">{error}</p>
+        <p role="alert" className="text-xs text-rose-700">{error}</p>
       )}
 
       {result && (

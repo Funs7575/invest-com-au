@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     title: `Trauma Insurance Australia (${CURRENT_YEAR}) — Critical Illness Cover`,
     description: "Everything about trauma insurance in Australia — covered conditions, costs, and whether you need it alongside life insurance and income protection.",
     url: `${SITE_URL}/insurance/trauma`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Trauma Insurance Australia")}&sub=${encodeURIComponent("Critical Illness · 40+ Conditions · Lump Sum · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/trauma` },
@@ -185,7 +187,7 @@ export default function TraumaInsurancePage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/insurance" className="hover:text-slate-900">Insurance</Link>
@@ -275,11 +277,11 @@ export default function TraumaInsurancePage() {
             sub="Premiums vary by age, sex, smoker status, and cover amount. These are indicative ranges — get personalised quotes."
           />
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table aria-label="Indicative trauma insurance costs by profile" className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Profile</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Indicative Monthly Premium</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Profile</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Indicative Monthly Premium</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -324,7 +326,7 @@ export default function TraumaInsurancePage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>
@@ -332,6 +334,15 @@ export default function TraumaInsurancePage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Get personalised advice on trauma insurance cover"
+        subheading="Trauma insurance definitions, waiting periods, and premium structures vary widely between insurers. A licensed insurance adviser can compare policies across the market for your health history and budget."
+        intent={{ need: "insurance", context: ["trauma_insurance", "critical_illness"] }}
+        source="insurance_trauma"
+        ctaLabel="Find an insurance adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related Insurance */}
       <section className="py-10 border-t border-slate-200">

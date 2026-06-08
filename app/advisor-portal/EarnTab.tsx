@@ -71,7 +71,7 @@ export default function EarnTab({ advisor }: Props) {
 
   if (loading) {
     return (
-      <div className="space-y-4 animate-pulse">
+      <div className="space-y-4 animate-pulse" aria-busy="true" aria-label="Loading earnings…">
         <div className="h-28 bg-slate-100 rounded-xl" />
         <div className="h-24 bg-slate-100 rounded-xl" />
         <div className="grid grid-cols-3 gap-3">
@@ -226,6 +226,19 @@ export default function EarnTab({ advisor }: Props) {
           <p className="text-xs text-slate-500 mt-0.5">Credits earned</p>
         </div>
       </div>
+
+      {/* ── Onboarding nudge (zero state) ── */}
+      {stats.total_referred === 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+          <span className="text-2xl" aria-hidden>🚀</span>
+          <div>
+            <p className="text-sm font-bold text-amber-900 mb-1">You haven&apos;t referred anyone yet</p>
+            <p className="text-xs text-amber-800">
+              Share your link above with advisors you know — colleagues, classmates, or LinkedIn connections. Each advisor who activates earns you ${creditPerReferralDollars} in free lead credits. There&apos;s no cap on referrals.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ── How it works ── */}
       <div className="bg-white border border-slate-200 rounded-xl p-5">

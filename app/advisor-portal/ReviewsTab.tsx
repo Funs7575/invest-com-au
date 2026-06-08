@@ -285,10 +285,11 @@ export default function ReviewsTab({ advisor }: Props) {
           <form onSubmit={(e) => { void handleInvite(e); }} className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="rt-invite-name" className="block text-xs font-semibold text-slate-700 mb-1">
                   Client name *
                 </label>
                 <input
+                  id="rt-invite-name"
                   type="text"
                   value={inviteName}
                   onChange={(e) => setInviteName(e.target.value)}
@@ -299,11 +300,13 @@ export default function ReviewsTab({ advisor }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="rt-invite-email" className="block text-xs font-semibold text-slate-700 mb-1">
                   Client email *
                 </label>
                 <input
-                  type="email"
+                  id="rt-invite-email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+                  autoComplete="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   placeholder="e.g. sarah@example.com"
@@ -323,11 +326,11 @@ export default function ReviewsTab({ advisor }: Props) {
               <button
                 type="submit"
                 disabled={inviteSubmitting || !inviteEmail.trim() || !inviteName.trim()}
-                className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors flex items-center gap-1.5"
+                className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
               >
                 {inviteSubmitting ? (
                   <>
-                    <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    <div aria-hidden="true" className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                     Sending...
                   </>
                 ) : (
@@ -364,6 +367,14 @@ export default function ReviewsTab({ advisor }: Props) {
           <p className="text-xs text-slate-500 mb-4">
             Send review invitations to your past clients to start building your reputation.
           </p>
+          <button
+            type="button"
+            onClick={() => document.getElementById("rt-invite-name")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+          >
+            <Icon name="send" size={13} aria-hidden />
+            Send an invitation
+          </button>
         </div>
       ) : (
         <div className="space-y-4">

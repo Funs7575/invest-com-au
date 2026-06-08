@@ -295,7 +295,7 @@ export default function BrokerDashboard() {
             return changePct !== 0 ? (
               <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-emerald-600" : "text-red-500"}`}>
                 <Icon name={changePct > 0 ? "arrow-up" : "arrow-down"} size={10} />
-                {Math.abs(changePct)}% vs prev week
+                {Math.abs(changePct)}% vs prev 7 days
               </p>
             ) : null;
           })()}
@@ -326,7 +326,7 @@ export default function BrokerDashboard() {
             return changePct !== 0 ? (
               <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-red-500" : "text-emerald-600"}`}>
                 <Icon name={changePct > 0 ? "arrow-up" : "arrow-down"} size={10} />
-                {Math.abs(changePct)}% vs prev week
+                {Math.abs(changePct)}% vs prev 7 days
               </p>
             ) : null;
           })()}
@@ -342,9 +342,19 @@ export default function BrokerDashboard() {
         const clicksChange = pctChange(currWeekClicks, prevClicks);
         const spendChange = pctChange(currWeekSpend, prevSpend);
         const conversionsChange = pctChange(currWeekConversions, prevConversions);
+        const now = new Date();
+        const d = (offset: number) => { const x = new Date(now); x.setDate(now.getDate() + offset); return x; };
+        const fmtD = (x: Date) => x.toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+        const thisLabel = `${fmtD(d(-7))}–${fmtD(d(-1))}`;
+        const prevLabel = `${fmtD(d(-14))}–${fmtD(d(-8))}`;
         return (
           <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
-            <h2 className="font-bold text-slate-900 text-sm mb-4">This Week vs Last Week</h2>
+            <h2 className="font-bold text-slate-900 text-sm mb-1">Last 7 days vs previous 7 days</h2>
+            <p className="text-[0.65rem] text-slate-400 mb-3">
+              <span className="font-medium text-slate-600">{thisLabel}</span>
+              {" "}vs{" "}
+              <span>{prevLabel}</span>
+            </p>
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
                 <p className="text-xs text-slate-500 mb-1">Clicks</p>
@@ -526,25 +536,42 @@ export default function BrokerDashboard() {
               const budgetPct = c.total_budget_cents
                 ? Math.min(100, Math.round((c.total_spent_cents / c.total_budget_cents) * 100))
                 : 0;
-              const statusDot = c.status === "active" ? "bg-emerald-500" :
+              const statusDotClass = c.status === "active" ? "bg-emerald-500" :
                 c.status === "pending_review" ? "bg-amber-500" :
-                c.status === "approved" ? "bg-blue-500" : "bg-slate-300";
+                c.status === "approved" ? "bg-blue-500" :
+                c.status === "budget_exhausted" ? "bg-red-500" :
+                c.status === "paused" ? "bg-slate-400" :
+                c.status === "rejected" ? "bg-red-400" : "bg-slate-300";
+              const statusTooltip: Record<string, string> = {
+                active: "Running and serving impressions",
+                pending_review: "Awaiting review from the invest.com.au team",
+                approved: "Approved — will start on the scheduled date",
+                budget_exhausted: "All budget has been spent — campaign paused",
+                paused: "Paused by you or the platform",
+                completed: "Campaign has ended",
+                cancelled: "Cancelled",
+                rejected: "Not approved — see rejection reason",
+              };
               return (
                 <div key={c.id} className="px-5 py-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className={`w-2 h-2 rounded-full ${statusDot}`} />
+                      <span className={`w-2 h-2 rounded-full ${statusDotClass}`} title={statusTooltip[c.status] ?? c.status} />
                       <div>
                         <p className="text-sm font-semibold text-slate-900">{c.name}</p>
                         <p className="text-xs text-slate-500">{placementName}</p>
                       </div>
                     </div>
-                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                      c.status === "active" ? "bg-emerald-50 text-emerald-700" :
-                      c.status === "pending_review" ? "bg-amber-50 text-amber-700" :
-                      c.status === "approved" ? "bg-blue-50 text-blue-700" :
-                      "bg-slate-100 text-slate-500"
-                    }`}>
+                    <span
+                      className={`text-xs font-bold px-2 py-1 rounded-full ${
+                        c.status === "active" ? "bg-emerald-50 text-emerald-700" :
+                        c.status === "pending_review" ? "bg-amber-50 text-amber-700" :
+                        c.status === "approved" ? "bg-blue-50 text-blue-700" :
+                        c.status === "budget_exhausted" ? "bg-red-50 text-red-700" :
+                        "bg-slate-100 text-slate-500"
+                      }`}
+                      title={statusTooltip[c.status] ?? c.status}
+                    >
                       {c.status.replace(/_/g, " ")}
                     </span>
                   </div>
@@ -558,7 +585,17 @@ export default function BrokerDashboard() {
                           style={{ width: `${budgetPct}%` }}
                         />
                       </div>
-                      <p className="text-[0.62rem] text-slate-400 mt-0.5">{budgetPct}% budget used</p>
+                      <div className="flex items-center justify-between mt-0.5">
+                        <p className="text-[0.62rem] text-slate-400">{budgetPct}% budget used</p>
+                        {c.status === "budget_exhausted" && (
+                          <Link
+                            href="/broker-portal/packages"
+                            className="text-[0.62rem] font-bold text-red-600 hover:text-red-700 underline"
+                          >
+                            Increase Budget →
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

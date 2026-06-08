@@ -90,6 +90,15 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
   const maxExtra = topAccount ? topAccount.extraEarnings : 0;
   const currentInterest = balance * (currentRate / 100);
 
+  const handleReset = () => {
+    setBalance(25000);
+    setCurrentRate(0.5);
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     storeQualificationData("savings_calculator", {
@@ -136,11 +145,12 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
         <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 shadow-sm mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Your savings balance</label>
+              <label htmlFor="sav-balance" className="block text-sm font-bold text-slate-700 mb-1.5">Your savings balance</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
-                  type="number"
+                  id="sav-balance"
+                  type="number" inputMode="decimal"
                   value={balance}
                   onChange={e => setBalance(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -148,17 +158,18 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5000, 10000, 25000, 50000, 100000].map(v => (
-                  <button key={v} onClick={() => setBalance(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setBalance(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v >= 1000 ? `$${v / 1000}k` : `$${v}`}
                   </button>
                 ))}
               </div>
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Your current interest rate</label>
+              <label htmlFor="sav-current-rate" className="block text-sm font-bold text-slate-700 mb-1.5">Your current interest rate</label>
               <div className="relative">
                 <input
-                  type="number"
+                  id="sav-current-rate"
+                  type="number" inputMode="decimal"
                   step="0.1"
                   value={currentRate}
                   onChange={e => setCurrentRate(Math.max(0, Math.min(10, parseFloat(e.target.value) || 0)))}
@@ -168,19 +179,30 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[0, 0.5, 1.0, 2.0, 3.0, 4.0].map(v => (
-                  <button key={v} onClick={() => setCurrentRate(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${currentRate === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setCurrentRate(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${currentRate === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}
               </div>
             </div>
           </div>
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-amber-500 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
-          >
-            Calculate My Savings →
-          </button>
+          <div className="flex items-center gap-3 mt-5">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-amber-500 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
+            >
+              Calculate My Savings →
+            </button>
+            {(balance !== 25000 || currentRate !== 0.5) && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}
@@ -273,7 +295,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                   <p className="text-sm font-bold text-slate-900 mb-1">See all {ranked.length} accounts</p>
                   <p className="text-xs text-slate-500 mb-3">Enter your email to unlock the full comparison</p>
                   <div className="flex gap-2 max-w-xs mx-auto">
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                    <input type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                     <button onClick={handleEmailSubmit} className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600">Unlock</button>
                   </div>
                 </div>

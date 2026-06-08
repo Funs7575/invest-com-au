@@ -198,6 +198,7 @@ export default function FullServiceBrokerEnquiryForm({
       <button
         type="submit"
         disabled={submitting}
+        aria-busy={submitting}
         className="w-full py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {submitting ? "Sending..." : `Enquire about ${firmName}`}

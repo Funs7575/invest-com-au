@@ -10,6 +10,7 @@ import {
   courseJsonLd as buildCourseJsonLd,
   REVIEW_AUTHOR,
 } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { getCourse, getCourseLessons, groupLessonsIntoModules } from "@/lib/course";
 import { GENERAL_ADVICE_WARNING, COURSE_AFFILIATE_DISCLOSURE, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import CoursePageClient from "./CoursePageClient";
@@ -73,6 +74,14 @@ export default async function CourseDetailPage({ params }: PageProps) {
   const priceDisplay = (course.price / 100).toFixed(0);
   const proPriceDisplay = course.pro_price ? (course.pro_price / 100).toFixed(0) : null;
 
+  const courseFaqs: { q: string; a: string }[] = [
+    { q: "Is this financial advice?", a: "No. This course provides general education about investing in Australia. It is not personal financial advice. Always consider your own circumstances and consult a licensed adviser if needed." },
+    ...(proPriceDisplay ? [{ q: "What if I already have an Investor Pro subscription?", a: `Pro subscribers get a discount — pay just $${proPriceDisplay} instead of $${priceDisplay}. The discount is applied automatically at checkout.` }] : []),
+    ...(course.guarantee ? [{ q: "Is there a money-back guarantee?", a: course.guarantee }] : []),
+    { q: "How long do I have access?", a: "Lifetime. You pay once and keep access to all lessons forever, including any future updates." },
+  ];
+  const courseFaqLd = faqJsonLd(courseFaqs);
+
   return (
     <>
       <script
@@ -83,6 +92,12 @@ export default async function CourseDetailPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {courseFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(courseFaqLd) }}
+        />
+      )}
 
       <Suspense>
         <CoursesGate>
@@ -298,7 +313,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                 <details key={faq.q} className="group rounded-xl border border-slate-200 bg-white">
                   <summary className="flex items-center justify-between cursor-pointer p-4 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
                     {faq.q}
-                    <svg className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    <svg aria-hidden="true" className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </summary>
                   <div className="px-4 pb-4 text-sm text-slate-600">{faq.a}</div>
                 </details>

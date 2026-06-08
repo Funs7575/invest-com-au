@@ -44,6 +44,9 @@ export default function LoanRatesEditor() {
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState<DraftRate>(EMPTY_DRAFT);
   const [busy, setBusy] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   async function load() {
     const res = await fetch("/api/admin/loan-rates");
@@ -60,6 +63,7 @@ export default function LoanRatesEditor() {
   }, []);
 
   async function save() {
+    setSaveError(null);
     setBusy(true);
     try {
       const payload = editing
@@ -73,8 +77,8 @@ export default function LoanRatesEditor() {
       });
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({})) as { error?: string };
-        alert(err.error ?? "Save failed");
+        const err = (await res.json().catch(() => ({}))) as { error?: string };
+        setSaveError(err.error ?? "Save failed");
         return;
       }
 
@@ -87,13 +91,14 @@ export default function LoanRatesEditor() {
     }
   }
 
-  async function remove(id: string, lenderName: string) {
-    if (!confirm(`Delete "${lenderName}"? This is destructive and cannot be undone.`)) return;
+  async function remove(id: string) {
+    setPendingDeleteId(null);
+    setDeleteError(null);
     const res = await fetch(`/api/admin/loan-rates?id=${encodeURIComponent(id)}`, {
       method: "DELETE",
     });
     if (!res.ok) {
-      alert("Delete failed");
+      setDeleteError("Delete failed");
       return;
     }
     await load();
@@ -140,14 +145,19 @@ export default function LoanRatesEditor() {
           draft={draft}
           setDraft={setDraft}
           onSave={save}
-          onCancel={cancelForm}
+          onCancel={() => { cancelForm(); setSaveError(null); }}
           busy={busy}
           isEdit={editing !== null}
+          saveError={saveError}
         />
       )}
 
+      {deleteError && (
+        <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">{deleteError}</p>
+      )}
+
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Loan rates">
           <thead className="bg-slate-50 text-xs font-semibold text-slate-600">
             <tr>
               <th className="text-left px-3 py-2">Lender</th>
@@ -203,13 +213,21 @@ export default function LoanRatesEditor() {
                   >
                     Edit
                   </button>
-                  <button
-                    type="button"
-                    className="text-red-600 hover:underline"
-                    onClick={() => void remove(r.id, r.lender_name)}
-                  >
-                    Delete
-                  </button>
+                  {pendingDeleteId === r.id ? (
+                    <span className="inline-flex items-center gap-1">
+                      <span className="text-red-700 font-semibold">Delete?</span>
+                      <button type="button" className="text-red-600 hover:underline font-bold" onClick={() => void remove(r.id)}>Yes</button>
+                      <button type="button" className="text-slate-500 hover:underline" onClick={() => setPendingDeleteId(null)}>No</button>
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      className="text-red-600 hover:underline"
+                      onClick={() => { setDeleteError(null); setPendingDeleteId(r.id); }}
+                    >
+                      Delete
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -227,9 +245,10 @@ interface FormProps {
   onCancel: () => void;
   busy: boolean;
   isEdit: boolean;
+  saveError?: string | null;
 }
 
-function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: FormProps) {
+function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveError }: FormProps) {
   function set<K extends keyof DraftRate>(key: K, value: DraftRate[K]) {
     setDraft({ ...draft, [key]: value });
   }
@@ -262,7 +281,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: FormP
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Field label="Rate % (p.a.)">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             step="0.01"
             min="0"
             max="99"
@@ -273,7 +292,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: FormP
         </Field>
         <Field label="Comparison rate % (p.a.)">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             step="0.01"
             min="0"
             max="99"
@@ -284,7 +303,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: FormP
         </Field>
         <Field label="Max LVR %">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             step="1"
             min="1"
             max="100"
@@ -297,7 +316,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: FormP
 
       <Field label="Min loan (cents — e.g. 500000000 = $5,000,000)">
         <input
-          type="number"
+          type="number" inputMode="decimal"
           step="100"
           min="0"
           value={draft.min_loan_cents}
@@ -354,6 +373,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: FormP
         >
           Cancel
         </button>
+        {saveError && <p role="alert" className="text-xs text-red-700 ml-2">{saveError}</p>}
       </div>
     </div>
   );

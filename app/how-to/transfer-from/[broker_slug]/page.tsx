@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import Icon from "@/components/Icon";
@@ -191,12 +192,53 @@ export default async function TransferFromPage({
 
   const steps = Array.isArray(guide.steps) ? guide.steps : [];
 
+  // Dynamic FAQ based on broker-specific data
+  const transferFee = guide.chess_transfer_fee == null
+    ? "varies — contact them directly to confirm"
+    : guide.chess_transfer_fee === 0
+    ? "free (no charge)"
+    : `${(guide.chess_transfer_fee / 100).toLocaleString("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 })} per holding`;
+  const timeline = guide.estimated_timeline_days
+    ? `typically ${guide.estimated_timeline_days} business days`
+    : "typically 3–10 business days";
+
+  const brokerFaqs = [
+    {
+      q: `How do I transfer my shares out of ${broker.name}?`,
+      a: guide.supports_in_specie
+        ? `${broker.name} supports CHESS in-specie transfers. To initiate the transfer, contact your new broker and provide your ${broker.name} HIN (Holder Identification Number) and SRN (Securityholder Reference Number). The new broker requests the holdings from CHESS on your behalf — you do not need to call ${broker.name} first. The transfer typically completes in ${timeline}. If ${broker.name} uses a custodial (non-CHESS) structure for some holdings, those positions may need to be sold and rebuilt at the new broker, which is a CGT event.`
+        : `Contact ${broker.name} directly to initiate a transfer out. Check whether your holdings are CHESS-sponsored (you have an HIN) or held in a custodial structure. For CHESS-sponsored holdings, your new broker can request the transfer; for custodial holdings, you may need to sell and rebuy at the new broker (a CGT event). See the steps above for the specific process ${broker.name} follows.`,
+    },
+    {
+      q: `What is ${broker.name}'s transfer-out fee?`,
+      a: `${broker.name}'s outgoing CHESS in-specie transfer fee is ${transferFee}. This fee is charged by ${broker.name} when shares leave their platform. The receiving broker typically charges nothing. If you are transferring multiple holdings, the fee may apply per security. Always confirm the current fee schedule on ${broker.name}'s official website before initiating — fees can change without notice.`,
+    },
+    {
+      q: `Does transferring shares out of ${broker.name} trigger capital gains tax?`,
+      a: guide.supports_in_specie
+        ? `A CHESS in-specie transfer out of ${broker.name} does NOT trigger a CGT event. The shares move to your new broker under the same HIN — no sale occurs, your original acquisition date and cost base are preserved. However, if any of your holdings are in a custodial account rather than a CHESS account (common with international shares or some ETFs on custodial platforms), those positions may need to be liquidated and rebuilt, which DOES trigger CGT at current market prices.`
+        : `Whether a transfer out of ${broker.name} triggers CGT depends on your holding structure. CHESS-sponsored holdings (you have an HIN) can be transferred in-specie without a sale — no CGT event. Custodial holdings (the broker holds shares on your behalf) typically require a sale and rebuy, which IS a CGT disposal. Check with ${broker.name} whether your holdings are CHESS or custodial before initiating. Consider your cost base and current gain/loss position before any required sale.`,
+    },
+    {
+      q: `How long does a transfer out of ${broker.name} take?`,
+      a: `Transfers out of ${broker.name} ${timeline}. The timeline covers: your new broker submitting the CHESS transfer request, ${broker.name} releasing the holdings, and CHESS updating the registered holder record. During this period your holdings are locked — you cannot buy, sell, or modify the positions being transferred. For international share positions held in custodial accounts (ACATS), allow 4–6 business days for US-listed securities. If ${guide.special_requirements && guide.special_requirements.length > 0 ? `there are special requirements for ${broker.name} transfers (see above)` : `the transfer is delayed beyond ${guide.estimated_timeline_days ? guide.estimated_timeline_days + " days" : "10 business days"}`}, contact ${broker.name}'s support team to check the status.`,
+    },
+  ];
+
+  const brokerFaqLd = faqJsonLd(brokerFaqs);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {brokerFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(brokerFaqLd) }}
+        />
+      )}
       <div className="bg-slate-50 min-h-screen">
         <section className="bg-white border-b border-slate-200 py-8 md:py-10">
           <div className="container-custom">
@@ -394,6 +436,23 @@ export default async function TransferFromPage({
               page is general information only, not personal financial product
               advice.
             </p>
+          </div>
+        </section>
+
+        <section className="py-8 bg-slate-50 border-t border-slate-200">
+          <div className="container-custom max-w-3xl">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {brokerFaqs.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-white">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </section>
       </div>

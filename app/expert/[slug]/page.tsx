@@ -28,7 +28,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: a.meta_description || a.excerpt,
       url: `/expert/${slug}`,
       type: "article",
+      images: [{ url: `/api/og?title=${encodeURIComponent(a.title)}&sub=${encodeURIComponent("Expert Insights · " + (a.author_name || "Invest.com.au"))}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -96,7 +98,7 @@ export default async function ExpertArticlePage({ params }: Props) {
       <div className="py-5 md:py-10">
         <div className="container-custom max-w-3xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-1.5">/</span>
             <Link href="/expert" className="hover:text-slate-900">Expert Insights</Link>

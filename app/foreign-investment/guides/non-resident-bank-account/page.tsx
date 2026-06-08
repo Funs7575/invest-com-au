@@ -10,8 +10,7 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const metadata: Metadata = {
   title: "Can Non-Residents Open an Australian Bank Account? (2026 Guide)",
-  description:
-    "Yes — non-residents can open Australian bank accounts remotely. Which major banks accept non-residents, what documents you need, how to open online without visiting Australia, and alternatives like Wise and OFX.",
+  description: "Non-residents can open an Australian bank account remotely. Which banks accept non-residents, required documents, and alternatives like Wise and OFX.",
   openGraph: {
     title: "Can Non-Residents Open an Australian Bank Account? (2026)",
     description:
@@ -176,7 +175,7 @@ export default async function NonResidentBankAccountPage() {
       {/* ── Hero ── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -313,11 +312,11 @@ export default async function NonResidentBankAccountPage() {
             sub="Gather these before applying. Incomplete applications cause delays."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Documents required to open a non-resident bank account">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Document</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Document</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -355,7 +354,7 @@ export default async function NonResidentBankAccountPage() {
                           )}
                         </div>
                         {p.rating && (
-                          <p className="text-xs text-amber-700 font-semibold">{renderStars(p.rating)} {p.rating.toFixed(1)}</p>
+                          <p className="text-xs text-amber-700 font-semibold"><span aria-hidden="true">{renderStars(p.rating)}</span> <span aria-label={`${p.rating.toFixed(1)} out of 5 stars`}>{p.rating.toFixed(1)}</span></p>
                         )}
                       </div>
                     </div>

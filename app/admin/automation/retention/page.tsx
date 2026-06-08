@@ -53,7 +53,7 @@ export default async function RetentionPage() {
               </button>
             </form>
           </header>
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Retention metrics">
             <thead>
               <tr className="text-[0.6rem] uppercase tracking-wider text-slate-500 border-b border-slate-100">
                 <th className="px-4 py-2 text-left font-semibold">Cohort</th>

@@ -3,6 +3,28 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const RENEWABLE_FAQS = [
+  {
+    q: "How can I invest in renewable energy in Australia?",
+    a: "Australian investors can access renewable energy through: (1) ASX-listed companies — Meridian Energy, Infigen, AGL, Origin, New Energy Solar; (2) ASX-listed infrastructure funds with clean energy assets (e.g. APA Group, Spark Infrastructure before delisting); (3) unlisted managed funds investing in solar farms, wind projects, or battery storage; (4) direct project co-investment via platforms or family offices; (5) green bonds issued by companies or government entities financing renewable projects. The Australian renewable energy sector is one of the fastest-growing globally, driven by the Emissions Reduction Fund, ARENA grants, and state-level renewable targets.",
+  },
+  {
+    q: "What government incentives exist for renewable energy investors in Australia?",
+    a: "Key incentives: (1) ARENA (Australian Renewable Energy Agency) grants for early-stage technology and demonstration projects — available to project developers, not passive investors; (2) the Capacity Investment Scheme — government backstop contracts for new renewable capacity, reducing revenue risk for project owners; (3) Large-scale Generation Certificates (LGCs) — each MWh of accredited renewable electricity earns a certificate worth ~$30–70 that electricity retailers are required to buy; (4) Small-scale Technology Certificates (STCs) for rooftop solar, reducing installation cost by ~20–30%; (5) state-based incentives vary (ACT and Victoria have the most aggressive renewable targets and subsidy programs).",
+  },
+  {
+    q: "What returns can I expect from a renewable energy investment?",
+    a: "Stabilised (operational) renewable energy assets typically target 7–10% unlevered IRR, with leverage boosting equity returns to 10–15% in normal conditions. Assets with long-term Power Purchase Agreements (PPAs) or government backstop contracts have more predictable cash flows and can be modelled with higher confidence. Construction-phase investments carry higher risk and target 15–20%+ equity returns. Listed renewable energy stocks and ETFs have been volatile — the global clean energy thematic experienced significant drawdowns in 2022–23 as rates rose, compressing valuations.",
+  },
+  {
+    q: "Can foreign investors invest in Australian renewable energy projects?",
+    a: "Yes, with conditions. FIRB approval is required for foreign investment above the monetary threshold in existing renewable energy businesses, and for the acquisition of greenfield sites above certain land thresholds. However, Australian policy actively encourages foreign capital in clean energy — the National Reconstruction Fund and the Clean Energy Finance Corporation both partner with foreign capital on large-scale projects. Many Australian renewable projects are majority foreign-owned (e.g., by European utilities and infrastructure funds). Foreign investors should take advice on the withholding tax treatment of dividends and interest from such investments under applicable tax treaties.",
+  },
+];
+
+const renewableFaqLd = faqJsonLd(RENEWABLE_FAQS);
 
 export const revalidate = 3600;
 
@@ -16,6 +38,7 @@ export const metadata: Metadata = {
     description:
       "Solar, wind, battery storage, and hydrogen projects seeking co-investment. ARENA, CEFC, and state incentives.",
     url: `${SITE_URL}/invest/renewable-energy`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Renewable Energy Investing Australia")}&sub=${encodeURIComponent("Solar · Wind · Battery Storage · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -32,11 +55,14 @@ export default function RenewableEnergyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {renewableFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(renewableFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -180,7 +206,7 @@ export default function RenewableEnergyPage() {
 
             <h3>5. Critical Minerals</h3>
             <p>
-              Investing in Australian lithium, cobalt, nickel, and rare earth companies provides indirect exposure to the energy transition supply chain. The "picks and shovels" approach to clean energy.
+              Investing in Australian lithium, cobalt, nickel, and rare earth companies provides indirect exposure to the energy transition supply chain. The &ldquo;picks and shovels&rdquo; approach to clean energy.
             </p>
 
             <h3>FIRB for Energy Infrastructure</h3>
@@ -214,6 +240,25 @@ export default function RenewableEnergyPage() {
                 Browse Energy Professionals
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {RENEWABLE_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

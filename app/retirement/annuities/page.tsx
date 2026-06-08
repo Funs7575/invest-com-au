@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Annuities in Australia — Lifetime, Term & How They Work (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How Australian annuities work: guaranteed income for life or a fixed term, Age Pension interaction, Challenger pricing example, ABP vs annuity comparison, and when partial annuitisation makes sense. ${UPDATED_LABEL}.`,
+  description: `Australian annuities: guaranteed income, Age Pension interaction, ABP vs annuity comparison, and when partial annuitisation makes sense. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Annuities in Australia (${CURRENT_YEAR}) — Guaranteed Income Explained`,
     description: "Lifetime vs term annuities: how they work, Age Pension assets test treatment, Challenger pricing, ABP comparison, taxation, and partial annuitisation.",
@@ -156,7 +157,7 @@ export default function RetirementAnnuitiesPage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/retirement" className="hover:text-slate-900">Retirement</Link>
@@ -280,12 +281,12 @@ export default function RetirementAnnuitiesPage() {
             most retirees benefit from holding both.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Account-based pension vs lifetime annuity comparison">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-1/4">Feature</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Account-based pension (ABP)</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifetime annuity</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-1/4">Feature</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Account-based pension (ABP)</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifetime annuity</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -368,13 +369,13 @@ export default function RetirementAnnuitiesPage() {
             calculators (Challenger, Allianz) or consult a financial adviser for a current quote.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-5">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Annuity pricing illustration for $200,000 lump sum at age 65">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Product option</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Approx. annual income</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Approx. monthly income</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Product option</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Approx. annual income</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Approx. monthly income</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -626,7 +627,7 @@ export default function RetirementAnnuitiesPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">
                     ▾
                   </span>
                 </summary>
@@ -657,6 +658,16 @@ export default function RetirementAnnuitiesPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Compare annuities with a licensed financial planner"
+        subheading="Annuity rates, guarantees, and income options are complex. A licensed financial planner can model whether a fixed, variable, or lifetime annuity suits your retirement income strategy."
+        intent={{ need: "retirement", context: ["annuities", "retirement_income"] }}
+        source="retirement_annuities"
+        ctaLabel="Find a retirement income specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

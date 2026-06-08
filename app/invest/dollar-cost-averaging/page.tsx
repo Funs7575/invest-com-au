@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
@@ -17,6 +17,7 @@ export const metadata: Metadata = {
       "Invest a fixed amount at regular intervals regardless of price. Here is how DCA works, when it beats a lump sum, and how to set it up in Australia.",
     url: `${SITE_URL}/invest/dollar-cost-averaging`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Dollar-Cost Averaging Australia")}&sub=${encodeURIComponent("DCA Strategy · ETFs · Automation · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -46,8 +47,15 @@ const faqItems = [
 const faq = faqJsonLd(faqItems);
 
 export default function DollarCostAveragingPage() {
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Invest", url: absoluteUrl("/invest") },
+    { name: "Dollar-Cost Averaging" },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {faq && (
         <script
           type="application/ld+json"
@@ -132,14 +140,14 @@ export default function DollarCostAveragingPage() {
             <p className="text-sm text-slate-500 mb-4">VAS is the Vanguard Australian Shares ETF. Prices below are illustrative only.</p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DCA worked example: $500/month into VAS over 12 months">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Month</th>
-                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Price/unit</th>
-                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Amount invested</th>
-                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Units bought</th>
-                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Cumulative units</th>
+                    <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Month</th>
+                    <th scope="col" className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Price/unit</th>
+                    <th scope="col" className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Amount invested</th>
+                    <th scope="col" className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Units bought</th>
+                    <th scope="col" className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Cumulative units</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -197,14 +205,14 @@ export default function DollarCostAveragingPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DCA vs lump sum: three scenarios">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="text-left py-3 px-4 font-semibold">Scenario</th>
-                    <th className="text-left py-3 px-4 font-semibold">What happens</th>
-                    <th className="text-left py-3 px-4 font-semibold">Lump sum result</th>
-                    <th className="text-left py-3 px-4 font-semibold">DCA result</th>
-                    <th className="text-left py-3 px-4 font-semibold">Winner</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">Scenario</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">What happens</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">Lump sum result</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">DCA result</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">Winner</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Shared Equity Home Loans Australia (${CURRENT_YEAR}) — Help to Buy & State Schemes | invest.com.au`,
-  description: `How shared equity works: government co-owns part of your home, reducing your loan size. Covers the federal Help to Buy scheme (up to 40% equity) and state programs. Income caps, property caps, repayment explained. ${UPDATED_LABEL}.`,
+  description: `Shared equity for first home buyers: federal Help to Buy (up to 40%) and state programs. Income caps, property caps, and repayment explained. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Shared Equity Home Loans Australia (${CURRENT_YEAR}) — Help to Buy & State Schemes`,
     description: "Shared equity home loans: government takes an equity stake to reduce your loan. Federal Help to Buy (up to 40%), state programs, income caps, property caps, and how repayment works on sale.",
@@ -123,7 +124,7 @@ export default function SharedEquityPage() {
       {/* Hero */}
       <section className="bg-slate-900 py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link><span>/</span>
             <Link href="/first-home-buyer" className="hover:text-white">First Home Buyer</Link><span>/</span>
             <span className="text-slate-200 font-medium">Shared Equity Schemes</span>
@@ -261,12 +262,12 @@ export default function SharedEquityPage() {
           {/* Property price caps */}
           <h3 className="text-lg font-extrabold text-slate-900 mb-3">Help to Buy property price caps by state</h3>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Help to Buy shared equity property price caps by state" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State / Territory</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">New build cap</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Existing home cap</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State / Territory</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">New build cap</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Existing home cap</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -302,15 +303,15 @@ export default function SharedEquityPage() {
             State programs change frequently — always verify current status with the relevant state housing authority.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="State shared equity programs comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Program</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Gov. equity</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Income cap</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Property cap</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Status</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Program</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Gov. equity</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Income cap</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Property cap</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -404,11 +405,11 @@ export default function SharedEquityPage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Pros and cons of shared equity</h2>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Pros and cons of shared equity schemes" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide w-1/2">Advantages</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-red-300 uppercase tracking-wide w-1/2">Disadvantages</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide w-1/2">Advantages</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-red-300 uppercase tracking-wide w-1/2">Disadvantages</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -438,12 +439,12 @@ export default function SharedEquityPage() {
             makes the government a guarantor only.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Shared equity vs First Home Guarantee comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Help to Buy (shared equity)</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-blue-300 uppercase tracking-wide whitespace-nowrap">First Home Guarantee (FHBG)</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Help to Buy (shared equity)</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-blue-300 uppercase tracking-wide whitespace-nowrap">First Home Guarantee (FHBG)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -510,7 +511,7 @@ export default function SharedEquityPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4 bg-white">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">&#9662;</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -518,6 +519,16 @@ export default function SharedEquityPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Find a mortgage broker who knows shared equity schemes"
+        subheading="Help to Buy and state shared equity programs have income caps, property price limits, and lender eligibility rules. A licensed mortgage broker can help you check eligibility and find a participating lender."
+        intent={{ need: "mortgage", context: ["shared_equity", "first_home_buyer"] }}
+        source="first_home_buyer_shared_equity"
+        ctaLabel="Find a mortgage broker"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

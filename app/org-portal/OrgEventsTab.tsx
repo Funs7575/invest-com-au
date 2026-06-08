@@ -296,12 +296,12 @@ export default function OrgEventsTab({ org: _org }: Props) {
         <div className="bg-white border border-teal-200 rounded-xl p-5 mb-5">
           <h2 className="text-sm font-bold text-slate-900 mb-4">New Event</h2>
           <EventFormFields form={form} setField={setFormField} />
-          {createError && <p className="text-xs text-red-600 mt-2">{createError}</p>}
+          {createError && <p role="alert" className="text-xs text-red-600 mt-2">{createError}</p>}
           <div className="flex gap-2 pt-3">
             <button
               onClick={handleCreate}
               disabled={creating || !form.title.trim() || !form.starts_at}
-              className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {creating ? "Creating..." : "Create Event"}
             </button>
@@ -317,16 +317,16 @@ export default function OrgEventsTab({ org: _org }: Props) {
 
       {/* Edit modal */}
       {editingEvent && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
-            <h2 className="text-sm font-bold text-slate-900 mb-4">Edit Event</h2>
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onKeyDown={(e) => { if (e.key === "Escape") { setEditingEvent(null); setEditError(""); } }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="org-edit-event-title" className="bg-white rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
+            <h2 id="org-edit-event-title" className="text-sm font-bold text-slate-900 mb-4">Edit Event</h2>
             <EventFormFields form={editForm} setField={setEditFormField} />
-            {editError && <p className="text-xs text-red-600 mt-2">{editError}</p>}
+            {editError && <p role="alert" className="text-xs text-red-600 mt-2">{editError}</p>}
             <div className="flex gap-2 pt-3">
               <button
                 onClick={handleSaveEdit}
                 disabled={saving || !editForm.title.trim() || !editForm.starts_at}
-                className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </button>
@@ -343,9 +343,9 @@ export default function OrgEventsTab({ org: _org }: Props) {
 
       {/* Delete confirm modal */}
       {deletingId !== null && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
-            <h2 className="text-sm font-bold text-slate-900 mb-2">Delete Event?</h2>
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onKeyDown={(e) => { if (e.key === "Escape") { setDeletingId(null); setDeleteError(""); } }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="org-delete-event-title" className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <h2 id="org-delete-event-title" className="text-sm font-bold text-slate-900 mb-2">Delete Event?</h2>
             <p className="text-xs text-slate-500 mb-4">
               This will permanently delete this draft event. This cannot be undone.
             </p>
@@ -477,8 +477,9 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
   return (
     <div className="space-y-3">
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1">Title *</label>
+        <label htmlFor="org-evt-title" className="block text-xs font-semibold text-slate-600 mb-1">Title *</label>
         <input
+          id="org-evt-title"
           value={form.title}
           onChange={(e) => setField("title", e.target.value)}
           placeholder="e.g. SMSF Fundamentals Webinar"
@@ -487,8 +488,9 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
+        <label htmlFor="org-evt-description" className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
         <textarea
+          id="org-evt-description"
           value={form.description}
           onChange={(e) => setField("description", e.target.value)}
           rows={3}
@@ -499,8 +501,9 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Event type</label>
+          <label htmlFor="org-evt-type" className="block text-xs font-semibold text-slate-600 mb-1">Event type</label>
           <select
+            id="org-evt-type"
             value={form.event_type}
             onChange={(e) => setField("event_type", e.target.value)}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -511,9 +514,10 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Price (AUD)</label>
+          <label htmlFor="org-evt-price" className="block text-xs font-semibold text-slate-600 mb-1">Price (AUD)</label>
           <input
-            type="number"
+            id="org-evt-price"
+            type="number" inputMode="decimal"
             min="0"
             step="0.01"
             value={form.price_dollars}
@@ -526,8 +530,9 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Starts at *</label>
+          <label htmlFor="org-evt-starts-at" className="block text-xs font-semibold text-slate-600 mb-1">Starts at *</label>
           <input
+            id="org-evt-starts-at"
             type="datetime-local"
             value={form.starts_at}
             onChange={(e) => setField("starts_at", e.target.value)}
@@ -535,8 +540,9 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Ends at</label>
+          <label htmlFor="org-evt-ends-at" className="block text-xs font-semibold text-slate-600 mb-1">Ends at</label>
           <input
+            id="org-evt-ends-at"
             type="datetime-local"
             value={form.ends_at}
             onChange={(e) => setField("ends_at", e.target.value)}
@@ -546,8 +552,9 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1">Location</label>
+        <label htmlFor="org-evt-location" className="block text-xs font-semibold text-slate-600 mb-1">Location</label>
         <input
+          id="org-evt-location"
           value={form.location}
           onChange={(e) => setField("location", e.target.value)}
           placeholder='e.g. "Online" or "123 Collins St, Melbourne VIC 3000"'
@@ -556,8 +563,9 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1">Meeting URL (shown after registration)</label>
+        <label htmlFor="org-evt-meeting-url" className="block text-xs font-semibold text-slate-600 mb-1">Meeting URL (shown after registration)</label>
         <input
+          id="org-evt-meeting-url"
           type="url"
           value={form.meeting_url}
           onChange={(e) => setField("meeting_url", e.target.value)}
@@ -567,9 +575,10 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1">Capacity (leave blank for unlimited)</label>
+        <label htmlFor="org-evt-capacity" className="block text-xs font-semibold text-slate-600 mb-1">Capacity (leave blank for unlimited)</label>
         <input
-          type="number"
+          id="org-evt-capacity"
+          type="number" inputMode="decimal"
           min="1"
           max="10000"
           value={form.max_attendees}

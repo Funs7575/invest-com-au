@@ -190,7 +190,13 @@ export default function ReviewsClient({ brokers, advisors = [] }: ReviewsClientP
           ) : (
             <div className="text-center py-8 md:py-12 text-slate-500">
               <p className="text-sm md:text-lg font-medium mb-1">No advisors in this category yet</p>
-              <p className="text-xs md:text-sm">Check back soon — we&apos;re adding more reviews regularly.</p>
+              <p className="text-xs md:text-sm mb-4">Check back soon — we&apos;re adding more reviews regularly.</p>
+              <Link
+                href="/advisors"
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-colors"
+              >
+                Browse all advisors
+              </Link>
             </div>
           )}
         </>

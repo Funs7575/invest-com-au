@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "How trust income flows through to beneficiaries, income splitting in family trusts, section 100A, testamentary trusts, and trust loss rules.",
     url: `${SITE_URL}/tax/trusts`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Trusts & Trust Taxation Australia")}&sub=${encodeURIComponent("Family Trusts · Income Splitting · Section 100A · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/trusts` },
@@ -362,7 +363,7 @@ export default function TrustsTaxPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -441,12 +442,12 @@ export default function TrustsTaxPage() {
             </p>
           </div>
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse min-w-[640px]">
+            <table className="w-full text-sm border-collapse min-w-[640px]" aria-label="Types of trusts in Australia: features and common uses">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold w-1/5">Trust type</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Key features</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Common uses</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/5">Trust type</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Key features</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Common uses</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -481,13 +482,13 @@ export default function TrustsTaxPage() {
             </p>
           </div>
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse min-w-[680px]">
+            <table className="w-full text-sm border-collapse min-w-[680px]" aria-label="Discretionary trust vs company vs personal ownership comparison">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold w-1/5">Feature</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Discretionary trust</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Company</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Held personally</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/5">Feature</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Discretionary trust</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Company</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Held personally</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -555,12 +556,12 @@ export default function TrustsTaxPage() {
             </p>
           </div>
           <div className="mt-6 overflow-x-auto max-w-3xl">
-            <table className="w-full text-sm border-collapse min-w-[560px]">
+            <table className="w-full text-sm border-collapse min-w-[560px]" aria-label="Trust setup and ongoing costs">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Item</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Indicative cost</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Notes</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Item</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Indicative cost</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -619,7 +620,7 @@ export default function TrustsTaxPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
                     &#9662;
                   </span>
                 </summary>

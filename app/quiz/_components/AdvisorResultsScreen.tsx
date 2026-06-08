@@ -372,7 +372,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
         <div className="container-custom max-w-2xl mx-auto">
           {loadingMatches ? (
             <div className="text-center py-16">
-              <div className="w-12 h-12 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin mx-auto mb-4" />
+              <div aria-hidden="true" className="w-12 h-12 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin mx-auto mb-4" />
               <p className="text-sm text-slate-500 font-medium">Filtering professionals…</p>
             </div>
           ) : allMatches.length === 0 ? (
@@ -591,10 +591,11 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           </p>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="ars-name" className="block text-xs font-semibold text-slate-700 mb-1">
                 Full name <span className="text-red-400">*</span>
               </label>
               <input
+                id="ars-name"
                 type="text"
                 placeholder="Alex Smith"
                 autoComplete="name"
@@ -604,10 +605,11 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="ars-phone" className="block text-xs font-semibold text-slate-700 mb-1">
                 Phone number <span className="text-red-400">*</span>
               </label>
               <input
+                id="ars-phone"
                 type="tel"
                 placeholder="04xx xxx xxx"
                 autoComplete="tel"
@@ -617,11 +619,12 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="ars-email" className="block text-xs font-semibold text-slate-700 mb-1">
                 Email address <span className="text-red-400">*</span>
               </label>
               <input
-                type="email"
+                id="ars-email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 placeholder="you@email.com"
                 autoComplete="email"
                 value={email}
@@ -630,11 +633,11 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               />
             </div>
           </div>
-          {contactError && <p className="text-xs text-red-500 mt-2">{contactError}</p>}
+          {contactError && <p role="alert" className="text-xs text-red-500 mt-2">{contactError}</p>}
           <button
             onClick={handleContactNext}
             disabled={!canSubmitContact}
-            className="w-full mt-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
+            className="w-full mt-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Continue — choose my location →
           </button>

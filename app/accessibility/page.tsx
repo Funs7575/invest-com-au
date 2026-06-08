@@ -9,6 +9,20 @@ export const metadata: Metadata = {
   description:
     "Invest.com.au is committed to making our website accessible to all users, including those with disabilities, in accordance with WCAG 2.1 and the Disability Discrimination Act 1992.",
   alternates: { canonical: "/accessibility" },
+  openGraph: {
+    title: "Accessibility Statement",
+    description:
+      "Our commitment to WCAG 2.1 AA accessibility under the Disability Discrimination Act 1992.",
+    url: "/accessibility",
+    images: [
+      {
+        url: "/api/og?title=Accessibility+Statement&subtitle=WCAG+2.1+AA+%7C+Disability+Discrimination+Act+1992&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 export default function AccessibilityPage() {

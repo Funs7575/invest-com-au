@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 86400;
 
@@ -20,6 +21,25 @@ export const metadata = {
   },
   twitter: { card: "summary_large_image" as const },
 };
+
+const HOW_WE_VERIFY_FAQS = [
+  {
+    q: "How often does Invest.com.au verify broker fees?",
+    a: "We verify all broker fees at a minimum quarterly cadence. When a broker announces a fee change mid-quarter, we update our records immediately — as soon as the new pricing is confirmed on their official website or PDS, not at the next scheduled audit. Every verification is date-stamped so you can see exactly when data was last checked.",
+  },
+  {
+    q: "Where does Invest.com.au get its fee data from?",
+    a: "We source fee data exclusively from each broker's official pricing page, Product Disclosure Statement (PDS), and Terms & Conditions. We never rely on third-party databases, user-submitted information, or press releases as a primary source. All data is cross-checked against the PDS to catch conditional fees and discrepancies not listed on the main pricing page.",
+  },
+  {
+    q: "Does Invest.com.au include all fee types, or just brokerage?",
+    a: "We capture every published fee: brokerage commissions (per-trade or percentage), FX conversion fees, inactivity fees, platform/subscription fees, account-keeping fees, international share fees, and any conditional charges. Where a broker uses multiple pricing tiers, we record all tiers so our fee simulator and comparisons reflect the full cost picture for different usage profiles.",
+  },
+  {
+    q: "How do verified fees influence the broker star rating?",
+    a: "Verified fee data feeds directly into our weighted scoring model. Fees are scored against the full comparison set — a broker charging $29.95 per trade scores lower on the cost dimension than one charging $2. The fee score is then weighted alongside safety, product range, platform features, and user experience to produce the overall star rating. You can see the full methodology at /methodology.",
+  },
+];
 
 const STEPS = [
   {
@@ -53,6 +73,7 @@ export default function HowWeVerifyPage() {
     { name: "Home", url: absoluteUrl("/") },
     { name: "How We Verify" },
   ]);
+  const faqLd = faqJsonLd(HOW_WE_VERIFY_FAQS);
 
   return (
     <>
@@ -60,6 +81,9 @@ export default function HowWeVerifyPage() {
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
     />
+    {faqLd && (
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+    )}
     <div className="py-5 md:py-12">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
@@ -175,6 +199,22 @@ export default function HowWeVerifyPage() {
               Subscribe to Fee Alerts →
             </Link>
           </div>
+
+          {/* FAQ */}
+          <section className="mb-10 border-t border-slate-200 pt-8">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {HOW_WE_VERIFY_FAQS.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
 
           {/* CTA */}
           <section className="bg-slate-700/5 border border-slate-700/20 rounded-xl p-6 md:p-8 text-center">

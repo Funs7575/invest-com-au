@@ -34,7 +34,7 @@ export default function CostCalculator({ surcharges }: { surcharges: StateStampD
 
       <div className="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
-          <label className="text-xs font-semibold text-slate-600 block mb-2">Property price</label>
+          <p className="text-xs font-semibold text-slate-600 block mb-2">Property price</p>
           <div className="flex flex-wrap gap-2">
             {priceOptions.map((opt) => (
               <button
@@ -52,7 +52,7 @@ export default function CostCalculator({ surcharges }: { surcharges: StateStampD
           </div>
         </div>
         <div>
-          <label className="text-xs font-semibold text-slate-600 block mb-2">State / Territory</label>
+          <p className="text-xs font-semibold text-slate-600 block mb-2">State / Territory</p>
           <div className="flex flex-wrap gap-2">
             {stateOptions.map((s) => (
               <button

@@ -11,14 +11,16 @@ export const revalidate = 43200;
 export const metadata: Metadata = {
   title: `Foreign Investment in Australian Energy (${CURRENT_YEAR}) — FIRB, Critical Infrastructure & Tax`,
   description:
-    "A practical guide for non-Australian investors in Australian oil, gas, LNG, refining and fuel-storage assets. FIRB thresholds, the 2025 national security amendments, dividend and royalty withholding, CGT for non-residents, and allied-nation frameworks.",
+    "Non-resident investing in Australian energy: FIRB thresholds, national security amendments, dividend/royalty withholding, and CGT for non-residents.",
   alternates: { canonical: `${SITE_URL}/foreign-investment/energy` },
   openGraph: {
     title: `Foreign Investment in Australian Energy (${CURRENT_YEAR})`,
     description:
       "FIRB, critical infrastructure, withholding tax and allied-nation frameworks for foreign investors in Australian energy.",
     url: `${SITE_URL}/foreign-investment/energy`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Foreign Investment in Australian Energy")}&sub=${encodeURIComponent("FIRB · Critical Infrastructure · Solar · LNG · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 const SECTIONS = [
@@ -115,7 +117,7 @@ export default function ForeignInvestmentEnergyPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>

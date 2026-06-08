@@ -224,6 +224,7 @@ export default function EnquireButton({
                   <button
                     type="submit"
                     disabled={submitting}
+                    aria-busy={submitting}
                     className={`flex-1 font-bold text-sm px-4 py-2.5 rounded-lg disabled:bg-slate-400 ${buttonCls}`}
                   >
                     {submitting ? "Sending..." : "Send enquiry"}

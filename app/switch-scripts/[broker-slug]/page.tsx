@@ -35,7 +35,9 @@ export async function generateMetadata({
       description,
       url: absoluteUrl(`/switch-scripts/${slug}`),
       type: "article",
+      images: [{ url: `/api/og?title=${encodeURIComponent("Switch from " + script.brokerName)}&sub=${encodeURIComponent("Negotiation Script · Transfer Steps · CGT Notes")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -57,7 +59,7 @@ export default async function SwitchScriptPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
 
-      <nav className="mb-4 text-sm text-slate-500">
+      <nav aria-label="Breadcrumb" className="mb-4 text-sm text-slate-500">
         <Link href="/switch-scripts" className="hover:text-slate-900">
           ← All switch scripts
         </Link>
@@ -93,7 +95,7 @@ export default async function SwitchScriptPage({ params }: PageProps) {
         </h2>
         <p className="mt-2 text-sm text-amber-800">
           Switching brokers takes 5–10 business days and may trigger a CGT event
-          if you're forced to sell instead of transfer. Often the cheapest path
+          if you&apos;re forced to sell instead of transfer. Often the cheapest path
           is to ask your existing broker for a discount before leaving.
         </p>
         <ol className="mt-6 space-y-5">

@@ -27,10 +27,11 @@ interface CardProps {
 
 function VerifiedCard({ row, onRemove }: CardProps) {
   const [removing, setRemoving] = useState(false);
+  const [pendingRemove, setPendingRemove] = useState(false);
   const cfg = TYPE_CONFIG[row.product_type];
 
   const handleRemove = async () => {
-    if (!confirm(`Remove "${row.product_ref}" from your verified products?`)) return;
+    setPendingRemove(false);
     setRemoving(true);
     try {
       const res = await fetch("/api/account/verified-products", {
@@ -68,14 +69,31 @@ function VerifiedCard({ row, onRemove }: CardProps) {
           </p>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() => { void handleRemove(); }}
-        disabled={removing}
-        className="shrink-0 text-xs text-slate-400 hover:text-red-600 disabled:opacity-50 transition-colors"
-      >
-        {removing ? "Removing…" : "Remove"}
-      </button>
+      {pendingRemove ? (
+        <div className="shrink-0 flex items-center gap-1.5">
+          <span className="text-xs text-red-600 font-medium">Remove?</span>
+          <button
+            type="button"
+            onClick={() => { void handleRemove(); }}
+            disabled={removing}
+            className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+          >{removing ? "…" : "Yes"}</button>
+          <button
+            type="button"
+            onClick={() => setPendingRemove(false)}
+            className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+          >No</button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setPendingRemove(true)}
+          disabled={removing}
+          className="shrink-0 text-xs text-slate-400 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {removing ? "Removing…" : "Remove"}
+        </button>
+      )}
     </div>
   );
 }

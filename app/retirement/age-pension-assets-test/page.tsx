@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Age Pension Assets Test — Thresholds, Exempt Assets & Taper Rate (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Complete guide to the Age Pension assets test: 2024–25 thresholds for singles and couples (homeowner and non-homeowner), exempt assets including the family home, $3/fortnight taper rate, gifting rules, super treatment, and 3 worked examples. ${UPDATED_LABEL}.`,
+  description: `Age Pension assets test — thresholds, the $3/fortnight taper, exempt assets, gifting rules, and worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Age Pension Assets Test (${CURRENT_YEAR}) — Thresholds, Exempt Assets & Taper`,
     description:
@@ -208,7 +209,7 @@ export default function AgePensionAssetsTestPage() {
       {/* ── Hero ────────────────────────────────────────────────────────── */}
       <section className="bg-slate-900 text-white py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link>
             <span>/</span>
             <Link href="/retirement" className="hover:text-white">Retirement</Link>
@@ -299,16 +300,16 @@ export default function AgePensionAssetsTestPage() {
             financial year.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Age Pension assets test thresholds 2024–25">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Situation
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Full pension (below)
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Cut-off — nil pension (above)
                   </th>
                 </tr>
@@ -864,7 +865,7 @@ export default function AgePensionAssetsTestPage() {
               <details key={i} className="group border border-slate-200 rounded-xl bg-white p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">
                     &#9660;
                   </span>
                 </summary>
@@ -874,6 +875,16 @@ export default function AgePensionAssetsTestPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get your Age Pension assets test modelled"
+        subheading="The assets test threshold, pension taper rate, and super drawdown strategy all interact. A licensed financial planner can model your entitlements and optimise your asset allocation."
+        intent={{ need: "retirement", context: ["age_pension", "assets_test", "centrelink"] }}
+        source="retirement_age_pension_assets_test"
+        ctaLabel="Find a retirement planner"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* ── Related guides ──────────────────────────────────────────────── */}
       <section className="py-8 border-b border-slate-100">

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 type AssetClass =
   | "residential-property"
@@ -623,6 +624,15 @@ export default function SmsfCheckerClient() {
             </details>
           </div>
         </div>
+      </section>
+
+      <section className="container-custom max-w-3xl py-8">
+        <CalculatorLeadCapture
+          calcSlug="smsf-checker"
+          calcTitle="SMSF eligibility"
+          need="smsf"
+          contextKeys={["smsf", "self-managed-super", "investment"]}
+        />
       </section>
 
       <section className="py-10 bg-white border-t border-slate-200">

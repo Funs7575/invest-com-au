@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Division 296 Super Tax Explained (${CURRENT_YEAR}) — The $3 Million Threshold`,
   description:
-    "Division 296 is a proposed extra 15% tax on superannuation earnings for balances above $3 million — taking the effective rate to 30% on that portion. Understand the proportional calculation, the unrealised gains controversy, who is affected, and its legislative status.",
+    "Division 296 tax: 15% extra on super earnings above $3M. Proportional calculation, unrealised gains controversy, who is affected, and legislative status.",
   openGraph: {
     title: `Division 296 Super Tax Explained (${CURRENT_YEAR}) — The $3M Threshold`,
     description:
@@ -221,7 +221,7 @@ export default function Division296Page() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/super" className="hover:text-slate-900">Super</Link>
@@ -470,12 +470,12 @@ export default function Division296Page() {
             earners, while Division 296 taxes <strong>earnings</strong> for very large balances.
           </p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Division 296 vs Division 293 comparison">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Division 296 (proposed)</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Division 293 (in force)</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Division 296 (proposed)</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Division 293 (in force)</th>
                 </tr>
               </thead>
               <tbody>

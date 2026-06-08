@@ -248,7 +248,7 @@ export default function GlobalInvestingHubPage() {
       <section className="bg-white border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <span className="text-slate-900 font-medium">Global Investing</span>
@@ -340,13 +340,13 @@ export default function GlobalInvestingHubPage() {
             </p>
 
             <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="ASX vs global markets — sector weight comparison">
                 <thead>
                   <tr className="bg-white border-b border-slate-200">
-                    <th className="text-left px-4 py-3 text-xs font-bold text-slate-600">Sector</th>
-                    <th className="text-right px-4 py-3 text-xs font-bold text-slate-600">ASX 200</th>
-                    <th className="text-right px-4 py-3 text-xs font-bold text-slate-600">MSCI World</th>
-                    <th className="text-right px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Difference</th>
+                    <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600">Sector</th>
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-slate-600">ASX 200</th>
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-slate-600">MSCI World</th>
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Difference</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -391,14 +391,14 @@ export default function GlobalInvestingHubPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-xs md:text-sm">
+            <table className="w-full text-xs md:text-sm" aria-label="Five ways to invest globally from Australia — method, cost and ownership comparison">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Method</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Examples</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden lg:table-cell">Ownership</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Cost</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden xl:table-cell">Key notes</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Method</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Examples</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden lg:table-cell">Ownership</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Cost</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden xl:table-cell">Key notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -899,7 +899,7 @@ export default function GlobalInvestingHubPage() {
               >
                 <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-semibold text-sm text-slate-900 hover:bg-slate-100 transition-colors">
                   <span>{faq.q}</span>
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#8964;
                   </span>
                 </summary>

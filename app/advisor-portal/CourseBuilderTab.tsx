@@ -482,10 +482,11 @@ export default function CourseBuilderTab({ advisor }: Props) {
         {step === 1 && (
           <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="course-title" className="block text-xs font-bold text-slate-700 mb-1">
                 Course Title <span className="text-red-500">*</span>
               </label>
               <input
+                id="course-title"
                 type="text"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -498,8 +499,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Description</label>
+              <label htmlFor="course-description" className="block text-xs font-bold text-slate-700 mb-1">Description</label>
               <textarea
+                id="course-description"
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 placeholder="What will students learn? Who is this course for? What topics does it cover?"
@@ -510,8 +512,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Level</label>
+                <label htmlFor="cb-level" className="block text-xs font-bold text-slate-700 mb-1">Level</label>
                 <select
+                  id="cb-level"
                   value={form.level}
                   onChange={(e) => setForm({ ...form, level: e.target.value as "beginner" | "intermediate" | "advanced" })}
                   className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30"
@@ -522,11 +525,12 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
+                <label htmlFor="cb-price" className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">$</span>
                   <input
-                    type="number"
+                    id="cb-price"
+                    type="number" inputMode="decimal"
                     step="0.01"
                     min="0"
                     value={form.price}
@@ -540,9 +544,10 @@ export default function CourseBuilderTab({ advisor }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Estimated Hours</label>
+                <label htmlFor="cb-hours" className="block text-xs font-bold text-slate-700 mb-1">Estimated Hours</label>
                 <input
-                  type="number"
+                  id="cb-hours"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   min="0"
                   value={form.estimated_hours}
@@ -552,8 +557,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Cover Image URL</label>
+                <label htmlFor="cb-cover-url" className="block text-xs font-bold text-slate-700 mb-1">Cover Image URL</label>
                 <input
+                  id="cb-cover-url"
                   type="url"
                   value={form.cover_image_url}
                   onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })}
@@ -575,14 +581,14 @@ export default function CourseBuilderTab({ advisor }: Props) {
             </div>
 
             {formError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{formError}</div>
+              <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{formError}</div>
             )}
 
             <div className="flex justify-end">
               <button
                 onClick={saveCourseDetails}
                 disabled={saving || !form.title.trim() || form.title.trim().length < 5}
-                className="px-5 py-2.5 bg-slate-900 text-white font-semibold text-sm rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                className="px-5 py-2.5 bg-slate-900 text-white font-semibold text-sm rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Save & Continue →"}
               </button>
@@ -659,8 +665,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-1">Module Name</label>
+                    <label htmlFor="cb-module-name" className="block text-xs font-bold text-slate-600 mb-1">Module Name</label>
                     <input
+                      id="cb-module-name"
                       type="text"
                       value={lessonForm.module_title}
                       onChange={(e) => setLessonForm({ ...lessonForm, module_title: e.target.value })}
@@ -670,9 +677,10 @@ export default function CourseBuilderTab({ advisor }: Props) {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1">Module #</label>
+                      <label htmlFor="cb-module-index" className="block text-xs font-bold text-slate-600 mb-1">Module #</label>
                       <input
-                        type="number"
+                        id="cb-module-index"
+                        type="number" inputMode="decimal"
                         min="1"
                         value={lessonForm.module_index}
                         onChange={(e) => setLessonForm({ ...lessonForm, module_index: parseInt(e.target.value) || 1 })}
@@ -680,9 +688,10 @@ export default function CourseBuilderTab({ advisor }: Props) {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1">Lesson #</label>
+                      <label htmlFor="cb-lesson-index" className="block text-xs font-bold text-slate-600 mb-1">Lesson #</label>
                       <input
-                        type="number"
+                        id="cb-lesson-index"
+                        type="number" inputMode="decimal"
                         min="1"
                         value={lessonForm.lesson_index}
                         onChange={(e) => setLessonForm({ ...lessonForm, lesson_index: parseInt(e.target.value) || 1 })}
@@ -693,10 +702,11 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label htmlFor="lesson-title" className="block text-xs font-bold text-slate-600 mb-1">
                     Lesson Title <span className="text-red-500">*</span>
                   </label>
                   <input
+                    id="lesson-title"
                     type="text"
                     value={lessonForm.title}
                     onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
@@ -707,11 +717,12 @@ export default function CourseBuilderTab({ advisor }: Props) {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-1">
+                    <label htmlFor="lesson-video-url" className="block text-xs font-bold text-slate-600 mb-1">
                       Video URL{" "}
                       <span className="text-slate-400 font-normal">(YouTube / Vimeo)</span>
                     </label>
                     <input
+                      id="lesson-video-url"
                       type="url"
                       value={lessonForm.video_url}
                       onChange={(e) => setLessonForm({ ...lessonForm, video_url: e.target.value })}
@@ -720,9 +731,10 @@ export default function CourseBuilderTab({ advisor }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-1">Duration (minutes)</label>
+                    <label htmlFor="lesson-duration" className="block text-xs font-bold text-slate-600 mb-1">Duration (minutes)</label>
                     <input
-                      type="number"
+                      id="lesson-duration"
+                      type="number" inputMode="decimal"
                       min="0"
                       value={lessonForm.duration_minutes}
                       onChange={(e) => setLessonForm({ ...lessonForm, duration_minutes: e.target.value })}
@@ -733,10 +745,11 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label htmlFor="lesson-content" className="block text-xs font-bold text-slate-600 mb-1">
                     Description / Notes
                   </label>
                   <textarea
+                    id="lesson-content"
                     value={lessonForm.content}
                     onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
                     placeholder="Brief notes or summary for this lesson..."
@@ -756,14 +769,14 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 </label>
 
                 {lessonError && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{lessonError}</div>
+                  <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{lessonError}</div>
                 )}
 
                 <div className="flex items-center gap-2">
                   <button
                     onClick={saveLesson}
                     disabled={lessonSaving || !lessonForm.title.trim() || lessonForm.title.trim().length < 2}
-                    className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                    className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {lessonSaving ? "Saving..." : editingLesson ? "Update Lesson" : "Add Lesson"}
                   </button>
@@ -788,7 +801,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
               <button
                 onClick={() => setStep(3)}
                 disabled={lessons.length === 0}
-                className="px-5 py-2.5 bg-slate-900 text-white font-semibold text-sm rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                className="px-5 py-2.5 bg-slate-900 text-white font-semibold text-sm rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Continue to Preview →
               </button>
@@ -902,7 +915,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
             </div>
 
             {submitError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700 mb-4">{submitError}</div>
+              <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700 mb-4">{submitError}</div>
             )}
 
             <div className="flex items-center justify-between">
@@ -923,7 +936,8 @@ export default function CourseBuilderTab({ advisor }: Props) {
                   <button
                     onClick={submitForReview}
                     disabled={submitting}
-                    className="px-5 py-2.5 bg-violet-600 text-white font-bold text-sm rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                    aria-busy={submitting}
+                    className="px-5 py-2.5 bg-violet-600 text-white font-bold text-sm rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {submitting ? "Submitting..." : "Submit for Review"}
                   </button>
@@ -1133,7 +1147,7 @@ function LessonGroupList({
                         <button
                           onClick={() => onDelete(lesson.id)}
                           disabled={deletingLessonId === lesson.id}
-                          className="text-xs px-2 py-1 text-red-500 hover:text-red-700 border border-red-200 rounded-lg hover:bg-red-50 disabled:opacity-50 transition-colors"
+                          className="text-xs px-2 py-1 text-red-500 hover:text-red-700 border border-red-200 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           {deletingLessonId === lesson.id ? "..." : "Delete"}
                         </button>

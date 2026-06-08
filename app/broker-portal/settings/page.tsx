@@ -140,9 +140,10 @@ export default function SettingsPage() {
           <h3 className="font-bold text-slate-900">Account Details</h3>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+          <label htmlFor="broker-email" className="block text-sm font-medium text-slate-700 mb-1">Email</label>
           <input
-            type="email"
+            id="broker-email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             value={account.email}
             disabled
             className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-500"
@@ -151,30 +152,36 @@ export default function SettingsPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+          <label htmlFor="broker-full-name" className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
           <input
+            id="broker-full-name"
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
+            autoComplete="name"
             className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
+          <label htmlFor="broker-company" className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
           <input
+            id="broker-company"
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
+            autoComplete="organization"
             className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+          <label htmlFor="broker-phone" className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
           <input
+            id="broker-phone"
             type="tel"
+            autoComplete="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
@@ -184,8 +191,9 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Broker</label>
+            <label htmlFor="broker-slug-display" className="block text-sm font-medium text-slate-700 mb-1">Broker</label>
             <input
+              id="broker-slug-display"
               type="text"
               value={account.broker_slug}
               disabled
@@ -193,8 +201,9 @@ export default function SettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
+            <label htmlFor="broker-role-display" className="block text-sm font-medium text-slate-700 mb-1">Role</label>
             <input
+              id="broker-role-display"
               type="text"
               value={account.role}
               disabled
@@ -207,7 +216,8 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+            aria-busy={saving}
+            className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
@@ -255,7 +265,8 @@ export default function SettingsPage() {
             <button
               onClick={handleAcceptTerms}
               disabled={!termsChecked || saving}
-              className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+              aria-busy={saving}
+              className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Accept Terms
             </button>
@@ -310,11 +321,12 @@ export default function SettingsPage() {
           </label>
           {alertEnabled && (
             <div>
-              <label className="block text-sm text-slate-600 mb-1">Alert when balance drops below <InfoTip text="We recommend setting this to at least 2x your average daily spend to give you time to top up." /></label>
+              <label htmlFor="bp-alert-threshold" className="block text-sm text-slate-600 mb-1">Alert when balance drops below <InfoTip text="We recommend setting this to at least 2x your average daily spend to give you time to top up." /></label>
               <div className="flex items-center gap-2">
                 <span className="text-slate-500">$</span>
                 <input
-                  type="number"
+                  id="bp-alert-threshold"
+                  type="number" inputMode="decimal"
                   value={alertThreshold}
                   onChange={(e) => setAlertThreshold(Number(e.target.value))}
                   className="w-32 border border-slate-300 rounded-lg px-3 py-2 text-sm"
@@ -324,7 +336,7 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
-          <button onClick={handleSaveAlerts} disabled={saving} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50">
+          <button onClick={handleSaveAlerts} disabled={saving} aria-busy={saving} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
             Save Alert Preferences
           </button>
         </div>
@@ -339,7 +351,7 @@ export default function SettingsPage() {
           <h3 className="text-base font-bold text-slate-900">Email Notifications</h3>
         </div>
         <p className="text-sm text-slate-500 mb-4">
-          Choose which email notifications you'd like to receive. Changes save automatically.
+          Choose which email notifications you&apos;d like to receive. Changes save automatically.
         </p>
         <BrokerNotificationPreferences brokerSlug={account.broker_slug} />
       </div>

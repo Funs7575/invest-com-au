@@ -149,7 +149,7 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
 
           {/* Method selection */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-2">Evidence type</label>
+            <p className="block text-xs font-semibold text-gray-600 mb-2">Evidence type</p>
             <div className="grid grid-cols-2 gap-2">
               <label className="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 transition-colors">
                 <input
@@ -182,10 +182,10 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
 
           {method === "file" && (
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-2">
+              <p className="block text-xs font-semibold text-gray-600 mb-2">
                 ESIC evidence document
                 <span className="text-gray-400 font-normal ml-1">(PDF, JPG, or PNG · max 10 MB)</span>
-              </label>
+              </p>
               <div
                 className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center cursor-pointer hover:border-blue-300 transition-colors"
                 onClick={() => fileRef.current?.click()}
@@ -209,8 +209,9 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
           {method === "ato_register" && (
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Entity name</label>
+                <label htmlFor="esic-entity-name" className="block text-xs font-semibold text-gray-600 mb-1">Entity name</label>
                 <input
+                  id="esic-entity-name"
                   type="text"
                   value={entityName}
                   onChange={(e) => setEntityName(e.target.value)}
@@ -219,8 +220,9 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">ABN</label>
+                <label htmlFor="esic-abn" className="block text-xs font-semibold text-gray-600 mb-1">ABN</label>
                 <input
+                  id="esic-abn"
                   type="text"
                   value={abn}
                   onChange={(e) => setAbn(e.target.value)}
@@ -229,8 +231,9 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">ESIC registration date</label>
+                <label htmlFor="esic-reg-date" className="block text-xs font-semibold text-gray-600 mb-1">ESIC registration date</label>
                 <input
+                  id="esic-reg-date"
                   type="date"
                   value={esicRegDate}
                   onChange={(e) => setEsicRegDate(e.target.value)}
@@ -241,7 +244,7 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
           )}
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            <p role="alert" className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
               {error}
             </p>
           )}
@@ -259,6 +262,7 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
           <button
             type="submit"
             disabled={submitting}
+            aria-busy={submitting}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold text-sm py-2.5 rounded-lg transition-colors"
           >
             {submitting ? "Submitting…" : "Submit for review"}

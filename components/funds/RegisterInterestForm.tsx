@@ -232,6 +232,7 @@ export default function RegisterInterestForm({
       <button
         type="submit"
         disabled={submitting}
+        aria-busy={submitting}
         className="w-full inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-sm px-4 py-3 rounded-lg transition-colors disabled:bg-slate-400 disabled:cursor-not-allowed"
       >
         {submitting ? "Submitting..." : submitLabel}

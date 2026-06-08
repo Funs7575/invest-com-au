@@ -75,7 +75,7 @@ export default function QuizQuestionScreen({
       <div className="container-custom max-w-2xl mx-auto">
         {/* Data fetch error notice */}
         {fetchError && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4 text-[0.62rem] md:text-xs text-amber-700">
+          <div role="alert" className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4 text-[0.62rem] md:text-xs text-amber-700">
             {fetchError}
           </div>
         )}
@@ -209,9 +209,10 @@ export default function QuizQuestionScreen({
           {displayIndex > 0 && (
             <button
               onClick={onBack}
+              aria-label="Go back to previous question"
               className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mt-3 mb-1 min-h-11 transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
               Back

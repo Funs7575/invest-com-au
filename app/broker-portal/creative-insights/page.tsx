@@ -75,7 +75,7 @@ export default function CreativeInsightsPage() {
   }, []);
 
   // Aggregate stats per campaign
-  const campaignStats = useMemo(() => {
+  const _campaignStats = useMemo(() => {
     const map = new Map<number, { impressions: number; clicks: number; conversions: number; spend: number }>();
     for (const s of stats) {
       const existing = map.get(s.campaign_id) || { impressions: 0, clicks: 0, conversions: 0, spend: 0 };
@@ -515,17 +515,17 @@ export default function CreativeInsightsPage() {
         </div>
         <div className="relative">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[700px]">
+            <table className="w-full text-sm min-w-[700px]" aria-label="Creative performance insights">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                  <th className="px-5 py-3 text-left">Creative</th>
-                  <th className="px-5 py-3 text-left">Type</th>
-                  <th className="px-5 py-3 text-center">Status</th>
-                  <th className="px-5 py-3 text-right">Campaigns</th>
-                  <th className="px-5 py-3 text-right">Impressions</th>
-                  <th className="px-5 py-3 text-right">Clicks</th>
-                  <th className="px-5 py-3 text-right">CTR</th>
-                  <th className="px-5 py-3 text-right">Conversions</th>
+                  <th scope="col" className="px-5 py-3 text-left">Creative</th>
+                  <th scope="col" className="px-5 py-3 text-left">Type</th>
+                  <th scope="col" className="px-5 py-3 text-center">Status</th>
+                  <th scope="col" className="px-5 py-3 text-right">Campaigns</th>
+                  <th scope="col" className="px-5 py-3 text-right">Impressions</th>
+                  <th scope="col" className="px-5 py-3 text-right">Clicks</th>
+                  <th scope="col" className="px-5 py-3 text-right">CTR</th>
+                  <th scope="col" className="px-5 py-3 text-right">Conversions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "How to invest in infrastructure from Australia — toll roads, airports, utilities, ports. Transurban, APA Group, Atlas Arteria, Magellan Infrastructure Fund and unlisted options.",
     url: `${SITE_URL}/invest/infrastructure`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Infrastructure Investment Australia")}&sub=${encodeURIComponent("Toll Roads · Airports · Utilities · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -87,7 +88,7 @@ export default async function InfrastructurePage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -194,14 +195,14 @@ export default async function InfrastructurePage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">ASX-Listed Infrastructure Stocks</h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="ASX-listed infrastructure stocks">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Company</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Infrastructure Type</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Market Cap</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Company</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Infrastructure Type</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Market Cap</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
                 </tr>
               </thead>
               <tbody>

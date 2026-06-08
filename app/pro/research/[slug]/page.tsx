@@ -105,7 +105,7 @@ export default async function PremiumResearchReportPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
       />
 
-      <nav className="text-xs text-slate-500 mb-4">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
         <Link href="/pro/research" className="hover:text-slate-900">
           ← Premium research
         </Link>

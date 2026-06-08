@@ -60,7 +60,7 @@ export default function CgtCalculator({ searchParams }: Props) {
           <InputField label="Capital Gain" value={gainAmount} onChange={setGainAmount} placeholder="10000" prefix="$" />
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Marginal Tax Rate</label>
+            <p className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Marginal Tax Rate</p>
             <div className="grid grid-cols-5 gap-1.5">
               {TAX_BRACKETS.map((rate) => (
                 <button

@@ -270,12 +270,12 @@ export default function EquityAccessPage() {
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-6">Five methods — each with different structure, cost, and flexibility</p>
             <div className="rounded-xl border border-slate-200 overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table aria-label="Ways to access home equity" className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-800 text-white">
-                      <th className="text-left px-5 py-3 font-bold">Method</th>
-                      <th className="text-left px-5 py-3 font-bold">How it works</th>
-                      <th className="text-left px-5 py-3 font-bold">Best for</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">Method</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">How it works</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">Best for</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -323,13 +323,13 @@ export default function EquityAccessPage() {
             <h3 className="text-lg font-extrabold text-slate-900 mb-3">Usable equity by property value (at 80% LVR)</h3>
             <div className="rounded-xl border border-slate-200 overflow-hidden mb-4">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table aria-label="Usable equity by property value at 80% LVR" className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-800 text-white">
-                      <th className="text-left px-5 py-3 font-bold">Property value</th>
-                      <th className="text-left px-5 py-3 font-bold">80% max loan</th>
-                      <th className="text-left px-5 py-3 font-bold">Current balance</th>
-                      <th className="text-left px-5 py-3 font-bold text-emerald-300">Usable equity</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">Property value</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">80% max loan</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">Current balance</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold text-emerald-300">Usable equity</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

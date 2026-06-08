@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -62,7 +63,7 @@ export default function GlobalBondsPage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link><span>/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link><span>/</span>
             <span className="text-slate-900 font-medium">Foreign Bonds</span>
@@ -84,15 +85,15 @@ export default function GlobalBondsPage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">ASX-listed bond ETFs</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="ASX-listed bond ETFs — ticker, exposure, MER, yield and currency hedging">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Ticker</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Name</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Exposure</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">MER</th>
-                  <th className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">AUD hedged</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">~Yield</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Ticker</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Name</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Exposure</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">MER</th>
+                  <th scope="col" className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">AUD hedged</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">~Yield</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -124,7 +125,7 @@ export default function GlobalBondsPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">▾</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -132,6 +133,15 @@ export default function GlobalBondsPage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Get advice on adding bonds to your portfolio"
+        subheading="International bonds — from sovereign treasuries to emerging market credit — carry duration, currency, and credit risk. A financial adviser can model the fixed-income allocation that fits your risk profile and tax situation."
+        intent={{ need: "planning", context: ["bonds", "fixed_income", "portfolio_diversification"] }}
+        source="global_investing_bonds"
+        ctaLabel="Find an investment adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

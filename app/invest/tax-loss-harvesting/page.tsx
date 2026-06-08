@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Tax-Loss Harvesting Australia (${CURRENT_YEAR}) — How to Offset Capital Gains Before 30 June`,
-  description: `Reduce your CGT bill by crystallising capital losses before 30 June. How tax-loss harvesting works, the wash sale concern, worked examples, and the year-end checklist for Australian investors. ${UPDATED_LABEL}.`,
+  description: `Australian tax-loss harvesting: crystallise capital losses before 30 June to cut CGT. Wash sale concern, worked examples, and checklist. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Tax-Loss Harvesting Australia (${CURRENT_YEAR}) — Offset Capital Gains Before 30 June`,
     description:
@@ -518,7 +518,7 @@ export default function TaxLossHarvestingPage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
                   </summary>
                   <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
                 </details>

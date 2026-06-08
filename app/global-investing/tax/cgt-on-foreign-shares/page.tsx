@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "AUD cost base rules, FX gain impact, 50% CGT discount, and FITO for Australian investors holding US and other foreign shares.",
     url: `${SITE_URL}/global-investing/tax/cgt-on-foreign-shares`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("CGT on Foreign Shares")}&sub=${encodeURIComponent("Australian Tax on Overseas Investments · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: {
@@ -108,9 +109,15 @@ const COMMON_MISTAKES = [
 
 export default function CgtOnForeignSharesPage() {
   const faqSchema = faqJsonLd(FAQS);
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Global Investing", url: absoluteUrl("/global-investing") },
+    { name: "CGT on Foreign Shares" },
+  ]);
 
   return (
     <div className="bg-white min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {faqSchema && (
         <script
           type="application/ld+json"
@@ -121,7 +128,7 @@ export default function CgtOnForeignSharesPage() {
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -859,7 +866,7 @@ export default function CgtOnForeignSharesPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
                     &#9662;
                   </span>
                 </summary>

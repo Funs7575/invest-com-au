@@ -9,9 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Superannuation Death Benefits — Who Gets Your Super & How It's Taxed (${CURRENT_YEAR})`,
   description:
-    "How super death benefits work in Australia: who can receive them, the tax-free vs taxed distinction between dependants and non-dependants, binding death benefit nominations, reversionary pensions, the re-contribution strategy, and SMSF estate planning. " +
-    UPDATED_LABEL +
-    ".",
+    "Super death benefits: who receives them, dependant vs non-dependant tax, binding nominations, reversionary pensions, and the re-contribution strategy.",
   openGraph: {
     title: `Superannuation Death Benefits — Who Gets Your Super & How It's Taxed (${CURRENT_YEAR})`,
     description:
@@ -328,7 +326,7 @@ export default function SuperDeathBenefitPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/super" className="hover:text-slate-900">Super</Link>
@@ -388,12 +386,12 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Who can receive a death benefit (SIS dependants)</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-3xl">Under the Superannuation Industry (Supervision) Act, only certain people can receive your death benefit directly from the fund. Anyone else must receive it via your estate.</p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="SIS dependants eligible to receive super death benefit">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-56">Category</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Definition</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300 w-40">Can receive?</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-56">Category</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Definition</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300 w-40">Can receive?</th>
                 </tr>
               </thead>
               <tbody>
@@ -417,13 +415,13 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Tax treatment — dependants vs non-dependants</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-3xl">Two different definitions of &quot;dependant&quot; apply at the same time. SIS dependants can <em> receive</em> your super; tax dependants receive it <em>tax-free</em>. The mismatch — adult children are SIS dependants but usually not tax dependants — is the most common and costly surprise in Australian estate planning.</p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Death benefit tax treatment dependants vs non-dependants">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Recipient</th>
-                  <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide w-28">SIS dependant?</th>
-                  <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide w-28">Tax dependant?</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Lump sum tax</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Recipient</th>
+                  <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide w-28">SIS dependant?</th>
+                  <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide w-28">Tax dependant?</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Lump sum tax</th>
                 </tr>
               </thead>
               <tbody>
@@ -472,12 +470,12 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">$500,000 super: adult son vs spouse</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-4">Scenario: a $500,000 balance made up of a $400,000 taxable component and a $100,000 tax-free component. Compare paying it to an adult, financially independent son (a non-tax-dependant) with paying the identical balance to a spouse (a tax dependant).</p>
           <div className="overflow-x-auto rounded-2xl border border-amber-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Death benefit tax comparison adult son vs spouse">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Line item</th>
-                  <th className="px-5 py-4 text-right font-bold text-xs uppercase tracking-wide text-red-300">Adult son</th>
-                  <th className="px-5 py-4 text-right font-bold text-xs uppercase tracking-wide text-green-300">Spouse</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Line item</th>
+                  <th scope="col" className="px-5 py-4 text-right font-bold text-xs uppercase tracking-wide text-red-300">Adult son</th>
+                  <th scope="col" className="px-5 py-4 text-right font-bold text-xs uppercase tracking-wide text-green-300">Spouse</th>
                 </tr>
               </thead>
               <tbody>
@@ -502,12 +500,12 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Binding vs non-binding nominations</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-3xl">A nomination tells the trustee who you want to receive your death benefit. A <strong>binding</strong>{" "} nomination legally compels the trustee to follow it; a <strong>non-binding</strong> nomination is only a preference the trustee may choose to ignore.</p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-8">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Binding vs non-binding nomination comparison">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Binding nomination</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">Non-binding nomination</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Binding nomination</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">Non-binding nomination</th>
                 </tr>
               </thead>
               <tbody>
@@ -541,12 +539,12 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Reversionary pensions vs lump sum death benefits</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-3xl">A reversionary pension is an income stream set up so that, on your death, it automatically continues to a nominated beneficiary (usually your spouse). It is an alternative to taking the benefit as a one-off lump sum.</p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Reversionary pension vs lump sum death benefit comparison">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">Lump sum death benefit</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Reversionary pension</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">Lump sum death benefit</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Reversionary pension</th>
                 </tr>
               </thead>
               <tbody>
@@ -665,7 +663,7 @@ export default function SuperDeathBenefitPage() {
           <div className="space-y-4">
             {DEATH_BENEFIT_FAQS.map((faq) => (
               <details key={faq.q} className="group bg-white rounded-xl border border-slate-200">
-                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">{faq.q} <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3">⌄</span></summary>
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">{faq.q} <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">⌄</span></summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                   {faq.a}
                 </div>

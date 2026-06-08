@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     description:
       "Cash-flow asset businesses — vending, ATM networks, car washes, laundromats, self-storage and billboards.",
     url: `${SITE_URL}/invest/income-assets`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Income-Producing Assets Australia")}&sub=${encodeURIComponent("Dividends · Rent · Interest · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -254,7 +255,7 @@ export default function IncomeAssetsPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6" role="tablist">
+          <nav aria-label="Ways to invest" className="flex flex-wrap gap-2 mb-6">
             {WAYS_TO_INVEST.map((w, i) => (
               <a
                 key={w.id}
@@ -271,7 +272,7 @@ export default function IncomeAssetsPage() {
                 {w.label}
               </a>
             ))}
-          </div>
+          </nav>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {WAYS_TO_INVEST.map((w, i) => (

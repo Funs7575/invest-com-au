@@ -29,24 +29,34 @@ function ListCard({
   onTogglePublic: (id: number, isPublic: boolean) => void;
 }) {
   const [toggling, setToggling] = useState(false);
+  const [toggleError, setToggleError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(false);
 
   const handleToggle = async () => {
     setToggling(true);
+    setToggleError(null);
     try {
       const res = await fetch("/api/account/user-lists", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: list.id, is_public: !list.is_public }),
       });
-      if (res.ok) onTogglePublic(list.id, !list.is_public);
+      if (res.ok) {
+        onTogglePublic(list.id, !list.is_public);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        setToggleError((body as { error?: string }).error ?? "Update failed — please try again.");
+      }
+    } catch {
+      setToggleError("Update failed — please try again.");
     } finally {
       setToggling(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Delete "${list.title}"? This cannot be undone.`)) return;
+    setPendingDelete(false);
     setDeleting(true);
     try {
       const res = await fetch("/api/account/user-lists", {
@@ -93,17 +103,38 @@ function ListCard({
           <button
             onClick={() => { void handleToggle(); }}
             disabled={toggling}
-            className="text-xs text-slate-500 hover:text-violet-700 disabled:opacity-50"
+            aria-busy={toggling}
+            className="text-xs text-slate-500 hover:text-violet-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {toggling ? "…" : list.is_public ? "Make private" : "Make public"}
           </button>
-          <button
-            onClick={() => { void handleDelete(); }}
-            disabled={deleting}
-            className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
-          >
-            {deleting ? "Deleting…" : "Delete"}
-          </button>
+          {toggleError && (
+            <p role="alert" className="text-xs text-red-600">{toggleError}</p>
+          )}
+          {pendingDelete ? (
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-red-600 font-medium">Delete?</span>
+              <button
+                onClick={() => { void handleDelete(); }}
+                disabled={deleting}
+                aria-busy={deleting}
+                className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+              >{deleting ? "…" : "Yes"}</button>
+              <button
+                onClick={() => setPendingDelete(false)}
+                className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+              >No</button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setPendingDelete(true)}
+              disabled={deleting}
+              aria-busy={deleting}
+              className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {deleting ? "Deleting…" : "Delete"}
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -146,10 +177,11 @@ function AddForm({ onAdd }: { onAdd: (list: ListRow) => void }) {
       <h2 className="text-base font-semibold text-slate-900 mb-3">Create a list</h2>
       <form className="space-y-3" onSubmit={(e) => { void handleSubmit(e); }}>
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">
+          <label htmlFor="list-title" className="block text-xs font-medium text-slate-600 mb-1">
             Title <span className="text-red-500">*</span>
           </label>
           <input
+            id="list-title"
             name="title"
             type="text"
             required
@@ -159,8 +191,9 @@ function AddForm({ onAdd }: { onAdd: (list: ListRow) => void }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">Description</label>
+          <label htmlFor="list-description" className="block text-xs font-medium text-slate-600 mb-1">Description</label>
           <input
+            id="list-description"
             name="description"
             type="text"
             maxLength={500}
@@ -179,11 +212,12 @@ function AddForm({ onAdd }: { onAdd: (list: ListRow) => void }) {
             Make public (shareable with anyone)
           </label>
         </div>
-        {err && <p className="text-sm text-red-600">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600">{err}</p>}
         <button
           type="submit"
           disabled={busy}
-          className="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg"
+          aria-busy={busy}
+          className="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2 rounded-lg"
         >
           {busy ? "Creating…" : "Create list"}
         </button>
@@ -218,7 +252,18 @@ export default function ListsClient({ initialLists }: Props) {
         <div className="text-center py-10 text-slate-400">
           <p className="text-3xl mb-2" aria-hidden>📋</p>
           <p className="font-medium text-slate-600">No lists yet</p>
-          <p className="text-sm mt-1">Create your first list above and start curating.</p>
+          <p className="text-sm mt-1 mb-4">Create your first list above, then browse the platform to add items.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-xs">
+            <Link href="/best" className="inline-flex items-center gap-1 px-4 py-2 rounded-lg bg-slate-900 text-white font-semibold hover:bg-slate-700 transition-colors">
+              Browse brokers →
+            </Link>
+            <Link href="/advisors" className="inline-flex items-center gap-1 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 font-semibold hover:border-slate-400 transition-colors">
+              Find advisors →
+            </Link>
+            <Link href="/etfs" className="inline-flex items-center gap-1 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 font-semibold hover:border-slate-400 transition-colors">
+              Explore ETFs →
+            </Link>
+          </div>
         </div>
       )}
 

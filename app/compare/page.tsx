@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import Link from "next/link";
@@ -14,7 +15,7 @@ import DirectoryHero from "@/components/directory/DirectoryHero";
 import NextActions from "@/components/NextActions";
 
 export const metadata = {
-  title: "Compare Investing Platforms — Fees & Features",
+  title: "Compare Investing Platforms — Fees, Features & Safety",
   description: `Compare fees, features & safety across Australian investing platforms — shares, crypto, super & more. ${UPDATED_LABEL}.`,
   openGraph: {
     title: "Compare Platforms Side-by-Side",
@@ -283,6 +284,23 @@ export default async function ComparePage() {
         <NextActions surface="compare" />
       </Suspense>
       <HomeToolsStrip />
+      {/* Visible FAQ accordion — mirrors FAQPage JSON-LD for AI citation */}
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-4xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {faqLd.mainEntity.map((item: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={item.name} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {item.name}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{item.acceptedAnswer.text}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
       <div className="container-custom pb-8">
         <ComplianceFooter />
       </div>

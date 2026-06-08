@@ -153,6 +153,22 @@ export default function RetirementCalculatorClient() {
     return { monthly, projected: bal };
   });
 
+  const handleReset = () => {
+    setCurrentAge(35);
+    setRetirementAge(67);
+    setCurrentSuper(150000);
+    setAnnualSalary(100000);
+    setEmployerRate(12);
+    setAdditionalContributions(0);
+    setExpectedReturn(7);
+    setInflationRate(3);
+    setDesiredIncome(60000);
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     trackEvent("retirement_calc_result", {
@@ -206,9 +222,10 @@ export default function RetirementCalculatorClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Current Age */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Current age</label>
+              <label htmlFor="rc-current-age" className="block text-sm font-bold text-slate-700 mb-1.5">Current age</label>
               <input
-                type="number"
+                id="rc-current-age"
+                type="number" inputMode="decimal"
                 value={currentAge}
                 onChange={e => setCurrentAge(Math.max(18, Math.min(75, parseInt(e.target.value) || 18)))}
                 className="w-full px-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -217,9 +234,10 @@ export default function RetirementCalculatorClient() {
 
             {/* Retirement Age */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Retirement age</label>
+              <label htmlFor="rc-retirement-age" className="block text-sm font-bold text-slate-700 mb-1.5">Retirement age</label>
               <input
-                type="number"
+                id="rc-retirement-age"
+                type="number" inputMode="decimal"
                 value={retirementAge}
                 onChange={e => setRetirementAge(Math.max(currentAge + 1, Math.min(80, parseInt(e.target.value) || 67)))}
                 className="w-full px-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -228,11 +246,12 @@ export default function RetirementCalculatorClient() {
 
             {/* Current Super Balance */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
+              <label htmlFor="rc-super-balance" className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
-                  type="number"
+                  id="rc-super-balance"
+                  type="number" inputMode="decimal"
                   value={currentSuper}
                   onChange={e => setCurrentSuper(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -242,11 +261,12 @@ export default function RetirementCalculatorClient() {
 
             {/* Annual Salary */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Annual salary (pre-tax)</label>
+              <label htmlFor="rc-annual-salary" className="block text-sm font-bold text-slate-700 mb-1.5">Annual salary (pre-tax)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
-                  type="number"
+                  id="rc-annual-salary"
+                  type="number" inputMode="decimal"
                   value={annualSalary}
                   onChange={e => setAnnualSalary(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -254,7 +274,7 @@ export default function RetirementCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[60000, 80000, 100000, 150000, 200000].map(v => (
-                  <button key={v} onClick={() => setAnnualSalary(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${annualSalary === v ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setAnnualSalary(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${annualSalary === v ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     ${v / 1000}k
                   </button>
                 ))}
@@ -263,10 +283,11 @@ export default function RetirementCalculatorClient() {
 
             {/* Employer Super Rate */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Employer super rate</label>
+              <label htmlFor="rc-employer-rate" className="block text-sm font-bold text-slate-700 mb-1.5">Employer super rate</label>
               <div className="relative">
                 <input
-                  type="number"
+                  id="rc-employer-rate"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   value={employerRate}
                   onChange={e => setEmployerRate(Math.max(0, Math.min(25, parseFloat(e.target.value) || 0)))}
@@ -278,11 +299,12 @@ export default function RetirementCalculatorClient() {
 
             {/* Additional Contributions */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Additional contributions (yearly)</label>
+              <label htmlFor="rc-add-contrib" className="block text-sm font-bold text-slate-700 mb-1.5">Additional contributions (yearly)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
-                  type="number"
+                  id="rc-add-contrib"
+                  type="number" inputMode="decimal"
                   value={additionalContributions}
                   onChange={e => setAdditionalContributions(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -292,10 +314,11 @@ export default function RetirementCalculatorClient() {
 
             {/* Expected Return */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Expected return (p.a.)</label>
+              <label htmlFor="rc-expected-return" className="block text-sm font-bold text-slate-700 mb-1.5">Expected return (p.a.)</label>
               <div className="relative">
                 <input
-                  type="number"
+                  id="rc-expected-return"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   value={expectedReturn}
                   onChange={e => setExpectedReturn(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))}
@@ -307,10 +330,11 @@ export default function RetirementCalculatorClient() {
 
             {/* Inflation Rate */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Inflation rate (p.a.)</label>
+              <label htmlFor="rc-inflation-rate" className="block text-sm font-bold text-slate-700 mb-1.5">Inflation rate (p.a.)</label>
               <div className="relative">
                 <input
-                  type="number"
+                  id="rc-inflation-rate"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   value={inflationRate}
                   onChange={e => setInflationRate(Math.max(0, Math.min(10, parseFloat(e.target.value) || 0)))}
@@ -322,11 +346,12 @@ export default function RetirementCalculatorClient() {
 
             {/* Desired Retirement Income */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Desired retirement income (per year)</label>
+              <label htmlFor="rc-desired-income" className="block text-sm font-bold text-slate-700 mb-1.5">Desired retirement income (per year)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
-                  type="number"
+                  id="rc-desired-income"
+                  type="number" inputMode="decimal"
                   value={desiredIncome}
                   onChange={e => setDesiredIncome(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -335,12 +360,23 @@ export default function RetirementCalculatorClient() {
             </div>
           </div>
 
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-violet-600 text-white text-base font-bold rounded-xl hover:bg-violet-700 transition-all shadow-lg hover:shadow-xl"
-          >
-            Calculate My Retirement →
-          </button>
+          <div className="flex items-center gap-3 mt-5">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-violet-600 text-white text-base font-bold rounded-xl hover:bg-violet-700 transition-all shadow-lg hover:shadow-xl"
+            >
+              Calculate My Retirement →
+            </button>
+            {(currentAge !== 35 || retirementAge !== 67 || currentSuper !== 150000 || annualSalary !== 100000 || employerRate !== 12 || additionalContributions !== 0 || expectedReturn !== 7 || inflationRate !== 3 || desiredIncome !== 60000) && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}
@@ -469,7 +505,7 @@ export default function RetirementCalculatorClient() {
                 <p className="text-sm font-bold text-slate-900 mb-1">Save your retirement projection</p>
                 <p className="text-xs text-slate-500 mb-3">Enter your email and we&apos;ll send you a detailed breakdown</p>
                 <div className="flex gap-2 max-w-xs mx-auto">
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                  <input type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                   <button onClick={handleEmailSubmit} className="px-4 py-2 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700">Email Me My Results</button>
                 </div>
               </div>

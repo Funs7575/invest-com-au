@@ -89,8 +89,9 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Organisation Name *</label>
+          <label htmlFor="op-org-name" className="block text-xs font-semibold text-slate-600 mb-1">Organisation Name *</label>
           <input
+            id="op-org-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -100,8 +101,9 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
+          <label htmlFor="op-bio" className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
           <textarea
+            id="op-bio"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={4}
@@ -111,8 +113,9 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Logo URL</label>
+          <label htmlFor="op-logo-url" className="block text-xs font-semibold text-slate-600 mb-1">Logo URL</label>
           <input
+            id="op-logo-url"
             type="url"
             value={logoUrl}
             onChange={(e) => setLogoUrl(e.target.value)}
@@ -124,8 +127,9 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+            <label htmlFor="op-website" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
             <input
+              id="op-website"
               type="url"
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
@@ -134,9 +138,11 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
+            <label htmlFor="op-phone" className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
             <input
+              id="op-phone"
               type="tel"
+              autoComplete="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
@@ -147,9 +153,10 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+            <label htmlFor="op-email" className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
             <input
-              type="email"
+              id="op-email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
@@ -157,8 +164,9 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">State</label>
+            <label htmlFor="op-state" className="block text-xs font-semibold text-slate-600 mb-1">State</label>
             <select
+              id="op-state"
               value={locationState}
               onChange={(e) => setLocationState(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -172,8 +180,9 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
+          <label htmlFor="op-abn" className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
           <input
+            id="op-abn"
             type="text"
             value={abn}
             onChange={(e) => setAbn(e.target.value)}
@@ -185,8 +194,9 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
         {/* CPD Provider Number — only shown for CPD providers */}
         {org.organisation_type === "cpd_provider" && (
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">CPD Provider Number</label>
+            <label htmlFor="op-cpd-number" className="block text-xs font-semibold text-slate-600 mb-1">CPD Provider Number</label>
             <input
+              id="op-cpd-number"
               type="text"
               value={cpdProviderNumber}
               onChange={(e) => setCpdProviderNumber(e.target.value)}
@@ -197,7 +207,7 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
         )}
 
         {saveError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">
+          <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">
             {saveError}
           </div>
         )}
@@ -206,12 +216,12 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-5 py-2.5 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+            className="px-5 py-2.5 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
           {saved && (
-            <span className="text-sm text-emerald-600 font-medium flex items-center gap-1">
+            <span role="status" className="text-sm text-emerald-600 font-medium flex items-center gap-1">
               <Icon name="check-circle" size={16} />
               Saved!
             </span>

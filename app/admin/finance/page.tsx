@@ -58,6 +58,7 @@ export default function FinanceDashboardPage() {
   const [tab, setTab] = useState<"overview" | "transactions" | "recurring">("overview");
   const [amountInput, setAmountInput] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -156,10 +157,13 @@ export default function FinanceDashboardPage() {
           </button>
         ))}
         <div className="flex-1" />
-        <button onClick={async () => { const n = await syncStripeRevenue(); alert(n ? `Synced ${n} new payments` : "Already up to date"); }}
-          className="px-3 py-1.5 text-xs font-semibold bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200">
-          Sync Stripe Revenue
-        </button>
+        <div className="flex items-center gap-2">
+          {syncMessage && <span className="text-xs text-emerald-700 font-medium">{syncMessage}</span>}
+          <button onClick={async () => { const n = await syncStripeRevenue(); setSyncMessage(n ? `Synced ${n} new payments` : "Already up to date"); setTimeout(() => setSyncMessage(null), 4000); }}
+            className="px-3 py-1.5 text-xs font-semibold bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200">
+            Sync Stripe Revenue
+          </button>
+        </div>
         <button onClick={() => { setEditing({ ...EMPTY_TX }); setAmountInput(""); }}
           className="px-3 py-1.5 text-xs font-bold bg-slate-900 text-white rounded-lg hover:bg-slate-800">
           + Add Transaction
@@ -279,8 +283,8 @@ export default function FinanceDashboardPage() {
                 {t.type === "income" ? "+" : "-"}{fmt(t.amount_cents)}
               </span>
               <div className="flex gap-1 shrink-0">
-                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="pencil" size={14} /></button>
-                <button onClick={() => handleDelete(t.id)} className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
+                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} aria-label="Edit transaction" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="pencil" size={14} /></button>
+                <button onClick={() => handleDelete(t.id)} aria-label="Delete transaction" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
               </div>
             </div>
           ))}
@@ -316,7 +320,7 @@ export default function FinanceDashboardPage() {
                 <span className={`text-sm font-bold ${t.type === "income" ? "text-emerald-600" : "text-red-600"}`}>
                   {t.type === "income" ? "+" : "-"}{fmt(t.amount_cents)}/{t.recurring_interval === "yearly" ? "yr" : "mo"}
                 </span>
-                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="pencil" size={14} /></button>
+                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} aria-label="Edit transaction" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="pencil" size={14} aria-hidden /></button>
               </div>
             ))}
             {recurringTxns.length === 0 && <div className="text-center py-8 text-slate-400 text-sm">No recurring transactions. Add expenses like hosting, domains, and software.</div>}
@@ -327,20 +331,20 @@ export default function FinanceDashboardPage() {
       {/* ─── EDIT MODAL ─── */}
       {editing && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => { setEditing(null); setAmountInput(""); }}>
-          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">{editing.id ? "Edit" : "Add"} Transaction</h3>
+          <div role="dialog" aria-modal="true" aria-labelledby="fin-modal-title" className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+            <h3 id="fin-modal-title" className="text-lg font-bold text-slate-900 mb-4">{editing.id ? "Edit" : "Add"} Transaction</h3>
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Type</label>
-                  <select value={editing.type} onChange={e => setEditing({ ...editing, type: e.target.value as "income" | "expense", category: e.target.value === "income" ? "advisor_credits" : "hosting" })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="fin-type" className="block text-xs font-semibold text-slate-600 mb-1">Type</label>
+                  <select id="fin-type" value={editing.type} onChange={e => setEditing({ ...editing, type: e.target.value as "income" | "expense", category: e.target.value === "income" ? "advisor_credits" : "hosting" })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     <option value="income">Income</option>
                     <option value="expense">Expense</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Category</label>
-                  <select value={editing.category} onChange={e => setEditing({ ...editing, category: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="fin-category" className="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+                  <select id="fin-category" value={editing.category} onChange={e => setEditing({ ...editing, category: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     {(editing.type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map(c => (
                       <option key={c.key} value={c.key}>{c.label}</option>
                     ))}
@@ -348,27 +352,27 @@ export default function FinanceDashboardPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
-                <input value={editing.description || ""} onChange={e => setEditing({ ...editing, description: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Vercel Pro monthly" />
+                <label htmlFor="fin-description" className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
+                <input id="fin-description" value={editing.description || ""} onChange={e => setEditing({ ...editing, description: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Vercel Pro monthly" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Amount ($)</label>
-                  <input type="number" step="0.01" value={amountInput} onChange={e => { setAmountInput(e.target.value); setEditing({ ...editing, amount_cents: Math.round(parseFloat(e.target.value || "0") * 100) }); }} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="49.00" />
+                  <label htmlFor="fin-amount" className="block text-xs font-semibold text-slate-600 mb-1">Amount ($)</label>
+                  <input id="fin-amount" type="number" inputMode="decimal" step="0.01" value={amountInput} onChange={e => { setAmountInput(e.target.value); setEditing({ ...editing, amount_cents: Math.round(parseFloat(e.target.value || "0") * 100) }); }} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="49.00" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Date</label>
-                  <input type="date" value={editing.date?.slice(0, 10) || ""} onChange={e => setEditing({ ...editing, date: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  <label htmlFor="fin-date" className="block text-xs font-semibold text-slate-600 mb-1">Date</label>
+                  <input id="fin-date" type="date" value={editing.date?.slice(0, 10) || ""} onChange={e => setEditing({ ...editing, date: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Counterparty</label>
-                  <input value={editing.counterparty || ""} onChange={e => setEditing({ ...editing, counterparty: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Vercel, Stripe" />
+                  <label htmlFor="fin-counterparty" className="block text-xs font-semibold text-slate-600 mb-1">Counterparty</label>
+                  <input id="fin-counterparty" value={editing.counterparty || ""} onChange={e => setEditing({ ...editing, counterparty: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Vercel, Stripe" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Reference</label>
-                  <input value={editing.reference || ""} onChange={e => setEditing({ ...editing, reference: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Invoice #, Stripe ID" />
+                  <label htmlFor="fin-reference" className="block text-xs font-semibold text-slate-600 mb-1">Reference</label>
+                  <input id="fin-reference" value={editing.reference || ""} onChange={e => setEditing({ ...editing, reference: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Invoice #, Stripe ID" />
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -385,8 +389,8 @@ export default function FinanceDashboardPage() {
                 )}
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Notes</label>
-                <textarea value={editing.notes || ""} onChange={e => setEditing({ ...editing, notes: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                <label htmlFor="fin-notes" className="block text-xs font-semibold text-slate-600 mb-1">Notes</label>
+                <textarea id="fin-notes" value={editing.notes || ""} onChange={e => setEditing({ ...editing, notes: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
               </div>
             </div>
             <div className="flex gap-2 mt-5">

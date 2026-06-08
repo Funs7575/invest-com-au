@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Compare ASX-listed A-REITs by sector, yield, NTA discount and fees. Goodman Group, Stockland, Dexus, Scentre, Charter Hall — plus REIT ETFs like VAP and MVA.",
     url: `${SITE_URL}/invest/reits`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("A-REITs — Australian Real Estate Trusts")}&sub=${encodeURIComponent("A-REITs · Yield · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -87,7 +88,7 @@ export default async function ReitsPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -209,14 +210,14 @@ export default async function ReitsPage() {
                 <h3 className="text-lg font-bold text-slate-900 mb-2">{s.sector}</h3>
                 <p className="text-sm text-slate-600 mb-4">{s.desc}</p>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse">
+                  <table className="w-full text-sm border-collapse" aria-label={`A-REITs by sector: ${s.sector}`}>
                     <thead>
                       <tr className="bg-slate-50">
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Name</th>
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Market Cap</th>
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Notes</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Name</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Market Cap</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Notes</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -255,14 +256,14 @@ export default async function ReitsPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="A-REIT ETFs for diversified exposure">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ETF</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Manager</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">MER</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Holdings</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ETF</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Manager</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">MER</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Holdings</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
                 </tr>
               </thead>
               <tbody>

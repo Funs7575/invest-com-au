@@ -131,17 +131,18 @@ function CreateAlertForm({
     >
       <p className="text-xs font-semibold text-violet-800 mb-3">New Alert</p>
       {error && (
-        <div className="mb-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
+        <div role="alert" className="mb-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
           {error}
         </div>
       )}
       <div className="grid gap-3 sm:grid-cols-2">
         {/* Metric kind */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label htmlFor="alert-metric-kind" className="block text-xs font-medium text-slate-700 mb-1">
             Alert type
           </label>
           <select
+            id="alert-metric-kind"
             value={form.metric_kind}
             onChange={(e) =>
               setForm((f) => ({
@@ -160,10 +161,11 @@ function CreateAlertForm({
 
         {/* Direction */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label htmlFor="alert-direction" className="block text-xs font-medium text-slate-700 mb-1">
             Trigger when rate
           </label>
           <select
+            id="alert-direction"
             value={form.direction}
             onChange={(e) =>
               setForm((f) => ({
@@ -180,11 +182,12 @@ function CreateAlertForm({
 
         {/* Threshold */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label htmlFor="alert-threshold" className="block text-xs font-medium text-slate-700 mb-1">
             Threshold (%)
           </label>
           <input
-            type="number"
+            id="alert-threshold"
+            type="number" inputMode="decimal"
             min="0"
             max="100"
             step="0.01"
@@ -202,10 +205,11 @@ function CreateAlertForm({
 
         {/* Frequency */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label htmlFor="alert-frequency" className="block text-xs font-medium text-slate-700 mb-1">
             Notification frequency
           </label>
           <select
+            id="alert-frequency"
             value={form.frequency}
             onChange={(e) =>
               setForm((f) => ({
@@ -224,10 +228,11 @@ function CreateAlertForm({
         {/* Broker slug — only for broker_fee */}
         {showBrokerSlug && (
           <div className="sm:col-span-2">
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="alert-broker-slug" className="block text-xs font-medium text-slate-700 mb-1">
               Broker slug (optional — leave blank to watch all)
             </label>
             <input
+              id="alert-broker-slug"
               type="text"
               placeholder="e.g. commsec"
               value={form.broker_slug}
@@ -242,10 +247,11 @@ function CreateAlertForm({
         {/* Lender slug — only for loan_rate */}
         {showLenderSlug && (
           <div className="sm:col-span-2">
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="alert-lender-slug" className="block text-xs font-medium text-slate-700 mb-1">
               Lender slug (optional — leave blank to watch best rate)
             </label>
             <input
+              id="alert-lender-slug"
               type="text"
               placeholder="e.g. commonwealth-bank"
               value={form.lender_slug}
@@ -265,7 +271,8 @@ function CreateAlertForm({
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-violet-700 px-4 py-1.5 text-xs font-semibold text-white hover:bg-violet-800 transition-colors disabled:opacity-50"
+          aria-busy={saving}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-violet-700 px-4 py-1.5 text-xs font-semibold text-white hover:bg-violet-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? "Saving…" : "Create alert"}
         </button>
@@ -326,7 +333,7 @@ export default function AlertsClient({ alerts: initial, userEmail }: Props) {
   return (
     <div className="space-y-4">
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-700">
           {error}
         </div>
       )}
@@ -355,6 +362,21 @@ export default function AlertsClient({ alerts: initial, userEmail }: Props) {
             Set up an alert and we&apos;ll notify you when a savings rate, term
             deposit, loan rate, or brokerage fee crosses your threshold.
           </p>
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-2">
+            <Link
+              href="/fee-alerts"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-700 transition-colors"
+            >
+              <Icon name="bell" size={12} />
+              Set up a fee alert
+            </Link>
+            <Link
+              href="/rates/today"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 text-xs font-semibold hover:border-slate-400 transition-colors"
+            >
+              Browse current rates
+            </Link>
+          </div>
         </div>
       ) : (
         <>
@@ -427,7 +449,7 @@ export default function AlertsClient({ alerts: initial, userEmail }: Props) {
                     type="button"
                     disabled={removing === alert.id}
                     onClick={() => handleRemove(alert)}
-                    className="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-500 hover:border-red-200 hover:text-red-600 transition-colors disabled:opacity-40"
+                    className="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-500 hover:border-red-200 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {removing === alert.id ? "Removing…" : "Remove"}
                   </button>

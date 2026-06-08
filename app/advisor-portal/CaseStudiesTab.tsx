@@ -221,13 +221,14 @@ export default function CaseStudiesTab({ advisor }: Props) {
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-900">{editingId !== null ? "Edit Case Study" : "New Case Study"}</h3>
-            <button onClick={closeForm} className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+            <button onClick={closeForm} aria-label="Close form" className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
+              <label htmlFor="cs-title" className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
               <input
+                id="cs-title"
                 value={form.title}
                 onChange={(e) => setField("title", e.target.value)}
                 placeholder="e.g. Helping a family restructure super before retirement"
@@ -239,8 +240,9 @@ export default function CaseStudiesTab({ advisor }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Client Type</label>
+                <label htmlFor="cs-client-type" className="block text-xs font-bold text-slate-700 mb-1">Client Type</label>
                 <select
+                  id="cs-client-type"
                   value={form.client_type}
                   onChange={(e) => setField("client_type", e.target.value as ClientType)}
                   className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30"
@@ -251,8 +253,9 @@ export default function CaseStudiesTab({ advisor }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Outcome Type</label>
+                <label htmlFor="cs-outcome-type" className="block text-xs font-bold text-slate-700 mb-1">Outcome Type</label>
                 <select
+                  id="cs-outcome-type"
                   value={form.outcome_type}
                   onChange={(e) => setField("outcome_type", e.target.value as OutcomeType)}
                   className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30"
@@ -265,8 +268,9 @@ export default function CaseStudiesTab({ advisor }: Props) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Situation * <span className="font-normal text-slate-400">(client&rsquo;s starting point)</span></label>
+              <label htmlFor="cs-situation" className="block text-xs font-bold text-slate-700 mb-1">Situation * <span className="font-normal text-slate-400">(client&rsquo;s starting point)</span></label>
               <textarea
+                id="cs-situation"
                 value={form.situation}
                 onChange={(e) => setField("situation", e.target.value)}
                 placeholder="Describe the client's situation and challenge anonymously..."
@@ -278,8 +282,9 @@ export default function CaseStudiesTab({ advisor }: Props) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Approach * <span className="font-normal text-slate-400">(what you did)</span></label>
+              <label htmlFor="cs-approach" className="block text-xs font-bold text-slate-700 mb-1">Approach * <span className="font-normal text-slate-400">(what you did)</span></label>
               <textarea
+                id="cs-approach"
                 value={form.approach}
                 onChange={(e) => setField("approach", e.target.value)}
                 placeholder="Explain your strategy and the steps taken..."
@@ -291,8 +296,9 @@ export default function CaseStudiesTab({ advisor }: Props) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Outcome * <span className="font-normal text-slate-400">(results achieved)</span></label>
+              <label htmlFor="cs-outcome" className="block text-xs font-bold text-slate-700 mb-1">Outcome * <span className="font-normal text-slate-400">(results achieved)</span></label>
               <textarea
+                id="cs-outcome"
                 value={form.outcome}
                 onChange={(e) => setField("outcome", e.target.value)}
                 placeholder="Describe the measurable results and client impact..."
@@ -304,21 +310,23 @@ export default function CaseStudiesTab({ advisor }: Props) {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{error}</div>
+              <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{error}</div>
             )}
 
             <div className="flex gap-2">
               <button
                 onClick={() => { void handleSave("draft"); }}
                 disabled={saving}
-                className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 transition-colors"
+                aria-busy={saving}
+                className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Save Draft"}
               </button>
               <button
                 onClick={() => { void handleSave("published"); }}
                 disabled={saving}
-                className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 transition-colors"
+                aria-busy={saving}
+                className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Publish"}
               </button>
@@ -374,7 +382,7 @@ export default function CaseStudiesTab({ advisor }: Props) {
                   <button
                     onClick={() => { void handleDelete(cs.id); }}
                     disabled={deletingId === cs.id}
-                    className="text-xs px-2.5 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-40"
+                    className="text-xs px-2.5 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {deletingId === cs.id ? "..." : "Delete"}
                   </button>

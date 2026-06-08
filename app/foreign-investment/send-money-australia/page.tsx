@@ -11,7 +11,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const metadata: Metadata = {
   title: "Send Money to Australia — Best FX Transfer Options for Foreign Investors (2026)",
   description:
-    "Compare the best ways to send money to Australia as a foreign investor. Wise vs OFX vs WorldFirst vs bank transfer — exchange rates, fees, and which to use for property settlement vs share investing. Updated March 2026.",
+    "Best ways to send money to Australia as a foreign investor: Wise, OFX, WorldFirst vs bank. Exchange rates, fees, and use cases. Updated 2026.",
   openGraph: {
     title: "Send Money to Australia — FX Transfer Comparison 2026",
     description:
@@ -115,7 +115,7 @@ export default async function SendMoneyAustraliaPage() {
       {/* ── Hero ── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -154,13 +154,13 @@ export default async function SendMoneyAustraliaPage() {
         <section className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
           <h2 className="font-bold text-slate-800 mb-4">How much you save: ${(COST_EXAMPLE_AMOUNT / 1_000).toFixed(0)}K transfer example</h2>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="International money transfer provider cost comparison on a $500K transfer">
               <thead>
                 <tr className="border-b border-amber-200">
-                  <th className="text-start pb-2 font-semibold text-slate-600 text-xs">Provider</th>
-                  <th className="text-right pb-2 font-semibold text-slate-600 text-xs">Est. margin</th>
-                  <th className="text-right pb-2 font-semibold text-slate-600 text-xs">Cost on $500K</th>
-                  <th className="text-right pb-2 font-semibold text-slate-600 text-xs">You receive</th>
+                  <th scope="col" className="text-start pb-2 font-semibold text-slate-600 text-xs">Provider</th>
+                  <th scope="col" className="text-right pb-2 font-semibold text-slate-600 text-xs">Est. margin</th>
+                  <th scope="col" className="text-right pb-2 font-semibold text-slate-600 text-xs">Cost on $500K</th>
+                  <th scope="col" className="text-right pb-2 font-semibold text-slate-600 text-xs">You receive</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-amber-100">
@@ -224,7 +224,7 @@ export default async function SendMoneyAustraliaPage() {
                       </div>
                       {p.rating && (
                         <div className="text-right">
-                          <p className="font-extrabold text-2xl text-amber-600">{renderStars(p.rating)} {p.rating.toFixed(1)}</p>
+                          <p className="font-extrabold text-2xl text-amber-600"><span aria-hidden="true">{renderStars(p.rating)}</span> <span aria-label={`${p.rating.toFixed(1)} out of 5 stars`}>{p.rating.toFixed(1)}</span></p>
                           <p className="text-xs text-slate-400">rating</p>
                         </div>
                       )}

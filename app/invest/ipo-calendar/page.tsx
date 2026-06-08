@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     description:
       "Upcoming ASX IPOs, recently listed companies and how to access broker IPO allocations as a retail investor.",
     url: `${SITE_URL}/invest/ipo-calendar`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("ASX IPO Calendar")}&sub=${encodeURIComponent("Upcoming IPOs · Listings · Allocations · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -412,16 +413,16 @@ export default async function IpoCalendarPage() {
 
           {recent.length > 0 ? (
             <div className="overflow-x-auto bg-white border border-slate-200 rounded-xl">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Recent ASX IPO listings">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Code</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Company</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Sector</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Listed</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Issue</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Raised</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700 w-10"></th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Code</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Company</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Sector</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Listed</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Issue</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Raised</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 w-10"></th>
                   </tr>
                 </thead>
                 <tbody>

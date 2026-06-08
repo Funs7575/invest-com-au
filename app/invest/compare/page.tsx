@@ -76,7 +76,7 @@ export default async function CompareListingsPage({ searchParams }: PageProps) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <div className="container-custom max-w-6xl py-5 md:py-8">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5">/</span>
           <Link href="/invest" className="hover:text-slate-900">Opportunities</Link>

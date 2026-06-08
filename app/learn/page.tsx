@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import NewsletterCta from "./NewsletterCta";
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
     description: "Structured paths with progress tracking. New investor, broker choice, super & retirement, tax, and foreign investor.",
     url: `${SITE_URL}/learn`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Learning Paths — Invest.com.au")}&sub=${encodeURIComponent("New Investor · Super · Tax · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -81,6 +83,27 @@ const PATH_ACCENTS: Record<string, { border: string; text: string; bg: string; b
   rose:   { border: "border-rose-200",   text: "text-rose-700",   bg: "bg-rose-50",   badge: "bg-rose-100 text-rose-700" },
 };
 
+const LEARN_FAQS = [
+  {
+    q: "Are the investing learning paths on Invest.com.au free?",
+    a: "Yes. All learning paths on Invest.com.au are completely free — no account required to browse or complete steps. Progress tracking (tick-off as you complete each step) is saved to your browser's localStorage, so you can return to where you left off without signing in. Creating an account allows progress to sync across devices.",
+  },
+  {
+    q: "Which learning path should I start with?",
+    a: "If you have never invested before, start with the New Investor Starter Kit — it covers compound interest, diversification, ETFs, and how to choose and open a brokerage account. If you already invest but want a better platform, try Choosing the Right Broker. If you are a working Australian thinking about retirement, Retirement & Super covers superannuation, salary sacrifice, and SMSF. Tax-Smart Investing suits investors who want to legally minimise their tax through franking credits, CGT discount, and negative gearing. Foreign Investor covers FIRB rules, withholding tax, and ASX access for non-residents.",
+  },
+  {
+    q: "How long does each learning path take?",
+    a: "Each path is broken into steps with estimated reading or calculator times. The New Investor Starter Kit takes approximately 2–3 hours to complete; Choosing the Right Broker runs 1–2 hours; Retirement & Super and Tax-Smart Investing each run 2–3 hours; the Foreign Investor path runs approximately 1.5–2 hours. You can complete steps at your own pace — there's no deadline and progress is saved.",
+  },
+  {
+    q: "Is the content on these learning paths financial advice?",
+    a: "No. All content on Invest.com.au learning paths is general investing education and does not constitute personal financial advice. It does not take into account your individual financial situation, objectives, or risk tolerance. Before making any investment decision, consider whether the information is appropriate for your circumstances. Where relevant, seek advice from an AFSL-licensed financial adviser — you can find one at invest.com.au/find-advisor.",
+  },
+];
+
+const learnHubFaqLd = faqJsonLd(LEARN_FAQS);
+
 export default async function LearnHubPage() {
   const articles = await fetchBeginnerArticles();
   const showArticles = articles.length > 0 ? articles : FALLBACK_ARTICLES.map((a) => ({ ...a, category: "beginners" as string | null }));
@@ -113,6 +136,7 @@ export default async function LearnHubPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(hubItemListLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(learnHubFaqLd) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
@@ -207,6 +231,29 @@ export default async function LearnHubPage() {
                     Read article <Icon name="arrow-right" size={12} />
                   </p>
                 </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-12 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-4xl">
+            <h2 className="text-xl font-bold text-slate-900 mb-4">About these learning paths</h2>
+            <div className="divide-y divide-slate-100">
+              {LEARN_FAQS.map(({ q, a }) => (
+                <details key={q} className="group py-3">
+                  <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                    {q}
+                    <svg
+                      className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                      aria-hidden="true"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{a}</p>
+                </details>
               ))}
             </div>
           </div>

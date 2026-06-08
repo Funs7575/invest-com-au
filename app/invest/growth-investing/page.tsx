@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Complete guide to growth investing on the ASX — revenue growth metrics, PEG ratios, ASX tech stocks, growth vs value comparison, rate sensitivity, and how to build a growth portfolio in Australia.",
     url: `${SITE_URL}/invest/growth-investing`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Growth Investing Australia")}&sub=${encodeURIComponent("High-Growth Stocks · ETFs · Strategy · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -159,12 +160,12 @@ export default function GrowthInvestingPage() {
           <p className="text-slate-500 text-sm mb-6">Five metrics growth investors use to screen and assess high-growth companies.</p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Key growth investing metrics">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Growth investor&apos;s lens</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Typical growth range</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Growth investor&apos;s lens</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Typical growth range</th>
                 </tr>
               </thead>
               <tbody>
@@ -251,13 +252,13 @@ export default function GrowthInvestingPage() {
           {/* ASX growth ETF quick reference */}
           <h3 className="text-lg font-bold text-slate-900 mb-3">ASX-Listed Growth ETFs — Quick Reference</h3>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="ASX-listed growth ETFs quick reference">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">ETF Code</th>
-                  <th className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Index / Focus</th>
-                  <th className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Manager</th>
-                  <th className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Use case</th>
+                  <th scope="col" className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">ETF Code</th>
+                  <th scope="col" className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Index / Focus</th>
+                  <th scope="col" className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Manager</th>
+                  <th scope="col" className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Use case</th>
                 </tr>
               </thead>
               <tbody>
@@ -290,12 +291,12 @@ export default function GrowthInvestingPage() {
           <p className="text-slate-500 text-sm mb-6">Two distinct philosophies — how they compare across seven key dimensions.</p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Growth vs value investing comparison">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>
-                  <th className="text-left py-3 px-4 font-semibold text-amber-700 border-b border-slate-200">Growth</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-600 border-b border-slate-200">Value</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-amber-700 border-b border-slate-200">Growth</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-600 border-b border-slate-200">Value</th>
                 </tr>
               </thead>
               <tbody>

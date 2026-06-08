@@ -8,12 +8,13 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Salary Sacrifice Australia (${CURRENT_YEAR}) — How It Works, Tax Savings & Examples`,
-  description: `Salary sacrifice (salary packaging) explained for Australia: super, novated car leases, FBT-exempt devices, worked examples by income, the $30,000 concessional cap, and how to set it up. ${UPDATED_LABEL}.`,
+  description: `Salary sacrifice in Australia: super, novated leases, FBT-exempt devices, and the $30k concessional cap. Worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Salary Sacrifice Australia (${CURRENT_YEAR}) — Complete Guide`,
     description:
       "How salary sacrifice works: super at 15% vs your marginal rate, novated leases, FBT-exempt items, worked examples, and setup with your employer.",
     url: `${SITE_URL}/tax/salary-sacrifice`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Salary Sacrifice Australia")}&sub=${encodeURIComponent("Super · Novated Lease · Tax Savings · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/salary-sacrifice` },
@@ -357,13 +358,13 @@ export default function SalarySacrificePage() {
             deliver the full pre-tax saving; benefits like cars carry FBT that has to be managed.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Common salary sacrifice items and FBT treatment">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Benefit</th>
-                  <th className="text-left p-3 text-xs font-bold">FBT treatment</th>
-                  <th className="text-left p-3 text-xs font-bold">Tax outcome</th>
-                  <th className="text-left p-3 text-xs font-bold">Notes</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Benefit</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">FBT treatment</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Tax outcome</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -428,15 +429,15 @@ export default function SalarySacrificePage() {
             inside the fund. Figures use 2024-25 marginal rates including the 2% Medicare Levy and are illustrative.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Tax saving from sacrificing $10,000 at different income levels">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Annual income</th>
-                  <th className="text-right p-3 text-xs font-bold">Marginal rate</th>
-                  <th className="text-right p-3 text-xs font-bold">Take-home reduction</th>
-                  <th className="text-right p-3 text-xs font-bold">Income tax saved</th>
-                  <th className="text-right p-3 text-xs font-bold">Super tax (15%)</th>
-                  <th className="text-right p-3 text-xs font-bold text-green-300">Net benefit</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Annual income</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Marginal rate</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Take-home reduction</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Income tax saved</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Super tax (15%)</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold text-green-300">Net benefit</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -581,12 +582,12 @@ export default function SalarySacrificePage() {
             reportable super contributions back, so salary sacrifice does not always help — and occasionally it costs.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Impact of salary sacrifice on government entitlements and tests">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Measure</th>
-                  <th className="text-left p-3 text-xs font-bold">Effect</th>
-                  <th className="text-left p-3 text-xs font-bold">Detail</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Measure</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Effect</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Detail</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -622,7 +623,7 @@ export default function SalarySacrificePage() {
               <details key={item.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {item.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{item.a}</p>
               </details>

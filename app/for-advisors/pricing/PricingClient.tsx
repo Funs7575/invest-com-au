@@ -345,14 +345,15 @@ export default function PricingClient() {
           </h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-            <table className="w-full text-sm border-collapse bg-white">
+            <table className="w-full text-sm border-collapse bg-white" aria-label="Full feature comparison by plan tier">
               <thead>
                 <tr>
-                  <th className="text-left px-4 py-3 text-slate-500 font-semibold w-48 border-b border-slate-200 bg-slate-50">
+                  <th scope="col" className="text-left px-4 py-3 text-slate-500 font-semibold w-48 border-b border-slate-200 bg-slate-50">
                     Feature
                   </th>
                   {TIERS.map((tier) => (
                     <th
+              scope="col"
                       key={tier.id}
                       className={`px-4 py-3 text-center font-extrabold border-b border-slate-200 ${
                         tier.id === "pro"

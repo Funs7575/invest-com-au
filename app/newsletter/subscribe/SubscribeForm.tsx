@@ -84,7 +84,7 @@ export default function SubscribeForm({ segments }: Props) {
         </label>
         <input
           id="newsletter-email"
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           required
           autoComplete="email"
           value={email}

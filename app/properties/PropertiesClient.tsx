@@ -236,7 +236,7 @@ export default function PropertiesClient() {
       {/* Hero */}
       <section className="bg-gradient-to-r from-teal-600 to-teal-800 text-white py-10 md:py-16">
         <div className="container-custom">
-          <nav className="text-xs text-teal-200 mb-3">
+          <nav aria-label="Breadcrumb" className="text-xs text-teal-200 mb-3">
             <Link href="/" className="hover:text-white">
               Home
             </Link>

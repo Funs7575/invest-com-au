@@ -375,10 +375,11 @@ export default function AdminConsultationsPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-title" className="block text-xs font-semibold text-slate-700 mb-1">
                 Title *
               </label>
               <input
+                id="con-title"
                 type="text"
                 value={form.title}
                 onChange={(e) =>
@@ -393,10 +394,11 @@ export default function AdminConsultationsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-slug" className="block text-xs font-semibold text-slate-700 mb-1">
                 Slug
               </label>
               <input
+                id="con-slug"
                 type="text"
                 value={form.slug}
                 onChange={(e) => setForm({ ...form, slug: e.target.value })}
@@ -406,10 +408,11 @@ export default function AdminConsultationsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="con-desc" className="block text-xs font-semibold text-slate-700 mb-1">
               Description
             </label>
             <textarea
+              id="con-desc"
               value={form.description}
               onChange={(e) =>
                 setForm({ ...form, description: e.target.value })
@@ -421,10 +424,11 @@ export default function AdminConsultationsPage() {
 
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-consultant" className="block text-xs font-semibold text-slate-700 mb-1">
                 Consultant *
               </label>
               <select
+                id="con-consultant"
                 value={form.consultant_id}
                 onChange={(e) =>
                   setForm({ ...form, consultant_id: e.target.value })
@@ -441,10 +445,11 @@ export default function AdminConsultationsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-duration" className="block text-xs font-semibold text-slate-700 mb-1">
                 Duration (min)
               </label>
               <select
+                id="con-duration"
                 value={form.duration_minutes}
                 onChange={(e) =>
                   setForm({ ...form, duration_minutes: e.target.value })
@@ -459,10 +464,11 @@ export default function AdminConsultationsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-category" className="block text-xs font-semibold text-slate-700 mb-1">
                 Category
               </label>
               <select
+                id="con-category"
                 value={form.category}
                 onChange={(e) =>
                   setForm({ ...form, category: e.target.value })
@@ -479,11 +485,12 @@ export default function AdminConsultationsPage() {
 
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-price" className="block text-xs font-semibold text-slate-700 mb-1">
                 Price (AUD)
               </label>
               <input
-                type="number"
+                id="con-price"
+                type="number" inputMode="decimal"
                 step="0.01"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
@@ -492,11 +499,12 @@ export default function AdminConsultationsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-pro-price" className="block text-xs font-semibold text-slate-700 mb-1">
                 Pro Price (AUD)
               </label>
               <input
-                type="number"
+                id="con-pro-price"
+                type="number" inputMode="decimal"
                 step="0.01"
                 value={form.pro_price}
                 onChange={(e) =>
@@ -507,10 +515,11 @@ export default function AdminConsultationsPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-status" className="block text-xs font-semibold text-slate-700 mb-1">
                 Status
               </label>
               <select
+                id="con-status"
                 value={form.status}
                 onChange={(e) =>
                   setForm({ ...form, status: e.target.value })
@@ -525,10 +534,11 @@ export default function AdminConsultationsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label htmlFor="con-cal-link" className="block text-xs font-semibold text-slate-700 mb-1">
               Cal.com Link *
             </label>
             <input
+              id="con-cal-link"
               type="text"
               value={form.cal_link}
               onChange={(e) => setForm({ ...form, cal_link: e.target.value })}
@@ -541,10 +551,11 @@ export default function AdminConsultationsPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-stripe-price" className="block text-xs font-semibold text-slate-700 mb-1">
                 Stripe Price ID
               </label>
               <input
+                id="con-stripe-price"
                 type="text"
                 value={form.stripe_price_id}
                 onChange={(e) =>
@@ -556,10 +567,11 @@ export default function AdminConsultationsPage() {
               <p className="text-xs text-slate-400 mt-0.5">Link to the Stripe payment product. Create the product in Stripe first.</p>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-stripe-pro-price" className="block text-xs font-semibold text-slate-700 mb-1">
                 Stripe Pro Price ID
               </label>
               <input
+                id="con-stripe-pro-price"
                 type="text"
                 value={form.stripe_pro_price_id}
                 onChange={(e) =>
@@ -574,11 +586,12 @@ export default function AdminConsultationsPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="con-sort-order" className="block text-xs font-semibold text-slate-700 mb-1">
                 Sort Order
               </label>
               <input
-                type="number"
+                id="con-sort-order"
+                type="number" inputMode="decimal"
                 value={form.sort_order}
                 onChange={(e) =>
                   setForm({ ...form, sort_order: e.target.value })
@@ -636,7 +649,7 @@ export default function AdminConsultationsPage() {
         /* Consultations table */
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Consultations">
               <thead>
                 <tr className="bg-slate-50 text-left">
                   <th className="px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>
@@ -744,7 +757,7 @@ export default function AdminConsultationsPage() {
         /* Bookings table */
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Consultation bookings">
               <thead>
                 <tr className="bg-slate-50 text-left">
                   <th className="px-4 py-3 font-semibold text-slate-600">

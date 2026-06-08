@@ -47,7 +47,7 @@ export default function PackagesPage() {
   const [currentPackageId, setCurrentPackageId] = useState<number | null>(null);
   const [brokerSlug, setBrokerSlug] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selecting, setSelecting] = useState(false);
+  const [selecting, _setSelecting] = useState(false);
   const { toast } = useToast();
 
   // Change/cancel confirmation dialog
@@ -294,7 +294,7 @@ export default function PackagesPage() {
                 <button
                   onClick={() => initiateChange(pkg)}
                   disabled={selecting}
-                  className={`w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+                  className={`w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     isDowngrade
                       ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
                       : "bg-slate-900 text-white hover:bg-slate-800"
@@ -343,11 +343,11 @@ export default function PackagesPage() {
 
       {/* Confirmation Dialog */}
       {showDialog && targetPackage && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setShowDialog(false)}>
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 bounce-in-up" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setShowDialog(false)} onKeyDown={(e) => { if (e.key === "Escape") setShowDialog(false); }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="pkg-confirm-dialog-title" className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 bounce-in-up" onClick={e => e.stopPropagation()}>
             {/* Header */}
             <div>
-              <h2 className="text-lg font-extrabold text-slate-900">
+              <h2 id="pkg-confirm-dialog-title" className="text-lg font-extrabold text-slate-900">
                 {dialogAction === "cancel"
                   ? "Cancel Your Subscription"
                   : dialogAction === "downgrade"
@@ -419,10 +419,10 @@ export default function PackagesPage() {
 
             {/* Reason (for downgrade/cancel) */}
             {dialogAction !== "upgrade" && (
-              <div>
-                <label className="text-xs font-medium text-slate-700 mb-2 block">
-                  Why are you {dialogAction === "cancel" ? "cancelling" : "downgrading"}? <span className="text-red-500">*</span>
-                </label>
+              <fieldset>
+                <legend className="text-xs font-medium text-slate-700 mb-2 block">
+                  Why are you {dialogAction === "cancel" ? "cancelling" : "downgrading"}? <span className="text-red-500" aria-hidden>*</span><span className="sr-only">(required)</span>
+                </legend>
                 <div className="space-y-1.5">
                   {CANCELLATION_REASONS.map(reason => (
                     <label key={reason} className="flex items-center gap-2 cursor-pointer">
@@ -454,7 +454,7 @@ export default function PackagesPage() {
                   rows={2}
                   className="mt-3 w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30 resize-none"
                 />
-              </div>
+              </fieldset>
             )}
 
             {/* Actions */}
@@ -468,7 +468,7 @@ export default function PackagesPage() {
               <button
                 onClick={handleConfirm}
                 disabled={confirming || (dialogAction !== "upgrade" && !cancelReason) || (cancelReason === "Other" && !cancelReasonOther.trim())}
-                className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors disabled:opacity-50 ${
+                className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   dialogAction === "cancel"
                     ? "bg-red-600 text-slate-900 hover:bg-red-700"
                     : dialogAction === "downgrade"

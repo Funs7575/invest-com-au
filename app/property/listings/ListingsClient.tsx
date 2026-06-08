@@ -222,7 +222,7 @@ export default function ListingsClient() {
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(245,158,11,0.08),transparent_60%)]" />
         <div className="container-custom py-8 md:py-12 relative">
-          <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-900 transition-colors">Property</Link>
@@ -570,7 +570,7 @@ export default function ListingsClient() {
                   <button
                     onClick={() => setPage(Math.max(1, page - 1))}
                     disabled={page <= 1}
-                    className="px-4 py-2 text-xs font-bold border border-slate-200 rounded-lg disabled:opacity-30 hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                    className="px-4 py-2 text-xs font-bold border border-slate-200 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-50 hover:border-slate-300 transition-colors"
                   >
                     &larr; Previous
                   </button>
@@ -593,7 +593,7 @@ export default function ListingsClient() {
                   <button
                     onClick={() => setPage(Math.min(totalPages, page + 1))}
                     disabled={page >= totalPages}
-                    className="px-4 py-2 text-xs font-bold border border-slate-200 rounded-lg disabled:opacity-30 hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                    className="px-4 py-2 text-xs font-bold border border-slate-200 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-50 hover:border-slate-300 transition-colors"
                   >
                     Next &rarr;
                   </button>

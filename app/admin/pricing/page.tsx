@@ -34,15 +34,6 @@ const TYPE_LABELS: Record<string, string> = {
   real_estate_agent: "Real Estate Agents",
 };
 
-const TIER_COLORS: Record<string, string> = {
-  mortgage_broker: "bg-rose-50 border-rose-200",
-  buyers_agent: "bg-teal-50 border-teal-200",
-  financial_planner: "bg-violet-50 border-violet-200",
-  smsf_accountant: "bg-blue-50 border-blue-200",
-  insurance_broker: "bg-sky-50 border-sky-200",
-  tax_agent: "bg-amber-50 border-amber-200",
-};
-
 function formatCents(cents: number): string {
   return `$${(cents / 100).toFixed(0)}`;
 }
@@ -63,6 +54,7 @@ export default function AdminPricingPage() {
   const [editValues, setEditValues] = useState<Partial<PricingRow>>({});
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [logs, setLogs] = useState<{ advisor_type: string; field_changed: string; old_value: string; new_value: string; changed_at: string }[]>([]);
+  const [pendingApplyAllType, setPendingApplyAllType] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -77,6 +69,7 @@ export default function AdminPricingPage() {
     setLoading(false);
   }, [supabase]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- pre-existing pattern, refactor is post-launch hub-data-fetch redesign
   useEffect(() => { loadData(); }, [loadData]);
 
   const handleEdit = (row: PricingRow) => {
@@ -191,7 +184,7 @@ export default function AdminPricingPage() {
   };
 
   const handleApplyAll = async (type: string, priceCents: number) => {
-    if (!confirm(`Apply ${formatCents(priceCents)}/lead to ALL ${TYPE_LABELS[type]}? This will override individual pricing and notify all advisors.`)) return;
+    setPendingApplyAllType(null);
     setSaving(type);
 
     // Get current category price for the notification
@@ -263,7 +256,7 @@ export default function AdminPricingPage() {
       {/* Pricing Table */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Pricing by vertical">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 font-semibold text-slate-700">Vertical</th>
@@ -280,7 +273,6 @@ export default function AdminPricingPage() {
             <tbody className="divide-y divide-slate-100">
               {pricing.map((row) => {
                 const isEditing = editRow === row.advisor_type;
-                const tierColor = TIER_COLORS[row.advisor_type] || "bg-slate-50 border-slate-200";
 
                 return (
                   <tr key={row.advisor_type} className={`${isEditing ? "bg-blue-50/50" : "hover:bg-slate-50"} transition-colors`}>
@@ -298,7 +290,7 @@ export default function AdminPricingPage() {
                         <div className="flex items-center justify-center gap-1">
                           <span className="text-slate-400">$</span>
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             className="w-16 px-2 py-1 border border-blue-300 rounded text-center text-sm font-bold"
                             value={centsToInput(editValues.price_cents || 0)}
                             onChange={(e) => setEditValues({ ...editValues, price_cents: inputToCents(e.target.value) })}
@@ -313,7 +305,7 @@ export default function AdminPricingPage() {
                         <div className="flex items-center justify-center gap-1">
                           <span className="text-slate-400">$</span>
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             className="w-16 px-2 py-1 border border-blue-300 rounded text-center text-sm font-bold"
                             value={centsToInput(editValues.qualified_price_cents || 0)}
                             onChange={(e) => setEditValues({ ...editValues, qualified_price_cents: inputToCents(e.target.value) })}
@@ -328,7 +320,7 @@ export default function AdminPricingPage() {
                         <div className="flex items-center justify-center gap-1">
                           <span className="text-slate-400">$</span>
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             className="w-16 px-2 py-1 border border-violet-300 rounded text-center text-sm font-bold"
                             value={centsToInput(editValues.exclusive_price_cents || 0)}
                             onChange={(e) => setEditValues({ ...editValues, exclusive_price_cents: inputToCents(e.target.value) })}
@@ -341,7 +333,7 @@ export default function AdminPricingPage() {
                     <td className="px-3 py-3 text-center hidden md:table-cell">
                       {isEditing ? (
                         <input
-                          type="number"
+                          type="number" inputMode="decimal"
                           className="w-14 px-1 py-1 border border-slate-300 rounded text-center text-xs"
                           value={centsToInput(editValues.min_price_cents || 0)}
                           onChange={(e) => setEditValues({ ...editValues, min_price_cents: inputToCents(e.target.value) })}
@@ -353,7 +345,7 @@ export default function AdminPricingPage() {
                     <td className="px-3 py-3 text-center hidden md:table-cell">
                       {isEditing ? (
                         <input
-                          type="number"
+                          type="number" inputMode="decimal"
                           className="w-14 px-1 py-1 border border-slate-300 rounded text-center text-xs"
                           value={centsToInput(editValues.max_price_cents || 0)}
                           onChange={(e) => setEditValues({ ...editValues, max_price_cents: inputToCents(e.target.value) })}
@@ -365,7 +357,7 @@ export default function AdminPricingPage() {
                     <td className="px-3 py-3 text-center">
                       {isEditing ? (
                         <input
-                          type="number"
+                          type="number" inputMode="decimal"
                           className="w-12 px-1 py-1 border border-slate-300 rounded text-center text-xs"
                           value={editValues.free_trial_leads || 0}
                           onChange={(e) => setEditValues({ ...editValues, free_trial_leads: parseInt(e.target.value) || 0 })}
@@ -379,7 +371,7 @@ export default function AdminPricingPage() {
                         <div className="flex items-center justify-center gap-1">
                           <span className="text-slate-400 text-xs">$</span>
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             className="w-14 px-1 py-1 border border-slate-300 rounded text-center text-xs"
                             value={centsToInput(editValues.featured_monthly_cents || 0)}
                             onChange={(e) => setEditValues({ ...editValues, featured_monthly_cents: inputToCents(e.target.value) })}
@@ -408,9 +400,17 @@ export default function AdminPricingPage() {
                           <button onClick={() => handleEdit(row)} className="px-3 py-1 border border-slate-200 text-xs font-medium rounded hover:bg-slate-50">
                             Edit
                           </button>
-                          <button onClick={() => handleApplyAll(row.advisor_type, row.price_cents)} className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 font-medium">
-                            Apply All
-                          </button>
+                          {pendingApplyAllType === row.advisor_type ? (
+                            <>
+                              <span className="text-xs text-slate-600">Apply {formatCents(row.price_cents)} to all?</span>
+                              <button onClick={() => handleApplyAll(row.advisor_type, row.price_cents)} className="px-2 py-1 text-xs font-bold text-blue-600 hover:text-blue-800">Yes</button>
+                              <button onClick={() => setPendingApplyAllType(null)} className="px-2 py-1 text-xs text-slate-500 hover:text-slate-700">No</button>
+                            </>
+                          ) : (
+                            <button onClick={() => setPendingApplyAllType(row.advisor_type)} className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 font-medium">
+                              Apply All
+                            </button>
+                          )}
                         </div>
                       )}
                     </td>

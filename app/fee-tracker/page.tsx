@@ -153,7 +153,7 @@ export default async function FeeTrackerPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <span className="text-slate-900 font-medium">Fee Tracker</span>
@@ -277,13 +277,13 @@ export default async function FeeTrackerPage() {
               sub="Standard ASX brokerage fee as currently published by each broker. Verify directly with the broker before trading."
             />
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Current ASX brokerage fees by broker">
                 <thead>
                   <tr className="bg-slate-900 text-left">
-                    <th className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">Broker</th>
-                    <th className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">ASX Brokerage</th>
-                    <th className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">Fee Changes</th>
-                    <th className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide"></th>
+                    <th scope="col" className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">Broker</th>
+                    <th scope="col" className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">ASX Brokerage</th>
+                    <th scope="col" className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">Fee Changes</th>
+                    <th scope="col" className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -373,7 +373,7 @@ export default async function FeeTrackerPage() {
               <details key={faq.question} className="group bg-white rounded-xl border border-slate-200">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3">⌄</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">⌄</span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                   {faq.answer}

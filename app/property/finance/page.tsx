@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Financing an Investment Property in Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How to finance an investment property in Australia — investor loan rates vs owner-occupier, deposit and equity, interest-only vs P&I, offset accounts, borrowing capacity, debt recycling, and using equity to build a portfolio. ${UPDATED_LABEL}.`,
+  description: `How to finance an investment property: investor rates, interest-only vs P&I, offset accounts, borrowing capacity, and debt recycling. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Financing an Investment Property in Australia (${CURRENT_YEAR})`,
     description:
@@ -222,7 +222,7 @@ export default function PropertyFinancePage() {
       <div className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-14">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-sm text-blue-200 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-blue-200 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-white transition-colors">Property</Link>
@@ -320,12 +320,12 @@ export default function PropertyFinancePage() {
             indicative and vary by lender, LVR, and loan size.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Investment loan vs owner-occupier loan comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Feature</th>
-                  <th className="text-left px-5 py-3">Investment loan</th>
-                  <th className="text-left px-5 py-3">Owner-occupier loan</th>
+                  <th scope="col" className="text-left px-5 py-3">Feature</th>
+                  <th scope="col" className="text-left px-5 py-3">Investment loan</th>
+                  <th scope="col" className="text-left px-5 py-3">Owner-occupier loan</th>
                 </tr>
               </thead>
               <tbody>
@@ -359,13 +359,13 @@ export default function PropertyFinancePage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table aria-label="Deposit and equity requirements for investment loans" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Deposit</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Resulting LVR</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">LMI</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Deposit</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Resulting LVR</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">LMI</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -441,11 +441,11 @@ export default function PropertyFinancePage() {
             suggests. Each of these factors shapes your assessed capacity.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table aria-label="Borrowing capacity factors for property investors" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Factor</th>
-                  <th className="text-left px-5 py-3">How lenders apply it</th>
+                  <th scope="col" className="text-left px-5 py-3">Factor</th>
+                  <th scope="col" className="text-left px-5 py-3">How lenders apply it</th>
                 </tr>
               </thead>
               <tbody>
@@ -794,7 +794,7 @@ export default function PropertyFinancePage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-50 bg-white">
                   {faq.q}
-                  <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                  <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#9660;
                   </span>
                 </summary>

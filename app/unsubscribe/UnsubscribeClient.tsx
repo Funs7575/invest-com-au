@@ -85,7 +85,7 @@ export default function UnsubscribeClient() {
         <label htmlFor="unsub-email" className="sr-only">Email address</label>
         <input
           id="unsub-email"
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
@@ -99,7 +99,7 @@ export default function UnsubscribeClient() {
         <button
           onClick={handleUnsubscribe}
           disabled={status === "loading" || !email}
-          className="w-full py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50"
+          className="w-full py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {status === "loading" ? "Processing..." : "Unsubscribe"}
         </button>

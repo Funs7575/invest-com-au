@@ -26,9 +26,7 @@ const FORMS = [
 
 export default async function FormsFunnelPage() {
   const admin = createAdminClient();
-  const thirtyDaysAgo = new Date(
-    Date.now() - 30 * 24 * 60 * 60 * 1000,
-  ).toISOString();
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(); // eslint-disable-line react-hooks/purity -- server component
   const { data } = await admin
     .from("form_events")
     .select("session_id, form_name, step, step_index, event, created_at")
@@ -80,7 +78,7 @@ export default async function FormsFunnelPage() {
                     with recordFormEvent() to start seeing drop-off data here.
                   </div>
                 ) : (
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm" aria-label={`${f.form} funnel steps`}>
                     <thead>
                       <tr className="text-[0.6rem] uppercase tracking-wider text-slate-500 border-b border-slate-100">
                         <th className="px-4 py-2 text-left font-semibold">Step</th>

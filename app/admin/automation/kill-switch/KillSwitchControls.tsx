@@ -18,33 +18,23 @@ export default function KillSwitchControls({ initialRows }: { initialRows: Row[]
   const [rows, setRows] = useState(initialRows);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [pendingDisable, setPendingDisable] = useState<string | null>(null);
+  const [disableReason, setDisableReason] = useState("");
 
-  async function toggle(row: Row) {
+  async function applyToggle(feature: string, nextDisabled: boolean, reason: string | null) {
     setError(null);
-    setBusy(row.feature);
-    const nextDisabled = !row.current.disabled;
-    let reason: string | null = null;
-    if (nextDisabled) {
-      reason = window.prompt(
-        `Reason for disabling ${row.title}? (Logged to audit.)`,
-        "",
-      );
-      if (reason == null) {
-        setBusy(null);
-        return; // user cancelled
-      }
-    }
+    setBusy(feature);
     try {
       const res = await fetch("/api/admin/automation/kill-switch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ feature: row.feature, disabled: nextDisabled, reason }),
+        body: JSON.stringify({ feature, disabled: nextDisabled, reason }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (!res.ok) throw new Error((data as { error?: string }).error || `HTTP ${res.status}`);
       setRows((rs) =>
         rs.map((r) =>
-          r.feature === row.feature
+          r.feature === feature
             ? {
                 ...r,
                 current: {
@@ -64,11 +54,59 @@ export default function KillSwitchControls({ initialRows }: { initialRows: Row[]
     }
   }
 
+  function toggle(row: Row) {
+    if (!row.current.disabled) {
+      setPendingDisable(row.feature);
+      setDisableReason("");
+    } else {
+      void applyToggle(row.feature, false, null);
+    }
+  }
+
+  function confirmDisable() {
+    if (!pendingDisable) return;
+    const feature = pendingDisable;
+    setPendingDisable(null);
+    void applyToggle(feature, true, disableReason.trim() || null);
+  }
+
   return (
     <div className="space-y-3">
       {error && (
         <div className="px-3 py-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
           ⚠ {error}
+        </div>
+      )}
+      {pendingDisable && (
+        <div className="bg-red-50 border border-red-300 rounded-xl p-4 space-y-3">
+          <p className="text-sm font-semibold text-red-900">
+            Disable {rows.find(r => r.feature === pendingDisable)?.title ?? pendingDisable}?
+          </p>
+          <p className="text-xs text-red-700">Provide a reason — this is logged to the audit trail.</p>
+          <input
+            type="text"
+            value={disableReason}
+            onChange={(e) => setDisableReason(e.target.value)}
+            placeholder="Reason for disabling…"
+            className="w-full px-3 py-2 border border-red-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+          />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={confirmDisable}
+              disabled={!!busy || disableReason.trim().length === 0}
+              className="px-4 py-2 rounded bg-red-600 text-white font-semibold text-sm hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {busy ? "…" : "Yes, disable"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPendingDisable(null)}
+              className="px-4 py-2 rounded bg-white border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
       {rows.map((row) => {

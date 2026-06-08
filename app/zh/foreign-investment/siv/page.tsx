@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { absoluteUrl, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { getSubPageDict } from "@/lib/i18n/dictionaries";
 import { BCP47_TAG } from "@/lib/i18n/locales";
 import ForeignInvestmentSubPage from "@/components/ForeignInvestmentSubPage";
@@ -25,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: dict.meta.description,
       locale: BCP47_TAG.zh,
       url: `${SITE_URL}/zh/foreign-investment/siv`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Australia SIV Investor Visa — Chinese Guide")}&sub=${encodeURIComponent("SIV · BIIP · NIV · Migration Pathways · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

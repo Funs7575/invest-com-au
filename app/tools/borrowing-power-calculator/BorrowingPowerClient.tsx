@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { incomeTax } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── Australian lending maths (FY2025-26) ────────────────────────────────────
 
@@ -195,7 +196,7 @@ export default function BorrowingPowerClient() {
           </label>
           <input
             id="bp-dependents"
-            type="number"
+            type="number" inputMode="decimal"
             min={0}
             max={10}
             step={1}
@@ -205,8 +206,8 @@ export default function BorrowingPowerClient() {
           />
         </div>
 
-        <div>
-          <span className="block text-sm font-medium text-gray-700 mb-2">Loan term</span>
+        <fieldset>
+          <legend className="block text-sm font-medium text-gray-700 mb-2">Loan term</legend>
           <div className="flex gap-4">
             {LOAN_TERMS.map((t) => (
               <label key={t} className="flex items-center gap-2 cursor-pointer">
@@ -221,7 +222,7 @@ export default function BorrowingPowerClient() {
               </label>
             ))}
           </div>
-        </div>
+        </fieldset>
       </section>
 
       {/* Results */}
@@ -285,6 +286,13 @@ export default function BorrowingPowerClient() {
         </Link>
       </div>
 
+      <CalculatorLeadCapture
+        calcSlug="borrowing-power-calculator"
+        calcTitle="borrowing capacity"
+        need="mortgage"
+        contextKeys={["borrowing-power", "home-loan"]}
+      />
+
       <p className="text-xs text-gray-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </main>
   );
@@ -320,7 +328,7 @@ function InputField({
         )}
         <input
           id={id}
-          type="number"
+          type="number" inputMode="decimal"
           min={0}
           max={max}
           step={step}

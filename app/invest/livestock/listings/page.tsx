@@ -27,6 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Livestock & Equine Investment Opportunities Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/livestock/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Livestock Investment Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

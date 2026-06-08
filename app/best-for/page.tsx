@@ -8,6 +8,7 @@ import {
   SITE_URL,
   CURRENT_YEAR,
 } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 
 const log = logger("best-for-hub");
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
     description:
       "Ranked broker picks for every Australian investor profile — from day traders to SMSF long-term holders.",
     url: `${SITE_URL}/best-for`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Best Broker For Every Scenario")}&sub=${encodeURIComponent("Day Trading · SMSF · ETFs · Beginners · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };
@@ -130,6 +132,26 @@ export default async function BestForHubPage() {
     { name: "Best Broker For" },
   ]);
 
+  const bestForFaqs = [
+    {
+      q: "How does Invest.com.au rank brokers for each scenario?",
+      a: "Each scenario page weights the broker fields that matter most for that use case — for example, ASX brokerage fees for day traders, CHESS sponsorship and no inactivity fee for long-term holders, FX spread and US-market fees for international investors, and SMSF support flags for self-managed super. Rankings update automatically as broker data changes. No broker can pay to move up within a scenario list; sponsorship only enables optional feature placements that are clearly labelled.",
+    },
+    {
+      q: "Are these broker recommendations paid or sponsored?",
+      a: "Invest.com.au earns affiliate commissions when you open an account through our links. Sponsorship affects badge placement (e.g., a 'Featured' label) but does not alter the underlying ranking order — the best match for each scenario always appears first regardless of commercial relationships. See our How We Earn page for full disclosure.",
+    },
+    {
+      q: "How often are the broker rankings updated?",
+      a: "Broker data — including fees, rates, platform types, and support flags — is reviewed and updated regularly. The rankings recalculate automatically whenever broker data changes. Each scenario page shows the year in the title; if a fee changes mid-year the ranking adjusts before the next annual review.",
+    },
+    {
+      q: "What's the difference between a broker scenario and a broker category?",
+      a: "A scenario (e.g., 'best broker for SMSF' or 'best broker for day trading') is a weighted ranking optimised for a specific investor goal or trading style. A category (e.g., 'share trading') lists all eligible brokers sorted by overall rating. Scenarios are more useful when you have a specific need — categories are better for general comparison.",
+    },
+  ];
+  const bestForFaqLd = faqJsonLd(bestForFaqs);
+
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -153,10 +175,14 @@ export default async function BestForHubPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(bestForFaqLd) }}
+      />
 
       <div className="py-8 md:py-14">
         <div className="container-custom max-w-5xl">
-          <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5 flex-wrap" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" aria-hidden="true" />
             <span className="text-slate-700 font-medium">Best Broker For</span>
@@ -230,6 +256,26 @@ export default async function BestForHubPage() {
               ))}
             </div>
           )}
+
+          <section className="mt-12 border-t border-slate-200 pt-10">
+            <h2 className="text-base font-bold text-slate-900 mb-4">About these rankings</h2>
+            <div className="divide-y divide-slate-100">
+              {bestForFaqs.map(({ q, a }) => (
+                <details key={q} className="group py-3">
+                  <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                    {q}
+                    <svg
+                      className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
 
           <section className="mt-12 bg-slate-50 border border-slate-200 rounded-2xl p-6 md:p-8">
             <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-2">

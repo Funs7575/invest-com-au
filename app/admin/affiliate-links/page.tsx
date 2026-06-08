@@ -25,6 +25,7 @@ export default function AffiliateLinksPage() {
   const [clickCounts, setClickCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
+  const [saveErrorSlug, setSaveErrorSlug] = useState<string | null>(null);
   const [edits, setEdits] = useState<Record<string, EditableFields>>({});
   const [activeTab, setActiveTab] = useState<"links" | "revenue" | "health">("links");
 
@@ -89,7 +90,8 @@ export default function AffiliateLinksPage() {
 
     if (error) {
       log.error("Error saving broker", { error: error.message });
-      alert("Error saving: " + error.message);
+      setSaveErrorSlug(broker.slug);
+      setTimeout(() => setSaveErrorSlug(null), 4000);
     } else {
       setSavedSlug(broker.slug);
       setTimeout(() => setSavedSlug(null), 2000);
@@ -316,7 +318,7 @@ export default function AffiliateLinksPage() {
             <TableSkeleton rows={5} cols={7} />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Affiliate links">
                 <thead className="bg-slate-50">
                   {activeTab === "links" ? (
                     <tr>
@@ -424,6 +426,9 @@ export default function AffiliateLinksPage() {
                                 {savedSlug === broker.slug && (
                                   <span className="text-emerald-600 text-sm">Saved!</span>
                                 )}
+                                {saveErrorSlug === broker.slug && (
+                                  <span role="alert" className="text-red-600 text-xs">Save failed</span>
+                                )}
                               </div>
                             </td>
                           </>
@@ -444,7 +449,7 @@ export default function AffiliateLinksPage() {
                             </td>
                             <td className="px-4 py-3">
                               <input
-                                type="number"
+                                type="number" inputMode="decimal"
                                 step="0.01"
                                 min="0"
                                 value={getFieldValue(broker, "commission_value")}
@@ -457,7 +462,7 @@ export default function AffiliateLinksPage() {
                             </td>
                             <td className="px-4 py-3">
                               <input
-                                type="number"
+                                type="number" inputMode="decimal"
                                 step="0.01"
                                 min="0"
                                 value={getFieldValue(broker, "estimated_epc")}
@@ -487,6 +492,9 @@ export default function AffiliateLinksPage() {
                                 </button>
                                 {savedSlug === broker.slug && (
                                   <span className="text-emerald-600 text-sm">Saved!</span>
+                                )}
+                                {saveErrorSlug === broker.slug && (
+                                  <span role="alert" className="text-red-600 text-xs">Save failed</span>
                                 )}
                               </div>
                             </td>

@@ -69,6 +69,10 @@ vi.mock("@/lib/seo", () => ({
   breadcrumbJsonLd: () => ({}),
 }));
 
+vi.mock("@/lib/schema-markup", () => ({
+  faqJsonLd: () => null,
+}));
+
 const GUIDE = {
   id: 1,
   broker_slug: "commsec",

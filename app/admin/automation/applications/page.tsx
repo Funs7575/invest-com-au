@@ -25,7 +25,7 @@ export default async function ApplicationsDrillDown() {
           <p className="text-xs text-slate-500">Most recent 50 applications. Set <code>AFSL_LOOKUP_URL</code> + <code>ABN_LOOKUP_GUID</code> env vars to activate auto-verification.</p>
         </header>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-xs" aria-label="Automation applications">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
                 <th className="px-4 py-2 text-left font-semibold text-slate-600">ID</th>

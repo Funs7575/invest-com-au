@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -140,7 +141,7 @@ export default function IncomTestPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">
               Home
             </Link>
@@ -222,19 +223,19 @@ export default function IncomTestPage() {
             rises.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Age Pension income-free area and taper rate 2024–25">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Situation
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Income-free area (fortnight)
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Taper rate
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Approx. cut-off
                   </th>
                 </tr>
@@ -337,19 +338,19 @@ export default function IncomTestPage() {
             <em>deems</em> a standard return regardless of what the asset actually earns.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden mb-5">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Centrelink deeming rates on financial assets 2024–25">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Tier
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Single — asset value
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Couple — combined asset value
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Deeming rate
                   </th>
                 </tr>
@@ -707,16 +708,16 @@ export default function IncomTestPage() {
             Full income test calculation — step by step
           </h2>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Age Pension income test full calculation steps">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-8">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-8">
                     Step
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     What you calculate
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Notes
                   </th>
                 </tr>
@@ -796,7 +797,7 @@ export default function IncomTestPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4 bg-white">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">
                     &#9662;
                   </span>
                 </summary>
@@ -806,6 +807,16 @@ export default function IncomTestPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Model your Age Pension income test with an expert"
+        subheading="Super drawdown, part-time work, and investment income all affect your pension entitlement differently. A licensed financial planner can model your optimal income strategy."
+        intent={{ need: "retirement", context: ["income_test", "age_pension", "centrelink"] }}
+        source="retirement_income_test"
+        ctaLabel="Find a retirement planner"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

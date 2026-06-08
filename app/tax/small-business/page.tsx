@@ -8,12 +8,13 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Small Business Tax Australia (${CURRENT_YEAR}) — Sole Trader, Company, Trust & Partnership`,
-  description: `Small business tax in Australia: business structure comparison, GST threshold, company tax rates, small business CGT concessions, instant asset write-off, and key deductions. Updated for ${CURRENT_YEAR}. ${UPDATED_LABEL}.`,
+  description: `Small business tax in Australia: GST threshold, company tax rates, CGT concessions, instant asset write-off, and key deductions. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Small Business Tax Australia (${CURRENT_YEAR}) — Sole Trader, Company, Trust & Partnership`,
     description:
       "How Australian small businesses are taxed: structure comparison, GST threshold, 25% company rate, small business CGT concessions, instant asset write-off, and common deductions.",
     url: `${SITE_URL}/tax/small-business`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Small Business Tax Australia")}&sub=${encodeURIComponent("Sole Trader · Company · CGT Concessions · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/small-business` },
@@ -261,14 +262,14 @@ export default function SmallBusinessTaxPage() {
               Each structure has different tax rates, liability exposure, and complexity.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Business structure comparison: sole trader, partnership, company, trust">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-3 px-4 text-xs font-bold">Feature</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Sole trader</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Partnership</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold bg-amber-700">Company</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Trust</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Feature</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Sole trader</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Partnership</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold bg-amber-700">Company</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Trust</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -388,12 +389,12 @@ export default function SmallBusinessTaxPage() {
           <div className="container-custom max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Small business tax concessions</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Small business tax concessions eligibility and benefits">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-3 px-4 text-xs font-bold">Concession</th>
-                    <th className="text-left py-3 px-4 text-xs font-bold">Eligibility</th>
-                    <th className="text-left py-3 px-4 text-xs font-bold">Benefit</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Concession</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Eligibility</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Benefit</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">

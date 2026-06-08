@@ -11,6 +11,7 @@ import {
   CURRENT_YEAR,
   SITE_URL,
 } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import FullServiceBrokerEnquiryForm from "@/components/full-service-brokers/FullServiceBrokerEnquiryForm";
@@ -124,6 +125,33 @@ export default async function FullServiceBrokerDetailPage({
     { name: f.name },
   ]);
 
+  const feeLabel = f.fee_model ? FEE_MODEL_LABELS[f.fee_model] : null;
+  const minimumLabel = formatMinimum(f.minimum_investment_cents ?? undefined);
+
+  const firmFaqs = [
+    {
+      q: `What does ${f.name} offer as a full-service stockbroker?`,
+      a: `${f.name} is a ${f.type === "private_wealth_manager" ? "private wealth manager" : "full-service stockbroker"} providing personalised investment management beyond what DIY online platforms offer — including research, portfolio construction, and direct advisor access.${f.bio ? ` ${f.bio}` : ""}${f.specialties?.length ? ` Specialties include ${f.specialties.join(", ")}.` : ""}`,
+    },
+    {
+      q: `What is the minimum investment for ${f.name}?`,
+      a: minimumLabel === "Enquire"
+        ? `${f.name} does not publish a fixed minimum — contact them directly to discuss your portfolio size. Full-service brokers typically have higher minimums than online platforms ($100,000–$500,000 is common) because of the personalised service model.`
+        : `${f.name} requires a minimum portfolio of ${minimumLabel}.${feeLabel ? ` The fee model is: ${feeLabel}.` : ""} Enquire directly to confirm current terms as minimums can change.`,
+    },
+    {
+      q: `Is ${f.name} regulated by ASIC?`,
+      a: f.afsl_number
+        ? `Yes. ${f.name} holds Australian Financial Services Licence (AFSL) ${f.afsl_number}, which is issued and monitored by ASIC. You can verify this licence on ASIC Connect or MoneySmart's financial advisers register. AFSL holders must meet ongoing obligations including capital adequacy, dispute resolution membership, and compliance with the Corporations Act.`
+        : `${f.name} should hold an Australian Financial Services Licence (AFSL) to operate legally in Australia. You can verify their current AFSL status on ASIC Connect or MoneySmart. Always confirm a firm is ASIC-licensed before engaging their services.`,
+    },
+    {
+      q: `How does ${f.name} differ from an online broker like CommSec or Stake?`,
+      a: `Full-service brokers like ${f.name} provide personalised portfolio management, direct advisor relationships, and research access — at a higher cost than DIY online platforms. Online platforms charge a flat brokerage fee per trade ($5–$30) and you make all investment decisions yourself. Full-service fees are typically based on assets under management (e.g. 0.5–1.5% per year) or a flat retainer, and include ongoing advisor contact. The right choice depends on your portfolio size, confidence, and how much involvement you want.`,
+    },
+  ];
+  const firmFaqLd = faqJsonLd(firmFaqs);
+
   // Organization schema for the firm — gives Google a real entity to anchor
   // search results to. AFSL number doubles as the regulatory identifier.
   const organizationLd = {
@@ -148,11 +176,17 @@ export default async function FullServiceBrokerDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
       />
+      {firmFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(firmFaqLd) }}
+        />
+      )}
 
       <div className="py-6 md:py-12">
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/brokers/full-service" className="hover:text-slate-900">
@@ -287,6 +321,22 @@ export default async function FullServiceBrokerDetailPage({
               professionalId={f.id}
               firmName={f.name}
             />
+          </section>
+
+          {/* FAQ */}
+          <section className="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 mb-6">
+            <h2 className="text-base md:text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {firmFaqs.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 font-semibold text-sm text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  </summary>
+                  <p className="px-4 pb-4 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </section>
 
           {/* Back nav */}

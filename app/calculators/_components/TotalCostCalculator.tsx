@@ -69,11 +69,12 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
       {/* Inputs */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-3 md:mb-6">
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="tc-asx-trades" className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
             ASX Trades / Month
           </label>
           <input
-            type="number"
+            id="tc-asx-trades"
+            type="number" inputMode="decimal"
             value={asxTradesMonth}
             onChange={(e) => setAsxTradesMonth(e.target.value)}
             className="w-full px-3 py-2 md:py-3 border border-slate-200 rounded-lg text-sm md:text-lg font-semibold focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
@@ -83,11 +84,12 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
           />
         </div>
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="tc-us-trades" className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
             US Trades / Month
           </label>
           <input
-            type="number"
+            id="tc-us-trades"
+            type="number" inputMode="decimal"
             value={usTradesMonth}
             onChange={(e) => setUsTradesMonth(e.target.value)}
             className="w-full px-3 py-2 md:py-3 border border-slate-200 rounded-lg text-sm md:text-lg font-semibold focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
@@ -97,13 +99,14 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
           />
         </div>
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="tc-avg-trade" className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
             Avg Trade Size (AUD)
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
             <input
-              type="number"
+              id="tc-avg-trade"
+              type="number" inputMode="decimal"
               value={tradeAmount}
               onChange={(e) => setTradeAmount(e.target.value)}
               className="w-full pl-7 pr-3 py-2 md:py-3 border border-slate-200 rounded-lg text-sm md:text-lg font-semibold focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
@@ -192,16 +195,16 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
 
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full" aria-label="Broker total cost comparison">
               <thead>
                 <tr className="border-b border-slate-200">
-                  <th className="text-left text-xs font-semibold text-slate-500 pb-2 pr-4">Broker</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">ASX Brokerage</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">US Brokerage</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">FX Cost</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2 font-bold">Yearly Total</th>
-                  <th className="text-left text-xs font-semibold text-slate-500 pb-2 pl-4">Cost Bar</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 pl-2">
+                  <th scope="col" className="text-left text-xs font-semibold text-slate-500 pb-2 pr-4">Broker</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">ASX Brokerage</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">US Brokerage</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">FX Cost</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 px-2 font-bold">Yearly Total</th>
+                  <th scope="col" className="text-left text-xs font-semibold text-slate-500 pb-2 pl-4">Cost Bar</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 pl-2">
                     <span className="sr-only">Action</span>
                   </th>
                 </tr>

@@ -112,7 +112,7 @@ export default async function SearchPage({
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
               />
               <input
-                type="search"
+                type="search" enterKeyHint="search"
                 name="q"
                 defaultValue={query}
                 placeholder="Search brokers, advisors, articles, glossary…"
@@ -125,9 +125,9 @@ export default async function SearchPage({
 
           {/* Header */}
           {query.length >= 2 && (
-            <div className="mb-6">
+            <div className="mb-6" aria-live="polite" aria-atomic="true">
               {error ? (
-                <p className="text-sm text-red-600">{error}</p>
+                <p role="alert" className="text-sm text-red-600">{error}</p>
               ) : results ? (
                 <p className="text-sm text-slate-500">
                   {totalHits === 0

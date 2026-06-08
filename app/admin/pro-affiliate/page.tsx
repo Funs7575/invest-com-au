@@ -115,7 +115,7 @@ export default async function AdminProAffiliatePage() {
             No credit awards yet.
           </p>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Pro affiliate">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
                 <th className="text-left px-4 py-2">#</th>

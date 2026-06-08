@@ -185,13 +185,13 @@ function ParamsTable({ rows }: {
 }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-12">
-      <table className="w-full text-sm">
+      <table className="w-full text-sm" aria-label="Widget embed parameters">
         <thead>
           <tr className="bg-slate-50 border-b border-slate-200 text-left">
-            <th className="px-5 py-3 font-bold text-slate-700">Parameter</th>
-            <th className="px-5 py-3 font-bold text-slate-700">Values</th>
-            <th className="px-5 py-3 font-bold text-slate-700 hidden sm:table-cell">Default</th>
-            <th className="px-5 py-3 font-bold text-slate-700">Description</th>
+            <th scope="col" className="px-5 py-3 font-bold text-slate-700">Parameter</th>
+            <th scope="col" className="px-5 py-3 font-bold text-slate-700">Values</th>
+            <th scope="col" className="px-5 py-3 font-bold text-slate-700 hidden sm:table-cell">Default</th>
+            <th scope="col" className="px-5 py-3 font-bold text-slate-700">Description</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
@@ -233,7 +233,7 @@ export default function EmbedPage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <span className="text-slate-900 font-medium">Embed Widgets</span>

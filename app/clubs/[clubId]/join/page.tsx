@@ -61,8 +61,9 @@ export default function JoinClubPage({ params }: { params: Promise<{ clubId: str
       </p>
       <form onSubmit={handleJoin} className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Your display name</label>
+          <label htmlFor="cj-display-name" className="block text-xs font-semibold text-slate-600 mb-1">Your display name</label>
           <input
+            id="cj-display-name"
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
@@ -71,11 +72,11 @@ export default function JoinClubPage({ params }: { params: Promise<{ clubId: str
             className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
           />
         </div>
-        {error && <p className="text-red-600 text-xs">{error}</p>}
+        {error && <p role="alert" className="text-red-600 text-xs">{error}</p>}
         <button
           type="submit"
           disabled={joining || !clubId}
-          className="w-full px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-900 transition-colors disabled:opacity-50"
+          className="w-full px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {joining ? "Joining…" : "Join club"}
         </button>

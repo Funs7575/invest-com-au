@@ -121,10 +121,11 @@ export default function BrokerOutreachPage() {
       <div className="max-w-3xl grid gap-6 md:grid-cols-[1fr_1.2fr]">
         <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
+            <label htmlFor="bo-broker" className="block text-xs font-semibold text-slate-600 mb-1">
               Broker
             </label>
             <select
+              id="bo-broker"
               value={brokerSlug}
               onChange={(e) => onBrokerChange(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -138,10 +139,11 @@ export default function BrokerOutreachPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
+            <label htmlFor="bo-broker-name" className="block text-xs font-semibold text-slate-600 mb-1">
               Broker name (override)
             </label>
             <input
+              id="bo-broker-name"
               type="text"
               value={brokerName}
               onChange={(e) => setBrokerName(e.target.value)}
@@ -150,10 +152,11 @@ export default function BrokerOutreachPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
+            <label htmlFor="bo-contact-name" className="block text-xs font-semibold text-slate-600 mb-1">
               Contact name *
             </label>
             <input
+              id="bo-contact-name"
               type="text"
               value={contactName}
               onChange={(e) => setContactName(e.target.value)}
@@ -162,11 +165,12 @@ export default function BrokerOutreachPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
+            <label htmlFor="bo-contact-email" className="block text-xs font-semibold text-slate-600 mb-1">
               Contact email *
             </label>
             <input
-              type="email"
+              id="bo-contact-email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"

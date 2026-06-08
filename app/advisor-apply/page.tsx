@@ -280,7 +280,7 @@ function AdvisorApplyInner() {
   if (inviteLoading) {
     return (
       <div className="py-20 text-center">
-        <div className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
+        <div aria-hidden="true" className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm text-slate-500">Loading invitation...</p>
       </div>
     );
@@ -324,16 +324,62 @@ function AdvisorApplyInner() {
 
   const isInviteFlow = !!inviteContext;
 
+  // ADV-118: compute current step (1-based) from form completion state
+  const applySteps = [
+    { label: "Account type" },
+    { label: "Contact details" },
+    { label: "Your profile" },
+    { label: "Photo & submit" },
+  ];
+  const applyCurrentStep =
+    !form.name.trim() || !form.email.trim() || !!fieldErrors.name || !!fieldErrors.email ? 2
+    : !form.type ? 3
+    : !photoFile ? 4
+    : 4;
+
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-2xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <Link href="/advisors" className="hover:text-slate-900">Advisors</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-slate-700">Apply</span>
         </nav>
+
+        {/* ADV-118: Step progress indicator */}
+        {!isInviteFlow && (
+          <div className="mb-5" aria-label="Application progress">
+            <div className="flex items-center gap-0">
+              {applySteps.map((s, i) => {
+                const stepNum = i + 1;
+                const isDone = stepNum < applyCurrentStep;
+                const isCurrent = stepNum === applyCurrentStep;
+                return (
+                  <div key={i} className="flex items-center flex-1">
+                    <div className="flex flex-col items-center">
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                        isDone ? "bg-violet-600 text-white" : isCurrent ? "bg-violet-100 text-violet-700 ring-2 ring-violet-400" : "bg-slate-100 text-slate-400"
+                      }`}>
+                        {isDone ? (
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : stepNum}
+                      </div>
+                      <span className={`text-[0.6rem] mt-1 font-medium hidden sm:block ${isCurrent ? "text-violet-700" : isDone ? "text-slate-500" : "text-slate-400"}`}>{s.label}</span>
+                    </div>
+                    {i < applySteps.length - 1 && (
+                      <div className={`flex-1 h-0.5 mx-1 transition-colors ${isDone ? "bg-violet-400" : "bg-slate-200"}`} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-xs text-slate-500 mt-2 sm:hidden">Step {applyCurrentStep} of {applySteps.length}: <span className="font-semibold text-slate-700">{applySteps[applyCurrentStep - 1]?.label}</span></p>
+          </div>
+        )}
 
         {/* Invite banner */}
         {isInviteFlow && (
@@ -363,9 +409,9 @@ function AdvisorApplyInner() {
             </p>
             <div className="grid grid-cols-3 gap-2 md:gap-3">
               {[
-                { icon: "gift", title: "Free Listing", desc: "No upfront cost" },
-                { icon: "users", title: "Qualified Leads", desc: "Investors seeking help" },
-                { icon: "shield", title: "Verified Badge", desc: "ASIC/TPB checked" },
+                { icon: "gift", title: "Free to Start", desc: "No upfront cost, ever" },
+                { icon: "users", title: "Qualified Leads", desc: "Pre-screened by goal & budget" },
+                { icon: "shield", title: "Verified Badge", desc: "Builds trust with investors" },
               ].map((v, i) => (
                 <div key={i} className="bg-white/10 backdrop-blur rounded-lg p-2.5 md:p-3 text-center">
                   <Icon name={v.icon} size={18} className="text-violet-200 mx-auto mb-1" />
@@ -382,7 +428,7 @@ function AdvisorApplyInner() {
             {/* Account Type Selector — hidden in invite flow */}
             {!isInviteFlow && (
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-2">I&apos;m applying as *</label>
+                <p className="block text-xs font-semibold text-slate-600 mb-2">I&apos;m applying as *</p>
                 <div className="grid grid-cols-2 gap-3">
                   <button type="button" onClick={() => setAccountType("individual")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "individual" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
                     <div className="flex items-center gap-2 mb-1">
@@ -402,78 +448,13 @@ function AdvisorApplyInner() {
               </div>
             )}
 
-            {/* Photo Upload */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-2">Profile Photo *</label>
-              <div className="flex items-start gap-4">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={photoUploading}
-                  className={`
-                    relative w-24 h-24 rounded-full border-2 border-dashed overflow-hidden flex-shrink-0
-                    transition-all duration-200 cursor-pointer group
-                    ${photoPreview ? "border-slate-300" : "border-slate-300 hover:border-slate-400"}
-                    ${photoUploading ? "opacity-70 cursor-wait" : ""}
-                  `}
-                >
-                  {photoPreview ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- photoPreview is a blob: URL from URL.createObjectURL(); next/image does not support blob: scheme
-                    <img
-                      src={photoPreview}
-                      alt="Profile photo preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center w-full h-full bg-slate-100 text-slate-600">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                    </div>
-                  )}
-                  {!photoUploading && (
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="17 8 12 3 7 8" />
-                        <line x1="12" y1="3" x2="12" y2="15" />
-                      </svg>
-                    </div>
-                  )}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={handlePhotoSelect}
-                  className="hidden"
-                />
-                <div className="pt-1">
-                  <p className="text-xs text-slate-500">Click to upload a headshot photo.</p>
-                  <p className="text-[0.56rem] text-slate-400 mt-0.5">JPG, PNG, or WebP. Max 5MB.</p>
-                  {photoPreview && (
-                    <button
-                      type="button"
-                      onClick={removePhoto}
-                      className="text-[0.62rem] text-red-500 hover:text-red-600 font-medium mt-1.5"
-                    >
-                      Remove photo
-                    </button>
-                  )}
-                  {photoError && (
-                    <p className="text-xs text-red-600 font-medium mt-1">{photoError}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label htmlFor="aa-name" className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Your Full Name *" : "Full Name *"}</label>
                 <div className="relative">
                   <input
                     id="aa-name"
+                    autoComplete="name"
                     value={form.name}
                     onChange={(e) => {
                       const v = e.target.value;
@@ -533,8 +514,8 @@ function AdvisorApplyInner() {
               )}
               {isInviteFlow && (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Firm</label>
-                  <input value={inviteContext.firmName || ""} disabled className="w-full px-3 py-2 border border-slate-100 bg-slate-50 rounded-lg text-sm text-slate-500 cursor-not-allowed" />
+                  <label htmlFor="aa-firm-display" className="block text-xs font-semibold text-slate-600 mb-1">Firm</label>
+                  <input id="aa-firm-display" value={inviteContext.firmName || ""} disabled className="w-full px-3 py-2 border border-slate-100 bg-slate-50 rounded-lg text-sm text-slate-500 cursor-not-allowed" />
                 </div>
               )}
             </div>
@@ -543,12 +524,12 @@ function AdvisorApplyInner() {
             {accountType === "firm" && !isInviteFlow && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
-                  <input value={form.abn} onChange={(e) => setForm({ ...form, abn: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
+                  <label htmlFor="aa-abn" className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
+                  <input id="aa-abn" value={form.abn} onChange={(e) => setForm({ ...form, abn: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Website</label>
-                  <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                  <label htmlFor="aa-website" className="block text-xs font-semibold text-slate-600 mb-1">Firm Website</label>
+                  <input id="aa-website" type="url" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} autoComplete="url" className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
                 </div>
               </div>
             )}
@@ -559,7 +540,8 @@ function AdvisorApplyInner() {
                 <div className="relative">
                   <input
                     id="aa-email"
-                    type="email"
+                    type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+                    autoComplete="email"
                     value={form.email}
                     onChange={(e) => {
                       const v = e.target.value;
@@ -592,6 +574,8 @@ function AdvisorApplyInner() {
                 <div className="relative">
                   <input
                     id="aa-phone"
+                    type="tel"
+                    autoComplete="tel"
                     value={form.phone}
                     onChange={(e) => {
                       const v = e.target.value;
@@ -620,71 +604,138 @@ function AdvisorApplyInner() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Advisor Type *</label>
-              <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+              <label htmlFor="aa-type" className="block text-xs font-semibold text-slate-600 mb-1">Advisor Type *</label>
+              <select id="aa-type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
                 {Object.entries(PROFESSIONAL_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">AFSL Number</label>
-                <input value={form.afsl_number} onChange={(e) => setForm({ ...form, afsl_number: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. 234567" />
+                <label htmlFor="aa-afsl" className="block text-xs font-semibold text-slate-600 mb-1">AFSL Number</label>
+                <input id="aa-afsl" value={form.afsl_number} onChange={(e) => setForm({ ...form, afsl_number: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. 234567" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Registration / TAN</label>
-                <input value={form.registration_number} onChange={(e) => setForm({ ...form, registration_number: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="For tax agents" />
+                <label htmlFor="aa-reg-number" className="block text-xs font-semibold text-slate-600 mb-1">Registration / TAN</label>
+                <input id="aa-reg-number" value={form.registration_number} onChange={(e) => setForm({ ...form, registration_number: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="For tax agents" />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">State</label>
-                <select value={form.location_state} onChange={(e) => setForm({ ...form, location_state: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                <label htmlFor="aa-state" className="block text-xs font-semibold text-slate-600 mb-1">State</label>
+                <select id="aa-state" value={form.location_state} onChange={(e) => setForm({ ...form, location_state: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
                   <option value="">Select...</option>
                   {STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Suburb</label>
-                <input value={form.location_suburb} onChange={(e) => setForm({ ...form, location_suburb: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sydney CBD" />
+                <label htmlFor="aa-suburb" className="block text-xs font-semibold text-slate-600 mb-1">Suburb</label>
+                <input id="aa-suburb" value={form.location_suburb} onChange={(e) => setForm({ ...form, location_suburb: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sydney CBD" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Specialties</label>
-              <input value={form.specialties} onChange={(e) => setForm({ ...form, specialties: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="SMSF Setup, Retirement Planning, ETF Portfolios" />
+              <label htmlFor="aa-specialties" className="block text-xs font-semibold text-slate-600 mb-1">Specialties</label>
+              <input id="aa-specialties" value={form.specialties} onChange={(e) => setForm({ ...form, specialties: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="SMSF Setup, Retirement Planning, ETF Portfolios" />
               <p className="text-[0.56rem] text-slate-400 mt-0.5">Comma-separated</p>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Short Bio</label>
-              <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Tell investors about your experience and approach..." />
+              <label htmlFor="aa-bio" className="block text-xs font-semibold text-slate-600 mb-1">Short Bio</label>
+              <textarea id="aa-bio" value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Tell investors about your experience and approach..." />
             </div>
 
             {accountType !== "firm" || isInviteFlow ? (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
-                  <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                  <label htmlFor="aa-website-ind" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+                  <input id="aa-website-ind" type="url" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} autoComplete="url" className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
-                  <input value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
+                  <label htmlFor="aa-fee" className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
+                  <input id="aa-fee" value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
                 </div>
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
-                <input value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
+                <label htmlFor="aa-fee" className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
+                <input id="aa-fee" value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
               </div>
             )}
 
-            {errorMsg && <p className="text-xs text-red-600">{errorMsg}</p>}
+            {/* ADV-117: Photo upload moved here (end of form) to reduce early abandonment */}
+            <div>
+              <p className="block text-xs font-semibold text-slate-600 mb-2">Profile Photo *</p>
+              <div className="flex items-start gap-4">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={photoUploading}
+                  className={`
+                    relative w-24 h-24 rounded-full border-2 border-dashed overflow-hidden flex-shrink-0
+                    transition-all duration-200 cursor-pointer group
+                    ${photoPreview ? "border-slate-300" : "border-slate-300 hover:border-slate-400"}
+                    ${photoUploading ? "opacity-70 cursor-wait" : ""}
+                  `}
+                >
+                  {photoPreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- photoPreview is a blob: URL from URL.createObjectURL(); next/image does not support blob: scheme
+                    <img
+                      src={photoPreview}
+                      alt="Profile photo preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center w-full h-full bg-slate-100 text-slate-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                    </div>
+                  )}
+                  {!photoUploading && (
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                    </div>
+                  )}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handlePhotoSelect}
+                  className="hidden"
+                />
+                <div className="pt-1">
+                  <p className="text-xs text-slate-500">Almost done — add a headshot photo to complete your profile.</p>
+                  <p className="text-[0.56rem] text-slate-400 mt-0.5">JPG, PNG, or WebP. Max 5MB.</p>
+                  {photoPreview && (
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="text-[0.62rem] text-red-500 hover:text-red-600 font-medium mt-1.5"
+                    >
+                      Remove photo
+                    </button>
+                  )}
+                  {photoError && (
+                    <p className="text-xs text-red-600 font-medium mt-1">{photoError}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {errorMsg && <p role="alert" className="text-xs text-red-600">{errorMsg}</p>}
 
             <button
               onClick={submit}
               disabled={status === "submitting" || !isFormValid}
+              aria-busy={status === "submitting"}
               className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {status === "submitting" ? (photoUploading ? "Uploading photo..." : "Submitting...") : isInviteFlow ? "Accept Invitation & Apply" : "Submit Application"}
@@ -726,7 +777,7 @@ export default function AdvisorApplyPage() {
   return (
     <Suspense fallback={
       <div className="py-20 text-center">
-        <div className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
+        <div role="status" aria-label="Loading" className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
       </div>
     }>
       <AdvisorApplyInner />

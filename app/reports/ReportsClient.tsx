@@ -13,9 +13,12 @@ export default function ReportsClient({ reports }: { reports: QuarterlyReport[] 
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Quarterly Industry Reports</h1>
           <p className="text-slate-600 mb-8">In-depth quarterly analysis of the Australian broker landscape.</p>
-          <div className="text-center py-16 text-slate-400">
-            <p className="text-lg mb-1">First report coming soon</p>
-            <p className="text-sm">Our Q1 2026 report is in preparation.</p>
+          <div className="text-center py-16 space-y-3">
+            <svg className="w-12 h-12 text-slate-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p className="text-base font-semibold text-slate-700">First report coming soon</p>
+            <p className="text-sm text-slate-500">Our Q1 2026 report is in preparation — check back shortly.</p>
           </div>
         </div>
       </div>

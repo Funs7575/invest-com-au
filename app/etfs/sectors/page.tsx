@@ -9,11 +9,12 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Best Sector ETFs Australia (${CURRENT_YEAR}) — Technology, Healthcare, Resources & More`,
-  description: `Compare the best sector ETFs in Australia: HACK (cybersecurity), DRUG (healthcare), NDQ (tech), OZR (resources), QFN (financials) and more. Targeted sector exposure analysed by MER, performance, and risk. ${UPDATED_LABEL}.`,
+  description: `Best sector ETFs in Australia: HACK, DRUG, NDQ, OZR, QFN and more. Targeted exposure compared by MER, performance, and risk. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best Sector ETFs Australia (${CURRENT_YEAR})`,
     description: "Complete guide to Australian sector ETFs. Target technology, healthcare, resources, financials and more with a single ETF.",
     url: `${SITE_URL}/etfs/sectors`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Sector ETFs Australia")}&sub=${encodeURIComponent("Technology · Healthcare · Resources · Property · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/etfs/sectors` },
@@ -284,7 +285,7 @@ export default function SectorETFsPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>
@@ -434,7 +435,7 @@ export default function SectorETFsPage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>

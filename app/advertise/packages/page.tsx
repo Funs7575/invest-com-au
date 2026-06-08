@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { absoluteUrl, SITE_NAME } from "@/lib/seo";
 import PackagesClient from "./PackagesClient";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 86400;
 
@@ -119,7 +120,10 @@ const FAQS = [
 ];
 
 export default function PackagesPage() {
+  const faqSchema = faqJsonLd(FAQS.map((f) => ({ q: f.question, a: f.answer })));
   return (
+    <>
+      {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
     <div className="min-h-screen bg-slate-50">
       {/* Hero */}
       <section className="bg-slate-900 text-white py-16 md:py-24">
@@ -286,5 +290,6 @@ export default function PackagesPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

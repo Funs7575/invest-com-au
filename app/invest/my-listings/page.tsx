@@ -230,7 +230,7 @@ export default function MyListingsPage() {
                 </label>
                 <input
                   id="email"
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -238,7 +238,7 @@ export default function MyListingsPage() {
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
               <button
                 type="submit"
                 disabled={sendingCode}
@@ -285,7 +285,7 @@ export default function MyListingsPage() {
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-lg tracking-widest text-center font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              {error && <p className="text-sm text-red-600">{error}</p>}
+              {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
               <button
                 type="submit"
                 disabled={verifying || loadingListings}
@@ -307,7 +307,7 @@ export default function MyListingsPage() {
                   type="button"
                   onClick={handleResendCode}
                   disabled={sendingCode}
-                  className="hover:text-slate-700 underline-offset-2 hover:underline disabled:opacity-50"
+                  className="hover:text-slate-700 underline-offset-2 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {sendingCode ? "Sending..." : "Resend code"}
                 </button>

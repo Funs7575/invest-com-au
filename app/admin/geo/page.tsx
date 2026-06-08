@@ -46,7 +46,7 @@ export default function GeoMeasurementPage() {
           AI referrers we detect ({sources.length})
         </h2>
         <div className="overflow-x-auto rounded border border-gray-200">
-          <table className="min-w-full text-sm">
+          <table className="min-w-full text-sm" aria-label="AI referrer sources">
             <thead className="bg-gray-50 text-left text-gray-500">
               <tr>
                 <th className="px-3 py-2 font-medium">Source</th>
@@ -82,7 +82,7 @@ export default function GeoMeasurementPage() {
           step — see roadmap.
         </p>
         <div className="overflow-x-auto rounded border border-gray-200">
-          <table className="min-w-full text-sm">
+          <table className="min-w-full text-sm" aria-label="AI crawler bots">
             <thead className="bg-gray-50 text-left text-gray-500">
               <tr>
                 <th className="px-3 py-2 font-medium">Bot</th>

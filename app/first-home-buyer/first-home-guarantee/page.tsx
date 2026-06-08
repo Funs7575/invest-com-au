@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: `${SITE_URL}/first-home-buyer/first-home-guarantee`,
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("First Home Guarantee Australia")}&sub=${encodeURIComponent("5% Deposit · Eligibility · How to Apply · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };
@@ -312,13 +313,13 @@ export default function FirstHomeGuaranteePage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table aria-label="First Home Guarantee property price caps by state" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700">State / Territory</th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-700">Capital city cap</th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-700">Regional cap</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700 hidden sm:table-cell">Notes</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700">State / Territory</th>
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-700">Capital city cap</th>
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-700">Regional cap</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700 hidden sm:table-cell">Notes</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -532,14 +533,14 @@ export default function FirstHomeGuaranteePage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table aria-label="FHBG vs FHSS vs shared equity vs standard 5% deposit comparison" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700 min-w-[160px]">Scheme</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700">Deposit</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700">LMI?</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700">Income test</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700 hidden md:table-cell">Key limit</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700 min-w-[160px]">Scheme</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700">Deposit</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700">LMI?</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700">Income test</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700 hidden md:table-cell">Key limit</th>
                   </tr>
                 </thead>
                 <tbody>

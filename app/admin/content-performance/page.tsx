@@ -37,6 +37,7 @@ export default function ContentPerformancePage() {
   const [filterType, setFilterType] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"clicks" | "views" | "ctr" | "estRevenue">("estRevenue");
 
+  // eslint-disable-next-line react-hooks/immutability, react-hooks/exhaustive-deps -- fetchData is stable; mount-once pattern
   useEffect(() => { fetchData(); }, [period]);
 
   async function fetchData() {
@@ -171,7 +172,7 @@ export default function ContentPerformancePage() {
           {/* Table */}
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Content performance by page">
                 <thead>
                   <tr className="border-b border-slate-100 text-left">
                     <th className="px-4 py-3 text-xs font-bold text-slate-500">Page</th>

@@ -108,7 +108,7 @@ export default function ApplyForm({ jobId, jobTitle }: Props) {
         <input
           id="applicant_email"
           name="applicant_email"
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           autoComplete="email"
           required
           value={form.applicant_email}
@@ -151,7 +151,7 @@ export default function ApplyForm({ jobId, jobTitle }: Props) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-blue-800 disabled:opacity-50 transition-colors"
+        className="w-full bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {submitting ? "Submitting…" : "Submit application"}
       </button>

@@ -129,10 +129,11 @@ export default function ReportGate({ slug, gated, directUrl }: Props) {
       </p>
       <div className="space-y-3">
         <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
+          <label htmlFor="rg-name" className="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
             Full name
           </label>
           <input
+            id="rg-name"
             type="text"
             required
             value={name}
@@ -142,11 +143,12 @@ export default function ReportGate({ slug, gated, directUrl }: Props) {
           />
         </div>
         <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
+          <label htmlFor="rg-email" className="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
             Email
           </label>
           <input
-            type="email"
+            id="rg-email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}

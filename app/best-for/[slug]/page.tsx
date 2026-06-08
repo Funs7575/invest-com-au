@@ -7,8 +7,8 @@ import {
   type BrokerForScoring,
   type ScenarioInput,
 } from "@/lib/best-for-scorer";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { itemListJsonLd } from "@/lib/schema-markup";
+import { absoluteUrl, breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { itemListJsonLd, faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -133,6 +133,32 @@ export default async function BestForPage({
         )
       : null;
 
+  const weightSummary = Object.entries(scenario.scoring_weights)
+    .map(([k, v]) => `${k} (${v > 0 ? "+" : ""}${v})`)
+    .join(", ");
+
+  const topBrokerName = top[0]?.broker.name ?? "the top-ranked platform";
+
+  const scenarioFaqs = [
+    {
+      q: `What makes the best broker for ${scenario.target_user.toLowerCase()}?`,
+      a: `${scenario.intro} The key factors are ${Object.keys(scenario.scoring_weights).join(", ")}. We score every active Australian broker on each dimension and rank them using a deterministic weighted model, updated hourly.`,
+    },
+    {
+      q: `How is the ${scenario.h1} ranking calculated?`,
+      a: `The ranking weights: ${weightSummary}. Positive weights boost a broker's score; negative weights penalise it. Brokers that fail mandatory criteria (such as CHESS sponsorship or SMSF licensing where required) are excluded entirely. The full methodology is published at invest.com.au/editorial-policy.`,
+    },
+    {
+      q: `Is ${topBrokerName} right for me?`,
+      a: `${topBrokerName} scored highest for this scenario, but the right broker depends on your personal circumstances — portfolio size, trading frequency, tax situation, and existing investments. This ranking is general information only and does not constitute financial advice. ${scenario.target_user} should consider getting personalised guidance from an ASIC-registered financial advisor.`,
+    },
+    {
+      q: `How often is this list updated?`,
+      a: `Rankings update every hour as broker data changes — fee changes, ASIC status updates, and platform changes are reflected the same day. All data is verified against broker websites and ASIC's public register. The page was last re-scored at build time, with ISR re-validation every hour.`,
+    },
+  ];
+  const faqLd = faqJsonLd(scenarioFaqs);
+
   return (
     <>
       <script
@@ -145,10 +171,16 @@ export default async function BestForPage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(listLd) }}
         />
       )}
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
       <div>
         <section className="bg-white border-b border-slate-100 py-8 md:py-12">
           <div className="container-custom">
-            <nav className="text-xs text-slate-500 mb-4">
+            <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
               <Link href="/" className="hover:text-slate-900">Home</Link>
               <span className="mx-1.5">/</span>
               <Link href="/best" className="hover:text-slate-900">Best</Link>
@@ -281,6 +313,23 @@ export default async function BestForPage({
                 . This page is general advice only and does not take into
                 account your personal circumstances.
               </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-10 md:py-12 bg-white border-t border-slate-100">
+          <div className="container-custom max-w-4xl">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {scenarioFaqs.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
             </div>
           </div>
         </section>

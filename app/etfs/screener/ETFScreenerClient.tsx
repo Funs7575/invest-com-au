@@ -136,8 +136,9 @@ export default function ETFScreenerClient() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Asset Class</label>
+              <label htmlFor="etf-asset-class" className="block text-xs font-semibold text-slate-700 mb-1.5">Asset Class</label>
               <select
+                id="etf-asset-class"
                 value={assetClass}
                 onChange={(e) => setAssetClass(e.target.value as ETFAssetClass | "all")}
                 className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -148,8 +149,9 @@ export default function ETFScreenerClient() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Provider</label>
+              <label htmlFor="etf-provider" className="block text-xs font-semibold text-slate-700 mb-1.5">Provider</label>
               <select
+                id="etf-provider"
                 value={provider}
                 onChange={(e) => setProvider(e.target.value as ETFProvider | "all")}
                 className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -196,37 +198,45 @@ export default function ETFScreenerClient() {
               suggestions={[{ label: "Reset filters", onClick: () => { setAssetClass("all"); setProvider("all"); setMaxMER(2.0); setFrankingOnly(false); setSearch(""); } }]}
             />
           ) : (
-            <table className="w-full text-sm border-collapse min-w-[700px]">
+            <table className="w-full text-sm border-collapse min-w-[700px]" aria-label="ETF screener results">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th
+                    scope="col"
                     className="text-left py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("ticker")}
+                    aria-sort={sortKey === "ticker" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   >
                     Ticker <SortIcon col="ticker" sortKey={sortKey} sortDir={sortDir} />
                   </th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Name</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold hidden sm:table-cell">Category</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Name</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold hidden sm:table-cell">Category</th>
                   <th
+                    scope="col"
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("mer")}
+                    aria-sort={sortKey === "mer" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   >
                     MER <SortIcon col="mer" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+                    scope="col"
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("aumMillions")}
+                    aria-sort={sortKey === "aumMillions" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   >
                     AUM <SortIcon col="aumMillions" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+                    scope="col"
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("distributionYield")}
+                    aria-sort={sortKey === "distributionYield" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   >
                     Yield <SortIcon col="distributionYield" sortKey={sortKey} sortDir={sortDir} />
                   </th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Franking</th>
-                  <th className="py-3 px-4"></th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Franking</th>
+                  <th scope="col" className="py-3 px-4"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

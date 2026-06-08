@@ -167,6 +167,17 @@ export default function MortgageCalculatorClient() {
 
   /* ── handlers ─────────────────────────────────────── */
 
+  const handleReset = () => {
+    setLoanAmount(600000);
+    setInterestRate(6.0);
+    setLoanTerm(30);
+    setRepaymentType("pi");
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     storeQualificationData("mortgage_calculator", {
@@ -217,11 +228,12 @@ export default function MortgageCalculatorClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Loan amount */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Loan amount</label>
+              <label htmlFor="mc-loan-amount" className="block text-sm font-bold text-slate-700 mb-1.5">Loan amount</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
-                  type="number"
+                  id="mc-loan-amount"
+                  type="number" inputMode="decimal"
                   value={loanAmount}
                   onChange={e => setLoanAmount(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 focus:border-rose-400 outline-none"
@@ -229,7 +241,7 @@ export default function MortgageCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[300000, 500000, 600000, 800000, 1000000].map(v => (
-                  <button key={v} onClick={() => setLoanAmount(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${loanAmount === v ? "bg-rose-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setLoanAmount(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${loanAmount === v ? "bg-rose-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v >= 1000000 ? `$${v / 1000000}M` : `$${v / 1000}k`}
                   </button>
                 ))}
@@ -238,10 +250,11 @@ export default function MortgageCalculatorClient() {
 
             {/* Interest rate */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Interest rate</label>
+              <label htmlFor="mc-interest-rate" className="block text-sm font-bold text-slate-700 mb-1.5">Interest rate</label>
               <div className="relative">
                 <input
-                  type="number"
+                  id="mc-interest-rate"
+                  type="number" inputMode="decimal"
                   step="0.1"
                   value={interestRate}
                   onChange={e => setInterestRate(Math.max(0, Math.min(20, parseFloat(e.target.value) || 0)))}
@@ -251,7 +264,7 @@ export default function MortgageCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5.5, 6.0, 6.5, 7.0, 7.5].map(v => (
-                  <button key={v} onClick={() => setInterestRate(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${interestRate === v ? "bg-rose-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setInterestRate(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${interestRate === v ? "bg-rose-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}
@@ -262,7 +275,7 @@ export default function MortgageCalculatorClient() {
           {/* Loan term & repayment type toggles */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4">
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Loan term</label>
+              <p className="block text-sm font-bold text-slate-700 mb-1.5">Loan term</p>
               <div className="flex rounded-lg border border-slate-200 overflow-hidden">
                 {([25, 30] as const).map(y => (
                   <button
@@ -276,7 +289,7 @@ export default function MortgageCalculatorClient() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Repayment type</label>
+              <p className="block text-sm font-bold text-slate-700 mb-1.5">Repayment type</p>
               <div className="flex rounded-lg border border-slate-200 overflow-hidden">
                 <button
                   onClick={() => setRepaymentType("pi")}
@@ -294,12 +307,23 @@ export default function MortgageCalculatorClient() {
             </div>
           </div>
 
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-rose-600 text-white text-base font-bold rounded-xl hover:bg-rose-700 transition-all shadow-lg hover:shadow-xl"
-          >
-            Calculate My Repayments <Icon name="arrow-right" className="inline w-4 h-4 ml-1" />
-          </button>
+          <div className="flex items-center gap-3 mt-5">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-rose-600 text-white text-base font-bold rounded-xl hover:bg-rose-700 transition-all shadow-lg hover:shadow-xl"
+            >
+              Calculate My Repayments <Icon name="arrow-right" className="inline w-4 h-4 ml-1" />
+            </button>
+            {(loanAmount !== 600000 || interestRate !== 6.0 || loanTerm !== 30 || repaymentType !== "pi") && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}
@@ -433,7 +457,7 @@ export default function MortgageCalculatorClient() {
                     <p className="text-xs text-slate-500 mb-3">Enter your email to unlock the complete amortization breakdown</p>
                     <div className="flex gap-2 max-w-xs mx-auto">
                       <input
-                        type="email"
+                        type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         placeholder="your@email.com"

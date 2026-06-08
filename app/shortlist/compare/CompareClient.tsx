@@ -102,6 +102,7 @@ export default function CompareClient() {
   useEffect(() => {
     const brokerParam = searchParams.get("brokers");
     if (!brokerParam) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       return;
     }
@@ -199,15 +200,15 @@ export default function CompareClient() {
       {/* Comparison Table */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full" aria-label="Broker feature comparison">
             {/* Broker headers */}
             <thead>
               <tr className="border-b border-slate-200">
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase bg-slate-50 sticky left-0 z-10 min-w-35">
+                <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase bg-slate-50 sticky left-0 z-10 min-w-35">
                   Feature
                 </th>
                 {brokers.map((broker) => (
-                  <th key={broker.slug} className="px-4 py-4 text-center min-w-[160px]">
+                  <th scope="col" key={broker.slug} className="px-4 py-4 text-center min-w-[160px]">
                     <Link
                       href={`/broker/${broker.slug}`}
                       className="inline-flex flex-col items-center gap-2 group"

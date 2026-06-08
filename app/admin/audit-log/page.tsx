@@ -144,6 +144,7 @@ export default function AuditLogPage() {
     setLoading(false);
   }, [page, filter, actionFilter, search, dateFrom, dateTo]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load(); }, [load]);
 
   // Auto-refresh polling
@@ -253,7 +254,7 @@ export default function AuditLogPage() {
       {/* Search + Date range */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <input
-          type="text"
+          type="search" enterKeyHint="search"
           placeholder="Search entity name, admin email, or action..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(0); }}
@@ -538,7 +539,7 @@ export default function AuditLogPage() {
             <div className="px-6 py-5 space-y-5">
               {/* Action badge */}
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Action</label>
+                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Action</p>
                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${actionColors[detailEntry.action] || "bg-slate-100 text-slate-600"}`}>
                   {detailEntry.action}
                 </span>
@@ -547,27 +548,27 @@ export default function AuditLogPage() {
               {/* Entity info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Entity Type</label>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Entity Type</p>
                   <p className="text-sm text-slate-900">{detailEntry.entity_type}</p>
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Entity ID</label>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Entity ID</p>
                   <p className="text-sm text-slate-700 font-mono">{detailEntry.entity_id || "\u2014"}</p>
                 </div>
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Entity Name</label>
+                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Entity Name</p>
                 <p className="text-sm text-slate-900">{detailEntry.entity_name || "\u2014"}</p>
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Admin</label>
+                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Admin</p>
                 <p className="text-sm text-slate-700">{detailEntry.admin_email || "\u2014"}</p>
               </div>
 
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Timestamp</label>
+                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Timestamp</p>
                 <p className="text-sm text-slate-700">
                   {new Date(detailEntry.created_at).toLocaleString("en-AU", {
                     weekday: "long",
@@ -583,7 +584,7 @@ export default function AuditLogPage() {
 
               {/* Details JSON */}
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Details</label>
+                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Details</p>
                 {detailEntry.details && Object.keys(detailEntry.details).length > 0 ? (
                   <pre className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs text-slate-700 overflow-x-auto whitespace-pre-wrap font-mono">
                     {JSON.stringify(detailEntry.details, null, 2)}

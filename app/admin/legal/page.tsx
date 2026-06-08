@@ -57,6 +57,7 @@ export default function LegalDashboardPage() {
     setLoading(false);
   }, [supabase]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadDocs(); }, [loadDocs]);
 
   const filtered = filter === "all" ? docs : docs.filter(d => d.category === filter);
@@ -155,58 +156,58 @@ export default function LegalDashboardPage() {
       {/* Edit modal */}
       {editing && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">{editing.id ? "Edit" : "Add"} Document</h3>
+          <div role="dialog" aria-modal="true" aria-labelledby="leg-modal-title" className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+            <h3 id="leg-modal-title" className="text-lg font-bold text-slate-900 mb-4">{editing.id ? "Edit" : "Add"} Document</h3>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Title</label>
-                <input value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                <label htmlFor="leg-title" className="block text-xs font-semibold text-slate-600 mb-1">Title</label>
+                <input id="leg-title" value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Category</label>
-                  <select value={editing.category} onChange={e => setEditing({ ...editing, category: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="leg-category" className="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+                  <select id="leg-category" value={editing.category} onChange={e => setEditing({ ...editing, category: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     {CATEGORIES.filter(c => c !== "all").map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                  <select value={editing.status} onChange={e => setEditing({ ...editing, status: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="leg-status" className="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                  <select id="leg-status" value={editing.status} onChange={e => setEditing({ ...editing, status: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     {["active", "pending", "expired", "draft", "needs_review"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
-                <textarea value={editing.description || ""} onChange={e => setEditing({ ...editing, description: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                <label htmlFor="leg-description" className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
+                <textarea id="leg-description" value={editing.description || ""} onChange={e => setEditing({ ...editing, description: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Counterparty</label>
-                  <input value={editing.counterparty || ""} onChange={e => setEditing({ ...editing, counterparty: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Stripe, ASIC" />
+                  <label htmlFor="leg-counterparty" className="block text-xs font-semibold text-slate-600 mb-1">Counterparty</label>
+                  <input id="leg-counterparty" value={editing.counterparty || ""} onChange={e => setEditing({ ...editing, counterparty: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Stripe, ASIC" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Responsible</label>
-                  <input value={editing.responsible_person || ""} onChange={e => setEditing({ ...editing, responsible_person: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  <label htmlFor="leg-responsible" className="block text-xs font-semibold text-slate-600 mb-1">Responsible</label>
+                  <input id="leg-responsible" value={editing.responsible_person || ""} onChange={e => setEditing({ ...editing, responsible_person: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Signed Date</label>
-                  <input type="date" value={editing.signed_at?.slice(0, 10) || ""} onChange={e => setEditing({ ...editing, signed_at: e.target.value ? new Date(e.target.value).toISOString() : null })} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  <label htmlFor="leg-signed-date" className="block text-xs font-semibold text-slate-600 mb-1">Signed Date</label>
+                  <input id="leg-signed-date" type="date" value={editing.signed_at?.slice(0, 10) || ""} onChange={e => setEditing({ ...editing, signed_at: e.target.value ? new Date(e.target.value).toISOString() : null })} className="w-full px-3 py-2 border rounded-lg text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Expires</label>
-                  <input type="date" value={editing.expires_at?.slice(0, 10) || ""} onChange={e => setEditing({ ...editing, expires_at: e.target.value ? new Date(e.target.value).toISOString() : null })} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  <label htmlFor="leg-expires" className="block text-xs font-semibold text-slate-600 mb-1">Expires</label>
+                  <input id="leg-expires" type="date" value={editing.expires_at?.slice(0, 10) || ""} onChange={e => setEditing({ ...editing, expires_at: e.target.value ? new Date(e.target.value).toISOString() : null })} className="w-full px-3 py-2 border rounded-lg text-sm" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Document URL</label>
-                <input value={editing.file_url || ""} onChange={e => setEditing({ ...editing, file_url: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://drive.google.com/..." />
+                <label htmlFor="leg-file-url" className="block text-xs font-semibold text-slate-600 mb-1">Document URL</label>
+                <input id="leg-file-url" value={editing.file_url || ""} onChange={e => setEditing({ ...editing, file_url: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://drive.google.com/..." />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Notes</label>
-                <textarea value={editing.notes || ""} onChange={e => setEditing({ ...editing, notes: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                <label htmlFor="leg-notes" className="block text-xs font-semibold text-slate-600 mb-1">Notes</label>
+                <textarea id="leg-notes" value={editing.notes || ""} onChange={e => setEditing({ ...editing, notes: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
               </div>
             </div>
             <div className="flex gap-2 mt-5">
@@ -253,11 +254,11 @@ export default function LegalDashboardPage() {
                     <Icon name="external-link" size={14} />
                   </a>
                 )}
-                <button onClick={() => setEditing(doc)} className="p-1.5 text-slate-400 hover:text-slate-700 rounded">
-                  <Icon name="pencil" size={14} />
+                <button onClick={() => setEditing(doc)} aria-label="Edit document" className="p-1.5 text-slate-400 hover:text-slate-700 rounded">
+                  <Icon name="pencil" size={14} aria-hidden />
                 </button>
-                <button onClick={() => handleDelete(doc.id)} className="p-1.5 text-slate-400 hover:text-red-600 rounded">
-                  <Icon name="trash-2" size={14} />
+                <button onClick={() => handleDelete(doc.id)} aria-label="Delete document" className="p-1.5 text-slate-400 hover:text-red-600 rounded">
+                  <Icon name="trash-2" size={14} aria-hidden />
                 </button>
               </div>
             </div>

@@ -11,6 +11,7 @@ import {
   ORGANIZATION_JSONLD,
   REVIEW_AUTHOR,
 } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 
@@ -159,6 +160,26 @@ export default function HowToHubPage() {
     })),
   };
 
+  const howToFaqs = [
+    {
+      q: "What topics do the Invest.com.au how-to guides cover?",
+      a: `Invest.com.au how-to guides cover six main areas: share trading and ASX investing (buying shares, opening brokerage accounts, building a portfolio), ETFs and index funds (Vanguard ETFs, index fund strategies), cryptocurrency (buying Bitcoin and crypto in Australia), property investing (negative gearing, buyer's agents, FIRB rules), superannuation and retirement (SMSF setup, salary sacrifice, franking credits, early retirement), and savings and term deposits. All ${guides.length} guides are written specifically for Australian investors and reference current ATO, ASIC, and ASX rules.`,
+    },
+    {
+      q: "Are these how-to guides specific to Australian investors?",
+      a: "Yes. All Invest.com.au how-to guides are written specifically for Australian investors and residents. They reference Australian tax rules (ATO, capital gains tax, franking credits), ASIC-regulated brokers and platforms, ASX-listed products, and Australian superannuation law. They are not applicable to investors in other countries without adjustment.",
+    },
+    {
+      q: "Is the information in these guides financial advice?",
+      a: "No. Invest.com.au how-to guides are general information only — they do not constitute personal financial advice and do not take into account your individual circumstances, financial situation, or objectives. Before acting on anything in these guides, consider whether it is appropriate for you and, where relevant, seek advice from an AFSL-licensed financial adviser.",
+    },
+    {
+      q: "How current are the how-to guides?",
+      a: `All guides on Invest.com.au are reviewed and updated regularly to reflect current Australian legislation, ATO tax rates, ASIC regulatory changes, and broker data. The current edition reflects ${CURRENT_YEAR} rules. Each guide page shows its last-reviewed date.`,
+    },
+  ];
+  const howToFaqLd = faqJsonLd(howToFaqs);
+
   // Group guides by verticalLink
   const guidesByCategory = CATEGORIES.map((cat) => ({
     ...cat,
@@ -177,11 +198,15 @@ export default function HowToHubPage() {
           __html: JSON.stringify([breadcrumbs, webPageJsonLd, itemListJsonLd]),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToFaqLd) }}
+      />
 
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -322,6 +347,27 @@ export default function HowToHubPage() {
                 Our methodology
               </Link>
             </p>
+          </div>
+
+          <div className="mt-8 border-t border-slate-200 pt-6">
+            <h2 className="text-base font-bold text-slate-900 mb-3">About these guides</h2>
+            <div className="divide-y divide-slate-100">
+              {howToFaqs.map(({ q, a }) => (
+                <details key={q} className="group py-3">
+                  <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                    {q}
+                    <svg
+                      className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                      aria-hidden="true"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{a}</p>
+                </details>
+              ))}
+            </div>
           </div>
 
           <CompactDisclaimerLine />

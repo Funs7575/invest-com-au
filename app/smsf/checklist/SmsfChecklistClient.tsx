@@ -124,7 +124,7 @@ export default function SmsfChecklistClient() {
           <p className="text-sm text-slate-600 mb-4">We&rsquo;ll send a copy you can refer back to and add quarterly reminders.</p>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               name="email"
               required
               placeholder="you@example.com"
@@ -138,7 +138,7 @@ export default function SmsfChecklistClient() {
               Email it <Icon name="mail" size={14} />
             </button>
           </div>
-          {emailError && <p className="mt-2 text-xs text-red-600">{emailError}</p>}
+          {emailError && <p role="alert" className="mt-2 text-xs text-red-600">{emailError}</p>}
         </form>
       ) : (
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">

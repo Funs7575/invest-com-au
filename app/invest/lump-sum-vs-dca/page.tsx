@@ -247,12 +247,12 @@ export default function LumpSumVsDcaPage() {
           <div className="container-custom max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Head-to-head comparison</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Lump sum vs DCA head-to-head comparison">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Dimension</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-emerald-700">Lump Sum</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700">DCA</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Dimension</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-emerald-700">Lump Sum</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700">DCA</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -420,7 +420,7 @@ export default function LumpSumVsDcaPage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-white overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
                   </summary>
                   <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
                 </details>

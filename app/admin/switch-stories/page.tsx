@@ -89,7 +89,9 @@ export default function AdminSwitchStoriesPage() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- load is stable; deps would cause infinite loop
+  useEffect(() => { void load(); }, []);
+   
   useEffect(() => { setPage(0); }, [search, tab]);
 
   // Stats
@@ -216,7 +218,7 @@ export default function AdminSwitchStoriesPage() {
 
       {/* Search */}
       <input
-        type="text"
+        type="search" enterKeyHint="search"
         placeholder="Search by name, email, broker, or title..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -240,7 +242,7 @@ export default function AdminSwitchStoriesPage() {
         <div className="py-12 text-center text-slate-500 text-sm animate-pulse">Loading stories...</div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full" aria-label="Switch stories">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-3 py-3 w-8">

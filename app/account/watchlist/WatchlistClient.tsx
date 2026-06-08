@@ -81,7 +81,7 @@ export default function WatchlistClient({ initialItems }: Props) {
       <EmptyState
         icon="eye"
         title="Your watchlist is empty"
-        body="Add brokers, ETFs, stocks and savings accounts to your watchlist to track them in one place."
+        body="Add items by clicking the ♥ button on any broker, ETF, or stock page. Once you have items, you can enable price-change alerts below."
         ctas={[
           { label: "Browse brokers", href: "/brokers" },
           { label: "Explore ETFs", href: "/etfs", variant: "secondary" },
@@ -107,7 +107,7 @@ export default function WatchlistClient({ initialItems }: Props) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
           <button
             onClick={() => setError(null)}
@@ -149,7 +149,7 @@ export default function WatchlistClient({ initialItems }: Props) {
                   onClick={() => removeItem(item.id)}
                   disabled={removingIds.has(item.id)}
                   aria-label={`Remove ${item.display_name ?? item.item_slug} from watchlist`}
-                  className="shrink-0 text-xs text-slate-400 hover:text-red-500 disabled:opacity-40 transition-colors"
+                  className="shrink-0 text-xs text-slate-400 hover:text-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   {removingIds.has(item.id) ? "Removing…" : "Remove"}
                 </button>

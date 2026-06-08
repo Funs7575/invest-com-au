@@ -279,7 +279,7 @@ export default function AdvisorSignupPage() {
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-2xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <Link href="/advisors" className="hover:text-slate-900">Advisors</Link>
@@ -368,7 +368,7 @@ export default function AdvisorSignupPage() {
                   <div className="relative">
                     <input
                       id="as-email"
-                      type="email"
+                      type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                       value={form.email}
                       onChange={(e) => {
                         const v = e.target.value;
@@ -423,8 +423,9 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Advisor Type *</label>
+                <label htmlFor="as-advisor-type" className={labelClass}>Advisor Type *</label>
                 <select
+                  id="as-advisor-type"
                   value={form.type}
                   onChange={(e) => updateField("type", e.target.value)}
                   className={inputClass}
@@ -445,8 +446,9 @@ export default function AdvisorSignupPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className={labelClass}>AFSL Number</label>
+                  <label htmlFor="as-afsl-number" className={labelClass}>AFSL Number</label>
                   <input
+                    id="as-afsl-number"
                     value={form.afsl_number}
                     onChange={(e) => updateField("afsl_number", e.target.value)}
                     className={inputClass}
@@ -454,8 +456,9 @@ export default function AdvisorSignupPage() {
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>ABN</label>
+                  <label htmlFor="as-abn" className={labelClass}>ABN</label>
                   <input
+                    id="as-abn"
                     value={form.abn}
                     onChange={(e) => updateField("abn", e.target.value)}
                     className={inputClass}
@@ -463,8 +466,9 @@ export default function AdvisorSignupPage() {
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Registration / TAN</label>
+                  <label htmlFor="as-registration" className={labelClass}>Registration / TAN</label>
                   <input
+                    id="as-registration"
                     value={form.registration_number}
                     onChange={(e) => updateField("registration_number", e.target.value)}
                     className={inputClass}
@@ -474,7 +478,7 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Specialties</label>
+                <p className={labelClass}>Specialties</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-1">
                   {SPECIALTY_OPTIONS.map((s) => (
                     <label
@@ -563,8 +567,9 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Short Bio</label>
+                <label htmlFor="as-bio" className={labelClass}>Short Bio</label>
                 <textarea
+                  id="as-bio"
                   value={form.bio}
                   onChange={(e) => updateField("bio", e.target.value)}
                   rows={4}
@@ -577,9 +582,10 @@ export default function AdvisorSignupPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className={labelClass}>Years of Experience</label>
+                  <label htmlFor="as-years-exp" className={labelClass}>Years of Experience</label>
                   <input
-                    type="number"
+                    id="as-years-exp"
+                    type="number" inputMode="numeric"
                     min="0"
                     max="60"
                     value={form.years_experience}
@@ -589,8 +595,9 @@ export default function AdvisorSignupPage() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className={labelClass}>Languages Spoken</label>
+                  <label htmlFor="as-languages" className={labelClass}>Languages Spoken</label>
                   <input
+                    id="as-languages"
                     value={form.languages}
                     onChange={(e) => updateField("languages", e.target.value)}
                     className={inputClass}
@@ -601,8 +608,9 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Ideal Client Types</label>
+                <label htmlFor="as-client-types" className={labelClass}>Ideal Client Types</label>
                 <input
+                  id="as-client-types"
                   value={form.client_types}
                   onChange={(e) => updateField("client_types", e.target.value)}
                   className={inputClass}
@@ -622,8 +630,9 @@ export default function AdvisorSignupPage() {
               </p>
 
               <div>
-                <label className={labelClass}>Fee Type *</label>
+                <label htmlFor="as-fee-type" className={labelClass}>Fee Type *</label>
                 <select
+                  id="as-fee-type"
                   value={form.fee_structure}
                   onChange={(e) => updateField("fee_structure", e.target.value)}
                   className={inputClass}
@@ -635,8 +644,9 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Fee Description</label>
+                <label htmlFor="as-fee-description" className={labelClass}>Fee Description</label>
                 <textarea
+                  id="as-fee-description"
                   value={form.fee_description}
                   onChange={(e) => updateField("fee_description", e.target.value)}
                   rows={4}
@@ -695,7 +705,7 @@ export default function AdvisorSignupPage() {
           {/* Error message */}
           {errorMsg && (
             <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-xs text-red-600">{errorMsg}</p>
+              <p role="alert" className="text-xs text-red-600">{errorMsg}</p>
             </div>
           )}
 

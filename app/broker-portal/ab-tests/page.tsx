@@ -62,10 +62,12 @@ export default function ABTestsPage() {
   const [loading, setLoading] = useState(true);
   const [brokerSlug, setBrokerSlug] = useState("");
   const [showCreate, setShowCreate] = useState(false);
+  const [confirmModal, setConfirmModal] = useState<{ type: "winner" | "end"; id: number; winner?: "a" | "b" } | null>(null);
   const { toast } = useToast();
 
   // Create form
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [type, setType] = useState<string>("cta_text");
   const [variantA, setVariantA] = useState("");
   const [variantB, setVariantB] = useState("");
@@ -107,6 +109,7 @@ export default function ABTestsPage() {
     const { error } = await supabase.from("ab_tests").insert({
       broker_slug: brokerSlug,
       name,
+      description: description.trim() || null,
       type,
       status: "draft",
       variant_a: { value: variantA },
@@ -127,6 +130,7 @@ export default function ABTestsPage() {
       setTests((data || []) as ABTest[]);
       setShowCreate(false);
       setName("");
+      setDescription("");
       setVariantA("");
       setVariantB("");
     }
@@ -144,18 +148,26 @@ export default function ABTestsPage() {
     toast(`Test ${status}`, "success");
   };
 
-  const declareWinner = async (id: number, winner: "a" | "b") => {
-    if (!confirm(`Declare Variant ${winner.toUpperCase()} as the winner? This will end the test.`)) return;
-    const supabase = createClient();
-    await supabase.from("ab_tests").update({
-      winner,
-      status: "completed",
-      end_date: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }).eq("id", id);
+  const declareWinner = (id: number, winner: "a" | "b") => {
+    setConfirmModal({ type: "winner", id, winner });
+  };
 
-    setTests(prev => prev.map(t => t.id === id ? { ...t, winner, status: "completed" as const } : t));
-    toast(`Variant ${winner.toUpperCase()} declared winner`, "success");
+  const handleConfirm = async () => {
+    if (!confirmModal) return;
+    const supabase = createClient();
+    if (confirmModal.type === "winner" && confirmModal.winner) {
+      await supabase.from("ab_tests").update({
+        winner: confirmModal.winner,
+        status: "completed",
+        end_date: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }).eq("id", confirmModal.id);
+      setTests(prev => prev.map(t => t.id === confirmModal.id ? { ...t, winner: confirmModal.winner!, status: "completed" as const } : t));
+      toast(`Variant ${confirmModal.winner.toUpperCase()} declared winner`, "success");
+    } else if (confirmModal.type === "end") {
+      await updateStatus(confirmModal.id, "completed");
+    }
+    setConfirmModal(null);
   };
 
   const getWinnerStats = (test: ABTest) => {
@@ -249,14 +261,27 @@ export default function ABTestsPage() {
           <h3 className="font-bold text-slate-900">Create A/B Test</h3>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Test Name *</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required
+            <label htmlFor="ab-name" className="block text-sm font-medium text-slate-700 mb-1">
+              Test Name <span className="text-red-500">*</span>
+            </label>
+            <input id="ab-name" type="text" value={name} onChange={(e) => setName(e.target.value)} required maxLength={80}
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
-              placeholder="e.g. CTA Copy March 2024" />
+              placeholder="e.g. Homepage CTA — July 2026" />
+            <p className="mt-1 text-xs text-slate-400">Required. Max 80 characters — be specific so you can find it later.</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Test Type</label>
+            <label htmlFor="ab-description" className="block text-sm font-medium text-slate-700 mb-1">
+              Description <span className="text-slate-400 font-normal">(optional)</span>
+            </label>
+            <textarea id="ab-description" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} maxLength={300}
+              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-none"
+              placeholder="What are you testing and why?" />
+            <p className="mt-1 text-xs text-slate-400">Max 300 characters. Helps your team understand the hypothesis behind this test.</p>
+          </div>
+
+          <div>
+            <p className="block text-sm font-medium text-slate-700 mb-1">Test Type</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {TEST_TYPES.map(t => (
                 <button key={t.value} type="button" onClick={() => setType(t.value)}
@@ -271,26 +296,28 @@ export default function ABTestsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Variant A <span className="text-xs text-slate-400">(Control)</span>
+              <label htmlFor="ab-variant-a" className="block text-sm font-medium text-slate-700 mb-1">
+                Variant A <span className="text-xs text-slate-400">(Control)</span> <span className="text-red-500">*</span>
               </label>
-              <input type="text" value={variantA} onChange={(e) => setVariantA(e.target.value)} required
+              <input id="ab-variant-a" type="text" value={variantA} onChange={(e) => setVariantA(e.target.value)} required maxLength={200}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
-                placeholder={currentType?.placeholder_a} />
+                placeholder={currentType?.placeholder_a ?? "e.g. Start investing today"} />
+              <p className="mt-1 text-xs text-slate-400">Required. Your existing or baseline variant. Max 200 characters.</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
-                Variant B <span className="text-xs text-slate-400">(Challenger)</span>
+              <label htmlFor="ab-variant-b" className="block text-sm font-medium text-slate-700 mb-1">
+                Variant B <span className="text-xs text-slate-400">(Challenger)</span> <span className="text-red-500">*</span>
               </label>
-              <input type="text" value={variantB} onChange={(e) => setVariantB(e.target.value)} required
+              <input id="ab-variant-b" type="text" value={variantB} onChange={(e) => setVariantB(e.target.value)} required maxLength={200}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
-                placeholder={currentType?.placeholder_b} />
+                placeholder={currentType?.placeholder_b ?? "e.g. Open a free account"} />
+              <p className="mt-1 text-xs text-slate-400">Required. The new version you want to test. Max 200 characters.</p>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Traffic Split: {split}% / {100 - split}% <InfoTip text="Percentage of traffic seeing each variant. Start with 50/50 for equal comparison, or use 80/20 to limit exposure to the new variant." /></label>
-            <input type="range" min={10} max={90} step={5} value={split} onChange={(e) => setSplit(Number(e.target.value))}
+            <label htmlFor="ab-split" className="block text-sm font-medium text-slate-700 mb-1">Traffic Split: {split}% / {100 - split}% <InfoTip text="Percentage of traffic seeing each variant. Start with 50/50 for equal comparison, or use 80/20 to limit exposure to the new variant." /></label>
+            <input id="ab-split" type="range" min={10} max={90} step={5} value={split} onChange={(e) => setSplit(Number(e.target.value))}
               className="w-full accent-slate-900" />
             <div className="flex justify-between text-xs text-slate-400">
               <span>Variant A: {split}%</span>
@@ -304,7 +331,7 @@ export default function ABTestsPage() {
               Cancel
             </button>
             <button type="submit" disabled={saving}
-              className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50">
+              className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               {saving ? "Creating..." : "Create Test"}
             </button>
           </div>
@@ -364,7 +391,7 @@ export default function ABTestsPage() {
                           className="px-3 py-1.5 text-xs font-semibold bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 transition-colors">
                           Pause
                         </button>
-                        <button onClick={() => updateStatus(test.id, "completed")}
+                        <button onClick={() => setConfirmModal({ type: "end", id: test.id })}
                           className="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
                           End
                         </button>
@@ -447,6 +474,40 @@ export default function ABTestsPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Confirmation modal for End / Declare Winner */}
+      {confirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setConfirmModal(null)}>
+          <div role="dialog" aria-modal="true" aria-labelledby="abt-confirm-title" className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <h2 id="abt-confirm-title" className="text-base font-extrabold text-slate-900 mb-2">
+              {confirmModal.type === "winner"
+                ? `Declare Variant ${confirmModal.winner?.toUpperCase()} as winner?`
+                : "End this test?"}
+            </h2>
+            <p className="text-sm text-slate-500 mb-5">
+              {confirmModal.type === "winner"
+                ? "This will mark the test as completed and lock in the winning variant. This cannot be undone."
+                : "Ending the test will mark it as completed. You can view results but cannot restart it."}
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmModal(null)}
+                className="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirm}
+                className={`px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors ${
+                  confirmModal.type === "winner" ? "bg-emerald-600 hover:bg-emerald-700" : "bg-slate-800 hover:bg-slate-900"
+                }`}
+              >
+                {confirmModal.type === "winner" ? `Declare Variant ${confirmModal.winner?.toUpperCase()} Winner` : "End Test"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

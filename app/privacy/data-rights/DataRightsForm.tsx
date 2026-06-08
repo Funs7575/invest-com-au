@@ -10,6 +10,7 @@ export default function DataRightsForm() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -19,12 +20,11 @@ export default function DataRightsForm() {
       setError("Please enter a valid email address");
       return;
     }
-    if (type === "delete") {
-      const confirmed = window.confirm(
-        "This will PERMANENTLY delete or anonymise all data we hold for this email. This cannot be undone. Are you sure?",
-      );
-      if (!confirmed) return;
+    if (type === "delete" && !pendingDelete) {
+      setPendingDelete(true);
+      return;
     }
+    setPendingDelete(false);
     setBusy(true);
     try {
       const res = await fetch("/api/privacy/request", {
@@ -56,7 +56,7 @@ export default function DataRightsForm() {
         </label>
         <input
           id="email"
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
@@ -99,7 +99,7 @@ export default function DataRightsForm() {
             <div>
               <div className="text-sm font-semibold text-slate-900">Delete my data</div>
               <div className="text-xs text-slate-500 mt-0.5">
-                Permanently erase or anonymise everything we hold. Can't be undone.
+                Permanently erase or anonymise everything we hold. Can&apos;t be undone.
               </div>
             </div>
           </label>
@@ -117,13 +117,41 @@ export default function DataRightsForm() {
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={busy}
-        className="w-full py-2 rounded bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50"
-      >
-        {busy ? "Sending…" : `Send ${type === "export" ? "export" : "deletion"} confirmation link`}
-      </button>
+      {pendingDelete && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-sm font-semibold text-red-900 mb-1">Are you sure?</p>
+          <p className="text-xs text-red-800 mb-3">
+            This will permanently delete or anonymise all data held for this email. It cannot be undone.
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={busy}
+              aria-busy={busy}
+              className="px-4 py-2 rounded bg-red-600 text-white font-semibold text-sm hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {busy ? "Sending…" : "Yes, delete my data"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPendingDelete(false)}
+              className="px-4 py-2 rounded bg-white border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+      {!pendingDelete && (
+        <button
+          type="submit"
+          disabled={busy}
+          aria-busy={busy}
+          className="w-full py-2 rounded bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {busy ? "Sending…" : `Send ${type === "export" ? "export" : "deletion"} confirmation link`}
+        </button>
+      )}
     </form>
   );
 }

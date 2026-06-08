@@ -102,7 +102,7 @@ export default function FeatureFlagsClient({ initialFlags }: Props) {
                       <code>{flag.flag_key}</code>
                     </h3>
                     {saved && (
-                      <span className="text-[10px] font-bold uppercase text-emerald-700">
+                      <span role="status" className="text-[10px] font-bold uppercase text-emerald-700">
                         saved
                       </span>
                     )}

@@ -84,7 +84,7 @@ export default function SuburbsClient() {
     <div className="bg-white min-h-screen">
       <section className="bg-white border-b border-slate-100">
         <div className="container-custom py-6 md:py-8">
-          <nav className="text-xs text-slate-400 mb-3 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-600">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-600">Property</Link>
@@ -131,25 +131,25 @@ export default function SuburbsClient() {
                 </div>
               ) : (
                 <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm" aria-label="Australian suburb property data">
                     <thead>
                       <tr className="bg-slate-50 border-b border-slate-200">
-                        <th className="text-left px-4 py-3 cursor-pointer hover:bg-slate-100" onClick={() => handleSort("suburb")}>
+                        <th scope="col" aria-sort={sortKey === "suburb" ? (sortAsc ? "ascending" : "descending") : "none"} className="text-left px-4 py-3 cursor-pointer hover:bg-slate-100" onClick={() => handleSort("suburb")}>
                           <span className="flex items-center gap-1 text-xs font-semibold text-slate-600">Suburb <SortIcon col="suburb" /></span>
                         </th>
-                        <th className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100 hidden md:table-cell" onClick={() => handleSort("median_price_house")}>
+                        <th scope="col" aria-sort={sortKey === "median_price_house" ? (sortAsc ? "ascending" : "descending") : "none"} className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100 hidden md:table-cell" onClick={() => handleSort("median_price_house")}>
                           <span className="flex items-center justify-end gap-1 text-xs font-semibold text-slate-600">Median House <SortIcon col="median_price_house" /></span>
                         </th>
-                        <th className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100" onClick={() => handleSort("rental_yield_house")}>
+                        <th scope="col" aria-sort={sortKey === "rental_yield_house" ? (sortAsc ? "ascending" : "descending") : "none"} className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100" onClick={() => handleSort("rental_yield_house")}>
                           <span className="flex items-center justify-end gap-1 text-xs font-semibold text-slate-600">Yield <SortIcon col="rental_yield_house" /></span>
                         </th>
-                        <th className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100 hidden sm:table-cell" onClick={() => handleSort("vacancy_rate")}>
+                        <th scope="col" aria-sort={sortKey === "vacancy_rate" ? (sortAsc ? "ascending" : "descending") : "none"} className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100 hidden sm:table-cell" onClick={() => handleSort("vacancy_rate")}>
                           <span className="flex items-center justify-end gap-1 text-xs font-semibold text-slate-600">Vacancy <SortIcon col="vacancy_rate" /></span>
                         </th>
-                        <th className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100" onClick={() => handleSort("capital_growth_10yr")}>
+                        <th scope="col" aria-sort={sortKey === "capital_growth_10yr" ? (sortAsc ? "ascending" : "descending") : "none"} className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100" onClick={() => handleSort("capital_growth_10yr")}>
                           <span className="flex items-center justify-end gap-1 text-xs font-semibold text-slate-600">10yr Growth <SortIcon col="capital_growth_10yr" /></span>
                         </th>
-                        <th className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100 hidden lg:table-cell" onClick={() => handleSort("distance_to_cbd_km")}>
+                        <th scope="col" aria-sort={sortKey === "distance_to_cbd_km" ? (sortAsc ? "ascending" : "descending") : "none"} className="text-right px-4 py-3 cursor-pointer hover:bg-slate-100 hidden lg:table-cell" onClick={() => handleSort("distance_to_cbd_km")}>
                           <span className="flex items-center justify-end gap-1 text-xs font-semibold text-slate-600">CBD km <SortIcon col="distance_to_cbd_km" /></span>
                         </th>
                       </tr>
@@ -192,7 +192,7 @@ export default function SuburbsClient() {
                 <div className="border border-slate-200 rounded-2xl p-5 lg:sticky lg:top-24">
                   <div className="flex items-center justify-between mb-3">
                     <h2 className="text-lg font-bold text-slate-900">{selected.suburb}, {selected.state}</h2>
-                    <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600">
+                    <button onClick={() => setSelected(null)} aria-label="Close suburb detail" className="text-slate-400 hover:text-slate-600">
                       <Icon name="x-circle" size={18} />
                     </button>
                   </div>

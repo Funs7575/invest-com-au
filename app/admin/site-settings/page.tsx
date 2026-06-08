@@ -36,7 +36,9 @@ export default function SiteSettingsPage() {
   } | null>(null);
 
   useEffect(() => {
+     
     fetchSettings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchSettings() {
@@ -90,6 +92,7 @@ export default function SiteSettingsPage() {
     if (field.type === "textarea") {
       return (
         <textarea
+          id={field.key}
           value={value}
           onChange={(e) => updateSetting(field.key, e.target.value)}
           rows={3}
@@ -100,6 +103,7 @@ export default function SiteSettingsPage() {
 
     return (
       <input
+        id={field.key}
         type={field.type}
         value={value}
         onChange={(e) => updateSetting(field.key, e.target.value)}
@@ -162,7 +166,7 @@ export default function SiteSettingsPage() {
                       : ""
                   }
                 >
-                  <label className="block text-sm font-medium text-slate-600 mb-1">
+                  <label htmlFor={field.key} className="block text-sm font-medium text-slate-600 mb-1">
                     {field.label}
                   </label>
                   {renderField(field)}

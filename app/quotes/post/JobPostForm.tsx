@@ -81,6 +81,9 @@ export default function JobPostForm() {
   // surface a "From your quiz" reassurance banner so users don't think the
   // form is auto-filling itself unexplainably.
   const [prefilledFromQuiz, setPrefilledFromQuiz] = useState(false);
+  // Tracks which specific fields were auto-populated from the quiz so we can
+  // apply a visual highlight only to those fields (not to user-typed values).
+  const [prefilledFields, setPrefilledFields] = useState<Set<keyof JobForm>>(new Set());
 
   function set<K extends keyof JobForm>(key: K, v: JobForm[K]) {
     setForm((p) => ({ ...p, [key]: v }));
@@ -99,12 +102,14 @@ export default function JobPostForm() {
     const type = searchParams.get("type");
 
     let didPrefill = false;
+    const newPrefilledFields = new Set<keyof JobForm>();
 
     if (goal && GOAL_TO_TITLE_HINT[goal]) {
       const titleHint = complexity === "complex"
         ? `${GOAL_TO_TITLE_HINT[goal]} (complex situation)`
         : GOAL_TO_TITLE_HINT[goal];
       setForm((p) => ({ ...p, job_title: titleHint }));
+      newPrefilledFields.add("job_title");
       didPrefill = true;
     }
 
@@ -114,7 +119,10 @@ export default function JobPostForm() {
       didPrefill = true;
     }
 
-    if (didPrefill) setPrefilledFromQuiz(true);
+    if (didPrefill) {
+      setPrefilledFromQuiz(true);
+      setPrefilledFields(newPrefilledFields);
+    }
   }, [searchParams]);
 
   const canDetails =
@@ -166,10 +174,11 @@ export default function JobPostForm() {
           <Icon name="check-circle" size={28} className="text-emerald-600" />
         </div>
         <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Job posted!</h2>
-        <p className="text-slate-600 text-sm leading-relaxed mb-6 max-w-md mx-auto">
-          Verified advisors are being notified now. You&apos;ll see quotes appear on your job page over the next 72 hours.
+        <p className="text-slate-600 text-sm leading-relaxed mb-2 max-w-md mx-auto">
+          Verified advisors are being notified now. Expect quotes within 24–72 hours.
           We&apos;ve sent a link to <strong>{form.contact_email}</strong>.
         </p>
+        <p className="text-xs text-slate-400 mb-6">You can close this tab — your job is saved.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           {resultSlug && (
             <Link
@@ -180,12 +189,14 @@ export default function JobPostForm() {
               <Icon name="arrow-right" size={16} />
             </Link>
           )}
-          <Link
-            href="/quotes"
-            className="inline-flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl hover:border-slate-300 transition-colors"
-          >
-            Browse the marketplace
-          </Link>
+          {resultSlug && (
+            <a
+              href={`mailto:?subject=Get%20a%20free%20financial%20advice%20quote&body=I%20just%20posted%20a%20job%20on%20Invest.com.au%20%E2%80%94%20share%20with%20an%20advisor%20you%20know%3A%20https%3A%2F%2Finvest.com.au%2Fquotes%2F${resultSlug}`}
+              className="inline-flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl hover:border-slate-300 transition-colors"
+            >
+              Share with an advisor you know
+            </a>
+          )}
         </div>
       </div>
     );
@@ -193,6 +204,15 @@ export default function JobPostForm() {
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+      {/* Trust banner */}
+      {step === "details" && (
+        <div className="mb-5 -mt-1 flex flex-wrap items-center gap-4 text-xs text-slate-500 bg-slate-50 rounded-xl px-4 py-2.5">
+          <span className="flex items-center gap-1.5"><span className="text-emerald-600 font-bold">✓</span> Free, no obligation</span>
+          <span className="flex items-center gap-1.5"><span className="text-emerald-600 font-bold">✓</span> AFSL-licensed advisors only</span>
+          <span className="flex items-center gap-1.5"><span className="text-emerald-600 font-bold">✓</span> Compare up to 5 quotes</span>
+          <span className="flex items-center gap-1.5"><span className="text-emerald-600 font-bold">✓</span> Reply within 72 hours</span>
+        </div>
+      )}
       {/* Prefilled-from-quiz banner — soft reassurance that we're carrying
           their context, not auto-filling the form mysteriously. */}
       {prefilledFromQuiz && (
@@ -241,25 +261,31 @@ export default function JobPostForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="job-title" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Title <span className="text-red-500">*</span>
             </label>
             <input
+              id="job-title"
               type="text"
               maxLength={120}
               value={form.job_title}
-              onChange={(e) => set("job_title", e.target.value)}
+              onChange={(e) => {
+                set("job_title", e.target.value);
+                // Clear the prefill highlight once the user starts editing
+                setPrefilledFields((prev) => { const next = new Set(prev); next.delete("job_title"); return next; });
+              }}
               placeholder="e.g. Refinance our $750k investment loan"
-              className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className={`w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${prefilledFields.has("job_title") ? "border-blue-200 bg-blue-50 ring-1 ring-blue-200" : "border-slate-300"}`}
             />
             <p className="text-xs text-slate-400 mt-1">A short summary advisors will see in the job board.</p>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="job-description" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Describe your situation <span className="text-red-500">*</span>
             </label>
             <textarea
+              id="job-description"
               rows={6}
               maxLength={3000}
               value={form.job_description}
@@ -267,15 +293,16 @@ export default function JobPostForm() {
               placeholder="What's the situation? What outcome do you want? Any deadlines? The more context the better — advisors will give sharper, lower quotes."
               className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-y"
             />
-            <p className="text-xs text-slate-400 mt-1">Min 30 characters · {form.job_description.length} written</p>
+            <p className="text-xs text-slate-400 mt-1">Min 30 characters — specific descriptions attract better quotes from advisors. {form.job_description.length} written</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="job-state" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 State <span className="text-red-500">*</span>
               </label>
               <select
+                id="job-state"
                 value={form.location_state}
                 onChange={(e) => set("location_state", e.target.value)}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -285,10 +312,11 @@ export default function JobPostForm() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="job-budget" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Budget <span className="text-red-500">*</span>
               </label>
               <select
+                id="job-budget"
                 value={form.budget_band}
                 onChange={(e) => set("budget_band", e.target.value)}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -296,6 +324,7 @@ export default function JobPostForm() {
                 <option value="">Select budget</option>
                 {BUDGETS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
               </select>
+              <p className="text-xs text-slate-400 mt-1">Total project budget. SOA from ~$1,500 · Hourly from ~$250/hr</p>
             </div>
           </div>
 
@@ -355,10 +384,11 @@ export default function JobPostForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="contact-name" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Name <span className="text-red-500">*</span>
             </label>
             <input
+              id="contact-name"
               type="text"
               value={form.contact_name}
               onChange={(e) => set("contact_name", e.target.value)}
@@ -368,11 +398,12 @@ export default function JobPostForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="contact-email" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Email <span className="text-red-500">*</span>
               </label>
               <input
-                type="email"
+                id="contact-email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={form.contact_email}
                 onChange={(e) => set("contact_email", e.target.value)}
                 placeholder="you@example.com"
@@ -380,9 +411,11 @@ export default function JobPostForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">Phone</label>
+              <label htmlFor="contact-phone" className="block text-sm font-semibold text-slate-700 mb-1.5">Phone</label>
               <input
+                id="contact-phone"
                 type="tel"
+                autoComplete="tel"
                 value={form.contact_phone}
                 onChange={(e) => set("contact_phone", e.target.value)}
                 placeholder="+61 4XX XXX XXX"
@@ -407,7 +440,7 @@ export default function JobPostForm() {
           </label>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">{error}</div>
+            <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">{error}</div>
           )}
 
           <div className="flex justify-between">
@@ -426,7 +459,7 @@ export default function JobPostForm() {
             >
               {loading ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                  <div aria-hidden="true" className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
                   Posting...
                 </>
               ) : (

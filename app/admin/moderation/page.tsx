@@ -424,7 +424,7 @@ export default function ModerationQueuePage() {
       {/* Search + Sort row */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <input
-          type="text"
+          type="search" enterKeyHint="search"
           placeholder="Search by name, email, broker, or content..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -660,10 +660,11 @@ export default function ModerationQueuePage() {
 
                       {/* Moderation note + actions */}
                       <div className="border-t border-slate-200 pt-4">
-                        <label className="text-xs font-bold text-slate-500 uppercase block mb-1.5">
+                        <label htmlFor="mod-note" className="text-xs font-bold text-slate-500 uppercase block mb-1.5">
                           Moderation Note (optional)
                         </label>
                         <textarea
+                          id="mod-note"
                           value={moderationNote}
                           onChange={(e) => setModerationNote(e.target.value)}
                           placeholder="Add a reason for rejection or internal note..."

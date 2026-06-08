@@ -27,7 +27,9 @@ export async function generateMetadata({
       title: magnet.title,
       description: magnet.description,
       url: `${SITE_URL}/lead-magnets/${slug}`,
+      images: [{ url: `/api/og?title=${encodeURIComponent(magnet.title)}&sub=${encodeURIComponent("Free Download · invest.com.au")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -58,7 +60,7 @@ export default async function LeadMagnetPage({
       {/* Hero */}
       <div className="bg-gradient-to-br from-amber-900 to-amber-700 text-white py-14">
         <div className="container-custom max-w-3xl">
-          <nav className="text-sm text-amber-200 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-amber-200 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">
               Home
             </Link>

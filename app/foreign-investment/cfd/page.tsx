@@ -139,7 +139,7 @@ export default async function ForeignCFDPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -206,12 +206,12 @@ export default async function ForeignCFDPage() {
             sub="Applies to all retail clients of ASIC-regulated providers — including non-residents. Wholesale clients may access higher leverage with an accountant's certificate."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="ASIC leverage limits for retail CFD clients by asset class">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Market / Asset Class</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Max Leverage</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide hidden md:table-cell">Examples</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Market / Asset Class</th>
+                  <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Max Leverage</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide hidden md:table-cell">Examples</th>
                 </tr>
               </thead>
               <tbody>
@@ -318,7 +318,7 @@ export default async function ForeignCFDPage() {
               <details key={faq.question} className="group bg-white rounded-xl border border-slate-200">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3">⌄</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">⌄</span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                   {faq.answer}

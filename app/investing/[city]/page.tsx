@@ -157,7 +157,7 @@ export default async function CityInvestingPage({
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -281,25 +281,25 @@ export default async function CityInvestingPage({
             >
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">
                     #
                   </th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">
                     Platform
                   </th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">
                     ASX Fee
                   </th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">
                     US Fee
                   </th>
-                  <th className="px-4 py-3 text-center font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">
                     CHESS
                   </th>
-                  <th className="px-4 py-3 text-center font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">
                     Rating
                   </th>
-                  <th className="px-4 py-3"></th>
+                  <th scope="col" className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -352,10 +352,10 @@ export default async function CityInvestingPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-center">
-                      <span className="text-amber-600">
+                      <span className="text-amber-600" aria-hidden="true">
                         {renderStars(broker.rating || 0)}
                       </span>
-                      <span className="text-sm text-slate-500 ml-1">
+                      <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>
                         {broker.rating}
                       </span>
                     </td>

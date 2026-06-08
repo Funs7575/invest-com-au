@@ -174,6 +174,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [columnExpandedForFilter, setColumnExpandedForFilter] = useState<string | null>(null);
   const showAllMobileColumns = columnExpandedForFilter === activeFilter;
   const [scenario, setScenario] = useState<ScenarioMode | "none">((searchParams.get("scenario") as ScenarioMode) || "none");
+  const [shareLinkCopied, setShareLinkCopied] = useState(false);
   const [costInputs, setCostInputs] = useState<CostInputs>(DEFAULT_COST_INPUTS);
 
   // Sync URL when filter, search or sort changes (for sharing/bookmarking).
@@ -457,12 +458,17 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               if (navigator.share) {
                 navigator.share({ title: 'Compare Platforms — invest.com.au', url }).catch(() => {});
               } else {
-                navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => {});
+                navigator.clipboard.writeText(url).then(() => {
+                  setShareLinkCopied(true);
+                  setTimeout(() => setShareLinkCopied(false), 2000);
+                }).catch(() => {});
               }
             }}
+            aria-live="polite"
+            aria-label={shareLinkCopied ? "Link copied to clipboard" : "Share this view — copy link"}
             className="underline hover:text-slate-700"
           >
-            Share this view
+            {shareLinkCopied ? "Copied!" : "Share this view"}
           </button>
           <span className="text-slate-300">·</span>
           <Link href="/how-we-earn" className="underline hover:text-slate-700">How we earn</Link>
@@ -533,7 +539,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 <label key={key} className="text-[0.7rem] font-semibold text-slate-600">
                   {label}
                   <input
-                    type="number"
+                    type="number" inputMode="decimal"
                     min="0"
                     value={costInputs[key as keyof CostInputs]}
                     onChange={(e) => setCostInputs((prev) => ({ ...prev, [key]: Number(e.target.value) }))}
@@ -598,6 +604,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                     const on = activeFeatures.has(key);
                     return (
                       <button key={key} type="button"
+                        aria-pressed={on}
                         onClick={() => setActiveFeatures((prev) => { const next = new Set(prev); if (next.has(key)) next.delete(key); else next.add(key); return next; })}
                         className={`flex items-center gap-2 px-2.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${on ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
                         <Icon name={f.icon} size={13} className={on ? "text-amber-600" : "text-slate-400"} />
@@ -747,14 +754,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             {/* Fee & Rating */}
             <div className="mb-4 grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Max ASX Fee</label>
-                <select value={maxFee} onChange={e => setMaxFee(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
+                <label htmlFor="compare-max-fee" className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Max ASX Fee</label>
+                <select id="compare-max-fee" value={maxFee} onChange={e => setMaxFee(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
                   {maxFeeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Min Rating</label>
-                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
+                <label htmlFor="compare-min-rating" className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Min Rating</label>
+                <select id="compare-min-rating" value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
                   {minRatingOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
@@ -786,6 +793,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           {schema.columns.length > 4 && (
             <button
               type="button"
+              aria-expanded={showAllMobileColumns}
               onClick={() => setColumnExpandedForFilter(prev => prev === activeFilter ? null : activeFilter)}
               className="text-[0.62rem] font-semibold text-blue-700 hover:text-blue-800"
             >
@@ -899,6 +907,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           showMobileCompare={showMobileCompare}
           onToggleMobileCompare={() => setShowMobileCompare(prev => !prev)}
           onToggleSelected={toggleSelected}
+          onClearAll={() => setSelected(new Set())}
         />
 
 

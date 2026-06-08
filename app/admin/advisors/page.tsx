@@ -31,6 +31,16 @@ export default function AdminAdvisorsPage() {
   const [appTypeFilter, setAppTypeFilter] = useState<string>("all");
   const [appStateFilter, setAppStateFilter] = useState<string>("all");
   const [supplyData, setSupplyData] = useState<Record<string, Record<string, number>>>({});
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [pendingWelcomeId, setPendingWelcomeId] = useState<number | null>(null);
+  const [welcomeEmailMessage, setWelcomeEmailMessage] = useState<string | null>(null);
+  const [outreachMessage, setOutreachMessage] = useState<string | null>(null);
+  const [pendingApproveAppId, setPendingApproveAppId] = useState<number | null>(null);
+  const [rejectingAppId, setRejectingAppId] = useState<number | null>(null);
+  const [appRejectReason, setAppRejectReason] = useState("");
+  const [appActionMessage, setAppActionMessage] = useState<string | null>(null);
+  const [disputeMessage, setDisputeMessage] = useState<string | null>(null);
+  const [pendingRevokeId, setPendingRevokeId] = useState<number | null>(null);
 
   const supabase = createClient();
 
@@ -182,56 +192,56 @@ export default function AdminAdvisorsPage() {
               <h2 className="text-lg font-bold mb-4">{editing.id ? "Edit Advisor" : "Add New Advisor"}</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Name *</label>
-                  <input value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value, ...(!editing.id ? { slug: autoSlug(e.target.value) } : {}) })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sarah Chen" />
+                  <label htmlFor="adv-name" className="block text-xs font-semibold text-slate-600 mb-1">Name *</label>
+                  <input id="adv-name" value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value, ...(!editing.id ? { slug: autoSlug(e.target.value) } : {}) })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sarah Chen" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Slug *</label>
-                  <input value={editing.slug || ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah-chen" />
+                  <label htmlFor="adv-slug" className="block text-xs font-semibold text-slate-600 mb-1">Slug *</label>
+                  <input id="adv-slug" value={editing.slug || ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah-chen" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
-                  <input value={editing.firm_name || ""} onChange={(e) => setEditing({ ...editing, firm_name: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Chen Advisory" />
+                  <label htmlFor="adv-firm-name" className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
+                  <input id="adv-firm-name" value={editing.firm_name || ""} onChange={(e) => setEditing({ ...editing, firm_name: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Chen Advisory" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Type *</label>
-                  <select value={editing.type || "smsf_accountant"} onChange={(e) => setEditing({ ...editing, type: e.target.value as Professional["type"] })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="adv-type" className="block text-xs font-semibold text-slate-600 mb-1">Type *</label>
+                  <select id="adv-type" value={editing.type || "smsf_accountant"} onChange={(e) => setEditing({ ...editing, type: e.target.value as Professional["type"] })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     {Object.entries(PROFESSIONAL_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-                  <input type="email" value={editing.email || ""} onChange={(e) => setEditing({ ...editing, email: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
+                  <label htmlFor="adv-email" className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+                  <input id="adv-email" type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} value={editing.email || ""} onChange={(e) => setEditing({ ...editing, email: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
-                  <input value={editing.phone || ""} onChange={(e) => setEditing({ ...editing, phone: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="02 1234 5678" />
+                  <label htmlFor="adv-phone" className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
+                  <input id="adv-phone" value={editing.phone || ""} onChange={(e) => setEditing({ ...editing, phone: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="02 1234 5678" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Location (Display)</label>
-                  <input value={editing.location_display || ""} onChange={(e) => setEditing({ ...editing, location_display: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sydney CBD, NSW" />
+                  <label htmlFor="adv-location" className="block text-xs font-semibold text-slate-600 mb-1">Location (Display)</label>
+                  <input id="adv-location" value={editing.location_display || ""} onChange={(e) => setEditing({ ...editing, location_display: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sydney CBD, NSW" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">State</label>
-                  <select value={editing.location_state || ""} onChange={(e) => setEditing({ ...editing, location_state: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="adv-state" className="block text-xs font-semibold text-slate-600 mb-1">State</label>
+                  <select id="adv-state" value={editing.location_state || ""} onChange={(e) => setEditing({ ...editing, location_state: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     <option value="">Select state</option>
                     {["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"].map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">AFSL / Registration #</label>
-                  <input value={editing.afsl_number || ""} onChange={(e) => setEditing({ ...editing, afsl_number: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="AFSL 234567" />
+                  <label htmlFor="adv-afsl" className="block text-xs font-semibold text-slate-600 mb-1">AFSL / Registration #</label>
+                  <input id="adv-afsl" value={editing.afsl_number || ""} onChange={(e) => setEditing({ ...editing, afsl_number: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="AFSL 234567" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Description</label>
-                  <input value={editing.fee_description || ""} onChange={(e) => setEditing({ ...editing, fee_description: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="From $2,200/yr" />
+                  <label htmlFor="adv-fee-desc" className="block text-xs font-semibold text-slate-600 mb-1">Fee Description</label>
+                  <input id="adv-fee-desc" value={editing.fee_description || ""} onChange={(e) => setEditing({ ...editing, fee_description: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="From $2,200/yr" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
-                  <input value={editing.website || ""} onChange={(e) => setEditing({ ...editing, website: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://..." />
+                  <label htmlFor="adv-website" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+                  <input id="adv-website" value={editing.website || ""} onChange={(e) => setEditing({ ...editing, website: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Photo</label>
+                  <p className="block text-xs font-semibold text-slate-600 mb-1">Photo</p>
                   <div className="flex items-center gap-3">
                     {editing.photo_url && (
                       <Image src={editing.photo_url} alt="Preview" width={48} height={48} className="w-12 h-12 rounded-full object-cover border border-slate-200" />
@@ -251,12 +261,14 @@ export default function AdminAdvisorsPage() {
                           if (!error) {
                             const { data: urlData } = supabaseUpload.storage.from("public").getPublicUrl(path);
                             setEditing({ ...editing, photo_url: urlData.publicUrl });
+                            setUploadError(null);
                           } else {
-                            alert("Upload failed: " + error.message);
+                            setUploadError("Upload failed: " + error.message);
                           }
                         }}
                         className="w-full text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-slate-100 file:text-slate-600 file:font-semibold file:cursor-pointer hover:file:bg-slate-200"
                       />
+                      {uploadError && <p role="alert" className="mt-1 text-xs text-red-700">{uploadError}</p>}
                       <input
                         value={editing.photo_url || ""}
                         onChange={(e) => setEditing({ ...editing, photo_url: e.target.value })}
@@ -268,25 +280,25 @@ export default function AdminAdvisorsPage() {
                 </div>
               </div>
               <div className="mt-4">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
-                <textarea value={editing.bio || ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Professional bio..." />
+                <label htmlFor="adv-bio" className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
+                <textarea id="adv-bio" value={editing.bio || ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Professional bio..." />
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">LinkedIn URL</label>
-                  <input value={(editing as Record<string, unknown>).linkedin_url as string || ""} onChange={(e) => setEditing({ ...editing, linkedin_url: e.target.value } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://linkedin.com/in/..." />
+                  <label htmlFor="adv-linkedin" className="block text-xs font-semibold text-slate-600 mb-1">LinkedIn URL</label>
+                  <input id="adv-linkedin" value={(editing as Record<string, unknown>).linkedin_url as string || ""} onChange={(e) => setEditing({ ...editing, linkedin_url: e.target.value } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://linkedin.com/in/..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Years Experience</label>
-                  <input type="number" value={(editing as Record<string, unknown>).years_experience as number || ""} onChange={(e) => setEditing({ ...editing, years_experience: e.target.value ? parseInt(e.target.value) : undefined } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="15" />
+                  <label htmlFor="adv-years-exp" className="block text-xs font-semibold text-slate-600 mb-1">Years Experience</label>
+                  <input id="adv-years-exp" type="number" inputMode="decimal" value={(editing as Record<string, unknown>).years_experience as number || ""} onChange={(e) => setEditing({ ...editing, years_experience: e.target.value ? parseInt(e.target.value) : undefined } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="15" />
                 </div>
               </div>
               <div className="mt-4">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Admin Notes (internal only)</label>
-                <textarea value={(editing as Record<string, unknown>).admin_notes as string || ""} onChange={(e) => setEditing({ ...editing, admin_notes: e.target.value } as Partial<Professional>)} rows={2} className="w-full px-3 py-2 border border-amber-200 bg-amber-50 rounded-lg text-sm" placeholder="Internal notes — not visible to the advisor..." />
+                <label htmlFor="adv-admin-notes" className="block text-xs font-semibold text-slate-600 mb-1">Admin Notes (internal only)</label>
+                <textarea id="adv-admin-notes" value={(editing as Record<string, unknown>).admin_notes as string || ""} onChange={(e) => setEditing({ ...editing, admin_notes: e.target.value } as Partial<Professional>)} rows={2} className="w-full px-3 py-2 border border-amber-200 bg-amber-50 rounded-lg text-sm" placeholder="Internal notes — not visible to the advisor..." />
               </div>
               <div className="mt-4">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Specialties</label>
+                <p className="block text-xs font-semibold text-slate-600 mb-1">Specialties</p>
                 <div className="flex gap-2 mb-2">
                   <input value={specialtyInput} onChange={(e) => setSpecialtyInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSpecialty())} className="flex-1 px-3 py-2 border rounded-lg text-sm" placeholder="e.g. SMSF Setup" />
                   <button onClick={addSpecialty} className="px-3 py-2 bg-slate-100 rounded-lg text-sm font-semibold hover:bg-slate-200">Add</button>
@@ -326,7 +338,7 @@ export default function AdminAdvisorsPage() {
             <div className="text-slate-400 text-sm">Loading...</div>
           ) : (
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Advisor list">
                 <thead className="bg-slate-50 text-left">
                   <tr>
                     <th className="px-4 py-3 font-semibold text-slate-600">Name</th>
@@ -367,20 +379,32 @@ export default function AdminAdvisorsPage() {
                           <button onClick={() => setEditing(a)} className="text-xs text-blue-600 hover:text-blue-800 font-semibold">Edit</button>
                           <a href={`/advisor/${a.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-slate-700 font-semibold">View</a>
                           {a.email && (
-                            <button
-                              onClick={async () => {
-                                if (!confirm(`Send welcome email to ${a.email}?`)) return;
-                                const res = await fetch("/api/advisor-welcome", {
-                                  method: "POST",
-                                  headers: { "Content-Type": "application/json" },
-                                  body: JSON.stringify({ name: a.name, email: a.email, firm_name: a.firm_name, slug: a.slug, type: a.type }),
-                                });
-                                alert(res.ok ? "Welcome email sent!" : "Failed to send email");
-                              }}
-                              className="text-xs text-purple-600 hover:text-purple-800 font-semibold"
-                            >
-                              Welcome Email
-                            </button>
+                            pendingWelcomeId === a.id ? (
+                              <span className="flex items-center gap-1">
+                                <span className="text-xs text-slate-600">Send to {a.email}?</span>
+                                <button
+                                  onClick={async () => {
+                                    setPendingWelcomeId(null);
+                                    const res = await fetch("/api/advisor-welcome", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ name: a.name, email: a.email, firm_name: a.firm_name, slug: a.slug, type: a.type }),
+                                    });
+                                    setWelcomeEmailMessage(res.ok ? "Sent!" : "Failed");
+                                    setTimeout(() => setWelcomeEmailMessage(null), 3000);
+                                  }}
+                                  className="text-xs text-emerald-600 hover:text-emerald-800 font-semibold"
+                                >Yes</button>
+                                <button onClick={() => setPendingWelcomeId(null)} className="text-xs text-slate-500 hover:text-slate-700 font-semibold">No</button>
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => { setPendingWelcomeId(a.id); setWelcomeEmailMessage(null); }}
+                                className="text-xs text-purple-600 hover:text-purple-800 font-semibold"
+                              >
+                                Welcome Email
+                              </button>
+                            )
                           )}
                           <button onClick={() => handleDelete(a.id)} className="text-xs text-red-500 hover:text-red-700 font-semibold">Delete</button>
                         </div>
@@ -389,6 +413,9 @@ export default function AdminAdvisorsPage() {
                   ))}
                 </tbody>
               </table>
+              {welcomeEmailMessage && (
+                <p role="alert" className="px-4 py-2 text-xs text-emerald-700 bg-emerald-50 border-t border-emerald-200">{welcomeEmailMessage}</p>
+              )}
               {advisors.length === 0 && (
                 <div className="text-center py-12 text-slate-400">
                   <p className="mb-2">No advisors yet.</p>
@@ -433,7 +460,7 @@ export default function AdminAdvisorsPage() {
             </button>
           )}
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Advisor leads">
             <thead className="bg-slate-50 text-left">
               <tr>
                 <th className="px-4 py-3 font-semibold text-slate-600">Date</th>
@@ -496,7 +523,7 @@ export default function AdminAdvisorsPage() {
       {/* ─── REVIEWS TAB ─── */}
       {tab === "reviews" && (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Advisor reviews">
             <thead className="bg-slate-50 text-left">
               <tr>
                 <th className="px-4 py-3 font-semibold text-slate-600">Date</th>
@@ -582,36 +609,39 @@ export default function AdminAdvisorsPage() {
           <p className="text-sm text-slate-600 mb-4">Send an invitation email to a financial professional to list on invest.com.au. The email explains the free listing model and asks them to reply with their details.</p>
           <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Advisor Name *</label>
+              <label htmlFor="outreach-name" className="block text-xs font-semibold text-slate-600 mb-1">Advisor Name *</label>
               <input id="outreach-name" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sarah Chen" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
-              <input id="outreach-email" type="email" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
+              <label htmlFor="outreach-email" className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
+              <input id="outreach-email" type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
+              <label htmlFor="outreach-firm" className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
               <input id="outreach-firm" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Chen Advisory" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Advisor Type</label>
+              <label htmlFor="outreach-type" className="block text-xs font-semibold text-slate-600 mb-1">Advisor Type</label>
               <select id="outreach-type" className="w-full px-3 py-2 border rounded-lg text-sm">
                 {Object.entries(PROFESSIONAL_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
+            {outreachMessage && (
+              <p role="alert" className={`text-sm rounded-lg px-3 py-2 ${outreachMessage.startsWith("Failed") || outreachMessage.includes("required") ? "text-red-700 bg-red-50 border border-red-200" : "text-emerald-700 bg-emerald-50 border border-emerald-200"}`}>{outreachMessage}</p>
+            )}
             <button
               onClick={async () => {
                 const name = (document.getElementById("outreach-name") as HTMLInputElement).value;
                 const email = (document.getElementById("outreach-email") as HTMLInputElement).value;
                 const firm = (document.getElementById("outreach-firm") as HTMLInputElement).value;
                 const type = (document.getElementById("outreach-type") as HTMLSelectElement).value;
-                if (!name || !email) { alert("Name and email required"); return; }
+                if (!name || !email) { setOutreachMessage("Name and email required"); return; }
                 const res = await fetch("/api/advisor-outreach", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ to_email: email, to_name: name, firm_name: firm, advisor_type: type }),
                 });
-                alert(res.ok ? `Outreach email sent to ${email}!` : "Failed to send");
+                setOutreachMessage(res.ok ? `Outreach email sent to ${email}!` : "Failed to send");
               }}
               className="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800"
             >
@@ -650,7 +680,7 @@ export default function AdminAdvisorsPage() {
           <div className="mb-6 bg-white border border-slate-200 rounded-xl p-4">
             <h3 className="text-sm font-bold text-slate-900 mb-3">Supply Coverage by State</h3>
             <div className="overflow-x-auto">
-              <table className="w-full text-xs">
+              <table className="w-full text-xs" aria-label="Supply coverage by state">
                 <thead>
                   <tr className="border-b border-slate-100">
                     <th className="text-left py-2 pr-3 font-semibold text-slate-500">Vertical</th>
@@ -837,36 +867,70 @@ export default function AdminAdvisorsPage() {
 
                         {/* Action buttons */}
                         {app.status === "pending" && (
-                          <div className="flex gap-3 pt-2 border-t border-slate-100">
-                            <button
-                              onClick={async () => {
-                                if (!confirm(`Approve ${String(app.name)}? This will create their listing, send a magic link, and email them.`)) return;
-                                try {
-                                  const res = await fetch("/api/admin/advisor-applications", {
-                                    method: "PATCH", headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ applicationId: app.id, action: "approve" }),
-                                  });
-                                  if (res.ok) { alert("Approved! Listing created."); setExpandedAppId(null); loadData(); }
-                                  else { const d = await res.json(); alert(d.error || "Failed."); }
-                                } catch { alert("Network error."); }
-                              }}
-                              className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-4 py-2 border border-emerald-200 rounded-lg hover:bg-emerald-50"
-                            >Approve & Create Listing</button>
-                            <button
-                              onClick={async () => {
-                                const reason = prompt("Rejection reason (emailed to applicant):");
-                                if (reason == null) return;
-                                try {
-                                  const res = await fetch("/api/admin/advisor-applications", {
-                                    method: "PATCH", headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ applicationId: app.id, action: "reject", rejectionReason: reason }),
-                                  });
-                                  if (res.ok) { alert("Rejected."); setExpandedAppId(null); loadData(); }
-                                  else { const d = await res.json(); alert(d.error || "Failed."); }
-                                } catch { alert("Network error."); }
-                              }}
-                              className="text-xs font-semibold text-red-500 hover:text-red-700 px-4 py-2 border border-red-200 rounded-lg hover:bg-red-50"
-                            >Reject</button>
+                          <div className="pt-2 border-t border-slate-100 space-y-2">
+                            {appActionMessage && (
+                              <p role="alert" className="text-xs text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">{appActionMessage}</p>
+                            )}
+                            {rejectingAppId === Number(app.id) ? (
+                              <div className="bg-red-50 border border-red-200 rounded-lg p-3 space-y-2">
+                                <label htmlFor={`reject-reason-${app.id}`} className="block text-xs font-semibold text-red-800">Rejection reason (emailed to applicant)</label>
+                                <textarea
+                                  id={`reject-reason-${app.id}`}
+                                  value={appRejectReason}
+                                  onChange={(e) => setAppRejectReason(e.target.value)}
+                                  rows={2}
+                                  className="w-full px-2.5 py-1.5 border border-red-200 rounded text-xs bg-white"
+                                  placeholder="e.g. Could not verify credentials."
+                                />
+                                <div className="flex gap-2 justify-end">
+                                  <button onClick={() => { setRejectingAppId(null); setAppRejectReason(""); }} className="text-xs text-slate-600 font-semibold px-3 py-1.5">Cancel</button>
+                                  <button
+                                    disabled={appRejectReason.trim().length < 4}
+                                    onClick={async () => {
+                                      try {
+                                        const res = await fetch("/api/admin/advisor-applications", {
+                                          method: "PATCH", headers: { "Content-Type": "application/json" },
+                                          body: JSON.stringify({ applicationId: app.id, action: "reject", rejectionReason: appRejectReason.trim() }),
+                                        });
+                                        if (res.ok) { setRejectingAppId(null); setAppRejectReason(""); setExpandedAppId(null); loadData(); }
+                                        else { const d = await res.json(); setAppActionMessage(d.error || "Failed."); }
+                                      } catch { setAppActionMessage("Network error."); }
+                                    }}
+                                    className="text-xs font-bold text-white px-3 py-1.5 bg-red-600 rounded hover:bg-red-700 disabled:opacity-50"
+                                  >Confirm Rejection</button>
+                                </div>
+                              </div>
+                            ) : pendingApproveAppId === Number(app.id) ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-slate-600">Approve {String(app.name)}? Creates listing and emails them.</span>
+                                <button
+                                  onClick={async () => {
+                                    setPendingApproveAppId(null);
+                                    try {
+                                      const res = await fetch("/api/admin/advisor-applications", {
+                                        method: "PATCH", headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ applicationId: app.id, action: "approve" }),
+                                      });
+                                      if (res.ok) { setExpandedAppId(null); loadData(); }
+                                      else { const d = await res.json(); setAppActionMessage(d.error || "Failed."); }
+                                    } catch { setAppActionMessage("Network error."); }
+                                  }}
+                                  className="text-xs font-bold text-emerald-600 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50"
+                                >Yes, approve</button>
+                                <button onClick={() => setPendingApproveAppId(null)} className="text-xs font-semibold text-slate-500 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">No</button>
+                              </div>
+                            ) : (
+                              <div className="flex gap-3">
+                                <button
+                                  onClick={() => { setPendingApproveAppId(Number(app.id)); setAppActionMessage(null); }}
+                                  className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-4 py-2 border border-emerald-200 rounded-lg hover:bg-emerald-50"
+                                >Approve & Create Listing</button>
+                                <button
+                                  onClick={() => { setRejectingAppId(Number(app.id)); setAppRejectReason(""); setAppActionMessage(null); }}
+                                  className="text-xs font-semibold text-red-500 hover:text-red-700 px-4 py-2 border border-red-200 rounded-lg hover:bg-red-50"
+                                >Reject</button>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
@@ -915,15 +979,19 @@ export default function AdminAdvisorsPage() {
                       <span className="text-xs text-slate-400">{new Date(String(d.created_at)).toLocaleDateString("en-AU")}</span>
                     </div>
                     {d.status === "pending" && (
-                      <div className="flex gap-2 mt-2">
+                      <div className="mt-2 space-y-2">
+                        {disputeMessage && (
+                          <p role="alert" className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">{disputeMessage}</p>
+                        )}
+                        <div className="flex gap-2">
                         <button
                           onClick={async () => {
-                            // Waive the billing charge
                             if (d.billing_id) {
                               await supabase.from("advisor_billing").update({ status: "waived" }).eq("id", d.billing_id);
                             }
                             await supabase.from("lead_disputes").update({ status: "approved", resolved_at: new Date().toISOString() }).eq("id", d.id);
-                            alert("Dispute approved — charge waived.");
+                            setDisputeMessage("Dispute approved — charge waived.");
+                            setTimeout(() => setDisputeMessage(null), 4000);
                             loadData();
                           }}
                           className="text-xs font-semibold text-emerald-600 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50"
@@ -935,6 +1003,7 @@ export default function AdminAdvisorsPage() {
                           }}
                           className="text-xs font-semibold text-red-500 px-3 py-1.5 border border-red-200 rounded-lg hover:bg-red-50"
                         >Reject (Uphold Charge)</button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1020,17 +1089,28 @@ export default function AdminAdvisorsPage() {
                       </button>
                     )}
                     {a.verified && (
-                      <button
-                        onClick={async () => {
-                          if (!confirm(`Revoke verification for ${a.name}?`)) return;
-                          await supabase.from("professionals").update({ verified: false, verification_notes: "Manually revoked by admin" }).eq("id", a.id);
-                          await supabase.from("advisor_verification_log").insert({ professional_id: a.id, action: "revoked", method: "manual", performed_by: "admin" });
-                          loadData();
-                        }}
-                        className="px-2.5 py-1 text-[0.6rem] font-semibold border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
-                      >
-                        Revoke
-                      </button>
+                      pendingRevokeId === a.id ? (
+                        <span className="flex items-center gap-1">
+                          <span className="text-[0.6rem] text-slate-600">Revoke?</span>
+                          <button
+                            onClick={async () => {
+                              setPendingRevokeId(null);
+                              await supabase.from("professionals").update({ verified: false, verification_notes: "Manually revoked by admin" }).eq("id", a.id);
+                              await supabase.from("advisor_verification_log").insert({ professional_id: a.id, action: "revoked", method: "manual", performed_by: "admin" });
+                              loadData();
+                            }}
+                            className="px-2 py-0.5 text-[0.6rem] font-bold text-red-600 border border-red-200 rounded hover:bg-red-50"
+                          >Yes</button>
+                          <button onClick={() => setPendingRevokeId(null)} className="px-2 py-0.5 text-[0.6rem] font-semibold text-slate-500 border border-slate-200 rounded hover:bg-slate-50">No</button>
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => setPendingRevokeId(a.id)}
+                          className="px-2.5 py-1 text-[0.6rem] font-semibold border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
+                        >
+                          Revoke
+                        </button>
+                      )
                     )}
                     {a.status === "paused" && (
                       <button

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Trustee-controlled super: costs, rules, investment options, and how to set up an SMSF in Australia.",
     url: `${SITE_URL}/smsf`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Investment Hub")}&sub=${encodeURIComponent("Property · Shares · Crypto · Setup · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -194,12 +196,12 @@ export default function SmsfPage() {
             The ATO does not mandate a minimum balance, but fixed costs make SMSFs less competitive below roughly $200,000. Here are the typical cost categories:
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="SMSF annual cost categories and typical ranges">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left font-bold text-slate-800 px-4 py-3">Cost item</th>
-                  <th className="text-left font-bold text-slate-800 px-4 py-3">Typical range</th>
-                  <th className="text-left font-bold text-slate-800 px-4 py-3 hidden sm:table-cell">Notes</th>
+                  <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3">Cost item</th>
+                  <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3">Typical range</th>
+                  <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3 hidden sm:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -252,12 +254,12 @@ export default function SmsfPage() {
             There is no universal winner — the right answer depends entirely on your balance, investment goals, and willingness to take on trustee responsibilities.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="SMSF vs industry and retail superannuation fund comparison">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left font-bold text-slate-800 px-4 py-3 w-1/3">Factor</th>
-                  <th className="text-left font-bold text-amber-700 px-4 py-3">SMSF</th>
-                  <th className="text-left font-bold text-slate-600 px-4 py-3">Industry / retail fund</th>
+                  <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3 w-1/3">Factor</th>
+                  <th scope="col" className="text-left font-bold text-amber-700 px-4 py-3">SMSF</th>
+                  <th scope="col" className="text-left font-bold text-slate-600 px-4 py-3">Industry / retail fund</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -653,6 +655,16 @@ export default function SmsfPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get matched with an SMSF specialist"
+        subheading="SMSF setup, compliance, auditing, and investment strategy — find a licensed specialist near you."
+        intent={{ need: "smsf", context: ["smsf_setup", "smsf_compliance"] }}
+        source="smsf_hub"
+        ctaLabel="Find my SMSF specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* FAQ */}
       <section className="py-12 bg-white border-t border-slate-200">

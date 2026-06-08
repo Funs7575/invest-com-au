@@ -523,7 +523,7 @@ function EmailMyStack({ stackId, goal, amount }: EmailMyStackProps) {
       </p>
       <div className="mt-3 grid gap-2 sm:grid-cols-[1fr,auto]">
         <input
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"

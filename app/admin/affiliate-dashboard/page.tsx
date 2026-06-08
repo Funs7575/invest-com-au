@@ -179,7 +179,7 @@ export default function AffiliateDashboardPage() {
       ) : tab === "overview" ? (
         /* By Broker Table */
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Affiliate performance by broker">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Broker</th>
@@ -210,7 +210,7 @@ export default function AffiliateDashboardPage() {
       ) : tab === "signups" ? (
         /* All Signups Table */
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Affiliate signups">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Date</th>
@@ -245,7 +245,7 @@ export default function AffiliateDashboardPage() {
       ) : (
         /* Monthly Reports */
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Monthly affiliate reports">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Month</th>

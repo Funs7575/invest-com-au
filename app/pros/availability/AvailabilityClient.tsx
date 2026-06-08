@@ -16,6 +16,7 @@ export default function AvailabilityClient({ initialSlots }: Props) {
   const [duration, setDuration] = useState<Duration>(30);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   const { upcoming, past } = useMemo(() => {
     const now = Date.now();
@@ -76,7 +77,7 @@ export default function AvailabilityClient({ initialSlots }: Props) {
   }
 
   function handleDelete(slotId: number) {
-    if (!window.confirm("Remove this slot?")) return;
+    setPendingDeleteId(null);
     setError(null);
     startTransition(async () => {
       try {
@@ -133,7 +134,7 @@ export default function AvailabilityClient({ initialSlots }: Props) {
         </div>
 
         {error && (
-          <p className="text-xs text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
+          <p role="alert" className="text-xs text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
             {error}
           </p>
         )}
@@ -141,7 +142,7 @@ export default function AvailabilityClient({ initialSlots }: Props) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-400 disabled:opacity-50"
+          className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {pending ? "Saving…" : "Add slot"}
         </button>
@@ -183,14 +184,31 @@ export default function AvailabilityClient({ initialSlots }: Props) {
                   </p>
                 </div>
                 {s.status === "open" && (
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(s.id)}
-                    disabled={pending}
-                    className="text-xs text-slate-500 hover:text-rose-600 disabled:opacity-50"
-                  >
-                    Remove
-                  </button>
+                  pendingDeleteId === s.id ? (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-red-600 font-medium">Remove?</span>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(s.id)}
+                        disabled={pending}
+                        className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+                      >Yes</button>
+                      <button
+                        type="button"
+                        onClick={() => setPendingDeleteId(null)}
+                        className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+                      >No</button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setPendingDeleteId(s.id)}
+                      disabled={pending}
+                      className="text-xs text-slate-500 hover:text-rose-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Remove
+                    </button>
+                  )
                 )}
               </li>
             ))}

@@ -112,13 +112,14 @@ export default function EtfOverlapDetector() {
         <button
           onClick={analyse}
           disabled={loading}
+          aria-busy={loading}
           className="px-5 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg disabled:opacity-50 shrink-0"
         >
           {loading ? "Analysing…" : "Analyse"}
         </button>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
       {result && (
         <div className="border border-slate-200 rounded-xl bg-white divide-y divide-slate-100">

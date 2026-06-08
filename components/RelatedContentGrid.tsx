@@ -19,6 +19,42 @@ interface Props {
   cardClass?: string;
 }
 
+/** ADV-116: Static fallback links shown when no related articles are available. */
+const FALLBACK_ITEMS: RelatedItem[] = [
+  {
+    id: "fallback-1",
+    href: "/articles/how-to-start-investing",
+    title: "How to start investing in Australia",
+    badgeText: "Beginner",
+    badgeClass: "bg-green-100 text-green-700",
+    meta: "7 min read",
+  },
+  {
+    id: "fallback-2",
+    href: "/articles/etfs-vs-shares",
+    title: "ETFs vs shares: which is right for you?",
+    badgeText: "ETFs",
+    badgeClass: "bg-blue-100 text-blue-700",
+    meta: "6 min read",
+  },
+  {
+    id: "fallback-3",
+    href: "/articles/best-investment-platforms",
+    title: "Best investment platforms in Australia (2026)",
+    badgeText: "Platforms",
+    badgeClass: "bg-purple-100 text-purple-700",
+    meta: "8 min read",
+  },
+  {
+    id: "fallback-4",
+    href: "/articles/superannuation-guide",
+    title: "Superannuation explained: a plain-English guide",
+    badgeText: "Super",
+    badgeClass: "bg-amber-100 text-amber-700",
+    meta: "9 min read",
+  },
+];
+
 /**
  * KK-02: Reusable related-content grid used at the bottom of article, research,
  * and advisor-guide content pages to improve internal linking coverage.
@@ -26,19 +62,26 @@ interface Props {
  * Renders a responsive 1→3 column grid of linked cards. Data mapping (category
  * colours, read_time, sponsor name) stays in the caller to keep this component
  * data-agnostic.
+ *
+ * ADV-116: Never returns null — falls back to curated static articles when the
+ * caller provides an empty items array, so users always have a next step.
  */
 export default function RelatedContentGrid({
   items,
   heading = "Related Content",
   cardClass = "border border-slate-200 rounded-xl p-4 md:p-5 hover:shadow-md transition-all bg-white flex flex-col",
 }: Props) {
-  if (items.length === 0) return null;
+  const isEmpty = items.length === 0;
+  const displayItems = isEmpty ? FALLBACK_ITEMS : items;
+  const displayHeading = isEmpty ? "You might also like" : heading;
 
   return (
     <div className="mt-8 md:mt-12">
-      <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-6">{heading}</h3>
+      <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-6">
+        {displayHeading}
+      </h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-5">
-        {items.map((item) => (
+        {displayItems.map((item) => (
           <Link key={item.id} href={item.href} className={cardClass}>
             {item.badgeText && (
               <span
@@ -58,6 +101,16 @@ export default function RelatedContentGrid({
           </Link>
         ))}
       </div>
+      {isEmpty && (
+        <div className="mt-4 text-center">
+          <Link
+            href="/articles"
+            className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline"
+          >
+            Discover more investing guides →
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

@@ -344,7 +344,8 @@ export default function ProPageClient() {
             <button
               onClick={handleSubscribe}
               disabled={loading || authLoading}
-              className="block w-full text-center px-4 py-2 md:py-2.5 bg-slate-900 text-white text-xs md:text-sm font-semibold rounded-lg md:rounded-xl hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:ring-offset-2 transition-colors disabled:opacity-50"
+              aria-busy={loading || authLoading}
+              className="block w-full text-center px-4 py-2 md:py-2.5 bg-slate-900 text-white text-xs md:text-sm font-semibold rounded-lg md:rounded-xl hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {authLoading
                 ? "Loading..."
@@ -357,7 +358,7 @@ export default function ProPageClient() {
                 : "Sign In & Subscribe"}
             </button>
             {checkoutError && (
-              <p className="mt-2 text-xs text-red-500 text-center">{checkoutError}</p>
+              <p role="alert" className="mt-2 text-xs text-red-500 text-center">{checkoutError}</p>
             )}
             <ul className="mt-4 md:mt-6 space-y-2 md:space-y-3">
               {features.map((f) => (
@@ -445,10 +446,13 @@ export default function ProPageClient() {
               <div key={i} className="bg-white border border-slate-200 rounded-lg md:rounded-xl overflow-hidden">
                 <button
                   onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
+                  aria-expanded={expandedFaq === i}
+                  aria-controls={`faq-content-${i}`}
                   className="w-full flex items-center justify-between px-3 py-2.5 md:px-5 md:py-4 text-left gap-2"
                 >
                   <span className="text-[0.69rem] md:text-sm font-semibold text-slate-900">{faq.q}</span>
                   <svg
+                    aria-hidden="true"
                     className={`w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400 shrink-0 transition-transform ${
                       expandedFaq === i ? "rotate-180" : ""
                     }`}
@@ -459,11 +463,13 @@ export default function ProPageClient() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                {expandedFaq === i && (
-                  <div className="px-3 pb-2.5 md:px-5 md:pb-4">
-                    <p className="text-[0.69rem] md:text-sm text-slate-600">{faq.a}</p>
-                  </div>
-                )}
+                <div
+                  id={`faq-content-${i}`}
+                  hidden={expandedFaq !== i}
+                  className="px-3 pb-2.5 md:px-5 md:pb-4"
+                >
+                  <p className="text-[0.69rem] md:text-sm text-slate-600">{faq.a}</p>
+                </div>
               </div>
             ))}
           </div>

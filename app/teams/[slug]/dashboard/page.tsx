@@ -214,7 +214,7 @@ export default async function TeamDashboardPage({ params }: PageProps) {
       <div className="min-h-screen bg-slate-50">
         <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
           {/* Header */}
-          <nav className="text-xs text-slate-500">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500">
             <Link href={`/teams/${slug}`} className="hover:text-slate-900">
               ← {team.name}
             </Link>

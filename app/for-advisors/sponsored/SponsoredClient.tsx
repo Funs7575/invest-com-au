@@ -193,19 +193,21 @@ export default function SponsoredClient() {
               Book Your Sponsorship
             </h2>
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+              <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
                 {error}
               </div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label htmlFor="sp-name" className="block text-sm font-semibold text-slate-700 mb-1">
                     Name *
                   </label>
                   <input
+                    id="sp-name"
                     type="text"
                     name="name"
+                    autoComplete="name"
                     required
                     value={formData.name}
                     onChange={handleChange}
@@ -213,11 +215,13 @@ export default function SponsoredClient() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label htmlFor="sp-email" className="block text-sm font-semibold text-slate-700 mb-1">
                     Email *
                   </label>
                   <input
-                    type="email"
+                    id="sp-email"
+                    type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+                    autoComplete="email"
                     name="email"
                     required
                     value={formData.email}
@@ -228,12 +232,14 @@ export default function SponsoredClient() {
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label htmlFor="sp-company" className="block text-sm font-semibold text-slate-700 mb-1">
                     Company *
                   </label>
                   <input
+                    id="sp-company"
                     type="text"
                     name="company"
+                    autoComplete="organization"
                     required
                     value={formData.company}
                     onChange={handleChange}
@@ -241,12 +247,14 @@ export default function SponsoredClient() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label htmlFor="sp-phone" className="block text-sm font-semibold text-slate-700 mb-1">
                     Phone
                   </label>
                   <input
+                    id="sp-phone"
                     type="tel"
                     name="phone"
+                    autoComplete="tel"
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all"
@@ -254,9 +262,9 @@ export default function SponsoredClient() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">
+                <p className="block text-sm font-semibold text-slate-700 mb-1">
                   Selected Package
-                </label>
+                </p>
                 <div className="px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-slate-50 text-slate-600">
                   {selectedPackage
                     ? PACKAGES.find((p) => p.key === selectedPackage)?.name
@@ -264,10 +272,11 @@ export default function SponsoredClient() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">
+                <label htmlFor="sp-message" className="block text-sm font-semibold text-slate-700 mb-1">
                   Message / Notes
                 </label>
                 <textarea
+                  id="sp-message"
                   name="message"
                   rows={4}
                   value={formData.message}
@@ -279,6 +288,7 @@ export default function SponsoredClient() {
               <button
                 type="submit"
                 disabled={!selectedPackage || submitting}
+                aria-busy={submitting}
                 className="w-full py-3 bg-violet-600 text-white font-bold rounded-xl text-sm hover:bg-violet-700 transition-all disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed"
               >
                 {submitting ? "Submitting..." : "Submit Booking Request"}

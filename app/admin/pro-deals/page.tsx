@@ -81,9 +81,11 @@ export default function ProDealsPage() {
     setLoading(false);
   }, [supabase]);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     load();
   }, [load]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const showMessage = (type: "success" | "error", text: string) => {
     setMessage({ type, text });
@@ -283,7 +285,7 @@ export default function ProDealsPage() {
         </div>
 
         <input
-          type="text"
+          type="search" enterKeyHint="search"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -311,10 +313,11 @@ export default function ProDealsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="pd-broker" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Broker
                 </label>
                 <select
+                  id="pd-broker"
                   value={form.broker_slug}
                   onChange={(e) =>
                     setForm({ ...form, broker_slug: e.target.value })
@@ -330,10 +333,11 @@ export default function ProDealsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="pd-title" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Title
                 </label>
                 <input
+                  id="pd-title"
                   type="text"
                   value={form.title}
                   onChange={(e) =>
@@ -345,10 +349,11 @@ export default function ProDealsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="pd-description" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Description
               </label>
               <textarea
+                id="pd-description"
                 rows={3}
                 value={form.description}
                 onChange={(e) =>
@@ -360,10 +365,11 @@ export default function ProDealsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="pd-deal-value" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Deal Value
                 </label>
                 <input
+                  id="pd-deal-value"
                   type="text"
                   value={form.deal_value}
                   onChange={(e) =>
@@ -375,10 +381,11 @@ export default function ProDealsPage() {
                 <p className="text-xs text-slate-400 mt-0.5">Dollar value of the deal shown to users</p>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="pd-redemption-code" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Redemption Code
                 </label>
                 <input
+                  id="pd-redemption-code"
                   type="text"
                   value={form.redemption_code}
                   onChange={(e) =>
@@ -389,10 +396,11 @@ export default function ProDealsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="pd-redemption-url" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Redemption URL
                 </label>
                 <input
+                  id="pd-redemption-url"
                   type="text"
                   value={form.redemption_url}
                   onChange={(e) =>
@@ -405,10 +413,11 @@ export default function ProDealsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="pd-redemption-instr" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Redemption Instructions
               </label>
               <textarea
+                id="pd-redemption-instr"
                 rows={2}
                 value={form.redemption_instructions}
                 onChange={(e) =>
@@ -422,10 +431,11 @@ export default function ProDealsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="pd-terms" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Terms
               </label>
               <textarea
+                id="pd-terms"
                 rows={2}
                 value={form.terms}
                 onChange={(e) =>
@@ -437,10 +447,11 @@ export default function ProDealsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="pd-start-date" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Start Date
                 </label>
                 <input
+                  id="pd-start-date"
                   type="date"
                   value={form.start_date}
                   onChange={(e) =>
@@ -450,10 +461,11 @@ export default function ProDealsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="pd-end-date" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   End Date
                 </label>
                 <input
+                  id="pd-end-date"
                   type="date"
                   value={form.end_date}
                   onChange={(e) =>
@@ -463,10 +475,11 @@ export default function ProDealsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="pd-status" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Status
                 </label>
                 <select
+                  id="pd-status"
                   value={form.status}
                   onChange={(e) =>
                     setForm({
@@ -498,11 +511,12 @@ export default function ProDealsPage() {
                 </label>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="pd-sort-order" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Sort Order
                 </label>
                 <input
-                  type="number"
+                  id="pd-sort-order"
+                  type="number" inputMode="decimal"
                   value={form.sort_order}
                   onChange={(e) =>
                     setForm({
@@ -539,7 +553,7 @@ export default function ProDealsPage() {
         ) : (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Pro member deals">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("broker_slug")}>

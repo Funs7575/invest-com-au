@@ -106,7 +106,7 @@ export default function LicScreenerClient() {
     <div className="py-5 md:py-10">
       <div className="container-custom max-w-5xl">
         {/* Breadcrumb */}
-        <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span>/</span>
           <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>
@@ -143,8 +143,9 @@ export default function LicScreenerClient() {
         <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Investment Focus</label>
+              <label htmlFor="lic-focus" className="block text-xs font-semibold text-slate-600 mb-1">Investment Focus</label>
               <select
+                id="lic-focus"
                 value={focus}
                 onChange={(e) => setFocus(e.target.value as LICFocus | "all")}
                 className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -153,8 +154,9 @@ export default function LicScreenerClient() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Franking</label>
+              <label htmlFor="lic-franking" className="block text-xs font-semibold text-slate-600 mb-1">Franking</label>
               <select
+                id="lic-franking"
                 value={franking}
                 onChange={(e) => setFranking(e.target.value as typeof franking)}
                 className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -163,9 +165,10 @@ export default function LicScreenerClient() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Max Mgmt Cost (%)</label>
+              <label htmlFor="lic-max-mer" className="block text-xs font-semibold text-slate-600 mb-1">Max Mgmt Cost (%)</label>
               <input
-                type="number"
+                id="lic-max-mer"
+                type="number" inputMode="decimal"
                 min="0.1"
                 max="2"
                 step="0.1"
@@ -195,36 +198,41 @@ export default function LicScreenerClient() {
         {/* Table */}
         <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mb-6">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[640px]">
+            <table className="w-full text-sm min-w-[640px]" aria-label="Listed investment companies screener">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600 w-36">LIC</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Focus</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600 w-36">LIC</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Focus</th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("dividendYield")}
                   >
                     Yield <SortIcon col="dividendYield" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("frankingPct")}
                   >
                     Franking <SortIcon col="frankingPct" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("ntaDiscount")}
                   >
                     NTA ±% <SortIcon col="ntaDiscount" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("managementCostPct")}
                   >
                     Mgmt % <SortIcon col="managementCostPct" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("aumMillions")}
                   >
@@ -291,7 +299,7 @@ export default function LicScreenerClient() {
                 <h2 className="text-lg font-extrabold text-slate-900">{selectedLic.ticker} — {selectedLic.name}</h2>
                 <p className="text-xs text-slate-500">{selectedLic.manager} · Since {selectedLic.inceptionYear}</p>
               </div>
-              <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600 text-xl leading-none">×</button>
+              <button onClick={() => setSelected(null)} aria-label="Close" className="text-slate-400 hover:text-slate-600 text-xl leading-none">×</button>
             </div>
             <p className="text-sm text-slate-600 leading-relaxed mb-4">{selectedLic.description}</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">

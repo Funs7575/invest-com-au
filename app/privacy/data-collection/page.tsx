@@ -40,7 +40,7 @@ export default function DataCollectionPage() {
       />
       <div className="py-6 md:py-12">
         <div className="container-custom max-w-3xl">
-          <nav className="text-xs text-slate-500 mb-4">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
             <Link href="/privacy" className="hover:text-slate-900">
               ← Privacy Policy
             </Link>
@@ -75,19 +75,19 @@ export default function DataCollectionPage() {
                 Categories of data we collect
               </h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs border-collapse">
+                <table className="w-full text-xs border-collapse" aria-label="Categories of data we collect">
                   <thead>
                     <tr className="bg-slate-100 text-slate-700">
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Category
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         What we collect
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Why
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Legal basis
                       </th>
                     </tr>
@@ -229,16 +229,16 @@ export default function DataCollectionPage() {
             <section>
               <h2 className="text-lg font-bold mb-3">Retention windows</h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs border-collapse">
+                <table className="w-full text-xs border-collapse" aria-label="Data retention windows">
                   <thead>
                     <tr className="bg-slate-100 text-slate-700">
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Data type
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Retention period
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Rationale
                       </th>
                     </tr>
@@ -378,19 +378,19 @@ export default function DataCollectionPage() {
               </h2>
               <p className="text-slate-600 mb-3">{DATA_PROCESSOR_NOTE}</p>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs border-collapse">
+                <table className="w-full text-xs border-collapse" aria-label="Third-party data processors">
                   <thead>
                     <tr className="bg-slate-100 text-slate-700">
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Processor
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Purpose
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Data transferred
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Location
                       </th>
                     </tr>

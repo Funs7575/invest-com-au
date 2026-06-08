@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "How much can you borrow? Compare estimates across conservative, standard, and specialist lenders using APRA assessment rates.",
     url: `${SITE_URL}/tools/borrowing-power-calculator`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Borrowing Power Calculator")}&sub=${encodeURIComponent("How Much Can I Borrow · LVR · Income · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

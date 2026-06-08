@@ -127,7 +127,7 @@ export default function QuoteQAClient({ slug, initial, ownerEmailFromUrl }: Prop
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <input
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email (only the owner needs to enter this)"
@@ -142,7 +142,7 @@ export default function QuoteQAClient({ slug, initial, ownerEmailFromUrl }: Prop
             className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
         </div>
-        {err && <p className="text-xs text-red-600">{err}</p>}
+        {err && <p role="alert" className="text-xs text-red-600">{err}</p>}
         <p className="text-xs text-slate-400">
           Verified advisors don&apos;t need an email — just <Link href="/advisor-portal" className="underline">log in</Link>.
         </p>

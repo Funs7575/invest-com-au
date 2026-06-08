@@ -9,11 +9,12 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Best International ETFs Australia (${CURRENT_YEAR}) — VGS, IWLD, VEU, FEMX Compared`,
-  description: `Compare the best international ETFs available in Australia: VGS, IWLD, VEU, FEMX, VDHG and more. Developed markets, emerging markets, and all-world ETFs analysed by MER, coverage, and performance. ${UPDATED_LABEL}.`,
+  description: `Best international ETFs in Australia: VGS, IWLD, VEU, FEMX, and VDHG — compared by MER, coverage, and performance. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best International ETFs Australia (${CURRENT_YEAR})`,
     description: "Complete guide to international ETFs in Australia. Compare global developed markets, emerging markets, and all-world ETFs.",
     url: `${SITE_URL}/etfs/international`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("International ETFs on the ASX")}&sub=${encodeURIComponent("Global Shares · US Exposure · VGS · IVV · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/etfs/international` },
@@ -253,7 +254,7 @@ export default function InternationalETFsPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>
@@ -402,7 +403,7 @@ export default function InternationalETFsPage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>

@@ -32,9 +32,25 @@ export default function AccountActivityFeed({ items }: { items: FeedItem[] }) {
     return (
       <section className="bg-white border border-slate-200 rounded-2xl p-5">
         <h2 className="text-base font-bold text-slate-900 mb-1">Recent activity</h2>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 mb-3">
           When you build a plan or send a Match Request, you&apos;ll see it here.
         </p>
+        <div className="flex gap-2 flex-wrap">
+          <Link
+            href="/account/plans"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-900 text-white text-xs font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+          >
+            <Icon name="clipboard-list" size={12} aria-hidden />
+            Build a plan
+          </Link>
+          <Link
+            href="/find-advisor"
+            className="inline-flex items-center gap-1.5 px-3 py-2 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+          >
+            <Icon name="users" size={12} aria-hidden />
+            Match with an advisor
+          </Link>
+        </div>
       </section>
     );
   }

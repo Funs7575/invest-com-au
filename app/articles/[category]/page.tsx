@@ -45,7 +45,9 @@ export async function generateMetadata({
     openGraph: {
       title,
       url: absoluteUrl(`/articles/${category}`),
+      images: [{ url: `/api/og?title=${encodeURIComponent(label + " Articles")}&sub=${encodeURIComponent("Guides · Strategies · Australian Investors · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

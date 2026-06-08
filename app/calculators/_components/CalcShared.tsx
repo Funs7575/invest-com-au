@@ -136,7 +136,7 @@ export function InputField({ label, value, onChange, placeholder, prefix, suffix
         {prefix && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">{prefix}</div>}
         <input
           id={id}
-          type="number"
+          type="number" inputMode="decimal"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}

@@ -116,6 +116,13 @@ type ExpertArticle = {
   category: string; published_at: string; reading_time_mins: number | null; view_count: number;
 };
 
+interface ExpertTeamStub {
+  id: number;
+  name: string;
+  slug: string;
+  team_category: string;
+}
+
 export default function AdvisorProfileClient({
   professional: pro,
   similar,
@@ -125,6 +132,7 @@ export default function AdvisorProfileClient({
   firm,
   expertTeams = [],
   expertArticles = [],
+  expertTeams = [],
 }: {
   professional: Professional;
   similar: Professional[];
@@ -136,6 +144,7 @@ export default function AdvisorProfileClient({
   /** Verified, public Expert Teams this advisor belongs to (ADV-013). */
   expertTeams?: { slug: string; name: string; public_title: string | null }[];
   expertArticles?: ExpertArticle[];
+  expertTeams?: ExpertTeamStub[];
 }) {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error" | "unavailable">("idle");
   const [formError, setFormError] = useState("");
@@ -148,6 +157,7 @@ export default function AdvisorProfileClient({
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
   const [reviewState, setReviewState] = useState<"idle" | "success">("idle");
   const [bioExpanded, setBioExpanded] = useState(false);
+  const [allReviews, _setAllReviews] = useState(reviews);
   const { toggle: toggleShortlist, has: inShortlist, count: shortlistCount, max: shortlistMax } = useAdvisorShortlist();
 
   useEffect(() => {
@@ -156,7 +166,7 @@ export default function AdvisorProfileClient({
       if (raw) {
         const data = JSON.parse(raw);
         if (data.matchedAdvisors?.some((a: { slug: string }) => a.slug === pro.slug)) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect
+           
           setAlreadyMatched(true);
            
           if (data.quizData?.firstName) setName(data.quizData.firstName);
@@ -264,7 +274,7 @@ export default function AdvisorProfileClient({
       <div className="container-custom max-w-[1280px] py-5 md:py-8">
 
         {/* ── Breadcrumb ─────────────────────────────── */}
-        <nav className="flex items-center gap-1.5 text-sm text-slate-400 mb-5">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-slate-400 mb-5">
           <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
           <Icon name="chevron-right" size={14} className="text-slate-300" />
           <Link href="/advisors" className="hover:text-slate-700 transition-colors">Advisors</Link>
@@ -303,11 +313,23 @@ export default function AdvisorProfileClient({
                 {/* Name + badges */}
                 <div className="flex items-center gap-2.5 flex-wrap mb-1.5">
                   <h1 className="text-2xl md:text-4xl font-black text-slate-900 leading-tight">{pro.name}</h1>
+                  {/* ADV-023: credential verification chip — shows AFSL/licence on hover */}
                   {pro.verified && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold shrink-0">
-                      <Icon name="shield-check" size={12} />
-                      Verified
-                    </span>
+                    <details className="group relative shrink-0">
+                      <summary className="list-none cursor-pointer inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-bold select-none hover:bg-blue-200 transition-colors">
+                        <Icon name="shield-check" size={12} />
+                        Verified
+                        {credentialNumber && <span className="opacity-60 font-normal">· {vConfig.primaryLicence.code} {credentialNumber}</span>}
+                      </summary>
+                      <div className="absolute z-20 top-full left-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg p-3 min-w-[220px] text-left">
+                        <p className="text-xs font-bold text-slate-900 mb-1">{vConfig.primaryLicence.name}</p>
+                        {credentialNumber && <p className="text-xs text-slate-600 mb-0.5">{vConfig.primaryLicence.code} <strong>{credentialNumber}</strong></p>}
+                        <p className="text-xs text-slate-500 mb-0.5">Regulator: {vConfig.primaryLicence.regulatorShort}</p>
+                        {pro.verified_at && (
+                          <p className="text-xs text-slate-500">Verified {new Date(pro.verified_at).toLocaleDateString("en-AU", { year: "numeric", month: "short" })}</p>
+                        )}
+                      </div>
+                    </details>
                   )}
                   <VerifiedBadge
                     method={pro.verification_method ?? null}
@@ -541,6 +563,15 @@ export default function AdvisorProfileClient({
             </div>
           </div>
         )}
+
+        {/* ── On-this-page anchor nav ────────────────── */}
+        <nav aria-label="On this page" className="flex gap-2 overflow-x-auto pb-1 mb-2 scrollbar-hide">
+          {pro.bio && <a href="#about" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">About</a>}
+          <a href="#credentials" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">Credentials</a>
+          {reviews.length > 0 && <a href="#reviews" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">Reviews ({reviews.length})</a>}
+          {expertArticles.length > 0 && <a href="#articles" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">Articles ({expertArticles.length})</a>}
+          <a href="#contact" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-500 text-slate-900 hover:bg-amber-400 transition-colors">Contact</a>
+        </nav>
 
         {/* ── TWO-COLUMN LAYOUT ──────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 items-start">
@@ -976,7 +1007,7 @@ export default function AdvisorProfileClient({
                   </div>
                   <h2 className="text-base font-bold text-slate-900">
                     Reviews
-                    {reviews.length > 0 && (
+                    {totalReviews > 0 && (
                       <span className="ml-2 text-sm font-normal text-slate-400">({totalReviews})</span>
                     )}
                   </h2>
@@ -1013,7 +1044,7 @@ export default function AdvisorProfileClient({
                 {reviews.length > 0 ? (
                   <>
                   <div className="space-y-6 mb-4">
-                    {reviews.map((r) => (
+                    {allReviews.map((r) => (
                       <div key={r.id} className="border-b border-slate-100 last:border-0 pb-6 last:pb-0">
                         <div className="flex items-start gap-3 mb-2">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center text-sm font-black text-slate-600 shrink-0">
@@ -1121,7 +1152,7 @@ export default function AdvisorProfileClient({
 
             {/* Expert Articles */}
             {expertArticles.length > 0 && (
-              <SectionCard title={`Expert Insights by ${firstName}`} icon="file-text">
+              <SectionCard id="articles" title={`Expert Insights by ${firstName}`} icon="file-text">
                 <div className="space-y-3">
                   {expertArticles.map((article) => (
                     <a key={article.id} href={`/expert/${article.slug}`}
@@ -1241,6 +1272,25 @@ export default function AdvisorProfileClient({
               </div>
             )}
 
+            {/* ── Book a call card — primary CTA when booking link is set ── */}
+            {pro.booking_link && (
+              <a
+                href={pro.booking_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 bg-gradient-to-br from-teal-600 to-teal-500 text-white px-5 py-4 rounded-2xl shadow-sm hover:from-teal-500 hover:to-teal-400 transition-all group"
+                onClick={() => phTrack('advisor_booking_click', { advisor_id: pro.id, source: 'sidebar' })}
+              >
+                <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                  <Icon name="calendar" size={20} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-base">Book a Free Call</p>
+                  <p className="text-teal-100 text-xs mt-0.5">Pick a time that suits you →</p>
+                </div>
+              </a>
+            )}
+
             {/* ── Contact form ── */}
             <div id="contact" className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden scroll-mt-24">
               {/* Card header */}
@@ -1294,6 +1344,7 @@ export default function AdvisorProfileClient({
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         onBlur={() => setTouched((p) => ({ ...p, name: true }))}
+                        autoComplete="name"
                         placeholder="Full name"
                         aria-invalid={nameError ? true : undefined}
                         aria-describedby={nameError ? "advisor-contact-name-error" : undefined}
@@ -1301,13 +1352,14 @@ export default function AdvisorProfileClient({
                           nameError ? "border-red-300 bg-red-50" : "border-slate-200"
                         }`}
                       />
-                      {nameError && <p id="advisor-contact-name-error" className="text-xs text-red-500 mt-1">{nameError}</p>}
+                      {nameError && <p id="advisor-contact-name-error" role="alert" className="text-xs text-red-500 mt-1">{nameError}</p>}
                     </div>
                     <div>
                       <label htmlFor="advisor-contact-email" className="block text-xs font-bold text-slate-700 mb-1.5">Email *</label>
                       <input
                         id="advisor-contact-email"
-                        type="email"
+                        type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+                        autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         onBlur={() => setTouched((p) => ({ ...p, email: true }))}
@@ -1318,7 +1370,7 @@ export default function AdvisorProfileClient({
                           emailError ? "border-red-300 bg-red-50" : "border-slate-200"
                         }`}
                       />
-                      {emailError && <p id="advisor-contact-email-error" className="text-xs text-red-500 mt-1">{emailError}</p>}
+                      {emailError && <p id="advisor-contact-email-error" role="alert" className="text-xs text-red-500 mt-1">{emailError}</p>}
                     </div>
                     <div>
                       <label htmlFor="advisor-contact-phone" className="block text-xs font-bold text-slate-700 mb-1.5">
@@ -1327,6 +1379,7 @@ export default function AdvisorProfileClient({
                       <input
                         id="advisor-contact-phone"
                         type="tel"
+                        autoComplete="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="04XX XXX XXX"
@@ -1346,7 +1399,7 @@ export default function AdvisorProfileClient({
                         className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/25 focus:border-amber-400 focus:bg-white transition-all resize-none"
                       />
                     </div>
-                    {formError && <p className="text-xs text-red-500 font-semibold">{formError}</p>}
+                    {formError && <p role="alert" className="text-xs text-red-500 font-semibold">{formError}</p>}
                     <button
                       onClick={handleSubmit}
                       disabled={formState === "submitting"}
@@ -1354,7 +1407,7 @@ export default function AdvisorProfileClient({
                     >
                       {formState === "submitting" ? (
                         <span className="flex items-center justify-center gap-2">
-                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span aria-hidden="true" className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           Sending...
                         </span>
                       ) : (

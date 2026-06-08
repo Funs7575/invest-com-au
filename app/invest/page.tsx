@@ -19,17 +19,38 @@ import type { InvestmentListing } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import { listingUrl, categoryForListing, rawVerticalVariants } from "@/lib/listing-url";
 import { categoryListingsHref } from "@/lib/invest-listing-routes";
-import InvestListingsClient from "@/components/InvestListingsClient";
+import { faqJsonLd } from "@/lib/schema-markup";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { loadInvestPageContext } from "@/lib/listing-page-context";
 import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
-import DirectoryHero from "@/components/directory/DirectoryHero";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
+import DirectoryHero from "@/components/directory/DirectoryHero";
+import InvestListingsClient from "@/components/InvestListingsClient";
 
 const log = logger("invest-marketplace");
+
+const INVEST_FAQS = [
+  {
+    q: "What types of investment opportunities are listed on Invest.com.au?",
+    a: "The marketplace lists private Australian investment opportunities across 15+ sectors: businesses for sale (cafes, agencies, e-commerce, practices), mining and exploration tenements (gold, lithium, copper, rare earths), farmland (cropping, dairy, viticulture), commercial property (office, industrial, retail, medical), franchises, renewable energy projects (solar, wind, battery, hydrogen), startups and pre-IPO equity, alternative assets (wine, art, classic cars), private credit, infrastructure, managed funds, royalty streams, income-producing assets (vending, ATMs, car washes), and wholesale-only private equity. Listings are direct from vendors, syndicates, and fund managers — not a secondary market.",
+  },
+  {
+    q: "What does 'FIRB-eligible' mean on investment listings?",
+    a: "FIRB-eligible flags that the listing has been identified by the vendor as suitable for foreign investors subject to Foreign Investment Review Board (FIRB) rules. Foreign persons must obtain FIRB approval to acquire certain Australian assets — including commercial property, agricultural land, and stakes in sensitive businesses above the applicable monetary threshold. Always confirm FIRB requirements with a specialist before investing.",
+  },
+  {
+    q: "How do I list an investment opportunity on the Invest.com.au marketplace?",
+    a: "Go to /invest/list to submit a listing. You can list businesses for sale, investment property, mining tenements, managed fund offers, syndicate placements, or any other private investment opportunity. Basic listings are free; featured placements (pinned position, larger card, more photos, FIRB/SIV badge) are available as paid upgrades. All listings are reviewed for compliance with general advice rules before going live.",
+  },
+  {
+    q: "What is a SIV-complying investment on the marketplace?",
+    a: "SIV-complying (Significant Investor Visa) means the listing has been flagged as potentially eligible as a complying investment under Australia's Significant Investor Visa program (subclass 188C), which requires AUD $5 million deployed into approved fund categories. Note: SIV eligibility must be confirmed with an immigration investment lawyer and the fund manager — Invest.com.au does not make eligibility determinations. The SIV visa class was officially closed to new applications in 2024; existing visa holders may continue to hold complying investments.",
+  },
+];
 
 export const revalidate = 3600;
 
@@ -44,13 +65,14 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Australian Investment Opportunities — Marketplace (${CURRENT_YEAR}) | ${SITE_NAME}`,
   description:
-    "Browse Australian investment opportunities — businesses for sale, mining tenements, farmland, commercial property, franchises, renewable energy projects, startups, alternatives, private credit and managed funds. To compare super funds, share-trading platforms or savings accounts, visit Compare.",
+    "Australian investment marketplace: businesses for sale, mining tenements, farmland, franchises, startups, private credit and alternatives.",
   alternates: { canonical: "/invest" },
   openGraph: {
     title: `Australian Investment Opportunities — Marketplace (${CURRENT_YEAR})`,
     description:
       "Browse Australian investment opportunities — businesses, farmland, mining, commercial property, startups, alternatives, private credit & funds. All filterable in one place.",
     url: absoluteUrl("/invest"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Invest in Australia")}&sub=${encodeURIComponent("Shares · ETFs · Property · Super · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };
@@ -189,7 +211,6 @@ export default async function InvestMarketplacePage() {
     // Kind-based categories (no dbVerticals — e.g. listed-securities) are
     // bucketed purely by categoryForListing; vertical-based ones additionally
     // require the listing's vertical to be one the sector page fetches.
-    const kindBased = verts.size === 0;
     categoryCounts[cat.slug] = listings.filter(
       (l) => categoryForListing(l) === cat.slug && (kindBased || verts.has(l.vertical as string)),
     ).length;
@@ -217,6 +238,8 @@ export default async function InvestMarketplacePage() {
     { name: "Home", url: absoluteUrl("/") },
     { name: "Opportunities" },
   ]);
+
+  const investFaqLd = faqJsonLd(INVEST_FAQS);
 
   const webPageJsonLd = {
     "@context": "https://schema.org",
@@ -253,15 +276,14 @@ export default async function InvestMarketplacePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
+      {investFaqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(investFaqLd) }} />}
 
-      {/* ── Shared dark stat-led directory hero (SC-3) ────────────── */}
+      {/* ── Shared dark stat-led directory hero (matches /compare + /advisors) ── */}
       <DirectoryHero
         breadcrumbLabel="Opportunities"
         pill={{ label: "Live marketplace", live: true }}
         headlineLead={`${listings.length.toLocaleString("en-AU")} live opportunities.`}
-        headlineAccent={
-          aggregateAskCents > 0 ? `${formatAudBig(aggregateAskCents)} in aggregate ask.` : undefined
-        }
+        headlineAccent={aggregateAskCents > 0 ? `${formatAudBig(aggregateAskCents)} in aggregate ask.` : undefined}
         subtitle={
           <>
             Businesses, property, projects, funds, syndicates &amp; collectibles — all filterable in one place.
@@ -283,6 +305,11 @@ export default async function InvestMarketplacePage() {
         )}
       </DirectoryHero>
 
+      {/* ── GetMatched CTA — above listings so it's visible before users
+            scroll through options. Moved from below results (ADV-126). ── */}
+      <div className="container-custom max-w-5xl mt-4 mb-2">
+        <GetMatchedEmbed context="opportunity" />
+      </div>
       {/* ── Marketplace (primary — no two-step) ───────────────── */}
       {/* Suspense required: InvestListingsClient calls useSearchParams(), which
           causes Next.js to bail out of SSR for the whole page when unwrapped.
@@ -310,14 +337,6 @@ export default async function InvestMarketplacePage() {
           claimedSlugs={ctx.claimedSlugs}
         />
       </Suspense>
-
-      {/* ── "Not sure?" CTA — moved BELOW results per UX rebuild.
-            Wedging this between filters and results was an anti-pattern
-            (browse intent hitting a "decide" CTA before any listing).
-            Below-results it's a recovery prompt. ── */}
-      <div className="container-custom max-w-5xl mb-10">
-        <GetMatchedEmbed context="opportunity" />
-      </div>
 
       {/* ── Discovery: browse by category (single grid; sector hubs
             merged in as commodity entries rather than a separate row). ── */}
@@ -359,6 +378,9 @@ export default async function InvestMarketplacePage() {
                     <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed line-clamp-2">
                       {description}
                     </p>
+                    <span className={`text-[0.62rem] md:text-xs font-semibold mt-2 block ${accent.hover}`}>
+                      Browse {cat.label} →
+                    </span>
                   </Link>
                 );
               })}
@@ -414,12 +436,39 @@ export default async function InvestMarketplacePage() {
 
       <HomeToolsStrip />
 
+      <HubAdvisorCTA
+        heading="Not sure which investment is right for you?"
+        subheading="Alternative assets, unlisted funds, syndicates, and business investments carry different risks and tax treatments. A licensed financial adviser can assess which opportunities suit your portfolio size, time horizon, and tax position."
+        intent={{ need: "planning", context: ["alternative_investments", "portfolio_strategy"] }}
+        source="invest_hub"
+        ctaLabel="Find a financial adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
+
+      {/* FAQ accordion — GEO pivot: answer-first FAQ for AI citation */}
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-4xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {INVEST_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ── Compliance band (page bottom; was above-the-fold before
             the rebuild, eating 4 lines of small print before any
             listing). Mandatory copy preserved verbatim. ── */}
       <div className="border-t border-slate-200 bg-slate-50">
         <div className="container-custom max-w-6xl py-5 md:py-6 space-y-2">
-          <details className="text-xs text-slate-600">
+          <details open className="text-xs text-slate-600">
             <summary className="font-semibold text-slate-700 cursor-pointer flex items-center gap-1.5">
               <Icon name="shield-check" size={13} className="text-amber-500" />
               General Advice Warning &amp; Advertiser Disclosure

@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Complete guide to value investing on the ASX — intrinsic value, P/E and P/B ratios, margin of safety, value traps, and how franking credits affect Australian value analysis.",
     url: `${SITE_URL}/invest/value-investing`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Value Investing Australia")}&sub=${encodeURIComponent("Undervalued Stocks · P/E Ratio · Graham · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -159,13 +160,13 @@ export default function ValueInvestingPage() {
           <p className="text-slate-500 text-sm mb-6">Five ratios value investors use to identify potentially undervalued ASX stocks.</p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Key value investing valuation metrics">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Formula</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Value investor&apos;s target</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">ASX context</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Formula</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Value investor&apos;s target</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">ASX context</th>
                 </tr>
               </thead>
               <tbody>
@@ -268,12 +269,12 @@ export default function ValueInvestingPage() {
           <p className="text-slate-500 text-sm mb-6">Two distinct philosophies with different risk profiles and ASX fit.</p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Value vs growth investing comparison">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>
-                  <th className="text-left py-3 px-4 font-semibold text-amber-700 border-b border-slate-200">Value</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-600 border-b border-slate-200">Growth</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-amber-700 border-b border-slate-200">Value</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-600 border-b border-slate-200">Growth</th>
                 </tr>
               </thead>
               <tbody>

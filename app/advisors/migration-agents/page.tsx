@@ -58,6 +58,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Migration Agents",
     description: PAGE_DESCRIPTION,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Registered Migration Agents Australia")}&sub=${encodeURIComponent("Investor Visa · SIV · Business Visa · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: "/advisors/migration-agents" },

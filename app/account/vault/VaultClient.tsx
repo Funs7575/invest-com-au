@@ -55,6 +55,8 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const handleUpload = useCallback(async () => {
     if (!file) return;
@@ -89,10 +91,16 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
   }, [file, docType, description]);
 
   const handleDelete = useCallback(async (id: string) => {
-    if (!confirm("Delete this document? This cannot be undone.")) return;
+    setPendingDeleteId(null);
     setDeletingId(id);
-    await fetch(`/api/account/documents/${id}`, { method: "DELETE" });
-    setDocs((prev: Document[]) => prev.filter((d: Document) => d.id !== id));
+    setDeleteError(null);
+    const res = await fetch(`/api/account/documents/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setDocs((prev: Document[]) => prev.filter((d: Document) => d.id !== id));
+    } else {
+      const body = await res.json().catch(() => ({}));
+      setDeleteError((body as { error?: string }).error ?? "Delete failed — please try again.");
+    }
     setDeletingId(null);
   }, []);
 
@@ -113,14 +121,19 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
         </button>
       </div>
 
+      {deleteError && (
+        <p role="alert" className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{deleteError}</p>
+      )}
+
       {/* Upload modal */}
       {showUpload && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <h2 className="text-lg font-semibold mb-4">Upload a document</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onKeyDown={(e) => { if (e.key === "Escape") { setShowUpload(false); setUploadError(null); setFile(null); } }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="vault-upload-dialog-title" className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <h2 id="vault-upload-dialog-title" className="text-lg font-semibold mb-4">Upload a document</h2>
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">Document type</label>
+            <label htmlFor="vault-doc-type" className="block text-sm font-medium text-gray-700 mb-1">Document type</label>
             <select
+              id="vault-doc-type"
               value={docType}
               onChange={(e) => setDocType(e.target.value as DocType)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-4"
@@ -132,20 +145,22 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
               ))}
             </select>
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="vault-file" className="block text-sm font-medium text-gray-700 mb-1">
               File <span className="text-gray-400">(PDF, JPG, PNG — max 20 MB)</span>
             </label>
             <input
+              id="vault-file"
               type="file"
               accept=".pdf,.jpg,.jpeg,.png,.webp"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               className="w-full text-sm text-gray-700 mb-4 file:mr-3 file:rounded-md file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-sm"
             />
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="vault-description" className="block text-sm font-medium text-gray-700 mb-1">
               Description <span className="text-gray-400">(optional)</span>
             </label>
             <input
+              id="vault-description"
               type="text"
               maxLength={500}
               value={description}
@@ -155,14 +170,15 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
             />
 
             {uploadError && (
-              <p className="text-sm text-red-600 mb-3">{uploadError}</p>
+              <p role="alert" className="text-sm text-red-600 mb-3">{uploadError}</p>
             )}
 
             <div className="flex gap-3">
               <button
                 onClick={handleUpload}
                 disabled={!file || uploading}
-                className="flex-1 bg-blue-600 text-white text-sm font-medium py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                aria-busy={uploading}
+                className="flex-1 bg-blue-600 text-white text-sm font-medium py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {uploading ? "Uploading…" : "Upload"}
               </button>
@@ -182,7 +198,13 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
         <div className="text-center py-16 text-gray-400">
           <p className="text-4xl mb-3">🗂️</p>
           <p className="font-medium text-gray-600">Your vault is empty</p>
-          <p className="text-sm mt-1">Upload super statements, tax returns, and other key documents.</p>
+          <p className="text-sm mt-1 mb-4">Upload super statements, tax returns, and other key documents.</p>
+          <button
+            onClick={() => setShowUpload(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            + Upload your first document
+          </button>
         </div>
       ) : (
         <ul className="space-y-3">
@@ -219,14 +241,34 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
                     Download
                   </a>
                 )}
-                <button
-                  onClick={() => handleDelete(doc.id)}
-                  disabled={deletingId === doc.id}
-                  aria-label={`Delete ${doc.file_name}`}
-                  className="text-gray-400 hover:text-red-600 transition-colors disabled:opacity-40 text-sm"
-                >
-                  {deletingId === doc.id ? "…" : "✕"}
-                </button>
+                {pendingDeleteId === doc.id ? (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-red-600 font-medium">Delete?</span>
+                    <button
+                      onClick={() => handleDelete(doc.id)}
+                      disabled={deletingId === doc.id}
+                      aria-busy={deletingId === doc.id}
+                      className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+                    >
+                      {deletingId === doc.id ? "…" : "Yes"}
+                    </button>
+                    <button
+                      onClick={() => setPendingDeleteId(null)}
+                      className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+                    >
+                      No
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setPendingDeleteId(doc.id)}
+                    disabled={deletingId === doc.id}
+                    aria-label={`Delete ${doc.file_name}`}
+                    className="text-gray-400 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                  >
+                    {deletingId === doc.id ? "…" : "✕"}
+                  </button>
+                )}
               </div>
             </li>
           ))}

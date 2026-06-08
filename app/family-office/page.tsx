@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Family Office Australia — Setup, Structure & Services Guide (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Everything Australian families need to know about family office structures — single vs multi-family, trust and SMSF integration, tax consolidation, estate planning, and when net-worth makes a family office worthwhile. ${UPDATED_LABEL}.`,
+  description: `Australian family office structures: single vs multi-family, trust and SMSF integration, estate planning, and minimum net-worth thresholds. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Family Office Australia — Setup, Structure & Services Guide (${CURRENT_YEAR})`,
     description: "Single vs multi-family office, trust structures, SMSF integration, estate planning — for Australian families with investable assets $5M+.",
@@ -69,7 +70,7 @@ export default function FamilyOfficePage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-14 bg-gradient-to-b from-slate-50 to-white">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <span className="text-slate-900 font-medium">Family Office</span>
@@ -120,13 +121,13 @@ export default function FamilyOfficePage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Common family office vehicles</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Common family office vehicles — primary use, tax treatment and complexity">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Vehicle</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Primary use</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Tax treatment</th>
-                  <th className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Complexity</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Vehicle</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Primary use</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Tax treatment</th>
+                  <th scope="col" className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Complexity</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -176,7 +177,7 @@ export default function FamilyOfficePage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">▾</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -184,6 +185,15 @@ export default function FamilyOfficePage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Find a private wealth adviser for your family"
+        subheading="Family office structures require coordinated advice across investments, tax, estate planning, and legal. A private wealth specialist can help you decide whether an SFO, MFO, or premium advisory model suits your assets."
+        intent={{ need: "planning", context: ["family_office", "private_wealth", "high_net_worth"] }}
+        source="family_office"
+        ctaLabel="Find a private wealth adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related / CTA */}
       <section className="py-8 border-b border-slate-100">

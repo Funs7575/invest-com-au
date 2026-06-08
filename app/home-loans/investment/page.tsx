@@ -132,7 +132,7 @@ export default function InvestmentLoanPage() {
       <div className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-14">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-sm text-blue-200 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-blue-200 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>
@@ -219,13 +219,13 @@ export default function InvestmentLoanPage() {
             loan size.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Investor rate premiums vs owner-occupier rates" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Loan category</th>
-                  <th className="text-left px-5 py-3">Typical premium</th>
-                  <th className="text-left px-5 py-3">Risk level</th>
-                  <th className="text-left px-5 py-3">Why lenders charge more</th>
+                  <th scope="col" className="text-left px-5 py-3">Loan category</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical premium</th>
+                  <th scope="col" className="text-left px-5 py-3">Risk level</th>
+                  <th scope="col" className="text-left px-5 py-3">Why lenders charge more</th>
                 </tr>
               </thead>
               <tbody>
@@ -254,12 +254,12 @@ export default function InvestmentLoanPage() {
 
           {/* IO vs P&I table */}
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-8">
-            <table className="w-full text-sm">
+            <table aria-label="Interest-only vs principal and interest for investors" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700 w-40">Feature</th>
-                  <th className="text-left px-5 py-3 font-semibold text-blue-700">Interest Only (IO)</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Principal & Interest (P&I)</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700 w-40">Feature</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-blue-700">Interest Only (IO)</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Principal & Interest (P&I)</th>
                 </tr>
               </thead>
               <tbody>
@@ -442,11 +442,11 @@ export default function InvestmentLoanPage() {
             how each factor affects your assessed capacity.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table aria-label="Borrowing capacity factors for investors" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Factor</th>
-                  <th className="text-left px-5 py-3">How lenders apply it</th>
+                  <th scope="col" className="text-left px-5 py-3">Factor</th>
+                  <th scope="col" className="text-left px-5 py-3">How lenders apply it</th>
                 </tr>
               </thead>
               <tbody>
@@ -631,7 +631,7 @@ export default function InvestmentLoanPage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-100 bg-white">
                   {faq.q}
-                  <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
                 </summary>
                 <div className="px-5 pb-4 pt-1 text-sm text-slate-600 leading-relaxed bg-white">{faq.a}</div>
               </details>

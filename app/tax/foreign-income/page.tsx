@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -53,6 +54,7 @@ export const metadata: Metadata = {
     description:
       "Foreign dividends, withholding tax offsets, Double Tax Agreements, currency conversion, ETF AMMA statements, and CFC/FIF rules — all explained for Australian investors.",
     url: `${SITE_URL}/tax/foreign-income`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Foreign Income Tax Australia")}&sub=${encodeURIComponent("Dividends · Withholding Tax · DTAs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };
@@ -125,12 +127,12 @@ export default function ForeignIncomeTaxPage() {
               Australia taxes its residents on their worldwide income. It does not matter where the income was earned, where the assets are held, or whether the money was remitted to Australia. Any income sourced from outside Australia must be declared in your Australian tax return.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Types of foreign income and key tax considerations">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Foreign income type</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Examples</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Key tax consideration</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Foreign income type</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Examples</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Key tax consideration</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -214,12 +216,12 @@ export default function ForeignIncomeTaxPage() {
               Australia has DTAs with over 40 countries. These treaties cap the WHT rate the other country can impose on dividends paid to Australian residents. The DTA rate only applies when you have lodged the correct declaration or form with your foreign broker or custodian (e.g. a W-8BEN for US accounts). If no form is lodged, the standard (higher) withholding rate applies.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Dividend withholding tax rates by country under Double Tax Agreements">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Country</th>
-                    <th className="text-center p-4 font-bold text-slate-700">Standard dividend WHT</th>
-                    <th className="text-center p-4 font-bold text-slate-700">DTA rate (qualifying)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Country</th>
+                    <th scope="col" className="text-center p-4 font-bold text-slate-700">Standard dividend WHT</th>
+                    <th scope="col" className="text-center p-4 font-bold text-slate-700">DTA rate (qualifying)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -315,11 +317,11 @@ export default function ForeignIncomeTaxPage() {
               All foreign amounts must be converted to Australian dollars for Australian tax purposes. The ATO requires you to use the exchange rate at the time of each transaction — not a year-end spot rate, a 12-month average, or a rate of your choosing.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Exchange rates to use for foreign income tax transactions">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Transaction</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Exchange rate to use</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Transaction</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Exchange rate to use</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -425,6 +427,16 @@ export default function ForeignIncomeTaxPage() {
             </div>
           </div>
         </section>
+
+        {/* Advisor CTA */}
+        <HubAdvisorCTA
+          heading="Get expert advice on Australian foreign income tax"
+          subheading="DTAs, FIF rules, foreign tax credits, and Part IVA anti-avoidance are complex. A registered tax agent with international tax experience can ensure you're paying the correct amount."
+          intent={{ need: "tax", context: ["foreign_income", "international_tax"] }}
+          source="tax_foreign_income"
+          ctaLabel="Find an international tax specialist"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* Navigation links */}
         <section className="py-10 bg-slate-50 border-t border-slate-200">

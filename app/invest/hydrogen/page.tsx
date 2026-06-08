@@ -12,6 +12,28 @@ import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning"
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const HYDROGEN_FAQS = [
+  {
+    q: "How can I invest in Australian hydrogen companies?",
+    a: "There are four main ways to invest in Australian hydrogen: (1) ASX pure-plays — Hazer Group (HZR), Province Resources (PRL), and Frontier Energy (FHE) are small-cap pure plays with direct hydrogen project exposure. (2) Large-cap diversified — Fortescue (FMG) and Origin Energy (ORG) have major green hydrogen divisions alongside core businesses. (3) ETFs — Global X Hydrogen ETF (HGEN on ASX) holds a basket of global hydrogen companies with approximately 15% Australian exposure. (4) Direct project equity — unlisted hydrogen project investments are accessible to wholesale investors, typically $500K–$5M per deal via the invest.com.au marketplace. Note that most pure-play hydrogen companies are pre-revenue and carry significant technology risk.",
+  },
+  {
+    q: "What is the $2 billion Hydrogen Headstart program?",
+    a: "The Australian Government's Hydrogen Headstart program provides production credit subsidies to accelerate early hydrogen production. The program offers AU$2/kg production credits for eligible large-scale green hydrogen projects over 10 years, reducing the cost gap between green hydrogen and fossil-fuel alternatives. Round 1 shortlisted projects include HyEnergy (Province Resources) in WA and HyNQ (Fortescue Future Industries) in Queensland. Projects must demonstrate commercial-scale production and significant Australian content. This government underwriting reduces project risk for investors but doesn't guarantee commercial success.",
+  },
+  {
+    q: "Do foreign investors need FIRB approval to invest in Australian hydrogen projects?",
+    a: "FIRB approval requirements depend on investment type and investor nationality. Direct investment in Australian energy infrastructure, mining tenements, or significant business acquisitions triggers FIRB review — thresholds are lower for state-owned enterprises (A$0 for SOEs from non-agreement countries) and may be A$0 for investments in hydrogen projects classified as critical infrastructure. Portfolio share purchases below 10% in ASX-listed hydrogen companies are generally exempt. US, UK, and Japanese investors benefit from bilateral frameworks that facilitate critical minerals and clean energy investments. Always seek FIRB advice before making direct project investments.",
+  },
+  {
+    q: "Is hydrogen a good investment in Australia in 2026?",
+    a: "Australian hydrogen investment carries significant long-term promise but near-term execution risk. Australia's competitive advantages — abundant solar/wind resources, established LNG export infrastructure, and proximity to Asian markets — position it well as a potential hydrogen exporter. Government support (Hydrogen Headstart, Hydrogen Home Electrification, National Hydrogen Strategy) provides policy tailwind. However: most pure-play companies are pre-revenue with 5–10+ year commercialisation timelines; green hydrogen cost reduction targets remain challenging; export demand from Japan and South Korea is real but volume commitments are modest; and the HGEN ETF has underperformed the ASX 200 since launch. Suitable for risk-tolerant investors with a 10+ year horizon.",
+  },
+];
+
+const hydrogenFaqLd = faqJsonLd(HYDROGEN_FAQS);
 
 export const revalidate = 1800;
 
@@ -25,6 +47,7 @@ export const metadata: Metadata = {
     description:
       "ASX hydrogen pure-plays, indirect majors, ETFs, and policy drivers — the 2026 investor guide.",
     url: `${SITE_URL}/invest/hydrogen`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Hydrogen")}&sub=${encodeURIComponent("ASX Stocks · ETFs · Green H2 · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -89,6 +112,9 @@ export default async function HydrogenPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {hydrogenFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(hydrogenFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -238,7 +264,7 @@ export default async function HydrogenPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6" role="tablist">
+          <nav aria-label="Ways to invest" className="flex flex-wrap gap-2 mb-6">
             {WAYS_TO_INVEST.map((w, i) => (
               <a
                 key={w.id}
@@ -255,7 +281,7 @@ export default async function HydrogenPage() {
                 {w.label}
               </a>
             ))}
-          </div>
+          </nav>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {WAYS_TO_INVEST.map((w, i) => (
@@ -457,6 +483,26 @@ export default async function HydrogenPage() {
               FIRB fee estimator
               <Icon name="arrow-right" size={14} />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="max-w-3xl mx-auto px-4 container-custom">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {HYDROGEN_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

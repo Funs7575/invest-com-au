@@ -13,8 +13,7 @@ import type { Broker } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "How to Buy Property in Australia as a Foreigner (2026 Guide)",
-  description:
-    "Complete step-by-step guide to buying property in Australia as a foreign buyer. FIRB approval, eligible property types, the 2025–2027 established dwelling ban, stamp duty surcharges, and costs. Updated March 2026.",
+  description: "Buying property in Australia as a foreigner: FIRB approval, the 2025–2027 established dwelling ban, stamp duty surcharges, and costs. Updated 2026.",
   openGraph: {
     title: "How to Buy Property in Australia as a Foreigner (2026 Guide)",
     description:
@@ -218,7 +217,7 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
       {/* ── Hero ── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -349,13 +348,13 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
             sub="On top of standard stamp duty, all states charge an additional surcharge for foreign buyers."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Foreign buyer stamp duty surcharges by state">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State/Territory</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State/Territory</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -388,11 +387,11 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
             sub="Fees are based on the purchase price and are non-refundable regardless of outcome."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="FIRB application fees by property value">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB fee</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB fee</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -515,7 +514,7 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
                 <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                   <div>
                     <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                    <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating ?? 0))}</span> <span className="font-semibold text-slate-600">{Number(b.rating ?? 0).toFixed(1)}</span></p>
+                    <p className="text-xs"><span className="text-amber-600" aria-hidden="true">{renderStars(Number(b.rating ?? 0))}</span> <span className="font-semibold text-slate-600" aria-label={`${Number(b.rating ?? 0).toFixed(1)} out of 5 stars`}>{Number(b.rating ?? 0).toFixed(1)}</span></p>
                     <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                   </div>
                   <div className="mt-auto">

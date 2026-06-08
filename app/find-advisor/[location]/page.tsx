@@ -13,6 +13,7 @@ import {
 export const revalidate = 3600; // 1 hour
 import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 interface LocationConfig {
   slug: string;
@@ -136,7 +137,9 @@ export async function generateMetadata({ params }: { params: Promise<{ location:
       title: `Best ${type}s in ${loc.city}`,
       description: loc.description,
       url: `${SITE_URL}/find-advisor/${location}`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Find " + type + "s in " + loc.city)}&sub=${encodeURIComponent("Compare · Verified · Free Consultation · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -175,6 +178,26 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
     : undefined;
   const allAdvisors = rankAdvisors(eligibleAdvisors, weights, { countryMatch });
 
+  const locationFaqs = [
+    {
+      q: `How do I find the best financial advisor in ${loc.city}?`,
+      a: `Look for verified AFSL credentials (or authorised representative status), transparent fees (fee-for-service is generally less conflicted than commission-based), specialties that match your situation, and positive client reviews. Every advisor listed on invest.com.au has had their AFSL status and ASIC registration independently verified before being included. Use the filters on this page to narrow by specialty — e.g., SMSF, retirement planning, or tax.`,
+    },
+    {
+      q: `How much does a financial advisor in ${loc.city} cost?`,
+      a: `Financial advice fees in ${loc.city} typically range from $2,500–$5,000 for an initial Statement of Advice (SOA), with ongoing fees of $2,000–$4,000 per year. Some advisors offer fixed-fee packages; others charge hourly ($200–$450/hour). Fee-for-service advisors don't receive commissions, so their advice is less likely to be conflicted. Always ask for a Fee Disclosure Statement before engaging any advisor.`,
+    },
+    {
+      q: `Do I need an AFSL-licensed advisor in ${loc.city}?`,
+      a: `Any person providing personal financial advice in Australia — including in ${loc.city} — must hold an Australian Financial Services Licence (AFSL) or be an authorised representative of an AFSL holder. This is a legal requirement under the Corporations Act 2001, enforced by ASIC. You can verify any advisor's credentials at connect.asic.gov.au. All advisors listed on invest.com.au are ASIC-verified. Be cautious of anyone offering financial advice without AFSL credentials.`,
+    },
+    {
+      q: `What's the difference between a financial planner, financial adviser, and tax agent in ${loc.city}?`,
+      a: `In Australia these terms are often used interchangeably but have different regulatory meanings. Financial advisers/planners must hold an AFSL and are regulated by ASIC — they can provide personal advice on investments, super, insurance, and retirement. Tax agents are registered with the Tax Practitioners Board (TPB) and focus on tax return preparation and ATO compliance. Some professionals hold both registrations. When searching in ${loc.city}, check the specific credentials held by each professional to ensure they can help with your particular needs.`,
+    },
+  ];
+  const locationFaqLd = faqJsonLd(locationFaqs);
+
   // JSON-LD
   const jsonLd = {
     "@context": "https://schema.org",
@@ -197,9 +220,10 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(locationFaqLd) }} />
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         {/* Breadcrumbs */}
-        <nav className="text-[0.6rem] text-slate-400 mb-4 flex gap-1.5">
+        <nav aria-label="Breadcrumb" className="text-[0.6rem] text-slate-400 mb-4 flex gap-1.5">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>/</span>
           <Link href="/find-advisor" className="hover:text-slate-600">Find Advisor</Link>
@@ -258,13 +282,29 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
           </div>
         )}
 
-        {/* SEO content */}
-        <div className="mt-10 space-y-4 text-sm text-slate-600 leading-relaxed">
-          <h2 className="text-lg font-bold text-slate-900">How to Choose a {type} in {loc.city}</h2>
-          <p>When choosing a {type.toLowerCase()} in {loc.city}, look for: verified credentials (AFSL or authorised representative status), transparent fee structure (fee-for-service is generally better for clients than commission-based), relevant specialties for your situation, and positive client reviews.</p>
-          <p>All advisors listed on Invest.com.au have their credentials independently verified. We check AFSL status, ASIC registration, and professional memberships before listing any advisor.</p>
-          <h3 className="text-base font-bold text-slate-900">How Much Does a {type} in {loc.city} Cost?</h3>
-          <p>Financial advice fees in {loc.city} typically range from $2,500-$5,000 for an initial Statement of Advice (SOA), with ongoing fees of $2,000-$4,000 per year. Some advisors offer fixed-fee packages while others charge hourly ($200-$450/hour). Fee-for-service advisors don&apos;t receive commissions, which means their advice is less likely to be conflicted.</p>
+        {/* FAQ accordion — replaces flat prose with structured schema-backed content */}
+        <div className="mt-10">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Common questions</h2>
+          <div className="divide-y divide-slate-100">
+            {locationFaqs.map(({ q, a }) => (
+              <details key={q} className="group py-4">
+                <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                  {q}
+                  <svg
+                    className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                    aria-hidden="true"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{a}</p>
+              </details>
+            ))}
+          </div>
         </div>
 
         {/* Cross-links to other locations */}

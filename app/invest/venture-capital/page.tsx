@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     description:
       "VC funds, ESIC concessions, wholesale access and the emerging co-investment market.",
     url: `${SITE_URL}/invest/venture-capital`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Venture Capital")}&sub=${encodeURIComponent("VC Funds · ESIC · Wholesale Access · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -1,6 +1,28 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const PE_FAQS = [
+  {
+    q: "How do Australian retail investors access private equity?",
+    a: "Retail investors have three main routes: (1) ASX-listed PE vehicles — Magellan, Pengana, Hearts & Minds, and WAM Global hold PE-style portfolios and are accessible through any broker with no minimum. (2) Wholesale investor threshold — if you earn $250,000+/year or have $2.5M+ in net assets (excluding your home), you qualify as a wholesale investor under s708 Corporations Act and can access unlisted PE funds directly. (3) Managed funds — some retail-accessible managed funds have PE-like allocations. The true institutional PE funds (Blackstone, KKR, Apollo Australian vehicles) require wholesale status.",
+  },
+  {
+    q: "What returns can you expect from private equity in Australia?",
+    a: "Australian PE funds targeting the mid-market have historically returned 12–20% IRR gross of fees over 7–10 year fund lives, versus ASX 200 total returns of 9–11% p.a. over the same periods. Net of management fees (1.5–2% p.a.) and performance carry (20% of profits above an 8% hurdle), net returns are typically 3–7% above public market equivalents. However, returns vary significantly by vintage year, manager skill, and strategy (buyout vs. growth vs. venture). Illiquidity premium is real but not guaranteed — some PE funds underperform public markets.",
+  },
+  {
+    q: "What is the minimum investment for Australian private equity funds?",
+    a: "Institutional PE funds typically require $1M–$5M minimum commitments (capital called over 3–5 years, not upfront). Australian mid-market funds may accept $250,000–$500,000 minimums from wholesale investors. ASX-listed PE vehicles have no minimum (you buy shares). Fund-of-funds and PE feeder structures sometimes accept $50,000–$100,000 minimums. Note that all unlisted PE investments require wholesale investor status — retail investors cannot access them directly regardless of minimum.",
+  },
+  {
+    q: "Do foreigners need FIRB approval to invest in Australian PE funds?",
+    a: "Generally no. Fund interests (units/shares in a PE fund) are not direct business acquisitions and do not trigger FIRB notification requirements. However, if the PE fund makes a direct acquisition of an Australian business, FIRB approvals happen at the fund level — not the investor level. Foreign investors in Australian PE funds do face Australian withholding tax on distributions: 30% on dividends (reduced to 15% under most DTA), 10% on interest income (or DTA rate). Capital gains from Australian PE fund investments are generally exempt for non-residents under Div 855, unless the fund holds direct real property.",
+  },
+];
+
+const peFaqLd = faqJsonLd(PE_FAQS);
 
 export const revalidate = 3600;
 
@@ -14,6 +36,7 @@ export const metadata: Metadata = {
     description:
       "How Australians and foreign investors access private equity and hedge funds — wholesale investor routes, ASX-listed PE, SIV complying funds, returns, and tax treatment.",
     url: `${SITE_URL}/invest/private-equity`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Private Equity & Hedge Funds Australia")}&sub=${encodeURIComponent("PE · Hedge Funds · Wholesale · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -42,11 +65,14 @@ export default function PrivateEquityPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
       />
+      {peFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(peFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span className="text-slate-900 font-medium">/</span>
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -184,12 +210,12 @@ export default function PrivateEquityPage() {
                 Retail investors can access PE-style returns through listed investment companies (LICs) and ASX-listed funds. These provide liquidity and lower minimums:
               </p>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-sm border-collapse" aria-label="ASX-listed private equity vehicles">
                   <thead>
                     <tr className="bg-slate-50">
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Name</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Strategy</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Name</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Strategy</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -355,6 +381,26 @@ export default function PrivateEquityPage() {
           <p className="text-xs text-slate-400 mt-4">
             Tax treatment is complex and fact-specific. Always obtain advice from an Australian tax adviser before investing.
           </p>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="max-w-3xl mx-auto px-4 container-custom">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {PE_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 

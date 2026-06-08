@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "How investment income is taxed in Australia — dividends (with franking credits), bank interest, rent, and ETF distributions. Deductions, marginal rates, and strategies.",
     url: `${SITE_URL}/tax/investment-income`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investment Income Tax Australia")}&sub=${encodeURIComponent("Dividends · Interest · Rent · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/investment-income` },
@@ -302,13 +303,13 @@ export default function InvestmentIncomeTaxPage() {
             </p>
           </div>
           <div className="overflow-x-auto max-w-4xl">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="How each type of investment income is taxed">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Income type</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">What&apos;s assessable</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Tax rate</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Key note</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Income type</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">What&apos;s assessable</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Tax rate</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Key note</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -594,12 +595,12 @@ export default function InvestmentIncomeTaxPage() {
             </p>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-xs border-collapse">
+              <table className="w-full text-xs border-collapse" aria-label="ETF and managed fund distribution components and tax treatment">
                 <thead>
                   <tr className="bg-slate-700 text-white">
-                    <th className="text-left py-3 px-4 font-bold">Component</th>
-                    <th className="text-left py-3 px-4 font-bold">Tax treatment</th>
-                    <th className="text-left py-3 px-4 font-bold">Where to report</th>
+                    <th scope="col" className="text-left py-3 px-4 font-bold">Component</th>
+                    <th scope="col" className="text-left py-3 px-4 font-bold">Tax treatment</th>
+                    <th scope="col" className="text-left py-3 px-4 font-bold">Where to report</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -714,13 +715,13 @@ export default function InvestmentIncomeTaxPage() {
             </p>
           </div>
           <div className="overflow-x-auto max-w-2xl">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Australian marginal income tax rates 2024–25">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Marginal rate</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Medicare levy</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Marginal rate</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Medicare levy</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">
                     Combined (incl. Medicare)
                   </th>
                 </tr>
@@ -927,7 +928,7 @@ export default function InvestmentIncomeTaxPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
                     &#9662;
                   </span>
                 </summary>

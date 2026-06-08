@@ -113,10 +113,11 @@ function AddForm({ onAdd }: AddFormProps) {
         onSubmit={(e) => { void handleSubmit(e); }}
       >
         <div className="sm:col-span-3">
-          <label className="block text-xs font-medium text-slate-600 mb-1">
+          <label htmlFor="td-institution" className="block text-xs font-medium text-slate-600 mb-1">
             Institution <span className="text-red-500">*</span>
           </label>
           <input
+            id="td-institution"
             name="institution_name"
             type="text"
             required
@@ -125,10 +126,11 @@ function AddForm({ onAdd }: AddFormProps) {
           />
         </div>
         <div className="sm:col-span-3">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Principal ($)</label>
+          <label htmlFor="td-principal" className="block text-xs font-medium text-slate-600 mb-1">Principal ($)</label>
           <input
+            id="td-principal"
             name="principal"
-            type="number"
+            type="number" inputMode="decimal"
             min="1"
             step="0.01"
             required
@@ -137,10 +139,11 @@ function AddForm({ onAdd }: AddFormProps) {
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Rate (% p.a.)</label>
+          <label htmlFor="td-rate" className="block text-xs font-medium text-slate-600 mb-1">Rate (% p.a.)</label>
           <input
+            id="td-rate"
             name="rate_pct"
-            type="number"
+            type="number" inputMode="decimal"
             min="0"
             max="50"
             step="0.01"
@@ -150,8 +153,9 @@ function AddForm({ onAdd }: AddFormProps) {
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Term (months)</label>
+          <label htmlFor="td-term" className="block text-xs font-medium text-slate-600 mb-1">Term (months)</label>
           <select
+            id="td-term"
             name="term_months"
             value={termMonths}
             onChange={(e) => {
@@ -170,8 +174,9 @@ function AddForm({ onAdd }: AddFormProps) {
           </select>
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Maturity date</label>
+          <label htmlFor="td-maturity" className="block text-xs font-medium text-slate-600 mb-1">Maturity date</label>
           <input
+            id="td-maturity"
             name="maturity_date"
             type="date"
             required
@@ -180,8 +185,9 @@ function AddForm({ onAdd }: AddFormProps) {
           />
         </div>
         <div className="sm:col-span-6">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Notes (optional)</label>
+          <label htmlFor="td-notes" className="block text-xs font-medium text-slate-600 mb-1">Notes (optional)</label>
           <input
+            id="td-notes"
             name="notes"
             type="text"
             maxLength={500}
@@ -189,12 +195,13 @@ function AddForm({ onAdd }: AddFormProps) {
             className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
           />
         </div>
-        {err && <p className="sm:col-span-6 text-sm text-red-600">{err}</p>}
+        {err && <p role="alert" className="sm:col-span-6 text-sm text-red-600">{err}</p>}
         <div className="sm:col-span-6">
           <button
             type="submit"
             disabled={busy}
-            className="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg"
+            aria-busy={busy}
+            className="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2 rounded-lg"
           >
             {busy ? "Adding…" : "Add term deposit"}
           </button>
@@ -211,6 +218,8 @@ interface TdCardProps {
 
 function TdCard({ td, onDelete }: TdCardProps) {
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState(false);
   const days = daysUntil(td.maturity_date);
   const badge = maturityBadge(days);
 
@@ -221,7 +230,7 @@ function TdCard({ td, onDelete }: TdCardProps) {
   });
 
   const handleDelete = async () => {
-    if (!confirm("Remove this term deposit?")) return;
+    setPendingDelete(false);
     setDeleting(true);
     try {
       const res = await fetch("/api/account/term-deposits", {
@@ -233,6 +242,7 @@ function TdCard({ td, onDelete }: TdCardProps) {
       onDelete(td.id);
     } catch {
       setDeleting(false);
+      setDeleteError("Could not remove term deposit — please try again.");
     }
   };
 
@@ -271,17 +281,36 @@ function TdCard({ td, onDelete }: TdCardProps) {
             <p className="mt-2 text-xs text-slate-500 truncate">{td.notes}</p>
           )}
         </div>
-        <button
-          onClick={() => { void handleDelete(); }}
-          disabled={deleting}
-          className="shrink-0 text-slate-400 hover:text-red-500 disabled:opacity-40 transition-colors"
-          aria-label="Remove term deposit"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </button>
+        {pendingDelete ? (
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-xs text-red-600 font-medium">Remove?</span>
+            <button
+              onClick={() => { void handleDelete(); }}
+              disabled={deleting}
+              aria-busy={deleting}
+              className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+            >{deleting ? "…" : "Yes"}</button>
+            <button
+              onClick={() => setPendingDelete(false)}
+              className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+            >No</button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setPendingDelete(true)}
+            disabled={deleting}
+            className="shrink-0 text-slate-400 hover:text-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            aria-label="Remove term deposit"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        )}
       </div>
+      {deleteError && (
+        <p role="alert" className="mt-2 text-xs text-red-600">{deleteError}</p>
+      )}
     </div>
   );
 }

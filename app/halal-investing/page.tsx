@@ -33,6 +33,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: `${SITE_URL}/halal-investing`,
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Halal Investing in Australia")}&sub=${encodeURIComponent("Sharia-Compliant Shares · ETFs · Screening · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };
@@ -124,12 +125,12 @@ export default function HalalInvestingPage() {
             </p>
 
             <div className="overflow-x-auto mb-6">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Core Islamic finance principles and their practical investing implications">
                 <thead>
                   <tr className="bg-emerald-50 text-left">
-                    <th className="px-4 py-3 font-semibold text-slate-800 border border-slate-200 w-1/4">Principle</th>
-                    <th className="px-4 py-3 font-semibold text-slate-800 border border-slate-200 w-1/4">What it means</th>
-                    <th className="px-4 py-3 font-semibold text-slate-800 border border-slate-200">Practical investing implication</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-slate-800 border border-slate-200 w-1/4">Principle</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-slate-800 border border-slate-200 w-1/4">What it means</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-slate-800 border border-slate-200">Practical investing implication</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -637,7 +638,7 @@ export default function HalalInvestingPage() {
                 >
                   <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-semibold text-slate-800 list-none select-none">
                     <span>{faq.q}</span>
-                    <span className="ml-4 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg">&#8964;</span>
+                    <span className="ml-4 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg" aria-hidden="true">&#8964;</span>
                   </summary>
                   <div className="px-5 pb-5 text-slate-700 leading-relaxed text-sm border-t border-slate-100 pt-4">
                     {faq.a}

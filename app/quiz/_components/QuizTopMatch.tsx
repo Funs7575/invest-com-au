@@ -65,7 +65,7 @@ export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Pro
             <h2 className="text-xl md:text-3xl font-extrabold">{broker.name}</h2>
             {isSponsored(broker) && <SponsorBadge broker={broker} />}
           </div>
-          <div className="text-xs md:text-sm text-amber-600">{renderStars(broker.rating || 0)} <span className="text-slate-500">{broker.rating}/5</span></div>
+          <div className="text-xs md:text-sm text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)} <span className="text-slate-500" aria-hidden="true">{broker.rating}/5</span><span className="sr-only">{broker.rating} out of 5 stars</span></div>
         </div>
       </div>
       <p className="text-[0.69rem] md:text-base text-slate-600 mb-3 md:mb-4 hidden md:block">{broker.tagline}</p>

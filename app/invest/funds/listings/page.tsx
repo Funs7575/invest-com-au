@@ -22,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Fund Investment Opportunities Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/funds/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Managed Fund Listings")}&sub=${encodeURIComponent("Current Offers · Minimums · Returns · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

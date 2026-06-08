@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { howToJsonLd } from "@/lib/schema-markup";
+import { howToJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     description: "Trustee structure, trust deed, ATO registration, costs and 7-step setup.",
     url: `${SITE_URL}/smsf/setup`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Set Up an SMSF")}&sub=${encodeURIComponent("Step-by-Step · Costs · Trustee Obligations · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -74,10 +75,35 @@ export default async function SmsfSetupPage() {
       }),
     ),
   };
+
+  const SETUP_FAQS = [
+    {
+      q: "Can I set up an SMSF myself or do I need a professional?",
+      a: "You can establish the legal structure yourself (ATO registration, bank account, trust deed), but in practice most trustees use a specialist SMSF administrator or accountant — because the ATO's compliance obligations (annual audit, tax return, investment strategy, member statements) are ongoing. Mistakes carry significant penalties: civil and criminal liability for contraventions of the Superannuation Industry (Supervision) Act. Using a licensed SMSF auditor and accountant is strongly recommended.",
+    },
+    {
+      q: "How long does it take to set up an SMSF?",
+      a: "Completing the legal setup (ABN, TFN, trust deed, bank account) typically takes 2–4 weeks. Rolling over existing super balances takes a further 2–6 weeks depending on the outgoing fund. If you plan to purchase property via a limited recourse borrowing arrangement (LRBA), add another 4–12 weeks for lender approval and property settlement. Allow 2–3 months from decision to fully operational.",
+    },
+    {
+      q: "What is the minimum super balance needed for an SMSF to be cost-effective?",
+      a: "The ATO and most financial advisers suggest a minimum of $200,000–$500,000 in super to justify the fixed running costs of an SMSF. Annual costs (accounting, audit, ASIC fees, bank fees, software) typically run $2,000–$5,000+ regardless of fund size. At $500,000, $3,000 in annual costs represents 0.6% — competitive with many retail super funds. Below $200,000, the cost-per-dollar is generally uncompetitive.",
+    },
+    {
+      q: "Can I buy residential property in my SMSF?",
+      a: "Yes, but with strict restrictions. The property cannot be purchased from a related party (you, a family member, or an associated entity), and no member or related party can live in it or use it personally. It must be held solely to provide retirement benefits. If you want to buy your own business premises, that is possible — business real property can be purchased from or rented back to a related party under specific conditions. Borrowing to buy property within an SMSF requires a limited recourse borrowing arrangement (LRBA) with a bare trustee structure.",
+    },
+  ];
+
+  const setupFaqLd = faqJsonLd(SETUP_FAQS);
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo) }} />
+      {setupFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(setupFaqLd) }} />
+      )}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
@@ -129,12 +155,12 @@ export default async function SmsfSetupPage() {
           <div className="container-custom max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Individual vs corporate trustee</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="SMSF individual vs corporate trustee comparison">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Type</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Cost</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Suitable for</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Type</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Cost</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Suitable for</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -233,6 +259,25 @@ export default async function SmsfSetupPage() {
             </div>
           </section>
         )}
+
+        <section className="py-10 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-3xl">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {SETUP_FAQS.map((faq) => (
+                <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                  <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                    {faq.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                  </summary>
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );

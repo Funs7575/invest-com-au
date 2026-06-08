@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Independent insurance comparison and guides for Australians. Life, income protection, health, and home.",
     url: `${SITE_URL}/insurance`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Insurance Guide Australia")}&sub=${encodeURIComponent("Life · Income Protection · Health · TPD · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };
@@ -138,16 +139,16 @@ export default function InsuranceHubPage() {
               specific situation.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Insurance comparison">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700 w-1/3">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700 w-1/3">
                       Your situation
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700">
                       Recommended cover
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700 w-28">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700 w-28">
                       Priority
                     </th>
                   </tr>

@@ -76,6 +76,10 @@ export default function PlacementExperimentsEditor() {
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState<DraftExperiment>(EMPTY_DRAFT);
   const [busy, setBusy] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [statusError, setStatusError] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   async function load() {
     const url = filter
@@ -122,6 +126,7 @@ export default function PlacementExperimentsEditor() {
   }
 
   async function save() {
+    setSaveError(null);
     // Coerce empty broker_slug strings to null before validation, so
     // editors can leave the control variant's slug blank.
     const cleaned: DraftExperiment = {
@@ -131,9 +136,9 @@ export default function PlacementExperimentsEditor() {
         broker_slug: v.broker_slug === "" ? null : v.broker_slug,
       })),
     };
-    const err = validateDraft(cleaned);
-    if (err) {
-      alert(err);
+    const validationErr = validateDraft(cleaned);
+    if (validationErr) {
+      setSaveError(validationErr);
       return;
     }
 
@@ -156,7 +161,7 @@ export default function PlacementExperimentsEditor() {
       });
       if (!res.ok) {
         const errData = (await res.json().catch(() => ({}))) as { error?: string };
-        alert(errData.error || "Save failed");
+        setSaveError(errData.error || "Save failed");
         return;
       }
       setEditing(null);
@@ -169,18 +174,20 @@ export default function PlacementExperimentsEditor() {
   }
 
   async function remove(id: number) {
-    if (!confirm("Delete this experiment? Metrics will be lost.")) return;
+    setPendingDeleteId(null);
+    setDeleteError(null);
     const res = await fetch(`/api/admin/placement-experiments?id=${id}`, {
       method: "DELETE",
     });
     if (!res.ok) {
-      alert("Delete failed");
+      setDeleteError("Delete failed");
       return;
     }
     await load();
   }
 
   async function setStatus(row: PlacementExperiment, status: PlacementExperimentStatus) {
+    setStatusError(null);
     setBusy(true);
     try {
       const res = await fetch("/api/admin/placement-experiments", {
@@ -190,7 +197,7 @@ export default function PlacementExperimentsEditor() {
       });
       if (!res.ok) {
         const errData = (await res.json().catch(() => ({}))) as { error?: string };
-        alert(errData.error || "Status change failed");
+        setStatusError(errData.error || "Status change failed");
         return;
       }
       await load();
@@ -221,8 +228,9 @@ export default function PlacementExperimentsEditor() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600">Status</label>
+          <label htmlFor="pe-filter-status" className="text-sm text-slate-600">Status</label>
           <select
+            id="pe-filter-status"
             value={filter}
             onChange={(e) =>
               setFilter(e.target.value as "" | PlacementExperimentStatus)
@@ -254,10 +262,19 @@ export default function PlacementExperimentsEditor() {
             setEditing(null);
             setCreating(false);
             setDraft(EMPTY_DRAFT);
+            setSaveError(null);
           }}
           busy={busy}
           isEdit={editing !== null}
+          saveError={saveError}
         />
+      )}
+
+      {deleteError && (
+        <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">{deleteError}</p>
+      )}
+      {statusError && (
+        <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">{statusError}</p>
       )}
 
       {rows.length === 0 ? (
@@ -271,8 +288,11 @@ export default function PlacementExperimentsEditor() {
               key={row.id}
               row={row}
               onEdit={() => startEdit(row)}
-              onDelete={() => remove(row.id)}
-              onStatus={(s) => setStatus(row, s)}
+              onDelete={() => void remove(row.id)}
+              onDeleteRequest={() => { setDeleteError(null); setPendingDeleteId(row.id); }}
+              onDeleteCancel={() => setPendingDeleteId(null)}
+              isPendingDelete={pendingDeleteId === row.id}
+              onStatus={(s) => void setStatus(row, s)}
               busy={busy}
             />
           ))}
@@ -286,12 +306,18 @@ function ExperimentCard({
   row,
   onEdit,
   onDelete,
+  onDeleteRequest,
+  onDeleteCancel,
+  isPendingDelete,
   onStatus,
   busy,
 }: {
   row: PlacementExperiment;
   onEdit: () => void;
   onDelete: () => void;
+  onDeleteRequest: () => void;
+  onDeleteCancel: () => void;
+  isPendingDelete: boolean;
   onStatus: (status: PlacementExperimentStatus) => void;
   busy: boolean;
 }) {
@@ -370,13 +396,21 @@ function ExperimentCard({
           >
             Edit
           </button>
-          <button
-            type="button"
-            onClick={onDelete}
-            className="text-red-600 text-xs font-semibold hover:underline px-2"
-          >
-            Delete
-          </button>
+          {isPendingDelete ? (
+            <span className="inline-flex items-center gap-1 px-2">
+              <span className="text-red-700 text-xs font-semibold">Delete?</span>
+              <button type="button" className="text-red-600 text-xs font-bold hover:underline" onClick={onDelete}>Yes</button>
+              <button type="button" className="text-slate-500 text-xs hover:underline" onClick={onDeleteCancel}>No</button>
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={onDeleteRequest}
+              className="text-red-600 text-xs font-semibold hover:underline px-2"
+            >
+              Delete
+            </button>
+          )}
         </div>
       </div>
 
@@ -445,6 +479,7 @@ function ExperimentForm({
   onCancel,
   busy,
   isEdit,
+  saveError,
 }: {
   draft: DraftExperiment;
   setDraft: (d: DraftExperiment) => void;
@@ -452,6 +487,7 @@ function ExperimentForm({
   onCancel: () => void;
   busy: boolean;
   isEdit: boolean;
+  saveError?: string | null;
 }) {
   function setVariant(i: number, patch: Partial<PlacementVariant>) {
     const next = draft.variants.map((v, idx) =>
@@ -546,7 +582,7 @@ function ExperimentForm({
               className="col-span-6 text-sm border rounded px-2 py-1 font-mono"
             />
             <input
-              type="number"
+              type="number" inputMode="decimal"
               value={v.weight}
               onChange={(e) => setVariant(i, { weight: parseInt(e.target.value, 10) || 0 })}
               min={0}
@@ -601,6 +637,7 @@ function ExperimentForm({
         >
           Cancel
         </button>
+        {saveError && <p role="alert" className="text-xs text-red-700 ml-2">{saveError}</p>}
       </div>
     </div>
   );

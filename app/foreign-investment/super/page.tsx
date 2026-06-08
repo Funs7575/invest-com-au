@@ -11,7 +11,7 @@ import DASPCalculator from "../DASPCalculator";
 export const metadata: Metadata = {
   title: "Superannuation for Foreign Workers in Australia — DASP Guide 2026",
   description:
-    "Complete guide to superannuation for temporary visa holders in Australia. How the super guarantee works, DASP withholding rates (35% or 65%), how to claim, NZ Trans-Tasman portability, and key mistakes to avoid. Updated March 2026.",
+    "Super for temporary visa holders in Australia: how the guarantee works, DASP rates (35%/65%), how to claim, and NZ Trans-Tasman portability. Updated 2026.",
   openGraph: {
     title: "Super & DASP Guide for Foreign Workers — 2026",
     description:
@@ -127,7 +127,7 @@ export default async function ForeignSuperPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -189,13 +189,13 @@ export default async function ForeignSuperPage() {
             sub="DASP withholding rates by super component type. Most employer contributions fall into the 'taxed element' category."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="DASP withholding tax rates by super component type">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Component type</th>
-                  <th className="text-center px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">WHT rate</th>
-                  <th className="text-center px-5 py-3 text-xs font-bold text-red-600 uppercase tracking-wide">WHM rate</th>
-                  <th className="text-left px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Component type</th>
+                  <th scope="col" className="text-center px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">WHT rate</th>
+                  <th scope="col" className="text-center px-5 py-3 text-xs font-bold text-red-600 uppercase tracking-wide">WHM rate</th>
+                  <th scope="col" className="text-left px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -300,7 +300,7 @@ export default async function ForeignSuperPage() {
               <details key={faq.question} className="group bg-white rounded-xl border border-slate-200">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3">⌄</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">⌄</span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                   {faq.answer}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, absoluteUrl, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import {
   WEIGHT_VERIFICATION,
@@ -8,6 +9,25 @@ import {
   WEIGHT_TRANSPARENCY,
   WEIGHT_CLIENT_FEEDBACK,
 } from "@/lib/advisor-trust-score";
+
+const TRUST_SCORE_FAQS = [
+  {
+    q: "What is the Invest.com.au Advisor Trust Score?",
+    a: "The Advisor Trust Score is a factual composite score (0–100) built from publicly verifiable credential and compliance signals for each financial advisor on Invest.com.au. It is calculated from four dimensions: Verification & Registration (AFSL/AR number, editorial verification), Track Record (years of experience), Transparency (profile completeness, public disclosures), and Client Feedback (verified review volume and rating). It is not a recommendation or a 'best advisor' ranking.",
+  },
+  {
+    q: "Does a high Trust Score mean the advisor is recommended?",
+    a: "No. The Trust Score is a transparency tool, not a recommendation or financial advice. A score of 90 means the advisor has strong verifiable credentials, a long track record, a complete profile, and good client reviews — it does not mean they are the right advisor for your specific situation. Always review an advisor's qualifications, specialties, fee structure, and experience before engaging them.",
+  },
+  {
+    q: "How does the Trust Score verify an advisor's AFSL licence?",
+    a: "AFSL (Australian Financial Services Licence) and Authorised Representative (AR) numbers are cross-checked against the ASIC Professional Registers. An AFSL number alone does not guarantee a current active licence — the editorial verification step additionally confirms the licence status is active at the time of review. Advisors with an AFSL number and a current verified status receive 80 of the available 100 points in the Verification dimension.",
+  },
+  {
+    q: "How often is the Trust Score updated?",
+    a: "Trust Scores are recalculated whenever an advisor updates their profile or when new data becomes available from ASIC registers. Verification status is checked at least annually. New client reviews are factored in as they are submitted and moderated. The methodology itself is updated when we make changes to scoring weights or dimensions — all changes are logged in the methodology page with the reason for the change.",
+  },
+];
 
 export const revalidate = 86400;
 
@@ -24,6 +44,7 @@ export const metadata: Metadata = {
       "How Invest.com.au computes the Advisor Trust Score from factual credential and " +
       "compliance signals. Four dimensions, named-constant weights, fully transparent.",
     url: "/advisor/trust-score-methodology",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Advisor Trust Score Methodology")}&sub=${encodeURIComponent("Verification · Track Record · Transparency · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -110,6 +131,7 @@ const VOLUME_BANDS = [
 ] as const;
 
 export default function TrustScoreMethodologyPage() {
+  const faqLd = faqJsonLd(TRUST_SCORE_FAQS);
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Find an Advisor", url: absoluteUrl("/advisors") },
@@ -122,6 +144,9 @@ export default function TrustScoreMethodologyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
 
       {/* ── Hero ── */}
       <section className="bg-white border-b border-slate-100">
@@ -169,16 +194,16 @@ export default function TrustScoreMethodologyPage() {
             full transparency.
           </p>
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Trust score dimension weights">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">
                     Dimension
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
                     Weight
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
                     Max Contribution
                   </th>
                 </tr>
@@ -228,13 +253,13 @@ export default function TrustScoreMethodologyPage() {
 
             {"signals" in d && d.signals && (
               <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-3">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label={`${d.label} signals and scoring`}>
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
+                      <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
                         Signal
                       </th>
-                      <th className="text-right px-4 py-2.5 text-xs font-semibold text-slate-600">
+                      <th scope="col" className="text-right px-4 py-2.5 text-xs font-semibold text-slate-600">
                         Points
                       </th>
                     </tr>
@@ -258,13 +283,13 @@ export default function TrustScoreMethodologyPage() {
 
             {"bands" in d && d.bands && (
               <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-3">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label={`${d.label} experience tenure bands`}>
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
+                      <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
                         Tenure / Experience
                       </th>
-                      <th className="text-right px-4 py-2.5 text-xs font-semibold text-slate-600">
+                      <th scope="col" className="text-right px-4 py-2.5 text-xs font-semibold text-slate-600">
                         Dimension Score
                       </th>
                     </tr>
@@ -295,7 +320,7 @@ export default function TrustScoreMethodologyPage() {
                       Sub-score A — Volume (50% of dimension)
                     </p>
                   </div>
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm" aria-label="Review volume scoring bands">
                     <tbody>
                       {VOLUME_BANDS.map((vb, i) => (
                         <tr
@@ -350,16 +375,16 @@ export default function TrustScoreMethodologyPage() {
             Score Bands &amp; Labels
           </h2>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Trust score bands and labels">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
+                  <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
                     Overall Score
                   </th>
-                  <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
+                  <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
                     Label
                   </th>
-                  <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600 hidden sm:table-cell">
+                  <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600 hidden sm:table-cell">
                     Interpretation
                   </th>
                 </tr>
@@ -458,6 +483,20 @@ export default function TrustScoreMethodologyPage() {
               verification, and inviting clients to leave reviews through the advisor portal.
             </p>
           </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="space-y-3">
+          <h2 className="text-lg font-extrabold text-slate-900">Frequently asked questions</h2>
+          {TRUST_SCORE_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
         </section>
 
         {/* General advice warning */}

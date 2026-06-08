@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `FX & Currency Accounts for Australian Investors (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Compare Wise, OFX, WorldFirst, Revolut, Airwallex for AUD conversions and multi-currency accounts. FX spreads, fees, and best options for funding foreign brokers, international transfers, and multi-currency portfolios. ${UPDATED_LABEL}.`,
+  description: `Compare Wise, OFX, WorldFirst, Revolut, and Airwallex for AUD conversions, international transfers, and multi-currency portfolios. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `FX & Currency Accounts for Australian Investors (${CURRENT_YEAR})`,
     description: "Wise vs OFX vs WorldFirst vs Revolut — FX spreads, transfer fees, and multi-currency accounts compared for Australian investors.",
@@ -63,7 +63,7 @@ export default function GlobalCurrencyPage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link><span>/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link><span>/</span>
             <span className="text-slate-900 font-medium">FX &amp; Currency</span>
@@ -85,14 +85,14 @@ export default function GlobalCurrencyPage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">FX provider comparison</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="FX provider comparison — spread, fixed fee, best use and multi-currency support">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Provider</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">FX spread</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Fixed fee</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Best for</th>
-                  <th className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Multi-currency</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Provider</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">FX spread</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Fixed fee</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Best for</th>
+                  <th scope="col" className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Multi-currency</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -140,7 +140,7 @@ export default function GlobalCurrencyPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">▾</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

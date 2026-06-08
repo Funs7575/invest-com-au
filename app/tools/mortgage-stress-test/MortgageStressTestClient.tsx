@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { incomeTax } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── Maths ────────────────────────────────────────────────────────────────────
 
@@ -82,7 +83,7 @@ export default function MortgageStressTestClient() {
         hi = 0.3;
       for (let i = 0; i < 60; i++) {
         const mid = (lo + hi) / 2;
-        monthlyRepayment(loanAmount, mid, months) < targetMonthly ? (lo = mid) : (hi = mid);
+        if (monthlyRepayment(loanAmount, mid, months) < targetMonthly) { lo = mid; } else { hi = mid; }
       }
       const rate = ((lo + hi) / 2) * 100;
       if (rate > currentRate + 0.01) bkr = rate;
@@ -281,6 +282,13 @@ export default function MortgageStressTestClient() {
         </Link>
       </div>
 
+      <CalculatorLeadCapture
+        calcSlug="mortgage-stress-test"
+        calcTitle="mortgage stress test"
+        need="mortgage"
+        contextKeys={["mortgage", "rate-rise", "stress-test"]}
+      />
+
       <p className="text-xs text-gray-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </main>
   );
@@ -322,7 +330,7 @@ function NumberField({
         )}
         <input
           id={id}
-          type="number"
+          type="number" inputMode="decimal"
           min={0}
           max={max}
           step={step}

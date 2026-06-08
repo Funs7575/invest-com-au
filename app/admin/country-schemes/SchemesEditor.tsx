@@ -67,6 +67,9 @@ export default function SchemesEditor() {
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState<Omit<Scheme, "id">>(EMPTY_FORM);
   const [busy, setBusy] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   async function load() {
     const url = filter
@@ -87,6 +90,7 @@ export default function SchemesEditor() {
   }, [filter]);
 
   async function save() {
+    setSaveError(null);
     setBusy(true);
     try {
       const isEdit = editing !== null;
@@ -96,8 +100,8 @@ export default function SchemesEditor() {
         body: JSON.stringify(isEdit ? { ...draft, id: editing.id } : draft),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        alert(err.error || "Save failed");
+        const err = (await res.json().catch(() => ({}))) as { error?: string };
+        setSaveError(err.error || "Save failed");
         return;
       }
       setEditing(null);
@@ -110,10 +114,11 @@ export default function SchemesEditor() {
   }
 
   async function remove(id: number) {
-    if (!confirm("Delete this scheme? This is destructive.")) return;
+    setPendingDeleteId(null);
+    setDeleteError(null);
     const res = await fetch(`/api/admin/country-schemes?id=${id}`, { method: "DELETE" });
     if (!res.ok) {
-      alert("Delete failed");
+      setDeleteError("Delete failed");
       return;
     }
     await load();
@@ -137,8 +142,9 @@ export default function SchemesEditor() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600">Country</label>
+          <label htmlFor="cs-filter-country" className="text-sm text-slate-600">Country</label>
           <select
+            id="cs-filter-country"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="text-sm border rounded px-2 py-1"
@@ -169,14 +175,20 @@ export default function SchemesEditor() {
             setEditing(null);
             setCreating(false);
             setDraft(EMPTY_FORM);
+            setSaveError(null);
           }}
           busy={busy}
           isEdit={editing !== null}
+          saveError={saveError}
         />
       )}
 
+      {deleteError && (
+        <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">{deleteError}</p>
+      )}
+
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Country schemes">
           <thead className="bg-slate-50 text-xs font-semibold text-slate-600">
             <tr>
               <th className="text-left px-3 py-2">Country</th>
@@ -223,13 +235,21 @@ export default function SchemesEditor() {
                     >
                       Edit
                     </button>
-                    <button
-                      type="button"
-                      className="text-red-600 hover:underline"
-                      onClick={() => remove(r.id)}
-                    >
-                      Delete
-                    </button>
+                    {pendingDeleteId === r.id ? (
+                      <span className="inline-flex items-center gap-1">
+                        <span className="text-red-700 font-semibold">Delete?</span>
+                        <button type="button" className="text-red-600 hover:underline font-bold" onClick={() => void remove(r.id)}>Yes</button>
+                        <button type="button" className="text-slate-500 hover:underline" onClick={() => setPendingDeleteId(null)}>No</button>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-red-600 hover:underline"
+                        onClick={() => { setDeleteError(null); setPendingDeleteId(r.id); }}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               );
@@ -248,9 +268,10 @@ interface SchemeFormProps {
   onCancel: () => void;
   busy: boolean;
   isEdit: boolean;
+  saveError?: string | null;
 }
 
-function SchemeForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: SchemeFormProps) {
+function SchemeForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveError }: SchemeFormProps) {
   function set<K extends keyof typeof draft>(key: K, value: (typeof draft)[K]) {
     setDraft({ ...draft, [key]: value });
   }
@@ -339,7 +360,7 @@ function SchemeForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: SchemeF
         </Field>
         <Field label="Threshold cents (numeric, optional)">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             value={draft.threshold_cents ?? ""}
             onChange={(e) =>
               set(
@@ -390,7 +411,7 @@ function SchemeForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: SchemeF
         </Field>
         <Field label="Display order">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             value={draft.display_order}
             onChange={(e) =>
               set("display_order", parseInt(e.target.value, 10) || 0)
@@ -425,6 +446,7 @@ function SchemeForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: SchemeF
         >
           Cancel
         </button>
+        {saveError && <p role="alert" className="text-xs text-red-700 ml-2">{saveError}</p>}
       </div>
     </div>
   );

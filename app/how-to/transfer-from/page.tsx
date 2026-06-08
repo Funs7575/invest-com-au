@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -69,6 +70,27 @@ function formatFee(cents: number | null): string {
   });
 }
 
+const TRANSFER_FROM_FAQS = [
+  {
+    q: "How do I transfer my shares from one Australian broker to another?",
+    a: "For ASX shares held in your own CHESS-sponsored account (with an HIN), transferring to a new broker is an in-specie CHESS transfer: the new broker initiates the transfer from CHESS on your behalf, no sale occurs, and your cost base is preserved. You will need to provide your HIN and SRN (securityholder reference number) to the new broker. Most CHESS in-specie transfers complete within 3–10 business days. For shares held in a custodial (sponsored) account — common with international brokers like IBKR or some fintechs — the process differs and may require a sale-and-rebuy, which is a CGT event.",
+  },
+  {
+    q: "Does transferring shares trigger capital gains tax?",
+    a: "A CHESS in-specie transfer does NOT trigger a CGT disposal event — the shares move between brokers without being sold. Your original acquisition date and cost base are preserved in the new broker's system. However, if your shares are held in a custodial (non-CHESS) structure — where the broker is the registered holder, not you — transferring them out may require selling and rebuying at the new broker, which DOES trigger a CGT event at current market prices. Check which holding structure your broker uses before initiating a transfer.",
+  },
+  {
+    q: "What fees apply when transferring shares between brokers?",
+    a: "CHESS in-specie transfer fees vary by broker. Some brokers charge a per-holding fee (e.g. $20–$55 per security transferred out), while others charge per transfer ($50–$100 flat). A few brokers offer free outgoing transfers as a competitive differentiator. The new (receiving) broker typically charges nothing. Check each broker's full transfer-out fee schedule before initiating — the guide for your specific broker on this page shows the current fees and any applicable conditions.",
+  },
+  {
+    q: "How long does a broker transfer take?",
+    a: "CHESS in-specie transfers between Australian brokers typically take 3–10 business days from initiation to completion. The process involves the receiving broker requesting the holdings from CHESS, the original broker releasing the securities, and CHESS updating the registered holder. During this period your holdings are locked — you cannot sell, buy, or receive dividends credited to the position until the transfer completes. For international share positions held in custodial accounts (ACATS transfers), allow 4–6 business days for US-listed securities.",
+  },
+];
+
+const transferFromFaqLd = faqJsonLd(TRANSFER_FROM_FAQS);
+
 export default async function TransferFromIndex() {
   const guides = await fetchGuides();
   const brokerMap = await fetchBrokers(guides.map((g) => g.broker_slug));
@@ -85,6 +107,12 @@ export default async function TransferFromIndex() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {transferFromFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(transferFromFaqLd) }}
+        />
+      )}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
@@ -117,14 +145,14 @@ export default async function TransferFromIndex() {
               </div>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
-                <table className="w-full text-sm">
+                <table aria-label="Broker share transfer guides: CHESS fees, in-specie support, and timelines" className="w-full text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700">From</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">CHESS transfer fee</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">In-specie</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">Timeline</th>
-                      <th className="px-4 py-3"></th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">From</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">CHESS transfer fee</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">In-specie</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">Timeline</th>
+                      <th scope="col" className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -167,6 +195,21 @@ export default async function TransferFromIndex() {
           </div>
         </section>
       </div>
+
+      <section className="container-custom max-w-5xl mt-10 border-t border-slate-200 pt-8 pb-10">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {TRANSFER_FROM_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
     </>
   );
 }

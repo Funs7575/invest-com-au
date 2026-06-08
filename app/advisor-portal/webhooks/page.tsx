@@ -43,7 +43,7 @@ export default async function AdvisorPortalWebhooksPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-6 md:py-10">
       <div className="container-custom max-w-3xl">
-        <nav className="text-xs text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
           <Link
             href="/advisor-portal"
             className="hover:text-slate-900"

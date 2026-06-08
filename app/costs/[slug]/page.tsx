@@ -41,7 +41,9 @@ export async function generateMetadata({
       title: scenario.title,
       description: scenario.metaDescription,
       url: absoluteUrl(`/costs/${slug}`),
+      images: [{ url: `/api/og?title=${encodeURIComponent(scenario.title)}&sub=${encodeURIComponent("Compare Broker Costs · Annual Fees · Brokerage")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
     alternates: { canonical: `/costs/${slug}` },
   };
 }
@@ -112,7 +114,7 @@ export default async function CostScenarioPage({
       <Header />
       <main className="max-w-4xl mx-auto px-4 py-12">
         {/* Breadcrumbs */}
-        <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span className="mx-1.5">/</span>
           <Link href="/costs" className="hover:text-slate-600">Cost Comparisons</Link>
@@ -170,28 +172,28 @@ export default async function CostScenarioPage({
 
         {/* Cost comparison table */}
         <div className="overflow-x-auto mb-10">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Broker cost comparison">
             <thead>
               <tr className="border-b border-slate-200 text-left">
-                <th className="py-3 pr-4 font-semibold text-slate-900">#</th>
-                <th className="py-3 pr-4 font-semibold text-slate-900">Platform</th>
-                <th className="py-3 pr-4 font-semibold text-slate-900 text-right">
+                <th scope="col" className="py-3 pr-4 font-semibold text-slate-900">#</th>
+                <th scope="col" className="py-3 pr-4 font-semibold text-slate-900">Platform</th>
+                <th scope="col" className="py-3 pr-4 font-semibold text-slate-900 text-right">
                   ASX Fee
                 </th>
                 {scenario.inputs.usTradesPerMonth != null && (
                   <>
-                    <th className="py-3 pr-4 font-semibold text-slate-900 text-right">
+                    <th scope="col" className="py-3 pr-4 font-semibold text-slate-900 text-right">
                       US Fee
                     </th>
-                    <th className="py-3 pr-4 font-semibold text-slate-900 text-right">
+                    <th scope="col" className="py-3 pr-4 font-semibold text-slate-900 text-right">
                       FX Rate
                     </th>
                   </>
                 )}
-                <th className="py-3 font-semibold text-slate-900 text-right">
+                <th scope="col" className="py-3 font-semibold text-slate-900 text-right">
                   Total Cost
                 </th>
-                <th className="py-3 pl-4"></th>
+                <th scope="col" className="py-3 pl-4"></th>
               </tr>
             </thead>
             <tbody>

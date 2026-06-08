@@ -90,6 +90,12 @@ export default function BillingTab({ advisor, stats, onNavigate, initialSummary 
           <div className="text-2xl font-extrabold text-amber-600 mt-1">
             ${((stats?.pendingBilledCents || 0) / 100).toFixed(0)}
           </div>
+          {(stats?.pendingBilledCents ?? 0) > 0 && (
+            <p className="text-[0.6rem] text-amber-700 mt-0.5">
+              Pending —{" "}
+              <a href="#ledger" className="underline">see payment history</a>
+            </p>
+          )}
         </div>
       </div>
 
@@ -108,12 +114,15 @@ export default function BillingTab({ advisor, stats, onNavigate, initialSummary 
 }
 
 function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
+  const [buyFeaturedError, setBuyFeaturedError] = useState<string | null>(null);
   return (
     <div className="bg-white border border-amber-200 rounded-xl p-5">
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-1">
         <Icon name="star" size={18} className="text-amber-500" />
         <h3 className="text-sm font-bold text-slate-900">Featured Advisor</h3>
       </div>
+      {/* ADV-104: one-line benefit statement */}
+      <p className="text-xs text-amber-700 font-medium mb-2">Avg. 3× more profile views &amp; priority in search</p>
       <div className="text-2xl font-extrabold text-slate-900 mb-1">
         $149<span className="text-sm font-normal text-slate-400">/month</span>
       </div>
@@ -155,10 +164,14 @@ function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
                 body: JSON.stringify({ amount_cents: 14900, pack_slug: "featured_monthly" }),
               });
               const data = await res.json();
-              if (data.url) window.location.href = data.url;
-              else alert(data.error || "Failed to create checkout session. Please try again.");
+              if (data.url) {
+                setBuyFeaturedError(null);
+                window.location.href = data.url;
+              } else {
+                setBuyFeaturedError((data as { error?: string }).error || "Failed to create checkout session. Please try again.");
+              }
             } catch (err) {
-              alert("Something went wrong. Please check you're logged in and try again.");
+              setBuyFeaturedError("Something went wrong. Please check you're logged in and try again.");
               log.error("featured topup checkout failed", {
                 err: err instanceof Error ? err.message : String(err),
               });
@@ -169,6 +182,9 @@ function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
           Get Featured
         </button>
       )}
+      {buyFeaturedError && (
+        <p role="alert" className="mt-2 text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{buyFeaturedError}</p>
+      )}
     </div>
   );
 }
@@ -176,10 +192,12 @@ function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
 function ExpertArticleCard({ onNavigate }: { onNavigate: (v: ViewType) => void }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-5">
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-1">
         <Icon name="file-text" size={18} className="text-violet-500" />
         <h3 className="text-sm font-bold text-slate-900">Expert Article</h3>
       </div>
+      {/* ADV-104: one-line benefit statement */}
+      <p className="text-xs text-violet-700 font-medium mb-2">Builds E-E-A-T authority &amp; ranks on Google</p>
       <div className="text-2xl font-extrabold text-slate-900 mb-1">
         $299<span className="text-sm font-normal text-slate-400">/article</span>
       </div>

@@ -37,6 +37,7 @@ export default function AdminPackagesPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, []);
 
@@ -98,7 +99,7 @@ export default function AdminPackagesPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Marketplace packages">
               <thead>
                 <tr className="border-b border-slate-100 text-left">
                   <th className="px-4 py-3 text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
@@ -187,16 +188,17 @@ export default function AdminPackagesPage() {
         {/* Edit Modal */}
         {editing && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4">
-              <h3 className="text-lg font-bold text-slate-900">
+            <div role="dialog" aria-modal="true" aria-labelledby="pkg-modal-title" className="bg-white rounded-xl p-6 w-full max-w-md space-y-4">
+              <h3 id="pkg-modal-title" className="text-lg font-bold text-slate-900">
                 Edit Package
               </h3>
 
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="pkg-name" className="block text-xs font-medium text-slate-600 mb-1">
                   Name
                 </label>
                 <input
+                  id="pkg-name"
                   type="text"
                   value={editForm.name || ""}
                   onChange={(e) =>
@@ -207,10 +209,11 @@ export default function AdminPackagesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="pkg-description" className="block text-xs font-medium text-slate-600 mb-1">
                   Description
                 </label>
                 <textarea
+                  id="pkg-description"
                   value={editForm.description || ""}
                   onChange={(e) =>
                     setEditForm({ ...editForm, description: e.target.value })
@@ -222,11 +225,12 @@ export default function AdminPackagesPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="pkg-monthly-fee" className="block text-xs font-medium text-slate-600 mb-1">
                     Monthly Fee ($)
                   </label>
                   <input
-                    type="number"
+                    id="pkg-monthly-fee"
+                    type="number" inputMode="decimal"
                     value={(editForm.monthly_fee_cents || 0) / 100}
                     onChange={(e) =>
                       setEditForm({
@@ -238,11 +242,12 @@ export default function AdminPackagesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="pkg-cpc-discount" className="block text-xs font-medium text-slate-600 mb-1">
                     CPC Discount (%)
                   </label>
                   <input
-                    type="number"
+                    id="pkg-cpc-discount"
+                    type="number" inputMode="decimal"
                     value={editForm.cpc_rate_discount_pct || 0}
                     onChange={(e) =>
                       setEditForm({
@@ -259,11 +264,12 @@ export default function AdminPackagesPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="pkg-featured-slots" className="block text-xs font-medium text-slate-600 mb-1">
                     Featured Slots
                   </label>
                   <input
-                    type="number"
+                    id="pkg-featured-slots"
+                    type="number" inputMode="decimal"
                     value={editForm.featured_slots_included || 0}
                     onChange={(e) =>
                       setEditForm({
@@ -276,10 +282,11 @@ export default function AdminPackagesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="pkg-active" className="block text-xs font-medium text-slate-600 mb-1">
                     Active
                   </label>
                   <select
+                    id="pkg-active"
                     value={editForm.is_active ? "true" : "false"}
                     onChange={(e) =>
                       setEditForm({

@@ -327,7 +327,7 @@ export default function BuyUSSharesFromAustraliaPage() {
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link>
@@ -465,13 +465,13 @@ export default function BuyUSSharesFromAustraliaPage() {
             <table className="min-w-full text-xs border-collapse">
               <thead className="bg-slate-100">
                 <tr>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200 sticky left-0 bg-slate-100 z-10">Broker</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Brokerage</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">FX spread</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Custody</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">W-8BEN in flow?</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">AU friendly</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Best for</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200 sticky left-0 bg-slate-100 z-10">Broker</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Brokerage</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">FX spread</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Custody</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">W-8BEN in flow?</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">AU friendly</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Best for</th>
                 </tr>
               </thead>
               <tbody>
@@ -787,7 +787,7 @@ export default function BuyUSSharesFromAustraliaPage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>

@@ -165,7 +165,7 @@ export default function EventsTab({ advisor }: Props) {
 
   if (loading) {
     return (
-      <div className="animate-pulse space-y-3">
+      <div className="animate-pulse space-y-3" aria-busy="true" aria-label="Loading events…">
         <div className="h-8 w-48 bg-slate-200 rounded" />
         <div className="h-24 bg-slate-100 rounded-xl" />
       </div>
@@ -193,13 +193,14 @@ export default function EventsTab({ advisor }: Props) {
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-900">New Event</h3>
-            <button onClick={() => { setShowCreateForm(false); setError(""); }} className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+            <button onClick={() => { setShowCreateForm(false); setError(""); }} aria-label="Close form" className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
           </div>
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
+                <label htmlFor="evt-title" className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
                 <input
+                  id="evt-title"
                   required
                   minLength={3}
                   maxLength={200}
@@ -211,11 +212,12 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Event Type</label>
+                <label htmlFor="evt-type" className="block text-xs font-bold text-slate-700 mb-1">Event Type</label>
                 <select
+                  id="evt-type"
                   value={form.event_type}
                   onChange={(e) => setForm((f) => ({ ...f, event_type: e.target.value }))}
-                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none"
+                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
                 >
                   {["webinar", "seminar", "workshop", "conference", "networking", "other"].map((t) => (
                     <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
@@ -224,9 +226,10 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
+                <label htmlFor="evt-price" className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
                 <input
-                  type="number"
+                  id="evt-price"
+                  type="number" inputMode="decimal"
                   min={0}
                   step={1}
                   value={form.price_cents === "0" ? "0" : form.price_cents}
@@ -238,8 +241,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Starts At *</label>
+                <label htmlFor="evt-starts-at" className="block text-xs font-bold text-slate-700 mb-1">Starts At *</label>
                 <input
+                  id="evt-starts-at"
                   required
                   type="datetime-local"
                   value={form.starts_at}
@@ -249,8 +253,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Ends At <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-ends-at" className="block text-xs font-bold text-slate-700 mb-1">Ends At <span className="font-normal text-slate-400">(optional)</span></label>
                 <input
+                  id="evt-ends-at"
                   type="datetime-local"
                   value={form.ends_at}
                   onChange={(e) => setForm((f) => ({ ...f, ends_at: e.target.value }))}
@@ -259,8 +264,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Location <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-location" className="block text-xs font-bold text-slate-700 mb-1">Location <span className="font-normal text-slate-400">(optional)</span></label>
                 <input
+                  id="evt-location"
                   maxLength={300}
                   value={form.location}
                   onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
@@ -270,8 +276,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Meeting URL <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-meeting-url" className="block text-xs font-bold text-slate-700 mb-1">Meeting URL <span className="font-normal text-slate-400">(optional)</span></label>
                 <input
+                  id="evt-meeting-url"
                   type="url"
                   value={form.meeting_url}
                   onChange={(e) => setForm((f) => ({ ...f, meeting_url: e.target.value }))}
@@ -281,9 +288,10 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Max Attendees <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-max-attendees" className="block text-xs font-bold text-slate-700 mb-1">Max Attendees <span className="font-normal text-slate-400">(optional)</span></label>
                 <input
-                  type="number"
+                  id="evt-max-attendees"
+                  type="number" inputMode="decimal"
                   min={1}
                   max={10000}
                   value={form.max_attendees}
@@ -294,8 +302,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 mb-1">Description <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-description" className="block text-xs font-bold text-slate-700 mb-1">Description <span className="font-normal text-slate-400">(optional)</span></label>
                 <textarea
+                  id="evt-description"
                   maxLength={3000}
                   rows={4}
                   value={form.description}
@@ -307,14 +316,15 @@ export default function EventsTab({ advisor }: Props) {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{error}</div>
+              <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{error}</div>
             )}
 
             <div className="flex gap-2">
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                aria-busy={submitting}
+                className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {submitting ? "Creating..." : "Create Event"}
               </button>
@@ -405,11 +415,11 @@ export default function EventsTab({ advisor }: Props) {
 
       {/* RSVP modal */}
       {rsvpModalEventId != null && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[80vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onKeyDown={(e) => { if (e.key === "Escape") setRsvpModalEventId(null); }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="rsvp-modal-title" className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[80vh] flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-slate-900">RSVPs</h2>
-              <button onClick={() => setRsvpModalEventId(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+              <h2 id="rsvp-modal-title" className="text-base font-bold text-slate-900">RSVPs</h2>
+              <button onClick={() => setRsvpModalEventId(null)} aria-label="Close" className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
             </div>
             <div className="overflow-y-auto flex-1">
               {(rsvps[rsvpModalEventId] ?? []).length === 0 ? (

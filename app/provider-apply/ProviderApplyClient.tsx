@@ -217,7 +217,7 @@ export default function ProviderApplyClient() {
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-2xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">
             Home
           </Link>
@@ -478,7 +478,7 @@ export default function ProviderApplyClient() {
                 <div className="relative">
                   <input
                     id="pa-contact-email"
-                    type="email"
+                    type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                     value={form.contact_email}
                     onChange={(e) => {
                       const v = e.target.value;
@@ -621,7 +621,7 @@ export default function ProviderApplyClient() {
             </div>
 
             {errorMsg && (
-              <p className="text-xs text-red-600 font-medium">{errorMsg}</p>
+              <p role="alert" className="text-xs text-red-600 font-medium">{errorMsg}</p>
             )}
 
             <button

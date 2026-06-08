@@ -43,7 +43,7 @@ export async function generateMetadata({
     title: `${title} | ${SITE_NAME}`,
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "website" },
+    openGraph: { title, description, url, type: "website", images: [{ url: `/api/og?title=${encodeURIComponent(combo.title)}&sub=${encodeURIComponent("Best Investments · " + combo.profileLabel + " · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
     twitter: { card: "summary_large_image" },
   };
 }

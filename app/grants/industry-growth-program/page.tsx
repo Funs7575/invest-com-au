@@ -1,8 +1,30 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
+
+const IGP_FAQS = [
+  {
+    q: "What is the Industry Growth Program (IGP)?",
+    a: `The Industry Growth Program (IGP) is an Australian Government grant program administered by the Department of Industry, Science and Resources. It provides matched funding for small and medium enterprises (SMEs) to commercialise products, processes, and services in Future Made in Australia priority sectors — including clean energy, critical minerals processing, advanced manufacturing, and food security. There are two streams: Stream 1 ($50K–$250K, TRL 3–6) for early-stage validation and prototyping, and Stream 2 ($100K–$5M, TRL 4–9) for manufacturing scale-up and first-of-kind commercial deployment.`,
+  },
+  {
+    q: "Who is eligible for the Industry Growth Program?",
+    a: "Eligible applicants are Australian SMEs (small and medium-sized enterprises) that: (1) are legally incorporated in Australia; (2) are commercialising a product, process, or service in a Future Made in Australia priority sector; (3) can provide matched funding equal to the grant amount; and (4) have not previously received an IGP grant for the same project. Large companies, universities, and research organisations are not eligible as lead applicants (though they can be project partners). You must also complete a mandatory advisory engagement with a Department of Industry advisor before submitting a full application.",
+  },
+  {
+    q: "What is the advisory step and is it mandatory?",
+    a: "Yes — the advisory engagement is mandatory. Before submitting a full IGP application, you must complete a free advisory engagement with a designated Department of Industry advisor. The advisor produces a written commercial readiness report that forms part of your application. Cold applications submitted without a current advisory report will not be assessed. The advisory step alone takes 4–8 weeks, so factor this into your timeline. You can request an advisory engagement via business.gov.au.",
+  },
+  {
+    q: "How much of the IGP funding pool is still available?",
+    a: `The IGP was allocated $287M under the ${CURRENT_YEAR} budget. Approximately 90% of the pool is projected to be committed by June 2026 based on current application rates. Once the pool is exhausted, no new awards can be made until a successor program is announced. Given the 4–8 week advisory step and the 4–6 month total application timeline, businesses interested in the IGP should begin the advisory process immediately to maximise their chances of accessing remaining funds.`,
+  },
+];
+
+const igpFaqLd = faqJsonLd(IGP_FAQS);
 
 export const revalidate = 3600;
 
@@ -16,6 +38,7 @@ export const metadata: Metadata = {
     description: "Two streams. Advisory-first. ~90% of funding projected committed by June 2026.",
     url: `${SITE_URL}/grants/industry-growth-program`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Industry Growth Program Australia")}&sub=${encodeURIComponent("Up to $5M · SME Manufacturing · Advisory-First · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -29,6 +52,7 @@ export default function IgpPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(igpFaqLd) }} />
 
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
@@ -109,6 +133,30 @@ export default function IgpPage() {
           extraFields={[{ name: "company", label: "Company name" }, { name: "stream", label: "Target stream (1 or 2)" }]}
           className="py-12 bg-white"
         />
+
+        {/* FAQ accordion */}
+        <section className="py-12 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-5xl">
+            <h2 className="text-xl font-bold text-slate-900 mb-4">Common questions</h2>
+            <div className="divide-y divide-slate-100">
+              {IGP_FAQS.map(({ q, a }) => (
+                <details key={q} className="group py-3">
+                  <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                    {q}
+                    <svg
+                      className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                      aria-hidden="true"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* Cross-links */}
         <section className="py-10 bg-slate-50 border-t border-slate-200">

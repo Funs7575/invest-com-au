@@ -182,7 +182,7 @@ export default function RefinancingPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-emerald-900 to-emerald-700 text-white py-14">
         <div className="container-custom">
-          <nav className="text-sm text-emerald-200 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-emerald-200 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>
@@ -317,12 +317,12 @@ export default function RefinancingPage() {
             Know what you are paying before you switch. Most standard refinances cost $800–$2,000 excluding LMI and fixed break costs.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Home loan refinancing switching costs checklist" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Cost item</th>
-                  <th className="text-left px-5 py-3">Typical amount</th>
-                  <th className="text-left px-5 py-3">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3">Cost item</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical amount</th>
+                  <th scope="col" className="text-left px-5 py-3">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -405,12 +405,12 @@ export default function RefinancingPage() {
             A refinance is an opportunity to choose a loan structure that better fits your current financial goals — not just a lower rate.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Loan structures to consider when refinancing" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Structure</th>
-                  <th className="text-left px-5 py-3">Best suited to</th>
-                  <th className="text-left px-5 py-3">Key benefit</th>
+                  <th scope="col" className="text-left px-5 py-3">Structure</th>
+                  <th scope="col" className="text-left px-5 py-3">Best suited to</th>
+                  <th scope="col" className="text-left px-5 py-3">Key benefit</th>
                 </tr>
               </thead>
               <tbody>
@@ -634,7 +634,7 @@ export default function RefinancingPage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-50 bg-white">
                   {faq.q}
-                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
                 </summary>
                 <div className="px-5 pb-4 pt-1 text-sm text-slate-600 leading-relaxed bg-white">{faq.a}</div>
               </details>

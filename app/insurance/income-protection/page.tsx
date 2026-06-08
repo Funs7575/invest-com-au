@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Income Protection Insurance Australia (${CURRENT_YEAR})`,
     description: "How income protection works, what to look for, and why it matters for working Australians.",
     url: `${SITE_URL}/insurance/income-protection`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Income Protection Insurance")}&sub=${encodeURIComponent("75% Income · Benefit Period · Waiting Period · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/income-protection` },
@@ -190,7 +191,7 @@ export default function IncomeProtectionPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/insurance" className="hover:text-slate-900">Insurance</Link>
@@ -207,7 +208,7 @@ export default function IncomeProtectionPage() {
               <span className="text-amber-600">({CURRENT_YEAR})</span>
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed">
-              Income protection replaces up to 70% of your salary if you can't work due to illness or injury.
+              Income protection replaces up to 70% of your salary if you can&apos;t work due to illness or injury.
               We explain benefit periods, waiting periods, own vs any occupation, and how to get it right.
             </p>
           </div>
@@ -221,7 +222,7 @@ export default function IncomeProtectionPage() {
             <div className="bg-white rounded-2xl border border-green-200 p-5">
               <p className="text-xs font-bold text-green-800 uppercase tracking-wide mb-1">Income Covered</p>
               <p className="text-xl font-black text-green-700">Up to 70%</p>
-              <p className="text-xs text-slate-600 mt-1">Monthly benefit pays up to 70% of pre-disability gross income while you can't work</p>
+              <p className="text-xs text-slate-600 mt-1">Monthly benefit pays up to 70% of pre-disability gross income while you can&apos;t work</p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
               <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Tax Deductibility</p>
@@ -231,7 +232,7 @@ export default function IncomeProtectionPage() {
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
               <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Best Definition</p>
               <p className="text-xl font-black text-slate-900">Own Occupation</p>
-              <p className="text-xs text-slate-600 mt-1">Own occupation definition pays based on your specific job — far better than "any occupation"</p>
+              <p className="text-xs text-slate-600 mt-1">Own occupation definition pays based on your specific job — far better than &ldquo;any occupation&rdquo;</p>
             </div>
           </div>
         </div>
@@ -265,7 +266,7 @@ export default function IncomeProtectionPage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>

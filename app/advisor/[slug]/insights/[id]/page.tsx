@@ -60,7 +60,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: `/advisor/${slug}/insights/${postId}`,
       type: "article",
       publishedTime: post.created_at,
+      images: [{ url: `/api/og?title=${encodeURIComponent(title)}&sub=${encodeURIComponent("Advisor Insight · Invest.com.au")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -141,7 +143,7 @@ export default async function AdvisorInsightPage({ params }: { params: Promise<{
         <div className="container-custom" style={{ maxWidth: 760 }}>
 
           {/* Breadcrumb */}
-          <nav style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 28 }}>
+          <nav aria-label="Breadcrumb" style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 28 }}>
             <Link href="/advisors" style={{ color: "var(--color-ink-400)", textDecoration: "none" }}>Advisors</Link>
             <span style={{ margin: "0 6px" }}>/</span>
             <Link href={`/advisor/${slug}`} style={{ color: "var(--color-ink-400)", textDecoration: "none" }}>{pro.name}</Link>

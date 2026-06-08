@@ -147,7 +147,7 @@ export default function BridgingFinancePage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-900 to-slate-700 text-white py-14">
         <div className="container-custom">
-          <nav className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>
@@ -285,12 +285,12 @@ export default function BridgingFinancePage() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Bridging Finance Cost Breakdown</h2>
           <p className="text-sm text-slate-500 mb-6">Typical ranges only — actual costs depend on your lender, loan size, and bridging term.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Bridging finance cost breakdown" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Cost</th>
-                  <th className="text-left px-5 py-3">Typical range</th>
-                  <th className="text-left px-5 py-3">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3">Cost</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical range</th>
+                  <th scope="col" className="text-left px-5 py-3">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -332,11 +332,11 @@ export default function BridgingFinancePage() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">When Bridging Finance Makes Sense vs When It Doesn&apos;t</h2>
           <p className="text-sm text-slate-500 mb-6">Bridging finance is a powerful tool in the right circumstances — and a costly mistake in the wrong ones.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="When bridging finance suits vs does not suit" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3 text-green-300">Bridging suits</th>
-                  <th className="text-left px-5 py-3 text-red-300">Bridging doesn&apos;t suit</th>
+                  <th scope="col" className="text-left px-5 py-3 text-green-300">Bridging suits</th>
+                  <th scope="col" className="text-left px-5 py-3 text-red-300">Bridging doesn&apos;t suit</th>
                 </tr>
               </thead>
               <tbody>
@@ -382,7 +382,7 @@ export default function BridgingFinancePage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-50 bg-white">
                   {faq.q}
-                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
                 </summary>
                 <div className="px-5 pb-4 pt-1 text-sm text-slate-600 leading-relaxed bg-white">{faq.a}</div>
               </details>

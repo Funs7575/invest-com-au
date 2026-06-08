@@ -161,7 +161,7 @@ export default function CommodityHubsClient({ initialSectors }: Props) {
           <p className="text-sm text-slate-500">No sectors yet. Create one below.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden">
+            <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden" aria-label="Commodity hubs">
               <thead className="bg-slate-50 text-slate-600">
                 <tr>
                   <th className="text-left px-3 py-2">Slug</th>
@@ -413,7 +413,7 @@ export default function CommodityHubsClient({ initialSectors }: Props) {
                 MER %
               </span>
               <input
-                type="number"
+                type="number" inputMode="decimal"
                 step="0.01"
                 min="0"
                 max="10"

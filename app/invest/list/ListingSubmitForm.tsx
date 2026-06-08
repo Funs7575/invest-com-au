@@ -402,10 +402,11 @@ export default function ListingSubmitForm() {
           )}
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="lsf-title" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Listing Title <span className="text-red-500">*</span>
             </label>
             <input
+              id="lsf-title"
               type="text"
               value={form.title}
               onChange={(e) => set("title", e.target.value)}
@@ -423,10 +424,11 @@ export default function ListingSubmitForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="lsf-description" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Description <span className="text-red-500">*</span>
             </label>
             <textarea
+              id="lsf-description"
               value={form.description}
               onChange={(e) => set("description", e.target.value)}
               rows={6}
@@ -438,10 +440,11 @@ export default function ListingSubmitForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="lsf-location-state" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 State / Territory <span className="text-red-500">*</span>
               </label>
               <select
+                id="lsf-location-state"
                 value={form.location_state}
                 onChange={(e) => set("location_state", e.target.value)}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -453,8 +456,9 @@ export default function ListingSubmitForm() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">City / Region</label>
+              <label htmlFor="lsf-location-city" className="block text-sm font-semibold text-slate-700 mb-1.5">City / Region</label>
               <input
+                id="lsf-location-city"
                 type="text"
                 value={form.location_city}
                 onChange={(e) => set("location_city", e.target.value)}
@@ -466,10 +470,11 @@ export default function ListingSubmitForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="lsf-asking-price" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Asking Price / Investment
               </label>
               <input
+                id="lsf-asking-price"
                 type="text"
                 value={form.asking_price_display}
                 onChange={(e) => set("asking_price_display", e.target.value)}
@@ -478,8 +483,9 @@ export default function ListingSubmitForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">Industry / Type</label>
+              <label htmlFor="lsf-industry" className="block text-sm font-semibold text-slate-700 mb-1.5">Industry / Type</label>
               <input
+                id="lsf-industry"
                 type="text"
                 value={form.industry}
                 onChange={(e) => set("industry", e.target.value)}
@@ -554,11 +560,13 @@ export default function ListingSubmitForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="lsf-contact-name" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Your Name <span className="text-red-500">*</span>
             </label>
             <input
+              id="lsf-contact-name"
               type="text"
+              autoComplete="name"
               value={form.contact_name}
               onChange={(e) => set("contact_name", e.target.value)}
               placeholder="Full name or business name"
@@ -568,11 +576,12 @@ export default function ListingSubmitForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="lsf-contact-email" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Email Address <span className="text-red-500">*</span>
               </label>
               <input
-                type="email"
+                id="lsf-contact-email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={form.contact_email}
                 onChange={(e) => set("contact_email", e.target.value)}
                 placeholder="you@example.com"
@@ -580,9 +589,11 @@ export default function ListingSubmitForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number</label>
+              <label htmlFor="lsf-contact-phone" className="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number</label>
               <input
+                id="lsf-contact-phone"
                 type="tel"
+                autoComplete="tel"
                 value={form.contact_phone}
                 onChange={(e) => set("contact_phone", e.target.value)}
                 placeholder="+61 4XX XXX XXX"
@@ -713,7 +724,7 @@ export default function ListingSubmitForm() {
           </label>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3">
+            <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3">
               <Icon name="alert-circle" size={16} className="text-red-500 shrink-0 mt-0.5" />
               <p className="text-sm text-red-700">{error}</p>
             </div>
@@ -736,7 +747,7 @@ export default function ListingSubmitForm() {
             >
               {loading ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                  <div aria-hidden="true" className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
                   Submitting...
                 </>
               ) : (

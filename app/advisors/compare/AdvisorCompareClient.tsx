@@ -199,24 +199,25 @@ export default function AdvisorCompareClient() {
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
+            <caption className="sr-only">Advisor comparison</caption>
             {/* ── Advisor header row ── */}
             <thead>
               <tr className="border-b border-slate-200">
                 {/* Feature label header */}
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide bg-slate-50 sticky left-0 z-10 min-w-[9rem]">
+                <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide bg-slate-50 sticky left-0 z-10 min-w-[9rem]">
                   Feature
                 </th>
 
                 {columns.map((col) => {
                   const advisor = advisors.find((a) => a.slug === col.slug);
                   return (
-                    <th key={col.slug} className="px-4 py-4 text-center min-w-[200px] align-top">
+                    <th scope="col" key={col.slug} className="px-4 py-4 text-center min-w-[200px] align-top">
                       {/* Remove button */}
                       <div className="flex justify-end mb-1">
                         <button
                           onClick={() => toggle(col.slug)}
+                          aria-label="Remove from comparison"
                           className="text-slate-300 hover:text-red-400 transition-colors"
-                          title="Remove from comparison"
                         >
                           <Icon name="x" size={14} />
                         </button>

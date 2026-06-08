@@ -47,6 +47,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
   const [showResults, setShowResults] = useState(false);
   const [email, setEmail] = useState("");
   const [emailCaptured, setEmailCaptured] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
 
   useEffect(() => { trackPageDuration("/switching-calculator"); }, []);
 
@@ -59,6 +60,22 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
   const currentCost = currentBroker ? results.find(r => r.broker.slug === currentBroker)?.cost || 0 : 0;
   const cheapest = results[0];
   const savings = currentBroker ? currentCost - (cheapest?.cost || 0) : 0;
+
+  const isModified =
+    currentBroker !== "" ||
+    tradesPerYear !== 24 ||
+    avgTradeSize !== 2000 ||
+    usAllocation !== 30;
+
+  const handleReset = () => {
+    setCurrentBroker("");
+    setTradesPerYear(24);
+    setAvgTradeSize(2000);
+    setUsAllocation(30);
+    setShowResults(false);
+    setEmail("");
+    setEmailCaptured(false);
+  };
 
   const handleCalculate = () => {
     setShowResults(true);
@@ -112,7 +129,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
   return (
     <div className={inline ? "" : "py-5 md:py-12"}>
       <div className={inline ? "" : "container-custom max-w-3xl"}>
-        {!inline && <nav className="text-xs md:text-sm text-slate-500 mb-3">
+        {!inline && <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5">/</span>
           <Link href="/calculators" className="hover:text-slate-900">Calculators</Link>
@@ -138,8 +155,8 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
           <h2 className="text-sm font-bold text-slate-900 mb-4">Your Trading Profile</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Your current broker</label>
-              <select value={currentBroker} onChange={e => setCurrentBroker(e.target.value)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg">
+              <label htmlFor="switch-current-broker" className="block text-xs font-bold text-slate-700 mb-1">Your current broker</label>
+              <select id="switch-current-broker" value={currentBroker} onChange={e => setCurrentBroker(e.target.value)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg">
                 <option value="">Select your current broker...</option>
                 {brokers.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}
                 <option value="_other">Other / Not listed</option>
@@ -148,22 +165,32 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
 
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Trades per year</label>
-                <input type="number" value={tradesPerYear} onChange={e => setTradesPerYear(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
+                <label htmlFor="switch-trades-per-year" className="block text-xs font-bold text-slate-700 mb-1">Trades per year</label>
+                <input id="switch-trades-per-year" type="number" inputMode="decimal" value={tradesPerYear} onChange={e => setTradesPerYear(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Avg trade size ($)</label>
-                <input type="number" value={avgTradeSize} onChange={e => setAvgTradeSize(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
+                <label htmlFor="switch-avg-trade-size" className="block text-xs font-bold text-slate-700 mb-1">Avg trade size ($)</label>
+                <input id="switch-avg-trade-size" type="number" inputMode="decimal" value={avgTradeSize} onChange={e => setAvgTradeSize(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">US shares (%)</label>
-                <input type="number" value={usAllocation} onChange={e => setUsAllocation(Math.min(100, parseInt(e.target.value) || 0))} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" min={0} max={100} />
+                <label htmlFor="switch-us-allocation" className="block text-xs font-bold text-slate-700 mb-1">US shares (%)</label>
+                <input id="switch-us-allocation" type="number" inputMode="decimal" value={usAllocation} onChange={e => setUsAllocation(Math.min(100, parseInt(e.target.value) || 0))} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" min={0} max={100} />
               </div>
             </div>
 
-            <button onClick={handleCalculate} className="w-full py-3 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 active:scale-[0.99] transition-all">
-              Calculate My Savings →
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={handleCalculate} className="flex-1 py-3 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 active:scale-[0.99] transition-all">
+                Calculate My Savings →
+              </button>
+              {isModified && (
+                <button
+                  onClick={handleReset}
+                  className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -230,7 +257,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                 {/* Transfer info */}
                 <div className="text-[0.65rem] text-slate-500 space-y-1">
                   <p><strong className="text-slate-700">How to switch:</strong> {cheapest?.broker.chess_sponsored ? "Both brokers use CHESS sponsorship — your HIN transfers directly. Shares stay in your name. Takes 3-5 business days." : "Check if your new broker supports CHESS transfer or if you'll need to sell and rebuy."}</p>
-                  <p>Read our <a href="/switch" className="text-violet-600 hover:underline">complete switching guide</a> for step-by-step instructions.</p>
+                  <p>Read our <Link href="/switch" className="text-violet-600 hover:underline">complete switching guide</Link> for step-by-step instructions.</p>
                 </div>
               </div>
             )}
@@ -244,7 +271,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                     <p className="text-sm font-bold mb-1">Get the full comparison + a free PDF fee report</p>
                     <p className="text-xs text-slate-300 mb-3">Enter your email to see all {brokers.length} brokers ranked by cost for your exact portfolio.</p>
                     <div className="flex gap-2">
-                      <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm rounded-lg text-slate-900 border-0" />
+                      <input type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm rounded-lg text-slate-900 border-0" />
                       <button onClick={handleEmailCapture} className="px-4 py-2 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600 shrink-0">Unlock Results</button>
                     </div>
                   </div>
@@ -271,7 +298,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                           {isCurrent && <span className="text-[0.5rem] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">YOUR BROKER</span>}
                           {i === 0 && !isCurrent && <span className="text-[0.5rem] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">CHEAPEST</span>}
                         </div>
-                        <div className="text-xs text-slate-500">{renderStars(r.broker.rating || 0)} {r.broker.rating}/5</div>
+                        <div className="text-xs text-slate-500"><span aria-hidden="true">{renderStars(r.broker.rating || 0)}</span> <span aria-label={`${r.broker.rating} out of 5 stars`}>{r.broker.rating}/5</span></div>
                       </div>
                       <div className="text-right shrink-0">
                         <div className={`text-sm font-extrabold ${isCurrent ? "text-red-600" : "text-slate-900"}`}>${Math.round(r.cost).toLocaleString()}<span className="text-[0.6rem] font-normal text-slate-400">/yr</span></div>
@@ -304,12 +331,18 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                 <button
                   onClick={() => {
                     const text = `I just found out I could save $${Math.round(savings)}/year by switching brokers. Check yours at invest.com.au/switching-calculator`;
-                    if (navigator.share) { navigator.share({ text, url: "https://invest.com.au/switching-calculator" }); }
-                    else { navigator.clipboard.writeText(text); alert("Copied to clipboard!"); }
+                    if (navigator.share) {
+                      void navigator.share({ text, url: "https://invest.com.au/switching-calculator" });
+                    } else {
+                      void navigator.clipboard.writeText(text).then(() => {
+                        setShareCopied(true);
+                        setTimeout(() => setShareCopied(false), 2000);
+                      });
+                    }
                   }}
                   className="text-xs font-semibold text-slate-500 hover:text-slate-700 flex items-center gap-1"
                 >
-                  <Icon name="share-2" size={14} /> Share your savings
+                  <Icon name="share-2" size={14} /> {shareCopied ? "Copied!" : "Share your savings"}
                 </button>
                 <a
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I could save $${Math.round(savings)}/year by switching brokers 🤯`)}&url=${encodeURIComponent("https://invest.com.au/switching-calculator")}`}

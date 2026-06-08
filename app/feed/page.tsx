@@ -91,7 +91,7 @@ export default async function FeedPage() {
         <div className="container-custom" style={{ maxWidth: 760 }}>
           {/* Header */}
           <div style={{ marginBottom: 24 }}>
-            <nav style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 16 }}>
+            <nav aria-label="Breadcrumb" style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 16 }}>
               <Link href="/" style={{ color: "var(--color-ink-400)", textDecoration: "none" }}>Home</Link>
               <span style={{ margin: "0 6px" }}>/</span>
               <span style={{ color: "var(--color-ink-600)" }}>Advisor Feed</span>

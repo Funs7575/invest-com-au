@@ -80,7 +80,7 @@ export default function CurrencyConverterPage() {
       {/* Hero */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-10 md:py-14">
         <div className="container-custom">
-          <nav className="text-xs text-blue-200 mb-3">
+          <nav aria-label="Breadcrumb" className="text-xs text-blue-200 mb-3">
             <Link href="/" className="hover:text-white">
               Home
             </Link>{" "}
@@ -107,7 +107,7 @@ export default function CurrencyConverterPage() {
             <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr]">
               {/* From */}
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Amount</label>
+                <p className="block text-xs font-medium text-slate-600 mb-1">Amount</p>
                 <div className="flex gap-2">
                   <select
                     value={fromCurrency}
@@ -122,7 +122,7 @@ export default function CurrencyConverterPage() {
                     ))}
                   </select>
                   <input
-                    type="number"
+                    type="number" inputMode="decimal"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     min={0}
@@ -148,7 +148,7 @@ export default function CurrencyConverterPage() {
 
               {/* To */}
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Converted to</label>
+                <p className="block text-xs font-medium text-slate-600 mb-1">Converted to</p>
                 <div className="flex gap-2">
                   <select
                     value={toCurrency}
@@ -186,12 +186,12 @@ export default function CurrencyConverterPage() {
               Key AUD amounts converted at the current indicative rate.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label={`Australian thresholds in ${toCurrency}`}>
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 font-medium text-slate-600">Threshold</th>
-                    <th className="text-right py-2 font-medium text-slate-600">AUD</th>
-                    <th className="text-right py-2 font-medium text-slate-600">{toCurrency}</th>
+                    <th scope="col" className="text-left py-2 font-medium text-slate-600">Threshold</th>
+                    <th scope="col" className="text-right py-2 font-medium text-slate-600">AUD</th>
+                    <th scope="col" className="text-right py-2 font-medium text-slate-600">{toCurrency}</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -19,7 +19,7 @@
  * Mobile-first: tested at 375px, single column at every breakpoint.
  */
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { PROFESSIONAL_TYPE_LABELS, type ProfessionalType } from "@/lib/types";
 
@@ -106,7 +106,14 @@ const SECONDARY_SPECIALTIES: ProfessionalType[] = (
 function StepHeader({ step }: { step: number }) {
   return (
     <div className="mb-6">
-      <div className="flex items-center gap-1.5 mb-3" aria-label={`Step ${step} of ${TOTAL_STEPS}`}>
+      <div
+        role="progressbar"
+        aria-valuenow={step}
+        aria-valuemin={1}
+        aria-valuemax={TOTAL_STEPS}
+        aria-label={`Step ${step} of ${TOTAL_STEPS}`}
+        className="flex items-center gap-1.5 mb-3"
+      >
         {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((n) => (
           <div
             key={n}
@@ -116,7 +123,7 @@ function StepHeader({ step }: { step: number }) {
           />
         ))}
       </div>
-      <p className="text-xs text-slate-500 font-medium">
+      <p className="text-xs text-slate-500 font-medium" aria-live="polite" aria-atomic="true">
         Step {step} of {TOTAL_STEPS}
       </p>
     </div>
@@ -421,7 +428,7 @@ export default function ProsJoinWizard() {
               placeholder="Chen Advisory"
             />
             <Field
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               label="Work email *"
               value={state.email}
               onChange={(v) => update("email", v)}
@@ -467,10 +474,11 @@ export default function ProsJoinWizard() {
             </div>
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="pj-state" className="block text-xs font-semibold text-slate-600 mb-1">
                   State
                 </label>
                 <select
+                  id="pj-state"
                   value={state.location_state}
                   onChange={(e) => update("location_state", e.target.value)}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white"
@@ -524,9 +532,13 @@ export default function ProsJoinWizard() {
               }}
               disabled={docUploading}
             />
+            <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+              {docUploading && `Uploading ${docFile?.name ?? "document"}…`}
+              {docStoragePath && !docUploading && `${docFile?.name ?? "Document"} uploaded successfully.`}
+            </div>
             {docUploading ? (
               <div className="text-sm text-slate-600">
-                <div className="mx-auto mb-2 w-6 h-6 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin" />
+                <div aria-hidden="true" className="mx-auto mb-2 w-6 h-6 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin" />
                 Uploading {docFile?.name}…
               </div>
             ) : docStoragePath && docFile ? (
@@ -550,7 +562,7 @@ export default function ProsJoinWizard() {
             )}
           </label>
           {docError && (
-            <p className="text-xs text-red-600 font-medium mt-2">{docError}</p>
+            <p role="alert" className="text-xs text-red-600 font-medium mt-2">{docError}</p>
           )}
           <p className="text-[0.62rem] text-slate-400 mt-3 leading-relaxed">
             Documents are stored privately and visible only to the
@@ -571,13 +583,18 @@ export default function ProsJoinWizard() {
           </p>
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2.5">
-              <Field
-                label="BSB *"
-                value={state.payout_bsb}
-                onChange={(v) => update("payout_bsb", v)}
-                placeholder="062-000"
-                small
-              />
+              <div>
+                <Field
+                  label="BSB *"
+                  value={state.payout_bsb}
+                  onChange={(v) => update("payout_bsb", v)}
+                  placeholder="062-000"
+                  small
+                />
+                {state.payout_bsb && !BSB_RE.test(state.payout_bsb.trim()) && (
+                  <p role="alert" className="mt-1 text-xs text-red-600">Format: 000-000</p>
+                )}
+              </div>
               <Field
                 label="Account number *"
                 value={state.payout_account_number}
@@ -649,7 +666,7 @@ export default function ProsJoinWizard() {
             </label>
 
             {submitError && (
-              <p className="text-xs text-red-600 font-medium">{submitError}</p>
+              <p role="alert" className="text-xs text-red-600 font-medium">{submitError}</p>
             )}
           </div>
         </section>
@@ -684,6 +701,7 @@ export default function ProsJoinWizard() {
             type="button"
             onClick={handleSubmit}
             disabled={!stepValid || submitState === "submitting"}
+            aria-busy={submitState === "submitting"}
             className="ml-auto px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {submitState === "submitting"
@@ -713,12 +731,14 @@ function Field({
   type = "text",
   small,
 }: FieldProps) {
+  const id = useId();
   return (
     <div>
-      <label className={`block ${small ? "text-[0.65rem]" : "text-xs"} font-semibold text-slate-600 mb-1`}>
+      <label htmlFor={id} className={`block ${small ? "text-[0.65rem]" : "text-xs"} font-semibold text-slate-600 mb-1`}>
         {label}
       </label>
       <input
+        id={id}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -762,6 +782,7 @@ function SpecialtyGroup({
               onClick={() => onToggle(opt)}
               disabled={disabled}
               aria-pressed={isSelected}
+              aria-label={disabled ? `${PROFESSIONAL_TYPE_LABELS[opt]} — maximum 8 specialties reached, deselect one to add another` : PROFESSIONAL_TYPE_LABELS[opt]}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 isSelected
                   ? "bg-violet-600 text-white border-violet-600"

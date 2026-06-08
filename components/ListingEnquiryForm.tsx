@@ -236,6 +236,7 @@ export default function ListingEnquiryForm({
       <button
         type="submit"
         disabled={loading}
+        aria-busy={loading}
         className="w-full bg-amber-500 hover:bg-amber-400 disabled:bg-amber-300 text-slate-900 font-bold text-sm px-4 py-3 rounded-lg transition-colors"
       >
         {loading ? "Sending…" : "Send Enquiry"}

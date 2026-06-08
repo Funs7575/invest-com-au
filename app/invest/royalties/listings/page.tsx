@@ -24,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Royalty & IP Investment Opportunities Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/royalties/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Royalty Investment Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

@@ -109,7 +109,7 @@ export default function ConfigEditor({ initialRows }: { initialRows: ConfigRow[]
           <header className="px-4 py-3 border-b border-slate-100 bg-slate-50">
             <h3 className="text-sm font-bold text-slate-900">{classifier}</h3>
           </header>
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label={`${classifier} configuration thresholds`}>
             <thead>
               <tr className="text-[0.6rem] uppercase tracking-wider text-slate-500 border-b border-slate-100">
                 <th className="px-4 py-2 text-left font-semibold">Threshold</th>
@@ -135,7 +135,7 @@ export default function ConfigEditor({ initialRows }: { initialRows: ConfigRow[]
                     </td>
                     <td className="px-4 py-2">
                       <input
-                        type="number"
+                        type="number" inputMode="decimal"
                         step="any"
                         defaultValue={row.value}
                         onChange={(e) =>

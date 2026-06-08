@@ -138,7 +138,7 @@ export default function FirbApplicationGuidePage() {
       {/* ── Hero ── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -186,12 +186,12 @@ export default function FirbApplicationGuidePage() {
             sub="FIRB approval is required for most foreign persons. Check your category below."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="FIRB approval requirement by buyer type">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Buyer type</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB needed?</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Buyer type</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB needed?</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -245,12 +245,12 @@ export default function FirbApplicationGuidePage() {
             sub="Gather these before lodging. Incomplete applications cause delays."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Documents required for FIRB application">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Document</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">When required</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Document</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">When required</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -278,11 +278,11 @@ export default function FirbApplicationGuidePage() {
             sub="Fees are non-refundable regardless of outcome. Pay when you lodge."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="FIRB application fees by property value">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB fee</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB fee</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

@@ -114,11 +114,12 @@ export default function PropertyEnquiryForm({
       <h3 className="text-base font-bold text-slate-900 mb-1">Enquire About {listingTitle}</h3>
       <p className="text-xs text-slate-400 mb-4">Free, no obligation. {developerName} responds within 24–48 hours.</p>
 
-      {error && <p className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
 
       <div className="space-y-3">
         <input
           type="text"
+          autoComplete="name"
           placeholder="Full name *"
           aria-label="Full name"
           required
@@ -128,7 +129,7 @@ export default function PropertyEnquiryForm({
           className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
         />
         <input
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           placeholder="Email address *"
           aria-label="Email address"
           required
@@ -139,6 +140,7 @@ export default function PropertyEnquiryForm({
         />
         <input
           type="tel"
+          autoComplete="tel"
           placeholder="Phone number"
           aria-label="Phone number"
           value={form.user_phone}
@@ -220,7 +222,7 @@ export default function PropertyEnquiryForm({
         <button
           type="submit"
           disabled={submitting || !form.consent}
-          className="w-full py-3 bg-amber-500 text-slate-900 font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 transition-all text-sm"
+          className="w-full py-3 bg-amber-500 text-slate-900 font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
         >
           {submitting ? "Sending..." : "Send Enquiry — Free"}
         </button>

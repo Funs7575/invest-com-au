@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600; // 1 hour
 
 export const metadata: Metadata = {
   title: "List Your Training Courses — Reach 30,000+ Australian Advisors",
   description:
-    "Training companies, CPD providers, compliance firms and industry bodies: list courses on Invest.com.au. Reach 30,000+ financial advisors, 70,000+ tax agents, MFAA/FBAA mortgage brokers. Platform handles enrolment, payments and CPD certificates.",
+    "List CPD courses on Invest.com.au. Reach 30,000+ financial advisors and 70,000+ registered tax agents. Platform handles enrolment, payments, and CPD certificates.",
   alternates: { canonical: "/for-providers" },
   openGraph: {
     title: "List Your Courses — Reach Australian Financial Professionals",
@@ -23,8 +24,20 @@ export const metadata: Metadata = {
   },
 };
 
+const FOR_PROVIDERS_FAQS = [
+  { q: "Do we need an AFSL to list courses?", a: "No. Organisations listing training content do not require an Australian Financial Services Licence (AFSL). The AFSL requirement applies to individual advisors who give personal financial advice, not to education and CPD providers. You do need a valid ABN." },
+  { q: "What counts as CPD under ASIC rules?", a: "ASIC-approved CPD covers five categories: Ethics, Regulatory Compliance and Consumer Protection, Technical Competence, Client Care, and Professionalism. Each course you list must be tagged to the relevant category." },
+  { q: "How do payouts work?", a: "We use Stripe Connect. When a professional enrols in your course, payment is collected immediately. Funds are released to your bank account on a 30-day settlement cycle after deducting our platform fee. You receive a remittance statement each cycle." },
+  { q: "Can we offer free or subsidised courses?", a: "Yes. You can set any course to $0 if you want to use it as a lead magnet or industry contribution. Subsidised pricing is also supported — set the price you want and Stripe Connect handles the rest." },
+  { q: "What's the difference between a CPD provider number and general listing?", a: "If your organisation is a registered CPD provider with FPA, SMSFA, or AFA, you can display your provider number on your profile. This builds trust with members of those associations. It is optional — non-registered providers can still list content that qualifies for CPD hours." },
+  { q: "How long does the application review take?", a: "We review organisation applications within 5 business days. We verify ABN, check website legitimacy, and review the type of training you offer. Approved organisations get a profile page immediately after review." },
+];
+
 export default function ForProvidersPage() {
+  const faqSchema = faqJsonLd(FOR_PROVIDERS_FAQS);
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <div className="min-h-screen bg-white">
       {/* Hero */}
       <section className="bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-800 text-white py-16 md:py-24 px-4">
@@ -442,7 +455,7 @@ export default function ForProvidersPage() {
               >
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-50 flex items-center justify-between">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform">
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#9660;
                   </span>
                 </summary>
@@ -473,5 +486,6 @@ export default function ForProvidersPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

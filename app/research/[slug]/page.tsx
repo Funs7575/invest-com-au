@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
-import Icon from "@/components/Icon";
 import ReportGate from "./ReportGate";
 import RelatedContentGrid from "@/components/RelatedContentGrid";
 
@@ -110,11 +110,37 @@ export default async function ReportPage({
     { name: report.title },
   ]);
 
+  const researchFaqs = [
+    {
+      q: `What does the "${report.title}" report cover?`,
+      a: report.summary
+        ? `${report.summary} ${sectorLabel ? `This report focuses on the ${sectorLabel.toLowerCase()} sector in Australia.` : ""}`
+        : `This report — "${report.title}" — is part of Invest.com.au's editorial research series${sectorLabel ? ` covering the ${sectorLabel.toLowerCase()} sector` : ""}. It provides data-driven analysis to help Australian investors understand market dynamics and investment opportunities. Download or read the report for full coverage.`,
+    },
+    {
+      q: `Is "${report.title}" independent research?`,
+      a: `${report.sponsor_name ? `This report has been produced with support from ${report.sponsor_name}. Sponsorship covers production costs but does not influence the editorial findings or conclusions — Invest.com.au maintains editorial independence for all research.` : `This report is produced by the Invest.com.au editorial team with no external sponsorship. Our research is independent and not influenced by any commercial relationships.`} All factual claims are sourced from publicly available data.`,
+    },
+    {
+      q: `Is this report financial advice?`,
+      a: `No. This report is general information only — it does not constitute personal financial advice and does not take into account your individual financial situation, objectives, or needs. Before acting on any information in this report, you should consider whether it is appropriate for you and seek advice from an AFSL-licensed financial adviser. Past performance is not a reliable indicator of future returns.`,
+    },
+    {
+      q: `Who publishes invest.com.au research reports?`,
+      a: `Research reports on invest.com.au are produced by the Invest.com.au editorial team — independent financial journalists and analysts based in Australia. Our reports draw on publicly available data, regulatory filings, and industry sources. We publish regularly on topics including ${sectorLabel ?? "property, SMSF, foreign investment, and sector analysis"} to help Australian investors make informed decisions.`,
+    },
+  ];
+  const researchFaqLd = faqJsonLd(researchFaqs);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(researchFaqLd) }}
       />
       <div className="bg-slate-50 min-h-screen">
         {/* Header with prominent sponsor attribution */}
@@ -221,6 +247,32 @@ export default async function ReportPage({
             </div>
           </section>
         )}
+
+        <section className="py-10 bg-white border-t border-slate-100">
+          <div className="container-custom max-w-4xl">
+            <h2 className="text-lg font-bold text-slate-900 mb-5">About this report</h2>
+            <div className="divide-y divide-slate-100">
+              {researchFaqs.map(({ q, a }) => (
+                <details key={q} className="group py-4">
+                  <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                    {q}
+                    <svg
+                      className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                      aria-hidden="true"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="mt-3 text-sm text-slate-600 leading-relaxed">{a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
 
         <section className="py-8 bg-slate-50 border-t border-slate-200">
           <div className="container-custom max-w-4xl">

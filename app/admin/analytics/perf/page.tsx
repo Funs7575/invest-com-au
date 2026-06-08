@@ -53,6 +53,7 @@ export default async function AdminPerfPage() {
   if (!guard.ok) redirect("/admin");
 
   const supabase = createAdminClient();
+  // eslint-disable-next-line react-hooks/purity -- async server component, not a React render
   const since = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
   const { data } = await supabase
     .from("web_vitals_daily_rollup")
@@ -130,7 +131,7 @@ export default async function AdminPerfPage() {
                   {metric} — top 5 slowest pages
                 </h2>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden">
+                  <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden" aria-label={`${metric} — top 5 slowest pages`}>
                     <thead className="bg-slate-50 text-slate-600">
                       <tr>
                         <th className="text-left px-3 py-2">Page</th>

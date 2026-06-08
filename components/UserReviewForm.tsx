@@ -177,6 +177,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="e.g. Sarah M."
             maxLength={50}
             required
+            autoComplete="nickname"
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
           />
         </div>
@@ -192,6 +193,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="you@email.com"
             maxLength={254}
             required
+            autoComplete="email"
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
           />
           <p className="text-xs text-slate-400 mt-1">For verification only — never displayed.</p>
@@ -285,7 +287,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
 
       {/* Error */}
       {errorMsg && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{errorMsg}</p>
+        <p role="alert" className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{errorMsg}</p>
       )}
 
       {/* Submit */}
@@ -293,6 +295,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
         <button
           type="submit"
           disabled={status === "loading"}
+          aria-busy={status === "loading"}
           className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60"
         >
           {status === "loading" ? "Submitting..." : "Submit Review"}

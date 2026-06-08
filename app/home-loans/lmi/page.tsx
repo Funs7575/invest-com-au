@@ -161,7 +161,7 @@ export default function LMIPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-900 to-slate-700 text-white py-14">
         <div className="container-custom">
-          <nav className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>
@@ -251,12 +251,12 @@ export default function LMIPage() {
             Estimates only — actual premiums vary by lender and LMI provider. Notice how the cost rises steeply as LVR increases and as the loan grows.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Approximate LMI cost by LVR and loan size" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">LVR</th>
+                  <th scope="col" className="text-left px-5 py-3">LVR</th>
                   {COST_COLUMNS.map((col) => (
-                    <th key={col} className="text-left px-5 py-3">{col}</th>
+                    <th scope="col" key={col} className="text-left px-5 py-3">{col}</th>
                   ))}
                 </tr>
               </thead>
@@ -317,11 +317,11 @@ export default function LMIPage() {
             A larger deposit lowers your LVR, which can reduce the premium — or remove it entirely once you reach 80%. The premium is also <strong>tiered</strong>, so small differences in LVR can produce large differences in cost. Moving from 88% to 90% LVR, for example, can push you into a higher tier and a noticeably bigger premium, even though the deposit difference is modest.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="LMI premium by LVR tier" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">LVR band</th>
-                  <th className="text-left px-5 py-3">What it means for LMI</th>
+                  <th scope="col" className="text-left px-5 py-3">LVR band</th>
+                  <th scope="col" className="text-left px-5 py-3">What it means for LMI</th>
                 </tr>
               </thead>
               <tbody>
@@ -537,7 +537,7 @@ export default function LMIPage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-50">
                   {faq.q}
-                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.a}</div>
               </details>

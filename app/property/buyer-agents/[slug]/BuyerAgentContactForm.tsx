@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function BuyerAgentContactForm({
   agentName,
-  agentEmail,
+  agentEmail: _agentEmail,
   agencyName,
 }: {
   agentName: string;
@@ -56,12 +56,12 @@ export default function BuyerAgentContactForm({
       <h3 className="text-base font-bold text-slate-900 mb-1">Get a Free Consultation</h3>
       <p className="text-xs text-slate-400 mb-4">with {agentName}{agencyName ? ` at ${agencyName}` : ""}. No obligation.</p>
 
-      {error && <p className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
 
       <div className="space-y-3">
-        <input type="text" placeholder="Full name *" aria-label="Full name" required maxLength={200} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500" />
-        <input type="email" placeholder="Email address *" aria-label="Email address" required maxLength={254} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500" />
-        <input type="tel" placeholder="Phone number" aria-label="Phone number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500" />
+        <input type="text" autoComplete="name" placeholder="Full name *" aria-label="Full name" required maxLength={200} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500" />
+        <input type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoComplete="email" placeholder="Email address *" aria-label="Email address" required maxLength={254} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500" />
+        <input type="tel" autoComplete="tel" placeholder="Phone number" aria-label="Phone number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500" />
         <textarea placeholder="Tell us about your property goals (optional)" aria-label="Message" rows={3} maxLength={2000} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 resize-none" />
         <input type="text" name="website" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
@@ -83,7 +83,7 @@ export default function BuyerAgentContactForm({
           </span>
         </label>
 
-        <button type="submit" disabled={submitting || !form.consent} className="w-full py-3 bg-amber-500 text-slate-900 font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 transition-all text-sm">
+        <button type="submit" disabled={submitting || !form.consent} aria-busy={submitting} className="w-full py-3 bg-amber-500 text-slate-900 font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm">
           {submitting ? "Sending..." : "Request Free Consultation"}
         </button>
         <p className="text-[0.56rem] text-slate-400 text-center">No obligation, no cost. You may receive follow-up communications and can opt out at any time.</p>

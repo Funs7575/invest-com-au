@@ -199,14 +199,14 @@ export default function PassiveVsActivePage() {
               Assuming 8% gross annual return across all options. Performance fees are estimated averages for funds that charge them. Figures are illustrative — actual outcomes depend on specific funds, market returns, and tax.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Fee cost comparison: passive vs active over 20 years">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Investment vehicle</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">MER (p.a.)</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Performance fee</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-red-700">Total fee drag (20 yr)</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-emerald-700">Approx. final value</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Investment vehicle</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">MER (p.a.)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Performance fee</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-red-700">Total fee drag (20 yr)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-emerald-700">Approx. final value</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -542,12 +542,12 @@ export default function PassiveVsActivePage() {
           <div className="container-custom max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Head-to-head comparison</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Passive vs active investing head-to-head comparison">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Aspect</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700">Passive</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Active</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Aspect</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700">Passive</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Active</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -572,12 +572,12 @@ export default function PassiveVsActivePage() {
               Six diagnostic questions that clarify whether passive or active investing is the better fit for your specific circumstances and investment goals.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Decision framework: passive vs active investing">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Question</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700">Points toward passive</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Points toward active</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Question</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700">Points toward passive</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Points toward active</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -608,7 +608,7 @@ export default function PassiveVsActivePage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-white overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
                   </summary>
                   <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
                 </details>

@@ -131,14 +131,14 @@ export default function BusinessUpgradeForm({ existing, prefillName, isEdit }: P
           </select>
         </Field>
         <Field label="Year established">
-          <input type="number" name="year_established" min={1850} max={2100}
+          <input type="number" inputMode="numeric" name="year_established" min={1850} max={2100}
             defaultValue={existing?.year_established ?? ""}
             className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
         </Field>
       </div>
       {error && <p className="text-sm text-red-700" role="alert">{error}</p>}
-      <button type="submit" disabled={submitting}
-        className="w-full px-4 py-2.5 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-lg disabled:opacity-50">
+      <button type="submit" disabled={submitting} aria-busy={submitting}
+        className="w-full px-4 py-2.5 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
         {submitting ? "Saving…" : isEdit ? "Save changes" : "Create business workspace"}
       </button>
       <p className="text-xs text-slate-500 italic">

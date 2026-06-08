@@ -148,7 +148,7 @@ export default function OpsSettingsClient({
             type="button"
             onClick={() => addTag(newTag)}
             disabled={!newTag.trim() || tags.length >= 20}
-            className="rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white text-xs font-semibold px-3"
+            className="rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold px-3"
           >
             Add
           </button>
@@ -238,7 +238,7 @@ export default function OpsSettingsClient({
       </section>
 
       {error && (
-        <p className="text-sm text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
+        <p role="alert" className="text-sm text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
           {error}
         </p>
       )}
@@ -248,12 +248,12 @@ export default function OpsSettingsClient({
           type="button"
           onClick={save}
           disabled={pending}
-          className="rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-sm font-bold px-5 py-2.5"
+          className="rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold px-5 py-2.5"
         >
           {pending ? "Saving…" : "Save settings"}
         </button>
         {savedAt && (
-          <p className="text-xs text-emerald-700 font-semibold">
+          <p role="status" className="text-xs text-emerald-700 font-semibold">
             Saved ·{" "}
             {new Date(savedAt).toLocaleTimeString(undefined, {
               hour: "numeric",

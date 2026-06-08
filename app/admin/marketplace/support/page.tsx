@@ -76,6 +76,7 @@ export default function AdminSupportPage() {
 
   const openCount = tickets.filter((t) => t.status === "open").length;
   const urgentCount = tickets.filter((t) => t.priority === "urgent" && t.status !== "closed" && t.status !== "resolved").length;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const avgResponseMs = 0; // Would need message data for real SLA tracking
 
   const openTicket = async (ticket: Ticket) => {
@@ -311,8 +312,9 @@ export default function AdminSupportPage() {
         {/* Filters */}
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-2">
-            <label className="text-xs font-medium text-slate-500">Status:</label>
+            <label htmlFor="mps-filter-status" className="text-xs font-medium text-slate-500">Status:</label>
             <select
+              id="mps-filter-status"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-slate-400/30"
@@ -326,8 +328,9 @@ export default function AdminSupportPage() {
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-xs font-medium text-slate-500">Priority:</label>
+            <label htmlFor="mps-filter-priority" className="text-xs font-medium text-slate-500">Priority:</label>
             <select
+              id="mps-filter-priority"
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
               className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-slate-400/30"
@@ -355,7 +358,7 @@ export default function AdminSupportPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Marketplace support tickets">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                   <th className="px-4 py-3 text-left">#</th>

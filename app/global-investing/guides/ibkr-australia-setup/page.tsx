@@ -10,7 +10,7 @@ const PAGE_PATH = "/global-investing/guides/ibkr-australia-setup";
 
 export const metadata: Metadata = {
   title: `Interactive Brokers (IBKR) Australia Setup Guide (${CURRENT_YEAR})`,
-  description: `A how-to guide to setting up Interactive Brokers from Australia: entity and account types, the document and W-8BEN steps, AUD funding, low-cost FX conversion, key settings, costs, and tax reporting. ${UPDATED_LABEL}.`,
+  description: `Setting up Interactive Brokers from Australia: account types, W-8BEN, AUD funding, FX conversion, costs, and tax reporting. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Interactive Brokers (IBKR) Australia Setup Guide (${CURRENT_YEAR})`,
     description:
@@ -137,7 +137,7 @@ export default function IbkrAustraliaSetupPage() {
       <section className="bg-white border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link>
@@ -304,12 +304,12 @@ export default function IbkrAustraliaSetupPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-xs md:text-sm">
+            <table className="w-full text-xs md:text-sm" aria-label="IBKR account types — who each is for">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Account type</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Who it&apos;s for</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Account type</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Who it&apos;s for</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -525,12 +525,12 @@ export default function IbkrAustraliaSetupPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-xs md:text-sm">
+            <table className="w-full text-xs md:text-sm" aria-label="IBKR account costs — brokerage, FX conversion and data fees">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Cost item</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Indicative amount</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Cost item</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Indicative amount</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -656,7 +656,7 @@ export default function IbkrAustraliaSetupPage() {
               >
                 <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-semibold text-sm text-slate-900 hover:bg-slate-50 transition-colors">
                   <span>{faq.q}</span>
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#8964;
                   </span>
                 </summary>

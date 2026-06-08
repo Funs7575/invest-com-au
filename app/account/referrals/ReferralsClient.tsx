@@ -95,7 +95,7 @@ export default function ReferralsClient() {
     return (
       <div className="py-16">
         <div className="container-custom max-w-2xl">
-          <div className="animate-pulse space-y-4">
+          <div className="animate-pulse space-y-4" aria-busy="true" aria-label="Loading referrals…">
             <div className="h-8 bg-slate-200 rounded w-48" />
             <div className="h-40 bg-slate-100 rounded-xl" />
             <div className="h-32 bg-slate-100 rounded-xl" />
@@ -109,7 +109,7 @@ export default function ReferralsClient() {
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-2xl">
         {/* Breadcrumb */}
-        <nav className="text-xs text-slate-500 mb-4">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
           <Link href="/account" className="hover:text-slate-900">My Account</Link>
           <span className="mx-1.5">/</span>
           <span className="text-slate-700">Refer a Friend</span>
@@ -139,7 +139,7 @@ export default function ReferralsClient() {
         </div>
 
         {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+          <div className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700" role="alert">
             {error}
           </div>
         )}
@@ -304,16 +304,24 @@ export default function ReferralsClient() {
               <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Icon name="users" size={20} className="text-slate-400" />
               </div>
-              <p className="text-sm text-slate-500">No referrals yet. Share your link to get started!</p>
+              <p className="text-sm text-slate-500 mb-3">No referrals yet. Share your link to get started!</p>
+              <button
+                onClick={() => { if (referralUrl) void navigator.clipboard.writeText(referralUrl).then(() => setCopied(true)); }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 transition-colors"
+              >
+                <Icon name="copy" size={14} aria-hidden />
+                Copy referral link
+              </button>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
+                <caption className="sr-only">Referral History</caption>
                 <thead>
                   <tr className="border-b border-slate-100">
-                    <th className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Referral</th>
-                    <th className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                    <th className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                    <th scope="col" className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Referral</th>
+                    <th scope="col" className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Date</th>
+                    <th scope="col" className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Status</th>
                   </tr>
                 </thead>
                 <tbody>

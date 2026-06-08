@@ -30,13 +30,39 @@ const INCOME_BANDS = [
   { label: "Over $200k", cents: 220_000_00 },
 ];
 
+const STATE_GRANTS_DEFAULTS = {
+  state: "nsw" as AustralianState,
+  propertyType: "new_build" as PropertyType,
+  purchasePriceK: 700,
+  incomeIndex: 1,
+  coupleStatus: "single" as CoupleStatus,
+  isRegional: false,
+};
+
 export default function StateGrantsCalculatorClient() {
-  const [state, setState] = useState<AustralianState>("nsw");
-  const [propertyType, setPropertyType] = useState<PropertyType>("new_build");
-  const [purchasePriceK, setPurchasePriceK] = useState(700);
-  const [incomeIndex, setIncomeIndex] = useState(1);
-  const [coupleStatus, setCoupleStatus] = useState<CoupleStatus>("single");
-  const [isRegional, setIsRegional] = useState(false);
+  const [state, setState] = useState<AustralianState>(STATE_GRANTS_DEFAULTS.state);
+  const [propertyType, setPropertyType] = useState<PropertyType>(STATE_GRANTS_DEFAULTS.propertyType);
+  const [purchasePriceK, setPurchasePriceK] = useState(STATE_GRANTS_DEFAULTS.purchasePriceK);
+  const [incomeIndex, setIncomeIndex] = useState(STATE_GRANTS_DEFAULTS.incomeIndex);
+  const [coupleStatus, setCoupleStatus] = useState<CoupleStatus>(STATE_GRANTS_DEFAULTS.coupleStatus);
+  const [isRegional, setIsRegional] = useState(STATE_GRANTS_DEFAULTS.isRegional);
+
+  const isModified =
+    state !== STATE_GRANTS_DEFAULTS.state ||
+    propertyType !== STATE_GRANTS_DEFAULTS.propertyType ||
+    purchasePriceK !== STATE_GRANTS_DEFAULTS.purchasePriceK ||
+    incomeIndex !== STATE_GRANTS_DEFAULTS.incomeIndex ||
+    coupleStatus !== STATE_GRANTS_DEFAULTS.coupleStatus ||
+    isRegional !== STATE_GRANTS_DEFAULTS.isRegional;
+
+  function handleReset() {
+    setState(STATE_GRANTS_DEFAULTS.state);
+    setPropertyType(STATE_GRANTS_DEFAULTS.propertyType);
+    setPurchasePriceK(STATE_GRANTS_DEFAULTS.purchasePriceK);
+    setIncomeIndex(STATE_GRANTS_DEFAULTS.incomeIndex);
+    setCoupleStatus(STATE_GRANTS_DEFAULTS.coupleStatus);
+    setIsRegional(STATE_GRANTS_DEFAULTS.isRegional);
+  }
 
   const householdIncomeCents = INCOME_BANDS[incomeIndex]?.cents ?? 90_000_00;
 
@@ -65,7 +91,7 @@ export default function StateGrantsCalculatorClient() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-10">
-      <nav className="text-sm text-slate-500 mb-6">
+      <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
         <Link href="/" className="hover:underline">Home</Link>
         {" / "}
         <Link href="/tools" className="hover:underline">Tools</Link>
@@ -207,6 +233,19 @@ export default function StateGrantsCalculatorClient() {
           </div>
         </div>
       </section>
+
+      {/* Reset button */}
+      {isModified && (
+        <div className="flex justify-end mb-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+          >
+            Reset to defaults
+          </button>
+        </div>
+      )}
 
       {/* Results */}
       <section

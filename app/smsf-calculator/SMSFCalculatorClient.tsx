@@ -140,6 +140,25 @@ export default function SMSFCalculatorClient() {
 
   const smsfAnnualCostEstimate = smsfFixedCosts() + balance * smsfInvestmentMgmtRate();
 
+  const isModified =
+    balance !== 300000 ||
+    annualContribution !== 27500 ||
+    currentFeePercent !== 1.2 ||
+    expectedReturn !== 7 ||
+    yearsToRetirement !== 20;
+
+  const handleReset = () => {
+    setBalance(300000);
+    setAnnualContribution(27500);
+    setCurrentFeePercent(1.2);
+    setExpectedReturn(7);
+    setYearsToRetirement(20);
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     setEmailGated(true);
@@ -207,11 +226,12 @@ export default function SMSFCalculatorClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Super balance */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
+              <label htmlFor="smsf-balance" className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
-                  type="number"
+                  id="smsf-balance"
+                  type="number" inputMode="decimal"
                   value={balance}
                   onChange={e => setBalance(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -219,7 +239,7 @@ export default function SMSFCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[100_000, 200_000, 300_000, 500_000, 1_000_000].map(v => (
-                  <button key={v} onClick={() => setBalance(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setBalance(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v >= 1_000_000 ? `$${v / 1_000_000}M` : `$${v / 1000}k`}
                   </button>
                 ))}
@@ -228,11 +248,12 @@ export default function SMSFCalculatorClient() {
 
             {/* Annual contribution */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Annual contribution</label>
+              <label htmlFor="smsf-contribution" className="block text-sm font-bold text-slate-700 mb-1.5">Annual contribution</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
-                  type="number"
+                  id="smsf-contribution"
+                  type="number" inputMode="decimal"
                   value={annualContribution}
                   onChange={e => setAnnualContribution(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -243,10 +264,11 @@ export default function SMSFCalculatorClient() {
 
             {/* Current fund fee */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Current fund annual fee</label>
+              <label htmlFor="smsf-fund-fee" className="block text-sm font-bold text-slate-700 mb-1.5">Current fund annual fee</label>
               <div className="relative">
                 <input
-                  type="number"
+                  id="smsf-fund-fee"
+                  type="number" inputMode="decimal"
                   step="0.1"
                   value={currentFeePercent}
                   onChange={e => setCurrentFeePercent(Math.max(0, Math.min(5, parseFloat(e.target.value) || 0)))}
@@ -256,7 +278,7 @@ export default function SMSFCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[0.5, 0.8, 1.0, 1.2, 1.5, 2.0].map(v => (
-                  <button key={v} onClick={() => setCurrentFeePercent(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${currentFeePercent === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setCurrentFeePercent(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${currentFeePercent === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}
@@ -265,10 +287,11 @@ export default function SMSFCalculatorClient() {
 
             {/* Expected return */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Expected annual return</label>
+              <label htmlFor="smsf-expected-return" className="block text-sm font-bold text-slate-700 mb-1.5">Expected annual return</label>
               <div className="relative">
                 <input
-                  type="number"
+                  id="smsf-expected-return"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   value={expectedReturn}
                   onChange={e => setExpectedReturn(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))}
@@ -278,7 +301,7 @@ export default function SMSFCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5, 6, 7, 8, 9, 10].map(v => (
-                  <button key={v} onClick={() => setExpectedReturn(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${expectedReturn === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setExpectedReturn(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${expectedReturn === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}
@@ -287,10 +310,11 @@ export default function SMSFCalculatorClient() {
 
             {/* Years to retirement */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Years to retirement</label>
+              <label htmlFor="smsf-years" className="block text-sm font-bold text-slate-700 mb-1.5">Years to retirement</label>
               <div className="relative">
                 <input
-                  type="number"
+                  id="smsf-years"
+                  type="number" inputMode="decimal"
                   value={yearsToRetirement}
                   onChange={e => setYearsToRetirement(Math.max(1, Math.min(50, parseInt(e.target.value) || 0)))}
                   className="w-full pl-4 pr-12 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -299,7 +323,7 @@ export default function SMSFCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5, 10, 15, 20, 25, 30].map(v => (
-                  <button key={v} onClick={() => setYearsToRetirement(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${yearsToRetirement === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setYearsToRetirement(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${yearsToRetirement === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}yr
                   </button>
                 ))}
@@ -307,12 +331,22 @@ export default function SMSFCalculatorClient() {
             </div>
           </div>
 
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-amber-500 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
-          >
-            Compare SMSF vs Current Fund →
-          </button>
+          <div className="flex items-center gap-2 mt-5">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-amber-500 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
+            >
+              Compare SMSF vs Current Fund →
+            </button>
+            {isModified && (
+              <button
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}
@@ -441,7 +475,7 @@ export default function SMSFCalculatorClient() {
                     <p className="text-sm font-bold mb-1">Get your personalised SMSF comparison emailed to you</p>
                     <p className="text-xs text-slate-300 mb-3">Includes a detailed breakdown, checklist, and next steps for your situation.</p>
                     <div className="flex gap-2">
-                      <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm rounded-lg text-slate-900 border-0" />
+                      <input type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm rounded-lg text-slate-900 border-0" />
                       <button onClick={handleEmailSubmit} className="px-4 py-2 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600 shrink-0">Send Report</button>
                     </div>
                   </div>

@@ -108,9 +108,10 @@ export default function OrgTeamTab({ org: _org }: Props) {
         <h2 className="text-sm font-bold text-slate-900 mb-3">Invite Team Member</h2>
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Email address</label>
+            <label htmlFor="ot-email" className="block text-xs font-semibold text-slate-600 mb-1">Email address</label>
             <input
-              type="email"
+              id="ot-email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               placeholder="colleague@organisation.com"
@@ -119,8 +120,9 @@ export default function OrgTeamTab({ org: _org }: Props) {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Role</label>
+            <label htmlFor="ot-role" className="block text-xs font-semibold text-slate-600 mb-1">Role</label>
             <select
+              id="ot-role"
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -133,14 +135,14 @@ export default function OrgTeamTab({ org: _org }: Props) {
           </div>
 
           {inviteError && (
-            <p className="text-xs text-red-600">{inviteError}</p>
+            <p role="alert" className="text-xs text-red-600">{inviteError}</p>
           )}
 
           <div className="flex items-center gap-3">
             <button
               onClick={handleInvite}
               disabled={inviting || !inviteEmail.trim()}
-              className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Icon name="user-plus" size={16} />
               {inviting ? "Inviting..." : "Invite"}
@@ -159,7 +161,16 @@ export default function OrgTeamTab({ org: _org }: Props) {
       {members.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-6 text-center">
           <Icon name="users" size={28} className="text-slate-300 mx-auto mb-2" />
-          <p className="text-sm text-slate-500">No team members yet. Invite someone above.</p>
+          <p className="text-sm text-slate-700 font-semibold mb-1">No team members yet</p>
+          <p className="text-sm text-slate-500 mb-3">Use the form above to invite your first team member.</p>
+          <button
+            type="button"
+            onClick={() => document.getElementById("ot-email")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white text-sm font-semibold rounded-lg hover:bg-teal-700 transition-colors"
+          >
+            <Icon name="user-plus" size={13} aria-hidden />
+            Invite a team member
+          </button>
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">

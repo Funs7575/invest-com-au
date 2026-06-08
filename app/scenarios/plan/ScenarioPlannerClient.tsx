@@ -104,9 +104,10 @@ function InputField({
   max?: number;
   type?: string;
 }) {
+  const fieldId = `sp-field-${label.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")}`;
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-600 mb-1">
+      <label htmlFor={fieldId} className="block text-xs font-semibold text-slate-600 mb-1">
         {label}
         {hint && (
           <span className="font-normal text-slate-400 ml-1">{hint}</span>
@@ -119,6 +120,7 @@ function InputField({
           </span>
         )}
         <input
+          id={fieldId}
           type={type}
           min={min}
           max={max}
@@ -815,7 +817,7 @@ export default function ScenarioPlannerClient({
 
       <div className="container-custom max-w-4xl py-6 md:py-10">
         {/* ── Tabs ─────────────────────────────────────────────────────────── */}
-        <div className="flex gap-1 bg-slate-100 rounded-xl p-1 mb-6">
+        <div role="tablist" aria-label="Scenario planner sections" className="flex gap-1 bg-slate-100 rounded-xl p-1 mb-6">
           {(
             [
               { key: "inputs", label: "Inputs" },
@@ -828,6 +830,8 @@ export default function ScenarioPlannerClient({
           ).map((tab) => (
             <button
               key={tab.key}
+              role="tab"
+              aria-selected={activeTab === tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex-1 text-sm font-semibold rounded-lg py-2 transition-all ${
                 activeTab === tab.key
@@ -1000,9 +1004,9 @@ export default function ScenarioPlannerClient({
                     step={1000}
                   />
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">
+                    <p className="block text-xs font-semibold text-slate-600 mb-1">
                       CGT 50% discount eligible?
-                    </label>
+                    </p>
                     <div className="flex gap-3">
                       {[
                         { val: false, label: "No" },

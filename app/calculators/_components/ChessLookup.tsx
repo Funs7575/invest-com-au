@@ -79,13 +79,13 @@ export default function ChessLookup({ brokers, searchParams }: Props) {
           <div>
             <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">All Brokers at a Glance</h4>
             <div className="border border-slate-200 rounded-xl overflow-hidden">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="CHESS sponsorship by broker">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Broker</th>
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Model</th>
-                    <th className="text-right px-4 py-2.5 font-semibold text-slate-700">ASX Fee</th>
-                    <th className="text-right px-4 py-2.5 font-semibold text-slate-700"><span className="sr-only">Action</span></th>
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700">Broker</th>
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700">Model</th>
+                    <th scope="col" className="text-right px-4 py-2.5 font-semibold text-slate-700">ASX Fee</th>
+                    <th scope="col" className="text-right px-4 py-2.5 font-semibold text-slate-700"><span className="sr-only">Action</span></th>
                   </tr>
                 </thead>
                 <tbody>

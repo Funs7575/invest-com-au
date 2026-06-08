@@ -275,8 +275,9 @@ export default function ABTestsPage() {
             <h2 className="text-lg font-semibold text-slate-900 mb-4">Create New A/B Test</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Test Name</label>
+                <label htmlFor="abt-name" className="block text-sm font-medium text-slate-700 mb-1">Test Name</label>
                 <input
+                  id="abt-name"
                   type="text"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
@@ -285,8 +286,9 @@ export default function ABTestsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Test Type</label>
+                <label htmlFor="abt-type" className="block text-sm font-medium text-slate-700 mb-1">Test Type</label>
                 <select
+                  id="abt-type"
                   value={formType}
                   onChange={(e) => setFormType(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"
@@ -297,8 +299,9 @@ export default function ABTestsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Page</label>
+                <label htmlFor="abt-page" className="block text-sm font-medium text-slate-700 mb-1">Page</label>
                 <input
+                  id="abt-page"
                   type="text"
                   value={formPage}
                   onChange={(e) => setFormPage(e.target.value)}
@@ -307,9 +310,10 @@ export default function ABTestsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Traffic Split (% to Variant A)</label>
+                <label htmlFor="abt-split" className="block text-sm font-medium text-slate-700 mb-1">Traffic Split (% to Variant A)</label>
                 <input
-                  type="number"
+                  id="abt-split"
+                  type="number" inputMode="decimal"
                   value={formSplit}
                   onChange={(e) => setFormSplit(Number(e.target.value))}
                   min={1}
@@ -318,8 +322,9 @@ export default function ABTestsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Variant A (JSON)</label>
+                <label htmlFor="abt-variant-a" className="block text-sm font-medium text-slate-700 mb-1">Variant A (JSON)</label>
                 <textarea
+                  id="abt-variant-a"
                   value={formVariantA}
                   onChange={(e) => setFormVariantA(e.target.value)}
                   rows={3}
@@ -327,8 +332,9 @@ export default function ABTestsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Variant B (JSON)</label>
+                <label htmlFor="abt-variant-b" className="block text-sm font-medium text-slate-700 mb-1">Variant B (JSON)</label>
                 <textarea
+                  id="abt-variant-b"
                   value={formVariantB}
                   onChange={(e) => setFormVariantB(e.target.value)}
                   rows={3}
@@ -445,7 +451,7 @@ export default function ABTestsPage() {
 
                   {/* Results Table */}
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-sm" aria-label="A/B test results">
                       <thead>
                         <tr className="border-b border-slate-200">
                           <th className="text-left py-2 px-3 text-xs font-semibold text-slate-500">Variant</th>

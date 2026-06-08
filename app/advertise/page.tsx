@@ -8,7 +8,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
 export const metadata: Metadata = {
   title: "Advertise With Us",
-  description: "Reach thousands of Australian investors actively researching brokers. Promote your brokerage on Invest.com.au with CPC campaigns, featured placements, and sponsorship packages.",
+  description: "Reach Australian investors actively comparing brokers. CPC campaigns, featured placements, and sponsorship packages on Invest.com.au.",
   alternates: { canonical: `${siteUrl}/advertise` },
   openGraph: {
     title: "Advertise With Us",
@@ -32,6 +32,8 @@ const PLACEMENTS = [
     description: "Top position on our highest-traffic page. Your brokerage appears above all others when users compare brokers.",
     type: "Featured",
     reach: "15,000+ monthly visitors",
+    bestFor: "Established brokers building brand dominance",
+    ctrRange: "Avg CTR: 1.8–2.4%",
   },
   {
     name: "Compare Page CPC",
@@ -39,6 +41,8 @@ const PLACEMENTS = [
     description: "Pay per click on the compare page. Only pay when a user clicks through to your site.",
     type: "CPC",
     reach: "15,000+ monthly visitors",
+    bestFor: "Performance-focused campaigns with set CPA targets",
+    ctrRange: "Avg CTR: 0.8–1.2%",
   },
   {
     name: "Quiz Results Boost",
@@ -46,6 +50,8 @@ const PLACEMENTS = [
     description: "Appear as a recommended platform in our personalised quiz results, reaching users with high purchase intent.",
     type: "Featured",
     reach: "5,000+ monthly quiz completions",
+    bestFor: "Brokers targeting first-time or beginner investors",
+    ctrRange: "Avg CTR: 2.5–3.5%",
   },
   {
     name: "Homepage Featured",
@@ -53,6 +59,8 @@ const PLACEMENTS = [
     description: "Premium visibility on our homepage comparison table, seen by every visitor to invest.com.au.",
     type: "Featured",
     reach: "25,000+ monthly visitors",
+    bestFor: "Top-of-funnel awareness across all investor segments",
+    ctrRange: "Avg CTR: 1.2–1.8%",
   },
   {
     name: "Article Sidebar",
@@ -60,6 +68,8 @@ const PLACEMENTS = [
     description: "Contextual placement alongside our educational articles and guides.",
     type: "CPC",
     reach: "20,000+ monthly readers",
+    bestFor: "Brokers targeting research-phase investors reading guides",
+    ctrRange: "Avg CTR: 0.4–0.7%",
   },
   {
     name: "Deals Page",
@@ -67,6 +77,8 @@ const PLACEMENTS = [
     description: "Highlight your promotional offers on our deals and promotions page.",
     type: "Featured",
     reach: "8,000+ monthly visitors",
+    bestFor: "Time-limited promotions and sign-up bonus campaigns",
+    ctrRange: "Avg CTR: 1.5–2.2%",
   },
 ];
 
@@ -75,12 +87,34 @@ const PLACEMENTS = [
  * page never drift from what `/advertise/packages` actually charges.
  * Edit prices/features in `lib/sponsorship-tiers.ts`, not here.
  */
+
+/** ADV-123: Small-print keyed by tier id — billing terms, minimums, rate info. */
+const TIER_SMALL_PRINT: Record<string, { minimum: string; billing: string; rateNote: string }> = {
+  featured_partner: {
+    minimum: "$2,000/month minimum",
+    billing: "1-month minimum · up to 30% off on 12-month plans",
+    rateNote: "Includes CPC credits · rates from $1.20–$2.50/click",
+  },
+  category_sponsor: {
+    minimum: "$500/month minimum",
+    billing: "Billed monthly · cancel anytime",
+    rateNote: "Fixed sponsorship fee · no per-click charges",
+  },
+  deal_of_month: {
+    minimum: "$300/month minimum",
+    billing: "Billed monthly · cancel anytime",
+    rateNote: "Flat fee per promotion cycle · no per-click charges",
+  },
+};
+
 const TIERS = SELF_SERVE_TIERS.map((t) => ({
   name: t.name,
+  id: t.id,
   price: `$${t.basePrice.toLocaleString("en-AU")}`,
   period: "/month",
   features: t.includes,
   highlight: !!t.highlight,
+  smallPrint: TIER_SMALL_PRINT[t.id],
 }));
 
 export default function AdvertisePage() {
@@ -96,12 +130,12 @@ export default function AdvertisePage() {
             Reach Australian investors actively choosing a broker
           </h1>
           <p className="text-slate-300 text-base md:text-lg max-w-2xl mx-auto mb-8">
-            Invest.com.au is Australia&apos;s leading independent investing comparison hub. Our users are high-intent — they&apos;re actively researching and ready to open accounts.
+            Invest.com.au is Australia&apos;s leading independent investing comparison hub. Our users are high-intent &mdash; they&apos;re actively researching and ready to open accounts.
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <Link href="/advertise/packages"
               className="px-8 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-lg hover:bg-amber-400 transition-colors">
-              Start Advertising →
+              Start Advertising &rarr;
             </Link>
             <a href="mailto:partners@invest.com.au"
               className="px-8 py-3 bg-white/10 text-white font-bold text-sm rounded-lg hover:bg-white/20 transition-colors">
@@ -111,7 +145,7 @@ export default function AdvertisePage() {
           <p className="mt-4 text-sm text-slate-400">
             Already a partner?{" "}
             <Link href="/broker-portal/login" className="text-white underline hover:text-amber-300 transition-colors">
-              Sign in to your dashboard →
+              Sign in to your dashboard &rarr;
             </Link>
           </p>
         </div>
@@ -155,7 +189,22 @@ export default function AdvertisePage() {
                   </span>
                 </div>
                 <p className="text-sm text-slate-600 mb-3">{p.description}</p>
-                <p className="text-xs text-slate-400 font-medium">{p.reach}</p>
+                <p className="text-xs text-slate-400 font-medium mb-3">{p.reach}</p>
+                {/* ADV-124: Best-for guidance + estimated CTR */}
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1 text-[0.7rem] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
+                    <svg className="w-3 h-3 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Best for: {p.bestFor}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[0.7rem] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                    <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                    {p.ctrRange}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -171,7 +220,7 @@ export default function AdvertisePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
             {TIERS.map(tier => (
-              <div key={tier.name} className={`rounded-xl border p-6 ${
+              <div key={tier.name} className={`rounded-xl border p-6 flex flex-col ${
                 tier.highlight ? "border-amber-300 bg-amber-50/30 ring-1 ring-amber-300" : "border-slate-200 bg-white"
               }`}>
                 {tier.highlight && (
@@ -184,7 +233,7 @@ export default function AdvertisePage() {
                   <span className="text-3xl font-extrabold text-slate-900">{tier.price}</span>
                   <span className="text-sm text-slate-500">{tier.period}</span>
                 </div>
-                <ul className="space-y-2">
+                <ul className="space-y-2 flex-1">
                   {tier.features.map(f => (
                     <li key={f} className="flex items-start gap-2 text-sm text-slate-700">
                       <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,6 +243,14 @@ export default function AdvertisePage() {
                     </li>
                   ))}
                 </ul>
+                {/* ADV-123: Pricing small-print */}
+                {tier.smallPrint && (
+                  <div className="mt-4 pt-4 border-t border-slate-200/80 space-y-1">
+                    <p className="text-[0.7rem] text-slate-400 font-medium">{tier.smallPrint.minimum}</p>
+                    <p className="text-[0.7rem] text-slate-400">{tier.smallPrint.billing}</p>
+                    <p className="text-[0.7rem] text-slate-400">{tier.smallPrint.rateNote}</p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -208,7 +265,7 @@ export default function AdvertisePage() {
               </svg>
             </Link>
             <p className="text-xs text-slate-500 mt-3">
-              Self-serve checkout with duration discounts — or{" "}
+              Self-serve checkout with duration discounts &mdash; or{" "}
               <a href="mailto:partners@invest.com.au" className="underline hover:text-slate-900 transition-colors">
                 contact sales
               </a>
@@ -253,7 +310,7 @@ export default function AdvertisePage() {
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <Link href="/advertise/packages"
               className="px-8 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-lg hover:bg-amber-400 transition-colors">
-              Create Partner Account →
+              Create Partner Account &rarr;
             </Link>
             <a href="mailto:partners@invest.com.au"
               className="px-8 py-3 bg-white/10 text-white font-bold text-sm rounded-lg hover:bg-white/20 transition-colors">
@@ -263,7 +320,7 @@ export default function AdvertisePage() {
           <p className="mt-4 text-sm text-slate-400">
             Existing partner?{" "}
             <Link href="/broker-portal/login" className="text-white underline hover:text-amber-300 transition-colors">
-              Sign in →
+              Sign in &rarr;
             </Link>
           </p>
         </div>

@@ -131,7 +131,7 @@ export default function BusinessFinanceEnquiryForm() {
           </label>
           <input
             id={emailId}
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             name="email"
             required
             maxLength={254}
@@ -179,11 +179,11 @@ export default function BusinessFinanceEnquiryForm() {
           <input
             id={loanAmountId}
             type="number"
+            inputMode="decimal"
             name="loan_amount"
             min={0}
             max={50_000_000}
             step={1000}
-            inputMode="decimal"
             placeholder="e.g. 250000"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
@@ -195,11 +195,11 @@ export default function BusinessFinanceEnquiryForm() {
           <input
             id={annualRevenueId}
             type="number"
+            inputMode="decimal"
             name="annual_revenue"
             min={0}
             max={500_000_000}
             step={10000}
-            inputMode="decimal"
             placeholder="e.g. 1200000"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
@@ -210,7 +210,7 @@ export default function BusinessFinanceEnquiryForm() {
           </label>
           <input
             id={timeInBusinessId}
-            type="number"
+            type="number" inputMode="decimal"
             name="time_in_business_months"
             min={0}
             max={100}
@@ -258,7 +258,7 @@ export default function BusinessFinanceEnquiryForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="w-full rounded-xl bg-indigo-700 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-800 transition-colors disabled:opacity-50"
+        className="w-full rounded-xl bg-indigo-700 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {status === "submitting" ? "Submitting…" : "Submit Enquiry"}
       </button>

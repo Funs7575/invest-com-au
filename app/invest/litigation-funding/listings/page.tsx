@@ -24,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Litigation Funding Investment Opportunities — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/litigation-funding/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Litigation Funding Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

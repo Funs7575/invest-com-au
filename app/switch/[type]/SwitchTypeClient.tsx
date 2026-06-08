@@ -68,10 +68,11 @@ function BrokerEstimateForm() {
       </h2>
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="switch-current-fee" className="block text-xs font-semibold text-slate-600 mb-1">
             Current ASX fee
           </label>
           <input
+            id="switch-current-fee"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentFee}
             onChange={(e) => { setCurrentFee(e.target.value); setShowResult(false); }}
@@ -79,10 +80,11 @@ function BrokerEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="switch-target-fee" className="block text-xs font-semibold text-slate-600 mb-1">
             Target ASX fee
           </label>
           <input
+            id="switch-target-fee"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetFee}
             onChange={(e) => { setTargetFee(e.target.value); setShowResult(false); }}
@@ -90,11 +92,12 @@ function BrokerEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-broker-trades" className="block text-xs font-semibold text-slate-600 mb-1">
             Trades per year
           </label>
           <input
-            type="number"
+            id="st-broker-trades"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={trades}
             onChange={(e) => { setTrades(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -102,11 +105,12 @@ function BrokerEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-broker-avg-size" className="block text-xs font-semibold text-slate-600 mb-1">
             Avg trade size ($)
           </label>
           <input
-            type="number"
+            id="st-broker-avg-size"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={avgSize}
             onChange={(e) => { setAvgSize(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -114,11 +118,12 @@ function BrokerEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-broker-us-pct" className="block text-xs font-semibold text-slate-600 mb-1">
             US shares (%)
           </label>
           <input
-            type="number"
+            id="st-broker-us-pct"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={usPct}
             onChange={(e) => { setUsPct(Math.min(100, parseInt(e.target.value) || 0)); setShowResult(false); }}
@@ -173,11 +178,12 @@ function SuperEstimateForm() {
       </p>
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div className="col-span-2">
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-balance" className="block text-xs font-semibold text-slate-600 mb-1">
             Super balance ($)
           </label>
           <input
-            type="number"
+            id="st-super-balance"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={balance}
             onChange={(e) => { setBalance(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -185,11 +191,12 @@ function SuperEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-current-rate" className="block text-xs font-semibold text-slate-600 mb-1">
             Current fund fee (% p.a.)
           </label>
           <input
-            type="number"
+            id="st-super-current-rate"
+            type="number" inputMode="decimal"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentRate}
@@ -198,11 +205,12 @@ function SuperEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-target-rate" className="block text-xs font-semibold text-slate-600 mb-1">
             Target fund fee (% p.a.)
           </label>
           <input
-            type="number"
+            id="st-super-target-rate"
+            type="number" inputMode="decimal"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetRate}
@@ -211,11 +219,12 @@ function SuperEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-current-fixed" className="block text-xs font-semibold text-slate-600 mb-1">
             Current fixed fee ($/yr)
           </label>
           <input
-            type="number"
+            id="st-super-current-fixed"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentFixed}
             onChange={(e) => { setCurrentFixed(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -223,11 +232,12 @@ function SuperEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-target-fixed" className="block text-xs font-semibold text-slate-600 mb-1">
             Target fixed fee ($/yr)
           </label>
           <input
-            type="number"
+            id="st-super-target-fixed"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetFixed}
             onChange={(e) => { setTargetFixed(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -281,11 +291,12 @@ function SavingsEstimateForm() {
       </p>
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div className="col-span-2">
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-balance" className="block text-xs font-semibold text-slate-600 mb-1">
             Savings balance ($)
           </label>
           <input
-            type="number"
+            id="st-sav-balance"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={balance}
             onChange={(e) => { setBalance(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -293,11 +304,12 @@ function SavingsEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-current-rate" className="block text-xs font-semibold text-slate-600 mb-1">
             Current rate (% p.a., ongoing)
           </label>
           <input
-            type="number"
+            id="st-sav-current-rate"
+            type="number" inputMode="decimal"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentRate}
@@ -306,11 +318,12 @@ function SavingsEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-target-rate" className="block text-xs font-semibold text-slate-600 mb-1">
             Target rate (% p.a., ongoing)
           </label>
           <input
-            type="number"
+            id="st-sav-target-rate"
+            type="number" inputMode="decimal"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetRate}
@@ -319,11 +332,12 @@ function SavingsEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-current-fee" className="block text-xs font-semibold text-slate-600 mb-1">
             Current monthly fee ($)
           </label>
           <input
-            type="number"
+            id="st-sav-current-fee"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentFee}
             onChange={(e) => { setCurrentFee(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -331,11 +345,12 @@ function SavingsEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-target-fee" className="block text-xs font-semibold text-slate-600 mb-1">
             Target monthly fee ($)
           </label>
           <input
-            type="number"
+            id="st-sav-target-fee"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetFee}
             onChange={(e) => { setTargetFee(parseInt(e.target.value) || 0); setShowResult(false); }}

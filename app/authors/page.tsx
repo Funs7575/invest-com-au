@@ -3,7 +3,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd, formatRole, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
+
+const AUTHORS_FAQS = [
+  {
+    q: "Who writes the investing guides and reviews on Invest.com.au?",
+    a: "All editorial content is written by named financial professionals — many hold ASIC-issued AFSL Authorised Representative (AR) numbers, TPB-registered Tax Agent status, or relevant qualifications (CFP, CPA, RG146). Each author's credentials, disclosure statement, and professional affiliations are listed on their author profile page. We do not publish unsigned content or AI-generated copy without human expert review.",
+  },
+  {
+    q: "How do I verify an author's credentials on Invest.com.au?",
+    a: "Click any author's name to view their profile page. Profiles show: their AFSL or AR number (verifiable on ASIC's Financial Advisers Register), TPB tax agent registration number (verifiable at tpb.gov.au), relevant qualifications (CFP, CPA, RG146), years of experience, and a conflict-of-interest disclosure. We cross-check AFSL status annually — authors who lose their licence are removed from editorial roles.",
+  },
+  {
+    q: "Does Invest.com.au publish sponsored or paid articles?",
+    a: "No. Commercial relationships (affiliate commissions, platform sponsorships, and featured placement fees) are entirely separate from editorial content. Brokers and platforms cannot pay to influence our star ratings, rankings, or editorial coverage. Paid content — if any is published — is clearly labelled 'Sponsored'. Our editorial team does not receive revenue-linked bonuses tied to affiliate performance.",
+  },
+  {
+    q: "Can I contribute an investing article to Invest.com.au?",
+    a: "Yes — we publish articles from credentialled Australian financial professionals: licensed financial planners, SMSF accountants, tax agents, property advisors, and sector specialists. Contact us at editorial@invest.com.au with your credentials, the topic you want to cover, and a brief outline. Contributors must disclose any financial interests in products or platforms they write about, and articles are reviewed for factual accuracy and ASIC compliance before publication.",
+  },
+];
 
 export const revalidate = 3600;
 
@@ -44,12 +64,13 @@ export default async function AuthorsIndexPage() {
     { name: "Home", url: absoluteUrl("/") },
     { name: "Our Editorial Team" },
   ]);
+  const faqLd = faqJsonLd(AUTHORS_FAQS);
 
   return (
     <div className="py-8 md:py-14">
-      <JsonLd data={breadcrumb} testId="authors-jsonld" />
+      <JsonLd data={faqLd ? [breadcrumb, faqLd] : breadcrumb} testId="authors-jsonld" />
       <div className="container-custom max-w-5xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5">/</span>
           <span className="text-slate-700">Our Editorial Team</span>
@@ -69,8 +90,17 @@ export default async function AuthorsIndexPage() {
         </div>
 
         {members.length === 0 ? (
-          <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
-            <p className="text-sm text-slate-600">Team profiles coming soon.</p>
+          <div className="rounded-xl border border-slate-200 bg-white p-10 text-center space-y-4">
+            <p className="text-base font-semibold text-slate-900">Are you a financial adviser or investing expert?</p>
+            <p className="text-sm text-slate-600 max-w-md mx-auto">
+              Share your insights with 50,000+ investors. We publish independent guides, platform reviews, and strategy pieces from credentialled Australian professionals.
+            </p>
+            <Link
+              href="/contact"
+              className="inline-block px-5 py-2.5 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors"
+            >
+              Apply to write →
+            </Link>
           </div>
         ) : (
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -135,6 +165,21 @@ export default async function AuthorsIndexPage() {
             ))}
           </ul>
         )}
+        {/* FAQ */}
+        <section className="mt-12 border-t border-slate-200 pt-8">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {AUTHORS_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

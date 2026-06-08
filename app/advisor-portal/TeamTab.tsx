@@ -32,6 +32,14 @@ export default function TeamTab({ advisor }: Props) {
   const [inviteName, setInviteName] = useState("");
   const [inviteStatus, setInviteStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [inviteActionStatus, setInviteActionStatus] = useState<Record<number, "idle" | "loading" | "done" | "error">>({});
+  const [pendingRemoveMemberId, setPendingRemoveMemberId] = useState<number | null>(null);
+  const [memberRemoveError, setMemberRemoveError] = useState<string | null>(null);
+  const [pendingRevokeInviteId, setPendingRevokeInviteId] = useState<number | null>(null);
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [roleErrors, setRoleErrors] = useState<Record<number, string>>({});
+  const [inviteActionErrors, setInviteActionErrors] = useState<Record<number, string>>({});
+  const [firmSaveError, setFirmSaveError] = useState<string | null>(null);
+  const [seatRequestError, setSeatRequestError] = useState<string | null>(null);
 
   const loadFirmData = useCallback(async () => {
     try {
@@ -73,6 +81,7 @@ export default function TeamTab({ advisor }: Props) {
         body: JSON.stringify({ email: inviteEmail.trim(), name: inviteName.trim() || undefined }),
       });
       if (res.ok) {
+        setInviteError(null);
         setInviteStatus("sent");
         setInviteEmail("");
         setInviteName("");
@@ -80,7 +89,7 @@ export default function TeamTab({ advisor }: Props) {
         setTimeout(() => setInviteStatus("idle"), 3000);
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to send invite");
+        setInviteError((data as { error?: string }).error || "Failed to send invite");
         setInviteStatus("error");
       }
     } catch {
@@ -131,18 +140,19 @@ export default function TeamTab({ advisor }: Props) {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <input value={inviteName} onChange={(e) => setInviteName(e.target.value)} placeholder="Name (optional)" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
-                <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="Email address *" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
-                <button onClick={sendInvite} disabled={inviteStatus === "sending" || !inviteEmail.trim()} className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors">
+                <input type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoComplete="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="Email address *" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
+                <button onClick={sendInvite} disabled={inviteStatus === "sending" || !inviteEmail.trim()} aria-busy={inviteStatus === "sending"} className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                   {inviteStatus === "sending" ? "Sending..." : inviteStatus === "sent" ? "Sent!" : "Send Invite"}
                 </button>
               </div>
             )}
-            {inviteStatus === "error" && <p className="text-xs text-red-600 mt-2">Failed to send invite. Please try again.</p>}
+            {inviteError && <p role="alert" className="text-xs text-red-600 mt-2">{inviteError}</p>}
           </div>
 
           {/* Current members */}
           <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5">
             <h3 className="text-sm font-bold text-slate-900 mb-3">Team Members ({firmMembers.length})</h3>
+            {memberRemoveError && <p role="alert" className="text-xs text-red-600 mb-2">{memberRemoveError}</p>}
             {firmMembers.length === 0 ? (
               <p className="text-sm text-slate-400">No team members yet. Invite your first advisor above.</p>
             ) : (
@@ -177,10 +187,11 @@ export default function TeamTab({ advisor }: Props) {
                             body: JSON.stringify({ memberId: m.id, role: newRole }),
                           });
                           if (res.ok) {
+                            setRoleErrors(prev => { const n = { ...prev }; delete n[m.id]; return n; });
                             setFirmMembers(prev => prev.map(fm => fm.id === m.id ? { ...fm, role: newRole, is_firm_admin: newRole !== "member" } : fm));
                           } else {
                             const d = await res.json();
-                            alert(d.error || "Failed to update role");
+                            setRoleErrors(prev => ({ ...prev, [m.id]: (d as { error?: string }).error || "Failed to update role" }));
                           }
                         }}
                         className="text-[0.62rem] border border-slate-200 rounded px-1.5 py-1 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
@@ -189,24 +200,40 @@ export default function TeamTab({ advisor }: Props) {
                         <option value="manager">Manager</option>
                         <option value="member">Member</option>
                       </select>
+                      {roleErrors[m.id] && <span role="alert" className="text-[0.5rem] text-red-600" title={roleErrors[m.id]}>!</span>}
                       <span className={`text-[0.56rem] px-1.5 py-0.5 rounded font-semibold ${m.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{m.status}</span>
                       {m.id !== advisor?.id && (
-                        <button
-                          onClick={async () => {
-                            if (!confirm(`Remove ${m.name} from the firm? Their individual profile will remain active.`)) return;
-                            const res = await fetch(`/api/advisor-auth/firm/member?memberId=${m.id}`, { method: "DELETE" });
-                            if (res.ok) {
-                              setFirmMembers(prev => prev.filter(fm => fm.id !== m.id));
-                              setFirmMemberCount(c => c - 1);
-                            } else {
-                              const d = await res.json();
-                              alert(d.error || "Failed to remove member");
-                            }
-                          }}
-                          className="text-[0.56rem] text-red-500 hover:text-red-700 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors"
-                        >
-                          Remove
-                        </button>
+                        pendingRemoveMemberId === m.id ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[0.56rem] text-red-600 font-medium">Remove?</span>
+                            <button
+                              onClick={async () => {
+                                setPendingRemoveMemberId(null);
+                                setMemberRemoveError(null);
+                                const res = await fetch(`/api/advisor-auth/firm/member?memberId=${m.id}`, { method: "DELETE" });
+                                if (res.ok) {
+                                  setFirmMembers(prev => prev.filter(fm => fm.id !== m.id));
+                                  setFirmMemberCount(c => c - 1);
+                                } else {
+                                  const d = await res.json();
+                                  setMemberRemoveError(d.error || "Failed to remove member");
+                                }
+                              }}
+                              className="text-[0.56rem] font-bold text-white bg-red-600 hover:bg-red-700 px-1.5 py-0.5 rounded transition-colors"
+                            >Yes</button>
+                            <button
+                              onClick={() => setPendingRemoveMemberId(null)}
+                              className="text-[0.56rem] text-slate-500 hover:text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 transition-colors"
+                            >No</button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => { setMemberRemoveError(null); setPendingRemoveMemberId(m.id); }}
+                            className="text-[0.56rem] text-red-500 hover:text-red-700 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors"
+                          >
+                            Remove
+                          </button>
+                        )
                       )}
                     </div>
                   </div>
@@ -253,38 +280,50 @@ export default function TeamTab({ advisor }: Props) {
                               loadFirmData();
                             } else {
                               const d = await res.json();
-                              alert(d.error || "Failed to resend");
+                              setInviteActionErrors(prev => ({ ...prev, [inv.id]: (d as { error?: string }).error || "Failed to resend" }));
                               setInviteActionStatus(prev => ({ ...prev, [inv.id]: "error" }));
                             }
                           }}
-                          className="text-[0.56rem] text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-blue-50 transition-colors disabled:opacity-50"
+                          className="text-[0.56rem] text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {inviteActionStatus[inv.id] === "loading" ? "…" : inviteActionStatus[inv.id] === "done" ? "Sent!" : "Resend"}
+                          {inviteActionStatus[inv.id] === "loading" ? "…" : inviteActionStatus[inv.id] === "done" ? "Sent!" : inviteActionStatus[inv.id] === "error" ? <span title={inviteActionErrors[inv.id]}>Failed</span> : "Resend"}
                         </button>
                       )}
                       {inv.status === "pending" && (
+                        pendingRevokeInviteId === inv.id ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[0.56rem] text-red-600 font-medium">Revoke?</span>
+                            <button
+                              onClick={async () => {
+                                setPendingRevokeInviteId(null);
+                                setInviteActionStatus(prev => ({ ...prev, [inv.id]: "loading" }));
+                                const res = await fetch("/api/advisor-auth/firm/invite", {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ inviteId: inv.id, action: "revoke" }),
+                                });
+                                if (res.ok) {
+                                  loadFirmData();
+                                } else {
+                                  setInviteActionStatus(prev => ({ ...prev, [inv.id]: "error" }));
+                                }
+                              }}
+                              className="text-[0.56rem] font-bold text-white bg-red-600 hover:bg-red-700 px-1.5 py-0.5 rounded transition-colors"
+                            >Yes</button>
+                            <button
+                              onClick={() => setPendingRevokeInviteId(null)}
+                              className="text-[0.56rem] text-slate-500 hover:text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 transition-colors"
+                            >No</button>
+                          </div>
+                        ) : (
                         <button
                           disabled={inviteActionStatus[inv.id] === "loading"}
-                          onClick={async () => {
-                            if (!confirm("Revoke this invitation?")) return;
-                            setInviteActionStatus(prev => ({ ...prev, [inv.id]: "loading" }));
-                            const res = await fetch("/api/advisor-auth/firm/invite", {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ inviteId: inv.id, action: "revoke" }),
-                            });
-                            if (res.ok) {
-                              loadFirmData();
-                            } else {
-                              const d = await res.json();
-                              alert(d.error || "Failed to revoke");
-                              setInviteActionStatus(prev => ({ ...prev, [inv.id]: "error" }));
-                            }
-                          }}
-                          className="text-[0.56rem] text-red-500 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors disabled:opacity-50"
+                          onClick={() => setPendingRevokeInviteId(inv.id)}
+                          className="text-[0.56rem] text-red-500 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Revoke
                         </button>
+                        )
                       )}
                     </div>
                   </div>
@@ -299,8 +338,13 @@ export default function TeamTab({ advisor }: Props) {
       {firmTab === "analytics" && (
         <>
           {!firmAnalytics ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="w-6 h-6 border-2 border-slate-200 border-t-violet-600 rounded-full animate-spin" />
+            <div className="space-y-4 animate-pulse" role="status" aria-label="Loading team analytics">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="h-20 bg-slate-100 rounded-xl" />
+                ))}
+              </div>
+              <div className="h-48 bg-slate-100 rounded-xl" />
             </div>
           ) : (
             <>
@@ -328,15 +372,15 @@ export default function TeamTab({ advisor }: Props) {
                   <h3 className="text-sm font-bold text-slate-900">Performance by Member</h3>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
+                  <table className="w-full text-left text-xs" aria-label="Performance by member">
                     <thead>
                       <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
-                        <th className="px-4 py-2">Advisor</th>
-                        <th className="px-4 py-2 text-right">Views (30d)</th>
-                        <th className="px-4 py-2 text-right">Leads (30d)</th>
-                        <th className="px-4 py-2 text-right">Converted</th>
-                        <th className="px-4 py-2 text-right">Credits</th>
-                        <th className="px-4 py-2 text-right">Total Billed</th>
+                        <th scope="col" className="px-4 py-2">Advisor</th>
+                        <th scope="col" className="px-4 py-2 text-right">Views (30d)</th>
+                        <th scope="col" className="px-4 py-2 text-right">Leads (30d)</th>
+                        <th scope="col" className="px-4 py-2 text-right">Converted</th>
+                        <th scope="col" className="px-4 py-2 text-right">Credits</th>
+                        <th scope="col" className="px-4 py-2 text-right">Total Billed</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -392,8 +436,9 @@ export default function TeamTab({ advisor }: Props) {
             <h3 className="text-sm font-bold text-slate-900 mb-4">Firm Profile</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
+                <label htmlFor="firm-name" className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
                 <input
+                  id="firm-name"
                   value={editingFirm.name || ""}
                   onChange={(e) => setEditingFirm(f => ({ ...f, name: e.target.value }))}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -401,8 +446,9 @@ export default function TeamTab({ advisor }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">About the Firm</label>
+                <label htmlFor="firm-bio" className="block text-xs font-semibold text-slate-600 mb-1">About the Firm</label>
                 <textarea
+                  id="firm-bio"
                   value={editingFirm.bio || ""}
                   onChange={(e) => setEditingFirm(f => ({ ...f, bio: e.target.value }))}
                   rows={4}
@@ -412,40 +458,40 @@ export default function TeamTab({ advisor }: Props) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
-                  <input value={editingFirm.website || ""} onChange={(e) => setEditingFirm(f => ({ ...f, website: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                  <label htmlFor="firm-website" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+                  <input id="firm-website" type="url" autoComplete="url" value={editingFirm.website || ""} onChange={(e) => setEditingFirm(f => ({ ...f, website: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
-                  <input value={editingFirm.phone || ""} onChange={(e) => setEditingFirm(f => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="02 XXXX XXXX" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-                  <input type="email" value={editingFirm.email || ""} onChange={(e) => setEditingFirm(f => ({ ...f, email: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="info@firm.com.au" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
-                  <input value={editingFirm.abn || ""} onChange={(e) => setEditingFirm(f => ({ ...f, abn: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
+                  <label htmlFor="firm-phone" className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
+                  <input id="firm-phone" value={editingFirm.phone || ""} onChange={(e) => setEditingFirm(f => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="02 XXXX XXXX" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">AFSL Number</label>
-                  <input value={editingFirm.afsl_number || ""} onChange={(e) => setEditingFirm(f => ({ ...f, afsl_number: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. 234567" />
+                  <label htmlFor="firm-email" className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+                  <input id="firm-email" type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoComplete="email" value={editingFirm.email || ""} onChange={(e) => setEditingFirm(f => ({ ...f, email: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="info@firm.com.au" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">State</label>
-                  <select value={editingFirm.location_state || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_state: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                  <label htmlFor="firm-abn" className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
+                  <input id="firm-abn" value={editingFirm.abn || ""} onChange={(e) => setEditingFirm(f => ({ ...f, abn: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="firm-afsl" className="block text-xs font-semibold text-slate-600 mb-1">AFSL Number</label>
+                  <input id="firm-afsl" value={editingFirm.afsl_number || ""} onChange={(e) => setEditingFirm(f => ({ ...f, afsl_number: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. 234567" />
+                </div>
+                <div>
+                  <label htmlFor="firm-state" className="block text-xs font-semibold text-slate-600 mb-1">State</label>
+                  <select id="firm-state" value={editingFirm.location_state || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_state: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
                     <option value="">Select...</option>
                     {["NSW","VIC","QLD","WA","SA","TAS","ACT","NT"].map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Suburb</label>
-                <input value={editingFirm.location_suburb || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_suburb: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sydney CBD" />
+                <label htmlFor="firm-suburb" className="block text-xs font-semibold text-slate-600 mb-1">Suburb</label>
+                <input id="firm-suburb" value={editingFirm.location_suburb || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_suburb: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sydney CBD" />
               </div>
               <div className="flex items-center gap-3 pt-2">
                 <button
@@ -458,6 +504,7 @@ export default function TeamTab({ advisor }: Props) {
                         body: JSON.stringify(editingFirm),
                       });
                       if (res.ok) {
+                        setFirmSaveError(null);
                         const data = await res.json();
                         setFirmDetails(data.firm);
                         setEditingFirm(data.firm);
@@ -465,16 +512,17 @@ export default function TeamTab({ advisor }: Props) {
                         setTimeout(() => setFirmSaved(false), 3000);
                       } else {
                         const d = await res.json();
-                        alert(d.error || "Failed to save");
+                        setFirmSaveError((d as { error?: string }).error || "Failed to save changes. Please try again.");
                       }
                     } finally { setSavingFirm(false); }
                   }}
                   disabled={savingFirm}
-                  className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                  className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {savingFirm ? "Saving..." : "Save Changes"}
                 </button>
-                {firmSaved && <span className="text-sm text-emerald-600 font-medium">Saved!</span>}
+                {firmSaved && <span role="status" className="text-sm text-emerald-600 font-medium">Saved!</span>}
+                {firmSaveError && <p role="alert" className="text-xs text-red-600">{firmSaveError}</p>}
               </div>
             </div>
           </div>
@@ -499,9 +547,10 @@ export default function TeamTab({ advisor }: Props) {
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">Requested Seats</label>
+                    <label htmlFor="seat-req-count" className="block text-xs font-semibold text-slate-600 mb-1">Requested Seats</label>
                     <input
-                      type="number"
+                      id="seat-req-count"
+                      type="number" inputMode="decimal"
                       value={seatRequestSeats}
                       onChange={(e) => setSeatRequestSeats(e.target.value)}
                       min={(firmDetails?.max_seats || 10) + 1}
@@ -509,10 +558,16 @@ export default function TeamTab({ advisor }: Props) {
                       className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
                       placeholder={`More than ${firmDetails?.max_seats || 10}`}
                     />
+                    {seatRequestSeats && parseInt(seatRequestSeats) <= (firmDetails?.max_seats || 10) && (
+                      <p className="text-[0.65rem] text-amber-600 mt-1">
+                        Must be more than your current limit ({firmDetails?.max_seats || 10} seats).
+                      </p>
+                    )}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">Reason (optional)</label>
+                    <label htmlFor="seat-req-reason" className="block text-xs font-semibold text-slate-600 mb-1">Reason (optional)</label>
                     <input
+                      id="seat-req-reason"
                       value={seatRequestReason}
                       onChange={(e) => setSeatRequestReason(e.target.value)}
                       className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -530,17 +585,19 @@ export default function TeamTab({ advisor }: Props) {
                       body: JSON.stringify({ requestedSeats: parseInt(seatRequestSeats), reason: seatRequestReason }),
                     });
                     if (res.ok) {
+                      setSeatRequestError(null);
                       setSeatRequestStatus("sent");
                     } else {
                       const d = await res.json();
-                      alert(d.error || "Failed to submit request");
+                      setSeatRequestError((d as { error?: string }).error || "Failed to submit request. Please try again.");
                       setSeatRequestStatus("error");
                     }
                   }}
-                  className="px-4 py-2 bg-violet-600 text-white font-semibold rounded-lg text-sm hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                  className="px-4 py-2 bg-violet-600 text-white font-semibold rounded-lg text-sm hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {seatRequestStatus === "sending" ? "Sending..." : "Request More Seats"}
                 </button>
+                {seatRequestError && <p role="alert" className="text-xs text-red-600">{seatRequestError}</p>}
                 <p className="text-[0.6rem] text-slate-400">Our team will review your request and update your seat limit within 1 business day. There&apos;s no charge for seat upgrades.</p>
               </div>
             )}

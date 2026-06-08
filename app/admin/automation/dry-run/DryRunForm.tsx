@@ -58,10 +58,11 @@ export default function DryRunForm() {
   return (
     <div className="space-y-4">
       <div className="bg-white border border-slate-200 rounded-xl p-4">
-        <label className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 block mb-1">
+        <label htmlFor="dr-classifier" className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 block mb-1">
           Classifier
         </label>
         <select
+          id="dr-classifier"
           value={classifier}
           onChange={(e) => loadSample(e.target.value)}
           className="w-full px-3 py-2 border border-slate-300 rounded text-sm font-mono bg-white focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none"
@@ -75,10 +76,11 @@ export default function DryRunForm() {
       </div>
 
       <div className="bg-white border border-slate-200 rounded-xl p-4">
-        <label className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 block mb-1">
+        <label htmlFor="dr-input-json" className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 block mb-1">
           Input JSON
         </label>
         <textarea
+          id="dr-input-json"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           rows={14}

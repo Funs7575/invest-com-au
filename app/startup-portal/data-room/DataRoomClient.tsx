@@ -122,7 +122,7 @@ export default function DataRoomClient({
             <h1 className="text-lg font-semibold text-gray-900 mt-0.5">{profile.company_name}</h1>
           </div>
         </div>
-        <nav className="max-w-5xl mx-auto px-4 sm:px-6 flex gap-1 pb-0">
+        <nav aria-label="Portal navigation" className="max-w-5xl mx-auto px-4 sm:px-6 flex gap-1 pb-0">
           {NAV.map((n) => (
             <Link
               key={n.href}
@@ -156,13 +156,14 @@ export default function DataRoomClient({
 
         {/* Upload modal */}
         {showUpload && (
-          <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
-              <h3 className="text-base font-semibold text-gray-900 mb-4">Upload document</h3>
+          <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50" onKeyDown={(e) => { if (e.key === "Escape") { setShowUpload(false); setUploadError(null); } }}>
+            <div role="dialog" aria-modal="true" aria-labelledby="data-room-upload-title" className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md mx-4">
+              <h3 id="data-room-upload-title" className="text-base font-semibold text-gray-900 mb-4">Upload document</h3>
               <form onSubmit={handleUpload} className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Category</label>
+                  <label htmlFor="dr-category" className="text-sm font-medium text-gray-700">Category</label>
                   <select
+                    id="dr-category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -173,10 +174,11 @@ export default function DataRoomClient({
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label htmlFor="dr-file" className="text-sm font-medium text-gray-700">
                     File <span className="font-normal text-gray-400">(PDF, JPG, PNG, WebP — max 50 MB)</span>
                   </label>
                   <input
+                    id="dr-file"
                     ref={fileRef}
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png,.webp"
@@ -193,7 +195,7 @@ export default function DataRoomClient({
                   />
                   <span className="text-sm text-gray-700">Requires wholesale investor certification (s708)</span>
                 </label>
-                {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
+                {uploadError && <p role="alert" className="text-sm text-red-600">{uploadError}</p>}
                 <div className="flex gap-2 justify-end pt-1">
                   <button
                     type="button"
@@ -205,7 +207,7 @@ export default function DataRoomClient({
                   <button
                     type="submit"
                     disabled={uploading}
-                    className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium disabled:opacity-50 transition-colors"
+                    className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {uploading ? "Uploading…" : "Upload"}
                   </button>

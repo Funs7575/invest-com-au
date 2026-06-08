@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Direct US Shares vs ASX-Listed ETFs: True Cost (${CURRENT_YEAR})`,
     description: "Total cost comparison across investment sizes. At what amount does direct US share investing beat AU-listed ETFs?",
     url: `${SITE_URL}/global-investing/calculators/direct-vs-asx-cost`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Direct vs ASX Broker Cost Calculator")}&sub=${encodeURIComponent("IBKR vs CMC · Currency · Brokerage · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   alternates: { canonical: `${SITE_URL}/global-investing/calculators/direct-vs-asx-cost` },
 };
@@ -158,13 +159,13 @@ export default function DirectVsAsxCostPage() {
             <h2 className="text-2xl font-extrabold text-slate-900 mb-2">All cost factors compared</h2>
             <p className="text-sm text-slate-500 mb-5">AU-listed ETF (e.g. IVV) vs direct US shares via IBKR, Stake, CommSec International.</p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="AU ETF vs direct US shares cost factor comparison">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Cost factor</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">AU ETF (IVV)</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Direct US shares</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">Notes</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Cost factor</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">AU ETF (IVV)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Direct US shares</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">Notes</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

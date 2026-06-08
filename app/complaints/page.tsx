@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import {
   AFCA_REFERENCE,
   EDITORIAL_ACCURACY_COMMITMENT,
@@ -31,6 +32,27 @@ export const metadata = {
   twitter: { card: "summary_large_image" as const },
 };
 
+const COMPLAINTS_FAQS = [
+  {
+    q: "How do I make a complaint about Invest.com.au?",
+    a: "Email complaints@invest.com.au with a clear description of your complaint, the date(s) it relates to, and what outcome you are seeking. We will acknowledge your complaint within 2 business days and provide a substantive response within 10 business days. If your complaint is complex and requires more time, we will notify you and provide a revised timeframe. All complaints are handled by a senior team member — we do not use automated responses for complaint resolution.",
+  },
+  {
+    q: "What if I'm not satisfied with Invest.com.au's response?",
+    a: "If you are not satisfied with how we have handled your complaint, you can escalate to the Australian Financial Complaints Authority (AFCA) — the independent external dispute resolution scheme we are a member of. AFCA can be reached at afca.org.au or 1800 931 678 and their service is free to consumers. You have the right to escalate to AFCA after 30 days if we haven't resolved your complaint, or at any time after receiving our final response if you disagree with it.",
+  },
+  {
+    q: "What types of complaints can Invest.com.au handle?",
+    a: "We can handle complaints about: (1) inaccurate or misleading information published on invest.com.au; (2) our editorial ratings, reviews, or comparisons; (3) affiliate or referral arrangements and any commercial disclosure failures; (4) data privacy issues (covered separately under our Privacy Policy at /privacy); and (5) conduct by the Invest.com.au team. We cannot resolve complaints about the platforms or advisers listed on our site — those must be directed to the platform, adviser, or their relevant EDR scheme (e.g. AFCA for financial services).",
+  },
+  {
+    q: "Will making a complaint affect what I see on the site?",
+    a: "No. Complaints are handled confidentially by our team and have no effect on the editorial ratings, rankings, or content you see on invest.com.au. In particular, a complaint from a platform or adviser about their review will not result in removal of that review unless there is a verified factual error. We maintain strict separation between our complaints process and our editorial function.",
+  },
+];
+
+const complaintsFaqLd = faqJsonLd(COMPLAINTS_FAQS);
+
 export default function ComplaintsPage() {
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -44,6 +66,12 @@ export default function ComplaintsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      {complaintsFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(complaintsFaqLd) }}
+        />
+      )}
       <div className="py-8 md:py-12">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
@@ -323,6 +351,23 @@ export default function ComplaintsPage() {
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-4xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {COMPLAINTS_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </div>

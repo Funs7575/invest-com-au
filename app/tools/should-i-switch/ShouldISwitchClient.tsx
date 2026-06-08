@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink } from "@/lib/tracking";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 type AssetMix = "asx" | "us" | "mixed";
 
@@ -110,7 +111,7 @@ export default function ShouldISwitchClient({
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">
             Home
           </Link>
@@ -183,7 +184,7 @@ export default function ShouldISwitchClient({
                 Trades per month
               </span>
               <input
-                type="number"
+                type="number" inputMode="decimal"
                 min={0}
                 step={1}
                 value={tradesPerMonth}
@@ -202,7 +203,7 @@ export default function ShouldISwitchClient({
                 Average trade size (AUD)
               </span>
               <input
-                type="number"
+                type="number" inputMode="decimal"
                 min={0}
                 step={100}
                 value={avgTradeSize}
@@ -403,6 +404,15 @@ export default function ShouldISwitchClient({
               Per-trade cost calculator →
             </Link>
           </div>
+        </section>
+
+        <section className="container-custom max-w-3xl pb-8">
+          <CalculatorLeadCapture
+            calcSlug="should-i-switch"
+            calcTitle="broker switch analysis"
+            need="wealth"
+            contextKeys={["broker-switch", "brokerage-fees", "investment"]}
+          />
         </section>
       </div>
     </div>

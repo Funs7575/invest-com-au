@@ -34,6 +34,7 @@ export default function ExportImportPage() {
   const [exportMessage, setExportMessage] = useState<string | null>(null);
 
   const [, setImportFile] = useState<File | null>(null);
+  const [importFileError, setImportFileError] = useState<string | null>(null);
   const [importData, setImportData] = useState<Record<string, unknown[]> | null>(null);
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
   const [importing, setImporting] = useState(false);
@@ -86,6 +87,7 @@ export default function ExportImportPage() {
     if (!file) return;
 
     setImportFile(file);
+    setImportFileError(null);
     setImportData(null);
     setImportPreview(null);
     setImportStatuses([]);
@@ -112,7 +114,7 @@ export default function ExportImportPage() {
       } catch (err: unknown) {
         setImportPreview(null);
         setImportData(null);
-        alert(`Invalid JSON file: ${err instanceof Error ? err.message : String(err)}`);
+        setImportFileError(`Invalid JSON file: ${err instanceof Error ? err.message : String(err)}`);
       }
     };
     reader.readAsText(file);
@@ -245,10 +247,11 @@ export default function ExportImportPage() {
           </p>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-slate-600 mb-2">
+            <label htmlFor="ei-backup-file" className="block text-sm font-medium text-slate-600 mb-2">
               Select Backup File
             </label>
             <input
+              id="ei-backup-file"
               type="file"
               accept=".json"
               onChange={handleFileSelect}
@@ -260,6 +263,9 @@ export default function ExportImportPage() {
                 hover:file:bg-slate-600
                 file:cursor-pointer cursor-pointer"
             />
+            {importFileError && (
+              <p role="alert" className="mt-2 text-xs text-red-700 bg-red-50 border border-red-100 rounded px-3 py-2">{importFileError}</p>
+            )}
           </div>
 
           {/* Preview */}
@@ -269,7 +275,7 @@ export default function ExportImportPage() {
                 Import Preview
               </h3>
               <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Import preview">
                   <thead>
                     <tr className="border-b border-slate-200">
                       <th className="px-4 py-2 text-left text-slate-500 font-medium">

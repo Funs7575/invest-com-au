@@ -102,7 +102,7 @@ export default async function PropertyBan2025Page() {
       {/* ── Hero ── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -349,13 +349,13 @@ export default async function PropertyBan2025Page() {
             sub="The ban affects all states equally, but the practical impact varies by market conditions."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Foreign buyer property ban impact by state — stamp duty and land tax surcharges">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Stamp Duty Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Key Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Stamp Duty Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Key Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -412,7 +412,7 @@ export default async function PropertyBan2025Page() {
                 <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                   <div>
                     <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                    <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating ?? 0))}</span> <span className="font-semibold text-slate-600">{Number(b.rating ?? 0).toFixed(1)}</span></p>
+                    <p className="text-xs"><span className="text-amber-600" aria-hidden="true">{renderStars(Number(b.rating ?? 0))}</span> <span className="font-semibold text-slate-600" aria-label={`${Number(b.rating ?? 0).toFixed(1)} out of 5 stars`}>{Number(b.rating ?? 0).toFixed(1)}</span></p>
                     <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                   </div>
                   <div className="mt-auto">

@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Estimate tax on your redundancy ETP — tax-free threshold, 17%/32% concessional rate, and net payout.",
     url: `${SITE_URL}/tools/etp-calculator`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("ETP Tax Calculator")}&sub=${encodeURIComponent("Employment Termination Payment · Tax Treatment · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import InvestOpportunitiesCallout from "@/components/invest/InvestOpportunitiesCallout";
 import { categoryListingsHref } from "@/lib/invest-listing-routes";
 
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
       "Residential vs commercial rules, sole purpose test, LRBA, tax rates, and the related-party traps — everything trustees need to know about property in super.",
     url: `${SITE_URL}/smsf/property`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Property Investment")}&sub=${encodeURIComponent("LRBA · Sole Purpose Test · Tax & Compliance · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -124,12 +126,12 @@ export default function SmsfPropertyPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="SMSF residential vs commercial property rules comparison">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 min-w-[180px]">Rule</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Residential property</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Commercial (business real) property</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 min-w-[180px]">Rule</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Residential property</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Commercial (business real) property</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
@@ -412,13 +414,13 @@ export default function SmsfPropertyPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Tax treatment of SMSF property in accumulation and pension phase">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Income or gain type</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Accumulation phase</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Pension phase</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Outside super (comparison)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Income or gain type</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Accumulation phase</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Pension phase</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Outside super (comparison)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
@@ -763,7 +765,7 @@ export default function SmsfPropertyPage() {
                 >
                   <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer select-none list-none font-bold text-slate-900 text-sm hover:bg-slate-50 transition-colors">
                     <span>{faq.q}</span>
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base">&#8964;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base" aria-hidden="true">&#8964;</span>
                   </summary>
                   <div className="px-5 pb-5 pt-1">
                     <p className="text-sm text-slate-700 leading-relaxed">{faq.a}</p>
@@ -792,6 +794,15 @@ export default function SmsfPropertyPage() {
             </div>
           </div>
         </section>
+
+        <HubAdvisorCTA
+          heading="Get specialist advice before buying property in your SMSF"
+          subheading="SMSF property rules — including the sole-purpose test, related-party restrictions, and LRBA structures — are complex. An SMSF specialist can review your investment strategy and ensure your fund stays compliant."
+          intent={{ need: "smsf", context: ["smsf_property", "lrba", "smsf_compliance"] }}
+          source="smsf_property"
+          ctaLabel="Find an SMSF property specialist"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* ── Related links ─────────────────────────────────────────────────── */}
         <section className="py-10 bg-slate-50 border-t border-slate-200">

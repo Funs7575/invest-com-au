@@ -21,14 +21,14 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: `DASP Calculator — Departing Australia Superannuation Payment (${CURRENT_YEAR})`,
-  description:
-    "Calculate the tax withheld on your Departing Australia Superannuation Payment (DASP). Shows 35% standard rate vs 65% Working Holiday Maker rate, plus component breakdown (taxed, untaxed, tax-free). ATO rates.",
+  description: "DASP calculator: estimate tax withheld on your Departing Australia Superannuation Payment. 35% standard rate or 65% Working Holiday Maker rate. ATO rates.",
   alternates: { canonical: absoluteUrl("/tools/dasp-calculator") },
   openGraph: {
     title: `DASP Calculator — Departing Australia Super Tax (${CURRENT_YEAR})`,
     description:
       "Estimate net DASP payment after ATO withholding. 35% standard / 65% WHM. Free and instant.",
     url: absoluteUrl("/tools/dasp-calculator"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("DASP Calculator")}&sub=${encodeURIComponent("Departing Australia Super Payment · Tax · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

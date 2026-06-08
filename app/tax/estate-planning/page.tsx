@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "CGT at death, super death benefits tax, testamentary trusts for minors, and the estate vs non-estate asset distinction explained.",
     url: `${SITE_URL}/tax/estate-planning`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Estate Planning & Tax Australia")}&sub=${encodeURIComponent("CGT at Death · Super Death Benefits · Testamentary Trusts · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/estate-planning` },
@@ -242,11 +243,11 @@ export default function EstatePlanningTaxPage() {
               when the beneficiary eventually sells.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="CGT outcomes by asset type on death">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-3 px-4 text-xs font-bold w-1/2">Asset type</th>
-                    <th className="text-left py-3 px-4 text-xs font-bold w-1/2">CGT outcome on death</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/2">Asset type</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/2">CGT outcome on death</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">

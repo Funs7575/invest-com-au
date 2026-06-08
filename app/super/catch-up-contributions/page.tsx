@@ -188,12 +188,12 @@ export default function CatchUpContributionsPage() {
               non-concessional caps (a 3-year bring-forward rule applies instead).
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Super contribution caps by financial year">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Financial Year</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Concessional Cap</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Non-Concessional Cap</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Financial Year</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Concessional Cap</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Non-Concessional Cap</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -374,11 +374,11 @@ export default function CatchUpContributionsPage() {
           <div className="container-custom max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">4 common catch-up contribution mistakes</h2>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Common catch-up contribution mistakes">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-64">Mistake</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-red-300">Why it matters</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-64">Mistake</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-red-300">Why it matters</th>
                   </tr>
                 </thead>
                 <tbody>

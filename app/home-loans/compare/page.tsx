@@ -75,7 +75,7 @@ export default function CompareHomeLoanPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-violet-900 to-violet-700 text-white py-14">
         <div className="container-custom">
-          <nav className="text-sm text-violet-200 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-violet-200 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>
@@ -99,12 +99,12 @@ export default function CompareHomeLoanPage() {
         <div className="container-custom">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">The 10-Point Home Loan Comparison Checklist</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="10-point home loan comparison checklist">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Factor</th>
-                  <th className="text-left px-5 py-3">Why It Matters</th>
-                  <th className="text-left px-5 py-3">What to Look For</th>
+                  <th scope="col" className="text-left px-5 py-3">Factor</th>
+                  <th scope="col" className="text-left px-5 py-3">Why It Matters</th>
+                  <th scope="col" className="text-left px-5 py-3">What to Look For</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,13 +126,13 @@ export default function CompareHomeLoanPage() {
         <div className="container-custom">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">LVR Tiers & Their Impact on Rate</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="LVR tiers and impact on home loan rate">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">LVR</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Lender Risk View</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Rate Expectation</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">LMI Required?</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">LVR</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Lender Risk View</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Rate Expectation</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">LMI Required?</th>
                 </tr>
               </thead>
               <tbody>
@@ -170,7 +170,7 @@ export default function CompareHomeLoanPage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-50">
                   {faq.q}
-                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.a}</div>
               </details>

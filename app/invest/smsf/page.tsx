@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Comprehensive SMSF investment strategy guide — property through SMSF (LRBA), shares, crypto, collectibles, in-house asset rules, limited recourse borrowing, and platform comparison.",
     url: `${SITE_URL}/invest/smsf`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Investment Guide Australia")}&sub=${encodeURIComponent("Property · Shares · Crypto · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -87,7 +88,7 @@ export default async function SmsfInvestmentPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -361,14 +362,14 @@ export default async function SmsfInvestmentPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">SMSF Investment Strategies Compared</h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="SMSF investment strategies compared">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Strategy</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Return Type</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Tax Efficiency</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Complexity</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Minimum</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Strategy</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Return Type</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Tax Efficiency</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Complexity</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Minimum</th>
                 </tr>
               </thead>
               <tbody>

@@ -157,7 +157,7 @@ export default function PushOptIn({ initialEnabled }: Props) {
             threshold — even when you&apos;re not on the site.
           </p>
           {error && (
-            <p className="mt-1.5 text-xs text-red-600">{error}</p>
+            <p role="alert" className="mt-1.5 text-xs text-red-600">{error}</p>
           )}
           {permission === "denied" && !error && (
             <p className="mt-1.5 text-xs text-amber-600">
@@ -173,8 +173,9 @@ export default function PushOptIn({ initialEnabled }: Props) {
             <button
               type="button"
               disabled={busy}
+              aria-busy={busy}
               onClick={handleDisable}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-red-200 hover:text-red-600 transition-colors disabled:opacity-40"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-red-200 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {busy ? "Saving…" : "Disable"}
             </button>
@@ -182,8 +183,9 @@ export default function PushOptIn({ initialEnabled }: Props) {
             <button
               type="button"
               disabled={busy || permission === "denied"}
+              aria-busy={busy}
               onClick={handleEnable}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-40"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {busy ? "Enabling…" : "Enable"}
             </button>

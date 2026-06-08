@@ -3,16 +3,18 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `TPD Insurance Australia (${CURRENT_YEAR}) — Total & Permanent Disability Guide`,
-  description: `Complete guide to TPD (Total and Permanent Disability) insurance in Australia: own occupation vs any occupation definitions, inside super vs outside, typical payouts, and how to choose cover. ${UPDATED_LABEL}.`,
+  description: `TPD insurance in Australia: own occupation vs any occupation, inside vs outside super, typical payouts, and how to choose cover. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `TPD Insurance Australia (${CURRENT_YEAR}) — Total & Permanent Disability Guide`,
     description: "Everything you need to know about TPD insurance in Australia — definitions, super vs outside, costs, and who needs it.",
     url: `${SITE_URL}/insurance/tpd`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("TPD Insurance Australia")}&sub=${encodeURIComponent("Total Permanent Disability · Own vs Any Occupation · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/tpd` },
@@ -183,7 +185,7 @@ export default function TPDInsurancePage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/insurance" className="hover:text-slate-900">Insurance</Link>
@@ -310,11 +312,11 @@ export default function TPDInsurancePage() {
             sub="Monthly premiums vary significantly by age, occupation, definition, and health. These are indicative ranges only — get personalised quotes."
           />
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table aria-label="Indicative TPD insurance costs by profile" className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Profile</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Indicative Monthly Premium</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Profile</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Indicative Monthly Premium</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -359,7 +361,7 @@ export default function TPDInsurancePage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>
@@ -367,6 +369,15 @@ export default function TPDInsurancePage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Get advice on the right TPD cover for your occupation"
+        subheading="Own occupation vs any occupation TPD definitions can mean the difference between a claim being paid or rejected. An insurance specialist can review your super fund's default TPD and recommend the right standalone cover for your role."
+        intent={{ need: "insurance", context: ["tpd_insurance", "disability_insurance"] }}
+        source="insurance_tpd"
+        ctaLabel="Find an insurance adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related Insurance */}
       <section className="py-10 border-t border-slate-200">

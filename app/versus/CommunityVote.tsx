@@ -108,7 +108,7 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
 
       {/* Fetch-error notice — show only when user has voted (can't see correct tallies) */}
       {voted && fetchError && (
-        <p className="text-xs text-slate-400 text-center py-2 mb-2">
+        <p role="alert" className="text-xs text-slate-400 text-center py-2 mb-2">
           Could not load vote tallies right now.
         </p>
       )}
@@ -123,7 +123,9 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
               key={broker.slug}
               onClick={() => castVote(broker)}
               disabled={voted || loading}
-              className={`relative rounded-xl border-2 p-4 md:p-5 text-center transition-all ${
+              aria-pressed={voted ? isChosen : undefined}
+              aria-label={voted ? `${broker.name} — ${percent}% of votes${isChosen ? " (your pick)" : ""}` : `Vote for ${broker.name}`}
+              className={`relative rounded-xl border-2 p-4 md:p-5 text-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500 ${
                 voted
                   ? isChosen
                     ? "border-emerald-500 bg-emerald-50/50"
@@ -134,17 +136,21 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
               <BrokerLogo broker={broker} size="lg" className="mx-auto mb-2" />
               <p className="font-bold text-sm text-slate-900">{broker.name}</p>
               {broker.rating && (
-                <p className="text-xs text-slate-500 mt-0.5">{broker.rating}/5</p>
+                <p className="text-xs text-slate-500 mt-0.5" aria-label={`Rated ${broker.rating} out of 5`}>{broker.rating}/5</p>
               )}
 
               {/* Vote result overlay */}
               {voted && (
-                <div className="mt-3">
+                <div className="mt-3" aria-hidden="true">
                   <p className="text-xl md:text-2xl font-extrabold" style={{ color: isChosen ? "#059669" : "#64748b" }}>
                     {percent}%
                   </p>
                   <div className="h-2 bg-slate-200 rounded-full overflow-hidden mt-1.5">
                     <div
+                      role="progressbar"
+                      aria-valuenow={percent}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
                       className="h-full rounded-full transition-all duration-700"
                       style={{
                         width: `${percent}%`,

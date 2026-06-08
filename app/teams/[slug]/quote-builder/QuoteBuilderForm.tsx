@@ -76,10 +76,11 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
     <div className="space-y-6">
       {/* Amount */}
       <section className="bg-white border border-slate-200 rounded-2xl p-5">
-        <label className="block text-sm font-semibold text-slate-900 mb-2">
+        <label htmlFor="qbf-amount" className="block text-sm font-semibold text-slate-900 mb-2">
           Total amount (A$)
         </label>
         <input
+          id="qbf-amount"
           type="number"
           inputMode="decimal"
           value={amountDollars}
@@ -113,7 +114,7 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
               className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
             />
             <input
-              type="number"
+              type="number" inputMode="decimal"
               value={it.estimated_hours}
               onChange={(e) => updateItem(i, { estimated_hours: e.target.value })}
               placeholder="hrs"
@@ -154,7 +155,7 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
             Estimated delivery (days) <span className="text-xs text-slate-400">(optional)</span>
           </span>
           <input
-            type="number"
+            type="number" inputMode="decimal"
             value={deliveryDays}
             onChange={(e) => setDeliveryDays(e.target.value)}
             placeholder="e.g. 21"

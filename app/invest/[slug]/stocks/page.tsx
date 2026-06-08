@@ -91,7 +91,9 @@ export async function generateMetadata({
     openGraph: {
       title: `ASX ${sector.display_name} Stocks (${CURRENT_YEAR})`,
       url: `${SITE_URL}/invest/${slug}/stocks`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("ASX " + sector.display_name + " Stocks")}&sub=${encodeURIComponent("Market Cap · Dividend Yield · P/E · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -176,28 +178,28 @@ export default async function SectorStocksPage({
               </div>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label={`${sector.display_name} stocks`}>
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">
                         Ticker
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">
                         Company
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
                         Market cap
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">
                         Yield
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">
                         P/E
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
                         FIRB
                       </th>
-                      <th className="px-4 py-3"></th>
+                      <th scope="col" className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

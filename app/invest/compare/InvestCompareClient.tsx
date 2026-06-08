@@ -216,11 +216,11 @@ function CompareTable({ listings, onRemove }: { listings: InvestmentListing[]; o
         {/* ── Header row: one column per listing ────────────────── */}
         <thead>
           <tr>
-            <th className="sticky left-0 z-10 bg-white border-b border-slate-200 px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-slate-500 align-bottom w-[140px]">
+            <th scope="col" className="sticky left-0 z-10 bg-white border-b border-slate-200 px-3 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-slate-500 align-bottom w-[140px]">
               Attribute
             </th>
             {listings.map((l) => (
-              <th key={l.slug} className="border-b border-slate-200 px-3 py-3 align-top text-left min-w-[220px]">
+              <th scope="col" key={l.slug} className="border-b border-slate-200 px-3 py-3 align-top text-left min-w-[220px]">
                 <ListingHeaderCell listing={l} onRemove={() => onRemove(l.slug)} />
               </th>
             ))}

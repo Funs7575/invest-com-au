@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Home & Contents Insurance Australia (${CURRENT_YEAR})`,
     description: "Building vs contents insurance, underinsurance, and what's covered — complete guide for Australian homeowners and renters.",
     url: `${SITE_URL}/insurance/home-contents`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Home & Contents Insurance")}&sub=${encodeURIComponent("Compare Policies · Underinsurance · Claims · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/home-contents` },
@@ -196,7 +197,7 @@ export default function HomeContentsInsurancePage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/insurance" className="hover:text-slate-900">Insurance</Link>
@@ -232,7 +233,7 @@ export default function HomeContentsInsurancePage() {
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
               <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Two Separate Products</p>
               <p className="text-xl font-black text-slate-900">Building + Contents</p>
-              <p className="text-xs text-slate-600 mt-1">Building and contents are separate policies — renters need contents insurance even though they don't own the building</p>
+              <p className="text-xs text-slate-600 mt-1">Building and contents are separate policies — renters need contents insurance even though they don&apos;t own the building</p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
               <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Key Distinction</p>
@@ -271,7 +272,7 @@ export default function HomeContentsInsurancePage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>
@@ -283,7 +284,7 @@ export default function HomeContentsInsurancePage() {
       {/* CTA */}
       <section className="py-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
         <div className="container-custom text-center max-w-xl">
-          <h2 className="text-xl font-extrabold mb-3">Make sure you're not underinsured</h2>
+          <h2 className="text-xl font-extrabold mb-3">Make sure you&apos;re not underinsured</h2>
           <p className="text-sm text-slate-300 mb-6">An insurance broker can compare home and contents policies and help you set the right sum insured for your property.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/best/insurance-brokers" className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm rounded-xl transition-colors">

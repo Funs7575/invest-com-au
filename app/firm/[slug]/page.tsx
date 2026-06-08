@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: firm.name,
       description,
+      images: [{ url: `/api/og?title=${encodeURIComponent(firm.name)}&sub=${encodeURIComponent("Advisory Firm · " + (firm.location_display || "Australia") + " · Verified")}`, width: 1200, height: 630 }],
     },
     twitter: { card: "summary_large_image" },
     alternates: { canonical: `/firm/${slug}` },
@@ -122,7 +123,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
         {/* ── Breadcrumb ── */}
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-5xl mx-auto px-4 py-3">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-500">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500">
               <Link href="/" className="hover:text-violet-600 transition-colors">Home</Link>
               <span>/</span>
               <Link href="/advisors" className="hover:text-violet-600 transition-colors">Advisors</Link>

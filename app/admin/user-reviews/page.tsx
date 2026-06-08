@@ -93,7 +93,9 @@ export default function AdminUserReviewsPage() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- load is stable; deps would cause infinite loop
+  useEffect(() => { void load(); }, []);
+   
   useEffect(() => { setPage(0); }, [search, tab]);
 
   // Stats
@@ -219,7 +221,7 @@ export default function AdminUserReviewsPage() {
 
       {/* Search */}
       <input
-        type="text"
+        type="search" enterKeyHint="search"
         placeholder="Search by name, email, broker, or title..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}

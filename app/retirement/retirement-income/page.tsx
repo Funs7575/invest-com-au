@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Retirement Income Strategy — Super Drawdown, Age Pension & More (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How to structure retirement income in Australia: account-based pension drawdown rules, Age Pension integration, sequencing risk, the bucket strategy, tax strategies, and Centrelink optimisation. ${UPDATED_LABEL}.`,
+  description: `Retirement income in Australia: account-based pension drawdown, Age Pension integration, sequencing risk, and the bucket strategy. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Retirement Income Strategy (${CURRENT_YEAR})`,
     description: "Super drawdown, Age Pension, annuities, sequencing risk, bucket strategy, and tax tips for Australian retirees.",
@@ -133,7 +134,7 @@ export default function RetirementIncomePage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link><span>/</span>
             <Link href="/retirement" className="hover:text-slate-900">Retirement</Link><span>/</span>
             <span className="text-slate-900 font-medium">Retirement Income Strategy</span>
@@ -198,13 +199,13 @@ export default function RetirementIncomePage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Income sources — the layered approach</h2>
           <p className="text-sm text-slate-500 mb-5">Most retirees draw from several sources simultaneously. The mix determines your overall tax rate and Centrelink position.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Retirement income sources: amounts, tax treatment, and reliability">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Source</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Amount</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Tax treatment</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Reliability</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Source</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Amount</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Tax treatment</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Reliability</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -233,11 +234,11 @@ export default function RetirementIncomePage() {
           </p>
           <div className="grid md:grid-cols-2 gap-8 items-start">
             <div className="rounded-xl border border-slate-200 overflow-hidden">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Account-based pension minimum annual drawdown rates by age">
                 <thead>
                   <tr className="bg-slate-900">
-                    <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Age</th>
-                    <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Minimum % per year</th>
+                    <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Age</th>
+                    <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Minimum % per year</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
@@ -419,7 +420,7 @@ export default function RetirementIncomePage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">▾</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -427,6 +428,16 @@ export default function RetirementIncomePage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Build your retirement income strategy with a planner"
+        subheading="Sequencing risk, drawdown rate, Age Pension, and annuity blending all affect how long your money lasts. A licensed financial planner can build a personalised income strategy."
+        intent={{ need: "retirement", context: ["retirement_income", "drawdown_strategy"] }}
+        source="retirement_retirement_income"
+        ctaLabel="Find a retirement income specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

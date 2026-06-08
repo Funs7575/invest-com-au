@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
+import { useToast } from "@/components/Toast";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
@@ -35,6 +36,7 @@ interface PercentileData {
 }
 
 export default function AnalyticsPage() {
+  const { toast } = useToast();
   const [tab, setTab] = useState<TabKey>("overview");
   const [days, setDays] = useState<DateRange>("30d");
   const [stats, setStats] = useState<CampaignDailyStats[]>([]);
@@ -298,7 +300,7 @@ export default function AnalyticsPage() {
     { key: "benchmarks", label: "Benchmarks" },
   ];
 
-  if (loading) return <div className="h-8 bg-slate-100 rounded w-48 animate-pulse" />;
+  if (loading && stats.length === 0) return <div className="h-8 bg-slate-100 rounded w-48 animate-pulse" />;
 
   return (
     <div className="space-y-6">
@@ -320,15 +322,17 @@ export default function AnalyticsPage() {
                 (d.spend / 100).toFixed(2),
               ]);
               downloadCSV(`analytics-${days}-${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+              toast("Export started — your file will download shortly.", "success", 3000);
             }}
             className="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors flex items-center gap-1"
           >
             <Icon name="download" size={11} />
             Export CSV
           </button>
+          {loading && <span aria-live="polite" aria-atomic="true" className="text-xs text-slate-400 animate-pulse">Loading…</span>}
           {(["7d", "30d", "90d"] as DateRange[]).map(d => (
-            <button key={d} onClick={() => setDays(d)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+            <button key={d} onClick={() => setDays(d)} disabled={loading}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                 days === d ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}>
               {d.toUpperCase()}
@@ -338,9 +342,9 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
+      <div role="tablist" aria-label="Analytics sections" className="flex gap-1 bg-slate-100 rounded-lg p-1">
         {TABS.map(t => (
-          <button key={t.key} onClick={() => setTab(t.key)}
+          <button key={t.key} role="tab" aria-selected={tab === t.key} onClick={() => setTab(t.key)}
             className={`flex-1 py-2 text-xs font-semibold rounded-md transition-colors ${
               tab === t.key ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
             }`}>
@@ -348,6 +352,23 @@ export default function AnalyticsPage() {
           </button>
         ))}
       </div>
+
+      {/* Tab content wrapper — overlay shown while re-fetching after a range switch */}
+      <div className="relative">
+        {loading && stats.length > 0 && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[2px] flex items-start justify-center pt-20 rounded-xl pointer-events-none"
+          >
+            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full shadow text-xs font-semibold text-slate-500">
+              <svg className="w-3.5 h-3.5 animate-spin text-slate-400" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+              Loading…
+            </div>
+          </div>
+        )}
 
       {/* Overview Tab */}
       {tab === "overview" && (
@@ -859,17 +880,17 @@ export default function AnalyticsPage() {
               <div className="p-8 text-center text-sm text-slate-400">No campaign data for this period.</div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Campaign performance benchmark ranking">
                   <thead>
                     <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                      <th className="px-5 py-3 text-left">Rank</th>
-                      <th className="px-5 py-3 text-left">Campaign ID</th>
-                      <th className="px-5 py-3 text-right">Clicks</th>
-                      <th className="px-5 py-3 text-right">CTR</th>
-                      <th className="px-5 py-3 text-right">Conv. Rate</th>
-                      <th className="px-5 py-3 text-right">Avg CPC</th>
-                      <th className="px-5 py-3 text-right">Spend</th>
-                      <th className="px-5 py-3 text-center">Score</th>
+                      <th scope="col" className="px-5 py-3 text-left">Rank</th>
+                      <th scope="col" className="px-5 py-3 text-left">Campaign ID</th>
+                      <th scope="col" className="px-5 py-3 text-right">Clicks</th>
+                      <th scope="col" className="px-5 py-3 text-right">CTR</th>
+                      <th scope="col" className="px-5 py-3 text-right">Conv. Rate</th>
+                      <th scope="col" className="px-5 py-3 text-right">Avg CPC</th>
+                      <th scope="col" className="px-5 py-3 text-right">Spend</th>
+                      <th scope="col" className="px-5 py-3 text-center">Score</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -995,6 +1016,7 @@ export default function AnalyticsPage() {
           </div>
         </>
       )}
+      </div>{/* end tab content wrapper */}
     </div>
   );
 }

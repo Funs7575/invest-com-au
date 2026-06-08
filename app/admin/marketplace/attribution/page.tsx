@@ -527,7 +527,7 @@ export default function AttributionAnalyticsPage() {
               </div>
             ) : (
               <div className="overflow-auto">
-                <table className="w-full">
+                <table className="w-full" aria-label="Attribution by page">
                   <thead className="bg-slate-50">
                     <tr>
                       <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
@@ -615,7 +615,7 @@ export default function AttributionAnalyticsPage() {
                 </div>
               ) : (
                 <div className="overflow-auto">
-                  <table className="w-full">
+                  <table className="w-full" aria-label="Attribution by device type">
                     <thead className="bg-slate-50">
                       <tr>
                         <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
@@ -706,7 +706,7 @@ export default function AttributionAnalyticsPage() {
               </div>
             ) : (
               <div className="overflow-auto">
-                <table className="w-full">
+                <table className="w-full" aria-label="Attribution by placement">
                   <thead className="bg-slate-50">
                     <tr>
                       <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">

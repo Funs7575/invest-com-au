@@ -149,9 +149,9 @@ export default function LeadQualityClient({ initial }: Props) {
         <button
           onClick={refresh}
           disabled={loading}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-violet-600 hover:text-violet-700 transition-colors disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-violet-600 hover:text-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Icon name="refresh-cw" size={14} className={loading ? "animate-spin" : ""} />
+          <Icon name="refresh-cw" size={14} className={loading ? "animate-spin" : ""} aria-hidden="true" />
           Refresh
         </button>
       </div>

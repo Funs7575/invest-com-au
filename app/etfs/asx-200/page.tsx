@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `ASX 200 ETFs Australia (${CURRENT_YEAR}) — VAS vs A200 vs IOZ vs STW`,
-  description: `The complete guide to ASX 200 and Australian shares ETFs: VAS, A200, IOZ, STW, VHY, and MVW compared on MER, holdings, and franking credits. Concentration risk, returns history, and portfolio building. ${UPDATED_LABEL}.`,
+  description: `ASX 200 ETFs compared — VAS, A200, IOZ, STW, VHY, MVW: fees (MER), holdings, franking credits, and concentration risk. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `ASX 200 ETFs (${CURRENT_YEAR}) — The Cornerstone of Australian Portfolios`,
     description: "Low-cost, diversified exposure to Australia's largest listed companies. Compare the major ASX 200 and ASX 300 index ETFs and understand franking credits, concentration risk, and tax.",
@@ -232,7 +232,7 @@ export default function ASX200ETFPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>
@@ -335,15 +335,15 @@ export default function ASX200ETFPage() {
             sub="The major ASX 200 and ASX 300 index ETFs, plus an income tilt and an equal-weight option. MERs are approximate &mdash; verify with the provider before investing."
           />
           <div className="mt-8 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm" aria-label="Australian shares ETFs compared">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                  <th className="px-4 py-3 font-semibold">Ticker</th>
-                  <th className="px-4 py-3 font-semibold">Name</th>
-                  <th className="px-4 py-3 font-semibold">Index</th>
-                  <th className="px-4 py-3 font-semibold">MER</th>
-                  <th className="px-4 py-3 font-semibold">Holdings</th>
-                  <th className="px-4 py-3 font-semibold">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Ticker</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Name</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Index</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">MER</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Holdings</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -440,10 +440,10 @@ export default function ASX200ETFPage() {
               <caption className="sr-only">Approximate top 10 holdings of the S&amp;P/ASX 200 and their index weights</caption>
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                  <th className="px-4 py-3 font-semibold">#</th>
-                  <th className="px-4 py-3 font-semibold">Company</th>
-                  <th className="px-4 py-3 font-semibold">Sector</th>
-                  <th className="px-4 py-3 font-semibold text-right">Approx. weight</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">#</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Company</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Sector</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-right">Approx. weight</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -572,7 +572,7 @@ export default function ASX200ETFPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

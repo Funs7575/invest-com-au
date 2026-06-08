@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     description: "Franking credits, ASX high-yield stocks, dividend ETFs and the SMSF crossover.",
     url: `${SITE_URL}/dividends`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Australian Dividend Investing")}&sub=${encodeURIComponent("Franking Credits · High-Yield Stocks · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

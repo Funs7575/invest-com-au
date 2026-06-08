@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Compare Australia's best managed funds and index funds — Vanguard, Betashares, iShares, Magellan, Platinum. Fees, returns, minimum investment and platform comparison.",
     url: `${SITE_URL}/invest/managed-funds`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Managed Funds & Index Funds Australia")}&sub=${encodeURIComponent("Vanguard · ETFs · Active Funds · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -88,7 +89,7 @@ export default async function ManagedFundsPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -207,14 +208,14 @@ export default async function ManagedFundsPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Top Index Fund Providers in Australia</h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Top index fund providers in Australia">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Provider</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Popular Fund/ETF</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Index</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">MER</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Minimum</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Provider</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Popular Fund/ETF</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Index</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">MER</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Minimum</th>
                 </tr>
               </thead>
               <tbody>

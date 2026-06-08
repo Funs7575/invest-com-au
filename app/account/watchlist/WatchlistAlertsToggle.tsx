@@ -49,10 +49,12 @@ export default function WatchlistAlertsToggle({ initialOptedIn, hasItems }: Prop
           type="button"
           role="switch"
           aria-checked={optedIn}
+          aria-busy={pending}
           aria-label="Weekly watchlist email digest"
           onClick={toggle}
           disabled={pending || !hasItems}
-          className={`shrink-0 inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 ${
+          title={!hasItems ? "Add watchlist items first to enable alerts" : undefined}
+          className={`shrink-0 inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
             optedIn ? "bg-emerald-600" : "bg-slate-300"
           }`}
         >
@@ -64,7 +66,7 @@ export default function WatchlistAlertsToggle({ initialOptedIn, hasItems }: Prop
         </button>
       </div>
       {error && (
-        <p className="mt-2 text-xs text-red-600">{error}</p>
+        <p className="mt-2 text-xs text-red-600" role="alert">{error}</p>
       )}
     </div>
   );

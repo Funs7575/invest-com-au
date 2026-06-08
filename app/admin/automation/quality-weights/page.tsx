@@ -32,11 +32,11 @@ export default async function QualityWeightsDrillDown() {
             Latest computed weights{latestVersion ? ` (v${latestVersion.model_version})` : ""}
           </h2>
           <p className="text-xs text-slate-500">
-            Recomputed nightly from 90-day conversion outcomes. The live scorer in <code className="bg-slate-100 px-1 rounded">/api/advisor-enquiry</code> currently uses hardcoded weights — flip it to read from this table when you're confident in the values.
+            Recomputed nightly from 90-day conversion outcomes. The live scorer in <code className="bg-slate-100 px-1 rounded">/api/advisor-enquiry</code> currently uses hardcoded weights — flip it to read from this table when you&apos;re confident in the values.
           </p>
         </header>
         {weights && weights.length > 0 ? (
-          <table className="w-full text-xs">
+          <table className="w-full text-xs" aria-label="Automation quality weights">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
                 <th className="px-4 py-2 text-left font-semibold text-slate-600">Signal</th>

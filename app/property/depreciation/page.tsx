@@ -54,7 +54,9 @@ export const metadata: Metadata = {
     description:
       "Complete guide to claiming tax depreciation on Australian investment properties — building allowance, plant and equipment, the 2017 second-hand property rule, and real-world examples.",
     url: absoluteUrl("/property/depreciation"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Property Depreciation Guide")}&sub=${encodeURIComponent("Division 43 · Division 40 · Tax Depreciation Schedule · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function PropertyDepreciationPage() {
@@ -207,12 +209,12 @@ export default function PropertyDepreciationPage() {
                 <h3 className="font-extrabold text-sm">Common plant &amp; equipment items (ATO TR 2023/1)</h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table aria-label="Common plant and equipment depreciation items under ATO TR 2023/1" className="w-full text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="text-left px-5 py-3 font-bold text-slate-700">Item</th>
-                      <th className="text-left px-5 py-3 font-bold text-slate-700">ATO effective life</th>
-                      <th className="text-left px-5 py-3 font-bold text-slate-700">Diminishing value rate</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold text-slate-700">Item</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold text-slate-700">ATO effective life</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold text-slate-700">Diminishing value rate</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

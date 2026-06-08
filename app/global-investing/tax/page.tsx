@@ -4,12 +4,13 @@ import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/s
 import { faqJsonLd } from "@/lib/schema-markup";
 import type { FaqItem } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Tax on International Investing for Australians (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How Australian residents are taxed on foreign shares, ETFs and income: worldwide income, withholding tax, the Foreign Income Tax Offset (FITO), CGT in AUD, the W-8BEN form, and US estate tax. Worked examples and record-keeping tips. ${UPDATED_LABEL}.`,
+  description: `Tax on foreign shares and ETFs for Australian residents: worldwide income, withholding tax, FITO, AUD CGT, W-8BEN, and US estate tax. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Tax on International Investing for Australians (${CURRENT_YEAR})`,
     description:
@@ -233,7 +234,7 @@ export default function GlobalInvestingTaxPage() {
       <section className="bg-white border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link>
@@ -386,13 +387,13 @@ export default function GlobalInvestingTaxPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-xs md:text-sm">
+            <table className="w-full text-xs md:text-sm" aria-label="Dividend withholding tax rates by country for Australian investors">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Market</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Dividend withholding</th>
-                  <th className="text-center px-4 py-3 font-bold text-slate-600 hidden sm:table-cell">DTA with Australia</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden lg:table-cell">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Market</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Dividend withholding</th>
+                  <th scope="col" className="text-center px-4 py-3 font-bold text-slate-600 hidden sm:table-cell">DTA with Australia</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden lg:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -702,7 +703,7 @@ export default function GlobalInvestingTaxPage() {
               >
                 <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-semibold text-sm text-slate-900 hover:bg-slate-100 transition-colors">
                   <span>{faq.q}</span>
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#8964;
                   </span>
                 </summary>
@@ -714,6 +715,16 @@ export default function GlobalInvestingTaxPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Advisor CTA ─────────────────────────────────────────────────── */}
+      <HubAdvisorCTA
+        heading="Get international tax advice from a specialist"
+        subheading="FIF rules, CGT on foreign shares, DTA credits, and controlled foreign company rules are complex. A registered tax agent with international experience can review your situation."
+        intent={{ need: "tax", context: ["international_tax", "foreign_investment_tax"] }}
+        source="global_investing_tax"
+        ctaLabel="Find an international tax specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* ── Compliance footer ───────────────────────────────────────────── */}
       <section className="bg-slate-50 border-t border-slate-200 py-6">

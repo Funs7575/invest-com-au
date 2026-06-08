@@ -34,7 +34,7 @@ export default function DTASearchTable({ countries, defaultRates, dtaDisclaimer 
       {/* Search bar */}
       <div className="mb-4 relative">
         <input
-          type="text"
+          type="search" enterKeyHint="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search your country (e.g. United States, Japan, UK…)"
@@ -53,14 +53,14 @@ export default function DTASearchTable({ countries, defaultRates, dtaDisclaimer 
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Double tax agreement withholding rates by country">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Country</th>
-              <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">DTA</th>
-              <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Dividends</th>
-              <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Interest</th>
-              <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Royalties</th>
+              <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Country</th>
+              <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">DTA</th>
+              <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Dividends</th>
+              <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Interest</th>
+              <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Royalties</th>
             </tr>
           </thead>
           <tbody>

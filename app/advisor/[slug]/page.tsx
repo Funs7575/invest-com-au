@@ -84,6 +84,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     .single();
   // Explicit column projection makes Supabase return GenericStringError typing; cast back to the row shape.
   const pro = proRow as unknown as Professional | null;
+  const profileUpdatedAt = (proRow as Record<string, unknown> | null)?.updated_at as string | null ?? null;
 
   if (!pro) notFound();
 
@@ -437,7 +438,6 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         }) }} />
       )}
       <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} reviewTotalCount={reviewTotalCount} teamMembers={teamMembers} firm={firm} expertTeams={expertTeams} expertArticles={expertArticles} />
-
       {/* Good-fit hint — shown when logged-in user's profile matches ideal-client criteria */}
       {isGoodFit && (
         <div className="container-custom max-w-4xl mt-4">
@@ -453,12 +453,26 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
 
       {/* Follow strip — visible below the profile header */}
       <div className="container-custom max-w-4xl mt-4">
-        <div className="flex items-center gap-3 py-2">
+        <div className="flex items-center justify-between py-2">
           <FollowAdvisorButton
             professionalId={pro.id}
             initialFollowing={initialFollowing}
             followerCount={pro.follower_count ?? 0}
           />
+          {profileUpdatedAt && (
+            <span className="text-xs text-slate-400">
+              Profile updated{" "}
+              {(() => {
+                // eslint-disable-next-line react-hooks/purity -- server component, Date.now() is safe
+                const days = Math.floor((Date.now() - new Date(profileUpdatedAt).getTime()) / 86400000);
+                if (days < 1) return "today";
+                if (days === 1) return "yesterday";
+                if (days < 30) return `${days} days ago`;
+                const months = Math.floor(days / 30);
+                return months === 1 ? "1 month ago" : `${months} months ago`;
+              })()}
+            </span>
+          )}
         </div>
       </div>
 

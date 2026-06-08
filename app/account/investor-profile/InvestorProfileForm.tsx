@@ -156,10 +156,10 @@ export default function InvestorProfileForm({ initial }: Props) {
       </Field>
 
       {error && <p className="text-sm text-red-700" role="alert">{error}</p>}
-      {saved && <p className="text-sm text-emerald-700">Saved ✓</p>}
+      {saved && <p role="status" className="text-sm text-emerald-700">Saved ✓</p>}
 
-      <button type="submit" disabled={submitting}
-        className="w-full px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg disabled:opacity-50">
+      <button type="submit" disabled={submitting} aria-busy={submitting}
+        className="w-full px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
         {submitting ? "Saving…" : "Save investor profile"}
       </button>
       <p className="text-xs text-slate-500 italic">

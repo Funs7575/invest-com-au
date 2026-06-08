@@ -64,6 +64,7 @@ export default function AdminCoursesPage() {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     fetchData();
   }, []);
 
@@ -252,8 +253,9 @@ export default function AdminCoursesPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Title *</label>
+              <label htmlFor="c-title" className="block text-xs font-semibold text-slate-700 mb-1">Title *</label>
               <input
+                id="c-title"
                 type="text"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value, slug: autoSlug(e.target.value) })}
@@ -262,8 +264,9 @@ export default function AdminCoursesPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Slug</label>
+              <label htmlFor="c-slug" className="block text-xs font-semibold text-slate-700 mb-1">Slug</label>
               <input
+                id="c-slug"
                 type="text"
                 value={form.slug}
                 onChange={(e) => setForm({ ...form, slug: e.target.value })}
@@ -273,8 +276,9 @@ export default function AdminCoursesPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Subtitle</label>
+            <label htmlFor="c-subtitle" className="block text-xs font-semibold text-slate-700 mb-1">Subtitle</label>
             <input
+              id="c-subtitle"
               type="text"
               value={form.subtitle}
               onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
@@ -283,8 +287,9 @@ export default function AdminCoursesPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Description</label>
+            <label htmlFor="c-description" className="block text-xs font-semibold text-slate-700 mb-1">Description</label>
             <textarea
+              id="c-description"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={3}
@@ -294,9 +299,10 @@ export default function AdminCoursesPage() {
 
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Price (AUD)</label>
+              <label htmlFor="c-price" className="block text-xs font-semibold text-slate-700 mb-1">Price (AUD)</label>
               <input
-                type="number"
+                id="c-price"
+                type="number" inputMode="decimal"
                 step="0.01"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
@@ -305,9 +311,10 @@ export default function AdminCoursesPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Pro Price (AUD)</label>
+              <label htmlFor="c-pro-price" className="block text-xs font-semibold text-slate-700 mb-1">Pro Price (AUD)</label>
               <input
-                type="number"
+                id="c-pro-price"
+                type="number" inputMode="decimal"
                 step="0.01"
                 value={form.pro_price}
                 onChange={(e) => setForm({ ...form, pro_price: e.target.value })}
@@ -317,8 +324,9 @@ export default function AdminCoursesPage() {
               <p className="text-xs text-slate-400 mt-0.5">Discounted price for Pro members</p>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Level</label>
+              <label htmlFor="c-level" className="block text-xs font-semibold text-slate-700 mb-1">Level</label>
               <select
+                id="c-level"
                 value={form.level}
                 onChange={(e) => setForm({ ...form, level: e.target.value })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
@@ -332,8 +340,9 @@ export default function AdminCoursesPage() {
 
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Creator</label>
+              <label htmlFor="c-creator" className="block text-xs font-semibold text-slate-700 mb-1">Creator</label>
               <select
+                id="c-creator"
                 value={form.creator_id}
                 onChange={(e) => setForm({ ...form, creator_id: e.target.value })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
@@ -345,9 +354,10 @@ export default function AdminCoursesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Revenue Share %</label>
+              <label htmlFor="c-rev-share" className="block text-xs font-semibold text-slate-700 mb-1">Revenue Share %</label>
               <input
-                type="number"
+                id="c-rev-share"
+                type="number" inputMode="decimal"
                 min="0"
                 max="100"
                 value={form.revenue_share_percent}
@@ -357,8 +367,9 @@ export default function AdminCoursesPage() {
               <p className="text-xs text-slate-400 mt-0.5">Percentage of revenue paid to the course creator</p>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
+              <label htmlFor="c-status" className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
               <select
+                id="c-status"
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
@@ -372,8 +383,9 @@ export default function AdminCoursesPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Stripe Price ID <InfoTip text="Create the product in Stripe first, then paste the ID here." /></label>
+              <label htmlFor="c-stripe-price-id" className="block text-xs font-semibold text-slate-700 mb-1">Stripe Price ID <InfoTip text="Create the product in Stripe first, then paste the ID here." /></label>
               <input
+                id="c-stripe-price-id"
                 type="text"
                 value={form.stripe_price_id}
                 onChange={(e) => setForm({ ...form, stripe_price_id: e.target.value })}
@@ -382,8 +394,9 @@ export default function AdminCoursesPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Stripe Pro Price ID</label>
+              <label htmlFor="c-stripe-pro-price-id" className="block text-xs font-semibold text-slate-700 mb-1">Stripe Pro Price ID</label>
               <input
+                id="c-stripe-pro-price-id"
                 type="text"
                 value={form.stripe_pro_price_id}
                 onChange={(e) => setForm({ ...form, stripe_pro_price_id: e.target.value })}
@@ -394,8 +407,9 @@ export default function AdminCoursesPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Cover Image URL</label>
+            <label htmlFor="c-cover-image-url" className="block text-xs font-semibold text-slate-700 mb-1">Cover Image URL</label>
             <input
+              id="c-cover-image-url"
               type="url"
               value={form.cover_image_url}
               onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })}
@@ -422,7 +436,7 @@ export default function AdminCoursesPage() {
       ) : tab === "courses" ? (
         /* Courses table */
         <div className="bg-white border border-slate-200 rounded-xl overflow-x-auto">
-          <table className="w-full text-sm min-w-[640px]">
+          <table className="w-full text-sm min-w-[640px]" aria-label="Courses">
             <thead className="bg-slate-50">
               <tr>
                 <th className="text-left px-4 py-3 font-semibold text-slate-700">Course</th>
@@ -492,7 +506,7 @@ export default function AdminCoursesPage() {
       ) : (
         /* Revenue table */
         <div className="bg-white border border-slate-200 rounded-xl overflow-x-auto">
-          <table className="w-full text-sm min-w-[640px]">
+          <table className="w-full text-sm min-w-[640px]" aria-label="Course revenue by creator">
             <thead className="bg-slate-50">
               <tr>
                 <th className="text-left px-4 py-3 font-semibold text-slate-700">Creator</th>

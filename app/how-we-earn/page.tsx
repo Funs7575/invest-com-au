@@ -1,5 +1,25 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const HOW_WE_EARN_FAQS = [
+  {
+    q: "Does clicking your affiliate links cost me anything extra?",
+    a: "No. Broker fees — brokerage rates, account fees, and FX charges — are identical whether you sign up through our links or go directly to the broker's website. Brokers pay us a referral commission from their own marketing budget; this cost is never passed on to you. The comparison data (fees, ratings, product details) we display is factual and the same regardless of whether a broker has an affiliate arrangement with us.",
+  },
+  {
+    q: "Do you sell my personal data to advertisers or brokers?",
+    a: "No. We do not sell, rent, or share your personal data with third-party advertisers, data brokers, or platforms listed on the site. Revenue comes from platform referral commissions and per-enquiry fees from advisors — not from monetising user data. Our privacy policy explains exactly what data we collect and how it is used.",
+  },
+  {
+    q: "Can I trust your comparison data if brokers pay to appear on the site?",
+    a: "Yes. Comparison table data — fees, CHESS sponsorship status, asset coverage, and product details — is sourced from product disclosure statements and broker pricing pages, not provided by the brokers themselves. Commercial relationships (affiliate deals, sponsored placements) are disclosed separately and do not affect the factual data. Sponsored placements are always clearly labelled and separated from organic comparison results.",
+  },
+  {
+    q: "Do financial advisors pay to be listed in your directory?",
+    a: "Advisors may pay a per-enquiry fee when you submit a consultation request through their profile — you are never charged. Basic listing in the directory is free. Paying for enquiry routing does not change an advisor's verification status, Trust Score, or the factual data shown on their profile (AFSL licence, AR registration, qualifications). Verification is done independently against ASIC's Financial Advisers Register.",
+  },
+];
 
 export const revalidate = 86400;
 
@@ -16,6 +36,7 @@ export const metadata = {
 };
 
 export default function HowWeEarnPage() {
+  const faqLd = faqJsonLd(HOW_WE_EARN_FAQS);
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "About", url: absoluteUrl("/about") },
@@ -28,6 +49,9 @@ export default function HowWeEarnPage() {
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
     />
+    {faqLd && (
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+    )}
     <div className="py-5 md:py-12">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
@@ -143,6 +167,22 @@ export default function HowWeEarnPage() {
                 hello@invest.com.au
               </a>.
             </p>
+          </section>
+
+          {/* FAQ */}
+          <section className="mb-10">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {HOW_WE_EARN_FAQS.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </section>
 
           <div className="text-center">

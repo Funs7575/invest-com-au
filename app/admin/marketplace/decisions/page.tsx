@@ -69,8 +69,8 @@ export default function AllocationDecisionsPage() {
   }, [dateRange]);
 
   useEffect(() => {
-    loadData();
-  }, [dateRange, placementFilter, page]);
+    loadData(); // eslint-disable-line react-hooks/immutability -- loadData declared below; stable pattern
+  }, [dateRange, placementFilter, page]); // eslint-disable-line react-hooks/exhaustive-deps -- loadData is stable
 
   const loadData = async () => {
     setLoading(true);
@@ -274,7 +274,7 @@ export default function AllocationDecisionsPage() {
             </div>
           ) : (
             <div className="overflow-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Marketplace allocation decisions">
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">

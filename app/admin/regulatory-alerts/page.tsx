@@ -273,10 +273,11 @@ export default function RegulatoryAlertsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="ra-title" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Title
                 </label>
                 <input
+                  id="ra-title"
                   type="text"
                   value={form.title}
                   onChange={(e) => {
@@ -291,10 +292,11 @@ export default function RegulatoryAlertsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="ra-slug" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Slug
                 </label>
                 <input
+                  id="ra-slug"
                   type="text"
                   value={form.slug}
                   onChange={(e) =>
@@ -306,10 +308,11 @@ export default function RegulatoryAlertsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="ra-body" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Body
               </label>
               <textarea
+                id="ra-body"
                 rows={6}
                 value={form.body}
                 onChange={(e) =>
@@ -321,10 +324,11 @@ export default function RegulatoryAlertsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="ra-source-url" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Source URL
                 </label>
                 <input
+                  id="ra-source-url"
                   type="text"
                   value={form.source_url}
                   onChange={(e) =>
@@ -335,10 +339,11 @@ export default function RegulatoryAlertsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="ra-source-name" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Source Name
                 </label>
                 <input
+                  id="ra-source-name"
                   type="text"
                   value={form.source_name}
                   onChange={(e) =>
@@ -352,10 +357,11 @@ export default function RegulatoryAlertsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="ra-alert-type" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Alert Type
                 </label>
                 <select
+                  id="ra-alert-type"
                   value={form.alert_type}
                   onChange={(e) =>
                     setForm({
@@ -372,10 +378,11 @@ export default function RegulatoryAlertsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="ra-severity" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Severity
                 </label>
                 <select
+                  id="ra-severity"
                   value={form.severity}
                   onChange={(e) =>
                     setForm({
@@ -392,10 +399,11 @@ export default function RegulatoryAlertsPage() {
                 <p className="text-xs text-slate-400 mt-0.5">critical &gt; high &gt; medium &gt; low. Critical alerts are shown prominently to users.</p>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="ra-status" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Status
                 </label>
                 <select
+                  id="ra-status"
                   value={form.status}
                   onChange={(e) =>
                     setForm({
@@ -413,10 +421,11 @@ export default function RegulatoryAlertsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="ra-effective-date" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Effective Date
                 </label>
                 <input
+                  id="ra-effective-date"
                   type="date"
                   value={form.effective_date}
                   onChange={(e) =>
@@ -427,10 +436,11 @@ export default function RegulatoryAlertsPage() {
                 <p className="text-xs text-slate-400 mt-0.5">When the regulation takes effect.</p>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="ra-impact-summary" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Impact Summary
                 </label>
                 <input
+                  id="ra-impact-summary"
                   type="text"
                   value={form.impact_summary}
                   onChange={(e) =>
@@ -442,10 +452,11 @@ export default function RegulatoryAlertsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="ra-action-items" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Action Items (JSON)
               </label>
               <textarea
+                id="ra-action-items"
                 rows={5}
                 value={form.action_items}
                 onChange={(e) =>
@@ -480,7 +491,7 @@ export default function RegulatoryAlertsPage() {
         ) : (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Regulatory alerts">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>

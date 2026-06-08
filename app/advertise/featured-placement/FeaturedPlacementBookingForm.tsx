@@ -217,6 +217,7 @@ export default function FeaturedPlacementBookingForm({
           <input
             id="book-contact"
             type="text"
+            autoComplete="name"
             value={contactName}
             onChange={(e) => setContactName(e.target.value)}
             placeholder="Jane Smith"
@@ -233,7 +234,8 @@ export default function FeaturedPlacementBookingForm({
           </label>
           <input
             id="book-email"
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@broker.com"
@@ -244,7 +246,7 @@ export default function FeaturedPlacementBookingForm({
       </div>
 
       {error && (
-        <div className="bg-rose-50 border border-rose-200 rounded-lg px-3 py-2.5 text-sm text-rose-800">
+        <div role="alert" className="bg-rose-50 border border-rose-200 rounded-lg px-3 py-2.5 text-sm text-rose-800">
           {error}
         </div>
       )}
@@ -253,7 +255,8 @@ export default function FeaturedPlacementBookingForm({
         <button
           type="submit"
           disabled={submitting}
-          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg text-sm transition-colors disabled:opacity-60"
+          aria-busy={submitting}
+          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {submitting
             ? "Redirecting to checkout…"

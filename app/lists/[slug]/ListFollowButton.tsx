@@ -36,7 +36,7 @@ export default function ListFollowButton({ slug, initialFollowing, isAuthenticat
         ${following
           ? "bg-slate-100 text-slate-700 hover:bg-red-50 hover:text-red-700 border border-slate-200"
           : "bg-violet-600 text-white hover:bg-violet-700"}
-        disabled:opacity-50`}
+        disabled:opacity-50 disabled:cursor-not-allowed`}
       aria-pressed={following}
     >
       {busy ? "…" : following ? "Following" : "Follow"}

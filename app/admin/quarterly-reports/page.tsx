@@ -279,7 +279,7 @@ export default function QuarterlyReportsPage() {
         </div>
 
         <input
-          type="text"
+          type="search" enterKeyHint="search"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -307,10 +307,11 @@ export default function QuarterlyReportsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="qr-title" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Title
                 </label>
                 <input
+                  id="qr-title"
                   type="text"
                   value={form.title}
                   onChange={(e) => {
@@ -325,10 +326,11 @@ export default function QuarterlyReportsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="qr-slug" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Slug
                 </label>
                 <input
+                  id="qr-slug"
                   type="text"
                   value={form.slug}
                   onChange={(e) =>
@@ -341,10 +343,11 @@ export default function QuarterlyReportsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="qr-quarter" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Quarter
                 </label>
                 <select
+                  id="qr-quarter"
                   value={form.quarter}
                   onChange={(e) =>
                     setForm({ ...form, quarter: e.target.value })
@@ -358,11 +361,12 @@ export default function QuarterlyReportsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="qr-year" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Year
                 </label>
                 <input
-                  type="number"
+                  id="qr-year"
+                  type="number" inputMode="decimal"
                   value={form.year}
                   onChange={(e) =>
                     setForm({
@@ -374,10 +378,11 @@ export default function QuarterlyReportsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="qr-status" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Status
                 </label>
                 <select
+                  id="qr-status"
                   value={form.status}
                   onChange={(e) =>
                     setForm({
@@ -394,10 +399,11 @@ export default function QuarterlyReportsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="qr-exec-summary" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Executive Summary
               </label>
               <textarea
+                id="qr-exec-summary"
                 rows={4}
                 value={form.executive_summary}
                 onChange={(e) =>
@@ -408,10 +414,11 @@ export default function QuarterlyReportsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="qr-sections" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Sections (JSON)
               </label>
               <textarea
+                id="qr-sections"
                 rows={8}
                 value={form.sections}
                 onChange={(e) =>
@@ -423,10 +430,11 @@ export default function QuarterlyReportsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="qr-key-findings" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Key Findings (JSON)
               </label>
               <textarea
+                id="qr-key-findings"
                 rows={5}
                 value={form.key_findings}
                 onChange={(e) =>
@@ -438,10 +446,11 @@ export default function QuarterlyReportsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="qr-fee-changes" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Fee Changes Summary (JSON)
               </label>
               <textarea
+                id="qr-fee-changes"
                 rows={5}
                 value={form.fee_changes_summary}
                 onChange={(e) =>
@@ -453,10 +462,11 @@ export default function QuarterlyReportsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="qr-new-entrants" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 New Entrants (comma-separated)
               </label>
               <input
+                id="qr-new-entrants"
                 type="text"
                 value={form.new_entrants}
                 onChange={(e) =>
@@ -491,7 +501,7 @@ export default function QuarterlyReportsPage() {
         ) : (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Quarterly reports">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>

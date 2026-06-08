@@ -130,9 +130,10 @@ export default function ReportsPage() {
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {/* Date mode toggle */}
-          <div className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
+          <div role="group" aria-label="Date range mode" className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
             <button
               onClick={() => setDateMode("preset")}
+              aria-pressed={dateMode === "preset"}
               className={`px-3 py-2 min-h-9 text-[0.69rem] font-semibold rounded-md transition-colors ${
                 dateMode === "preset" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
               }`}
@@ -141,6 +142,7 @@ export default function ReportsPage() {
             </button>
             <button
               onClick={() => setDateMode("custom")}
+              aria-pressed={dateMode === "custom"}
               className={`px-3 py-2 min-h-9 text-[0.69rem] font-semibold rounded-md transition-colors ${
                 dateMode === "custom" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
               }`}
@@ -344,19 +346,19 @@ export default function ReportsPage() {
         ) : (
           <div className="relative">
             <div className="overflow-x-auto portal-table-stagger">
-              <table className="w-full text-sm min-w-[700px]">
+              <table className="w-full text-sm min-w-[700px]" aria-label="Campaign performance breakdown">
                 <thead>
                   <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                    <th className="px-3 md:px-5 py-3 text-left">Campaign</th>
-                    <th className="px-3 md:px-5 py-3 text-left">Type</th>
-                    <th className="px-3 md:px-5 py-3 text-left">Status</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Clicks</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Impr.</th>
-                    <th className="px-3 md:px-5 py-3 text-right">CTR</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Conv.</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Conv. Rate</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Avg CPC</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Spend</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-left">Campaign</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-left">Type</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-left">Status</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Clicks</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Impr.</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">CTR</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Conv.</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Conv. Rate</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Avg CPC</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Spend</th>
                   </tr>
                 </thead>
               <tbody className="divide-y divide-slate-100">
@@ -425,15 +427,15 @@ export default function ReportsPage() {
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Daily performance report">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                  <th className="px-5 py-3 text-left">Date</th>
-                  <th className="px-5 py-3 text-right">Clicks</th>
-                  <th className="px-5 py-3 text-right">Impressions</th>
-                  <th className="px-5 py-3 text-right">CTR</th>
-                  <th className="px-5 py-3 text-right">Conversions</th>
-                  <th className="px-5 py-3 text-right">Spend</th>
+                  <th scope="col" className="px-5 py-3 text-left">Date</th>
+                  <th scope="col" className="px-5 py-3 text-right">Clicks</th>
+                  <th scope="col" className="px-5 py-3 text-right">Impressions</th>
+                  <th scope="col" className="px-5 py-3 text-right">CTR</th>
+                  <th scope="col" className="px-5 py-3 text-right">Conversions</th>
+                  <th scope="col" className="px-5 py-3 text-right">Spend</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

@@ -474,6 +474,8 @@ function QuestionScreen({
 }) {
   const { question, totalSteps, currentStep } = step;
   const progress = Math.max(0, Math.min(100, (currentStep / totalSteps) * 100));
+  const remainingSecs = (totalSteps - currentStep) * 20;
+  const remainingLabel = remainingSecs >= 60 ? `~${Math.ceil(remainingSecs / 60)} min remaining` : `~${remainingSecs}s remaining`;
   const intentSummary = (answers.intent as string | undefined) ?? null;
   const helpSummary = (answers.help_preference as string | undefined) ?? null;
   const budgetSummary = (answers.budget_band as string | undefined) ?? null;
@@ -488,7 +490,7 @@ function QuestionScreen({
             <div className="h-1 bg-amber-500 transition-all" style={{ width: `${progress}%` }} />
           </div>
           <p className="text-[11px] uppercase tracking-widest text-slate-500 mt-1">
-            Step {currentStep} of {totalSteps} · No account needed yet
+            Step {currentStep} of {totalSteps} · {remainingLabel}
           </p>
         </div>
 
@@ -501,7 +503,7 @@ function QuestionScreen({
                 <div className="h-1 bg-amber-500 transition-all" style={{ width: `${progress}%` }} />
               </div>
               <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-3">
-                Step {currentStep} of {totalSteps}
+                Step {currentStep} of {totalSteps} · {remainingLabel}
               </p>
               <ul className="text-xs text-slate-500 space-y-2">
                 <li className="flex items-start gap-2"><Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" /> No account needed yet</li>
@@ -816,7 +818,7 @@ function ActionPlanScreen({
           ) : (
             <div className="flex flex-col sm:flex-row gap-2">
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 placeholder="you@example.com"
                 aria-label="Email address"
                 value={email}
@@ -840,7 +842,7 @@ function ActionPlanScreen({
             </div>
           )}
           {saveError && (
-            <p className="mt-2 text-xs text-red-700">{saveError}</p>
+            <p role="alert" className="mt-2 text-xs text-red-700">{saveError}</p>
           )}
           {shareToken && !savedUrl && (
             <p className="mt-3 text-[11px] text-slate-400">

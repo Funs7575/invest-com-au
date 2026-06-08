@@ -121,12 +121,22 @@ export default function FireCalculatorClient() {
           {/* Inputs */}
           <div className="lg:col-span-2 space-y-5">
             <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-5">
-              <h2 className="font-bold text-slate-900">Your Details</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="font-bold text-slate-900">Your Details</h2>
+                <button
+                  type="button"
+                  onClick={() => { setCurrentAge(30); setCurrentSavings(50_000); setAnnualSavings(30_000); setAnnualExpenses(60_000); setReturnRate(7); setWithdrawalRate(4); }}
+                  className="text-xs text-slate-400 hover:text-slate-600 underline"
+                >
+                  Reset to defaults
+                </button>
+              </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Current age</label>
+                <label htmlFor="fire-age" className="block text-xs font-semibold text-slate-600 mb-1">Current age</label>
                 <input
-                  type="number"
+                  id="fire-age"
+                  type="number" inputMode="decimal"
                   min={18}
                   max={80}
                   step={1}
@@ -137,11 +147,12 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Current savings / investments</label>
+                <label htmlFor="fire-savings" className="block text-xs font-semibold text-slate-600 mb-1">Current savings / investments</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="fire-savings"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={5000}
                     value={currentSavings}
@@ -152,11 +163,12 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Annual savings / investments</label>
+                <label htmlFor="fire-annual-savings" className="block text-xs font-semibold text-slate-600 mb-1">Annual savings / investments</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="fire-annual-savings"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={annualSavings}
@@ -167,14 +179,15 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="fire-expenses" className="block text-xs font-semibold text-slate-600 mb-1">
                   Annual expenses in retirement
                   <span className="text-slate-400 font-normal ml-1">today&apos;s dollars</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="fire-expenses"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={annualExpenses}
@@ -185,10 +198,11 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Expected annual return</label>
+                <label htmlFor="fire-return" className="block text-xs font-semibold text-slate-600 mb-1">Expected annual return</label>
                 <div className="relative">
                   <input
-                    type="number"
+                    id="fire-return"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={30}
                     step={0.5}
@@ -201,13 +215,14 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="fire-withdrawal" className="block text-xs font-semibold text-slate-600 mb-1">
                   Safe withdrawal rate
                   <span className="text-slate-400 font-normal ml-1">4% = 25× rule</span>
                 </label>
                 <div className="relative">
                   <input
-                    type="number"
+                    id="fire-withdrawal"
+                    type="number" inputMode="decimal"
                     min={1}
                     max={10}
                     step={0.5}
@@ -385,6 +400,17 @@ function SaveGoalButton({
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "signin" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (status === "saved") {
+      const t = setTimeout(() => setStatus("idle"), 4000);
+      return () => clearTimeout(t);
+    }
+    if (status === "error") {
+      const t = setTimeout(() => { setStatus("idle"); setError(null); }, 8000);
+      return () => clearTimeout(t);
+    }
+  }, [status]);
+
   async function save() {
     setStatus("saving");
     setError(null);
@@ -426,9 +452,16 @@ function SaveGoalButton({
 
   if (status === "saved") {
     return (
-      <p className="mt-3 text-xs text-emerald-700" role="status" aria-live="polite">
-        ✓ Saved — view + edit on your account dashboard.
-      </p>
+      <div
+        className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2"
+        role="status"
+        aria-live="polite"
+      >
+        <span className="text-emerald-600 font-semibold text-sm">✓ Goal saved</span>
+        <Link href="/account" className="ml-auto text-xs text-emerald-700 underline font-medium">
+          View dashboard
+        </Link>
+      </div>
     );
   }
   if (status === "signin") {
@@ -452,9 +485,11 @@ function SaveGoalButton({
         {status === "saving" ? "Saving…" : "Save this FIRE goal"}
       </button>
       {error && (
-        <span role="alert" className="ml-2 text-xs text-red-700">
-          {error}
-        </span>
+        <div role="alert" className="mt-2 flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
+          <span className="flex-1">{error}</span>
+          <button type="button" onClick={save} className="font-semibold underline shrink-0">Retry</button>
+          <button type="button" onClick={() => { setStatus("idle"); setError(null); }} aria-label="Dismiss error" className="shrink-0">✕</button>
+        </div>
       )}
     </div>
   );

@@ -150,7 +150,7 @@ export default function WebhooksPage() {
             <h2 className="font-bold text-slate-900">Outbound Webhook URL</h2>
             <InfoTip text="We send JSON POST requests to this URL when events occur. Must be a publicly accessible HTTPS endpoint." />
           </div>
-          {webhookSaved && <span className="text-xs text-emerald-600 font-medium">✓ Saved</span>}
+          {webhookSaved && <span role="status" className="text-xs text-emerald-600 font-medium">✓ Saved</span>}
         </div>
         <p className="text-xs text-slate-500 mb-3">
           When a conversion is recorded via postback, we&apos;ll automatically send a webhook notification to this URL.
@@ -167,7 +167,7 @@ export default function WebhooksPage() {
           <button
             onClick={saveWebhookUrl}
             disabled={webhookSaving || webhookInput === webhookUrl}
-            className="px-4 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 shrink-0"
+            className="px-4 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             {webhookSaving ? "Saving..." : "Save"}
           </button>
@@ -357,7 +357,7 @@ export default function WebhooksPage() {
         <button
           onClick={testEndpoint}
           disabled={testing || !apiKey}
-          className="px-4 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+          className="px-4 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {testing ? "Testing..." : "Send Test Request"}
         </button>

@@ -149,7 +149,7 @@ export default function SubscriptionAuditClient() {
     <div className="py-5 md:py-10">
       <div className="container-custom max-w-3xl">
         {/* Breadcrumb */}
-        <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span>/</span>
           <Link href="/tools" className="hover:text-slate-900">Tools</Link>
@@ -253,7 +253,7 @@ export default function SubscriptionAuditClient() {
                     <label htmlFor={`${formId}-price`} className="block text-xs font-semibold text-slate-600 mb-1">Price (A$)</label>
                     <input
                       id={`${formId}-price`}
-                      type="number"
+                      type="number" inputMode="decimal"
                       min="0.01"
                       step="0.01"
                       value={price}
@@ -279,7 +279,7 @@ export default function SubscriptionAuditClient() {
                     </select>
                   </div>
                 </div>
-                {addError && <p className="text-xs text-red-600">{addError}</p>}
+                {addError && <p role="alert" className="text-xs text-red-600">{addError}</p>}
                 <button
                   onClick={addCustom}
                   className="px-4 py-2 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors"

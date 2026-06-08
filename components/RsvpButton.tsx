@@ -61,6 +61,7 @@ export default function RsvpButton({ sessionId, className = "" }: Props) {
     <button
       onClick={toggle}
       disabled={loading}
+      aria-busy={loading}
       className={`inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${
         rsvpd
           ? "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"

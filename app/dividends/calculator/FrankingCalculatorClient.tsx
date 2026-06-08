@@ -70,6 +70,14 @@ export default function FrankingCalculatorClient() {
 
   const isRefund = calc.refundOrTax < 0;
 
+  const isModified = dividend !== 1000 || frankingPct !== 100 || taxRateId !== "30";
+
+  const handleReset = () => {
+    setDividend(1000);
+    setFrankingPct(100);
+    setTaxRateId("30");
+  };
+
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm space-y-6">
@@ -77,7 +85,7 @@ export default function FrankingCalculatorClient() {
           <label className="block">
             <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Dividend amount (AUD)</span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               step={50}
               value={dividend}
@@ -111,6 +119,17 @@ export default function FrankingCalculatorClient() {
             />
           </label>
         </div>
+
+        {isModified && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleReset}
+              className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+            >
+              Reset to defaults
+            </button>
+          </div>
+        )}
 
         <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

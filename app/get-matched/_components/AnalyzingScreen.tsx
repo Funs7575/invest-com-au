@@ -55,6 +55,7 @@ export default function AnalyzingScreen({ onComplete }: Props) {
         <div className="relative w-20 h-20 mx-auto mb-6">
           <div className="absolute inset-0 rounded-full border-4 border-slate-100" />
           <div
+            aria-hidden="true"
             className="absolute inset-0 rounded-full border-4 border-transparent border-t-amber-500 motion-safe:animate-spin"
             style={{ animationDuration: "1s" }}
           />

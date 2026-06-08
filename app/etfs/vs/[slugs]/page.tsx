@@ -306,7 +306,8 @@ export async function generateMetadata({
   return {
     title,
     description,
-    openGraph: { title, description, url: `${SITE_URL}/etfs/vs/${slugs}` },
+    openGraph: { title, description, url: `${SITE_URL}/etfs/vs/${slugs}`, images: [{ url: `/api/og?title=${encodeURIComponent(a.ticker + " vs " + b.ticker)}&sub=${encodeURIComponent("ETF Comparison · MER · Yield · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
+    twitter: { card: "summary_large_image" },
     twitter: { card: "summary_large_image" },
     alternates: { canonical: `${SITE_URL}/etfs/vs/${slugs}` },
   };
@@ -377,7 +378,7 @@ export default async function ETFVsPage({
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>
@@ -418,12 +419,12 @@ export default async function ETFVsPage({
         <div className="container-custom">
           <SectionHeading eyebrow="Side-by-Side" title={`${etfA.ticker} vs ${etfB.ticker} Comparison`} />
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full border-collapse text-sm" aria-label={`${etfA.ticker} vs ${etfB.ticker} side-by-side comparison`}>
               <thead>
                 <tr className="border-b-2 border-slate-200">
-                  <th className="text-left py-3 pr-4 text-xs font-bold text-slate-500 uppercase tracking-wide w-40">Metric</th>
-                  <th className="text-center py-3 px-4 text-sm font-black text-amber-700 font-mono w-1/3">{etfA.ticker}</th>
-                  <th className="text-center py-3 px-4 text-sm font-black text-blue-700 font-mono w-1/3">{etfB.ticker}</th>
+                  <th scope="col" className="text-left py-3 pr-4 text-xs font-bold text-slate-500 uppercase tracking-wide w-40">Metric</th>
+                  <th scope="col" className="text-center py-3 px-4 text-sm font-black text-amber-700 font-mono w-1/3">{etfA.ticker}</th>
+                  <th scope="col" className="text-center py-3 px-4 text-sm font-black text-blue-700 font-mono w-1/3">{etfB.ticker}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -493,13 +494,13 @@ export default async function ETFVsPage({
           <div className="mt-6 bg-slate-50 rounded-2xl border border-slate-200 p-6">
             <p className="text-sm text-slate-600 mb-4">The annual cost difference on selected portfolio sizes:</p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label={`Annual MER cost comparison ${etfA.ticker} vs ${etfB.ticker}`}>
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 text-xs font-bold text-slate-500">Portfolio</th>
-                    <th className="text-center py-2 text-xs font-bold text-amber-700 font-mono">{etfA.ticker} ({etfA.merDisplay})</th>
-                    <th className="text-center py-2 text-xs font-bold text-blue-700 font-mono">{etfB.ticker} ({etfB.merDisplay})</th>
-                    <th className="text-center py-2 text-xs font-bold text-slate-500">Difference</th>
+                    <th scope="col" className="text-left py-2 text-xs font-bold text-slate-500">Portfolio</th>
+                    <th scope="col" className="text-center py-2 text-xs font-bold text-amber-700 font-mono">{etfA.ticker} ({etfA.merDisplay})</th>
+                    <th scope="col" className="text-center py-2 text-xs font-bold text-blue-700 font-mono">{etfB.ticker} ({etfB.merDisplay})</th>
+                    <th scope="col" className="text-center py-2 text-xs font-bold text-slate-500">Difference</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -531,28 +532,28 @@ export default async function ETFVsPage({
             <details className="py-4 group">
               <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                 Is {etfA.ticker} or {etfB.ticker} the better ETF?
-                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
               </summary>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">{comparison.verdict}</p>
             </details>
             <details className="py-4 group">
               <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                 What is the fee difference between {etfA.ticker} and {etfB.ticker}?
-                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
               </summary>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">{comparison.analysis} Over 20 years compounded, this difference becomes significant — use the table above to see the annual cost at your portfolio size.</p>
             </details>
             <details className="py-4 group">
               <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                 Should I switch from {etfA.ticker} to {etfB.ticker} (or vice versa)?
-                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
               </summary>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">Generally, no &mdash; not if you&apos;re already invested. Switching between similar ETFs triggers CGT on any unrealised gains, and transaction costs apply. The fee saving over future years rarely justifies the immediate tax cost of switching. If you&apos;re starting fresh with new money, choose the cheapest option.</p>
             </details>
             <details className="py-4 group">
               <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                 Can I hold both {etfA.ticker} and {etfB.ticker} at the same time?
-                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
               </summary>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">Technically yes, but if they track similar indices (e.g. both ASX 200 ETFs), you&apos;re adding complexity without meaningful diversification benefit. There&apos;s no reason to hold two ETFs tracking the same market &mdash; you&apos;d just be doubling your brokerage and complicating your tax reporting. Pick one and stick with it.</p>
             </details>

@@ -9,12 +9,13 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `US ETFs for Australian Investors (${CURRENT_YEAR}) — VOO, IVV, QQQ, NDQ & the VTS Estate-Tax Trap`,
-  description: `How Australians invest in US ETFs: US-domiciled (VOO, SPY, QQQ, VTI) vs ASX-listed US-exposure ETFs (IVV, NDQ, VTS). US estate tax, W-8BEN, currency hedging, FITO and the AMMA tax advantage explained. ${UPDATED_LABEL}.`,
+  description: `US ETFs for Australians: US-domiciled (VOO, SPY, QQQ) vs ASX-listed (IVV, NDQ, VTS). US estate tax, W-8BEN, and FITO explained. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `US ETFs for Australian Investors (${CURRENT_YEAR})`,
     description:
       "US-domiciled vs Australian-domiciled US-exposure ETFs — estate tax, tax reporting, currency and cost compared for Australian investors.",
     url: `${SITE_URL}/global-investing/etfs/us`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("US Share ETFs Australia")}&sub=${encodeURIComponent("S&P 500 · NASDAQ · Hedged · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/global-investing/etfs/us` },
@@ -157,7 +158,7 @@ export default function GlobalInvestingUSETFPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link>
@@ -287,7 +288,7 @@ export default function GlobalInvestingUSETFPage() {
             sub="The lowest-cost, deepest US funds — accessed through a US broker. Remember: all of these carry US estate-tax exposure and a W-8BEN obligation. Approximate data — verify current figures with the issuer."
           />
           <div className="mt-8 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm" aria-label="US-domiciled ETFs accessible via IBKR — ticker, fund, MER and access method">
               <thead className="bg-slate-100 text-slate-600">
                 <tr>
                   <th scope="col" className="px-4 py-3 font-bold">Ticker</th>
@@ -335,7 +336,7 @@ export default function GlobalInvestingUSETFPage() {
             sub="Bought on the ASX through any Australian broker. Most are Australian-domiciled — but watch VTS, which is US-domiciled despite its ASX listing."
           />
           <div className="mt-8 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm" aria-label="ASX-listed US-exposure ETFs — ticker, fund, MER and domicile">
               <thead className="bg-slate-100 text-slate-600">
                 <tr>
                   <th scope="col" className="px-4 py-3 font-bold">Ticker</th>
@@ -570,7 +571,7 @@ export default function GlobalInvestingUSETFPage() {
             sub="Illustrative fees on a flat $100K balance held for 30 years (fee drag only, ignoring compounding on the fee itself and any market growth). Figures are indicative."
           />
           <div className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm" aria-label="MER and 30-year fee cost comparison for US ETFs on a $100K balance">
               <thead className="bg-slate-100 text-slate-600">
                 <tr>
                   <th scope="col" className="px-4 py-3 font-bold">Ticker</th>
@@ -646,7 +647,7 @@ export default function GlobalInvestingUSETFPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

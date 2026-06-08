@@ -170,6 +170,7 @@ export default function FunnelAnalyticsPage() {
 
   // Core data
   const [events, setEvents] = useState<CampaignEvent[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [dailyStats, setDailyStats] = useState<DailyStat[]>([]);
@@ -361,6 +362,7 @@ export default function FunnelAnalyticsPage() {
       setBrokerA(brokerFunnels[0].broker_slug);
       if (brokerFunnels.length > 1) setBrokerB(brokerFunnels[1].broker_slug);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brokerFunnels.length]);
 
   /* ─────────── Sort helper ─────────── */
@@ -557,7 +559,7 @@ export default function FunnelAnalyticsPage() {
             />
           </div>
           <div className="overflow-auto">
-            <table className="w-full">
+            <table className="w-full" aria-label="Marketplace funnel by placement">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Placement</th>
@@ -847,7 +849,7 @@ export default function FunnelAnalyticsPage() {
                     <div className="p-8 text-center text-sm text-slate-400">No weekly data available.</div>
                   ) : (
                     <div className="overflow-auto">
-                      <table className="w-full">
+                      <table className="w-full" aria-label="Weekly cohort performance">
                         <thead className="bg-slate-50">
                           <tr>
                             <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Week</th>
@@ -908,8 +910,9 @@ export default function FunnelAnalyticsPage() {
                 <div className="bg-white border border-slate-200 rounded-lg p-4">
                   <div className="flex flex-col sm:flex-row sm:items-end gap-4">
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Broker A</label>
+                      <label htmlFor="mpf-broker-a" className="block text-xs font-medium text-slate-500 mb-1">Broker A</label>
                       <select
+                        id="mpf-broker-a"
                         value={brokerA}
                         onChange={(e) => setBrokerA(e.target.value)}
                         className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
@@ -924,8 +927,9 @@ export default function FunnelAnalyticsPage() {
                     </div>
                     <div className="text-xs text-slate-400 font-medium pb-2.5">vs</div>
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Broker B</label>
+                      <label htmlFor="mpf-broker-b" className="block text-xs font-medium text-slate-500 mb-1">Broker B</label>
                       <select
+                        id="mpf-broker-b"
                         value={brokerB}
                         onChange={(e) => setBrokerB(e.target.value)}
                         className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
@@ -953,7 +957,7 @@ export default function FunnelAnalyticsPage() {
                     <h2 className="text-lg font-semibold text-slate-900">All Brokers by Conversion Rate</h2>
                   </div>
                   <div className="overflow-auto">
-                    <table className="w-full">
+                    <table className="w-full" aria-label="Brokers ranked by conversion rate">
                       <thead className="bg-slate-50">
                         <tr>
                           <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">

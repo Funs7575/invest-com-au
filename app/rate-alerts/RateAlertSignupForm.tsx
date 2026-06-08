@@ -237,7 +237,7 @@ export default function RateAlertSignupForm() {
           </span>
           <input
             data-testid="rate-alert-email"
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
@@ -325,7 +325,7 @@ export default function RateAlertSignupForm() {
         data-testid="rate-alert-submit"
         type="submit"
         disabled={status === "sending"}
-        className="mt-6 w-full rounded-lg bg-amber-500 px-5 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-6 w-full rounded-lg bg-amber-500 px-5 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {status === "sending" ? "Setting your alert…" : "Alert me"}
       </button>

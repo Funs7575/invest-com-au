@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Spouse Super Contributions & Tax Offset Guide 2026 — Up to $540",
   description:
-    "Learn how the spouse super contribution tax offset works in Australia. Contribute to your spouse's super and claim up to $540 tax offset if your spouse earns below $40,000. Eligibility, worked examples, and comparison with super splitting. Updated 2026.",
+    "Spouse super contribution tax offset: claim up to $540/year when your spouse earns under $40,000. Eligibility rules, worked examples, and super splitting comparison. Updated 2026.",
   openGraph: {
     title: "Spouse Super Contributions & Tax Offset Guide 2026 — Up to $540",
     description:
@@ -171,7 +171,7 @@ export default function SpouseContributionsPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/super" className="hover:text-slate-900">Super</Link>
@@ -232,13 +232,13 @@ export default function SpouseContributionsPage() {
             sub="The offset phases out progressively as your spouse's income rises from $37,000 to $40,000."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Spouse contribution tax offset rates by income" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Spouse&apos;s Income</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Offset Rate</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Offset Applies On First</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Maximum Offset</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Spouse&apos;s Income</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Offset Rate</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Offset Applies On First</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Maximum Offset</th>
                 </tr>
               </thead>
               <tbody>
@@ -360,12 +360,12 @@ export default function SpouseContributionsPage() {
             sub="Two different tools for equalising super balances — understanding both helps you choose the right approach."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Spouse contributions vs super splitting comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Spouse Contribution</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Super Splitting</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Spouse Contribution</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Super Splitting</th>
                 </tr>
               </thead>
               <tbody>
@@ -394,7 +394,7 @@ export default function SpouseContributionsPage() {
               <details key={faq.q} className="group bg-white rounded-xl border border-slate-200">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3">&#x2304;</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">&#x2304;</span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                   {faq.a}
@@ -420,10 +420,10 @@ export default function SpouseContributionsPage() {
               Compare Super Funds
             </Link>
             <Link
-              href="/super/contributions"
+              href="/advisors/financial-planners"
               className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap"
             >
-              Super Contributions Guide
+              Find a Financial Planner
             </Link>
           </div>
         </div>

@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `How to Compare Super Funds in Australia (${CURRENT_YEAR} Guide) | invest.com.au`,
-  description: `How to compare Australian super funds beyond the headline return: long-term net returns, total fees, insurance, investment options, the APRA performance test, and the ATO YourSuper tool. ${UPDATED_LABEL}.`,
+  description: `Comparing super funds: long-term net returns, total fees, insurance, the APRA performance test, and the ATO YourSuper tool. ${UPDATED_LABEL}.`,
   alternates: { canonical: `${SITE_URL}/super/compare-guide` },
   openGraph: {
     title: `How to Compare Super Funds (${CURRENT_YEAR} Guide)`,
@@ -268,12 +268,12 @@ export default function SuperCompareGuidePage() {
               single one decides it.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Super fund comparison factors">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Factor</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">What to look at</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Why it matters</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Factor</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">What to look at</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Why it matters</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -335,13 +335,13 @@ export default function SuperCompareGuidePage() {
               the main categories you will come across.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Types of super fund">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Type</th>
-                    <th className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Model</th>
-                    <th className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide">Examples</th>
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Notes</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Type</th>
+                    <th scope="col" className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Model</th>
+                    <th scope="col" className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide">Examples</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Notes</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -503,13 +503,13 @@ export default function SuperCompareGuidePage() {
               cross-check with independent research.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Super fund research tools">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Tool</th>
-                    <th className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide">Where</th>
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide text-emerald-300">What it shows</th>
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Limitations</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Tool</th>
+                    <th scope="col" className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide">Where</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide text-emerald-300">What it shows</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Limitations</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -648,10 +648,10 @@ export default function SuperCompareGuidePage() {
                 Compare Super Funds
               </Link>
               <Link
-                href="/super/consolidation"
+                href="/advisors/financial-planners"
                 className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap"
               >
-                Consolidate Super
+                Find a Financial Planner
               </Link>
             </div>
           </div>

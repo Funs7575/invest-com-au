@@ -114,6 +114,7 @@ export function Button({
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
+      aria-busy={loading}
       className={classes}
       aria-label={ariaLabel}
     >

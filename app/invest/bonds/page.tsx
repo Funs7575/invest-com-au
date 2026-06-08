@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Complete guide to Australian bonds: government bonds, bond ETFs, corporate bonds, interest rate risk, yield, duration, tax treatment, and portfolio allocation.",
     url: `${SITE_URL}/invest/bonds`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Invest in Bonds Australia")}&sub=${encodeURIComponent("Government · Corporate · Bond ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -243,19 +244,19 @@ export default function BondsPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Types of bonds available in Australia">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Type
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Issuer / Examples
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Risk
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Notes
                   </th>
                 </tr>
@@ -360,19 +361,19 @@ export default function BondsPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Bond ETFs on the ASX comparison">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     ASX Code
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Fund Name
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Exposure
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     ~MER p.a.
                   </th>
                 </tr>
@@ -592,19 +593,19 @@ export default function BondsPage() {
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Credit ratings and yield spreads">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Rating (S&amp;P)
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Category
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Australian Examples
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Relative Yield
                   </th>
                 </tr>
@@ -793,16 +794,16 @@ export default function BondsPage() {
           </h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Direct bonds vs bond ETFs comparison">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Factor
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Direct bonds
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Bond ETFs
                   </th>
                 </tr>

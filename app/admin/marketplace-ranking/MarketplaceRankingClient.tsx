@@ -138,7 +138,7 @@ function SurfaceSection({
             <code>lib/marketplace-ranking</code> apply until rows are seeded.
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Marketplace ranking">
             <thead className="bg-slate-50 text-xs text-slate-500 uppercase">
               <tr>
                 <th className="text-left px-4 py-2 font-medium">Signal</th>
@@ -155,7 +155,7 @@ function SurfaceSection({
                   </td>
                   <td className="px-4 py-2">
                     <input
-                      type="number"
+                      type="number" inputMode="decimal"
                       step="100"
                       min="0"
                       max="100000"

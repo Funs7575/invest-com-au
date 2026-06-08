@@ -210,7 +210,7 @@ export default async function SwitchTypePage({
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-3xl mx-auto">
           {/* Breadcrumb */}
-          <nav className="text-sm text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
             <Link href="/" className="hover:text-brand">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/switch" className="hover:text-brand">Switch</Link>
@@ -259,7 +259,7 @@ export default async function SwitchTypePage({
                   >
                     <summary className="font-semibold text-sm text-slate-900 cursor-pointer list-none flex justify-between items-center gap-2">
                       {f.q}
-                      <span className="text-slate-400 shrink-0 group-open:rotate-180 transition-transform">▾</span>
+                      <span className="text-slate-400 shrink-0 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                     </summary>
                     <p className="mt-3 text-sm text-slate-600 leading-relaxed">
                       {f.a}

@@ -78,7 +78,7 @@ export default async function DbHealthPage() {
             <p className="text-[0.65rem] text-slate-500">Top 50 by mean execution time (ms)</p>
           </header>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-xs" aria-label="Slow queries">
               <thead className="bg-slate-50 border-b border-slate-100">
                 <tr>
                   <th className="px-3 py-2 text-left font-semibold text-slate-600">Query</th>
@@ -126,7 +126,7 @@ export default async function DbHealthPage() {
             <h2 className="text-sm font-bold text-slate-900">Retention rules</h2>
             <p className="text-[0.65rem] text-slate-500">GDPR + Privacy Act data trimming policy</p>
           </header>
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Database retention rules">
             <thead>
               <tr className="text-[0.6rem] uppercase tracking-wider text-slate-500 border-b border-slate-100">
                 <th className="px-4 py-2 text-left font-semibold">Table</th>

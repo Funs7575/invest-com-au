@@ -208,12 +208,12 @@ export default function DividendReinvestmentPage() {
               The mechanics differ slightly depending on whether you hold individual ASX shares or an ETF. The key distinction is where you enrol.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DRP on ASX shares vs ETFs">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Feature</th>
-                    <th className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">ASX Shares (e.g. CBA, BHP)</th>
-                    <th className="text-left py-3 px-4 font-extrabold text-amber-700 border-b border-slate-200">ASX ETFs (e.g. VAS, VGS)</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Feature</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">ASX Shares (e.g. CBA, BHP)</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-amber-700 border-b border-slate-200">ASX ETFs (e.g. VAS, VGS)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -300,13 +300,13 @@ export default function DividendReinvestmentPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DRP compounding effect worked example">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Year</th>
-                    <th className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Units held</th>
-                    <th className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Annual distribution</th>
-                    <th className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">New units added</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Year</th>
+                    <th scope="col" className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Units held</th>
+                    <th scope="col" className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Annual distribution</th>
+                    <th scope="col" className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">New units added</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -359,12 +359,12 @@ export default function DividendReinvestmentPage() {
               DRP is not always the right choice. The best option depends on your income needs, tax position, and investment goals.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DRP vs taking cash comparison">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Situation</th>
-                    <th className="text-center py-3 px-4 font-extrabold text-amber-700 border-b border-slate-200">DRP better</th>
-                    <th className="text-center py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Cash better</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Situation</th>
+                    <th scope="col" className="text-center py-3 px-4 font-extrabold text-amber-700 border-b border-slate-200">DRP better</th>
+                    <th scope="col" className="text-center py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Cash better</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -478,7 +478,7 @@ export default function DividendReinvestmentPage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
                   </summary>
                   <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
                 </details>

@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="py-12">
+    <div className="py-12" aria-busy="true" aria-label="Loading advisor portal…">
       <div className="container-custom max-w-3xl">
         <div className="h-8 w-64 bg-slate-200 rounded animate-pulse mb-3" />
         <div className="h-5 w-96 bg-slate-100 rounded animate-pulse mb-8" />

@@ -59,9 +59,9 @@ export default function TaxOptimizerQuickView({ searchParams }: Props) {
         <InputField label="Capital Gain" value={gain} onChange={setGain} prefix="$" placeholder="10000" />
         <InputField label="Days Held" value={days} onChange={setDays} placeholder="400" />
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">
+          <p className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">
             Marginal Tax Bracket
-          </label>
+          </p>
           <div className="grid grid-cols-5 gap-1">
             {BRACKETS.map((o) => (
               <button

@@ -70,7 +70,7 @@ export default function OrgPortalLogin() {
               </p>
 
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@organisation.com"
@@ -81,13 +81,13 @@ export default function OrgPortalLogin() {
               <button
                 onClick={handleSendLink}
                 disabled={status === "sending" || !email}
-                className="w-full py-2.5 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+                className="w-full py-2.5 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {status === "sending" ? "Sending..." : "Send magic link"}
               </button>
 
               {error && (
-                <p className="text-xs text-red-600 mt-2 text-center">{error}</p>
+                <p role="alert" className="text-xs text-red-600 mt-2 text-center">{error}</p>
               )}
             </>
           )}

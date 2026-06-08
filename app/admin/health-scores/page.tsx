@@ -83,6 +83,7 @@ export default function HealthScoresPage() {
   }, [supabase]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
@@ -271,10 +272,11 @@ export default function HealthScoresPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-broker" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Broker
                 </label>
                 <select
+                  id="hs-broker"
                   value={form.broker_slug}
                   onChange={(e) =>
                     setForm({ ...form, broker_slug: e.target.value })
@@ -290,11 +292,12 @@ export default function HealthScoresPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-overall-score" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Overall Score <InfoTip text="Weighted average of all health dimensions. Higher = safer." />
                 </label>
                 <input
-                  type="number"
+                  id="hs-overall-score"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.overall_score}
@@ -311,11 +314,12 @@ export default function HealthScoresPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-regulatory-score" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Regulatory Score <InfoTip text="Based on AFSL status, compliance history, and ASIC actions." />
                 </label>
                 <input
-                  type="number"
+                  id="hs-regulatory-score"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.regulatory_score}
@@ -329,10 +333,11 @@ export default function HealthScoresPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-regulatory-notes" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Regulatory Notes
                 </label>
                 <input
+                  id="hs-regulatory-notes"
                   type="text"
                   value={form.regulatory_notes}
                   onChange={(e) =>
@@ -345,11 +350,12 @@ export default function HealthScoresPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-client-money-score" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Client Money Score
                 </label>
                 <input
-                  type="number"
+                  id="hs-client-money-score"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.client_money_score}
@@ -363,10 +369,11 @@ export default function HealthScoresPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-client-money-notes" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Client Money Notes
                 </label>
                 <input
+                  id="hs-client-money-notes"
                   type="text"
                   value={form.client_money_notes}
                   onChange={(e) =>
@@ -379,11 +386,12 @@ export default function HealthScoresPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-fin-stability-score" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Financial Stability Score <InfoTip text="Based on balance sheet health, parent company, and capital reserves." />
                 </label>
                 <input
-                  type="number"
+                  id="hs-fin-stability-score"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.financial_stability_score}
@@ -398,10 +406,11 @@ export default function HealthScoresPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-fin-stability-notes" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Financial Stability Notes
                 </label>
                 <input
+                  id="hs-fin-stability-notes"
                   type="text"
                   value={form.financial_stability_notes}
                   onChange={(e) =>
@@ -417,11 +426,12 @@ export default function HealthScoresPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-platform-score" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Platform Reliability Score
                 </label>
                 <input
-                  type="number"
+                  id="hs-platform-score"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.platform_reliability_score}
@@ -436,10 +446,11 @@ export default function HealthScoresPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-platform-notes" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Platform Reliability Notes
                 </label>
                 <input
+                  id="hs-platform-notes"
                   type="text"
                   value={form.platform_reliability_notes}
                   onChange={(e) =>
@@ -455,11 +466,12 @@ export default function HealthScoresPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-insurance-score" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Insurance Score
                 </label>
                 <input
-                  type="number"
+                  id="hs-insurance-score"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.insurance_score}
@@ -473,10 +485,11 @@ export default function HealthScoresPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-insurance-notes" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Insurance Notes
                 </label>
                 <input
+                  id="hs-insurance-notes"
                   type="text"
                   value={form.insurance_notes}
                   onChange={(e) =>
@@ -489,10 +502,11 @@ export default function HealthScoresPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-afsl-number" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   AFSL Number
                 </label>
                 <input
+                  id="hs-afsl-number"
                   type="text"
                   value={form.afsl_number}
                   onChange={(e) =>
@@ -503,10 +517,11 @@ export default function HealthScoresPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="hs-afsl-status" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   AFSL Status
                 </label>
                 <input
+                  id="hs-afsl-status"
                   type="text"
                   value={form.afsl_status}
                   onChange={(e) =>
@@ -542,7 +557,7 @@ export default function HealthScoresPage() {
         ) : (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Health score overrides">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("broker_slug")}>

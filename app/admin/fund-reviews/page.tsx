@@ -209,7 +209,7 @@ export default function AdminFundReviewsPage() {
       </div>
 
       <input
-        type="text"
+        type="search" enterKeyHint="search"
         placeholder="Search by name, email, fund, or title..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -231,7 +231,7 @@ export default function AdminFundReviewsPage() {
         <div className="py-12 text-center text-slate-500 text-sm animate-pulse">Loading reviews...</div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full" aria-label="Fund reviews">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-3 py-3 w-8">

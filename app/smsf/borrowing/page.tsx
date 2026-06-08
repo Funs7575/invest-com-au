@@ -9,6 +9,7 @@ import {
 } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
       "Bare trust structure, ATO safe-harbour rates, eligible assets, lender comparison, and the tax treatment of LRBA income inside super.",
     url: `${SITE_URL}/smsf/borrowing`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Borrowing (LRBA)")}&sub=${encodeURIComponent("Limited Recourse · Property · Rules · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -262,14 +264,14 @@ export default function SmsfBorrowingPage() {
               {" "}{CURRENT_YEAR}.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="ATO LRBA safe-harbour conditions for real property and listed securities">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Condition</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Condition</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Real property
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Listed securities
                     </th>
                   </tr>
@@ -413,14 +415,14 @@ export default function SmsfBorrowingPage() {
               become negative once all fees are included.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="LRBA costs for SMSF borrowing">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Cost item</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Cost item</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Typical range
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Notes</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Notes</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
@@ -551,16 +553,16 @@ export default function SmsfBorrowingPage() {
               apply a 45% tax rate if the arrangement is not at arm&apos;s length.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Tax treatment of LRBA income in accumulation and pension phase">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Tax item
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Accumulation phase
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Pension phase
                     </th>
                   </tr>
@@ -835,7 +837,7 @@ export default function SmsfBorrowingPage() {
                 >
                   <summary className="flex items-center justify-between cursor-pointer px-5 py-4 font-bold text-slate-900 text-sm list-none select-none">
                     {q}
-                    <span className="ml-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                    <span className="ml-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                       &#x25BC;
                     </span>
                   </summary>
@@ -900,6 +902,15 @@ export default function SmsfBorrowingPage() {
             <p className="text-xs text-slate-400 mt-2">{UPDATED_LABEL}</p>
           </div>
         </section>
+
+        <HubAdvisorCTA
+          heading="Get advice on SMSF borrowing (LRBA)"
+          subheading="Limited recourse borrowing arrangements have strict ATO rules on asset types, trust structures, and refinancing. An SMSF specialist can review your bare trust deed and loan terms before settlement."
+          intent={{ need: "smsf", context: ["smsf_borrowing", "lrba", "smsf_property"] }}
+          source="smsf_borrowing"
+          ctaLabel="Find an SMSF borrowing specialist"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* ── Related links ────────────────────────────────────────────── */}
         <section className="py-8 bg-slate-50 border-t border-slate-200">

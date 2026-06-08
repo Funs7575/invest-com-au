@@ -48,7 +48,7 @@ export default function NewsletterCta() {
       <p className="text-sm text-slate-600 mb-4">One email a week. Tax windows, deal alerts and the most-read guides — no fluff.</p>
       <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2">
         <input
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           name="email"
           required
           placeholder="you@example.com"
@@ -63,7 +63,7 @@ export default function NewsletterCta() {
           {submitting ? "…" : "Subscribe"}
         </button>
       </form>
-      {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+      {error && <p role="alert" className="mt-2 text-xs text-red-600">{error}</p>}
       <p className="text-[11px] text-slate-500 leading-relaxed mt-3">Double opt-in. Unsubscribe at any time. We never share your email.</p>
     </div>
   );

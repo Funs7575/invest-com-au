@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import HubPage from "@/components/HubPage";
 import HubServiceGrid from "@/components/HubServiceGrid";
@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     title: `Retirement Planning Hub (${CURRENT_YEAR})`,
     description: RETIREMENT_HUB_CONFIG.metaDescription,
     url: `${SITE_URL}/retirement`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Retirement Planning Hub")}&sub=${encodeURIComponent("Income Strategies · Annuities · Pension Phase · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -55,8 +56,15 @@ export default async function RetirementHubPage() {
 
   const deepDives = RETIREMENT_HUB_CONFIG.deepDives ?? [];
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Retirement" },
+  ]);
+
   return (
-    <HubPage
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <HubPage
       config={RETIREMENT_HUB_CONFIG}
       serviceGrid={
         <HubServiceGrid
@@ -133,5 +141,6 @@ export default async function RetirementHubPage() {
       {/* Lead magnet capture */}
       {retirementMagnet && <LeadMagnetCapture magnet={retirementMagnet} />}
     </HubPage>
+    </>
   );
 }

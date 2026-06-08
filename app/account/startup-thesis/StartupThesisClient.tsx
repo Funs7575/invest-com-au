@@ -196,23 +196,25 @@ export default function StartupThesisClient({ initial }: Props) {
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Min (AUD)</label>
+            <label htmlFor="thesis-min-ticket" className="block text-xs font-medium text-slate-500 mb-1">Min (AUD)</label>
             <input
-              type="number"
+              id="thesis-min-ticket"
+              type="number" inputMode="decimal"
               value={minTicket ?? ""}
               onChange={(e) => setMinTicket(e.target.value ? Number(e.target.value) : null)}
               placeholder="e.g. 10000"
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-400"
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Max (AUD)</label>
+            <label htmlFor="thesis-max-ticket" className="block text-xs font-medium text-slate-500 mb-1">Max (AUD)</label>
             <input
-              type="number"
+              id="thesis-max-ticket"
+              type="number" inputMode="decimal"
               value={maxTicket ?? ""}
               onChange={(e) => setMaxTicket(e.target.value ? Number(e.target.value) : null)}
               placeholder="e.g. 100000"
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-400"
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400"
             />
           </div>
         </div>
@@ -238,7 +240,7 @@ export default function StartupThesisClient({ initial }: Props) {
       </section>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2" role="alert">
           {error}
         </p>
       )}
@@ -248,12 +250,13 @@ export default function StartupThesisClient({ initial }: Props) {
           type="button"
           onClick={handleSave}
           disabled={saving}
+          aria-busy={saving}
           className="bg-violet-600 hover:bg-violet-700 disabled:bg-violet-300 text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
         >
           {saving ? "Saving…" : "Save thesis"}
         </button>
         {savedAt && !error && (
-          <p className="text-xs text-emerald-600">
+          <p role="status" className="text-xs text-emerald-600">
             Saved at {savedAt.toLocaleTimeString("en-AU", { hour: "2-digit", minute: "2-digit" })}
           </p>
         )}

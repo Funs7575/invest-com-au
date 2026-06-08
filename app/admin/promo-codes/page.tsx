@@ -69,6 +69,7 @@ export default function PromoCodesAdminPage() {
   const [expiresAt, setExpiresAt] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -139,9 +140,8 @@ export default function PromoCodesAdminPage() {
     }
   }
 
-  async function remove(id: number, codeStr: string) {
-    if (!confirm(`Delete promo code ${codeStr}? This can't be undone.`))
-      return;
+  async function remove(id: number) {
+    setPendingDeleteId(null);
     const res = await fetch(`/api/admin/promo-codes?id=${id}`, {
       method: "DELETE",
     });
@@ -216,7 +216,7 @@ export default function PromoCodesAdminPage() {
                   : "(ignored)"}
             </span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               min={kind === "free_brief" ? undefined : 1}
               max={kind === "percent_off_accept" ? 100 : undefined}
               step="1"
@@ -232,7 +232,7 @@ export default function PromoCodesAdminPage() {
               Max uses
             </span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               min={1}
               max={10000}
               step="1"
@@ -297,7 +297,7 @@ export default function PromoCodesAdminPage() {
               No codes yet. Mint one above.
             </p>
           ) : (
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Promo codes">
               <thead className="text-xs uppercase text-slate-500 bg-slate-50">
                 <tr>
                   <th className="text-left px-4 py-2 font-semibold">Code</th>
@@ -355,9 +355,16 @@ export default function PromoCodesAdminPage() {
                         {c.notes ?? "—"}
                       </td>
                       <td className="px-4 py-2 text-right">
+                        {pendingDeleteId === c.id ? (
+                          <div className="flex items-center justify-end gap-1">
+                            <span className="text-xs text-red-600 font-medium">Delete?</span>
+                            <button type="button" onClick={() => void remove(c.id)} className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded">Yes</button>
+                            <button type="button" onClick={() => setPendingDeleteId(null)} className="text-xs border border-slate-300 text-slate-600 hover:bg-slate-50 font-semibold px-2 py-1 rounded">No</button>
+                          </div>
+                        ) : (
                         <button
                           type="button"
-                          onClick={() => remove(c.id, c.code)}
+                          onClick={() => setPendingDeleteId(c.id)}
                           className="text-xs text-rose-600 hover:text-rose-700 hover:underline"
                           disabled={c.usedCount > 0}
                           title={
@@ -368,6 +375,7 @@ export default function PromoCodesAdminPage() {
                         >
                           Delete
                         </button>
+                        )}
                       </td>
                     </tr>
                   );

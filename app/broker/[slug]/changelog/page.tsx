@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { getBrokerBySlug } from "@/lib/request-cache";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
@@ -34,8 +35,9 @@ export async function generateMetadata({
       title: `${broker.name} Changelog`,
       description: `Full history of fee and data changes for ${broker.name}.`,
       url: absoluteUrl(`/broker/${slug}/changelog`),
+      images: [{ url: `/api/og?title=${encodeURIComponent(broker.name + " Changelog")}&sub=${encodeURIComponent("Fee Changes · Rating Updates · Data History · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
-    twitter: { card: "summary" as const },
+    twitter: { card: "summary_large_image" as const },
   };
 }
 
@@ -136,16 +138,42 @@ export default async function BrokerChangelogPage({
     { name: "Changelog" },
   ]);
 
+  const changelogFaqs = [
+    {
+      q: `Why does Invest.com.au track ${broker.name}'s fee changes?`,
+      a: `Fee transparency is central to our editorial model. Broker fees change frequently — sometimes without announcement — and these changes directly affect your investment returns. We log every detected change to ${broker.name}'s ASX brokerage, US brokerage, FX markup, inactivity fees, and account fees so you always have a verified historical record. Data is sourced from broker websites and ASIC filings.`,
+    },
+    {
+      q: `How often is ${broker.name}'s fee data updated?`,
+      a: `Our monitoring system checks ${broker.name}'s fee data regularly. When a change is detected, it's logged here with the old value, new value, date, and source. Our editorial team also manually verifies fees against the broker's website and product disclosure statement. The changelog is the most complete public record of ${broker.name}'s fee history available.`,
+    },
+    {
+      q: `What types of changes are tracked in this changelog?`,
+      a: `We track: ASX brokerage fees (per trade), US/international brokerage fees, FX markup rates, inactivity fees, account fees, minimum deposit requirements, rating changes, and data corrections. Changes can be fee increases, fee decreases, new fees introduced, or fees removed. Editorial corrections (where we identified an error in our earlier data) are also logged with a "correction" change type.`,
+    },
+    {
+      q: `Do broker fee changes affect my existing investments?`,
+      a: `New fee structures typically apply to trades made after the change date — they rarely affect existing positions retroactively. However, ongoing fees like account fees and inactivity fees can start charging immediately once introduced. Always check ${broker.name}'s current Product Disclosure Statement (PDS) and Financial Services Guide (FSG) for the fees that apply to your account. This changelog is general information only and is not financial advice.`,
+    },
+  ];
+  const changelogFaqLd = faqJsonLd(changelogFaqs);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      {changelogFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(changelogFaqLd) }}
+        />
+      )}
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-3xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-4">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-4">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/best" className="hover:text-slate-900">Brokers</Link>
@@ -233,6 +261,21 @@ export default async function BrokerChangelogPage({
             </div>
           )}
         </div>
+
+        <section className="mt-10 border-t border-slate-100 pt-8 pb-4">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {changelogFaqs.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
       </div>
       <ComplianceFooter />
     </>

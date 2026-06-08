@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Stamp Duty for First Home Buyers — State-by-State Concessions (${CURRENT_YEAR}) | invest.com.au`,
-  description: `First home buyer stamp duty concessions and exemptions by state: NSW ($800K full exemption or annual property tax), VIC ($600K), QLD ($700K), WA ($430K), SA, ACT, TAS, NT. Thresholds, worked examples, NSW property tax option explained. ${UPDATED_LABEL}.`,
+  description: `First home buyer stamp duty: state exemption thresholds and worked examples. NSW ($800K), VIC ($600K), QLD ($700K), WA ($430K). ${UPDATED_LABEL}.`,
   openGraph: {
     title: `First Home Buyer Stamp Duty (${CURRENT_YEAR}) — State Concessions & NSW Property Tax`,
     description: "Stamp duty concessions for first home buyers in every state: exemption thresholds, partial concessions, worked dollar examples, NSW annual property tax option, off-the-plan rules, and foreign purchaser surcharges.",
@@ -200,7 +201,7 @@ export default function StampDutyConcessionsPage() {
       {/* Hero */}
       <section className="bg-slate-900 py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link><span>/</span>
             <Link href="/first-home-buyer" className="hover:text-white">First Home Buyer</Link><span>/</span>
             <span className="text-slate-200 font-medium">Stamp Duty Concessions</span>
@@ -282,13 +283,13 @@ export default function StampDutyConcessionsPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-2">State-by-state concessions at a glance</h2>
           <p className="text-sm text-slate-500 mb-5">Quick-reference table. Full detail for each state is in the section below.</p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Stamp duty concessions and exemptions by state" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">State</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide whitespace-nowrap">Full exemption threshold</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Concession / partial relief</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Key notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">State</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide whitespace-nowrap">Full exemption threshold</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Concession / partial relief</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Key notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -506,12 +507,12 @@ export default function StampDutyConcessionsPage() {
             the stamp duty base is lower than the completed market value.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto mb-5">
-            <table className="w-full text-sm">
+            <table aria-label="Off-the-plan stamp duty concessions by state" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide">Off-the-plan concession</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Duty calculated on</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide">Off-the-plan concession</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Duty calculated on</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -543,12 +544,12 @@ export default function StampDutyConcessionsPage() {
             top of the standard rate. This applies even to permanent residents in some states.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto mb-5">
-            <table className="w-full text-sm">
+            <table aria-label="Foreign purchaser stamp duty surcharges by state" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-red-300 uppercase tracking-wide whitespace-nowrap">Foreign purchaser surcharge</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-red-300 uppercase tracking-wide whitespace-nowrap">Foreign purchaser surcharge</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -637,7 +638,7 @@ export default function StampDutyConcessionsPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4 bg-white">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">&#9662;</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -645,6 +646,15 @@ export default function StampDutyConcessionsPage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Find a mortgage broker for your first home purchase"
+        subheading="Stamp duty concessions, first home buyer grants, and lender requirements all vary by state. A mortgage broker can help you structure your purchase, identify all applicable concessions, and compare lenders before you commit."
+        intent={{ need: "mortgage", context: ["stamp_duty", "first_home_buyer"] }}
+        source="first_home_buyer_stamp_duty"
+        ctaLabel="Find a mortgage broker"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100 bg-slate-50">

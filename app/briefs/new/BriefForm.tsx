@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -471,7 +471,7 @@ export default function BriefForm({
           >
             {copilotLoading ? (
               <>
-                <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                <div aria-hidden="true" className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
                 Drafting…
               </>
             ) : (
@@ -649,10 +649,11 @@ export default function BriefForm({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="brief-title" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Title <span className="text-red-500">*</span>
             </label>
             <input
+              id="brief-title"
               type="text"
               maxLength={120}
               value={form.job_title}
@@ -663,10 +664,11 @@ export default function BriefForm({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="brief-description" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Describe the situation <span className="text-red-500">*</span>
             </label>
             <textarea
+              id="brief-description"
               rows={5}
               maxLength={3000}
               value={form.job_description}
@@ -681,10 +683,11 @@ export default function BriefForm({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-state" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 State <span className="text-red-500">*</span>
               </label>
               <select
+                id="brief-state"
                 value={form.location_state}
                 onChange={(e) => setField("location_state", e.target.value)}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -698,10 +701,11 @@ export default function BriefForm({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-budget" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Budget band <span className="text-red-500">*</span>
               </label>
               <select
+                id="brief-budget"
                 value={form.budget_band}
                 onChange={(e) => setField("budget_band", e.target.value)}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -851,10 +855,11 @@ export default function BriefForm({
 
           {form.routing_mode === "direct" && (
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-target-slug" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Target team / firm / individual slug
               </label>
               <input
+                id="brief-target-slug"
                 type="text"
                 value={form.target_team_slug}
                 onChange={(e) => setField("target_team_slug", e.target.value)}
@@ -907,10 +912,11 @@ export default function BriefForm({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="brief-contact-name" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Name <span className="text-red-500">*</span>
             </label>
             <input
+              id="brief-contact-name"
               type="text"
               value={form.contact_name}
               onChange={(e) => setField("contact_name", e.target.value)}
@@ -920,11 +926,12 @@ export default function BriefForm({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-contact-email" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Email <span className="text-red-500">*</span>
               </label>
               <input
-                type="email"
+                id="brief-contact-email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={form.contact_email}
                 onChange={(e) => setField("contact_email", e.target.value)}
                 placeholder="you@example.com"
@@ -932,11 +939,13 @@ export default function BriefForm({
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-contact-phone" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Phone
               </label>
               <input
+                id="brief-contact-phone"
                 type="tel"
+                autoComplete="tel"
                 value={form.contact_phone}
                 onChange={(e) => setField("contact_phone", e.target.value)}
                 placeholder="+61 4XX XXX XXX"
@@ -966,7 +975,7 @@ export default function BriefForm({
           </label>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
+            <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
               {error}
             </div>
           )}
@@ -987,7 +996,7 @@ export default function BriefForm({
             >
               {loading ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                  <div aria-hidden="true" className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
                   Creating…
                 </>
               ) : (
@@ -1012,14 +1021,16 @@ function DynamicField({
   value: unknown;
   onChange: (v: unknown) => void;
 }) {
+  const id = useId();
   if (field.kind === "text") {
     return (
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+        <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1.5">
           {field.label}
           {field.required && <span className="text-red-500"> *</span>}
         </label>
         <input
+          id={id}
           type="text"
           maxLength={field.maxLength}
           placeholder={field.placeholder}
@@ -1033,11 +1044,12 @@ function DynamicField({
   if (field.kind === "textarea") {
     return (
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+        <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1.5">
           {field.label}
           {field.required && <span className="text-red-500"> *</span>}
         </label>
         <textarea
+          id={id}
           rows={3}
           maxLength={field.maxLength}
           placeholder={field.placeholder}
@@ -1051,11 +1063,12 @@ function DynamicField({
   if (field.kind === "select") {
     return (
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+        <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1.5">
           {field.label}
           {field.required && <span className="text-red-500"> *</span>}
         </label>
         <select
+          id={id}
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value)}
           className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"

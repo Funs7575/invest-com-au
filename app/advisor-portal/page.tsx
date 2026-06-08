@@ -57,8 +57,12 @@ export default function AdvisorPortalPage() {
   const [disputeError, setDisputeError] = useState("");
   const [disputeDone, setDisputeDone] = useState(false);
 
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+
   // Onboarding banner
   const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
+  const [dataLoadedAt, setDataLoadedAt] = useState<Date | null>(null);
+  const [moreNavOpen, setMoreNavOpen] = useState(false);
 
   // Dashboard load error (ADV-003): surface a banner instead of silently
   // swallowing fetch failures so advisors aren't left staring at a blank shell.
@@ -109,7 +113,7 @@ export default function AdvisorPortalPage() {
         loadData();
       } else {
         const err = await res.json();
-        alert(err.error || "Invalid or expired link. Please request a new one.");
+        setVerifyError(err.error || "Invalid or expired link. Please request a new one.");
         setView("login");
       }
     } catch {
@@ -154,6 +158,7 @@ export default function AdvisorPortalPage() {
     }
 
     setLoadError(parseFailed || anyFetchFailed([dashResult, summaryResult]));
+    setDataLoadedAt(new Date());
   }, []);
 
   const refreshData = useCallback(async () => {
@@ -211,20 +216,32 @@ export default function AdvisorPortalPage() {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-slate-500">Loading...</p>
+          <div aria-hidden="true" className="w-8 h-8 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin mx-auto mb-3" />
+          <p role="status" className="text-sm text-slate-500">Loading…</p>
         </div>
       </div>
     );
   }
 
   if (view === "login") {
-    return <AdvisorPortalLogin />;
+    return (
+      <>
+        {verifyError && (
+          <div className="max-w-md mx-auto mt-6 px-4">
+            <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{verifyError}</p>
+          </div>
+        )}
+        <AdvisorPortalLogin />
+      </>
+    );
   }
 
   // ─── PORTAL SHELL ───
   const isPending = advisor?.status === "pending";
   const isFirmAdmin = advisor?.is_firm_admin && advisor?.firm_id;
+
+  // ADV-006: top 7 tabs shown on mobile; rest collapse to "More…"
+  const MOBILE_TOP_KEYS = new Set(["dashboard", "leads", "profile", "analytics", "reviews", "billing", "articles"]);
 
   const navItems = [
     { key: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
@@ -263,15 +280,17 @@ export default function AdvisorPortalPage() {
         </div>
       </div>
 
-      {/* Nav tabs */}
+      {/* Nav tabs — ADV-006: desktop scrollable, mobile shows top 7 + More dropdown */}
       <div className="bg-white border-b border-slate-200 px-4">
-        <div className="max-w-5xl mx-auto flex gap-1 overflow-x-auto">
+        <div role="tablist" aria-label="Advisor portal navigation" className="max-w-5xl mx-auto flex gap-1 overflow-x-auto">
           {navItems.map((item) => (
             <button
               key={item.key}
               type="button"
-              onClick={() => { setView(item.key as ViewType); }}
-              className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset ${
+              role="tab"
+              aria-selected={view === item.key}
+              onClick={() => { setView(item.key as ViewType); setMoreNavOpen(false); }}
+              className={`${!MOBILE_TOP_KEYS.has(item.key) ? "hidden sm:flex" : "flex"} items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset ${
                 view === item.key
                   ? "border-slate-900 text-slate-900"
                   : "border-transparent text-slate-500 hover:text-slate-700"
@@ -284,41 +303,87 @@ export default function AdvisorPortalPage() {
               )}
             </button>
           ))}
-          {/* AJ-1: the brief/auction inbox (the core "win work" funnel) lives on
-              separate routes, not SPA views — surface it in the nav so advisors
-              who log in organically can find incoming work (was only reachable
-              via direct URL / email links). */}
+          {/* AJ-1: route-level tabs — shown on desktop only (collapse in More on mobile) */}
           <Link
             href="/advisor-portal/briefs"
-            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
             <Icon name="briefcase" size={16} />
             Briefs
           </Link>
           <Link
             href="/advisor-portal/auctions"
-            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
             <Icon name="activity" size={16} />
             Auctions
           </Link>
-          {/* P2-4: marketplace settings (bid templates / alert prefs) and the
-              Expert Teams (Pro Squad) manager were URL-only — surface them so
-              advisors can reach them without a direct link. */}
           <Link
             href="/advisor-portal/marketplace"
-            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
             <Icon name="store" size={16} />
             Marketplace
           </Link>
           <Link
             href="/advisor-portal/teams"
-            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
             <Icon name="users" size={16} />
             Expert Teams
           </Link>
+          {/* Mobile-only "More…" dropdown for non-top-7 tabs */}
+          <div className="relative sm:hidden flex items-center">
+            <button
+              type="button"
+              aria-expanded={moreNavOpen}
+              aria-haspopup="menu"
+              aria-label="More navigation items"
+              onClick={() => setMoreNavOpen(o => !o)}
+              className={`flex items-center gap-1 px-3 py-3 text-sm font-medium border-b-2 whitespace-nowrap ${
+                !MOBILE_TOP_KEYS.has(view)
+                  ? "border-slate-900 text-slate-900"
+                  : "border-transparent text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              More
+              <svg className={`w-3.5 h-3.5 transition-transform ${moreNavOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            {moreNavOpen && (
+              <div className="absolute top-full left-0 z-30 bg-white border border-slate-200 rounded-xl shadow-lg py-1 min-w-[180px]">
+                {navItems.filter(i => !MOBILE_TOP_KEYS.has(i.key)).map(item => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => { setView(item.key as ViewType); setMoreNavOpen(false); }}
+                    className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-left transition-colors ${
+                      view === item.key ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    <Icon name={item.icon} size={15} />
+                    {item.label}
+                  </button>
+                ))}
+                {/* ADV-024: route-level links also in mobile More dropdown */}
+                {[
+                  { href: "/advisor-portal/briefs", icon: "briefcase", label: "Briefs" },
+                  { href: "/advisor-portal/auctions", icon: "activity", label: "Auctions" },
+                  { href: "/advisor-portal/marketplace", icon: "store", label: "Marketplace" },
+                  { href: "/advisor-portal/teams", icon: "users", label: "Expert Teams" },
+                ].map(link => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMoreNavOpen(false)}
+                    className="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                  >
+                    <Icon name={link.icon} size={15} />
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -381,6 +446,8 @@ export default function AdvisorPortalPage() {
             onNavigate={setView}
             onDismissOnboarding={() => setDismissedOnboarding(true)}
             billingSummary={billingSummary}
+            dataLoadedAt={dataLoadedAt}
+            onRefresh={loadData}
           />
         )}
 
@@ -498,8 +565,8 @@ export default function AdvisorPortalPage() {
 
       {/* ─── DISPUTE MODAL ─── */}
       {disputeModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onKeyDown={(e) => { if (e.key === "Escape") setDisputeModal(null); }}>
+          <div role="dialog" aria-modal="true" aria-labelledby="dispute-modal-title" className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
             {disputeDone ? (
               <div className="text-center py-4">
                 <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -513,10 +580,10 @@ export default function AdvisorPortalPage() {
               <>
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h2 className="text-base font-bold text-slate-900">Dispute Lead</h2>
+                    <h2 id="dispute-modal-title" className="text-base font-bold text-slate-900">Dispute Lead</h2>
                     <p className="text-xs text-slate-500 mt-0.5">Lead from <strong>{disputeModal.leadName}</strong> · {disputeModal.daysLeft} day{disputeModal.daysLeft !== 1 ? "s" : ""} left to dispute</p>
                   </div>
-                  <button onClick={() => setDisputeModal(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+                  <button onClick={() => setDisputeModal(null)} aria-label="Close dispute modal" className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
                 </div>
 
                 <div className="mb-4">
@@ -546,8 +613,9 @@ export default function AdvisorPortalPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Additional details <span className="text-slate-400 font-normal">(optional{disputeReason === "other" ? ", required" : ""})</span></label>
+                  <label htmlFor="dispute-details" className="block text-xs font-semibold text-slate-600 mb-1.5">Additional details <span className="text-slate-400 font-normal">(optional{disputeReason === "other" ? ", required" : ""})</span></label>
                   <textarea
+                    id="dispute-details"
                     value={disputeDetails}
                     onChange={(e) => setDisputeDetails(e.target.value)}
                     rows={3}
@@ -557,14 +625,14 @@ export default function AdvisorPortalPage() {
                 </div>
 
                 {disputeError && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700 mb-4">{disputeError}</div>
+                  <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700 mb-4">{disputeError}</div>
                 )}
 
                 <div className="flex items-center gap-3">
                   <button
                     onClick={submitDispute}
                     disabled={disputeSubmitting || !disputeReason || (disputeReason === "other" && !disputeDetails.trim())}
-                    className="flex-1 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                    className="flex-1 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {disputeSubmitting ? "Submitting..." : "Submit Dispute"}
                   </button>
@@ -772,22 +840,22 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
         {/* ═══ ARTICLE FORM ═══ */}
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
-            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. 5 SMSF Mistakes I See Every Tax Season" className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+            <label htmlFor="art-title" className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
+            <input id="art-title" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. 5 SMSF Mistakes I See Every Tax Season" className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
             {title.length > 0 && title.length < 20 && <p className="text-[0.58rem] text-amber-600 mt-0.5">Title should be at least 20 characters for good SEO</p>}
             {title.length > 80 && <p className="text-[0.58rem] text-amber-600 mt-0.5">Title is over 80 characters — may be truncated in search results</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Category</label>
-              <select value={category} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
+              <label htmlFor="art-category" className="block text-xs font-bold text-slate-700 mb-1">Category</label>
+              <select id="art-category" value={category} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Publication Tier</label>
-              <select value={tier} onChange={e => setTier(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
+              <label htmlFor="art-tier" className="block text-xs font-bold text-slate-700 mb-1">Publication Tier</label>
+              <select id="art-tier" value={tier} onChange={e => setTier(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
                 {PRICING_TIERS.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}
               </select>
             </div>
@@ -800,13 +868,13 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Excerpt <span className="font-normal text-slate-400">(1-2 sentences for preview cards)</span></label>
-            <textarea value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Brief summary of what the article covers..." rows={2} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical" />
+            <label htmlFor="art-excerpt" className="block text-xs font-bold text-slate-700 mb-1">Excerpt <span className="font-normal text-slate-400">(1-2 sentences for preview cards)</span></label>
+            <textarea id="art-excerpt" value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Brief summary of what the article covers..." rows={2} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical" />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Content * <span className="font-normal text-slate-400">(Markdown supported)</span></label>
-            <textarea value={content} onChange={e => setContent(e.target.value)} placeholder={"Write your article here. Use **bold**, *italic*, ## headings, and - bullet points.\n\nRemember to include a general advice disclaimer, e.g.:\n\"This is general information only and does not constitute personal financial advice. Consider your own circumstances before acting.\""} rows={16} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical font-mono" />
+            <label htmlFor="art-content" className="block text-xs font-bold text-slate-700 mb-1">Content * <span className="font-normal text-slate-400">(Markdown supported)</span></label>
+            <textarea id="art-content" value={content} onChange={e => setContent(e.target.value)} placeholder={"Write your article here. Use **bold**, *italic*, ## headings, and - bullet points.\n\nRemember to include a general advice disclaimer, e.g.:\n\"This is general information only and does not constitute personal financial advice. Consider your own circumstances before acting.\""} rows={16} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical font-mono" />
             <div className="flex items-center justify-between mt-1">
               <p className={`text-[0.58rem] ${wc < 600 ? "text-amber-600" : "text-emerald-600"}`}>{wc} words {wc < 600 ? `(${600 - wc} more needed)` : "✓"}</p>
               <p className="text-[0.58rem] text-slate-400">~{Math.max(1, Math.ceil(wc / 250))} min read</p>
@@ -849,13 +917,14 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
           </div>
 
           <div className="flex gap-2">
-            <button onClick={() => handleSave("save")} disabled={saving || !title.trim() || !content.trim()} className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 transition-colors">
+            <button onClick={() => handleSave("save")} disabled={saving || !title.trim() || !content.trim()} aria-busy={saving} className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
               {saving ? "Saving..." : "Save Draft"}
             </button>
             <button
               onClick={() => handleSave("submit")}
               disabled={saving || !title.trim() || !content.trim() || wc < 300 || hasErrors || !acknowledged}
-              className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 transition-colors"
+              aria-busy={saving}
+              className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {saving ? "Submitting..." : "Submit for Review"}
             </button>

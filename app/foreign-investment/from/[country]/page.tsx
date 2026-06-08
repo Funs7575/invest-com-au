@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
 import { DTA_COUNTRIES, DEFAULT_WHT, type DTACountry } from "@/lib/foreign-investment-data";
 import { intentCountryFromIso, intentCountryMeta } from "@/lib/intent-context";
@@ -112,6 +113,28 @@ export default async function CountryForeignInvestmentPage({
     ? DEFAULT_WHT.dividendUnfranked - dtaCountry.dividendWHT
     : 0;
 
+  const countryFaqs = [
+    {
+      q: `Can ${dtaCountry.country} residents invest in Australia?`,
+      a: `Yes — ${dtaCountry.country} residents can invest in Australian shares, ETFs, savings accounts, and other assets. You will need to open an account with an ASIC-regulated broker that accepts non-resident investors, provide your ${dtaCountry.country} address and tax identification number, and comply with Australian tax withholding rules. Some product types (e.g., managed funds) may have additional non-resident restrictions. Browse brokers that accept non-residents at invest.com.au/best.`,
+    },
+    {
+      q: `What taxes apply to ${dtaCountry.country} investors in Australia?`,
+      a: dtaCountry.hasDTA
+        ? `Australia and ${dtaCountry.country} have a Double Taxation Agreement (DTA). Under this DTA, unfranked dividends are taxed at ${dtaCountry.dividendWHT}% (compared to the standard 30% for non-residents without a DTA) — a saving of ${dividendSaving}% per dollar of unfranked dividend income. Interest withholding tax is ${dtaCountry.interestWHT}%. Capital gains on Australian assets are generally exempt for non-residents (except for property). You may also need to declare Australian income in ${dtaCountry.country} under your domestic tax rules.`
+        : `Australia does not have a Double Taxation Agreement (DTA) with ${dtaCountry.country}. The standard non-resident withholding tax rates apply: 30% on unfranked dividends, ${dtaCountry.interestWHT}% on interest, and 0% on capital gains (except for property). You may also need to declare Australian income in ${dtaCountry.country}. We strongly recommend consulting an Australian tax adviser familiar with ${dtaCountry.country} obligations before investing.`,
+    },
+    {
+      q: `Do ${dtaCountry.country} investors need FIRB approval for Australian investments?`,
+      a: `Foreign Investment Review Board (FIRB) approval is generally required for residential real estate purchases by non-residents and for significant acquisitions of Australian businesses or agricultural land above FIRB thresholds. Share market investments (ASX-listed shares and ETFs) purchased as a portfolio investment (under 20% stake) do not require FIRB approval. Savings accounts and most managed funds are also exempt. Consult a tax adviser or solicitor if you plan to invest in property or make a substantial business acquisition.`,
+    },
+    {
+      q: `Which Australian brokers accept ${dtaCountry.country} residents?`,
+      a: `Not all Australian brokers accept international clients due to AML/KYC compliance complexity. Those that do typically require a passport or national ID, proof of overseas address, and a foreign tax identification number (TIN). The platform comparison on this page lists brokers that accept non-residents — use it to filter options. Always verify directly with the broker before applying, as acceptance criteria and documentation requirements vary.`,
+    },
+  ];
+  const countryFaqLd = faqJsonLd(countryFaqs);
+
   const PLATFORM_TYPE_LABELS: Record<string, string> = {
     share_broker: "Share Broker",
     crypto_exchange: "Crypto Exchange",
@@ -135,13 +158,14 @@ export default async function CountryForeignInvestmentPage({
   return (
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(countryFaqLd) }} />
 
       <ForeignInvestmentNav current="" />
 
       {/* ── Hero ──────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -367,6 +391,35 @@ export default async function CountryForeignInvestmentPage({
             <Link href="/foreign-investment" className="px-3 py-1.5 bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-700 rounded-lg">
               All countries &rarr;
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ──────────────────────────────────────────────────────── */}
+      <section className="py-10 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-xl font-bold text-slate-900 mb-6">
+            Frequently asked questions — investing from {dtaCountry.country}
+          </h2>
+          <div className="divide-y divide-slate-100">
+            {countryFaqs.map(({ q, a }) => (
+              <details key={q} className="group py-4">
+                <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                  {q}
+                  <svg
+                    className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                    aria-hidden="true"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>

@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Interactive ETF screener for Australian investors. Filter by asset class, MER, AUM, and franking credits.",
     url: `${SITE_URL}/etfs/screener`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("ASX ETF Screener")}&sub=${encodeURIComponent("Filter by MER · Asset Class · Provider · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -64,7 +65,7 @@ export default function ETFScreenerPage() {
       {/* Hero */}
       <section className="bg-white border-b border-slate-100 py-8 md:py-10">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>

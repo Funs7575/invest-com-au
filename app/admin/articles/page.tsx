@@ -36,6 +36,7 @@ export default function AdminArticlesPage() {
     if (data) setTeamMembers(data);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); loadTeamMembers(); }, []);
 
   const handleSave = async (formData: FormData) => {
@@ -202,17 +203,17 @@ export default function AdminArticlesPage() {
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Title <span className="text-red-600">*</span></label>
-              <input name="title" defaultValue={formArticle.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="art-title" className="block text-xs font-medium text-slate-500 mb-1">Title <span className="text-red-600">*</span></label>
+              <input id="art-title" name="title" defaultValue={formArticle.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
-              <input name="slug" defaultValue={formArticle.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="art-slug" className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
+              <input id="art-slug" name="slug" defaultValue={formArticle.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               <p className="text-xs text-slate-400 mt-0.5">URL path — e.g. &quot;best-brokers-2026&quot; creates /article/best-brokers-2026</p>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
-              <select name="status" defaultValue={formArticle.status || "published"} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+              <label htmlFor="art-status" className="block text-xs font-medium text-slate-500 mb-1">Status</label>
+              <select id="art-status" name="status" defaultValue={formArticle.status || "published"} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                 <option value="published">Published</option>
                 <option value="draft">Draft</option>
               </select>
@@ -220,50 +221,50 @@ export default function AdminArticlesPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Excerpt</label>
-            <textarea name="excerpt" defaultValue={formArticle.excerpt} rows={2} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <label htmlFor="art-excerpt" className="block text-xs font-medium text-slate-500 mb-1">Excerpt</label>
+            <textarea id="art-excerpt" name="excerpt" defaultValue={formArticle.excerpt} rows={2} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             <p className="text-xs text-slate-400 mt-0.5">Short summary shown in article cards and social shares.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
-              <input name="category" defaultValue={formArticle.category} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="art-category" className="block text-xs font-medium text-slate-500 mb-1">Category</label>
+              <input id="art-category" name="category" defaultValue={formArticle.category} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Read Time (min)</label>
-              <input name="read_time" type="number" defaultValue={formArticle.read_time?.toString()} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="art-read-time" className="block text-xs font-medium text-slate-500 mb-1">Read Time (min)</label>
+              <input id="art-read-time" name="read_time" type="number" inputMode="decimal" defaultValue={formArticle.read_time?.toString()} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Tags (comma-separated)</label>
-              <input name="tags" defaultValue={formArticle.tags?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="art-tags" className="block text-xs font-medium text-slate-500 mb-1">Tags (comma-separated)</label>
+              <input id="art-tags" name="tags" defaultValue={formArticle.tags?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Content</label>
-            <textarea name="content" defaultValue={formArticle.content} rows={8} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <label htmlFor="art-content" className="block text-xs font-medium text-slate-500 mb-1">Content</label>
+            <textarea id="art-content" name="content" defaultValue={formArticle.content} rows={8} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Sections (JSON array)</label>
-            <textarea name="sections" defaultValue={formArticle.sections ? JSON.stringify(formArticle.sections, null, 2) : ""} rows={6} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <label htmlFor="art-sections" className="block text-xs font-medium text-slate-500 mb-1">Sections (JSON array)</label>
+            <textarea id="art-sections" name="sections" defaultValue={formArticle.sections ? JSON.stringify(formArticle.sections, null, 2) : ""} rows={6} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             <p className="text-xs text-slate-400 mt-0.5">JSON array of content sections — use the content editor for easier editing.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
-              <input name="related_brokers" defaultValue={formArticle.related_brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="art-related-brokers" className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
+              <input id="art-related-brokers" name="related_brokers" defaultValue={formArticle.related_brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               <p className="text-xs text-slate-400 mt-0.5">Broker slugs, comma-separated. Shows comparison widget in article.</p>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Related Calculator</label>
-              <input name="related_calc" defaultValue={formArticle.related_calc} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="art-related-calc" className="block text-xs font-medium text-slate-500 mb-1">Related Calculator</label>
+              <input id="art-related-calc" name="related_calc" defaultValue={formArticle.related_calc} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-xs font-medium text-slate-500 mb-1">Cover Image URL</label>
-              <input name="cover_image_url" defaultValue={formArticle.cover_image_url || ""} placeholder="https://images.unsplash.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="art-cover-image" className="block text-xs font-medium text-slate-500 mb-1">Cover Image URL</label>
+              <input id="art-cover-image" name="cover_image_url" defaultValue={formArticle.cover_image_url || ""} placeholder="https://images.unsplash.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               {formArticle.cover_image_url && (
                 <div className="mt-2 relative h-24 w-40 rounded-lg overflow-hidden">
                   <Image
@@ -281,8 +282,8 @@ export default function AdminArticlesPage() {
           {/* Author/Reviewer (structured — from team_members) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Author (Team Member) <InfoTip text="Link to a team member. Preferred over legacy author fields below." /></label>
-              <select name="author_id" defaultValue={formArticle.author_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+              <label htmlFor="art-author-id" className="block text-xs font-medium text-slate-500 mb-1">Author (Team Member) <InfoTip text="Link to a team member. Preferred over legacy author fields below." /></label>
+              <select id="art-author-id" name="author_id" defaultValue={formArticle.author_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                 <option value="">None (use legacy fields)</option>
                 {teamMembers.filter(m => m.role !== 'expert_reviewer').map(m => (
                   <option key={m.id} value={m.id}>{m.full_name} ({m.role.replace('_', ' ')})</option>
@@ -290,8 +291,8 @@ export default function AdminArticlesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Reviewer (Team Member)</label>
-              <select name="reviewer_id" defaultValue={formArticle.reviewer_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+              <label htmlFor="art-reviewer-id" className="block text-xs font-medium text-slate-500 mb-1">Reviewer (Team Member)</label>
+              <select id="art-reviewer-id" name="reviewer_id" defaultValue={formArticle.reviewer_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                 <option value="">None</option>
                 {teamMembers.map(m => (
                   <option key={m.id} value={m.id}>{m.full_name} ({m.role.replace('_', ' ')})</option>
@@ -299,15 +300,15 @@ export default function AdminArticlesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Reviewed At</label>
-              <input name="reviewed_at" type="date" defaultValue={formArticle.reviewed_at ? new Date(formArticle.reviewed_at).toISOString().split('T')[0] : ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="art-reviewed-at" className="block text-xs font-medium text-slate-500 mb-1">Reviewed At</label>
+              <input id="art-reviewed-at" name="reviewed_at" type="date" defaultValue={formArticle.reviewed_at ? new Date(formArticle.reviewed_at).toISOString().split('T')[0] : ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
           </div>
 
           {/* Changelog */}
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Changelog (JSON array)</label>
-            <textarea name="changelog" defaultValue={formArticle.changelog ? JSON.stringify(formArticle.changelog, null, 2) : "[]"} rows={3} placeholder='[{"date": "2026-02-18", "summary": "Updated fee data for all brokers"}]' className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <label htmlFor="art-changelog" className="block text-xs font-medium text-slate-500 mb-1">Changelog (JSON array)</label>
+            <textarea id="art-changelog" name="changelog" defaultValue={formArticle.changelog ? JSON.stringify(formArticle.changelog, null, 2) : "[]"} rows={3} placeholder='[{"date": "2026-02-18", "summary": "Updated fee data for all brokers"}]' className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           {/* Legacy author fields */}
@@ -315,20 +316,20 @@ export default function AdminArticlesPage() {
             <summary className="px-3 py-2 text-xs font-medium text-slate-400 cursor-pointer hover:text-slate-600">Legacy Author Fields (flat text — used when no team member selected)</summary>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Author Name</label>
-                <input name="author_name" defaultValue={formArticle.author_name} placeholder="Market Research Team" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+                <label htmlFor="art-author-name" className="block text-xs font-medium text-slate-500 mb-1">Author Name</label>
+                <input id="art-author-name" name="author_name" defaultValue={formArticle.author_name} placeholder="Market Research Team" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Author Title</label>
-                <input name="author_title" defaultValue={formArticle.author_title} placeholder="Invest.com.au" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+                <label htmlFor="art-author-title" className="block text-xs font-medium text-slate-500 mb-1">Author Title</label>
+                <input id="art-author-title" name="author_title" defaultValue={formArticle.author_title} placeholder="Invest.com.au" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Author LinkedIn URL</label>
-                <input name="author_linkedin" defaultValue={formArticle.author_linkedin} placeholder="https://linkedin.com/in/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+                <label htmlFor="art-author-linkedin" className="block text-xs font-medium text-slate-500 mb-1">Author LinkedIn URL</label>
+                <input id="art-author-linkedin" name="author_linkedin" defaultValue={formArticle.author_linkedin} placeholder="https://linkedin.com/in/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Author Twitter URL</label>
-                <input name="author_twitter" defaultValue={formArticle.author_twitter} placeholder="https://x.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+                <label htmlFor="art-author-twitter" className="block text-xs font-medium text-slate-500 mb-1">Author Twitter URL</label>
+                <input id="art-author-twitter" name="author_twitter" defaultValue={formArticle.author_twitter} placeholder="https://x.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               </div>
             </div>
           </details>
@@ -351,7 +352,7 @@ export default function AdminArticlesPage() {
           {/* Search + Status Filter */}
           <div className="flex flex-col sm:flex-row gap-3 mb-4">
             <input
-              type="text"
+              type="search" enterKeyHint="search"
               placeholder="Search articles by title, slug, or category..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -373,7 +374,7 @@ export default function AdminArticlesPage() {
           </div>
 
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-            <table className="w-full">
+            <table className="w-full" aria-label="Articles">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Article</th>

@@ -394,14 +394,14 @@ function HandoffBanner({ token }: { token: string }) {
         <p className="text-xs text-emerald-700">No holdings in snapshot.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-xs text-slate-700 border-collapse">
+          <table className="w-full text-xs text-slate-700 border-collapse" aria-label="Portfolio snapshot holdings">
             <thead>
               <tr className="border-b border-emerald-200 text-emerald-800">
-                <th className="text-left pb-1 font-semibold">Ticker</th>
-                <th className="text-left pb-1 font-semibold">Exchange</th>
-                <th className="text-right pb-1 font-semibold">Shares</th>
-                <th className="text-right pb-1 font-semibold">Cost basis</th>
-                <th className="text-right pb-1 font-semibold">Acquired</th>
+                <th scope="col" className="text-left pb-1 font-semibold">Ticker</th>
+                <th scope="col" className="text-left pb-1 font-semibold">Exchange</th>
+                <th scope="col" className="text-right pb-1 font-semibold">Shares</th>
+                <th scope="col" className="text-right pb-1 font-semibold">Cost basis</th>
+                <th scope="col" className="text-right pb-1 font-semibold">Acquired</th>
               </tr>
             </thead>
             <tbody>
@@ -554,6 +554,8 @@ function FindAdvisorQuiz() {
   const [otpStage, setOtpStage] = useState<"idle" | "sending" | "sent" | "verifying">("idle");
   const [otpCode, setOtpCode] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
+  const [otpSentAt, setOtpSentAt] = useState<number | null>(null);
+  const [savedProgress, setSavedProgress] = useState<QuizState | null>(null);
   // ADV-015: OTP expiry countdown + resend cooldown. Codes are valid for 10 min
   // server-side; the resend button is gated for a short cooldown then re-enabled.
   const [otpExpiresAt, setOtpExpiresAt] = useState<number | null>(null);
@@ -583,12 +585,52 @@ function FindAdvisorQuiz() {
     if (quiz.step > 1) saveQuizProgress(quiz);
   }, [quiz, submitted]);
 
-
   const currentMatch = matchedAdvisors.length > 0 ? matchedAdvisors[matchedAdvisors.length - 1] : null;
 
   const update = useCallback((updates: Partial<QuizState>) => {
-    setQuiz((prev) => ({ ...prev, ...updates }));
+    setQuiz((prev) => {
+      const next = { ...prev, ...updates };
+      // ADV-025: sync localStorage on every state update so progress is always current
+      if (next.step >= 1 && next.step <= 4 && next.intent) {
+        saveQuizProgress(next);
+      } else if (next.step >= 5) {
+        clearQuizProgress();
+      }
+      return next;
+    });
   }, []);
+
+  // ADV-008: also save on mount in case quiz was initialised from URL params
+  useEffect(() => {
+    if (quiz.step >= 1 && quiz.step <= 4 && quiz.intent) {
+      saveQuizProgress(quiz);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ADV-008: on mount, offer "resume" if saved progress exists and no URL pre-fill
+  useEffect(() => {
+    if (quiz.step === 1 && !initialIntent) {
+      const p = loadQuizProgress();
+      if (p) setSavedProgress(p);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleResume = () => {
+    if (!savedProgress) return;
+    setQuiz(prev => ({
+      ...prev,
+      step: savedProgress.step,
+      intent: savedProgress.intent,
+      context: savedProgress.context,
+      state: savedProgress.state,
+      postcode: savedProgress.postcode,
+      suburb: savedProgress.suburb,
+      budget: savedProgress.budget,
+    }));
+    setSavedProgress(null);
+  };
 
   const restart = () => {
     setQuiz({ step: 1, intent: null, context: [], state: "", postcode: "", suburb: "", budget: "", firstName: "", email: "", phone: "", consent: false });
@@ -610,7 +652,6 @@ function FindAdvisorQuiz() {
 
   const dismissResume = () => {
     setShowResumePrompt(false);
-    clearQuizProgress();
   };
 
   const handleIntent = (intent: Intent) => {
@@ -716,6 +757,7 @@ function FindAdvisorQuiz() {
       setOtpResendAt(sentAt + OTP_RESEND_COOLDOWN_MS);
       setNowMs(sentAt);
       setOtpStage("sent");
+      setOtpSentAt(Date.now());
     } catch {
       setOtpError("Network error. Please try again.");
       setOtpStage("idle");
@@ -867,8 +909,32 @@ function FindAdvisorQuiz() {
         {/* Handoff banner — rendered when investor shares holdings from the holdings page */}
         {handoffToken && <HandoffBanner token={handoffToken} />}
 
+        {/* ADV-008: Resume banner — shown when localStorage has saved quiz progress */}
+        {savedProgress && quiz.step === 1 && (
+          <div className="mb-5 bg-teal-50 border border-teal-200 rounded-xl p-4 flex items-center gap-3">
+            <span className="text-teal-600 text-base shrink-0">↩</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-slate-900">Continue where you left off</p>
+              <p className="text-xs text-slate-500 mt-0.5">You were partway through finding an advisor.</p>
+            </div>
+            <button
+              onClick={handleResume}
+              className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg whitespace-nowrap"
+            >
+              Resume
+            </button>
+            <button
+              onClick={() => { setSavedProgress(null); clearQuizProgress(); }}
+              className="text-slate-400 hover:text-slate-600 text-lg leading-none p-0.5 shrink-0"
+              aria-label="Dismiss"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
         {/* Breadcrumb */}
-        <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
           <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
           <span className="mx-1.5 text-slate-300">/</span>
           <Link href="/advisors" className="hover:text-slate-700 transition-colors">Advisors</Link>
@@ -970,6 +1036,7 @@ function FindAdvisorQuiz() {
             otpStage={otpStage}
             otpCode={otpCode}
             otpError={otpError}
+            otpSentAt={otpSentAt}
             onOtpCodeChange={setOtpCode}
             onOtpVerify={handleVerifyAndSubmit}
             onOtpResend={handleSendOtp}
@@ -1256,7 +1323,7 @@ function Step3({
             />
             {lookupStatus === "loading" && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <svg className="w-4 h-4 text-slate-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                <svg role="status" aria-label="Looking up location" className="w-4 h-4 text-slate-400 animate-spin" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                 </svg>
@@ -1371,14 +1438,14 @@ function Step4({
   firstName, email, phone, consent, onChange, onSubmit, onBack,
   submitting, errors, submitError,
   otpStage, otpCode, otpError, onOtpCodeChange, onOtpVerify, onOtpResend,
-  otpSecondsLeft, otpExpired, otpCanResend, otpResendInSeconds,
+  otpSentAt, otpSecondsLeft, otpExpired, otpCanResend, otpResendInSeconds,
 }: {
   firstName: string; email: string; phone: string; consent: boolean;
   onChange: (field: string, value: string | boolean) => void;
   onSubmit: (e: React.FormEvent) => void; onBack: () => void;
   submitting: boolean; errors: Record<string, string>; submitError: string | null;
   otpStage: "idle" | "sending" | "sent" | "verifying";
-  otpCode: string; otpError: string | null;
+  otpCode: string; otpError: string | null; otpSentAt: number | null;
   onOtpCodeChange: (v: string) => void;
   onOtpVerify: () => void;
   onOtpResend: (e: React.SyntheticEvent) => void;
@@ -1386,6 +1453,19 @@ function Step4({
   otpCanResend: boolean; otpResendInSeconds: number;
 }) {
   const otpActive = otpStage === "sent" || otpStage === "verifying";
+
+  // ADV-015: OTP countdown timer
+  const [secondsLeft, setSecondsLeft] = useState<number>(300);
+  useEffect(() => {
+    if (!otpSentAt || !otpActive) return;
+    const target = otpSentAt + 5 * 60 * 1000;
+    const tick = () => setSecondsLeft(Math.max(0, Math.round((target - Date.now()) / 1000)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [otpSentAt, otpActive]);
+
+  const countdownStr = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, "0")}`;
 
   return (
     <Card variant="default" padding="lg">
@@ -1410,7 +1490,7 @@ function Step4({
           value={firstName} onChange={(e) => onChange("firstName", e.target.value)}
           error={errors.firstName} autoComplete="given-name" disabled={otpActive} />
 
-        <Input id="email" label="Email address" type="email" required placeholder="john@example.com"
+        <Input id="email" label="Email address" type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} required placeholder="john@example.com"
           value={email} onChange={(e) => onChange("email", e.target.value)}
           hint={otpActive ? `Code sent to ${email}` : "We'll send a verification code here"}
           error={errors.email} autoComplete="email" disabled={otpActive} />
@@ -1467,6 +1547,11 @@ function Step4({
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-slate-900">Check your inbox</p>
               <p className="text-xs text-slate-500 mt-0.5">We sent a 6-digit code to <strong>{email}</strong></p>
+              {otpActive && (
+                otpExpired
+                  ? <p className="text-xs text-red-500 font-semibold mt-1">Code expired — resend below</p>
+                  : <p className="text-xs text-slate-400 mt-1">Expires in <span className={secondsLeft < 60 ? "text-red-500 font-semibold" : ""}>{countdownStr}</span></p>
+              )}
             </div>
             {/* ADV-015: live expiry countdown so users know when the code dies. */}
             <div
@@ -1480,8 +1565,9 @@ function Step4({
 
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Verification code</label>
+              <label htmlFor="otp-code" className="block text-xs font-semibold text-slate-700 mb-1.5">Verification code</label>
               <input
+                id="otp-code"
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
@@ -1694,6 +1780,38 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
               </div>
             )}
 
+            {/* ADV-007: "Why we matched you" explanation */}
+            {(() => {
+              const intentLabel: Record<string, string> = {
+                buy_property: "property buying & investment",
+                grow_wealth: "wealth creation & growth",
+                protect_assets: "asset protection & insurance",
+                business_tax: "business tax & accounting",
+              };
+              const bullets: string[] = [];
+              const specialty = currentMatch.specialties?.[0];
+              if (specialty) bullets.push(`Specialises in ${specialty}`);
+              else if (userIntent) bullets.push(`Matches your goal: ${intentLabel[userIntent] ?? userIntent}`);
+              if (currentMatch.location_display) bullets.push(`Based ${currentMatch.location_display}${userState ? ` — serves ${userState}` : ""}`);
+              if (currentMatch.rating > 0 && currentMatch.review_count > 0)
+                bullets.push(`Rated ${currentMatch.rating}/5 from ${currentMatch.review_count} verified review${currentMatch.review_count !== 1 ? "s" : ""}`);
+              else if (currentMatch.verified) bullets.push("Verified AFSL / registered professional");
+              if (bullets.length === 0) return null;
+              return (
+                <div role="status" aria-live="polite" className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4">
+                  <p className="text-[0.65rem] font-bold text-emerald-700 uppercase tracking-wider mb-2">Why we matched you</p>
+                  <ul className="space-y-1">
+                    {bullets.map((b) => (
+                      <li key={b} className="flex items-start gap-1.5 text-xs text-emerald-800">
+                        <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })()}
+
             {/* CTA */}
             {isCurrentConfirmed ? (
               <div className="space-y-2">
@@ -1714,7 +1832,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                 <button
                   onClick={() => onConfirm(currentMatch)}
                   disabled={confirming}
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-slate-900 font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed text-slate-900 font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
                 >
                   {confirming ? "Sending request…" : `Connect with ${currentMatch.name}`}
                   {!confirming && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
@@ -1769,11 +1887,11 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
         <button
           onClick={onRematch}
           disabled={rematching}
-          className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50/50 transition-all disabled:opacity-50"
+          className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {rematching ? (
             <span className="flex items-center justify-center gap-2">
-              <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+              <svg aria-hidden="true" className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
               Finding another advisor...
             </span>
           ) : (

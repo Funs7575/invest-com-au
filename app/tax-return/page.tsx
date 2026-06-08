@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     title: `Tax Return Hub (${CURRENT_YEAR}) — Deductions, Agents & Investment Income`,
     description: taxReturnHubConfig.metaDescription,
     url: `${SITE_URL}/tax-return`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Australian Tax Return Hub")}&sub=${encodeURIComponent("Deductions · Agents · Investment Income · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

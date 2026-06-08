@@ -122,7 +122,7 @@ export default function UpgradeClient({ currentTier, tiers }: Props) {
                   type="button"
                   onClick={() => pick(tier.id)}
                   disabled={busy !== null}
-                  className="w-full py-2 rounded bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 disabled:opacity-50"
+                  className="w-full py-2 rounded bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {busy === tier.id ? "…" : `Switch to ${tier.label}`}
                 </button>

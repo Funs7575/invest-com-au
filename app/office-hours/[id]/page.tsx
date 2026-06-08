@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import OfficeHoursLiveStream from "@/components/OfficeHoursLiveStream";
 import RsvpButton from "@/components/RsvpButton";
 import { breadcrumbJsonLd, absoluteUrl, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 60; // 1 min ISR — status changes quickly
@@ -133,6 +134,28 @@ export default async function OfficeHoursSessionPage({
   const isTranscript = session.status === "transcript";
   const advisor = session.professionals;
 
+  const advisorName = advisor ? advisor.name : "a verified financial adviser";
+  const advisorFirm = advisor?.firm_name ? ` from ${advisor.firm_name}` : "";
+  const officeHoursFaqs = [
+    {
+      q: `What is "${session.title}" and who is it for?`,
+      a: `${session.description ? session.description + " " : ""}This advisor office hours session is hosted by ${advisorName}${advisorFirm} on invest.com.au. It is open to anyone who wants to ask questions about investing, financial planning, or related topics. ${isTranscript ? "The full transcript with all questions and answers is available on this page." : "You can submit questions before or during the session."}`,
+    },
+    {
+      q: `Is the advice given in office hours sessions personal financial advice?`,
+      a: `No. Questions answered during invest.com.au office hours sessions are general information only and do not constitute personal financial advice. Answers do not take into account your individual financial situation, objectives, or needs. For advice specific to your circumstances, consult an AFSL-licensed financial adviser directly. invest.com.au and participating advisers hold AFSL licences or are authorised representatives.`,
+    },
+    {
+      q: `How do I ask a question in an advisor office hours session?`,
+      a: `You can submit questions via the form on this page${session.status === "upcoming" ? " before the session begins" : ""}. Questions are moderated before being shown to the adviser. You can choose to ask anonymously — your name will not be displayed to other participants. The adviser selects which questions to answer during the live session or transcript period. There is a maximum of ${session.max_questions} questions per session.`,
+    },
+    {
+      q: `How do I find future office hours sessions?`,
+      a: `Browse all upcoming advisor office hours sessions at invest.com.au/office-hours. Sessions are hosted by verified, AFSL-licensed advisers across specialties including SMSF, retirement planning, property investment, and tax. You can RSVP to receive a reminder before the session starts.`,
+    },
+  ];
+  const officeHoursFaqLd = faqJsonLd(officeHoursFaqs);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Advisor Office Hours", url: absoluteUrl("/office-hours") },
@@ -188,6 +211,10 @@ export default async function OfficeHoursSessionPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(officeHoursFaqLd) }}
+      />
       {qaSchema && (
         <script
           type="application/ld+json"
@@ -202,7 +229,7 @@ export default async function OfficeHoursSessionPage({
       )}
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
         <Link href="/" className="hover:text-slate-900">Home</Link>
         <span className="text-slate-300">/</span>
         <Link href="/office-hours" className="hover:text-slate-900">Office Hours</Link>
@@ -276,6 +303,30 @@ export default async function OfficeHoursSessionPage({
           maxQuestions={session.max_questions}
         />
       </section>
+
+      <div className="mt-10 border-t border-slate-100 pt-8">
+        <h2 className="text-base font-bold text-slate-900 mb-4">About this session</h2>
+        <div className="divide-y divide-slate-100">
+          {officeHoursFaqs.map(({ q, a }) => (
+            <details key={q} className="group py-3">
+              <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                {q}
+                <svg
+                  className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                  aria-hidden="true"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <p className="mt-2 text-sm text-slate-600 leading-relaxed">{a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
 
       <footer className="mt-10 pt-4 border-t border-slate-200">
         <p className="text-[11px] text-slate-500 leading-relaxed">

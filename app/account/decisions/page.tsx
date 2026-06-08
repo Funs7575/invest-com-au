@@ -101,7 +101,7 @@ export default async function DecisionsPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
 
         {/* Breadcrumb */}
-        <nav style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 24 }}>
+        <nav aria-label="Breadcrumb" style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 24 }}>
           <Link href="/account" style={{ color: "var(--color-ink-400)", textDecoration: "none" }}>
             My Account
           </Link>

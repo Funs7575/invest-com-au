@@ -22,6 +22,7 @@ import {
 } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -38,6 +39,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: absoluteUrl("/property/positive-gearing"),
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Positive Gearing Property Australia")}&sub=${encodeURIComponent("Cash Flow Positive · Yield vs Growth · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };
@@ -289,16 +291,16 @@ export default function PositiveGearingPage() {
               most to Australian property investors.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table aria-label="Positive vs negative gearing comparison" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs w-1/4">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600 text-xs w-1/4">
                       Attribute
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-emerald-700 text-xs">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-emerald-700 text-xs">
                       Positive gearing
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-500 text-xs">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-500 text-xs">
                       Negative gearing
                     </th>
                   </tr>
@@ -622,22 +624,22 @@ export default function PositiveGearingPage() {
 
             <h3 className="text-lg font-semibold mb-3">Example tax impact</h3>
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table aria-label="Example tax impact of positive gearing income" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">
                       Scenario
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
                       Net surplus
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
                       Marginal rate
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
                       Tax owed
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
                       After-tax surplus
                     </th>
                   </tr>
@@ -734,12 +736,12 @@ export default function PositiveGearingPage() {
               but where 20-year median price growth has been significant.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-5">
-              <table className="w-full text-sm">
+              <table aria-label="Positive cash flow vs capital growth trade-off" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Factor</th>
-                    <th className="text-left px-4 py-3 font-semibold text-emerald-700 text-xs">High yield / positive gearing</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-500 text-xs">Low yield / capital growth</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Factor</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-emerald-700 text-xs">High yield / positive gearing</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-500 text-xs">Low yield / capital growth</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -815,6 +817,15 @@ export default function PositiveGearingPage() {
               ))}
             </div>
           </section>
+
+          <HubAdvisorCTA
+            heading="Find a mortgage broker for your positive-gearing strategy"
+            subheading="Identifying positively geared markets and structuring your loan for tax deductibility requires both property research and lending expertise. A specialist mortgage broker can compare investment loan rates and help maximise your cash-flow from day one."
+            intent={{ need: "mortgage", context: ["positive_gearing", "property_investment", "investment_loan"] }}
+            source="property_positive_gearing"
+            ctaLabel="Find a mortgage broker"
+            className="py-12 bg-amber-50 border-t border-amber-200 rounded-xl mb-10"
+          />
 
           {/* Related links */}
           <section className="mb-10">

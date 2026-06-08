@@ -61,7 +61,7 @@ function MiniBar({ data, maxVal }: { data: { label: string; value: number }[]; m
 }
 
 function SparkChart({ data, color = "#8b5cf6" }: { data: { day: string; count: number }[]; color?: string }) {
-  if (!data.length) return <div className="h-20 flex items-center justify-center text-xs text-slate-400">No data</div>;
+  if (!data.length) return <div className="h-20 flex flex-col items-center justify-center gap-1 text-xs text-slate-400"><Icon name="trending-up" size={16} className="opacity-40" /><span>No data yet</span></div>;
   const max = Math.max(...data.map((d) => d.count), 1);
   const width = 100 / data.length;
 
@@ -149,9 +149,9 @@ export default function DashboardClient() {
               Last updated: {new Date(data.generated_at).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" })}
             </p>
           </div>
-          <div className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
+          <div role="group" aria-label="Report period" className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
             {(["7d", "30d"] as const).map((p) => (
-              <button key={p} onClick={() => setPeriod(p)} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${period === p ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+              <button key={p} aria-pressed={period === p} onClick={() => setPeriod(p)} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${period === p ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
                 {p === "7d" ? "7 Days" : "30 Days"}
               </button>
             ))}
@@ -216,7 +216,7 @@ export default function DashboardClient() {
                 maxVal={Number(data.top_pages[0]?.count || 1)}
               />
             ) : (
-              <p className="text-xs text-slate-400 text-center py-4">No data yet</p>
+              <div className="flex flex-col items-center gap-1 py-4"><Icon name="file-text" size={18} className="text-slate-300" /><p className="text-xs text-slate-400">No page views yet</p></div>
             )}
           </div>
 
@@ -229,7 +229,7 @@ export default function DashboardClient() {
                 maxVal={Number(data.top_broker_clicks[0]?.count || 1)}
               />
             ) : (
-              <p className="text-xs text-slate-400 text-center py-4">No clicks yet</p>
+              <div className="flex flex-col items-center gap-1 py-4"><Icon name="mouse-pointer" size={18} className="text-slate-300" /><p className="text-xs text-slate-400">No broker clicks yet</p></div>
             )}
           </div>
         </div>
@@ -265,7 +265,7 @@ export default function DashboardClient() {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-slate-400 text-center py-4">No data yet</p>
+              <div className="flex flex-col items-center gap-1 py-4"><Icon name="layout" size={18} className="text-slate-300" /><p className="text-xs text-slate-400">No placement data yet</p></div>
             )}
           </div>
 
@@ -287,7 +287,7 @@ export default function DashboardClient() {
                 })}
               </div>
             ) : (
-              <p className="text-xs text-slate-400 text-center py-4">No data yet</p>
+              <div className="flex flex-col items-center gap-1 py-4"><Icon name="monitor" size={18} className="text-slate-300" /><p className="text-xs text-slate-400">No device data yet</p></div>
             )}
           </div>
         </div>

@@ -43,6 +43,7 @@ export const metadata: Metadata = {
     description:
       "How ETFs work, the major types on the ASX, key metrics to compare (MER, tracking error, bid-ask spread), hedged vs unhedged, tax treatment, and portfolio frameworks for Australian investors.",
     url: `${SITE_URL}/invest/etfs`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("ETF Investing Australia")}&sub=${encodeURIComponent("ASX ETFs · Compare · MER · Asset Class · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -213,13 +214,13 @@ export default function EtfsPage() {
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Major ETF types on the ASX</h2>
             <p className="text-sm text-slate-500 mb-6">There are over 300 ETFs on the ASX spanning equities, bonds, property, commodities, and multi-asset strategies. Here are the ten core categories and the most popular examples in each.</p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Major ETF types on the ASX">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Type</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Examples</th>
-                    <th className="text-left p-4 font-bold text-slate-700">What it tracks</th>
-                    <th className="text-right p-4 font-bold text-slate-700">Typical MER</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Type</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Examples</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">What it tracks</th>
+                    <th scope="col" className="text-right p-4 font-bold text-slate-700">Typical MER</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -327,12 +328,12 @@ export default function EtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Hedged vs unhedged international ETFs">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Feature</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Unhedged (e.g., VGS)</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Hedged (e.g., VGAD)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Feature</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Unhedged (e.g., VGS)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Hedged (e.g., VGAD)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -372,12 +373,12 @@ export default function EtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Tax treatment of ETF distribution components">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Distribution component</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Tax treatment</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Example ETF source</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Distribution component</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Tax treatment</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Example ETF source</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -521,13 +522,13 @@ export default function EtfsPage() {
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">ETF vs LIC vs managed fund</h2>
             <p className="text-sm text-slate-500 mb-6">Three common ways to invest in a diversified portfolio — understanding the structural differences helps you choose the right vehicle.</p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="ETF vs LIC vs managed fund comparison">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Feature</th>
-                    <th className="text-left p-4 font-bold text-slate-700">ETF</th>
-                    <th className="text-left p-4 font-bold text-slate-700">LIC (Listed Investment Company)</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Managed fund (unlisted)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Feature</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">ETF</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">LIC (Listed Investment Company)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Managed fund (unlisted)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

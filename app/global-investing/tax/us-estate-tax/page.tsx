@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `US Estate Tax for Australian Investors (${CURRENT_YEAR}) | invest.com.au`,
-  description: `The overlooked risk for Australians holding US shares directly: up to 40% US federal estate tax on US-situs assets above US$60,000. Why Australia has no estate-tax treaty, and how AU-domiciled ETFs eliminate the risk entirely. ${UPDATED_LABEL}.`,
+  description: `US estate tax for Australians: up to 40% on US-situs assets above US$60,000. No AU-US treaty — how AU-domiciled ETFs eliminate the risk. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `US Estate Tax for Australian Investors (${CURRENT_YEAR})`,
     description:
@@ -198,7 +198,7 @@ export default function UsEstateTaxPage() {
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section className="bg-white border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link>
@@ -304,12 +304,12 @@ export default function UsEstateTaxPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="US-situs assets — which assets Australians hold that are subject to US estate tax">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600">Asset</th>
-                  <th className="text-center px-3 py-3 text-xs font-bold text-slate-600">US-situs?</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600">Asset</th>
+                  <th scope="col" className="text-center px-3 py-3 text-xs font-bold text-slate-600">US-situs?</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -401,12 +401,12 @@ export default function UsEstateTaxPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="US estate tax rate bands for non-resident aliens — marginal rates by asset value">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600">US-situs assets</th>
-                  <th className="text-right px-4 py-3 text-xs font-bold text-slate-600">Marginal rate</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Note</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600">US-situs assets</th>
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-slate-600">Marginal rate</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Note</th>
                 </tr>
               </thead>
               <tbody>

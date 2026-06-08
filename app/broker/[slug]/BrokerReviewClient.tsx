@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
@@ -196,6 +196,7 @@ export default function BrokerReviewClient({
   relatedDeals = [],
   screenshots = [],
 }: BrokerReviewProps) {
+  const [reviewLinkCopied, setReviewLinkCopied] = useState(false);
   // Track this broker for "Recently Viewed"
   useEffect(() => { trackView(b); trackPageDuration(`/broker/${b.slug}`); }, [b]);
 
@@ -300,8 +301,8 @@ export default function BrokerReviewClient({
               <h1 className="text-xl md:text-3xl font-extrabold leading-tight text-slate-900">{b.name} Review ({CURRENT_YEAR})</h1>
               <p className="text-slate-500 mt-0.5 md:mt-1 text-xs md:text-base">{b.tagline}</p>
               <div className="flex items-center gap-2 md:gap-3 flex-wrap mt-2">
-                <span className="text-amber-600 text-sm">{renderStars(b.rating || 0)}</span>
-                <span className="text-sm font-bold text-slate-700">{b.rating}/5</span>
+                <span className="text-amber-600 text-sm" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
+                <span className="text-sm font-bold text-slate-700" aria-hidden="true">{b.rating}/5</span>
                 {b.chess_sponsored && (
                   <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">CHESS</span>
                 )}
@@ -321,17 +322,14 @@ export default function BrokerReviewClient({
           >
             {getBenefitCta(b, 'review')}
           </a>
+          <p className="text-[0.68rem] text-slate-400 mt-2 leading-relaxed">
+            {ADVERTISER_DISCLOSURE_SHORT}{" "}{PDS_CONSIDERATION}{" "}
+            <a href="#important-info" className="text-blue-600 underline hover:text-blue-800">
+              Important information →
+            </a>
+          </p>
           <BrokerReliabilityScore brokerId={b.id} brokerName={b.name} />
         </div>
-        <p className="text-xs text-slate-500 mb-1">
-          {ADVERTISER_DISCLOSURE_SHORT}
-        </p>
-        <p className="text-xs text-slate-500 mb-3">
-          {PDS_CONSIDERATION}{" "}
-          <a href="#important-info" className="text-blue-700 underline">
-            Important information, fees &amp; exit policy →
-          </a>
-        </p>
 
         {/* Author Byline & Dates — E-E-A-T visible signals */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
@@ -371,11 +369,21 @@ export default function BrokerReviewClient({
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[0.62rem] text-slate-400 font-medium">Share:</span>
           <button
-            onClick={() => { if (navigator.share) { navigator.share({ title: `${b.name} Review — Invest.com.au`, url: window.location.href }); } else { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); } }}
+            onClick={() => {
+              if (navigator.share) {
+                void navigator.share({ title: `${b.name} Review — Invest.com.au`, url: window.location.href });
+              } else {
+                void navigator.clipboard.writeText(window.location.href).then(() => {
+                  setReviewLinkCopied(true);
+                  setTimeout(() => setReviewLinkCopied(false), 2000);
+                });
+              }
+            }}
             className="text-[0.62rem] px-2 py-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 transition-colors"
             aria-label="Share this review"
           >
-            <Icon name="share-2" size={12} className="inline mr-1" />Copy Link
+            <Icon name="share-2" size={12} className="inline mr-1" />
+            {reviewLinkCopied ? "Copied!" : "Copy Link"}
           </button>
           <a
             href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${b.name} Review — ${b.rating}/5 on Invest.com.au`)}&url=${encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://invest.com.au'}/broker/${b.slug}`)}`}
@@ -471,8 +479,8 @@ export default function BrokerReviewClient({
             </p>
             <div className="flex items-center gap-4 pt-3 border-t border-white/10">
               <div className="flex items-center gap-2">
-                <span className="text-amber-400 text-lg">{renderStars(b.rating || 0)}</span>
-                <span className="text-2xl font-extrabold">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
+                <span className="text-amber-400 text-lg" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
+                <span className="text-2xl font-extrabold" aria-hidden="true">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
               </div>
               <a
                 href={getAffiliateLink(b)}
@@ -1059,7 +1067,7 @@ export default function BrokerReviewClient({
                     <BrokerLogo broker={s} size="md" />
                   </div>
                   <h3 className="font-bold text-xs md:text-sm">{s.name}</h3>
-                  <div className="text-[0.62rem] md:text-xs text-amber-600">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></div>
+                  <div className="text-[0.62rem] md:text-xs text-amber-600" aria-label={`Rated ${s.rating ?? 0} out of 5 stars`}><span aria-hidden="true">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></span></div>
                   <div className="text-[0.58rem] md:text-xs text-slate-500 mt-0.5 md:mt-1">{s.asx_fee} · {s.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
                   <span className="inline-block mt-1.5 md:mt-2 text-[0.62rem] md:text-xs px-2 py-0.5 md:px-3 md:py-1 bg-slate-900 text-white rounded-md font-semibold">vs {b.name} →</span>
                 </Link>

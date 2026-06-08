@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `RAD vs DAP — Aged Care Accommodation Payments Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `RAD (Refundable Accommodation Deposit) vs DAP (Daily Accommodation Payment) for Australian residential aged care. How to decide, tax treatment, Centrelink impact, and hybrid RAD/DAP options. ${UPDATED_LABEL}.`,
+  description: `RAD vs DAP for Australian residential aged care: lump sum deposit vs daily fee, tax treatment, Centrelink impact, and hybrid options. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `RAD vs DAP: Aged Care Accommodation Payments (${CURRENT_YEAR})`,
     description: "RAD vs DAP decision for Australian aged care: lump sum vs daily fee, Centrelink impact, tax, and the hybrid option.",
@@ -65,7 +66,7 @@ export default function RadVsDapPage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link><span>/</span>
             <Link href="/aged-care" className="hover:text-slate-900">Aged Care</Link><span>/</span>
             <span className="text-slate-900 font-medium">RAD vs DAP</span>
@@ -106,12 +107,12 @@ export default function RadVsDapPage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">RAD vs DAP comparison</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="RAD vs DAP comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">RAD (lump sum)</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">DAP (daily fee)</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">RAD (lump sum)</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">DAP (daily fee)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -152,7 +153,7 @@ export default function RadVsDapPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">▾</span>
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
@@ -160,6 +161,16 @@ export default function RadVsDapPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get matched with an aged care financial specialist"
+        subheading="RAD vs DAP affects your Centrelink entitlements, estate, and cash flow. An aged care specialist can model the numbers for your situation."
+        intent={{ need: "aged_care", context: ["rad_dap", "aged_care_planning"] }}
+        source="aged_care_rad_dap"
+        ctaLabel="Find an aged care financial specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

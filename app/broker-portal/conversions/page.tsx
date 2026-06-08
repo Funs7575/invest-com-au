@@ -119,7 +119,7 @@ export default function ConversionsPage() {
         <button
           onClick={handleExport}
           disabled={conversions.length === 0}
-          className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+          className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Export CSV
         </button>
@@ -298,25 +298,25 @@ export default function ConversionsPage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto portal-table-stagger">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Conversion history">
             <thead>
               <tr className="border-b border-slate-100 text-left">
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Date
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Event
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   <span className="inline-flex items-center gap-1">Click ID <InfoTip text="Unique identifier linking this conversion back to the original ad click for attribution." /></span>
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Value
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Campaign
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Source
                 </th>
               </tr>

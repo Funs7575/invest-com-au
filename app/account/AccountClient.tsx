@@ -51,6 +51,8 @@ export default function AccountClient() {
   const [showRefundConfirm, setShowRefundConfirm] = useState(false);
   const [refundSuccess, setRefundSuccess] = useState(false);
 
+  const [showSubscriptionActiveBanner, setShowSubscriptionActiveBanner] = useState(false);
+
   const [savedComparisonsCount, setSavedComparisonsCount] = useState<number | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
   const [onboardingDone, setOnboardingDone] = useState<boolean>(true);
@@ -75,6 +77,15 @@ export default function AccountClient() {
 
     return () => clearInterval(interval);
   }, [checkoutSuccess, user, refresh]);
+
+  // When polling resolves and isPro flips true, swap the "Processing" banner
+  // for a 5-second green success banner (ADV-089)
+  useEffect(() => {
+    if (!checkoutSuccess || !isPro) return;
+    setShowSubscriptionActiveBanner(true);
+    const timer = setTimeout(() => setShowSubscriptionActiveBanner(false), 5000);
+    return () => clearTimeout(timer);
+  }, [checkoutSuccess, isPro]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -106,13 +117,16 @@ export default function AccountClient() {
 
   // Fetch saved comparisons count
   const fetchSavedComparisonsCount = useCallback(async () => {
+    const timeout = setTimeout(() => setSavedComparisonsCount(0), 3000);
     try {
       const res = await fetch("/api/saved-comparisons");
-      if (!res.ok) return;
+      clearTimeout(timeout);
+      if (!res.ok) { setSavedComparisonsCount(0); return; }
       const data = await res.json();
       setSavedComparisonsCount(Array.isArray(data.comparisons) ? data.comparisons.length : 0);
     } catch {
-      // Silently fail - count is a nice-to-have
+      clearTimeout(timeout);
+      setSavedComparisonsCount(0);
     }
   }, []);
 
@@ -126,7 +140,7 @@ export default function AccountClient() {
     return (
       <div className="py-16">
         <div className="container-custom max-w-2xl">
-          <div className="animate-pulse space-y-4">
+          <div className="animate-pulse space-y-4" aria-busy="true" aria-label="Loading account…">
             <div className="h-8 bg-slate-200 rounded w-48" />
             <div className="h-40 bg-slate-100 rounded-xl" />
           </div>
@@ -265,16 +279,38 @@ export default function AccountClient() {
           </div>
         )}
 
-        {/* Processing banner */}
-        {showSuccessBanner && !isPro && (
+        {/* Processing banner — shown while polling, hidden once isPro resolves */}
+        {showSuccessBanner && !isPro && !showSubscriptionActiveBanner && (
           <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
+              <svg aria-hidden="true" className="w-4 h-4 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
               <p className="text-sm text-blue-700">Processing your subscription... This usually takes a few seconds.</p>
             </div>
+          </div>
+        )}
+
+        {/* Subscription activated banner — replaces Processing banner once polling confirms active (ADV-089) */}
+        {showSubscriptionActiveBanner && (
+          <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-start gap-3">
+            <svg className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-emerald-800">Your subscription is now active.</p>
+              <p className="text-xs text-emerald-700 mt-0.5">Premium features are enabled.</p>
+            </div>
+            <button
+              onClick={() => setShowSubscriptionActiveBanner(false)}
+              aria-label="Dismiss"
+              className="ml-auto text-emerald-400 hover:text-emerald-600"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         )}
 
@@ -288,7 +324,7 @@ export default function AccountClient() {
               <p className="text-sm font-semibold text-emerald-800">Welcome to Invest.com.au{profileName ? `, ${profileName}` : ""}!</p>
               <p className="text-xs text-emerald-700 mt-0.5">Your profile is set up. Start comparing brokers, explore our tools, or take the platform quiz to find your best match.</p>
             </div>
-            <button onClick={() => setShowWelcomeBanner(false)} className="text-emerald-400 hover:text-emerald-600 shrink-0">
+            <button onClick={() => setShowWelcomeBanner(false)} aria-label="Dismiss welcome banner" className="text-emerald-400 hover:text-emerald-600 shrink-0">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
@@ -444,18 +480,27 @@ export default function AccountClient() {
             )}
 
             {refundSuccess && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-4">
-                <p className="text-xs text-emerald-700 font-semibold">
-                  Refund processed successfully. Check your email for confirmation. The refund will appear on your statement within 5–10 business days.
-                </p>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">
+                <svg className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p className="text-sm font-semibold text-emerald-800">Refund processed.</p>
+                  <p className="text-xs text-emerald-700 mt-0.5">
+                    Expect the amount back within 5–10 business days. A confirmation has been sent to your email.
+                  </p>
+                </div>
               </div>
             )}
 
+            {portalError && (
+              <p role="alert" className="mb-2 text-xs text-red-500">{portalError}</p>
+            )}
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={handleManageSubscription}
                 disabled={portalLoading}
-                className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50"
+                className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {portalLoading ? "Opening..." : "Manage Subscription"}
               </button>
@@ -479,10 +524,6 @@ export default function AccountClient() {
               )}
             </div>
 
-            {portalError && (
-              <p role="alert" className="mt-2 text-xs text-red-500">{portalError}</p>
-            )}
-
             {showCancelConfirm && (
               <div className="mt-3 bg-red-50 border border-red-200 rounded-xl p-4">
                 <p className="text-sm font-semibold text-red-800 mb-1">Are you sure you want to cancel?</p>
@@ -501,7 +542,7 @@ export default function AccountClient() {
                   <button
                     onClick={handleCancelSubscription}
                     disabled={cancelLoading}
-                    className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {cancelLoading ? "Cancelling..." : "Yes, Cancel"}
                   </button>
@@ -528,7 +569,7 @@ export default function AccountClient() {
                   <button
                     onClick={handleRefundSubscription}
                     disabled={refundLoading}
-                    className="px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-xl hover:bg-amber-700 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-xl hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {refundLoading ? "Processing..." : "Yes, Refund & Cancel"}
                   </button>

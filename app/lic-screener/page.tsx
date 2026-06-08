@@ -96,7 +96,7 @@ export default function LicScreenerPage() {
             <details key={item.q} className="bg-white border border-slate-200 rounded-xl group">
               <summary className="px-5 py-4 text-sm font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center">
                 {item.q}
-                <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2">▾</span>
+                <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2" aria-hidden="true">▾</span>
               </summary>
               <p className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{item.a}</p>
             </details>

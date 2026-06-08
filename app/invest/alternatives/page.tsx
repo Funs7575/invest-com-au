@@ -33,6 +33,7 @@ export const metadata: Metadata = {
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
     url: absoluteUrl(CANONICAL),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Alternative Investments Australia")}&sub=${encodeURIComponent("Private Equity · Private Credit · Hedge Funds · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" as const },
 };
@@ -120,7 +121,7 @@ export default function AlternativesHubPage() {
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/invest" className="hover:text-slate-900">Invest</Link>

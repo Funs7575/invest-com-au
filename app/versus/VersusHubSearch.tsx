@@ -56,9 +56,9 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-stretch">
         {/* Broker A */}
         <div className="flex-1 relative">
-          <label className="text-[0.6rem] md:text-xs text-slate-500 mb-1 block">
+          <p className="text-[0.6rem] md:text-xs text-slate-500 mb-1 block">
             Platform 1
-          </label>
+          </p>
           {selectedA && !focusA ? (
             <button
               onClick={() => {
@@ -77,7 +77,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
           ) : (
             <>
               <input
-                type="text"
+                type="search" enterKeyHint="search"
                 placeholder="Search platforms..."
                 aria-label="Search for first platform"
                 value={searchA}
@@ -118,9 +118,9 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
 
         {/* Broker B */}
         <div className="flex-1 relative">
-          <label className="text-[0.6rem] md:text-xs text-slate-500 mb-1 block">
+          <p className="text-[0.6rem] md:text-xs text-slate-500 mb-1 block">
             Platform 2
-          </label>
+          </p>
           {selectedB && !focusB ? (
             <button
               onClick={() => {
@@ -139,7 +139,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
           ) : (
             <>
               <input
-                type="text"
+                type="search" enterKeyHint="search"
                 placeholder="Search platforms..."
                 aria-label="Search for second platform"
                 value={searchB}

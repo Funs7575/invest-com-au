@@ -81,17 +81,27 @@ export default function LumpSumCalculatorClient() {
 
   const maxFinal = Math.max(main.final, conservative.final, optimistic.final);
 
+  const isModified = lumpSum !== 100000 || monthly !== 0 || returnRate !== 7 || years !== 15 || taxId !== "30";
+
+  const handleReset = () => {
+    setLumpSum(100000);
+    setMonthly(0);
+    setReturnRate(7);
+    setYears(15);
+    setTaxId("30");
+  };
+
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <label className="block">
             <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Lump sum (AUD)</span>
-            <input type="number" min={0} step={5_000} value={lumpSum} onChange={(e) => setLumpSum(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            <input type="number" inputMode="decimal" min={0} step={5_000} value={lumpSum} onChange={(e) => setLumpSum(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
           </label>
           <label className="block">
             <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Monthly contribution (AUD)</span>
-            <input type="number" min={0} step={100} value={monthly} onChange={(e) => setMonthly(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            <input type="number" inputMode="decimal" min={0} step={100} value={monthly} onChange={(e) => setMonthly(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
           </label>
           <label className="block">
             <span className="flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">
@@ -114,6 +124,17 @@ export default function LumpSumCalculatorClient() {
             </select>
           </label>
         </div>
+
+        {isModified && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleReset}
+              className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+            >
+              Reset to defaults
+            </button>
+          </div>
+        )}
 
         <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6">
           <p className="text-[10px] uppercase tracking-wider font-extrabold text-amber-400">Final balance after {years} years</p>

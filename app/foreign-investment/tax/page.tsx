@@ -22,7 +22,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const metadata: Metadata = {
   title: "Australian Tax for Non-Residents & Foreign Investors — 2026 Guide",
   description:
-    "Complete Australian tax guide for non-residents and foreign investors. Withholding tax rates, Double Tax Agreements (DTA) by country, CGT rules, residency tests, and the key differences vs resident tax rates. Updated March 2026.",
+    "Australian tax for non-residents: withholding rates, DTA treaties by country, CGT rules, and residency tests. Updated 2026.",
   openGraph: {
     title: "Australian Tax Guide for Non-Residents & Foreign Investors — 2026",
     description:
@@ -137,7 +137,7 @@ export default async function ForeignTaxPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -172,13 +172,13 @@ export default async function ForeignTaxPage() {
             sub="How much Australian tax is deducted from different types of income paid to non-residents."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Australian withholding tax rates by income type for non-residents">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Income type</th>
-                  <th className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">No DTA</th>
-                  <th className="text-start px-4 py-3 text-xs font-bold text-green-700 uppercase tracking-wide">With DTA</th>
-                  <th className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide hidden md:table-cell">Notes</th>
+                  <th scope="col" className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Income type</th>
+                  <th scope="col" className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">No DTA</th>
+                  <th scope="col" className="text-start px-4 py-3 text-xs font-bold text-green-700 uppercase tracking-wide">With DTA</th>
+                  <th scope="col" className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -212,7 +212,7 @@ export default async function ForeignTaxPage() {
                 <h3 className="text-sm font-extrabold text-red-900">Non-resident rates</h3>
                 <p className="text-xs text-red-700 mt-0.5">No tax-free threshold · No Medicare levy</p>
               </div>
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Non-resident income tax rates 2025–26">
                 <tbody>
                   {nonResidentBrackets.map((b, i) => (
                     <tr key={i} className="border-b border-slate-100 last:border-0">
@@ -229,7 +229,7 @@ export default async function ForeignTaxPage() {
                 <h3 className="text-sm font-extrabold text-green-900">Resident rates</h3>
                 <p className="text-xs text-green-700 mt-0.5">Tax-free threshold: $18,200 · Medicare levy: +2%</p>
               </div>
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Resident income tax rates 2025–26">
                 <tbody>
                   {residentBrackets.map((b, i) => (
                     <tr key={i} className="border-b border-slate-100 last:border-0">
@@ -296,7 +296,7 @@ export default async function ForeignTaxPage() {
               <details key={faq.question} className="group bg-white rounded-xl border border-slate-200">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ms-3">⌄</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ms-3" aria-hidden="true">⌄</span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                   {faq.answer}

@@ -13,6 +13,7 @@ import {
   trackPageDuration,
   AFFILIATE_REL,
 } from "@/lib/tracking";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import type { Broker } from "@/lib/types";
 
 /* ─── Fee calculation (same logic as switching calculator) ─── */
@@ -90,6 +91,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
     const p = searchParams.get("us");
     return p ? Math.min(100, Math.max(0, parseInt(p) || 30)) : 30;
   });
+  const [linkCopied, setLinkCopied] = useState(false);
 
   useEffect(() => {
     trackPageDuration("/fee-simulator");
@@ -117,8 +119,13 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
         url,
       });
     } else {
-      navigator.clipboard.writeText(url);
-      alert("Link copied to clipboard!");
+      navigator.clipboard.writeText(url).then(() => {
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2000);
+      }).catch(() => {
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2000);
+      });
     }
     trackEvent("fee_simulator_share", {
       trades: tradesPerYear,
@@ -143,7 +150,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-5xl">
         {/* Breadcrumb */}
-        <nav className="text-xs md:text-sm text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">
             Home
           </Link>
@@ -178,14 +185,21 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
           {/* Sliders Panel */}
           <div className="lg:col-span-4">
             <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 sticky top-4">
-              <h2 className="text-sm font-bold text-slate-900 mb-4">
-                Your Trading Profile
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-bold text-slate-900">Your Trading Profile</h2>
+                <button
+                  type="button"
+                  onClick={() => { setTradesPerYear(24); setAvgTradeSize(2000); setUsAllocation(30); }}
+                  className="text-xs text-slate-400 hover:text-slate-600 underline"
+                >
+                  Reset
+                </button>
+              </div>
 
               {/* Trades per year */}
               <div className="mb-5">
                 <div className="flex justify-between items-baseline mb-1.5">
-                  <label className="text-xs font-bold text-slate-700">
+                  <label htmlFor="fs-trades" className="text-xs font-bold text-slate-700">
                     Trades per year
                   </label>
                   <span className="text-sm font-extrabold text-emerald-700">
@@ -193,6 +207,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   </span>
                 </div>
                 <input
+                  id="fs-trades"
                   type="range"
                   min={1}
                   max={200}
@@ -202,8 +217,8 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 />
                 <div className="flex justify-between text-[0.6rem] text-slate-400 mt-0.5">
                   <span>1</span>
-                  <span>50</span>
-                  <span>100</span>
+                  <span className="hidden sm:inline">50</span>
+                  <span className="hidden sm:inline">100</span>
                   <span>200</span>
                 </div>
               </div>
@@ -211,7 +226,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
               {/* Average trade size */}
               <div className="mb-5">
                 <div className="flex justify-between items-baseline mb-1.5">
-                  <label className="text-xs font-bold text-slate-700">
+                  <label htmlFor="fs-avg-trade" className="text-xs font-bold text-slate-700">
                     Average trade size
                   </label>
                   <span className="text-sm font-extrabold text-emerald-700">
@@ -219,6 +234,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   </span>
                 </div>
                 <input
+                  id="fs-avg-trade"
                   type="range"
                   min={100}
                   max={50000}
@@ -229,8 +245,8 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 />
                 <div className="flex justify-between text-[0.6rem] text-slate-400 mt-0.5">
                   <span>$100</span>
-                  <span>$10k</span>
-                  <span>$25k</span>
+                  <span className="hidden sm:inline">$10k</span>
+                  <span className="hidden sm:inline">$25k</span>
                   <span>$50k</span>
                 </div>
               </div>
@@ -238,7 +254,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
               {/* US allocation */}
               <div className="mb-5">
                 <div className="flex justify-between items-baseline mb-1.5">
-                  <label className="text-xs font-bold text-slate-700">
+                  <label htmlFor="fs-us-alloc" className="text-xs font-bold text-slate-700">
                     US share allocation
                   </label>
                   <span className="text-sm font-extrabold text-emerald-700">
@@ -246,6 +262,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   </span>
                 </div>
                 <input
+                  id="fs-us-alloc"
                   type="range"
                   min={0}
                   max={100}
@@ -254,9 +271,9 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
                 <div className="flex justify-between text-[0.6rem] text-slate-400 mt-0.5">
-                  <span>0% (ASX only)</span>
-                  <span>50%</span>
-                  <span>100% (US only)</span>
+                  <span>0%<span className="hidden sm:inline"> (ASX only)</span></span>
+                  <span className="hidden sm:inline">50%</span>
+                  <span>100%<span className="hidden sm:inline"> (US only)</span></span>
                 </div>
               </div>
 
@@ -277,6 +294,11 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 <Icon name="share-2" size={14} />
                 Share this simulation
               </button>
+              {linkCopied && (
+                <p className="mt-1.5 text-center text-xs text-emerald-600" role="status">
+                  Link copied to clipboard
+                </p>
+              )}
             </div>
           </div>
 
@@ -477,6 +499,13 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 </div>
               </div>
             )}
+
+            <CalculatorLeadCapture
+              calcSlug="fee-simulator"
+              calcTitle="fee simulation"
+              need="planning"
+              contextKeys={["brokerage-fees", "investment", "broker-switch"]}
+            />
 
             {/* SEO content */}
             <div className="mt-8 space-y-5 text-sm text-slate-600 leading-relaxed">

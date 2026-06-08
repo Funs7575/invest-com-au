@@ -32,6 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         "Discover alternative investment opportunities in Australia. Wine, art, classic cars, watches, coins, whisky and more.",
       url: `${SITE_URL}/invest/alternatives/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Alternative Investment Opportunities")}&sub=${encodeURIComponent("Current Deals · Private Credit · PE · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

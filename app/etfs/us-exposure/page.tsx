@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     title: `Best US Market ETFs for Australians (${CURRENT_YEAR})`,
     description: "S&P 500, NASDAQ 100, and total US market ETFs compared for Australian investors.",
     url: `${SITE_URL}/etfs/us-exposure`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("US Market ETFs (ASX-listed)")}&sub=${encodeURIComponent("S&P 500 · NASDAQ · Hedged vs Unhedged · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/etfs/us-exposure` },
@@ -180,7 +181,7 @@ export default function USExposureETFPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>
@@ -331,7 +332,7 @@ export default function USExposureETFPage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>

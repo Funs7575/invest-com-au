@@ -157,6 +157,37 @@ export default function PropertyYieldCalculatorClient() {
 
   const yieldStyle = yieldColor(grossYield);
 
+  const isModified =
+    purchasePrice !== 750000 ||
+    weeklyRent !== 550 ||
+    councilRates !== 2000 ||
+    insurance !== 1500 ||
+    maintenance !== 2000 ||
+    managementPct !== 7 ||
+    strata !== 0 ||
+    otherExpenses !== 0 ||
+    showMortgage !== false ||
+    loanAmount !== 600000 ||
+    interestRate !== 6.2;
+
+  const handleReset = () => {
+    setPurchasePrice(750000);
+    setWeeklyRent(550);
+    setCouncilRates(2000);
+    setInsurance(1500);
+    setMaintenance(2000);
+    setManagementPct(7);
+    setStrata(0);
+    setOtherExpenses(0);
+    setShowMortgage(false);
+    setLoanAmount(600000);
+    setInterestRate(6.2);
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     setEmailGated(false);
@@ -207,11 +238,12 @@ export default function PropertyYieldCalculatorClient() {
         <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 shadow-sm mb-6">
           {/* Purchase price */}
           <div className="mb-5">
-            <label className="block text-sm font-bold text-slate-700 mb-1.5">Purchase price</label>
+            <label htmlFor="py-purchase-price" className="block text-sm font-bold text-slate-700 mb-1.5">Purchase price</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
               <input
-                type="number"
+                id="py-purchase-price"
+                type="number" inputMode="decimal"
                 value={purchasePrice}
                 onChange={e => setPurchasePrice(Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none"
@@ -225,7 +257,7 @@ export default function PropertyYieldCalculatorClient() {
                 { label: "$1M", value: 1000000 },
                 { label: "$1.5M", value: 1500000 },
               ].map(v => (
-                <button key={v.value} onClick={() => setPurchasePrice(v.value)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${purchasePrice === v.value ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                <button key={v.value} onClick={() => setPurchasePrice(v.value)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${purchasePrice === v.value ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                   {v.label}
                 </button>
               ))}
@@ -234,11 +266,12 @@ export default function PropertyYieldCalculatorClient() {
 
           {/* Weekly rent */}
           <div className="mb-5">
-            <label className="block text-sm font-bold text-slate-700 mb-1.5">Weekly rent</label>
+            <label htmlFor="py-weekly-rent" className="block text-sm font-bold text-slate-700 mb-1.5">Weekly rent</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
               <input
-                type="number"
+                id="py-weekly-rent"
+                type="number" inputMode="decimal"
                 value={weeklyRent}
                 onChange={e => setWeeklyRent(Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none"
@@ -246,7 +279,7 @@ export default function PropertyYieldCalculatorClient() {
             </div>
             <div className="flex gap-1.5 mt-2">
               {[350, 450, 550, 700, 900].map(v => (
-                <button key={v} onClick={() => setWeeklyRent(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${weeklyRent === v ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                <button key={v} onClick={() => setWeeklyRent(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${weeklyRent === v ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                   ${v}/wk
                 </button>
               ))}
@@ -258,45 +291,45 @@ export default function PropertyYieldCalculatorClient() {
             <h3 className="text-sm font-bold text-slate-700 mb-3">Annual expenses</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div>
-                <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Council rates</label>
+                <label htmlFor="py-council-rates" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Council rates</label>
                 <div className="relative">
                   <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                  <input type="number" value={councilRates} onChange={e => setCouncilRates(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
+                  <input id="py-council-rates" type="number" inputMode="decimal" value={councilRates} onChange={e => setCouncilRates(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Insurance</label>
+                <label htmlFor="py-insurance" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Insurance</label>
                 <div className="relative">
                   <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                  <input type="number" value={insurance} onChange={e => setInsurance(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
+                  <input id="py-insurance" type="number" inputMode="decimal" value={insurance} onChange={e => setInsurance(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Maintenance</label>
+                <label htmlFor="py-maintenance" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Maintenance</label>
                 <div className="relative">
                   <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                  <input type="number" value={maintenance} onChange={e => setMaintenance(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
+                  <input id="py-maintenance" type="number" inputMode="decimal" value={maintenance} onChange={e => setMaintenance(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Property mgmt (%)</label>
+                <label htmlFor="py-mgmt-pct" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Property mgmt (%)</label>
                 <div className="relative">
-                  <input type="number" step="0.5" value={managementPct} onChange={e => setManagementPct(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))} className="w-full pl-3 pr-7 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
+                  <input id="py-mgmt-pct" type="number" inputMode="decimal" step="0.5" value={managementPct} onChange={e => setManagementPct(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))} className="w-full pl-3 pr-7 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                   <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
                 </div>
               </div>
               <div>
-                <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Strata / body corp</label>
+                <label htmlFor="py-strata" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Strata / body corp</label>
                 <div className="relative">
                   <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                  <input type="number" value={strata} onChange={e => setStrata(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
+                  <input id="py-strata" type="number" inputMode="decimal" value={strata} onChange={e => setStrata(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
               <div>
-                <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Other expenses</label>
+                <label htmlFor="py-other" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Other expenses</label>
                 <div className="relative">
                   <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                  <input type="number" value={otherExpenses} onChange={e => setOtherExpenses(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
+                  <input id="py-other" type="number" inputMode="decimal" value={otherExpenses} onChange={e => setOtherExpenses(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
             </div>
@@ -311,16 +344,16 @@ export default function PropertyYieldCalculatorClient() {
             {showMortgage && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
                 <div>
-                  <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Loan amount</label>
+                  <label htmlFor="py-loan-amount" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Loan amount</label>
                   <div className="relative">
                     <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                    <input type="number" value={loanAmount} onChange={e => setLoanAmount(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
+                    <input id="py-loan-amount" type="number" inputMode="decimal" value={loanAmount} onChange={e => setLoanAmount(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Interest rate</label>
+                  <label htmlFor="py-interest-rate" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Interest rate</label>
                   <div className="relative">
-                    <input type="number" step="0.1" value={interestRate} onChange={e => setInterestRate(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))} className="w-full pl-3 pr-7 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
+                    <input id="py-interest-rate" type="number" inputMode="decimal" step="0.1" value={interestRate} onChange={e => setInterestRate(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))} className="w-full pl-3 pr-7 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                     <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
                   </div>
                 </div>
@@ -328,12 +361,22 @@ export default function PropertyYieldCalculatorClient() {
             )}
           </div>
 
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-2 px-6 py-3.5 bg-emerald-600 text-white text-base font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl"
-          >
-            Calculate Rental Yield &rarr;
-          </button>
+          <div className="flex items-center gap-2 mt-2">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-emerald-600 text-white text-base font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl"
+            >
+              Calculate Rental Yield &rarr;
+            </button>
+            {isModified && (
+              <button
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}
@@ -438,7 +481,7 @@ export default function PropertyYieldCalculatorClient() {
                 <p className="text-sm font-bold text-slate-900 mb-1">Save your yield analysis</p>
                 <p className="text-xs text-slate-500 mb-3">Enter your email and we&rsquo;ll send you a copy of this breakdown</p>
                 <div className="flex gap-2 max-w-xs mx-auto">
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                  <input type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                   <button onClick={handleEmailSubmit} className="px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700">Email Me My Results</button>
                 </div>
               </div>

@@ -90,18 +90,18 @@ export default function ValuationClient() {
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Annual revenue (AUD)</span>
-              <input type="number" min={0} step={50_000} value={revenue} onChange={(e) => setRevenue(Math.max(0, Number(e.target.value) || 0))}
+              <input type="number" inputMode="decimal" min={0} step={50_000} value={revenue} onChange={(e) => setRevenue(Math.max(0, Number(e.target.value) || 0))}
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Annual EBITDA (AUD)</span>
-              <input type="number" min={0} step={10_000} value={ebitda} onChange={(e) => setEbitda(Math.max(0, Number(e.target.value) || 0))}
+              <input type="number" inputMode="decimal" min={0} step={10_000} value={ebitda} onChange={(e) => setEbitda(Math.max(0, Number(e.target.value) || 0))}
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
               <span className="text-[11px] text-slate-500 mt-1 block">Normalise — adjust for owner&rsquo;s salary at market rate, related-party rent, one-offs.</span>
             </label>
             <label className="block md:col-span-2">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Net tangible assets (AUD)</span>
-              <input type="number" min={0} step={10_000} value={netAssets} onChange={(e) => setNetAssets(Math.max(0, Number(e.target.value) || 0))}
+              <input type="number" inputMode="decimal" min={0} step={10_000} value={netAssets} onChange={(e) => setNetAssets(Math.max(0, Number(e.target.value) || 0))}
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
           </div>

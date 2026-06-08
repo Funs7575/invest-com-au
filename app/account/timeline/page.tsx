@@ -52,7 +52,7 @@ export default async function AccountTimelinePage() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-      <nav className="text-xs text-slate-500 mb-3">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
         <Link href="/account" className="hover:underline">
           Account
         </Link>
@@ -69,12 +69,15 @@ export default async function AccountTimelinePage() {
       </p>
 
       {items.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 text-sm text-slate-500">
-          Nothing here yet. Start with{" "}
-          <Link href="/get-matched" className="text-amber-700 hover:underline">
-            Get Matched
-          </Link>{" "}
-          to build your first action plan.
+        <div className="bg-white border border-slate-200 rounded-2xl p-10 text-center space-y-3">
+          <svg className="w-10 h-10 text-slate-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="text-sm font-semibold text-slate-700">No activity yet</p>
+          <p className="text-xs text-slate-500">Your plans, match requests, quotes, and consultations will appear here.</p>
+          <Link href="/get-matched" className="inline-block mt-1 px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-xl hover:bg-amber-600 transition-colors">
+            Get Matched &rarr;
+          </Link>
         </div>
       ) : (
         <ol className="relative border-l border-slate-200 pl-6 space-y-5">

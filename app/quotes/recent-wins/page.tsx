@@ -3,6 +3,7 @@ import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 600;
 
@@ -11,6 +12,27 @@ export const metadata: Metadata = {
   description: `Anonymised feed of recently-accepted quote requests on Invest.com.au — see how the marketplace works in ${CURRENT_YEAR}.`,
   alternates: { canonical: `${SITE_URL}/quotes/recent-wins` },
 };
+
+const RECENT_WINS_FAQS = [
+  {
+    q: "How does the Invest.com.au quote marketplace work?",
+    a: "The Invest.com.au quote marketplace lets consumers post a request for financial advice or a financial service — such as a financial planner, SMSF accountant, buyers agent, or mortgage broker. Qualified advisers in our network can then submit a quote for that job. The consumer reviews the quotes anonymously, selects the adviser they want to work with, and an introduction is made. Advisers pay a small fee only when a quote is accepted — consumers post and receive quotes for free.",
+  },
+  {
+    q: "Are the recent wins shown on this page real jobs?",
+    a: "Yes. The feed on this page shows anonymised records of jobs where a consumer accepted an adviser's quote in the last 60 days. Names, contact details, and specific job descriptions are redacted — only the adviser category, state/territory, budget band, and time-to-acceptance are shown. The data comes directly from our quote management system and is refreshed every 10 minutes. This page exists to show how the marketplace operates in practice, not to rank advisers.",
+  },
+  {
+    q: "How long does it take to receive quotes after posting a job?",
+    a: "Most jobs posted on the Invest.com.au marketplace receive their first quote within 2–24 hours during business hours (Monday–Friday, 8am–6pm AEST). The time-to-accept shown on this page reflects how long it took the consumer to choose a quote after the job was posted — not how long it took to receive the first response. Financial planning jobs tend to take longer to evaluate (1–5 days) while simpler requests (tax agents, mortgage brokers) are often accepted within a day.",
+  },
+  {
+    q: "Who are the advisers in the Invest.com.au network?",
+    a: "The Invest.com.au adviser network includes licensed financial planners (AFSL-authorised), registered tax agents (TPB-registered), licensed mortgage brokers (ACL/MFAA members), licensed buyers agents, property advisors, SMSF accountants, estate planners, aged care advisors, insurance brokers, and migration agents. All advisers who participate in the quote marketplace are verified against their relevant licence or registration before being permitted to submit quotes. Invest.com.au is not affiliated with any specific adviser and does not receive commissions from the advisers in our network.",
+  },
+];
+
+const recentWinsFaqLd = faqJsonLd(RECENT_WINS_FAQS);
 
 const TYPE_LABELS: Record<string, string> = {
   smsf_accountant: "SMSF Accountant",
@@ -85,6 +107,12 @@ export default async function RecentWinsPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {recentWinsFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(recentWinsFaqLd) }}
+        />
+      )}
 
       <section className="bg-gradient-to-b from-slate-900 to-slate-800 text-white">
         <div className="max-w-5xl mx-auto px-4 py-12">
@@ -141,6 +169,21 @@ export default async function RecentWinsPage() {
               })}
             </ol>
           )}
+        </div>
+      </section>
+
+      <section className="max-w-3xl mx-auto px-4 py-10 border-t border-slate-200">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {RECENT_WINS_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
         </div>
       </section>
     </>

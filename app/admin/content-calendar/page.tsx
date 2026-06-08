@@ -76,6 +76,8 @@ export default function ContentCalendarPage() {
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<CalendarItem | null>(null);
   const [generating, setGenerating] = useState<number | null>(null);
+  const [cronSecret, setCronSecret] = useState("");
+  const [pendingDraftItem, setPendingDraftItem] = useState<CalendarItem | null>(null);
   const [staleArticles, setStaleArticles] = useState<{ id: number; title: string; slug: string; staleness_score: number }[]>([]);
 
   const supabase = createClient();
@@ -113,6 +115,7 @@ export default function ContentCalendarPage() {
     load();
     loadTeamMembers();
     loadStaleArticles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSave = async (formData: FormData) => {
@@ -191,13 +194,18 @@ export default function ContentCalendarPage() {
       toast("Draft can only be generated for planned items", "error");
       return;
     }
+    if (!cronSecret.trim()) {
+      setPendingDraftItem(item);
+      return;
+    }
+    setPendingDraftItem(null);
     setGenerating(item.id);
     try {
       const res = await fetch("/api/admin/content/generate-draft", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${prompt("Enter CRON_SECRET to authorize:")}`,
+          Authorization: `Bearer ${cronSecret.trim()}`,
         },
         body: JSON.stringify({ calendarId: item.id }),
       });
@@ -290,10 +298,11 @@ export default function ContentCalendarPage() {
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-xs font-medium text-slate-500 mb-1">
+              <label htmlFor="cal-title" className="block text-xs font-medium text-slate-500 mb-1">
                 Title <span className="text-red-600">*</span>
               </label>
               <input
+                id="cal-title"
                 name="title"
                 defaultValue={formItem.title}
                 required
@@ -301,8 +310,9 @@ export default function ContentCalendarPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Article Type</label>
+              <label htmlFor="cal-article-type" className="block text-xs font-medium text-slate-500 mb-1">Article Type</label>
               <select
+                id="cal-article-type"
                 name="article_type"
                 defaultValue={formItem.article_type || "article"}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -318,8 +328,9 @@ export default function ContentCalendarPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Target Keyword</label>
+              <label htmlFor="cal-target-keyword" className="block text-xs font-medium text-slate-500 mb-1">Target Keyword</label>
               <input
+                id="cal-target-keyword"
                 name="target_keyword"
                 defaultValue={formItem.target_keyword || ""}
                 placeholder="best online broker australia"
@@ -327,16 +338,18 @@ export default function ContentCalendarPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Secondary Keywords (comma-separated)</label>
+              <label htmlFor="cal-secondary-kw" className="block text-xs font-medium text-slate-500 mb-1">Secondary Keywords (comma-separated)</label>
               <input
+                id="cal-secondary-kw"
                 name="secondary_keywords"
                 defaultValue={(formItem.secondary_keywords || []).join(", ")}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
+              <label htmlFor="cal-category" className="block text-xs font-medium text-slate-500 mb-1">Category</label>
               <input
+                id="cal-category"
                 name="category"
                 defaultValue={formItem.category || ""}
                 placeholder="brokers, investing, guides"
@@ -346,8 +359,9 @@ export default function ContentCalendarPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Brief / Instructions for AI</label>
+            <label htmlFor="cal-brief" className="block text-xs font-medium text-slate-500 mb-1">Brief / Instructions for AI</label>
             <textarea
+              id="cal-brief"
               name="brief"
               defaultValue={formItem.brief || ""}
               rows={3}
@@ -358,8 +372,9 @@ export default function ContentCalendarPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Author</label>
+              <label htmlFor="cal-author" className="block text-xs font-medium text-slate-500 mb-1">Author</label>
               <select
+                id="cal-author"
                 name="assigned_author_id"
                 defaultValue={formItem.assigned_author_id?.toString() || ""}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -375,8 +390,9 @@ export default function ContentCalendarPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Reviewer</label>
+              <label htmlFor="cal-reviewer" className="block text-xs font-medium text-slate-500 mb-1">Reviewer</label>
               <select
+                id="cal-reviewer"
                 name="assigned_reviewer_id"
                 defaultValue={formItem.assigned_reviewer_id?.toString() || ""}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -390,8 +406,9 @@ export default function ContentCalendarPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Target Publish Date</label>
+              <label htmlFor="cal-target-date" className="block text-xs font-medium text-slate-500 mb-1">Target Publish Date</label>
               <input
+                id="cal-target-date"
                 name="target_publish_date"
                 type="date"
                 defaultValue={formItem.target_publish_date || ""}
@@ -402,16 +419,18 @@ export default function ContentCalendarPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
+              <label htmlFor="cal-related-brokers" className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
               <input
+                id="cal-related-brokers"
                 name="related_brokers"
                 defaultValue={(formItem.related_brokers || []).join(", ")}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Related Tools (slugs, comma-separated)</label>
+              <label htmlFor="cal-related-tools" className="block text-xs font-medium text-slate-500 mb-1">Related Tools (slugs, comma-separated)</label>
               <input
+                id="cal-related-tools"
                 name="related_tools"
                 defaultValue={(formItem.related_tools || []).join(", ")}
                 placeholder="fee-impact, compare, quiz"
@@ -419,8 +438,9 @@ export default function ContentCalendarPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Priority</label>
+              <label htmlFor="cal-priority" className="block text-xs font-medium text-slate-500 mb-1">Priority</label>
               <select
+                id="cal-priority"
                 name="priority"
                 defaultValue={formItem.priority || "normal"}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -437,8 +457,9 @@ export default function ContentCalendarPage() {
           {editing && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
+                <label htmlFor="cal-status" className="block text-xs font-medium text-slate-500 mb-1">Status</label>
                 <select
+                  id="cal-status"
                   name="status"
                   defaultValue={formItem.status}
                   className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -451,8 +472,9 @@ export default function ContentCalendarPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Notes</label>
+                <label htmlFor="cal-notes" className="block text-xs font-medium text-slate-500 mb-1">Notes</label>
                 <input
+                  id="cal-notes"
                   name="notes"
                   defaultValue={formItem.notes || ""}
                   className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -519,7 +541,7 @@ export default function ContentCalendarPage() {
                 No content items{statusFilter !== "all" ? ` with status "${statusFilter}"` : ""}. Click &quot;+ New Content&quot; to start.
               </div>
             ) : (
-              <table className="w-full">
+              <table className="w-full" aria-label="Content calendar items">
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Content</th>
@@ -634,7 +656,7 @@ export default function ContentCalendarPage() {
             <div className="mt-8">
               <h2 className="text-lg font-bold text-slate-900 mb-3">Articles Needing Update</h2>
               <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                <table className="w-full">
+                <table className="w-full" aria-label="Articles needing update">
                   <thead className="bg-slate-50">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Article</th>
@@ -695,6 +717,30 @@ export default function ContentCalendarPage() {
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />
+
+      {pendingDraftItem && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setPendingDraftItem(null)}>
+          <div role="dialog" aria-modal="true" aria-labelledby="cal-draft-modal-title" className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-3" onClick={e => e.stopPropagation()}>
+            <h2 id="cal-draft-modal-title" className="text-sm font-bold text-slate-900">AI Draft — Authorize</h2>
+            <p className="text-xs text-slate-500">Enter the CRON_SECRET to generate a draft for <strong>{pendingDraftItem.title}</strong>.</p>
+            <input
+              type="password"
+              value={cronSecret}
+              onChange={e => setCronSecret(e.target.value)}
+              placeholder="CRON_SECRET"
+              className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg font-mono"
+              autoComplete="current-password"
+              aria-label="CRON_SECRET authorization key"
+              autoFocus
+              onKeyDown={e => { if (e.key === "Enter" && cronSecret.trim()) void handleGenerateDraft(pendingDraftItem); }}
+            />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setPendingDraftItem(null)} className="px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 rounded-lg font-semibold border border-slate-200">Cancel</button>
+              <button onClick={() => void handleGenerateDraft(pendingDraftItem)} disabled={!cronSecret.trim()} className="px-3 py-2 text-xs bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 disabled:opacity-50">Generate</button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminShell>
   );
 }

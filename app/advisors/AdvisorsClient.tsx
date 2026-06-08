@@ -158,7 +158,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
           className="w-full pl-8 pr-8 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30"
         />
         {selected && (
-          <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+          <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} aria-label="Clear location" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
             <Icon name="x" size={14} />
           </button>
         )}
@@ -697,9 +697,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       </DirectoryHero>
       <div className="py-5 md:py-12">
         <div className="container-custom">
-
         {/* Advisor matching + concierge — light band below the hero */}
         <div className="mb-4 md:mb-6">
+          <p className="text-sm font-medium text-slate-600 mb-2 text-center">Not sure which advisor you need? Get matched in 60 seconds.</p>
           <GetMatchedEmbed context="advisor_directory" />
           <p className="text-[0.65rem] md:text-xs text-slate-500 mt-3 text-center">
             Prefer to chat?{" "}
@@ -768,7 +768,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             {/* ADV-016: show the active count on mobile too, not just a bare
                 sliders icon. "Filters (N)" when filters are active, else the
                 full "All filters" label. */}
-            <span>{activeFilterCount > 0 ? `Filters (${activeFilterCount})` : "All filters"}</span>
           </button>
           <SortDropdown
             options={SORT_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}
@@ -778,6 +777,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         </div>
 
         {/* Primary facet pills — mirrors /invest + /compare (shared FilterPill). */}
+        <p className="text-sm font-semibold text-slate-700 mb-2">Narrow by type, location, and fees — or search by name.</p>
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {/* Type */}
           <div className="relative">
@@ -792,7 +792,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   const selected = typeFilters.has(f.key as ProfessionalType);
                   return (
                     <button key={f.key} type="button" disabled={count === 0 && !selected} onClick={() => toggleType(f.key)}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-semibold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
                       <Icon name={f.icon} size={11} />
                       {f.label}
                       <span className="font-mono text-[10px] text-slate-500">{count}</span>
@@ -816,7 +816,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   const selected = stateFilter === s;
                   return (
                     <button key={s} type="button" disabled={count === 0 && !selected} onClick={() => { setStateFilter(selected ? "all" : s); setOpenPill(null); }}
-                      className={`py-2 rounded-lg border text-xs font-bold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      className={`py-2 rounded-lg border text-xs font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
                       {s}
                       <span className="block text-[9px] font-mono text-slate-500">{count}</span>
                     </button>
@@ -884,7 +884,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <span className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5"><Icon name="map-pin" size={13} className="text-amber-500" />Location</span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div className="sm:col-span-2"><LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} /></div>
-                <select value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" disabled={!isLocationActive}>
+                <select aria-label="Search radius" value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isLocationActive}>
                   {RADIUS_OPTIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </select>
               </div>
@@ -927,7 +927,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
               <div>
                 <label htmlFor="adv-state" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">State</label>
-                <select id="adv-state" value={stateFilter} onChange={(e) => setStateFilter(e.target.value)} disabled={isLocationActive} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50">
+                <select id="adv-state" value={stateFilter} onChange={(e) => setStateFilter(e.target.value)} disabled={isLocationActive} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50 disabled:cursor-not-allowed">
                   <option value="all">All States</option>
                   {AU_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -1283,7 +1283,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                       {/* PR queue #12.5 — eligibility badge per visitor's intent country */}
                       <EligibilityBadge entity={pro} intentCountry={intentCountry} compact />
                       {pro.accepts_international_clients && (
-                        <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">🌏 Intl</span>
+                        <span className="shrink-0 inline-flex items-center gap-0.5 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                          <Icon name="globe" size={9} className="shrink-0" />Intl
+                        </span>
                       )}
                       {pro.firb_specialist && (
                         <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">FIRB</span>
@@ -1365,45 +1367,20 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <EmptyState
             title="No advisors found"
             body={isLocationActive ? `No advisors within ${radius}km — try a larger radius or clear filters.` : search ? `No results for "${search}". Try a different search or clear filters.` : "Try adjusting or clearing your filters."}
-            suggestions={[{ label: "Clear all filters", onClick: clearAll }]}
-          >
-            <div className="mt-5 max-w-md mx-auto text-left rounded-xl border border-amber-200 bg-amber-50 p-4">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
-                  <Icon name="bell" size={16} className="text-amber-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">Get notified when one joins</p>
-                  <p className="text-xs text-slate-500 mt-0.5">We&apos;ll email you when a matching advisor joins Invest.com.au.</p>
-                </div>
-              </div>
-              {alertStatus === "done" ? (
-                <div className="flex items-center gap-2 text-sm text-emerald-700 font-semibold">
-                  <Icon name="check-circle" size={16} className="text-emerald-500" />
-                  Alert saved! We&apos;ll email you when a match is available.
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    type="email"
-                    value={alertEmail}
-                    onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
-                    placeholder="your@email.com"
-                    className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
-                    onKeyDown={(e) => e.key === "Enter" && saveAlert()}
-                  />
-                  <button
-                    onClick={saveAlert}
-                    disabled={alertStatus === "submitting"}
-                    className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
-                  >
-                    {alertStatus === "submitting" ? "Saving..." : "Notify Me"}
-                  </button>
-                </div>
-              )}
-              {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
-            </div>
-          </EmptyState>
+            suggestions={[
+              ...(Array.from(typeFilters).map(t => ({
+                label: `Type: ${TYPE_FILTERS.find(f => f.key === t)?.label ?? t} ×`,
+                onClick: () => setTypeFilters(prev => { const next = new Set(prev); next.delete(t as ProfessionalType); return next; }),
+              }))),
+              ...(stateFilter !== "all" ? [{ label: `State: ${stateFilter} ×`, onClick: () => setStateFilter("all") }] : []),
+              ...(feeFilter !== "all" ? [{ label: `Fee: ${FEE_OPTIONS.find(f => f.value === feeFilter)?.label ?? feeFilter} ×`, onClick: () => setFeeFilter("all") }] : []),
+              ...(minRating > 0 ? [{ label: `Rating: ${minRating}+ ★ ×`, onClick: () => setMinRating(0) }] : []),
+              ...(verifiedOnly ? [{ label: "Verified only ×", onClick: () => setVerifiedOnly(false) }] : []),
+              ...(acceptingOnly ? [{ label: "Accepting clients ×", onClick: () => setAcceptingOnly(false) }] : []),
+              ...(search ? [{ label: `"${search}" ×`, onClick: () => setSearch("") }] : []),
+              ...(activeFilterCount > 1 ? [{ label: "Clear all", onClick: clearAll }] : []),
+            ]}
+          />
         )}
 
         {/* Pagination */}
@@ -1531,7 +1508,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           ) : (
             <div className="flex gap-2">
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+                autoComplete="email"
                 value={alertEmail}
                 onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
                 placeholder="your@email.com"
@@ -1541,13 +1519,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <button
                 onClick={saveAlert}
                 disabled={alertStatus === "submitting"}
-                className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
               >
                 {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
               </button>
             </div>
           )}
-          {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
+          {alertError && <p role="alert" className="text-xs text-red-600 mt-1">{alertError}</p>}
         </div>
 
         <div className="mt-6 md:mt-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 md:p-8 text-center shadow-xl shadow-slate-900/10">

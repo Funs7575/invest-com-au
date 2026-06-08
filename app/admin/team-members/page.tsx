@@ -55,6 +55,7 @@ export default function TeamMembersPage() {
 
   useEffect(() => {
     load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSave = async (formData: FormData) => {
@@ -220,10 +221,11 @@ export default function TeamMembersPage() {
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">
+              <label htmlFor="tm-full-name" className="block text-xs font-medium text-slate-500 mb-1">
                 Full Name <span className="text-red-600">*</span>
               </label>
               <input
+                id="tm-full-name"
                 name="full_name"
                 defaultValue={formMember.full_name}
                 required
@@ -239,10 +241,11 @@ export default function TeamMembersPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">
+              <label htmlFor="tm-slug" className="block text-xs font-medium text-slate-500 mb-1">
                 Slug <span className="text-red-600">*</span>
               </label>
               <input
+                id="tm-slug"
                 name="slug"
                 defaultValue={formMember.slug}
                 required
@@ -251,10 +254,11 @@ export default function TeamMembersPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">
+              <label htmlFor="tm-role" className="block text-xs font-medium text-slate-500 mb-1">
                 Role
               </label>
               <select
+                id="tm-role"
                 name="role"
                 defaultValue={formMember.role || "contributor"}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -269,10 +273,11 @@ export default function TeamMembersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="tm-short-bio" className="block text-xs font-medium text-slate-500 mb-1">
               Short Bio
             </label>
             <textarea
+              id="tm-short-bio"
               name="short_bio"
               defaultValue={formMember.short_bio}
               rows={3}
@@ -282,10 +287,11 @@ export default function TeamMembersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="tm-credentials" className="block text-xs font-medium text-slate-500 mb-1">
               Credentials <span className="text-slate-400 font-normal">(one per line)</span>
             </label>
             <textarea
+              id="tm-credentials"
               name="credentials"
               defaultValue={formMember.credentials?.join("\n")}
               rows={3}
@@ -295,10 +301,11 @@ export default function TeamMembersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="tm-disclosure" className="block text-xs font-medium text-slate-500 mb-1">
               Disclosure Statement
             </label>
             <textarea
+              id="tm-disclosure"
               name="disclosure"
               defaultValue={formMember.disclosure}
               rows={2}
@@ -309,10 +316,11 @@ export default function TeamMembersPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">
+              <label htmlFor="tm-linkedin-url" className="block text-xs font-medium text-slate-500 mb-1">
                 LinkedIn URL
               </label>
               <input
+                id="tm-linkedin-url"
                 name="linkedin_url"
                 defaultValue={formMember.linkedin_url}
                 placeholder="https://linkedin.com/in/..."
@@ -320,10 +328,11 @@ export default function TeamMembersPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">
+              <label htmlFor="tm-twitter-url" className="block text-xs font-medium text-slate-500 mb-1">
                 Twitter URL
               </label>
               <input
+                id="tm-twitter-url"
                 name="twitter_url"
                 defaultValue={formMember.twitter_url}
                 placeholder="https://x.com/..."
@@ -333,10 +342,11 @@ export default function TeamMembersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="tm-avatar-url" className="block text-xs font-medium text-slate-500 mb-1">
               Avatar URL
             </label>
             <input
+              id="tm-avatar-url"
               name="avatar_url"
               defaultValue={formMember.avatar_url}
               placeholder="https://..."
@@ -346,13 +356,14 @@ export default function TeamMembersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="tm-publications" className="block text-xs font-medium text-slate-500 mb-1">
               Publications{" "}
               <span className="text-slate-400 font-normal">
                 (JSON array or &quot;Name | URL&quot; per line)
               </span>
             </label>
             <textarea
+              id="tm-publications"
               name="publications"
               defaultValue={
                 formMember.publications?.length
@@ -366,10 +377,11 @@ export default function TeamMembersPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="tm-status" className="block text-xs font-medium text-slate-500 mb-1">
               Status
             </label>
             <select
+              id="tm-status"
               name="status"
               defaultValue={formMember.status || "active"}
               className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30 max-w-xs"
@@ -409,7 +421,7 @@ export default function TeamMembersPage() {
           {/* Search */}
           <div className="mb-4">
             <input
-              type="text"
+              type="search" enterKeyHint="search"
               placeholder="Search by name, slug, or role..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -418,7 +430,7 @@ export default function TeamMembersPage() {
           </div>
 
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-            <table className="w-full">
+            <table className="w-full" aria-label="Team members">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">

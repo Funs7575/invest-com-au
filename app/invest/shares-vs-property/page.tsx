@@ -123,13 +123,13 @@ export default function SharesVsPropertyPage() {
               Long-run data comparing Australian shares and residential property — using like-for-like (ungeared) capital and total return figures.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Historical returns: Australian shares vs property">
                 <thead className="bg-slate-900 text-white">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold">Asset</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-300">Annual return (p.a.)</th>
-                    <th className="px-4 py-3 text-left font-extrabold">Period</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-300">Notes</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold">Asset</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-300">Annual return (p.a.)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold">Period</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-300">Notes</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -157,12 +157,12 @@ export default function SharesVsPropertyPage() {
           <div className="container-custom max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Head-to-head: key differences</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Shares vs property: head-to-head key differences">
                 <thead className="bg-slate-900 text-white">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold">Factor</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-300">Shares</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-200">Property</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold">Factor</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-300">Shares</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-200">Property</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -570,7 +570,7 @@ export default function SharesVsPropertyPage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
                   </summary>
                   <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
                 </details>

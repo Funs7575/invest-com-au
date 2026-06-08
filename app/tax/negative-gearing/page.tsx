@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "How negative gearing works for Australian investors — tax savings by income level, deductible expenses, the CGT connection, and when it makes financial sense.",
     url: `${SITE_URL}/tax/negative-gearing`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Negative Gearing Australia")}&sub=${encodeURIComponent("Property · Shares · Tax Savings · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/negative-gearing` },
@@ -187,7 +188,7 @@ export default function NegativeGearingPage() {
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/tax" className="hover:text-slate-900">Tax</Link>
@@ -289,11 +290,11 @@ export default function NegativeGearingPage() {
 
           {/* Example table */}
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Negative gearing worked example income and expenses">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Item</th>
-                  <th className="text-right py-3 px-4 text-xs font-bold">Annual amount</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Item</th>
+                  <th scope="col" className="text-right py-3 px-4 text-xs font-bold">Annual amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -446,11 +447,11 @@ export default function NegativeGearingPage() {
             title="Deductible expenses for investment property"
           />
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Deductible expenses for investment property">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Notes</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -470,11 +471,11 @@ export default function NegativeGearingPage() {
 
           <div className="mt-8">
             <h3 className="text-base font-bold text-slate-900 mb-4">Non-deductible expenses</h3>
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Non-deductible investment property expenses">
               <thead>
                 <tr className="bg-red-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Why it&apos;s not deductible</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Why it&apos;s not deductible</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-red-100">
@@ -649,14 +650,14 @@ export default function NegativeGearingPage() {
           </p>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Annual tax saving from negative gearing at different income levels">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Marginal rate</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Annual loss</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Tax saving</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Real cash cost</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Marginal rate</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Annual loss</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Tax saving</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Real cash cost</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -899,7 +900,7 @@ export default function NegativeGearingPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
                     &#9662;
                   </span>
                 </summary>

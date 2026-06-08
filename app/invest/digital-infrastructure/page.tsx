@@ -7,7 +7,7 @@ import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 export const metadata: Metadata = {
   title: `Digital Infrastructure Investment in Australia (${CURRENT_YEAR})`,
   description:
-    "Invest in Australian data centres, fibre, subsea cables and AI compute. Compare ASX-listed pure-plays (NEXTDC, Macquarie Technology) with institutional placements (AirTrunk, Equinix) — yields, structures, FIRB and how to invest.",
+    "Australian digital infrastructure: data centres, fibre, AI compute. Compare NEXTDC, Macquarie Technology, and Equinix — yields, structures, and FIRB rules.",
   alternates: { canonical: `${SITE_URL}/invest/digital-infrastructure` },
   openGraph: {
     title: `Digital Infrastructure Investment in Australia (${CURRENT_YEAR})`,
@@ -149,7 +149,7 @@ export default async function DigitalInfrastructurePage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -368,7 +368,7 @@ export default async function DigitalInfrastructurePage() {
               <details key={i} className="border border-slate-200 rounded-xl bg-white p-5 group">
                 <summary className="text-sm md:text-base font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
                   <span>{q.name}</span>
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <p className="text-sm text-slate-600 leading-relaxed mt-3">{q.acceptedAnswer.text}</p>
               </details>

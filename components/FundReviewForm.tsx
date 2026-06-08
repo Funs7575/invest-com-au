@@ -308,6 +308,7 @@ export default function FundReviewForm({ fundSlug, fundTitle }: FundReviewFormPr
         <button
           type="submit"
           disabled={status === "loading"}
+          aria-busy={status === "loading"}
           className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60"
         >
           {status === "loading" ? "Submitting..." : "Submit Review"}

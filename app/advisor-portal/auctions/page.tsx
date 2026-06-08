@@ -82,6 +82,8 @@ export default function AdvisorAuctionsPage() {
   const [bidLoading, setBidLoading] = useState<Record<number, boolean>>({});
   const [bidMessages, setBidMessages] = useState<Record<number, { type: "success" | "error"; text: string }>>({});
   const [retractingBid, setRetractingBid] = useState<number | null>(null);
+  const [pendingRetractId, setPendingRetractId] = useState<number | null>(null);
+  const [retractReason, setRetractReason] = useState("");
 
   const fetchAdvisor = useCallback(async () => {
     try {
@@ -123,10 +125,9 @@ export default function AdvisorAuctionsPage() {
   }, [advisorId]);
 
   async function handleRetractBid(bidId: number) {
-    const reason = window.prompt(
-      "Why are you retracting? (optional)\n\nschedule_conflict / already_booked / outside_expertise / other",
-      "",
-    );
+    setPendingRetractId(null);
+    const reason = retractReason;
+    setRetractReason("");
     setRetractingBid(bidId);
     try {
       const params = new URLSearchParams({ bid_id: String(bidId) });
@@ -426,7 +427,7 @@ export default function AdvisorAuctionsPage() {
                               </span>
                               <input
                                 id={`bid-${auction.id}`}
-                                type="number"
+                                type="number" inputMode="decimal"
                                 min={50}
                                 step={5}
                                 value={bidInputs[auction.id] || ""}
@@ -445,7 +446,7 @@ export default function AdvisorAuctionsPage() {
                             type="button"
                             onClick={() => handleBid(auction.id)}
                             disabled={bidLoading[auction.id]}
-                            className="px-5 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                            className="px-5 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {bidLoading[auction.id]
                               ? "Bidding..."
@@ -650,14 +651,42 @@ export default function AdvisorAuctionsPage() {
                               <Icon name="external-link" size={12} />
                               View job
                             </Link>
-                            <button
-                              onClick={() => handleRetractBid(bid.id)}
-                              disabled={retractingBid === bid.id}
-                              className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 disabled:opacity-50 transition-colors"
-                            >
-                              <Icon name="x-circle" size={12} />
-                              {retractingBid === bid.id ? "Retracting…" : "Retract bid"}
-                            </button>
+                            {pendingRetractId === bid.id ? (
+                              <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-xs space-y-2">
+                                <p className="font-medium text-red-800">Retract this bid?</p>
+                                <select
+                                  value={retractReason}
+                                  onChange={(e) => setRetractReason(e.target.value)}
+                                  className="w-full border border-red-200 rounded px-2 py-1 text-xs text-slate-700 bg-white"
+                                >
+                                  <option value="">Reason (optional)</option>
+                                  <option value="schedule_conflict">Schedule conflict</option>
+                                  <option value="already_booked">Already booked</option>
+                                  <option value="outside_expertise">Outside my expertise</option>
+                                  <option value="other">Other</option>
+                                </select>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => { void handleRetractBid(bid.id); }}
+                                    disabled={retractingBid === bid.id}
+                                    className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded transition-colors disabled:opacity-50"
+                                  >{retractingBid === bid.id ? "Retracting…" : "Confirm retract"}</button>
+                                  <button
+                                    onClick={() => { setPendingRetractId(null); setRetractReason(""); }}
+                                    className="text-xs text-slate-500 hover:text-slate-700 px-2 py-1 rounded border border-slate-200 transition-colors"
+                                  >Cancel</button>
+                                </div>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => setPendingRetractId(bid.id)}
+                                disabled={retractingBid === bid.id}
+                                className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                              >
+                                <Icon name="x-circle" size={12} />
+                                {retractingBid === bid.id ? "Retracting…" : "Retract bid"}
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>

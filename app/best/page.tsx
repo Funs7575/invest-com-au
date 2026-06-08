@@ -5,6 +5,28 @@ import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/li
 import Icon from "@/components/Icon";
 import { SHOW_BEST_PICKS } from "@/lib/compliance-config";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const BEST_PLATFORM_FAQS = [
+  {
+    q: "What is the best investing platform in Australia for beginners?",
+    a: "For most beginners, a CHESS-sponsored broker with simple flat-fee pricing is the best starting point. Options like SelfWealth ($9.50 flat brokerage, CHESS-sponsored), Stake (fractional US shares, simple interface), or Pearler (designed for long-term investing, auto-invest feature) suit investors starting out. Avoid platforms with complex interfaces, margin lending, or CFD features until you understand the basics. Also consider whether you primarily want ASX shares/ETFs (most Australian platforms) or US/international shares (Stake, Interactive Brokers, CMC Markets). Start simple — you can always change platforms later.",
+  },
+  {
+    q: "What does CHESS-sponsored mean and why does it matter?",
+    a: "CHESS (Clearing House Electronic Subregister System) is the ASX's share settlement and registration system. A CHESS-sponsored account means your shares are registered in your name (you receive a HIN — Holder Identification Number) directly with the ASX, not held on a nominee or custodial basis by the broker. This matters because if your broker becomes insolvent, your shares are protected — they're yours, not the broker's. Non-CHESS (custodial) brokers are cheaper but hold shares in a pooled account; your claim becomes an unsecured creditor claim in insolvency. Stake, Tiger Brokers, moomoo use custodial structure. CommSec, SelfWealth, Pearler, Westpac are CHESS-sponsored.",
+  },
+  {
+    q: "How do I choose between CommSec, SelfWealth, Stake and other brokers?",
+    a: "The right broker depends on what you're buying and how often you trade. For ASX shares: CommSec is the most established but charges $19.95 minimum (0.12%); SelfWealth charges $9.50 flat and is CHESS-sponsored; Pearler charges $6.50 and is built for long-term investors with auto-invest and dividend reinvestment. For US shares: Stake charges USD$3 flat and has a clean interface; CMC Markets charges 0.15% min USD$3.99; Interactive Brokers is cheapest at scale but complex. For ETFs: Superhero offers $0 brokerage on ETFs (min $100) and Pearler offers low flat fees. Beginners should start with a simple CHESS-sponsored ASX broker.",
+  },
+  {
+    q: "Are investing platforms regulated in Australia?",
+    a: "Yes. All legitimate investing platforms operating in Australia must hold (or operate under) an Australian Financial Services Licence (AFSL) issued by ASIC. This means they must meet capital adequacy requirements, maintain client money separately from their own funds, and comply with dispute resolution obligations. You can verify any platform's AFSL at ASIC Connect or our AFSL Lookup tool. For platforms with custodial (non-CHESS) structures, client money protections still apply, but you should understand that shares are held by a third party on your behalf.",
+  },
+];
+
+const bestPlatformFaqLd = faqJsonLd(BEST_PLATFORM_FAQS);
 
 export const revalidate = 3600;
 
@@ -73,11 +95,14 @@ export default function BestBrokersHub() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      {bestPlatformFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bestPlatformFaqLd) }} />
+      )}
 
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -158,6 +183,24 @@ export default function BestBrokersHub() {
             >
               Take the 60-Second Quiz →
             </Link>
+          </div>
+
+          {/* FAQ */}
+          <div className="mt-10 pt-6 border-t border-slate-200">
+            <h2 className="text-base font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {BEST_PLATFORM_FAQS.map((faq) => (
+                <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                  <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                    {faq.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                  </summary>
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
           </div>
 
           {/* E-E-A-T footer */}

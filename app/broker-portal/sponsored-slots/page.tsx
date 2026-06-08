@@ -240,15 +240,15 @@ export default function SponsoredSlotsPage() {
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Sponsored placement slots">
             <thead className="bg-slate-50 border-b border-slate-200 text-left">
               <tr className="text-[11px] uppercase tracking-wide text-slate-600">
-                <th className="px-4 py-2.5">Tier</th>
-                <th className="px-3 py-2.5">Window</th>
-                <th className="px-3 py-2.5">Status</th>
-                <th className="px-3 py-2.5 text-right">Amount</th>
-                <th className="px-3 py-2.5 text-right">Clicks</th>
-                <th className="px-3 py-2.5">Invoice</th>
+                <th scope="col" className="px-4 py-2.5">Tier</th>
+                <th scope="col" className="px-3 py-2.5">Window</th>
+                <th scope="col" className="px-3 py-2.5">Status</th>
+                <th scope="col" className="px-3 py-2.5 text-right">Amount</th>
+                <th scope="col" className="px-3 py-2.5 text-right">Clicks</th>
+                <th scope="col" className="px-3 py-2.5">Invoice</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

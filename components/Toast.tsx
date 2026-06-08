@@ -16,7 +16,7 @@ interface ToastProps {
  * No extra JSX needed - renders via DOM.
  */
 export function useToast() {
-  const toast = useCallback((message: string, variant?: "success" | "error" | "info") => {
+  const toast = useCallback((message: string, variant?: "success" | "error" | "info", duration = 1500) => {
     // Remove existing toast if any
     const existing = document.getElementById("__imperative_toast");
     if (existing) existing.remove();
@@ -53,7 +53,7 @@ export function useToast() {
       el.classList.remove("toast-enter");
       el.classList.add("toast-exit");
       setTimeout(() => el.remove(), 200);
-    }, 1500);
+    }, duration);
   }, []);
 
   return { toast };
@@ -76,7 +76,9 @@ export default function Toast({
 
   useEffect(() => {
     if (visible) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShow(true);
+       
       setExiting(false);
       const timer = setTimeout(() => {
         setExiting(true);

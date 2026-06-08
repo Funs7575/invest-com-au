@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { marginalRate } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── FHSS maths ──────────────────────────────────────────────────────────────
 
@@ -99,11 +100,31 @@ const INCOME_OPTIONS = [
   { label: "Over $190,000", value: 200_000, rate: "45%" },
 ];
 
+const FHSS_DEFAULTS = {
+  annualConc: 10_000,
+  annualNonConc: 0,
+  years: 3,
+  incomeIndex: 2,
+};
+
 export default function FHSSCalculatorClient() {
-  const [annualConc, setAnnualConc] = useState(10_000);
-  const [annualNonConc, setAnnualNonConc] = useState(0);
-  const [years, setYears] = useState(3);
-  const [incomeIndex, setIncomeIndex] = useState(2);
+  const [annualConc, setAnnualConc] = useState(FHSS_DEFAULTS.annualConc);
+  const [annualNonConc, setAnnualNonConc] = useState(FHSS_DEFAULTS.annualNonConc);
+  const [years, setYears] = useState(FHSS_DEFAULTS.years);
+  const [incomeIndex, setIncomeIndex] = useState(FHSS_DEFAULTS.incomeIndex);
+
+  const isModified =
+    annualConc !== FHSS_DEFAULTS.annualConc ||
+    annualNonConc !== FHSS_DEFAULTS.annualNonConc ||
+    years !== FHSS_DEFAULTS.years ||
+    incomeIndex !== FHSS_DEFAULTS.incomeIndex;
+
+  function handleReset() {
+    setAnnualConc(FHSS_DEFAULTS.annualConc);
+    setAnnualNonConc(FHSS_DEFAULTS.annualNonConc);
+    setYears(FHSS_DEFAULTS.years);
+    setIncomeIndex(FHSS_DEFAULTS.incomeIndex);
+  }
 
   const income = INCOME_OPTIONS[incomeIndex]?.value ?? 90_000;
   const result = useMemo(
@@ -116,7 +137,7 @@ export default function FHSSCalculatorClient() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-10">
-      <nav className="text-sm text-slate-500 mb-6">
+      <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
         <Link href="/" className="hover:underline">Home</Link>
         {" / "}
         <Link href="/tools" className="hover:underline">Tools</Link>
@@ -137,12 +158,13 @@ export default function FHSSCalculatorClient() {
 
         {/* Annual concessional */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="fhss-conc" className="block text-sm font-medium text-slate-700 mb-1">
             Annual concessional contributions (salary sacrifice / personal deductible)
             <span className="ml-2 text-slate-400 font-normal">max $15,000/yr</span>
           </label>
           <div className="flex items-center gap-4">
             <input
+              id="fhss-conc"
               type="range"
               min={0}
               max={15_000}
@@ -159,12 +181,13 @@ export default function FHSSCalculatorClient() {
 
         {/* Annual non-concessional */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="fhss-non-conc" className="block text-sm font-medium text-slate-700 mb-1">
             Annual non-concessional contributions (after-tax personal)
             <span className="ml-2 text-slate-400 font-normal">up to $15,000 – concessional/yr</span>
           </label>
           <div className="flex items-center gap-4">
             <input
+              id="fhss-non-conc"
               type="range"
               min={0}
               max={Math.max(0, MAX_PER_YEAR - annualConc)}
@@ -181,11 +204,12 @@ export default function FHSSCalculatorClient() {
 
         {/* Years */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="fhss-years" className="block text-sm font-medium text-slate-700 mb-1">
             Years saving
           </label>
           <div className="flex items-center gap-4">
             <input
+              id="fhss-years"
               type="range"
               min={1}
               max={10}
@@ -202,9 +226,9 @@ export default function FHSSCalculatorClient() {
 
         {/* Income bracket */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <p className="block text-sm font-medium text-slate-700 mb-2">
             Annual income (determines marginal tax rate)
-          </label>
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {INCOME_OPTIONS.map((opt, i) => (
               <button
@@ -223,6 +247,19 @@ export default function FHSSCalculatorClient() {
           </div>
         </div>
       </section>
+
+      {/* Reset button */}
+      {isModified && (
+        <div className="flex justify-end mb-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+          >
+            Reset to defaults
+          </button>
+        </div>
+      )}
 
       {/* Results */}
       <section className="bg-violet-50 border border-violet-200 rounded-xl p-6 mb-6">
@@ -330,6 +367,13 @@ export default function FHSSCalculatorClient() {
       </section>
 
       {/* Compliance */}
+      <CalculatorLeadCapture
+        calcSlug="fhss-calculator"
+        calcTitle="FHSS scheme"
+        need="planning"
+        contextKeys={["fhss", "first-home-buyer", "super"]}
+      />
+
       <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </main>
   );

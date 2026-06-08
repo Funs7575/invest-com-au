@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     title: "Tax Strategy Hub",
     description: "Complete tax guide for Australian investors. CGT, franking credits, negative gearing, crypto tax, and tax strategies.",
     url: `${SITE_URL}/tax`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Australian Investor Tax Guide")}&sub=${encodeURIComponent("CGT · Franking Credits · Negative Gearing · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax` },
@@ -249,7 +250,7 @@ export default function TaxHubPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <span className="text-slate-900 font-medium">Tax Strategy</span>
@@ -357,12 +358,12 @@ export default function TaxHubPage() {
         <div className="container-custom">
           <SectionHeading eyebrow="FY2025–26" title="Australian Income Tax Rates" sub="Individual resident tax rates including the 2% Medicare Levy." />
           <div className="mt-6 overflow-x-auto max-w-2xl">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Australian income tax rates FY2025–26">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Taxable Income</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Marginal Rate</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Notes</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable Income</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Marginal Rate</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -434,7 +435,7 @@ export default function TaxHubPage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>

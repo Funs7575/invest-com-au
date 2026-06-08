@@ -11,6 +11,7 @@ import {
 } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER, FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import CostCalculator from "./CostCalculator";
 import FaqAccordion from "./FaqAccordion";
 import SectionHeading from "@/components/SectionHeading";
@@ -53,6 +54,7 @@ function formatCurrency(n: number) {
 }
 
 export default function ForeignInvestmentPage() {
+  const faqSchema = faqJsonLd(FIRB_FAQS.map((f) => ({ q: f.question, a: f.answer })));
   return (
     <div className="bg-white min-h-screen">
       <script
@@ -67,6 +69,12 @@ export default function ForeignInvestmentPage() {
           ),
         }}
       />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
 
       {/* ── ESTABLISHED DWELLING BAN ALERT — prominent ──────────────────── */}
       <div className="bg-red-600 text-white">
@@ -103,7 +111,7 @@ export default function ForeignInvestmentPage() {
       {/* ── Hero ────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -173,12 +181,12 @@ export default function ForeignInvestmentPage() {
             sub="Your approval requirements depend on your residency status and visa type."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden" aria-label="FIRB approval requirements by buyer type">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Buyer type</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB needed?</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Buyer type</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB needed?</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -259,13 +267,13 @@ export default function ForeignInvestmentPage() {
             sub="Most Australian states add an extra surcharge on top of standard stamp duty. These are among the largest upfront costs for foreign investors."
           />
           <div className="overflow-x-auto mb-5">
-            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden" aria-label="State stamp duty surcharges for foreign buyers">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs text-center">Stamp duty surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs text-center hidden sm:table-cell">Annual land tax surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs text-center">Stamp duty surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs text-center hidden sm:table-cell">Annual land tax surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -344,11 +352,11 @@ export default function ForeignInvestmentPage() {
             sub="Fees are paid at time of application and are non-refundable, regardless of the outcome."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden" aria-label="FIRB application fee schedule">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs text-right">FIRB fee (residential)</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs text-right">FIRB fee (residential)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

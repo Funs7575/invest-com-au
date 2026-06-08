@@ -129,7 +129,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
       {/* Hero */}
       <section className="bg-white border-b border-slate-100">
         <div className="container-custom py-6 md:py-8">
-          <nav className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-600">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-600">Property</Link>
@@ -203,12 +203,12 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-3">{s.suburb} vs {s.state} State Average</h2>
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label={`${s.suburb} vs ${s.state} property market comparison`}>
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Metric</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">{s.suburb}</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">{s.state} Avg</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Metric</th>
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">{s.suburb}</th>
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">{s.state} Avg</th>
                 </tr>
               </thead>
               <tbody>
@@ -282,7 +282,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
               <details key={faq.question} className="bg-white border border-slate-200 rounded-xl group">
                 <summary className="px-5 py-4 text-sm font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <p className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>

@@ -53,6 +53,7 @@ export default function ShortlistClient() {
 
   // Load notes from localStorage
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronous localStorage read on mount; no cascade risk
     setNotes(getStoredNotes());
   }, []);
 
@@ -61,7 +62,9 @@ export default function ShortlistClient() {
     const code = searchParams.get("code");
     if (!code) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronous setup before async fetch; no cascade risk
     setIsSharedView(true);
+     
     setLoading(true);
 
     fetch(`/api/shortlist?code=${encodeURIComponent(code)}`)
@@ -99,7 +102,9 @@ export default function ShortlistClient() {
     if (isSharedView) return; // Don't load own brokers in shared view
 
     if (slugs.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- early-exit synchronous reset; no cascade risk
       setBrokers([]);
+       
       setLoading(false);
       return;
     }
@@ -258,7 +263,7 @@ export default function ShortlistClient() {
             <button
               onClick={handleImportShared}
               disabled={importedShared}
-              className="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 min-h-11"
+              className="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-11"
             >
               {importedShared ? "Added to My Shortlist!" : "Import to My Shortlist"}
             </button>
@@ -285,8 +290,8 @@ export default function ShortlistClient() {
                   )}
                 </div>
                 <div className="flex items-center gap-2 md:gap-3 mt-0.5">
-                  <span className="text-[0.69rem] text-amber-600">{renderStars(broker.rating || 0)}</span>
-                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500">{broker.rating}/5</span>
+                  <span className="text-[0.69rem] text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
+                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span>
                   <span className="text-slate-200 hidden sm:inline">|</span>
                   <span className="text-[0.62rem] md:text-[0.69rem] text-slate-400 hidden sm:inline">ASX {broker.asx_fee || "N/A"}</span>
                 </div>
@@ -461,8 +466,8 @@ export default function ShortlistClient() {
                   )}
                 </div>
                 <div className="flex items-center gap-2 md:gap-3 mt-0.5">
-                  <span className="text-[0.69rem] text-amber-600">{renderStars(broker.rating || 0)}</span>
-                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500">{broker.rating}/5</span>
+                  <span className="text-[0.69rem] text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
+                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span>
                   <span className="text-slate-200 hidden sm:inline">|</span>
                   <span className="text-[0.62rem] md:text-[0.69rem] text-slate-400 hidden sm:inline">
                     ASX {broker.asx_fee || "N/A"}

@@ -244,12 +244,12 @@ export default function RebalancingPage() {
 
             {/* Methods summary table */}
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Rebalancing methods compared">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Method</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">How it works</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700">Best for</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Method</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">How it works</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700">Best for</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -356,13 +356,13 @@ export default function RebalancingPage() {
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
                 <h3 className="font-extrabold text-slate-900 mb-4">Worked example: $100,000 portfolio</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs">
+                  <table className="w-full text-xs" aria-label="Rebalancing worked example: $100,000 portfolio">
                     <thead>
                       <tr className="border-b border-slate-300">
-                        <th className="pb-2 text-left font-bold text-slate-700">Asset class</th>
-                        <th className="pb-2 text-right font-bold text-slate-700">Target</th>
-                        <th className="pb-2 text-right font-bold text-slate-700">Current</th>
-                        <th className="pb-2 text-right font-bold text-slate-700">Drift</th>
+                        <th scope="col" className="pb-2 text-left font-bold text-slate-700">Asset class</th>
+                        <th scope="col" className="pb-2 text-right font-bold text-slate-700">Target</th>
+                        <th scope="col" className="pb-2 text-right font-bold text-slate-700">Current</th>
+                        <th scope="col" className="pb-2 text-right font-bold text-slate-700">Drift</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">
@@ -528,7 +528,7 @@ export default function RebalancingPage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
                   </summary>
                   <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
                 </details>

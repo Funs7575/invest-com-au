@@ -16,7 +16,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Foreign Property Investment in Australia — FIRB Guide",
   description:
-    "FIRB approval process, eligible property types, state stamp duty surcharges (7–8%), application fees, and everything foreign investors need to know before buying Australian property. Updated March 2026.",
+    "FIRB approval, eligible property types, stamp duty surcharges (7–8%), and application fees for foreign investors buying Australian property. Updated 2026.",
   alternates: { canonical: `${SITE_URL}/property/foreign-investment` },
 };
 

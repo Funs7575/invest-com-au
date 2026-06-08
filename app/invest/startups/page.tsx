@@ -3,6 +3,28 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const STARTUP_FAQS = [
+  {
+    q: "What is the ESIC tax incentive for startup investors in Australia?",
+    a: "The Early Stage Innovation Company (ESIC) tax incentive gives eligible investors a 20% non-refundable tax offset on their investment (capped at $200,000 per year), plus a CGT exemption if the shares are held for at least 12 months and sold within 10 years. To qualify, the startup must meet either a 100-point innovation test or a principles-based test, and must have been incorporated less than three years ago (or six years for a company whose expenditure is predominantly in R&D). The investor must not be an affiliate of the company.",
+  },
+  {
+    q: "How can I invest in Australian startups as a retail investor?",
+    a: "Retail investors can access startup investment through: (1) equity crowdfunding platforms (Equitise, OnMarket, Birchal) — regulated under the Corporations Act, allowing offers up to $5M to retail investors; (2) angel investing directly or via angel networks (Sydney Angels, Melbourne Angels, Innovation Bay); (3) listed venture capital funds or ASX-listed tech companies with early-stage characteristics; (4) some unlisted managed funds that accept retail minimums. Be aware that startup investing is high-risk: most startups fail, and liquidity is limited for years. Diversification across at least 10–20 companies is recommended.",
+  },
+  {
+    q: "What due diligence should I do before investing in a startup?",
+    a: "Key due diligence steps: review the company's constitution and shareholder agreement (especially anti-dilution provisions and liquidation preferences); examine three years of financial statements or management accounts; understand the cap table and founder equity; verify intellectual property ownership; check if there are existing investor agreements that would rank ahead of your shares; review the use-of-funds breakdown; assess the competitive landscape; speak to at least two customers; and confirm the team's background. In crowdfunding, the platform publishes an offer document — read it in full, including risk factors.",
+  },
+  {
+    q: "What is the typical return profile of startup investing in Australia?",
+    a: "Startup investing follows a power law: the vast majority of investments return little or nothing, while a small number return 10–100x and account for most of a portfolio's gains. Industry data suggests that portfolios of 20+ startups have historically returned 2–3x gross over 7–10 years at the institutional level — but retail portfolios are typically concentrated and illiquid. The ESIC offset materially improves the return profile by reducing the net cost of each investment by 20%. Only invest capital you can afford to lock up for 5–10 years.",
+  },
+];
+
+const startupFaqLd = faqJsonLd(STARTUP_FAQS);
 
 export const revalidate = 3600;
 
@@ -16,6 +38,7 @@ export const metadata: Metadata = {
     description:
       "ESIC incentives, angel investing, VC funds, and crowdfunding. Sydney and Melbourne ecosystems.",
     url: `${SITE_URL}/invest/startups`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Startups")}&sub=${encodeURIComponent("Angel Investing · ESIC · Equity Crowdfunding · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -32,11 +55,14 @@ export default function StartupsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {startupFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(startupFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -233,6 +259,25 @@ export default function StartupsPage() {
                 Browse Startup Professionals
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {STARTUP_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

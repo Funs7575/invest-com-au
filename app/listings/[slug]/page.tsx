@@ -71,7 +71,7 @@ export default async function ListingDetailPage({ params }: Params) {
 
       <section className="bg-slate-900 text-white">
         <div className="max-w-4xl mx-auto px-4 py-12 sm:py-16">
-          <nav className="text-xs text-slate-400 mb-2">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-2">
             <Link href="/listings" className="hover:text-white">
               ← All listings
             </Link>

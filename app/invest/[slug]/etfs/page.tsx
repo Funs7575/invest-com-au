@@ -84,7 +84,9 @@ export async function generateMetadata({
     openGraph: {
       title: `Best ${sector.display_name} ETFs in Australia (${CURRENT_YEAR})`,
       url: `${SITE_URL}/invest/${slug}/etfs`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Best " + sector.display_name + " ETFs Australia")}&sub=${encodeURIComponent("Compare MER · Exposure · ASX-Listed · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -154,17 +156,17 @@ export default async function SectorEtfsPage({
               </div>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label={`${sector.display_name} ETFs`}>
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700">Ticker</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700">Name</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">Issuer</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700">MER</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">Exposure</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden xl:table-cell">Dom.</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden xl:table-cell">Freq.</th>
-                      <th className="px-4 py-3"></th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">Ticker</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">Name</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">Issuer</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">MER</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">Exposure</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden xl:table-cell">Dom.</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden xl:table-cell">Freq.</th>
+                      <th scope="col" className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

@@ -134,13 +134,13 @@ export default function OrgBillingTab({ org }: Props) {
             <button
               onClick={handleConnectStripe}
               disabled={connectingStripe}
-              className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Icon name="external-link" size={16} />
               {connectingStripe ? "Redirecting..." : "Connect Stripe"}
             </button>
             {stripeError && (
-              <p className="text-xs text-red-600 mt-2">{stripeError}</p>
+              <p role="alert" className="text-xs text-red-600 mt-2">{stripeError}</p>
             )}
           </div>
         )}

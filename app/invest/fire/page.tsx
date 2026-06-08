@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: `${SITE_URL}/invest/fire`,
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("FIRE Investing Australia")}&sub=${encodeURIComponent("Financial Independence · 4% Rule · Early Retirement · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };
@@ -456,16 +457,16 @@ export default function FireGuidePage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Savings rate impact on years to FIRE">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
                       Savings Rate
                     </th>
-                    <th className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
                       Years to FIRE (from zero)
                     </th>
-                    <th className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
                       Approximate retirement age (starting at 25)
                     </th>
                   </tr>

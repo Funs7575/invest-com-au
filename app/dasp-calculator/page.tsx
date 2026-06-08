@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "DASP Calculator — Departing Australia Superannuation Payment Tax",
   description:
-    "Estimate the tax withheld when you claim your Australian super as a Departing Australia Superannuation Payment (DASP). 35% for temporary residents, 65% for Working Holiday Makers.",
+    "Estimate DASP withholding tax on your Australian super. 35% for temporary residents, 65% for Working Holiday Makers. See net payment after tax.",
   alternates: { canonical: "/dasp-calculator" },
   openGraph: {
     title: "DASP Calculator — Departing Australia Super Tax",

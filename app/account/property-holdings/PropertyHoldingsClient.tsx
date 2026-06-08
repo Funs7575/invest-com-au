@@ -167,7 +167,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
       </section>
 
       {/* Add form */}
-      <section className="bg-white border border-slate-200 rounded-xl p-4">
+      <section id="property-add-form" className="bg-white border border-slate-200 rounded-xl p-4">
         <h2 className="text-base font-semibold text-slate-900 mb-3">Add property</h2>
         <form
           className="grid grid-cols-1 sm:grid-cols-6 gap-3"
@@ -179,21 +179,21 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
           }}
         >
           <Field label="Address line" required cols="sm:col-span-3">
-            <input type="text" name="address" required maxLength={200}
+            <input type="text" name="address" required maxLength={200} autoComplete="street-address"
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Suburb" cols="sm:col-span-2">
-            <input type="text" name="suburb" maxLength={100}
+            <input type="text" name="suburb" maxLength={100} autoComplete="address-level2"
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="State">
-            <select name="state" defaultValue="NSW"
+            <select name="state" defaultValue="NSW" autoComplete="address-level1"
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
               {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </Field>
           <Field label="Postcode">
-            <input type="text" name="postcode" maxLength={10}
+            <input type="text" name="postcode" maxLength={10} autoComplete="postal-code"
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Type">
@@ -204,7 +204,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
             </select>
           </Field>
           <Field label="Purchase price (AUD)" required>
-            <input type="number" name="price" required min={0} step={1}
+            <input type="number" inputMode="decimal" name="price" required min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Purchase date" required>
@@ -212,7 +212,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Current est. value (AUD)">
-            <input type="number" name="current_value" min={0} step={1}
+            <input type="number" inputMode="decimal" name="current_value" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Investment property?" cols="sm:col-span-2">
@@ -222,15 +222,15 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
             </label>
           </Field>
           <Field label="Weekly rent (AUD)">
-            <input type="number" name="weekly_rent" min={0} step={1}
+            <input type="number" inputMode="decimal" name="weekly_rent" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Loan balance (AUD)">
-            <input type="number" name="loan_balance" min={0} step={1}
+            <input type="number" inputMode="decimal" name="loan_balance" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Loan rate %">
-            <input type="number" name="loan_rate" min={0} max={20} step={0.01}
+            <input type="number" inputMode="decimal" name="loan_rate" min={0} max={20} step={0.01}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Notes" cols="sm:col-span-6">
@@ -238,8 +238,8 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <div className="sm:col-span-6 flex justify-end">
-            <button type="submit" disabled={adding}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50">
+            <button type="submit" disabled={adding} aria-busy={adding}
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
               {adding ? "Adding…" : "Add property"}
             </button>
           </div>
@@ -251,7 +251,16 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
       <section>
         <h2 className="text-base font-semibold text-slate-900 mb-3">Your properties</h2>
         {items.length === 0 ? (
-          <p className="text-sm text-slate-500 italic">No properties yet — add your first above.</p>
+          <div className="text-center py-4">
+            <p className="text-sm text-slate-500 mb-3">No properties added yet. Track your property equity and portfolio growth.</p>
+            <button
+              type="button"
+              onClick={() => document.getElementById("property-add-form")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              Add your first property
+            </button>
+          </div>
         ) : (
           <ul className="divide-y divide-slate-200 border border-slate-200 rounded-xl">
             {items.map((p) => {
@@ -284,7 +293,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
                     )}
                     <button type="button" onClick={() => void handleDelete(p.id)}
                       disabled={deletingId === p.id}
-                      className="text-xs text-red-700 hover:text-red-900 mt-1 disabled:opacity-50">
+                      className="text-xs text-red-700 hover:text-red-900 mt-1 disabled:opacity-50 disabled:cursor-not-allowed">
                       {deletingId === p.id ? "Removing…" : "Remove"}
                     </button>
                   </div>

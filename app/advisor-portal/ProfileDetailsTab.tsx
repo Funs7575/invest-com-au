@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Icon from "@/components/Icon";
 import type { Advisor } from "./types";
 
@@ -74,6 +74,162 @@ function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString("en-AU", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 }
 
+// ── Searchable combo-box for tag-style fields ─────────────────────────────────
+
+function TagComboBox({
+  label,
+  placeholder,
+  selected,
+  options,
+  onAdd,
+  onRemove,
+  maxLength = 100,
+}: {
+  label: string;
+  placeholder: string;
+  selected: string[];
+  options: string[];
+  onAdd: (value: string) => void;
+  onRemove: (value: string) => void;
+  maxLength?: number;
+}) {
+  const [inputValue, setInputValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const filtered = options.filter(
+    (o) =>
+      !selected.includes(o) &&
+      o.toLowerCase().includes(inputValue.toLowerCase())
+  );
+
+  // Also show custom entry if typed value isn't in options and not already selected
+  const showCustom =
+    inputValue.trim().length > 0 &&
+    !selected.includes(inputValue.trim()) &&
+    !options.some((o) => o.toLowerCase() === inputValue.trim().toLowerCase());
+
+  function commit(value: string) {
+    const trimmed = value.trim();
+    if (!trimmed || selected.includes(trimmed)) return;
+    onAdd(trimmed);
+    setInputValue("");
+    setIsOpen(false);
+  }
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const dropdownVisible = isOpen && (filtered.length > 0 || showCustom);
+
+  return (
+    <div ref={containerRef} className="space-y-2">
+      <div className="relative">
+        <input
+          type="search" enterKeyHint="search"
+          aria-label={label}
+          value={inputValue}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            setIsOpen(true);
+          }}
+          onFocus={() => setIsOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              if (filtered.length > 0 && inputValue.trim() === "") {
+                // do nothing — no selection made
+              } else {
+                commit(inputValue);
+              }
+            } else if (e.key === "Escape") {
+              setIsOpen(false);
+            }
+          }}
+          placeholder={placeholder}
+          maxLength={maxLength}
+          className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 pr-8"
+        />
+        <Icon
+          name="chevron-down"
+          size={14}
+          className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400"
+        />
+
+        {dropdownVisible && (
+          <ul
+            role="listbox"
+            aria-label={`${label} options`}
+            className="absolute z-20 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto"
+          >
+            {filtered.map((option) => (
+              <li key={option}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={false}
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // prevent blur before click
+                    commit(option);
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors"
+                >
+                  {option}
+                </button>
+              </li>
+            ))}
+            {showCustom && (
+              <li>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={false}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    commit(inputValue);
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm text-slate-500 italic hover:bg-violet-50 hover:text-violet-700 transition-colors"
+                >
+                  Add &ldquo;{inputValue.trim()}&rdquo;
+                </button>
+              </li>
+            )}
+          </ul>
+        )}
+      </div>
+
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {selected.map((item) => (
+            <span
+              key={item}
+              className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 border border-violet-200 text-violet-700 text-xs rounded-full"
+            >
+              {item}
+              <button
+                type="button"
+                onClick={() => onRemove(item)}
+                className="ml-0.5 hover:text-violet-900"
+                aria-label={`Remove ${item}`}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null }) {
   const [services, setServices] = useState<Service[]>([]);
   const [certifications, setCertifications] = useState<Certification[]>([]);
@@ -83,9 +239,9 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Tag input state
-  const [specInput, setSpecInput] = useState("");
-  const [langInput, setLangInput] = useState("");
+  // ADV-100: flash IDs for newly added service / cert
+  const [recentServiceId, setRecentServiceId] = useState<number | null>(null);
+  const [recentCertId, setRecentCertId] = useState<number | null>(null);
 
   // Service form state
   const [showServiceForm, setShowServiceForm] = useState(false);
@@ -122,32 +278,6 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
       }
     })();
   }, []);
-
-  // ── Specializations ──────────────────────────────────────────────────────
-
-  function addSpec(value: string) {
-    const trimmed = value.trim();
-    if (!trimmed || specializations.includes(trimmed)) return;
-    setSpecializations((prev) => [...prev, trimmed]);
-    setSpecInput("");
-  }
-
-  function removeSpec(tag: string) {
-    setSpecializations((prev) => prev.filter((t) => t !== tag));
-  }
-
-  // ── Languages ────────────────────────────────────────────────────────────
-
-  function addLang(value: string) {
-    const trimmed = value.trim();
-    if (!trimmed || languages.includes(trimmed)) return;
-    setLanguages((prev) => [...prev, trimmed]);
-    setLangInput("");
-  }
-
-  function removeLang(lang: string) {
-    setLanguages((prev) => prev.filter((l) => l !== lang));
-  }
 
   // ── Save profile details ─────────────────────────────────────────────────
 
@@ -207,6 +337,9 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
         setServicePriceType("contact");
         setServicePriceFrom("");
         setServicePriceTo("");
+        // ADV-100: flash the newly added row
+        setRecentServiceId(d.service.id);
+        setTimeout(() => setRecentServiceId(null), 3000);
       } else {
         const d = (await res.json()) as { error?: string };
         setError(d.error ?? "Failed to add service.");
@@ -263,6 +396,9 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
         setCertIssuedAt("");
         setCertExpiresAt("");
         setCertUrl("");
+        // ADV-100: flash the newly added row
+        setRecentCertId(d.certification.id);
+        setTimeout(() => setRecentCertId(null), 3000);
       } else {
         const d = (await res.json()) as { error?: string };
         setError(d.error ?? "Failed to add certification.");
@@ -302,7 +438,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}
@@ -316,71 +452,16 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
         <p className="text-xs text-slate-500">
           Add areas of expertise to help investors find you when searching by specialty.
         </p>
-
-        {/* Quick-add chips */}
-        <div className="flex flex-wrap gap-1.5">
-          {COMMON_SPECIALIZATIONS.map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              disabled={specializations.includes(tag)}
-              onClick={() => addSpec(tag)}
-              className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${
-                specializations.includes(tag)
-                  ? "bg-violet-100 border-violet-300 text-violet-600 cursor-default"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
-
-        {/* Custom input */}
-        <div className="flex gap-2">
-          <input
-            value={specInput}
-            onChange={(e) => setSpecInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addSpec(specInput);
-              }
-            }}
-            placeholder="Add custom specialization..."
-            className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30"
-            maxLength={100}
-          />
-          <button
-            type="button"
-            onClick={() => addSpec(specInput)}
-            className="px-4 py-2 text-sm font-semibold bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors"
-          >
-            Add
-          </button>
-        </div>
-
-        {/* Selected tags */}
-        {specializations.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {specializations.map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 border border-violet-200 text-violet-700 text-xs rounded-full"
-              >
-                {tag}
-                <button
-                  type="button"
-                  onClick={() => removeSpec(tag)}
-                  className="ml-0.5 hover:text-violet-900"
-                  aria-label={`Remove ${tag}`}
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
+        {/* ADV-105: single searchable combo-box */}
+        <TagComboBox
+          label="Specializations"
+          placeholder="Search or type a specialization…"
+          selected={specializations}
+          options={COMMON_SPECIALIZATIONS}
+          onAdd={(v) => setSpecializations((prev) => [...prev, v])}
+          onRemove={(v) => setSpecializations((prev) => prev.filter((t) => t !== v))}
+          maxLength={100}
+        />
       </section>
 
       {/* ── 2. Languages ── */}
@@ -392,71 +473,16 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
         <p className="text-xs text-slate-500">
           Let clients know which languages you can advise in.
         </p>
-
-        {/* Quick-add chips */}
-        <div className="flex flex-wrap gap-1.5">
-          {COMMON_LANGUAGES.map((lang) => (
-            <button
-              key={lang}
-              type="button"
-              disabled={languages.includes(lang)}
-              onClick={() => addLang(lang)}
-              className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${
-                languages.includes(lang)
-                  ? "bg-violet-100 border-violet-300 text-violet-600 cursor-default"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300"
-              }`}
-            >
-              {lang}
-            </button>
-          ))}
-        </div>
-
-        {/* Custom input */}
-        <div className="flex gap-2">
-          <input
-            value={langInput}
-            onChange={(e) => setLangInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addLang(langInput);
-              }
-            }}
-            placeholder="Add another language..."
-            className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30"
-            maxLength={50}
-          />
-          <button
-            type="button"
-            onClick={() => addLang(langInput)}
-            className="px-4 py-2 text-sm font-semibold bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors"
-          >
-            Add
-          </button>
-        </div>
-
-        {/* Selected languages */}
-        {languages.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {languages.map((lang) => (
-              <span
-                key={lang}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-50 border border-violet-200 text-violet-700 text-xs rounded-full"
-              >
-                {lang}
-                <button
-                  type="button"
-                  onClick={() => removeLang(lang)}
-                  className="ml-0.5 hover:text-violet-900"
-                  aria-label={`Remove ${lang}`}
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
+        {/* ADV-105: single searchable combo-box */}
+        <TagComboBox
+          label="Languages"
+          placeholder="Search or type a language…"
+          selected={languages}
+          options={COMMON_LANGUAGES}
+          onAdd={(v) => setLanguages((prev) => [...prev, v])}
+          onRemove={(v) => setLanguages((prev) => prev.filter((l) => l !== v))}
+          maxLength={50}
+        />
       </section>
 
       {/* ── 3. Minimum Client Assets ── */}
@@ -487,12 +513,13 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+          aria-busy={saving}
+          className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {saving ? "Saving..." : "Save Changes"}
         </button>
         {saved && (
-          <span className="text-sm text-emerald-600 font-medium flex items-center gap-1">
+          <span role="status" className="text-sm text-emerald-600 font-medium flex items-center gap-1">
             <Icon name="check-circle" size={14} className="text-emerald-500" />
             Saved
           </span>
@@ -520,10 +547,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
             <h4 className="text-xs font-bold text-slate-700">New Service</h4>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
+              <label htmlFor="svc-name" className="block text-xs font-medium text-slate-600 mb-1">
                 Service name <span className="text-red-400">*</span>
               </label>
               <input
+                id="svc-name"
                 value={serviceName}
                 onChange={(e) => setServiceName(e.target.value)}
                 placeholder="e.g. Retirement Planning Review"
@@ -532,10 +560,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
+              <label htmlFor="svc-desc" className="block text-xs font-medium text-slate-600 mb-1">
                 Description <span className="text-slate-400">(optional)</span>
               </label>
               <textarea
+                id="svc-desc"
                 value={serviceDesc}
                 onChange={(e) => setServiceDesc(e.target.value)}
                 placeholder="Brief description of what this service includes..."
@@ -546,8 +575,9 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Pricing type</label>
+                <label htmlFor="svc-price-type" className="block text-xs font-medium text-slate-600 mb-1">Pricing type</label>
                 <select
+                  id="svc-price-type"
                   value={servicePriceType}
                   onChange={(e) =>
                     setServicePriceType(e.target.value as typeof servicePriceType)
@@ -562,11 +592,12 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
               </div>
               {(servicePriceType === "fixed" || servicePriceType === "hourly") && (
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="svc-price-from" className="block text-xs font-medium text-slate-600 mb-1">
                     Price from ($)
                   </label>
                   <input
-                    type="number"
+                    id="svc-price-from"
+                    type="number" inputMode="decimal"
                     min="0"
                     step="1"
                     value={servicePriceFrom}
@@ -580,11 +611,12 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
             {(servicePriceType === "fixed" || servicePriceType === "hourly") &&
               servicePriceFrom && (
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="svc-price-to" className="block text-xs font-medium text-slate-600 mb-1">
                     Price to ($) <span className="text-slate-400">(optional upper bound)</span>
                   </label>
                   <input
-                    type="number"
+                    id="svc-price-to"
+                    type="number" inputMode="decimal"
                     min="0"
                     step="1"
                     value={servicePriceTo}
@@ -599,7 +631,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 type="button"
                 onClick={handleAddService}
                 disabled={serviceSubmitting || !serviceName.trim()}
-                className="px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {serviceSubmitting ? "Adding..." : "Add Service"}
               </button>
@@ -624,9 +656,26 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
         {services.length > 0 ? (
           <div className="divide-y divide-slate-100">
             {services.map((service) => (
-              <div key={service.id} className="py-3 flex items-start justify-between gap-3">
+              <div
+                key={service.id}
+                className={`py-3 flex items-start justify-between gap-3 rounded-lg transition-colors duration-500 ${
+                  recentServiceId === service.id ? "bg-emerald-50" : ""
+                }`}
+              >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-900">{service.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-slate-900">{service.name}</p>
+                    {/* ADV-100: inline "Added" confirmation */}
+                    {recentServiceId === service.id && (
+                      <span
+                        role="status"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs font-medium text-emerald-700 bg-emerald-100 rounded-full"
+                      >
+                        <Icon name="check" size={11} className="text-emerald-600" />
+                        Added
+                      </span>
+                    )}
+                  </div>
                   {service.description && (
                     <p className="text-xs text-slate-500 mt-0.5">{service.description}</p>
                   )}
@@ -683,10 +732,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
             <h4 className="text-xs font-bold text-slate-700">New Qualification</h4>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-name" className="block text-xs font-medium text-slate-600 mb-1">
                   Qualification name <span className="text-red-400">*</span>
                 </label>
                 <input
+                  id="cert-name"
                   value={certName}
                   onChange={(e) => setCertName(e.target.value)}
                   placeholder="e.g. CFP® Certification"
@@ -695,10 +745,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-issuer" className="block text-xs font-medium text-slate-600 mb-1">
                   Issuing body <span className="text-red-400">*</span>
                 </label>
                 <input
+                  id="cert-issuer"
                   value={certIssuer}
                   onChange={(e) => setCertIssuer(e.target.value)}
                   placeholder="e.g. Financial Planning Association"
@@ -707,10 +758,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-cred-id" className="block text-xs font-medium text-slate-600 mb-1">
                   Credential / Licence ID <span className="text-slate-400">(optional)</span>
                 </label>
                 <input
+                  id="cert-cred-id"
                   value={certCredId}
                   onChange={(e) => setCertCredId(e.target.value)}
                   placeholder="e.g. 123456"
@@ -719,10 +771,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-issued-at" className="block text-xs font-medium text-slate-600 mb-1">
                   Date issued <span className="text-slate-400">(optional)</span>
                 </label>
                 <input
+                  id="cert-issued-at"
                   type="date"
                   value={certIssuedAt}
                   onChange={(e) => setCertIssuedAt(e.target.value)}
@@ -730,10 +783,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-expires-at" className="block text-xs font-medium text-slate-600 mb-1">
                   Expiry date <span className="text-slate-400">(optional)</span>
                 </label>
                 <input
+                  id="cert-expires-at"
                   type="date"
                   value={certExpiresAt}
                   onChange={(e) => setCertExpiresAt(e.target.value)}
@@ -741,10 +795,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-url" className="block text-xs font-medium text-slate-600 mb-1">
                   Certificate URL <span className="text-slate-400">(optional)</span>
                 </label>
                 <input
+                  id="cert-url"
                   type="url"
                   value={certUrl}
                   onChange={(e) => setCertUrl(e.target.value)}
@@ -758,7 +813,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 type="button"
                 onClick={handleAddCert}
                 disabled={certSubmitting || !certName.trim() || !certIssuer.trim()}
-                className="px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {certSubmitting ? "Adding..." : "Add Qualification"}
               </button>
@@ -784,9 +839,26 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
         {certifications.length > 0 ? (
           <div className="divide-y divide-slate-100">
             {certifications.map((cert) => (
-              <div key={cert.id} className="py-3 flex items-start justify-between gap-3">
+              <div
+                key={cert.id}
+                className={`py-3 flex items-start justify-between gap-3 rounded-lg transition-colors duration-500 ${
+                  recentCertId === cert.id ? "bg-emerald-50" : ""
+                }`}
+              >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-900">{cert.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-slate-900">{cert.name}</p>
+                    {/* ADV-100: inline "Added" confirmation */}
+                    {recentCertId === cert.id && (
+                      <span
+                        role="status"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-xs font-medium text-emerald-700 bg-emerald-100 rounded-full"
+                      >
+                        <Icon name="check" size={11} className="text-emerald-600" />
+                        Added
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-slate-500 mt-0.5">{cert.issuer}</p>
                   <div className="flex flex-wrap items-center gap-3 mt-1">
                     {cert.credential_id && (

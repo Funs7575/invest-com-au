@@ -31,12 +31,14 @@ const FOCUS_TYPES = ["All", "Capital Growth", "Cash Flow", "Prestige", "First Ho
 export default function BuyerAgentsClient() {
   const [agents, setAgents] = useState<BuyerAgent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [stateFilter, setStateFilter] = useState("All");
   const [focusFilter, setFocusFilter] = useState("All");
 
   useEffect(() => {
     async function fetchAgents() {
       setLoading(true);
+      setFetchError(false);
       const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -55,8 +57,12 @@ export default function BuyerAgentsClient() {
         query = query.contains("investment_focus", [focusFilter]);
       }
 
-      const { data } = await query;
-      setAgents(data || []);
+      const { data, error } = await query;
+      if (error) {
+        setFetchError(true);
+      } else {
+        setAgents(data || []);
+      }
       setLoading(false);
     }
     fetchAgents();
@@ -66,7 +72,7 @@ export default function BuyerAgentsClient() {
     <div className="bg-white min-h-screen">
       <section className="bg-white border-b border-slate-100">
         <div className="container-custom py-6 md:py-8">
-          <nav className="text-xs text-slate-400 mb-3 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-600">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-600">Property</Link>
@@ -112,7 +118,13 @@ export default function BuyerAgentsClient() {
       {/* Agent Grid */}
       <section className="py-6 md:py-8">
         <div className="container-custom">
-          {loading ? (
+          {fetchError ? (
+            <div role="alert" className="text-center py-16">
+              <Icon name="wifi-off" size={40} className="text-slate-300 mx-auto mb-3" />
+              <p className="text-slate-600 font-medium mb-1">Could not load buyer&apos;s agents</p>
+              <p className="text-sm text-slate-500">Please refresh the page to try again.</p>
+            </div>
+          ) : loading ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="border border-slate-200 rounded-2xl p-5 animate-pulse">

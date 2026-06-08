@@ -227,11 +227,12 @@ export default function SignupClient() {
                 </label>
                 <input
                   id="signup-email"
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   autoComplete="email"
+                  autoFocus
                   aria-required="true"
                   aria-describedby={error ? errorId : undefined}
                   className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
@@ -311,6 +312,7 @@ export default function SignupClient() {
               <button
                 type="submit"
                 disabled={loading}
+                aria-busy={loading}
                 className="w-full px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Creating account..." : "Create Account"}
@@ -327,7 +329,7 @@ export default function SignupClient() {
                 </label>
                 <input
                   id="signup-magic-email"
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
@@ -345,6 +347,7 @@ export default function SignupClient() {
               <button
                 type="submit"
                 disabled={loading}
+                aria-busy={loading}
                 className="w-full px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Sending..." : "Send Magic Link"}

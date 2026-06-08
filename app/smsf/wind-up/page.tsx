@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd, howToJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
       "Step-by-step guide to closing your SMSF correctly — ATO notifications, CGT events, final annual return, and how to avoid unexpected tax bills.",
     url: `${SITE_URL}/smsf/wind-up`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Wind Up an SMSF")}&sub=${encodeURIComponent("7-Step Process · Tax · Rollover · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -329,16 +331,16 @@ export default function SmsfWindUpPage() {
               each asset.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="CGT rates when winding up an SMSF by fund phase and holding period">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Fund phase
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Asset held &lt; 12 months
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Asset held &gt; 12 months
                     </th>
                   </tr>
@@ -548,13 +550,13 @@ export default function SmsfWindUpPage() {
               significantly more if property is involved.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="SMSF wind-up costs by item">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Cost item
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Indicative range
                     </th>
                   </tr>
@@ -696,7 +698,7 @@ export default function SmsfWindUpPage() {
                 <details key={f.q} className="group bg-white">
                   <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none font-extrabold text-slate-900 text-sm hover:bg-slate-50 transition-colors">
                     {f.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base leading-none">
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base leading-none" aria-hidden="true">
                       &#8964;
                     </span>
                   </summary>
@@ -725,6 +727,15 @@ export default function SmsfWindUpPage() {
             </div>
           </div>
         </section>
+
+        <HubAdvisorCTA
+          heading="Get help winding up your SMSF correctly"
+          subheading="Winding up an SMSF incorrectly can trigger penalties and tax liabilities. An SMSF specialist accredited by the SMSF Association can manage the rollover, final audit, and ATO deregistration."
+          intent={{ need: "smsf", context: ["smsf_wind_up", "smsf_compliance"] }}
+          source="smsf_wind_up"
+          ctaLabel="Find an SMSF specialist"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* ── Cross-links ── */}
         <section className="py-10 bg-white border-t border-slate-200">

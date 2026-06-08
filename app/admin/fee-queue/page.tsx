@@ -47,6 +47,8 @@ export default function AdminFeeQueuePage() {
   const [tab, setTab] = useState<"queue" | "rules" | "staleness">("queue");
   const [busy, setBusy] = useState<number | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [pendingBulkAction, setPendingBulkAction] = useState<"approve" | "reject" | null>(null);
+  const [pendingDeleteRuleId, setPendingDeleteRuleId] = useState<number | null>(null);
 
   const supabase = createClient();
 
@@ -84,7 +86,8 @@ export default function AdminFeeQueuePage() {
 
   const handleBulkAction = async (action: "approve" | "reject") => {
     if (selectedIds.size === 0) return;
-    if (!confirm(`${action === "approve" ? "Apply" : "Skip"} ${selectedIds.size} fee changes?`)) return;
+    if (pendingBulkAction !== action) { setPendingBulkAction(action); return; }
+    setPendingBulkAction(null);
     setBusy(-1);
     for (const id of selectedIds) {
       await fetch("/api/admin/fee-queue", {
@@ -104,7 +107,8 @@ export default function AdminFeeQueuePage() {
   };
 
   const deleteRule = async (id: number) => {
-    if (!confirm("Delete this automation rule?")) return;
+    if (pendingDeleteRuleId !== id) { setPendingDeleteRuleId(id); return; }
+    setPendingDeleteRuleId(null);
     await supabase.from("fee_auto_rules").delete().eq("id", id);
     fetchAll();
   };
@@ -138,9 +142,11 @@ export default function AdminFeeQueuePage() {
   const urgentCount = items.filter(i => i.priority === "urgent").length;
   const autoCount = items.filter(i => i.auto_applied).length;
 
+  // eslint-disable-next-line react-hooks/purity -- admin page, Date.now() used for age calculations
+  const now = Date.now();
   const staleCount = staleBrokers.filter(b => {
     if (!b.fee_last_checked) return true;
-    const daysSince = (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000;
+    const daysSince = (now - new Date(b.fee_last_checked).getTime()) / 86400000;
     return daysSince > 30;
   }).length;
 
@@ -194,15 +200,29 @@ export default function AdminFeeQueuePage() {
               ))}
             </div>
             {selectedIds.size > 0 && (
-              <div className="flex gap-1.5">
-                <button onClick={() => handleBulkAction("approve")} disabled={busy === -1}
-                  className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 disabled:opacity-50">
-                  ✓ Apply {selectedIds.size} selected
-                </button>
-                <button onClick={() => handleBulkAction("reject")} disabled={busy === -1}
-                  className="px-3 py-1.5 border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-50">
-                  ✗ Skip {selectedIds.size}
-                </button>
+              <div className="flex gap-1.5 items-center flex-wrap">
+                {pendingBulkAction ? (
+                  <>
+                    <span className="text-xs text-slate-700 font-medium">
+                      {pendingBulkAction === "approve" ? `Apply ${selectedIds.size} changes?` : `Skip ${selectedIds.size} changes?`}
+                    </span>
+                    <button onClick={() => void handleBulkAction(pendingBulkAction)} disabled={busy === -1}
+                      className="px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50">Yes</button>
+                    <button onClick={() => setPendingBulkAction(null)}
+                      className="px-3 py-1.5 border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-50">No</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => void handleBulkAction("approve")} disabled={busy === -1}
+                      className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 disabled:opacity-50">
+                      ✓ Apply {selectedIds.size} selected
+                    </button>
+                    <button onClick={() => void handleBulkAction("reject")} disabled={busy === -1}
+                      className="px-3 py-1.5 border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-50">
+                      ✗ Skip {selectedIds.size}
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -235,7 +255,7 @@ export default function AdminFeeQueuePage() {
                         <input type="checkbox" checked={selectedIds.has(item.id)}
                           onChange={() => setSelectedIds(prev => {
                             const n = new Set(prev);
-                            n.has(item.id) ? n.delete(item.id) : n.add(item.id);
+                            if (n.has(item.id)) { n.delete(item.id); } else { n.add(item.id); }
                             return n;
                           })}
                           className="rounded mt-1 shrink-0"
@@ -309,7 +329,15 @@ export default function AdminFeeQueuePage() {
                     className={`px-3 py-1 text-xs font-semibold rounded-lg ${rule.enabled ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
                     {rule.enabled ? "Enabled" : "Disabled"}
                   </button>
-                  <button onClick={() => deleteRule(rule.id)} className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
+                  {pendingDeleteRuleId === rule.id ? (
+                    <>
+                      <span className="text-xs text-red-600 font-medium">Delete?</span>
+                      <button onClick={() => void deleteRule(rule.id)} className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded">Yes</button>
+                      <button onClick={() => setPendingDeleteRuleId(null)} className="text-xs border border-slate-300 text-slate-600 hover:bg-slate-50 px-2 py-1 rounded">No</button>
+                    </>
+                  ) : (
+                    <button onClick={() => void deleteRule(rule.id)} aria-label="Delete rule" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
+                  )}
                 </div>
               </div>
             ))}
@@ -338,21 +366,21 @@ export default function AdminFeeQueuePage() {
           <div className="grid grid-cols-3 gap-3 mb-6">
             <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 text-center">
               <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Fresh (&lt;30d)</p>
-              <p className="text-2xl font-extrabold text-emerald-600">{staleBrokers.filter(b => b.fee_last_checked && (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000 <= 30).length}</p>
+              <p className="text-2xl font-extrabold text-emerald-600">{staleBrokers.filter(b => b.fee_last_checked && (now - new Date(b.fee_last_checked).getTime()) / 86400000 <= 30).length}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 text-center">
               <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Stale (&gt;30d)</p>
-              <p className="text-2xl font-extrabold text-amber-600">{staleBrokers.filter(b => b.fee_last_checked && (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000 > 30 && (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000 <= 90).length}</p>
+              <p className="text-2xl font-extrabold text-amber-600">{staleBrokers.filter(b => b.fee_last_checked && (now - new Date(b.fee_last_checked).getTime()) / 86400000 > 30 && (now - new Date(b.fee_last_checked).getTime()) / 86400000 <= 90).length}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 text-center">
               <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Critical (&gt;90d)</p>
-              <p className="text-2xl font-extrabold text-red-600">{staleBrokers.filter(b => !b.fee_last_checked || (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000 > 90).length}</p>
+              <p className="text-2xl font-extrabold text-red-600">{staleBrokers.filter(b => !b.fee_last_checked || (now - new Date(b.fee_last_checked).getTime()) / 86400000 > 90).length}</p>
             </div>
           </div>
 
           <div className="space-y-2">
             {staleBrokers.map(b => {
-              const daysSince = b.fee_last_checked ? Math.round((Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000) : 999;
+              const daysSince = b.fee_last_checked ? Math.round((now - new Date(b.fee_last_checked).getTime()) / 86400000) : 999;
               const severity = daysSince > 90 ? "critical" : daysSince > 30 ? "stale" : "fresh";
               return (
                 <div key={b.id} className={`bg-white border rounded-lg px-4 py-3 flex items-center justify-between gap-3 ${

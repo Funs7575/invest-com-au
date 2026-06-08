@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     title: `Insurance-Linked Securities for Australian Investors (${CURRENT_YEAR})`,
     description: "Cat bonds, ILS funds and uncorrelated reinsurance risk-return for Australians.",
     url: `${SITE_URL}/invest/insurance-linked-securities`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Insurance-Linked Securities Australia")}&sub=${encodeURIComponent("ILS · Cat Bonds · Non-Correlated Returns · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

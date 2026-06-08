@@ -20,6 +20,28 @@ import {
   type TrendDelta,
 } from "@/lib/fee-index";
 import Sparkline from "@/components/Sparkline";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const BROKERAGE_FEE_FAQS = [
+  {
+    q: "What is the average brokerage fee for ASX shares in Australia?",
+    a: "Based on our fee index, the average ASX per-trade brokerage across major Australian platforms sits around $9–$11 for trades under $10,000. Flat-fee brokers (SelfWealth at $9.50, CMC Markets Invest at $0 for the first trade then $11) have driven the average down significantly since 2020. Percentage-fee brokers (CommSec at 0.10% min $19.95, Westpac at 0.11% min $19.95) are more expensive for smaller trades but can be cheaper on very large trades. The median fee matters more than the average for small portfolios — one outlier with high fees can skew the average.",
+  },
+  {
+    q: "Which Australian broker has the lowest brokerage fee?",
+    a: "For ASX shares: CommSec Pocket ($2 flat for trades up to $1,000; 0.20% above), Superhero ($0 for ETFs; $5 for shares), and Pearler ($6.50 flat) are among the cheapest. For US shares: Stake (USD$3 flat), CMC Markets (0.15% min USD$3.99), and Selfwealth (AUD$9.50 + FX spread) are competitive. For most regular investors, the FX spread on US share trades is often a larger cost than brokerage — compare the FX rate offered (typically 0.5–0.7% above mid-market) across platforms when buying US or international shares.",
+  },
+  {
+    q: "What is an FX spread and why does it matter for share trading?",
+    a: "The FX spread is the difference between the exchange rate you receive and the true mid-market rate when converting AUD to USD (or another currency) to buy international shares. It's charged as a percentage of the transaction value. A 0.60% FX spread on a $10,000 US share trade costs $60 in currency conversion — more than the stated brokerage on many platforms. Some brokers (like Interactive Brokers) offer near-market FX rates (0.08–0.20%), making them significantly cheaper for international share trading despite higher brokerage on smaller trades.",
+  },
+  {
+    q: "How do brokerage fees affect long-term investment returns?",
+    a: "Brokerage affects returns in two ways: the direct cost of each trade, and the compounding cost of buying/selling frequently. On a $5,000 monthly investment with $9.50 brokerage, you pay 0.19% per purchase — small but real. More significantly, high brokerage discourages regular investing (because small amounts become uneconomical), which can reduce investment frequency and long-run returns. The biggest cost optimisation for regular investors is choosing a flat-fee broker over a percentage-fee broker, minimising trades (buy-and-hold vs active trading), and keeping individual transactions large enough that the brokerage as a percentage of trade value stays under 0.20%.",
+  },
+];
+
+const brokerageFaqLd = faqJsonLd(BROKERAGE_FEE_FAQS);
 
 const PAGE_PATH = "/brokerage-fee-index";
 const PAGE_TITLE = `AU Brokerage Fee Index (${CURRENT_YEAR})`;
@@ -271,6 +293,9 @@ export default async function BrokerageFeeIndexPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(dataset) }}
       />
+      {brokerageFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(brokerageFaqLd) }} />
+      )}
 
       <div className="pt-5 pb-10 md:py-12">
         <div className="container-custom max-w-3xl">
@@ -491,6 +516,24 @@ export default async function BrokerageFeeIndexPage() {
                 confirm the current fee with the platform before acting.
               </li>
             </ul>
+          </section>
+
+          {/* FAQ */}
+          <section className="mt-10 pt-8 border-t border-slate-200">
+            <h2 className="text-base font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {BROKERAGE_FEE_FAQS.map((faq) => (
+                <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                  <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                    {faq.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                  </summary>
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
           </section>
 
           {/* Compliance + E-E-A-T */}

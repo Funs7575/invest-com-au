@@ -106,7 +106,7 @@ export default function FeeImpactInputs({
         <button
           onClick={onSaveProfile}
           disabled={saving}
-          className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+          className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? (
             "Saving..."

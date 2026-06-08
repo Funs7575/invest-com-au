@@ -9,13 +9,14 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Super Co-Contribution Guide — Government Matching Explained (${CURRENT_YEAR})`,
   description:
-    "Complete guide to the Australian government super co-contribution scheme. How to claim up to $500 free government money in your super fund, income thresholds, eligibility requirements, and worked examples. Updated 2024-25.",
+    "Government super co-contribution: claim up to $500 free in your super. Income thresholds, eligibility, and worked examples. Updated 2025–26.",
   alternates: { canonical: `${SITE_URL}/super/co-contribution` },
   openGraph: {
     title: `Super Co-Contribution — Up to $500 Free Government Money in Your Super (${CURRENT_YEAR})`,
     description:
       "How the government co-contribution works, who is eligible, income thresholds, and step-by-step examples for low-to-middle income earners.",
     url: `${SITE_URL}/super/co-contribution`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Super Co-Contribution Guide")}&sub=${encodeURIComponent("$500 Government Match · Income Thresholds · How to Claim · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };
@@ -260,12 +261,12 @@ export default function SuperCoContributionPage() {
               The formula for partial co-contributions is: <strong>Maximum = $500 &minus; [(income &minus; $45,400) &times; 0.03333]</strong>.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Government co-contribution income thresholds 2024-25">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Income Range</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Maximum Co-Contribution</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">How It&apos;s Calculated</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Income Range</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Maximum Co-Contribution</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">How It&apos;s Calculated</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -357,12 +358,12 @@ export default function SuperCoContributionPage() {
               You can receive <strong>both in the same year</strong> if you are eligible for each.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-amber-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Co-contribution vs LISTO comparison">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Co-Contribution</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">LISTO</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Co-Contribution</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">LISTO</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -506,6 +507,34 @@ export default function SuperCoContributionPage() {
                   <div className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</div>
                 </details>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-10 bg-gradient-to-br from-slate-900 to-slate-800">
+          <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
+            <div>
+              <h2 className="text-lg font-extrabold text-white mb-1">
+                Make your co-contribution work harder
+              </h2>
+              <p className="text-slate-400 text-sm">
+                Low fees compound your government bonus faster. Compare Australia&apos;s top super funds.
+              </p>
+            </div>
+            <div className="flex gap-3 shrink-0 flex-wrap">
+              <Link
+                href="/compare/super"
+                className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
+              >
+                Compare Super Funds
+              </Link>
+              <Link
+                href="/advisors/financial-planners"
+                className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap"
+              >
+                Find a Financial Planner
+              </Link>
             </div>
           </div>
         </section>

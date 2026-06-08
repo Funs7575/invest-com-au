@@ -45,7 +45,7 @@ export default function LessonClient({
   isFreePreview,
   isLoggedIn,
   totalLessons,
-  courseTitle,
+  courseTitle: _courseTitle,
   creator,
 }: Props) {
   const [completed, setCompleted] = useState(
@@ -86,7 +86,7 @@ export default function LessonClient({
       <details className="lg:hidden mb-6 rounded-xl border border-slate-200 bg-white w-full">
         <summary className="flex items-center justify-between cursor-pointer px-4 py-3 text-sm font-semibold text-slate-700">
           <span>Course Outline — Module {moduleInfo.index}: {moduleInfo.title}</span>
-          <svg className="w-4 h-4 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          <svg aria-hidden="true" className="w-4 h-4 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
         </summary>
         <div className="px-4 pb-3 space-y-2 max-h-64 overflow-y-auto">
           {modules.map((mod) => (
@@ -137,7 +137,7 @@ export default function LessonClient({
             </div>
           )}
 
-          <nav className="space-y-3 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
+          <nav aria-label="Course lessons" className="space-y-3 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
             {modules.map((mod) => (
               <div key={mod.index}>
                 <p className="text-[0.69rem] font-bold uppercase tracking-wide text-slate-400 mb-1">
@@ -255,12 +255,12 @@ export default function LessonClient({
                   <button
                     onClick={handleMarkComplete}
                     disabled={marking}
-                    className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+                    className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {marking ? "Saving..." : "Mark as Complete"}
                   </button>
                   {markError && (
-                    <p className="text-xs text-red-600 mt-2">{markError}</p>
+                    <p role="alert" className="text-xs text-red-600 mt-2">{markError}</p>
                   )}
                 </>
               )}

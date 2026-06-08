@@ -187,7 +187,7 @@ export default function BookConsultationPanel({
               type="button"
               onClick={handleCancel}
               disabled={cancelling || pending}
-              className="text-xs font-semibold text-rose-600 hover:text-rose-700 disabled:opacity-50"
+              className="text-xs font-semibold text-rose-600 hover:text-rose-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {cancelling ? "Cancelling…" : "Cancel / reschedule"}
             </button>
@@ -222,7 +222,7 @@ export default function BookConsultationPanel({
         Pick an open slot from {proName}&apos;s availability below.
       </p>
 
-      {loading && <p className="text-sm text-slate-500">Loading availability…</p>}
+      {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-slate-500">Loading availability…</p>}
 
       {!loading && slots.length === 0 && (
         <p className="text-sm text-slate-500">
@@ -248,7 +248,7 @@ export default function BookConsultationPanel({
           </label>
 
           {error && (
-            <p className="text-xs text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 mb-3">
+            <p role="alert" className="text-xs text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 mb-3">
               {error}
             </p>
           )}
@@ -295,7 +295,7 @@ export default function BookConsultationPanel({
                           className={`text-[10px] sm:text-xs font-semibold rounded px-1 py-1 transition-colors ${
                             isPicked
                               ? "bg-amber-500 text-slate-900"
-                              : "bg-white text-slate-700 border border-slate-200 hover:bg-amber-50 hover:border-amber-300 disabled:opacity-50"
+                              : "bg-white text-slate-700 border border-slate-200 hover:bg-amber-50 hover:border-amber-300 disabled:opacity-50 disabled:cursor-not-allowed"
                           }`}
                           title={formatRange(s.start_at, s.end_at)}
                         >

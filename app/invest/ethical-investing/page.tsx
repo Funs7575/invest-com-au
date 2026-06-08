@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Ethical Investing Australia (${CURRENT_YEAR}) — ESG, Screening & Greenwashing Guide`,
-  description: `Complete guide to ethical and ESG investing in Australia. How screening works, top ESG ETFs (ETHI, VESG, IESG), greenwashing red flags, RIAA certification, super options and the performance debate. ${UPDATED_LABEL}.`,
+  description: `ESG and ethical investing in Australia: top ETFs (ETHI, VESG, IESG), greenwashing red flags, RIAA certification, and the performance debate. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Ethical Investing Australia (${CURRENT_YEAR}) — ESG Guide`,
     description:
@@ -464,22 +464,22 @@ export default function EthicalInvestingPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Australian ESG ETFs compared">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
                     Ticker
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Fund
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
                     MER
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 hidden md:table-cell">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 hidden md:table-cell">
                     Index Tracked
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Key Exclusions
                   </th>
                 </tr>

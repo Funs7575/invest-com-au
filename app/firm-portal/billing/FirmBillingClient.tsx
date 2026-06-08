@@ -114,7 +114,7 @@ export default function FirmBillingClient({ summary: initialSummary }: Props) {
             type="button"
             onClick={refresh}
             disabled={refreshing}
-            className="inline-flex items-center gap-1.5 text-sm text-violet-700 hover:text-violet-900 font-medium disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 text-sm text-violet-700 hover:text-violet-900 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Icon name="rotate-ccw" className="h-4 w-4" />
             {refreshing ? "Refreshing…" : "Refresh"}
@@ -154,7 +154,7 @@ export default function FirmBillingClient({ summary: initialSummary }: Props) {
               type="button"
               onClick={openPortal}
               disabled={portalLoading}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {portalLoading ? "Opening…" : "Manage in Stripe"}
             </button>
@@ -176,15 +176,15 @@ export default function FirmBillingClient({ summary: initialSummary }: Props) {
           </p>
         </header>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
+          <table className="min-w-full divide-y divide-slate-200 text-sm" aria-label="Firm billing invoices">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
-                <th className="px-5 md:px-7 py-3 text-left font-semibold">Member</th>
-                <th className="px-3 py-3 text-right font-semibold">Balance</th>
-                <th className="px-3 py-3 text-right font-semibold">Lifetime spend</th>
-                <th className="px-3 py-3 text-left font-semibold">Auto-recharge</th>
-                <th className="px-3 py-3 text-left font-semibold">Last seen</th>
-                <th className="px-5 md:px-7 py-3 text-right font-semibold">Manage</th>
+                <th scope="col" className="px-5 md:px-7 py-3 text-left font-semibold">Member</th>
+                <th scope="col" className="px-3 py-3 text-right font-semibold">Balance</th>
+                <th scope="col" className="px-3 py-3 text-right font-semibold">Lifetime spend</th>
+                <th scope="col" className="px-3 py-3 text-left font-semibold">Auto-recharge</th>
+                <th scope="col" className="px-3 py-3 text-left font-semibold">Last seen</th>
+                <th scope="col" className="px-5 md:px-7 py-3 text-right font-semibold">Manage</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

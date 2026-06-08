@@ -40,6 +40,7 @@ export default function PortfolioClient() {
   const [results, setResults] = useState<{ annual_fees: number; optimal_fees: number; savings: number; optimal_broker: string; holdings: Holding[] } | null>(null);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [existingPortfolio, setExistingPortfolio] = useState(false);
 
   // Fetch broker list
@@ -101,6 +102,7 @@ export default function PortfolioClient() {
   const savePortfolio = async () => {
     if (holdings.some(h => !h.broker_slug)) return;
     setLoading(true);
+    setSubmitError("");
     try {
       const res = await fetch("/api/portfolio", {
         method: "POST",
@@ -111,8 +113,12 @@ export default function PortfolioClient() {
         const data = await res.json();
         setResults(data);
         setStep("results");
+      } else {
+        setSubmitError("Something went wrong. Please try again.");
       }
-    } catch {}
+    } catch {
+      setSubmitError("Network error — please check your connection and try again.");
+    }
     setLoading(false);
   };
 
@@ -128,7 +134,7 @@ export default function PortfolioClient() {
     <div className="max-w-3xl mx-auto px-4 pt-6 pb-12 md:pt-10 md:pb-16">
       {/* Header */}
       <div className="mb-6 md:mb-8">
-        <nav className="text-xs text-slate-400 mb-2 flex items-center gap-1">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-2 flex items-center gap-1">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span>/</span>
           <span className="text-slate-700">Portfolio Monitor</span>
@@ -149,7 +155,7 @@ export default function PortfolioClient() {
           </div>
           <div className="space-y-3 max-w-sm mx-auto">
             <input
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={email}
               onChange={e => setEmail(e.target.value)}
               onKeyDown={e => e.key === "Enter" && checkExisting()}
@@ -160,7 +166,7 @@ export default function PortfolioClient() {
             <button
               onClick={checkExisting}
               disabled={loading || !email.trim()}
-              className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-50 text-sm"
+              className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               {loading ? "Checking..." : "Get Started — Free"}
             </button>
@@ -180,14 +186,15 @@ export default function PortfolioClient() {
               {holdings.map((h, idx) => (
                 <div key={idx} className="bg-slate-50 rounded-xl p-4 relative">
                   {holdings.length > 1 && (
-                    <button onClick={() => removeHolding(idx)} className="absolute top-2 right-2 p-1 text-slate-400 hover:text-red-500">
+                    <button onClick={() => removeHolding(idx)} aria-label="Remove holding" className="absolute top-2 right-2 p-2 text-slate-400 hover:text-red-500">
                       <Icon name="x-circle" size={16} />
                     </button>
                   )}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="col-span-2">
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
+                      <label htmlFor={`po-platform-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
                       <select
+                        id={`po-platform-${idx}`}
                         value={h.broker_slug}
                         onChange={e => updateHolding(idx, "broker_slug", e.target.value)}
                         className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm bg-white"
@@ -199,26 +206,29 @@ export default function PortfolioClient() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">Portfolio Value ($)</label>
+                      <label htmlFor={`po-value-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">Portfolio Value ($)</label>
                       <input
-                        type="number"
+                        id={`po-value-${idx}`}
+                        type="number" inputMode="decimal"
                         value={h.balance}
                         onChange={e => updateHolding(idx, "balance", Number(e.target.value))}
                         className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">Trades/Year</label>
+                      <label htmlFor={`po-trades-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">Trades/Year</label>
                       <input
-                        type="number"
+                        id={`po-trades-${idx}`}
+                        type="number" inputMode="decimal"
                         value={h.trades_per_year}
                         onChange={e => updateHolding(idx, "trades_per_year", Number(e.target.value))}
                         className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm"
                       />
                     </div>
                     <div className="col-span-2">
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">US Share Allocation ({h.us_allocation}%)</label>
+                      <label htmlFor={`po-us-alloc-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">US Share Allocation ({h.us_allocation}%)</label>
                       <input
+                        id={`po-us-alloc-${idx}`}
                         type="range"
                         min={0}
                         max={100}
@@ -240,10 +250,13 @@ export default function PortfolioClient() {
           <button
             onClick={savePortfolio}
             disabled={loading || holdings.some(h => !h.broker_slug)}
-            className="w-full py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-50 text-sm"
+            className="w-full py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
             {loading ? "Calculating..." : "Calculate My Fees & Start Monitoring"}
           </button>
+          {submitError && (
+            <p role="alert" className="mt-2 text-xs text-red-600 text-center">{submitError}</p>
+          )}
         </div>
       )}
 

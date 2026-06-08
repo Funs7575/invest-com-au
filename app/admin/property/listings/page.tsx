@@ -29,6 +29,7 @@ function formatPrice(cents: number): string {
 export default function AdminPropertyListings() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -45,6 +46,7 @@ export default function AdminPropertyListings() {
     setLoading(false);
   }, [supabase]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- pre-existing pattern, fetchListings is a data-loader not an effect side-effect
   useEffect(() => { fetchListings(); }, [fetchListings]);
 
   const toggleField = async (id: number, field: "featured" | "sponsored", current: boolean) => {
@@ -58,7 +60,7 @@ export default function AdminPropertyListings() {
   };
 
   const deleteListing = async (id: number) => {
-    if (!confirm("Delete this listing?")) return;
+    setPendingDeleteId(null);
     await supabase.from("property_listings").delete().eq("id", id);
     setListings(listings.filter((l) => l.id !== id));
   };
@@ -82,7 +84,7 @@ export default function AdminPropertyListings() {
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-14 bg-slate-50 rounded-lg animate-pulse" />)}</div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Property listings">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">Title</th>
@@ -129,9 +131,16 @@ export default function AdminPropertyListings() {
                     </button>
                   </td>
                   <td className="px-4 py-3">
-                    <button onClick={() => deleteListing(listing.id)} className="text-red-400 hover:text-red-600">
-                      <Icon name="trash-2" size={14} />
-                    </button>
+                    {pendingDeleteId === listing.id ? (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => void deleteListing(listing.id)} className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded">Yes</button>
+                        <button onClick={() => setPendingDeleteId(null)} className="text-xs text-slate-500 border border-slate-200 px-2 py-0.5 rounded hover:bg-slate-50">No</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setPendingDeleteId(listing.id)} className="text-red-400 hover:text-red-600">
+                        <Icon name="trash-2" size={14} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

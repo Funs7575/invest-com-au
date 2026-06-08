@@ -195,13 +195,13 @@ export default function FringeBenefitsPage() {
               Whether a benefit is Type 1 or Type 2 determines the gross-up rate used to calculate FBT. The distinction depends on whether the employer can claim a GST input tax credit on the cost of providing the benefit.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="FBT Type 1 and Type 2 gross-up rates">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Type</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">What it means</th>
-                    <th className="px-4 py-3 text-right font-extrabold text-amber-700">Gross-up rate</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Example</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Type</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">What it means</th>
+                    <th scope="col" className="px-4 py-3 text-right font-extrabold text-amber-700">Gross-up rate</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Example</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -397,7 +397,7 @@ export default function FringeBenefitsPage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
                   </summary>
                   <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
                 </details>

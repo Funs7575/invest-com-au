@@ -66,6 +66,7 @@ export async function generateMetadata({
       title: `${cfgA.countryShort} vs ${cfgB.countryShort} — Investing in Australia (${CURRENT_YEAR})`,
       description,
       url: absoluteUrl(`/foreign-investment/compare/${cfgA.slug}-vs-${cfgB.slug}`),
+      images: [{ url: `/api/og?title=${encodeURIComponent(cfgA.countryShort + " vs " + cfgB.countryShort + " — Investing in Australia")}&sub=${encodeURIComponent("Tax · FIRB · Migration · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
     twitter: { card: "summary_large_image" },
   };
@@ -160,7 +161,7 @@ export default async function ComparePairPage({
       {/* ── Hero ──────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -283,16 +284,16 @@ export default async function ComparePairPage({
 
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label={`${comparison.rows.length} dimension comparison`}>
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wide w-1/3">
+                  <th scope="col" className="text-left px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wide w-1/3">
                     Dimension
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wide w-[30%]">
+                  <th scope="col" className="text-left px-5 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wide w-[30%]">
                     <span className="mr-1">{cfgA.flag}</span> {cfgA.countryShort}
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wide w-[30%]">
+                  <th scope="col" className="text-left px-5 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wide w-[30%]">
                     <span className="mr-1">{cfgB.flag}</span> {cfgB.countryShort}
                   </th>
                 </tr>

@@ -185,9 +185,15 @@ export default async function PublicListPage({ params }: Params) {
 
       {/* Items */}
       {items.length === 0 ? (
-        <div className="text-center py-12 text-slate-400">
-          <p className="text-3xl mb-2" aria-hidden>📋</p>
-          <p>This list is empty.</p>
+        <div className="text-center py-12 text-slate-500">
+          <p className="text-3xl mb-3" aria-hidden>📋</p>
+          <p className="font-semibold text-slate-700 mb-1">No items yet</p>
+          <p className="text-sm text-slate-500 mb-5">The list owner hasn&apos;t added any items yet — check back soon.</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/compare" className="text-sm font-semibold text-teal-700 hover:underline">Browse platforms →</Link>
+            <Link href="/advisors" className="text-sm font-semibold text-teal-700 hover:underline">Find advisors →</Link>
+            <Link href="/etfs" className="text-sm font-semibold text-teal-700 hover:underline">Explore ETFs →</Link>
+          </div>
         </div>
       ) : (
         <div className="space-y-6">

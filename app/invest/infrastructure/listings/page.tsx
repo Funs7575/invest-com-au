@@ -31,6 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         "Explore infrastructure investment opportunities in Australia. Toll roads, energy, airports, ports and more.",
       url: `${SITE_URL}/invest/infrastructure/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Infrastructure Investment Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

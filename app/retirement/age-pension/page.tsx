@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Age Pension Australia — Eligibility, Rates & Assets Test (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Australian Age Pension guide: eligibility age (67), 2024–25 payment rates (single $1,144.40/fortnight, couple $862.60 each), assets test thresholds, income test, deeming, Work Bonus, super interaction and worked examples. ${UPDATED_LABEL}.`,
+  description: `Australian Age Pension: eligibility (age 67), current payment rates, assets test, income test, Work Bonus, and worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Age Pension Australia — Eligibility, Rates & Assets Test (${CURRENT_YEAR})`,
     description:
@@ -118,7 +119,7 @@ export default function AgePensionPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link>
             <span>/</span>
             <Link href="/retirement" className="hover:text-white">Retirement</Link>
@@ -196,22 +197,22 @@ export default function AgePensionPage() {
             (PBLCI), reviewed each March and September.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Age Pension payment rates 2024–25">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Situation
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Base rate
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Pension Supplement
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Energy Supplement
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Maximum total
                   </th>
                 </tr>
@@ -287,16 +288,16 @@ export default function AgePensionPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Age Pension assets test thresholds by situation">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Situation
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Full pension below
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Cut-off (nil pension above)
                   </th>
                 </tr>
@@ -864,7 +865,7 @@ export default function AgePensionPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none">
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">
                     ▾
                   </span>
                 </summary>
@@ -874,6 +875,16 @@ export default function AgePensionPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get Age Pension planning advice"
+        subheading="Assets test, income test, deeming rates, and super drawdown strategy all interact. A licensed financial planner can model your entitlements and help you maximise Age Pension."
+        intent={{ need: "retirement", context: ["age_pension", "centrelink"] }}
+        source="retirement_age_pension"
+        ctaLabel="Find a retirement planner"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

@@ -23,7 +23,9 @@ export default function CalculatorConfigPage() {
   const [messages, setMessages] = useState<Record<string, { type: "success" | "error"; text: string }>>({});
 
   useEffect(() => {
+     
     fetchConfigs();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchConfigs() {
@@ -108,11 +110,12 @@ export default function CalculatorConfigPage() {
       case "franking":
         return (
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">
+            <label htmlFor="cc-corporate-tax" className="block text-sm font-medium text-slate-600 mb-1">
               Corporate Tax Rate (%)
             </label>
             <input
-              type="number"
+              id="cc-corporate-tax"
+              type="number" inputMode="decimal"
               step="0.01"
               value={(config.corporate_tax_rate as number | string | undefined) ?? ""}
               onChange={(e) =>
@@ -126,11 +129,12 @@ export default function CalculatorConfigPage() {
       case "switching":
         return (
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">
+            <label htmlFor="cc-transfer-fee" className="block text-sm font-medium text-slate-600 mb-1">
               Transfer Fee ($)
             </label>
             <input
-              type="number"
+              id="cc-transfer-fee"
+              type="number" inputMode="decimal"
               step="0.01"
               value={(config.transfer_fee as number | string | undefined) ?? ""}
               onChange={(e) =>
@@ -147,10 +151,11 @@ export default function CalculatorConfigPage() {
             <p className="text-slate-500 text-sm">
               FX calculator configuration. Add custom fields as needed in the JSON config.
             </p>
-            <label className="block text-sm font-medium text-slate-600 mb-1 mt-3">
+            <label htmlFor="cc-fx-config" className="block text-sm font-medium text-slate-600 mb-1 mt-3">
               Raw Config (JSON)
             </label>
             <textarea
+              id="cc-fx-config"
               value={JSON.stringify(config, null, 2)}
               onChange={(e) => {
                 try {
@@ -176,12 +181,12 @@ export default function CalculatorConfigPage() {
       case "cgt":
         return (
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-2">
+            <p className="block text-sm font-medium text-slate-600 mb-2">
               Tax Brackets (display only)
-            </label>
+            </p>
             {Array.isArray(config.tax_brackets) && config.tax_brackets.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
+                <table className="w-full text-sm text-left" aria-label="Tax brackets">
                   <thead>
                     <tr className="border-b border-slate-300">
                       {Object.keys(config.tax_brackets[0] || {}).map((key) => (
@@ -229,10 +234,11 @@ export default function CalculatorConfigPage() {
             <p className="text-slate-500 text-sm">
               CHESS calculator configuration. Add custom fields as needed in the JSON config.
             </p>
-            <label className="block text-sm font-medium text-slate-600 mb-1 mt-3">
+            <label htmlFor="cc-chess-config" className="block text-sm font-medium text-slate-600 mb-1 mt-3">
               Raw Config (JSON)
             </label>
             <textarea
+              id="cc-chess-config"
               value={JSON.stringify(config, null, 2)}
               onChange={(e) => {
                 try {

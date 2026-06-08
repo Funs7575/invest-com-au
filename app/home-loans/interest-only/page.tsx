@@ -239,7 +239,7 @@ export default function InterestOnlyPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-900 to-slate-700 text-white py-14">
         <div className="container-custom">
-          <nav className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>
@@ -296,13 +296,13 @@ export default function InterestOnlyPage() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">IO vs P&amp;I: Detailed Comparison</h2>
           <p className="text-sm text-slate-500 mb-6">Based on a $600,000 loan at 6.5% over 30 years.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Interest-only vs principal and interest loan comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Feature</th>
-                  <th className="text-left px-5 py-3 text-blue-300">Interest-only</th>
-                  <th className="text-left px-5 py-3 text-green-300">Principal &amp; interest</th>
-                  <th className="text-left px-5 py-3 text-slate-300">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3">Feature</th>
+                  <th scope="col" className="text-left px-5 py-3 text-blue-300">Interest-only</th>
+                  <th scope="col" className="text-left px-5 py-3 text-green-300">Principal &amp; interest</th>
+                  <th scope="col" className="text-left px-5 py-3 text-slate-300">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -473,12 +473,12 @@ export default function InterestOnlyPage() {
           </p>
           <div className="bg-white border border-slate-200 rounded-xl p-6 mb-5">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table aria-label="Tax deductibility of IO vs P&I investment loans at 45% marginal tax rate" className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 font-semibold text-slate-700">Scenario</th>
-                    <th className="text-left py-2 font-semibold text-slate-700">Deductible amount</th>
-                    <th className="text-left py-2 font-semibold text-slate-700">After-tax cost (45% MTR)</th>
+                    <th scope="col" className="text-left py-2 font-semibold text-slate-700">Scenario</th>
+                    <th scope="col" className="text-left py-2 font-semibold text-slate-700">Deductible amount</th>
+                    <th scope="col" className="text-left py-2 font-semibold text-slate-700">After-tax cost (45% MTR)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -613,7 +613,7 @@ export default function InterestOnlyPage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-50 bg-white">
                   {faq.q}
-                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
                 </summary>
                 <div className="px-5 pb-4 pt-1 text-sm text-slate-600 leading-relaxed bg-white">{faq.a}</div>
               </details>

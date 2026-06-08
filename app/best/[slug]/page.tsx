@@ -286,7 +286,7 @@ export default async function BestBrokerPage({
         ]} />
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -471,8 +471,8 @@ export default async function BestBrokerPage({
                     {topPick.tagline}
                   </p>
                   <div className="flex items-center gap-3 mt-2 text-sm">
-                    <span className="text-amber-600">{renderStars(topPick.rating || 0)}</span>
-                    <span className="text-slate-500">{topPick.rating}/5</span>
+                    <span className="text-amber-600" aria-hidden="true">{renderStars(topPick.rating || 0)}</span>
+                    <span className="text-slate-500" aria-label={`${topPick.rating} out of 5 stars`}>{topPick.rating}/5</span>
                     <span className="text-slate-400">·</span>
                     <span className="text-slate-600">{topPick.asx_fee || "N/A"} ASX</span>
                     {topPick.chess_sponsored && (
@@ -511,14 +511,14 @@ export default async function BestBrokerPage({
             <ScrollReveal animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">#</th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">Platform</th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="ASX Fee" /></th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="US Fee" /></th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="FX Rate" /></th>
-                  <th className="px-4 py-3 text-center font-semibold text-sm"><JargonTooltip term="CHESS" /></th>
-                  <th className="px-4 py-3 text-center font-semibold text-sm">Rating</th>
-                  <th className="px-4 py-3"></th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">#</th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">Platform</th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="ASX Fee" /></th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="US Fee" /></th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="FX Rate" /></th>
+                  <th scope="col" className="px-4 py-3 text-center font-semibold text-sm"><JargonTooltip term="CHESS" /></th>
+                  <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">Rating</th>
+                  <th scope="col" className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -547,8 +547,8 @@ export default async function BestBrokerPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="text-amber-600">{renderStars(broker.rating || 0)}</span>
-                      <span className="text-sm text-slate-500 ml-1">{broker.rating}</span>
+                      <span className="text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
+                      <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}</span>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <a

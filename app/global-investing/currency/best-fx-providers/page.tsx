@@ -10,7 +10,7 @@ const PAGE_PATH = "/global-investing/currency/best-fx-providers";
 
 export const metadata: Metadata = {
   title: `Best FX & Money Transfer Providers for Australians (${CURRENT_YEAR}) — Wise vs OFX vs WorldFirst`,
-  description: `How to send money overseas from Australia for the lowest cost. Compare Wise, OFX, WorldFirst, Revolut and CurrencyFair against the banks — exchange-rate margins, transfer fees, the mid-market rate, IBKR FX, large transfers and multi-currency accounts. ${UPDATED_LABEL}.`,
+  description: `Best FX providers for Australians: compare Wise, OFX, WorldFirst, Revolut on exchange-rate margins, fees, and large-transfer rates. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best FX & Money Transfer Providers for Australians (${CURRENT_YEAR})`,
     description:
@@ -264,7 +264,7 @@ export default function BestFxProvidersPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-600 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-600 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link>
@@ -393,14 +393,14 @@ export default function BestFxProvidersPage() {
             though, is consistent: specialists beat banks by a wide margin.
           </p>
           <div className="overflow-x-auto -mx-4 px-4">
-            <table className="w-full border-collapse text-left min-w-[760px]">
+            <table className="w-full border-collapse text-left min-w-[760px]" aria-label="FX provider comparison — margin, transfer fee, best use and regulation">
               <thead>
                 <tr className="border-b border-slate-300">
-                  <th className="py-3 pr-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Provider</th>
-                  <th className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Typical margin</th>
-                  <th className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Transfer fee</th>
-                  <th className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Best for</th>
-                  <th className="py-3 pl-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Regulation</th>
+                  <th scope="col" className="py-3 pr-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Provider</th>
+                  <th scope="col" className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Typical margin</th>
+                  <th scope="col" className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Transfer fee</th>
+                  <th scope="col" className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Best for</th>
+                  <th scope="col" className="py-3 pl-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Regulation</th>
                 </tr>
               </thead>
               <tbody>

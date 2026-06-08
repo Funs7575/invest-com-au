@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Broker } from "@/lib/types";
@@ -8,6 +9,7 @@ import {
   SITE_NAME,
   CURRENT_YEAR,
 } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import BrokerLogo from "@/components/BrokerLogo";
 import Icon from "@/components/Icon";
 import ComplianceFooter from "@/components/ComplianceFooter";
@@ -56,6 +58,7 @@ export async function generateMetadata({
       url: absoluteUrl(`/broker/${slug}/safety`),
       siteName: SITE_NAME,
       type: "article",
+      images: [{ url: `/api/og?title=${encodeURIComponent(broker.name + " Safety Review")}&sub=${encodeURIComponent("AFSL · Financial Health · Safety Score · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image" as const,
@@ -228,7 +231,7 @@ export default async function BrokerSafetyPage({
   const b = broker as Broker;
   const safetyScore = calculateSafetyScore(b);
   const scoreStyle = getScoreColor(safetyScore);
-  const gaugeGradient = getGaugeGradient(safetyScore);
+  const _gaugeGradient = getGaugeGradient(safetyScore);
 
   const hasAsic = b.regulated_by?.toLowerCase().includes("asic") || false;
   const hasAfsl =
@@ -248,6 +251,36 @@ export default async function BrokerSafetyPage({
     { name: "Safety" },
   ]);
 
+  const safetyFaqs = [
+    {
+      q: `Is ${b.name} safe to use in Australia?`,
+      a: hasAsic
+        ? `Yes — ${b.name} is regulated by the Australian Securities and Investments Commission (ASIC)${hasAfsl ? " and holds an Australian Financial Services Licence (AFSL)" : ""}. ASIC-regulated brokers must comply with the Corporations Act 2001 and ASIC's client money rules. ${b.chess_sponsored ? `${b.name} is also CHESS-sponsored, meaning your ASX shareholdings are registered in your own name (under your personal HIN) on the Australian clearing and settlement system — not held by the broker. If ${b.name} went into administration, your CHESS-sponsored shares would remain yours.` : `Check whether your specific holdings are CHESS-sponsored (registered in your name) or held in a custodial structure — this affects what happens in an insolvency event.`} Our safety score for ${b.name} is ${safetyScore}/100.`
+        : `${b.name} is not listed as ASIC-regulated in our database — please verify its regulatory status directly on the ASIC Moneysmart Scamwatch or the ASIC Register before depositing funds. Always check that a broker holds a current AFSL before investing. Our safety score for ${b.name} is ${safetyScore}/100 based on available data.`,
+    },
+    {
+      q: `What investor protections does ${b.name} offer?`,
+      a: `${b.chess_sponsored
+        ? `${b.name} is CHESS-sponsored: your Australian shareholdings are registered directly with CHESS under your own Holder Identification Number (HIN). This means ${b.name} never owns your shares — you do. In the event of ${b.name}'s insolvency, your CHESS-sponsored holdings are not part of the broker's assets and cannot be claimed by creditors.`
+        : `${b.name} uses a custodial (non-CHESS) structure for some or all holdings — the broker holds shares on your behalf. In this case, your holdings are typically held in a pooled client trust account and are subject to ASIC's client money rules, which provide some protection but are less direct than CHESS sponsorship.`
+      } ${hasAsic ? "As an ASIC-regulated entity, " + b.name + " must hold client money separately from its own operating funds under the Corporations Act." : ""} ${hasAustrac ? b.name + " is also registered with AUSTRAC for anti-money-laundering compliance." : ""}`,
+    },
+    {
+      q: `Is ${b.name} regulated by ASIC?`,
+      a: hasAsic
+        ? `Yes. ${b.name} is regulated by ASIC${hasAfsl ? " and holds an Australian Financial Services Licence (AFSL), which is required to provide financial services to retail clients in Australia" : ""}. You can verify ${b.name}'s AFSL status by searching the ASIC Professional Registers at moneysmart.gov.au. ASIC regulation means ${b.name} is subject to ongoing supervisory oversight, conduct obligations, and can be subject to ASIC enforcement action for non-compliance.`
+        : `${b.name}'s ASIC regulation status is not confirmed in our database. Before investing, verify on the ASIC Professional Registers at moneysmart.gov.au. Investing with an unregulated broker carries significant risk — including no recourse under Australian financial services law in a dispute.`,
+    },
+    {
+      q: `What happens to my shares if ${b.name} goes bankrupt or is shut down?`,
+      a: b.chess_sponsored
+        ? `If ${b.name} went into administration or was shut down by ASIC, your CHESS-sponsored ASX shareholdings would be unaffected — they are registered in your own name under your personal HIN on the CHESS register. You could transfer your HIN to another CHESS-eligible broker (typically at no cost during an insolvency event — the regulator usually waives transfer fees). Your shares are never part of ${b.name}'s balance sheet and cannot be seized by the administrator to pay ${b.name}'s creditors.`
+        : `If ${b.name} were shut down, the treatment of your holdings depends on their structure. For custodially-held assets (common with international shares or some platforms), your assets should be held in a segregated trust account under ASIC's client money rules — protected from ${b.name}'s creditors, but an administrator may need to be appointed to return them. Processing can take weeks to months. For CHESS-sponsored ASX holdings (if any), you could transfer your HIN immediately. Check ${b.name}'s Product Disclosure Statement for the specific holding structure that applies to your account type.`,
+    },
+  ];
+
+  const safetyFaqLd = faqJsonLd(safetyFaqs);
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* JSON-LD */}
@@ -255,28 +288,34 @@ export default async function BrokerSafetyPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      {safetyFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(safetyFaqLd) }}
+        />
+      )}
 
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-slate-200">
         <div className="container-custom py-3">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500">
-            <a href="/" className="hover:text-slate-900 transition-colors">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500">
+            <Link href="/" className="hover:text-slate-900 transition-colors">
               Home
-            </a>
+            </Link>
             <span>/</span>
-            <a
+            <Link
               href="/compare"
               className="hover:text-slate-900 transition-colors"
             >
               Brokers
-            </a>
+            </Link>
             <span>/</span>
-            <a
+            <Link
               href={`/broker/${slug}`}
               className="hover:text-slate-900 transition-colors"
             >
               {b.name}
-            </a>
+            </Link>
             <span>/</span>
             <span className="text-slate-900 font-medium">Safety</span>
           </nav>
@@ -635,6 +674,21 @@ export default async function BrokerSafetyPage({
             for official guidance.
           </p>
         </div>
+
+        <section className="mt-8 border-t border-slate-200 pt-8">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {safetyFaqs.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
 
         <ComplianceFooter />
       </div>

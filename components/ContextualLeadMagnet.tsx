@@ -164,12 +164,13 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
           <button
             type="submit"
             disabled={status === "loading" || !consent}
+            aria-busy={status === "loading"}
             className="w-full px-4 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
           >
             {status === "loading" ? "Sending..." : config.buttonText}
           </button>
           {status === "error" && (
-            <p className="text-xs text-red-500 text-center">Something went wrong. Please try again.</p>
+            <p role="alert" className="text-xs text-red-500 text-center">Something went wrong. Please try again.</p>
           )}
         </form>
       )}

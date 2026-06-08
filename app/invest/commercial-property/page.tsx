@@ -8,13 +8,14 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Commercial Property Investment in Australia (${CURRENT_YEAR}) — A Plain-English Guide`,
-  description: `What commercial property investment is, how it works, and the ways Australians gain exposure — direct ownership, A-REITs, unlisted trusts, syndicates, and property ETFs. Yields, leases, risks, and tax explained. ${UPDATED_LABEL}.`,
+  description: `Australian commercial property investment: A-REITs, syndicates, unlisted trusts, and direct ownership. Yields, leases, and tax. ${UPDATED_LABEL}.`,
   alternates: { canonical: `${SITE_URL}/invest/commercial-property` },
   openGraph: {
     title: `Commercial Property Investment in Australia (${CURRENT_YEAR})`,
     description:
       "Office, retail, industrial, and specialised property as an asset class — yields, lease structures, A-REITs, ETFs, risks, and tax treatment, explained factually.",
     url: `${SITE_URL}/invest/commercial-property`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Commercial Property Investment Australia")}&sub=${encodeURIComponent("A-REITs · Office · Industrial · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -285,14 +286,14 @@ export default function CommercialPropertyPage() {
             broad contrasts — individual properties always vary.
           </p>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Commercial vs residential property comparison">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="text-left p-3 font-semibold text-slate-700">Factor</th>
-                  <th className="text-left p-3 font-semibold text-slate-700">
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">Factor</th>
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">
                     Commercial
                   </th>
-                  <th className="text-left p-3 font-semibold text-slate-700">
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">
                     Residential
                   </th>
                 </tr>
@@ -353,15 +354,15 @@ export default function CommercialPropertyPage() {
             your appetite for management work, and how much liquidity you need.
           </p>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Ways to gain exposure to commercial property">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="text-left p-3 font-semibold text-slate-700">Method</th>
-                  <th className="text-left p-3 font-semibold text-slate-700">
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">Method</th>
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">
                     What it is
                   </th>
-                  <th className="text-left p-3 font-semibold text-slate-700">Access</th>
-                  <th className="text-left p-3 font-semibold text-slate-700">
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">Access</th>
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">
                     Liquidity
                   </th>
                 </tr>
@@ -659,7 +660,7 @@ export default function CommercialPropertyPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
                     &#9662;
                   </span>
                 </summary>

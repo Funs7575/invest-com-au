@@ -135,7 +135,24 @@ export const smsfHubConfig: HubConfig = {
     },
   ],
 
-  faqs: [],
+  faqs: [
+    {
+      question: "Can I use my SMSF to buy property?",
+      answer: "Yes — an SMSF can buy residential or commercial property. Residential property must satisfy the 'sole purpose test' (held for retirement benefit only) and cannot be used by members or relatives. Commercial property can be leased back to a related business at market rent, which is a common strategy for business owners. SMSF property purchases can use a Limited Recourse Borrowing Arrangement (LRBA) to borrow up to ~80% LVR, but the loan must be from a third-party lender or an arm's-length related-party loan at commercial rates. SMSF property is CHESS-free — the title is held by a bare trust during the loan period.",
+    },
+    {
+      question: "What is the annual SMSF contribution limit?",
+      answer: "For 2024–25: concessional (pre-tax) contributions cap is $30,000 per person. This includes employer SG (11.5%), salary sacrifice, and personal deductible contributions. Non-concessional (after-tax) contributions cap is $120,000 per person, with a bring-forward rule allowing up to $360,000 over 3 years if your Total Super Balance (TSB) is under $1.68M. Unused concessional cap amounts from the previous 5 years can be carried forward if your TSB was under $500,000. Exceeding the caps triggers additional tax charges.",
+    },
+    {
+      question: "What are the running costs of an SMSF?",
+      answer: "SMSF running costs typically include: annual audit ($500–$1,200 for independent audit); accounting and tax return ($1,500–$3,500 depending on complexity); ASIC registration and SMSF supervisory levy (~$388/yr); investment platform or brokerage fees; and any financial advice fees. Total annual administration costs for a simple SMSF range from $2,000–$5,000 per year. SMSFs only become cost-competitive with retail/industry super funds when the balance exceeds approximately $200,000–$300,000, because the fixed costs represent a smaller percentage of assets.",
+    },
+    {
+      question: "What is pension phase in an SMSF and how does it reduce tax?",
+      answer: "When an SMSF member meets a condition of release (typically retirement after age 60, or age 65 regardless), they can start an account-based pension. In pension phase, investment income and capital gains on assets supporting the pension are tax-free (0%), down from 15% in accumulation phase. If the fund has both accumulating and pension members, income must be apportioned. Transfer balance cap (TBC) limits total amounts that can be moved to pension phase — $1.9M for 2024–25 — any excess must stay in accumulation.",
+    },
+  ],
 
   leadQueue: { kind: "smsf", advisorType: "smsf_specialist" },
 

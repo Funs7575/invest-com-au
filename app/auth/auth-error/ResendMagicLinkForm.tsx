@@ -76,7 +76,7 @@ export default function ResendMagicLinkForm({ next }: { next: string }) {
       </label>
       <input
         id="resend-email"
-        type="email"
+        type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
         value={email}
         onChange={(e) => {
           setEmail(e.target.value);
@@ -89,18 +89,20 @@ export default function ResendMagicLinkForm({ next }: { next: string }) {
         disabled={status === "loading"}
         placeholder="you@email.com"
         aria-invalid={status === "error"}
-        className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 disabled:opacity-60 ${
+        aria-describedby={status === "error" ? "resend-email-error" : undefined}
+        className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 disabled:opacity-60 disabled:cursor-not-allowed ${
           status === "error" ? "border-red-400" : "border-slate-200 focus:border-amber-500"
         }`}
       />
       {errorMsg && (
-        <p role="alert" className="text-xs text-red-600">
+        <p id="resend-email-error" role="alert" className="text-xs text-red-600">
           {errorMsg}
         </p>
       )}
       <button
         type="submit"
         disabled={status === "loading"}
+        aria-busy={status === "loading"}
         className="w-full py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {status === "loading" ? "Sending..." : "Send me a new sign-in link"}

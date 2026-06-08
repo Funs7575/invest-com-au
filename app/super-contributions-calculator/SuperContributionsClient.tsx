@@ -183,13 +183,14 @@ export default function SuperContributionsClient() {
               <h2 className="font-bold text-slate-900">Your Details</h2>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="sc-income" className="block text-xs font-semibold text-slate-600 mb-1">
                   Annual income (before tax)
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="sc-income"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={income}
@@ -205,14 +206,15 @@ export default function SuperContributionsClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="sc-employer-sg" className="block text-xs font-semibold text-slate-600 mb-1">
                   Employer SG contributions (annual)
                   <span className="text-slate-400 font-normal ml-1">11.5% of salary</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="sc-employer-sg"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={500}
                     value={currentConcessional}
@@ -223,14 +225,15 @@ export default function SuperContributionsClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="sc-extra-conc" className="block text-xs font-semibold text-slate-600 mb-1">
                   Extra concessional contributions
                   <span className="text-slate-400 font-normal ml-1">salary sacrifice / personal deductible</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="sc-extra-conc"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={500}
                     value={extraConcessional}
@@ -241,14 +244,15 @@ export default function SuperContributionsClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="sc-non-conc" className="block text-xs font-semibold text-slate-600 mb-1">
                   Non-concessional contributions
                   <span className="text-slate-400 font-normal ml-1">after-tax money into super</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="sc-non-conc"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={nonConcessional}
@@ -259,13 +263,14 @@ export default function SuperContributionsClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="sc-super-balance" className="block text-xs font-semibold text-slate-600 mb-1">
                   Current super balance
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
-                    type="number"
+                    id="sc-super-balance"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={5000}
                     value={superBalance}
@@ -282,13 +287,14 @@ export default function SuperContributionsClient() {
 
               {superBalance < CARRY_FORWARD_BALANCE_THRESHOLD && (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">
+                  <label htmlFor="sc-carry-forward" className="block text-xs font-semibold text-slate-600 mb-1">
                     Unused concessional cap (last 5 yrs)
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                     <input
-                      type="number"
+                      id="sc-carry-forward"
+                      type="number" inputMode="decimal"
                       min={0}
                       step={1000}
                       value={unusedCarryForward}

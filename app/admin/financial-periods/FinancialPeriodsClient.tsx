@@ -167,7 +167,7 @@ export default function FinancialPeriodsClient({
         </p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden">
+          <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden" aria-label="Financial periods">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
                 <th className="text-left px-3 py-2">Period</th>

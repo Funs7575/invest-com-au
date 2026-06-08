@@ -328,7 +328,7 @@ export default function ArticleEditorClient({
               </span>
             </span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               max={20}
               step={1}

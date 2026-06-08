@@ -88,7 +88,7 @@ export default async function DraftPreviewPage({ params }: Props) {
 
       <article className="py-8 md:py-12">
         <div className="container-custom max-w-3xl">
-          <nav className="text-xs text-slate-500 mb-4">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>

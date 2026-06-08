@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Health Insurance Australia (${CURRENT_YEAR}) — Do You Need It?`,
     description: "Medicare vs private health insurance in Australia: MLS, LHC loading, tiers, and the rebate explained.",
     url: `${SITE_URL}/insurance/health`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Health Insurance Australia")}&sub=${encodeURIComponent("Compare Policies · Private vs Public · Rebate · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/health` },
@@ -197,7 +198,7 @@ export default function HealthInsurancePage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/insurance" className="hover:text-slate-900">Insurance</Link>
@@ -273,7 +274,7 @@ export default function HealthInsurancePage() {
               <details key={faq.question} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>
@@ -286,7 +287,7 @@ export default function HealthInsurancePage() {
       <section className="py-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
         <div className="container-custom text-center max-w-xl">
           <h2 className="text-xl font-extrabold mb-3">Find the right health insurance policy</h2>
-          <p className="text-sm text-slate-300 mb-6">Compare hospital and extras policies from Australia's major health funds to find the best value for your situation.</p>
+          <p className="text-sm text-slate-300 mb-6">Compare hospital and extras policies from Australia&apos;s major health funds to find the best value for your situation.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/best/insurance-brokers" className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm rounded-xl transition-colors">
               Find an Insurance Broker →

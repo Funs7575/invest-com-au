@@ -196,6 +196,7 @@ export default function HubLeadForm({
       <button
         type="submit"
         disabled={submitting}
+        aria-busy={submitting}
         className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:bg-amber-300 text-slate-900 font-extrabold text-sm md:text-base px-6 py-3 transition-colors"
       >
         {submitting ? "Submitting…" : ctaLabel}

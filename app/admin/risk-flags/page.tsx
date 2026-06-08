@@ -25,6 +25,7 @@ export default function AdminRiskFlagsPage() {
     notes: "",
   });
   const [busy, setBusy] = useState<number | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -66,7 +67,7 @@ export default function AdminRiskFlagsPage() {
   }
 
   async function deletePattern(id: number) {
-    if (!confirm("Delete this pattern?")) return;
+    setPendingDeleteId(null);
     setBusy(id);
     try {
       await fetch(`/api/admin/risk-patterns?id=${id}`, { method: "DELETE" });
@@ -161,7 +162,7 @@ export default function AdminRiskFlagsPage() {
         {loading ? (
           <p className="text-sm text-slate-500">Loading…</p>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Risk flags">
             <thead className="text-xs uppercase tracking-wider text-slate-500">
               <tr>
                 <th className="text-left py-2 pr-3">Pattern</th>
@@ -217,14 +218,22 @@ export default function AdminRiskFlagsPage() {
                     >
                       Save
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => deletePattern(p.id)}
-                      disabled={busy === p.id}
-                      className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded-md"
-                    >
-                      Delete
-                    </button>
+                    {pendingDeleteId === p.id ? (
+                      <>
+                        <span className="text-xs text-red-600 font-medium">Delete?</span>
+                        <button type="button" onClick={() => void deletePattern(p.id)} className="text-xs bg-red-600 hover:bg-red-700 text-white font-bold px-2 py-1 rounded-md">Yes</button>
+                        <button type="button" onClick={() => setPendingDeleteId(null)} className="text-xs border border-slate-300 text-slate-600 hover:bg-slate-50 font-semibold px-2 py-1 rounded-md">No</button>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setPendingDeleteId(p.id)}
+                        disabled={busy === p.id}
+                        className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-2 py-1 rounded-md"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

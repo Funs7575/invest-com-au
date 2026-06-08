@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { absoluteUrl, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import FeaturedPlacementBookingForm from "./FeaturedPlacementBookingForm";
 
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
     description:
       "Book Featured Partner, Editor's Pick, or Deal-of-Month placement. Transparent pricing, self-serve checkout.",
     url: `${SITE_URL}/advertise/featured-placement`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Sponsored Placement — invest.com.au")}&sub=${encodeURIComponent("Featured Partner · Editor's Pick · Deal of Month")}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
@@ -108,6 +110,29 @@ export default async function FeaturedPlacementPage() {
   const [pricing, brokers] = await Promise.all([loadPricing(), loadBrokers()]);
   const grouped = groupByTier(pricing);
 
+  const faqLd = faqJsonLd([
+    {
+      q: "Does sponsored placement influence editorial ranking?",
+      a: "No. Our comparison pages and 'best for' rankings are determined by factual data (fees, features, CHESS sponsorship, SMSF support, etc.) applied uniformly. Sponsored placement is visually labelled and sits in its own slots.",
+    },
+    {
+      q: "What happens at the end of my placement window?",
+      a: "Your placement automatically ends. We'll email you 7 days before expiry so you can book a renewal if you want continuity. No auto-renewal by default.",
+    },
+    {
+      q: "Can I pick specific start dates?",
+      a: "Yes — you choose your start date at checkout (within the next 6 months). If your chosen window is full for that tier, we'll show availability and suggest alternatives.",
+    },
+    {
+      q: "Will I see performance data?",
+      a: "Yes. Log in to your Broker Portal at /broker-portal/sponsored-slots after checkout. You'll see impression counts, affiliate clicks, and campaign-window CTR updated daily.",
+    },
+    {
+      q: "Do you invoice?",
+      a: "Yes — Stripe issues an invoice automatically at checkout with GST. You can download the PDF or send it straight to your accounts team from the receipt email.",
+    },
+  ]);
+
   const ld = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -135,6 +160,12 @@ export default async function FeaturedPlacementPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
       />
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
 
       <div className="bg-slate-50 min-h-screen">
         <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-12 md:py-16">

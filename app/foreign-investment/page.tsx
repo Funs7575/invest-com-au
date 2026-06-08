@@ -24,7 +24,7 @@ import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 export const metadata: Metadata = {
   title: "Investing in Australia from Overseas — Complete Guide 2026",
   description:
-    "The complete guide to investing in Australia for non-residents, visa holders, expats and new migrants. Covers shares, crypto, savings, super (DASP), property (FIRB), and tax. Withholding tax rates, DTA treaty table, and per-vertical rules. Updated March 2026.",
+    "Non-resident and expat investing in Australia: shares, crypto, DASP super, property (FIRB), and tax. Withholding rates and DTA treaty table. Updated 2026.",
   openGraph: {
     title: "Investing in Australia from Overseas — Complete Guide 2026",
     description:
@@ -145,7 +145,7 @@ export default async function ForeignInvestmentHubPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-600 mb-5 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-600 mb-5 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <span className="text-slate-900 font-medium">Foreign Investment in Australia</span>
@@ -279,7 +279,7 @@ export default async function ForeignInvestmentHubPage() {
                     </div>
                     <div className="min-w-0">
                       <p className="font-bold text-sm text-slate-900 truncate">{b.name}</p>
-                      <p className="text-[0.65rem] text-slate-400 capitalize">{b.platform_type?.replace(/_/g, " ")}</p>
+                      <p className="text-[0.65rem] text-slate-500 capitalize">{b.platform_type?.replace(/_/g, " ")}</p>
                     </div>
                   </div>
                   {b.foreign_investor_notes && (
@@ -336,7 +336,7 @@ export default async function ForeignInvestmentHubPage() {
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed mb-3 flex-1">{v.tagline}</p>
                 <div className="border-t border-slate-100 pt-3 mt-auto">
-                  <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Key rule</p>
+                  <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wide mb-1.5">Key rule</p>
                   <p className="text-xs text-slate-700 leading-relaxed">{v.keyRule}</p>
                 </div>
                 <div className="mt-3 text-xs font-bold text-amber-700 group-hover:text-amber-800 flex items-center gap-1">
@@ -411,7 +411,7 @@ export default async function ForeignInvestmentHubPage() {
                 <span className="text-2xl leading-none shrink-0">{c.flag}</span>
                 <div className="min-w-0">
                   <p className="font-bold text-sm text-slate-900 group-hover:text-amber-700 transition-colors">{c.name}</p>
-                  <p className="text-[0.65rem] text-slate-400 mt-0.5">{c.note}</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">{c.note}</p>
                 </div>
               </Link>
             ))}
@@ -527,7 +527,7 @@ export default async function ForeignInvestmentHubPage() {
       {/* ── Disclaimer ───────────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER}</p>
         </div>
       </section>
     </div>

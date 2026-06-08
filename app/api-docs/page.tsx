@@ -168,19 +168,19 @@ export default function ApiDocsPage() {
               Rate Limits
             </h2>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="API rate limits">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
                       Tier
                     </th>
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
                       Per Minute
                     </th>
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
                       Per Day
                     </th>
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
                       Price
                     </th>
                   </tr>
@@ -900,16 +900,16 @@ if trend and trend["quarter"]:
               Broker fields ({"/api/v1/brokers"})
             </h3>
             <div className="overflow-x-auto mb-6">
-              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Broker API fields">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Field
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Type
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Description
                     </th>
                   </tr>
@@ -955,16 +955,16 @@ if trend and trend["quarter"]:
               Advisor fields ({"/api/v1/advisors"})
             </h3>
             <div className="overflow-x-auto mb-6">
-              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Advisor API fields">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Field
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Type
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Description
                     </th>
                   </tr>
@@ -1016,16 +1016,16 @@ if trend and trend["quarter"]:
               Fee Index fields ({"/api/v1/fee-index"})
             </h3>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Fee Index API fields">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Field
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Type
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Description
                     </th>
                   </tr>

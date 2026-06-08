@@ -426,6 +426,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: cfg.description.slice(0, 200),
       url: `${SITE_URL}/grants/${state}/${program}`,
       type: "website",
+      images: [{ url: `/api/og?title=${encodeURIComponent(cfg.programLabel)}&sub=${encodeURIComponent(cfg.stateLabel + " Grant · " + cfg.fundingMax + " · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }
@@ -468,7 +469,7 @@ export default async function StateGrantProgramPage({ params }: Props) {
       />
 
       <div className="container-custom py-8">
-        <nav className="text-sm text-slate-400 mb-6 flex flex-wrap gap-1">
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-6 flex flex-wrap gap-1">
           <Link href="/" className="hover:text-slate-600">
             Home
           </Link>

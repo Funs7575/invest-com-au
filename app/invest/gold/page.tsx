@@ -2,7 +2,26 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { howToJsonLd } from "@/lib/schema-markup";
+import { howToJsonLd, faqJsonLd } from "@/lib/schema-markup";
+
+const GOLD_FAQS = [
+  {
+    q: "Is gold a good investment in Australia?",
+    a: "Gold has historically served as a portfolio diversifier and inflation hedge rather than a growth asset. Over the long term, gold produces real returns close to zero — its price roughly tracks inflation. It tends to outperform when real interest rates are negative or when equity markets are under stress. For most Australian retail investors, a 5–10% allocation to gold (via a low-cost ASX-listed ETF like GOLD or PMGOLD) provides meaningful diversification without the storage and insurance costs of physical bullion.",
+  },
+  {
+    q: "What is the tax treatment of gold in Australia?",
+    a: "Gold held as an investment asset is subject to CGT in Australia, not income tax. If you sell gold held for 12 months or more, you're eligible for the 50% CGT discount — only half the capital gain is included in your assessable income. Physical gold coins that are legal tender in their country of origin may qualify for a GST exemption; gold bullion bars are generally GST-free as they meet the 'precious metal' definition under the GST Act. Gold ETFs are treated the same as shares for tax purposes.",
+  },
+  {
+    q: "What is the difference between allocated and unallocated gold?",
+    a: "Allocated gold means specific, identified bars are stored in your name — you have a direct legal claim on that physical metal. If the custodian becomes insolvent, your gold is yours. Unallocated gold means you hold a credit balance for gold with the custodian — like a bank deposit — and you're an unsecured creditor in an insolvency. For Australian investors, the Perth Mint's PMGOLD ETF is allocated (your gold is in the Mint's vault, backed by the Western Australian Government). Most overseas gold ETFs and digital gold products are unallocated.",
+  },
+  {
+    q: "Do I need FIRB approval to invest in gold in Australia?",
+    a: "No. Foreign investors do not require FIRB approval to purchase gold bullion, gold ETFs, or shares in Australian gold mining companies. FIRB restrictions apply to residential and agricultural land, certain business acquisitions, and sensitive sectors — gold as a financial asset is not subject to FIRB. Foreign investors should note that any capital gains on gold held in Australia may or may not be subject to Australian CGT depending on tax treaties with their home country — seek advice from a tax professional familiar with your jurisdiction.",
+  },
+];
 
 export const revalidate = 3600;
 
@@ -37,6 +56,7 @@ export const metadata: Metadata = {
     description:
       "Four ways to invest in gold in Australia: physical bullion via Perth Mint, gold ETFs (GOLD, PMGOLD, QAU), ASX gold miners (NST, EVN, NEM), and the Perth Mint Certificate Programme.",
     url: `${SITE_URL}/invest/gold`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Invest in Gold in Australia")}&sub=${encodeURIComponent("Physical · ETFs · ASX Miners · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -73,6 +93,8 @@ export default function GoldPage() {
     ),
   };
 
+  const goldFaqLd = faqJsonLd(GOLD_FAQS);
+
   return (
     <div>
       <script
@@ -83,11 +105,14 @@ export default function GoldPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo) }}
       />
+      {goldFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(goldFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -216,14 +241,14 @@ export default function GoldPage() {
               </p>
 
               <div className="overflow-x-auto rounded-xl border border-slate-200">
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-sm border-collapse" aria-label="Gold ETFs on the ASX">
                   <thead>
                     <tr className="bg-slate-50">
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Fund Name</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Type</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">~MER p.a.</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Currency</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Fund Name</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Type</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">~MER p.a.</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Currency</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -531,6 +556,25 @@ export default function GoldPage() {
               Find a foreign investment lawyer
               <Icon name="arrow-right" size={14} />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {GOLD_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

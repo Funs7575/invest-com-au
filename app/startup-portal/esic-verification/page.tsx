@@ -35,7 +35,7 @@ export default async function EsicVerificationPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4">
-          <nav className="text-xs text-gray-500 mb-1">
+          <nav aria-label="Breadcrumb" className="text-xs text-gray-500 mb-1">
             <Link href="/startup-portal" className="hover:text-blue-600">
               Founder Portal
             </Link>

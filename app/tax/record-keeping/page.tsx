@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     title: `Investment Record Keeping Australia (${CURRENT_YEAR}) — ATO Requirements`,
     description: "What investment records to keep for Australian tax purposes: 5-year ATO rule, CGT records, shares, property, crypto, and SMSF obligations.",
     url: absoluteUrl("/tax/record-keeping"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investment Record Keeping Australia")}&sub=${encodeURIComponent("ATO Requirements · CGT Records · 5-Year Rule · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: absoluteUrl("/tax/record-keeping") },
@@ -323,7 +324,7 @@ export default function RecordKeepingPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/tax" className="hover:text-slate-900">Tax Strategy</Link>
@@ -408,13 +409,13 @@ export default function RecordKeepingPage() {
             sub="Use this checklist when you sell any CGT asset to confirm you have every document needed."
           />
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="CGT cost base record keeping checklist by asset type">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Cost Base Element</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">What to Keep</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Shares</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Property</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Cost Base Element</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">What to Keep</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Shares</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Property</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -488,7 +489,7 @@ export default function RecordKeepingPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">&#9662;</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

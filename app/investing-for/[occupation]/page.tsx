@@ -993,7 +993,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: cfg.metaDescription,
       url: `${SITE_URL}/investing-for/${occupation}`,
       type: "website",
+      images: [{ url: `/api/og?title=${encodeURIComponent("Investing for " + cfg.label + " in Australia")}&sub=${encodeURIComponent("Tax · Super · Strategy · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -1035,7 +1037,7 @@ export default async function InvestingForOccupationPage({ params }: Props) {
 
       <div className="container-custom py-8">
         {/* Breadcrumb */}
-        <nav className="text-sm text-slate-400 mb-6 flex flex-wrap gap-1">
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-6 flex flex-wrap gap-1">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>›</span>
           <Link href="/investing-for" className="hover:text-slate-600">Investing For</Link>

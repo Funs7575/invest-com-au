@@ -7,7 +7,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988 and GDPR. Covers cookies, analytics, affiliate tracking, and your data rights.",
+    "How Invest.com.au collects and protects your data under the Privacy Act 1988 and GDPR. Covers cookies, analytics, affiliate tracking, and your data rights.",
   alternates: { canonical: "/privacy" },
   robots: { index: true, follow: true },
   openGraph: {

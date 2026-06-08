@@ -160,7 +160,7 @@ function ReviewCard({
                   <button
                     type="submit"
                     disabled={status === "saving" || responseText.trim().length < 10}
-                    className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                    className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {status === "saving"
                       ? "Saving…"
@@ -193,7 +193,7 @@ export default function AdvisorReviewsClient({ advisorName: _advisorName, review
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-      <nav className="text-xs text-slate-500 mb-4">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
         <Link href="/advisor-portal" className="hover:text-slate-900">
           ← Advisor portal
         </Link>

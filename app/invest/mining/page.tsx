@@ -1,6 +1,28 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const MINING_FAQS = [
+  {
+    q: "How can I invest in Australian mining without buying individual stocks?",
+    a: "Three main routes: (1) ASX mining ETFs — VanEck's MVMVG (gold miners) or BetaShares' QRE (Australian resources ETF) give diversified exposure without stock-picking. (2) Listed investment companies — WAM Strategic Value and Wilson Asset Management have mining allocations. (3) Mining royalty streams — listed companies like Deterra Royalties pay royalties off production without operational risk. For critical minerals specifically, some government-backed funds (Clean Energy Finance Corp, NAIF) have retail-accessible structures. Direct investment in tenements requires significant due diligence and typically $500K+ capital.",
+  },
+  {
+    q: "What is FIRB approval and when do foreign investors need it for mining?",
+    a: "FIRB (Foreign Investment Review Board) approval is required for foreign investors acquiring direct interests in Australian mining tenements, exploration licences, and production rights. The thresholds depend on investor nationality: most countries face a $330M threshold for greenfield investments and a $0 threshold for sensitive sectors including critical minerals. US, UK, Japanese, Korean, and EU investors benefit from bilateral agreements that raise some thresholds. Portfolio share purchases below 10% in ASX-listed miners are generally exempt. Always seek FIRB advice before acquiring direct tenement interests — penalties include forced divestiture.",
+  },
+  {
+    q: "What critical minerals does Australia produce and why do they matter for investors?",
+    a: "Australia is the world's #1 producer of lithium (essential for EV batteries), #1 exporter of iron ore, and a top-3 producer of gold, nickel, cobalt, manganese, and rare earth elements. The US-Australia Critical Minerals Partnership and similar agreements with Japan, Korea, and the EU have created government-backed offtake arrangements and bilateral investment protections for critical mineral projects. This reduces sovereign risk and improves project financing for investors in lithium, cobalt, nickel, and rare earths — the materials underpinning the global energy transition.",
+  },
+  {
+    q: "How are mining investments taxed in Australia?",
+    a: "For Australian residents, mining stocks and ETFs are taxed as capital gains (50% discount for assets held 12+ months) and dividends (with franking credits from tax paid at company level). Mining companies pay the 30% corporate tax rate (or 25% for small companies) plus state royalties — typically 2–8% of revenue depending on commodity and state. Exploration companies may qualify for the R&D Tax Incentive (43.5% refundable offset) or Junior Minerals Exploration Incentive. For non-residents, direct interests in mining tenements are 'Taxable Australian Property' — Australian CGT applies on disposal. Portfolio share sales by non-residents are generally CGT-exempt.",
+  },
+];
+
+const miningFaqLd = faqJsonLd(MINING_FAQS);
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
@@ -17,6 +39,7 @@ export const metadata: Metadata = {
     description:
       "Complete guide to mining investment in Australia. Lithium, gold, iron ore, copper, and rare earths.",
     url: `${SITE_URL}/invest/mining`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Mining Investment Australia")}&sub=${encodeURIComponent("ASX Miners · Gold · Lithium · Copper · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -33,11 +56,14 @@ export default function MiningPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {miningFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(miningFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -415,6 +441,26 @@ export default function MiningPage() {
               Find a foreign investment lawyer
               <Icon name="arrow-right" size={14} />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="max-w-3xl mx-auto px-4 container-custom">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {MINING_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

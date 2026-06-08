@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { CURRENT_YEAR } from "@/lib/seo";
 import { fallbackAvatarUrl } from "@/lib/admin";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 1800;
 
@@ -29,6 +30,27 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   };
 }
+
+const EXPERT_FAQS = [
+  {
+    q: "Who writes the Expert Insights articles?",
+    a: "All articles in Expert Insights are written by verified Australian financial professionals — licensed financial advisers (AFSL holders), registered tax agents, accountants, mortgage brokers, and estate planning lawyers. Each author is verified by Invest.com.au before publishing: we confirm their AFSL or professional licence, check their ASIC and relevant body registration status, and verify their business details. Author credentials and licence numbers are displayed on their professional profile page, linked from each article.",
+  },
+  {
+    q: "Is the content in Expert Insights personal financial advice?",
+    a: "No. Expert Insights articles are general financial information — they discuss strategies, concepts, and considerations in plain English but do not take into account your individual objectives, financial situation, or needs. They are educational content from qualified professionals, not statements of personal financial advice. Each article includes the author's AFSL disclosure. If you want advice tailored to your situation, use our adviser finder (/advisors) to connect with a licensed adviser directly.",
+  },
+  {
+    q: "How do I find an article on a specific topic?",
+    a: "Use the category filters at the top of this page to filter by topic — super, tax, investing, property, retirement, or budgeting. You can also search by keyword using the search bar. Articles are sorted by recency by default; featured articles are selected by the editorial team for quality and relevance. Each article links to the author's professional profile where you can see all their published content.",
+  },
+  {
+    q: "I'm a financial adviser — how do I write for Expert Insights?",
+    a: "Apply via the Advisor Portal (/advisor-portal) if you already have a profile, or at /advisor-apply if you are new. Once your profile is approved, you can submit articles directly from the portal. Articles must meet our editorial standards: original content, clearly general-information (not personal advice), no product promotions disguised as editorial, and compliant with ASIC's guidance on adviser-written content. Most articles are reviewed and published within 3 business days.",
+  },
+];
+
+const expertFaqLd = faqJsonLd(EXPERT_FAQS);
 
 export default async function ExpertInsightsPage() {
   const supabase = await createClient();
@@ -104,9 +126,12 @@ export default async function ExpertInsightsPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {expertFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(expertFaqLd) }} />
+      )}
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-5xl">
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-1.5 md:mx-2">/</span>
             <span className="text-slate-700">Expert Insights</span>
@@ -188,6 +213,23 @@ export default async function ExpertInsightsPage() {
             <Link href="/for-advisors" className="inline-block px-5 py-2.5 bg-white text-violet-700 text-xs font-bold rounded-lg hover:bg-violet-50 transition-colors">
               Learn More & Apply →
             </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-5xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {EXPERT_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </div>

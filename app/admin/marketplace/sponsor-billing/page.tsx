@@ -107,6 +107,7 @@ export default function SponsorBillingPage() {
 
   const updateInvoiceStatus = async (id: number, status: string) => {
     const supabase = createClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic update record
     const updates: Record<string, any> = { status };
     if (status === "paid") updates.paid_at = new Date().toISOString();
 
@@ -196,7 +197,7 @@ export default function SponsorBillingPage() {
         {tab === "active" && (
           <div className="bg-white rounded-xl border border-slate-200">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Active sponsorships billing">
                 <thead>
                   <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                     <th className="px-4 py-3 text-left">Broker</th>
@@ -212,6 +213,7 @@ export default function SponsorBillingPage() {
                     const tier = broker.sponsorship_tier ?? "";
                     const pricing = TIER_PRICING[tier];
                     const endDate = broker.sponsorship_end;
+                    // eslint-disable-next-line react-hooks/purity -- render-time date comparison
                     const isExpiring = endDate && new Date(endDate).getTime() - Date.now() < 14 * 86400000;
                     const isExpired = endDate && new Date(endDate) < new Date();
 
@@ -270,7 +272,7 @@ export default function SponsorBillingPage() {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Sponsorship invoices">
                   <thead>
                     <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                       <th className="px-4 py-3 text-left">#</th>

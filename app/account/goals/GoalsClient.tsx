@@ -45,13 +45,26 @@ export default function GoalsClient({ initialItems }: Props) {
   const handleAdd = async (form: FormData) => {
     setError(null);
     setAdding(true);
+    const targetDateVal = String(form.get("target_date") ?? "");
+    if (targetDateVal && targetDateVal < new Date().toISOString().slice(0, 10)) {
+      setError("Target date must be in the future.");
+      setAdding(false);
+      return;
+    }
+    const targetCents = Math.round(Number(form.get("target") ?? 0) * 100);
+    const currentBalanceCents = Math.round(Number(form.get("current_balance") ?? 0) * 100);
+    if (targetCents > 0 && currentBalanceCents > targetCents) {
+      setError("Current balance exceeds target — consider increasing the target amount.");
+      setAdding(false);
+      return;
+    }
     const goalType = String(form.get("goal_type") ?? "generic") as GoalRow["goalType"];
     const body = {
       label: String(form.get("label") ?? "").trim(),
       goal_type: goalType,
-      target_cents: Math.round(Number(form.get("target") ?? 0) * 100),
+      target_cents: targetCents,
       target_date: String(form.get("target_date") ?? ""),
-      current_balance_cents: Math.round(Number(form.get("current_balance") ?? 0) * 100),
+      current_balance_cents: currentBalanceCents,
       monthly_contribution_cents: Math.round(Number(form.get("monthly_contribution") ?? 0) * 100),
       expected_return_pct: Number(form.get("expected_return") ?? 6.5),
       notes: String(form.get("notes") ?? "").trim() || null,
@@ -107,7 +120,7 @@ export default function GoalsClient({ initialItems }: Props) {
   return (
     <div className="space-y-6">
       {/* Add form */}
-      <section className="bg-white border border-slate-200 rounded-xl p-4">
+      <section id="goals-add-form" className="bg-white border border-slate-200 rounded-xl p-4">
         <h2 className="text-base font-semibold text-slate-900 mb-3">Add goal</h2>
         <form
           className="grid grid-cols-1 sm:grid-cols-6 gap-3"
@@ -134,7 +147,7 @@ export default function GoalsClient({ initialItems }: Props) {
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Target $ (AUD)" required cols="sm:col-span-2">
-            <input type="number" name="target" required min={0} step={1}
+            <input type="number" inputMode="decimal" name="target" required min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Target date" required cols="sm:col-span-2">
@@ -142,16 +155,16 @@ export default function GoalsClient({ initialItems }: Props) {
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Expected return %/yr" cols="sm:col-span-2">
-            <input type="number" name="expected_return" min={-10} max={30} step={0.1}
+            <input type="number" inputMode="decimal" name="expected_return" min={-10} max={30} step={0.1}
               defaultValue={GOAL_TYPES.find((g) => g.value === defaultGoalType)?.defaultReturn ?? 6.5}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Current balance" cols="sm:col-span-2">
-            <input type="number" name="current_balance" min={0} step={1}
+            <input type="number" inputMode="decimal" name="current_balance" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Monthly contribution" cols="sm:col-span-2">
-            <input type="number" name="monthly_contribution" min={0} step={1}
+            <input type="number" inputMode="decimal" name="monthly_contribution" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Notes" cols="sm:col-span-2">
@@ -166,8 +179,14 @@ export default function GoalsClient({ initialItems }: Props) {
               </a>{" "}
               to upload bank or super statements as a reference for current balances.
             </p>
-            <button type="submit" disabled={adding}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 shrink-0">
+            <button type="submit" disabled={adding} aria-busy={adding}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+              {adding && (
+                <svg className="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" aria-hidden>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              )}
               {adding ? "Adding…" : "Add goal"}
             </button>
           </div>
@@ -179,7 +198,16 @@ export default function GoalsClient({ initialItems }: Props) {
       <section>
         <h2 className="text-base font-semibold text-slate-900 mb-3">Your goals</h2>
         {items.length === 0 ? (
-          <p className="text-sm text-slate-500 italic">No goals yet — add your first above.</p>
+          <div className="text-center py-4">
+            <p className="text-sm text-slate-500 mb-3">No goals yet. Define a target to start tracking your progress.</p>
+            <button
+              type="button"
+              onClick={() => document.getElementById("goals-add-form")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 text-white text-sm font-semibold rounded-lg hover:bg-emerald-800 transition-colors"
+            >
+              Add your first goal
+            </button>
+          </div>
         ) : (
           <ul className="space-y-3">
             {items.map((g) => (
@@ -230,8 +258,8 @@ function GoalCard({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm mb-3">
-        <Stat label="Current" value={fmt(goal.currentBalanceCents)} />
-        <Stat label="Monthly" value={fmt(goal.monthlyContributionCents)} />
+        <Stat label="Current" value={goal.currentBalanceCents === 0 ? "—" : fmt(goal.currentBalanceCents)} />
+        <Stat label="Monthly" value={goal.monthlyContributionCents === 0 ? "—" : fmt(goal.monthlyContributionCents)} />
         <Stat label="Projected" value={fmt(projection.projectedBalanceCents)} highlight={onTrack ? "good" : "warn"} />
         <Stat
           label={onTrack ? "Surplus" : "Shortfall"}
@@ -262,7 +290,7 @@ function GoalCard({
         type="button"
         onClick={onDelete}
         disabled={deleting}
-        className="text-xs text-red-700 hover:text-red-900 mt-2 disabled:opacity-50"
+        className="text-xs text-red-700 hover:text-red-900 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {deleting ? "Removing…" : "Remove goal"}
       </button>

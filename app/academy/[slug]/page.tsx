@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import {
   getAcademyCourse,
@@ -130,6 +131,32 @@ export default async function AcademyCourseDetailPage({ params }: PageProps) {
     { name: course.title },
   ]);
 
+  const courseFaqs = [
+    {
+      q: `What is covered in "${course.title}"?`,
+      a: course.description
+        ? `${course.description} The course is published on Invest.com.au Academy and designed for Australian investors.`
+        : `"${course.title}" covers key financial education content tailored to Australian investors. Enrol to access all lessons.`,
+    },
+    {
+      q: `How much does "${course.title}" cost?`,
+      a: isFree
+        ? `"${course.title}" is completely free — no credit card required. Simply enrol to get immediate access to all course content.`
+        : `"${course.title}" is priced at ${priceDisplay} (AUD, one-time payment). Once purchased, you have permanent access to all lessons and course materials.`,
+    },
+    {
+      q: `How long does it take to complete "${course.title}"?`,
+      a: course.cpd_hours != null && course.cpd_hours > 0
+        ? `This course is designed to take approximately ${course.cpd_hours} hour${course.cpd_hours !== 1 ? "s" : ""} to complete and awards ${course.cpd_hours} CPD hour${course.cpd_hours !== 1 ? "s" : ""} on completion. You can work through it at your own pace.`
+        : `You can work through the course lessons at your own pace — there is no time limit on access once enrolled.`,
+    },
+    {
+      q: `Is this course financial advice?`,
+      a: `No. All content on Invest.com.au Academy is general financial education only and does not take into account your personal financial situation, needs, or objectives. It is not a substitute for personalised financial advice from an ASIC-licensed financial advisor. If you need tailored advice, we can match you with a verified advisor at invest.com.au/find-advisor.`,
+    },
+  ];
+  const courseFaqLd = faqJsonLd(courseFaqs);
+
   const courseJsonLd = {
     "@context": "https://schema.org",
     "@type": "Course",
@@ -192,6 +219,12 @@ export default async function AcademyCourseDetailPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
       />
+      {courseFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(courseFaqLd) }}
+        />
+      )}
 
       <div className="py-6 md:py-12">
         <div className="container-custom max-w-5xl">
@@ -345,6 +378,21 @@ export default async function AcademyCourseDetailPage({ params }: PageProps) {
               </div>
             </div>
           </div>
+
+          <section className="mt-10 border-t border-slate-100 pt-8">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {courseFaqs.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
 
           <div className="mt-12">
             <Suspense>
