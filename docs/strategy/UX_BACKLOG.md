@@ -18,6 +18,8 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 
 ## Advisor Features (2026-06-06 audit)
 
+> **2026-06-08 status check**: ADV-001 through ADV-023 below have all been implemented and verified in the codebase. Items remain listed here for historical reference. ADV-057 is blocked pending founder sign-off; ADV-167 remains deprioritized.
+
 ### P1 — High impact, high urgency
 
 **[ADV-001] Advisor portal: onboarding wizard for new advisors**
