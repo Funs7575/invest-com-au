@@ -126,7 +126,7 @@ export default function AboutPage() {
                   <li className="flex items-start gap-3">
                     <span className="text-amber font-bold shrink-0">2.</span>
                     <span><strong className="text-white">Monetisation is transparent.</strong> We earn affiliate commissions when you sign up through our links. This never affects rankings.{" "}
-                      <Link href="/how-we-earn" className="text-amber underline underline-offset-2">Learn more</Link>.
+                      <Link href="/how-we-earn" className="text-amber underline underline-offset-2">How we earn revenue</Link>.
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
