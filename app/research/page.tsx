@@ -1,10 +1,32 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
+
+const RESEARCH_FAQS = [
+  {
+    q: "What types of research reports does Invest.com.au publish?",
+    a: "Invest.com.au publishes editorial investment research across four main categories: (1) Australian energy — sector outlooks, critical minerals demand forecasts, and renewable transition analysis; (2) SMSF property — direct property vs listed property (REITs) analysis, borrowing rules (LRBAs), and trustee strategy guides; (3) Foreign investment — FIRB threshold changes, non-resident withholding tax guidance, and foreign investor platform comparisons; and (4) Critical minerals — lithium, cobalt, rare earth supply chain analysis and ASX-listed exposure guides. New sectors are added as demand warrants.",
+  },
+  {
+    q: "Are any reports free to download?",
+    a: "Yes. Ungated reports are direct-download with no registration required — you can download them from this page immediately. Gated reports require a free email registration to download; you will receive the report by email and may receive occasional editorial updates (you can unsubscribe at any time). We gate premium reports to maintain our mailing list for future research releases. No payment is ever required to access research — all reports are free.",
+  },
+  {
+    q: "Are Invest.com.au's research reports independent?",
+    a: "Our editorial research is produced independently by the Invest.com.au team. Some reports are sponsored by institutional partners — in those cases, sponsor attribution appears prominently on the report's landing page and inside the report itself. Sponsored reports meet the same editorial standards as unsponsored reports: data and conclusions are not reviewed or approved by the sponsor before publication. Invest.com.au retains full editorial control.",
+  },
+  {
+    q: "How often are research reports updated?",
+    a: "Reports are updated quarterly at minimum, and more frequently when a material change occurs — such as a regulatory announcement, RBA decision, government budget measure, or significant market event affecting the sector covered. The publication date on each report card shows when the current version was released. Registered users are notified when a report they downloaded is materially updated.",
+  },
+];
+
+const researchFaqLd = faqJsonLd(RESEARCH_FAQS);
 
 export const metadata: Metadata = {
   title: `Investment Research & Sector Reports (${CURRENT_YEAR}) — Invest.com.au`,
@@ -71,6 +93,12 @@ export default async function ResearchPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {researchFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(researchFaqLd) }}
+        />
+      )}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
@@ -124,6 +152,23 @@ export default async function ResearchPage() {
               report page. Reports are not personal financial advice. Consult
               an AFSL-authorised adviser before making investment decisions.
             </p>
+          </div>
+        </section>
+
+        <section className="border-t border-slate-200 bg-white">
+          <div className="container-custom max-w-4xl py-8 md:py-10">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {RESEARCH_FAQS.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </section>
       </div>

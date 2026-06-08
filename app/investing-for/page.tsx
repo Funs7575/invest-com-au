@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 86400;
 
@@ -78,6 +79,27 @@ const OCCUPATION_GROUPS = [
   },
 ];
 
+const INVESTING_FOR_FAQS = [
+  {
+    q: "Why does investing strategy vary by occupation?",
+    a: "Income certainty, superannuation structures, tax treatment, and career-specific risks all differ significantly between occupations. A public servant accruing defined benefits in the PSS super scheme has very different priorities from a contractor who must self-fund superannuation and lacks SG entitlements. A mining worker earning $180,000 faces Division 293 tax and benefits heavily from salary sacrifice, while a new graduate nurse with HECS debt should prioritise voluntary super contributions to reduce assessable income. Each guide on this hub addresses the financial strategies that matter most for that career path.",
+  },
+  {
+    q: "What do the occupation-specific investing guides cover?",
+    a: "Each guide covers the key financial considerations for that profession: (1) Superannuation — which fund and account type is available, whether employer contributions exceed the SG minimum, and whether an SMSF makes sense; (2) Tax strategies — salary sacrifice, income-averaging rules, small business CGT concessions, Division 293 threshold planning; (3) Income protection — whether profession-specific risks (loss of licence for pilots, inability to work in your specialisation for surgeons) require specialist insurance; (4) Wealth-building priorities — property vs shares vs super, structured based on income certainty and career timeline; and (5) Common financial planning mistakes specific to that profession.",
+  },
+  {
+    q: "Are the occupation guides personal financial advice?",
+    a: "No. All content on Invest.com.au, including the occupation-specific guides, is general financial information only. It does not take into account your individual objectives, financial situation, or needs. Before acting on any information, you should consider whether it is appropriate for your circumstances and consult a licensed financial adviser (who holds an Australian Financial Services Licence). Invest.com.au does not provide personal financial advice under our AFSL.",
+  },
+  {
+    q: "How often are the occupation guides updated?",
+    a: "Occupation guides are reviewed at least annually and updated immediately when there is a material change — such as an ATO ruling, superannuation guarantee rate increase, HECS repayment threshold adjustment, or changes to profession-specific tax concessions (e.g., the small business CGT concessions or income averaging rules). The publication date on each guide shows when it was last substantively reviewed.",
+  },
+];
+
+const investingForFaqLd = faqJsonLd(INVESTING_FOR_FAQS);
+
 const breadcrumb = breadcrumbJsonLd([
   { name: "Home", url: absoluteUrl("/") },
   { name: "Investing For", url: absoluteUrl("/investing-for") },
@@ -90,6 +112,12 @@ export default function InvestingForPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {investingForFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(investingForFaqLd) }}
+        />
+      )}
 
       <div className="container-custom py-8">
         <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-6 flex gap-1">
@@ -148,6 +176,23 @@ export default function InvestingForPage() {
           >
             Go to calculators →
           </Link>
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-4xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {INVESTING_FOR_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </div>
     </>

@@ -739,5 +739,11 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-280]** FAQ JSON-LD on /insights — GEO pivot: FAQPage structured data + visible accordion added to the Australian Investing Index page. 4 FAQs covering what the index is, how often fee data updates, which platforms are included, and what the Investor Health Score measures. `app/insights/page.tsx`
 
+**[ADV-281]** FAQ JSON-LD on /health-scores, /tax-optimizer, /portfolio-xray — GEO pivot: FAQPage schema + visible accordions on 3 high-intent tool pages. Health scores: 4 FAQs on what the score is, the 5 dimensions, ASIC independence, and update cadence. Tax optimizer: 4 FAQs on tool scope, personal-advice disclaimer, CGT discount mechanics, and data privacy. Portfolio X-Ray: 4 FAQs on analysis dimensions, diversification scoring, concentration risk, and browser-local data. `app/health-scores/page.tsx`, `app/tax-optimizer/page.tsx`, `app/portfolio-xray/page.tsx`
+
+**[ADV-282]** FAQ JSON-LD on /investing-for, /benchmark — GEO pivot: FAQPage schema + visible accordions added to occupation investing hub and fee benchmarking dashboard. Investing-for: 4 FAQs on why strategy varies by occupation, what guides cover, personal-advice disclaimer, and update cadence. Benchmark: 4 FAQs on what the dashboard compares (6 dimensions), percentile ranking meaning, score methodology, and update frequency. `app/investing-for/page.tsx`, `app/benchmark/page.tsx`
+
+**[ADV-283]** FAQ JSON-LD on /versus, /research, /tools — GEO pivot: FAQPage schema + visible accordions on comparison hub, research reports hub, and financial tools hub. Versus: 4 FAQs on comparison scope, fee currency, volume tiers, and which platform wins. Research: 4 FAQs on report types, free vs gated, editorial independence, and update cadence. Tools: 4 FAQs on tool categories, free access model, personal-advice disclaimer, and where to start. `app/versus/page.tsx`, `app/research/page.tsx`, `app/tools/page.tsx`
+
 ---
 
