@@ -3,6 +3,7 @@ import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import CommunityNotifyForm from "./CommunityNotifyForm";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 // Each category now has ≥3 seeded threads (migration
 // 20260802000000_seed_forum_threads.sql) — safe to index.
@@ -26,6 +27,27 @@ export const metadata = {
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/community" },
 };
+
+const COMMUNITY_FAQS = [
+  {
+    q: "What topics are discussed in the Invest.com.au Community Forum?",
+    a: "The Community Forum covers all major investing and personal finance topics relevant to Australian investors: ASX shares and ETFs, international shares, property investment, SMSF strategy, super and retirement planning, tax and accounting (CGT, franking credits, deductions), broker comparisons and reviews, crypto, budgeting, and general market commentary. Threads are organised into categories so you can go directly to the topic most relevant to your situation.",
+  },
+  {
+    q: "Is the Community Forum moderated?",
+    a: "Yes. All threads and posts are subject to Invest.com.au's community guidelines. Moderators review flagged posts and remove content that contains personal financial advice presented as fact, spam, product promotions disguised as discussion, or content that is misleading or harmful. The forum is a peer discussion space — posts reflect the opinions of individual members and are not endorsed by Invest.com.au as financial advice. Always consult a licensed adviser before acting on anything you read here.",
+  },
+  {
+    q: "Can I ask a financial adviser a question in the forum?",
+    a: "Yes. The 'Ask an Advisor' category is designed for verified financial professionals to respond to community questions with general information. Verified advisers who contribute have confirmed AFSL or professional registrations. Their responses are general information only — not personal financial advice — but you can follow up by booking a consultation directly from their profile. You can also use our adviser finder (/advisors) to get matched to the right professional for your situation.",
+  },
+  {
+    q: "How do I start a new thread or post a reply?",
+    a: "Click 'New Thread' at the top of this page to start a discussion. To reply to an existing thread, click into the thread and use the reply box at the bottom. You need a free Invest.com.au account to post — sign up at /signup. Posting is free. Please review our community guidelines before posting to ensure your contribution meets our standards for respectful, factual discussion.",
+  },
+];
+
+const communityFaqLd = faqJsonLd(COMMUNITY_FAQS);
 
 interface ForumCategory {
   id: string;
@@ -67,6 +89,12 @@ export default async function CommunityPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {communityFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(communityFaqLd) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-16">
@@ -269,6 +297,23 @@ export default async function CommunityPage() {
               </div>
             </Link>
           ))}
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-4xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {COMMUNITY_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </div>
     </div>
