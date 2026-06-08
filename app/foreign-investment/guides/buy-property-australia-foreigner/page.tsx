@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd, howToJsonLd } from "@/lib/schema-markup";
 import { FIRB_FEES, STATE_SURCHARGES } from "@/lib/firb-data";
@@ -168,6 +169,7 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
 
   return (
     <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

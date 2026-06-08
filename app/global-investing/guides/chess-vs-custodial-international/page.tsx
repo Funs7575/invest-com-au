@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import { faqJsonLd, type FaqItem } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
@@ -189,6 +190,7 @@ export default function ChessVsCustodialPage() {
 
   return (
     <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}

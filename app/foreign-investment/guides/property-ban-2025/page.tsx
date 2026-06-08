@@ -1,6 +1,7 @@
 // dated-strings-exempt — entire page documents a specific legislative ban period (1 April 2025–31 March 2027); all dates are immutable statute references
 import Link from "next/link";
 import type { Metadata } from "next";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { STATE_SURCHARGES } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
@@ -46,6 +47,7 @@ export default async function PropertyBan2025Page() {
     .limit(3);
   return (
     <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

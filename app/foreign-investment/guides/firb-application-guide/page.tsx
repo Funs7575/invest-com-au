@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import { faqJsonLd, howToJsonLd } from "@/lib/schema-markup";
 import { FIRB_FEES, FIRB_PROCESS_STEPS, FIRB_FAQS, WHO_NEEDS_FIRB } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
@@ -98,6 +99,7 @@ export default function FirbApplicationGuidePage() {
 
   return (
     <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

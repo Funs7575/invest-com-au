@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import { STATE_SURCHARGES } from "@/lib/firb-data";
 import { FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
@@ -62,6 +63,7 @@ const PRICE_EXAMPLES = [500_000, 750_000, 1_000_000, 1_500_000, 2_000_000];
 export default function StampDutyForeignBuyersPage() {
   return (
     <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
