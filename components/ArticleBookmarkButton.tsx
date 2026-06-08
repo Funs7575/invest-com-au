@@ -59,7 +59,7 @@ export default function ArticleBookmarkButton({ slug, title }: Props) {
       aria-busy={loading}
       title={bookmarked ? "Remove bookmark" : "Save article for later"}
       aria-label={bookmarked ? "Remove from saved articles" : "Save article for later"}
-      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all disabled:opacity-50 ${
+      className={`flex items-center gap-1.5 px-3 py-1.5 min-h-9 rounded-lg text-xs font-semibold border transition-all disabled:opacity-50 ${
         bookmarked
           ? "bg-violet-50 border-violet-200 text-violet-700 hover:bg-violet-100"
           : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"

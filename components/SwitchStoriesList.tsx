@@ -92,7 +92,7 @@ export default function SwitchStoriesList({ stories, brokerSlug, brokerName }: S
               <h4 className="text-sm font-bold text-slate-900 mb-2">{story.title}</h4>
 
               {/* Body */}
-              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line mb-3">
+              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line mb-3 break-words break-words">
                 {story.body}
               </p>
 

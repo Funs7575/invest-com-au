@@ -294,10 +294,10 @@ export default async function HomePage() {
       {/* Quick-access chips for buried tools */}
       <section className="container-custom my-8">
         <div className="flex flex-wrap gap-2">
-          <Link href="/score" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
+          <Link href="/score" className="inline-flex items-center gap-2 px-4 py-2 min-h-11 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
             📊 Financial Health Score
           </Link>
-          <Link href="/just" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
+          <Link href="/just" className="inline-flex items-center gap-2 px-4 py-2 min-h-11 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
             📋 Life Event Checklists
           </Link>
         </div>

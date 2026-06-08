@@ -45,7 +45,7 @@ export default function CalculatorShareButton({
       aria-label="Copy shareable link to this calculation"
       className={
         className ??
-        "inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 rounded-md px-3 py-1.5 transition-colors"
+        "inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 rounded-md px-3 py-1.5 min-h-9 transition-colors"
       }
     >
       {copied ? (

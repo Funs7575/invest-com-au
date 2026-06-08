@@ -43,7 +43,7 @@ interface Props {
 export default function LinkifiedText({ text, skipHrefs, className, disabled, maxLinks, pillarPath }: Props) {
   if (!text) return null;
 
-  const wrapperClass = `max-w-none text-slate-700 leading-relaxed whitespace-pre-line ${className ?? ""}`;
+  const wrapperClass = `max-w-none text-slate-700 leading-relaxed whitespace-pre-line break-words ${className ?? ""}`;
 
   if (disabled) {
     return <div className={wrapperClass}>{text}</div>;

@@ -75,7 +75,7 @@ export default function FollowAdvisorButton({
         onClick={toggle}
         disabled={loading}
         aria-busy={loading}
-        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all duration-150 ${
+        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 min-h-9 rounded-full text-xs font-bold border transition-all duration-150 ${
           following
             ? "bg-slate-900 text-white border-slate-900 hover:bg-red-600 hover:border-red-600"
             : "bg-white text-slate-900 border-slate-300 hover:border-slate-900"

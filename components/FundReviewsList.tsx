@@ -136,7 +136,7 @@ export default function FundReviewsList({ reviews, stats, fundSlug, fundTitle }:
                 </div>
               </div>
 
-              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line mb-3">
+              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line mb-3 break-words break-words">
                 {review.body}
               </p>
 

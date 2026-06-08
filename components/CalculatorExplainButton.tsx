@@ -101,7 +101,7 @@ export default function CalculatorExplainButton({ calculatorId, tradeAmount, mar
         disabled={loading}
         aria-busy={loading}
         aria-expanded={open}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 min-h-9 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? (
           <>
@@ -133,7 +133,7 @@ export default function CalculatorExplainButton({ calculatorId, tradeAmount, mar
           {error ? (
             <p className="text-red-600">{error}</p>
           ) : (
-            <p className="whitespace-pre-line">{explanation}</p>
+            <p className="whitespace-pre-line break-words">{explanation}</p>
           )}
         </div>
       )}

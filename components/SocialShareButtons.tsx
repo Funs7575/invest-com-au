@@ -53,7 +53,7 @@ export default function SocialShareButtons({
   }
 
   const btnBase =
-    "inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900";
+    "inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 min-h-9 text-xs font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900";
 
   return (
     <div className="flex items-center gap-2 flex-wrap" aria-label="Share this page">
