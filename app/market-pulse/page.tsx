@@ -28,6 +28,7 @@ import {
   GENERAL_ADVICE_WARNING,
   EDITORIAL_ACCURACY_COMMITMENT,
 } from "@/lib/compliance";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { readFeeIndex } from "@/lib/fee-index";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -48,7 +49,28 @@ import {
 
 // ─── Page config ─────────────────────────────────────────────────────────────
 
-export const revalidate = 3600; // 1 h ISR
+export const revalidate = 3600;
+
+const MARKET_PULSE_FAQS = [
+  {
+    q: "What does the Market Pulse dashboard show?",
+    a: "Market Pulse shows three aggregate time-series for the Australian investing market: (1) Platform Health Score trend — the market-wide average of Invest.com.au's proprietary safety scores across all active platforms, showing whether the market is getting safer or riskier over time; (2) Best savings rate movement — the highest available savings rate across all tracked platforms, showing the direction of savings rate trends; and (3) Broker fee-index deltas — whether average brokerage costs across the market have risen or fallen period-over-period. All data points are market aggregates — no individual platform is named or ranked on this page.",
+  },
+  {
+    q: "How often is Market Pulse data updated?",
+    a: "Market Pulse data is updated daily. Platform health scores are recalculated daily from ASIC register checks and platform disclosures. Savings rates are monitored daily against each platform's published rate schedule. The fee index is recalculated whenever a platform changes its published fee schedule. The page itself refreshes via ISR every hour. The 'Data as of' date shown at the bottom of the page reflects the latest data period.",
+  },
+  {
+    q: "What is the Australian Brokerage Fee Index?",
+    a: "The Australian Brokerage Fee Index is Invest.com.au's aggregate measure of the average cost to trade ASX securities across all tracked active platforms. It is computed as a volume-weighted composite of ASX brokerage rates, normalised to a standard $5,000 trade size. A delta of -2% means the market-wide average fee has fallen 2% compared to the prior measurement period — usually driven by a major platform cutting its brokerage rate or a new low-cost entrant gaining share. It is a market-level indicator, not a guide to any specific platform's fee.",
+  },
+  {
+    q: "Is the Market Pulse data personal financial advice?",
+    a: "No. All data on the Market Pulse page is general information only. It presents factual aggregate statistics about the Australian investing market and does not recommend any action, product, or platform. It is not personal financial advice and does not take into account your individual circumstances, objectives, or financial situation. The data is intended to help investors understand macro trends, not to guide specific investment decisions.",
+  },
+];
+
+const marketPulseFaqLd = faqJsonLd(MARKET_PULSE_FAQS);
 
 const PAGE_PATH = "/market-pulse";
 const PAGE_TITLE = `Market Pulse: Australian Investing Trends (${CURRENT_YEAR})`;
@@ -749,6 +771,12 @@ export default async function MarketPulsePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(dataset) }}
       />
+      {marketPulseFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(marketPulseFaqLd) }}
+        />
+      )}
 
       <div className="pt-5 pb-12 md:py-12">
         <div className="container-custom max-w-4xl">
@@ -841,6 +869,23 @@ export default async function MarketPulsePage() {
             )}
           </div>
 
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-4xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {MARKET_PULSE_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </div>
     </>

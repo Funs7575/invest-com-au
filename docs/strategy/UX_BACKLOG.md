@@ -745,5 +745,9 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-283]** FAQ JSON-LD on /versus, /research, /tools — GEO pivot: FAQPage schema + visible accordions on comparison hub, research reports hub, and financial tools hub. Versus: 4 FAQs on comparison scope, fee currency, volume tiers, and which platform wins. Research: 4 FAQs on report types, free vs gated, editorial independence, and update cadence. Tools: 4 FAQs on tool categories, free access model, personal-advice disclaimer, and where to start. `app/versus/page.tsx`, `app/research/page.tsx`, `app/tools/page.tsx`
 
+**[ADV-284]** FAQ JSON-LD on /reviews, /scenarios, /rba-poll, /whats-new — GEO pivot: FAQPage schema + visible accordions on 4 more pages. Reviews: how ratings work, editorial independence, complaint process. Scenarios: what scenarios are, advice disclaimer, update cadence. RBA Poll: how the prediction works, meeting schedule, advice caveat. What's New: what's tracked, update speed, fee-page label explanation. `app/reviews/page.tsx`, `app/scenarios/page.tsx`, `app/rba-poll/page.tsx`, `app/whats-new/page.tsx`
+
+**[ADV-285]** FAQ JSON-LD on /contact, /deals, /calendar, /questions — GEO pivot: FAQPage schema + visible accordions. Contact: response times, data errors, partnerships, complaint process. Deals: deal types, verification, affiliate disclosure, how to claim. Calendar: events tracked, iCal export, date accuracy, update frequency. Questions: topic coverage, advice disclaimer, answer methodology, question submission. `app/contact/page.tsx`, `app/deals/page.tsx`, `app/calendar/page.tsx`, `app/questions/page.tsx`
+
 ---
 

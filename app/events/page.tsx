@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -61,6 +62,27 @@ interface AdvisorEvent {
   professional: Professional | null;
 }
 
+const EVENTS_FAQS = [
+  {
+    q: "What types of events and webinars are listed?",
+    a: "The events hub lists upcoming financial education events hosted by verified Australian financial advisors and firms: (1) Webinars — online sessions covering investing strategy, retirement planning, tax, SMSF, and property; (2) Seminars — in-person presentations, often at adviser offices or community venues; (3) Workshops — interactive small-group sessions with hands-on exercises; (4) Conferences — multi-speaker events covering financial planning and wealth management; and (5) Networking events — professional and investor networking sessions. All events are submitted by AFSL-holding advisers or advice firms and are verified before listing.",
+  },
+  {
+    q: "Are events on this page free to attend?",
+    a: "Some events are free; others are paid. The price is shown on each event card — free events are labelled 'Free'. For paid events, the fee is set by the hosting adviser or firm, not by Invest.com.au. Invest.com.au does not process payments — you register and pay directly with the event host via the registration link. Invest.com.au may receive a referral fee from adviser registrations generated through this page.",
+  },
+  {
+    q: "How do I register for an event?",
+    a: "Click the event card to go to the event detail page, then click the registration button. Registration takes you directly to the adviser's or event host's own booking page (Eventbrite, Zoom, their website, or similar). Invest.com.au does not manage registrations, waitlists, or cancellations — contact the event host directly for those. Check the event's terms for cancellation and refund policies.",
+  },
+  {
+    q: "I'm a financial adviser — how do I list my events?",
+    a: "Verified advisers with an active profile on Invest.com.au can create and manage events from the Advisor Portal (/advisor-portal). If you don't have a profile yet, apply at /advisor-apply. Events must comply with ASIC's advice advertising guidelines and Invest.com.au's content policies — events that constitute a financial product promotion require compliant disclosure. We review all events before they go live; most are approved within one business day.",
+  },
+];
+
+const eventsFaqLd = faqJsonLd(EVENTS_FAQS);
+
 export default async function EventsPage() {
   const supabase = await createClient();
 
@@ -87,6 +109,12 @@ export default async function EventsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      {eventsFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventsFaqLd) }}
+        />
+      )}
 
       <div className="py-8 md:py-12">
         <div className="max-w-5xl mx-auto px-4">
@@ -217,6 +245,23 @@ export default async function EventsPage() {
             >
               Manage Events in Advisor Portal
             </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-4xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {EVENTS_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </div>

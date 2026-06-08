@@ -3,8 +3,30 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
+
+const TESTIMONIALS_FAQS = [
+  {
+    q: "How are testimonials on this page verified?",
+    a: "All testimonials on this page come from real users who completed an engagement arranged through Invest.com.au — such as finding a financial adviser, comparing platforms, or completing a product application. We verify testimonials by: (1) confirming the submission came from a registered Invest.com.au account; (2) checking that the account has a confirmed engagement record with the adviser or platform mentioned; and (3) moderating submissions for authenticity and compliance with ASIC's testimonial guidance. Anonymous or incentivised testimonials are not published.",
+  },
+  {
+    q: "Can providers pay to have negative testimonials removed?",
+    a: "No. Testimonials are not available for purchase, suppression, or modification by providers. Verified testimonials that comply with our content guidelines are published regardless of whether the adviser or platform has a commercial relationship with Invest.com.au. Providers may flag a testimonial for factual inaccuracy — we review flagged testimonials and remove them only if they contain verifiably false information or violate our content policy.",
+  },
+  {
+    q: "How do I submit a testimonial for an adviser or platform I've used?",
+    a: "Log in to your Invest.com.au account and navigate to the profile of the adviser or platform you want to review. Click 'Write a review'. You must have a confirmed engagement record linked to your account — testimonials from accounts with no verified interaction with the provider are not published. Submissions are moderated before going live, typically within 2 business days.",
+  },
+  {
+    q: "Are testimonials personal financial advice?",
+    a: "No. Testimonials are individual experiences shared by real users and reflect their personal outcomes and satisfaction levels. They are general consumer feedback, not financial advice, and past outcomes are not a guarantee of similar results for your situation. The experiences described may not be typical. Always conduct your own due diligence before engaging a financial adviser or choosing an investing platform.",
+  },
+];
+
+const testimonialsFaqLd = faqJsonLd(TESTIMONIALS_FAQS);
 
 export const metadata: Metadata = {
   title: `Verified consumer testimonials (${CURRENT_YEAR}) | Invest.com.au`,
@@ -58,6 +80,12 @@ export default async function TestimonialsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {testimonialsFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(testimonialsFaqLd) }}
+        />
+      )}
       <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
         <Link href="/" className="hover:underline">Home</Link>
         <span className="mx-2">/</span>
@@ -133,6 +161,21 @@ export default async function TestimonialsPage() {
         General information only. Testimonials are individual experiences and not
         a guarantee of similar outcomes.
       </p>
+
+      <section className="mt-10 border-t border-slate-200 pt-8">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {TESTIMONIALS_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
