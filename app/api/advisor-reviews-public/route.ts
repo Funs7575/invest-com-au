@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 export async function GET(request: NextRequest) {
-  if (!(await isAllowed("advisor_reviews_public", ipKey(request), { max: 30, refillPerSec: 0.5 }))) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-  }
-
   const url = new URL(request.url);
   const professionalId = parseInt(url.searchParams.get("professional_id") ?? "", 10);
   const offset = Math.max(0, parseInt(url.searchParams.get("offset") ?? "0", 10));
