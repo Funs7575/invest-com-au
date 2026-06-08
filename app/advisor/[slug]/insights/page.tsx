@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import FollowAdvisorButton from "@/components/FollowAdvisorButton";
@@ -120,9 +121,32 @@ export default async function AdvisorInsightsPage({ params }: { params: Promise<
 
   const initials = pro.name.split(/\s+/).map((p: string) => p[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
 
+  const insightsFaqs = [
+    {
+      q: `What are ${pro.name}'s insights on Invest.com.au?`,
+      a: `${pro.name} is a verified Australian ${typeLabel.toLowerCase()} who publishes insights, market updates, and educational content on Invest.com.au. These posts cover topics relevant to ${pro.name}'s specialty area. New insights appear as they are published by the advisor — you can follow ${pro.name} to be notified of new posts.`,
+    },
+    {
+      q: `Is ${pro.name} a verified financial ${typeLabel.toLowerCase()}?`,
+      a: pro.verified
+        ? `Yes. ${pro.name} is a verified ${typeLabel.toLowerCase()} on Invest.com.au — we confirm AFSL or professional membership credentials before granting the verified badge. Verification does not constitute an endorsement of any specific advice. Always check that an advisor is suitable for your personal circumstances before engaging their services.`
+        : `${pro.name} is an active ${typeLabel.toLowerCase()} listed on Invest.com.au. To see verified credentials and AFSL details, visit ${pro.name}'s full profile page.`,
+    },
+    {
+      q: `Can I get personalised financial advice from ${pro.name}?`,
+      a: `Insights published by ${pro.name} on this platform are general in nature and do not constitute personal financial advice. They are intended for educational purposes only and do not take into account your individual financial situation, needs, or objectives. To get personalised advice from ${pro.name} or a similar specialist, use our matching tool at invest.com.au/find-advisor.`,
+    },
+    {
+      q: `How do I follow ${pro.name} to receive new insights?`,
+      a: `Use the Follow button on this page or on ${pro.name}'s profile to subscribe to new posts. You'll need a free Invest.com.au account to follow advisors and receive notifications when new insights are published.`,
+    },
+  ];
+  const insightsFaqLd = faqJsonLd(insightsFaqs);
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      {insightsFaqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(insightsFaqLd) }} />}
 
       <div style={{ background: "var(--color-ink-50)", minHeight: "100vh", paddingTop: 40, paddingBottom: 64 }}>
         <div className="container-custom" style={{ maxWidth: 760 }}>
@@ -207,6 +231,21 @@ export default async function AdvisorInsightsPage({ params }: { params: Promise<
             </div>
           )}
         </div>
+
+        <section style={{ marginTop: 48, borderTop: "1px solid #e5e7eb", paddingTop: 32 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 800, color: "var(--color-ink-900)", marginBottom: 16 }}>Frequently asked questions</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {insightsFaqs.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
 
         <p style={{ fontSize: 11, color: "var(--color-ink-400)", marginTop: 40, lineHeight: 1.6 }}>
           {GENERAL_ADVICE_WARNING}
