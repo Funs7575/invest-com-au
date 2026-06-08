@@ -271,7 +271,7 @@ export default function StartupsPage() {
               <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <div className="px-5 pb-4">
                   <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
