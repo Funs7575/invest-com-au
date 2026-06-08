@@ -81,7 +81,7 @@ export default function DividendCalendarPage() {
             >
               <summary className="px-4 py-3 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-50 flex items-center justify-between">
                 {faq.q}
-                <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">
+                <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">
                   ▾
                 </span>
               </summary>

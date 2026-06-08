@@ -764,7 +764,7 @@ export default function SmsfPropertyPage() {
                 >
                   <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer select-none list-none font-bold text-slate-900 text-sm hover:bg-slate-50 transition-colors">
                     <span>{faq.q}</span>
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base">&#8964;</span>
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base" aria-hidden="true">&#8964;</span>
                   </summary>
                   <div className="px-5 pb-5 pt-1">
                     <p className="text-sm text-slate-700 leading-relaxed">{faq.a}</p>

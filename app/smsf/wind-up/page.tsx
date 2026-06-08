@@ -698,7 +698,7 @@ export default function SmsfWindUpPage() {
                 <details key={f.q} className="group bg-white">
                   <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none font-extrabold text-slate-900 text-sm hover:bg-slate-50 transition-colors">
                     {f.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base leading-none">
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base leading-none" aria-hidden="true">
                       &#8964;
                     </span>
                   </summary>

@@ -837,7 +837,7 @@ export default function SmsfBorrowingPage() {
                 >
                   <summary className="flex items-center justify-between cursor-pointer px-5 py-4 font-bold text-slate-900 text-sm list-none select-none">
                     {q}
-                    <span className="ml-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                    <span className="ml-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                       &#x25BC;
                     </span>
                   </summary>
