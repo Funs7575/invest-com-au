@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import { itemListJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import {
   QUESTIONS,
@@ -165,6 +166,15 @@ export default function QuestionsPage() {
             );
           })}
         </div>
+
+        <HubAdvisorCTA
+          heading="Your question may need a personal answer"
+          subheading="General Q&A covers the rules — but SMSF, tax, retirement, and property decisions depend on your income, tax position, and goals. A licensed financial adviser can apply the rules to your specific situation."
+          intent={{ need: "planning", context: ["investing_questions", "tax_strategy", "financial_planning"] }}
+          source="questions_hub"
+          ctaLabel="Find a financial adviser"
+          className="mt-8 py-12 bg-amber-50 border border-amber-200 rounded-xl"
+        />
 
         <section className="mt-10 border-t border-slate-200 pt-8">
           <h2 className="text-lg font-extrabold text-slate-900 mb-5">About this Q&amp;A hub</h2>

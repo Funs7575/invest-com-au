@@ -1,6 +1,7 @@
 import ToolsClient from "./ToolsClient";
 import JsonLd from "@/components/JsonLd";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import { faqJsonLd } from "@/lib/schema-markup";
 
 export const metadata = {
@@ -61,6 +62,14 @@ export default function ToolsPage() {
         />
       )}
       <ToolsClient />
+      <HubAdvisorCTA
+        heading="Need help interpreting your results?"
+        subheading="Our tools model the numbers — but tax optimisation, retirement projections, and investment strategy depend on your full financial picture. A licensed financial adviser can review your situation and build a plan around the figures you've run."
+        intent={{ need: "planning", context: ["financial_tools", "portfolio_strategy", "tax_strategy"] }}
+        source="tools_hub"
+        ctaLabel="Find a financial adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
       <div className="border-t border-slate-200 bg-white">
         <div className="container-custom max-w-4xl py-8 md:py-10">
           <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
