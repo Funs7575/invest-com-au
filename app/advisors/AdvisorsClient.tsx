@@ -765,9 +765,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             className={`inline-flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg border text-sm font-bold whitespace-nowrap transition-colors shrink-0 ${activeFilterCount > 0 ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-800 border-slate-300 hover:border-slate-400"}`}
           >
             <Icon name="sliders" size={14} />
-            {/* ADV-016: show the active count on mobile too, not just a bare
-                sliders icon. "Filters (N)" when filters are active, else the
-                full "All filters" label. */}
+            {activeFilterCount > 0 ? `Filters (${activeFilterCount})` : "All filters"}
           </button>
           <SortDropdown
             options={SORT_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}
