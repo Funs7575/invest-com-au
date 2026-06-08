@@ -237,7 +237,8 @@ const eslintConfig = [
   // global block below for `.cjs` files — eslint-config-next only registers the
   // react plugin for js/mjs/jsx/ts/tsx, so linting a `.cjs` crashes config
   // resolution ("could not find plugin react"). Ignore them; nothing is lost.
-  { ignores: ["bots/**/*.cjs"] },
+  // .claude/worktrees/ contains agent working copies that also have .cjs files.
+  { ignores: ["bots/**/*.cjs", ".claude/"] },
   ...nextConfig,
   ...tsConfig,
   {
