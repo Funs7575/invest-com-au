@@ -34,8 +34,8 @@ if [ ! -d "node_modules" ]; then
 fi
 
 echo "[pre-push] Running type-check…"
-NODE_OPTIONS="--max-old-space-size=5120" npx tsc --noEmit
-TSC_EXIT=$?
+TSC_EXIT=0
+NODE_OPTIONS="--max-old-space-size=5120" npx tsc --noEmit || TSC_EXIT=$?
 if [ "$TSC_EXIT" -eq 137 ] || [ "$TSC_EXIT" -eq 134 ]; then
   echo "[pre-push] ⚠  type-check killed (OOM — machine has <8 GB free). Skipping; CI will verify."
 elif [ "$TSC_EXIT" -ne 0 ]; then
