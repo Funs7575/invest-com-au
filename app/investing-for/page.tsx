@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -178,6 +179,15 @@ export default function InvestingForPage() {
           </Link>
         </div>
       </div>
+
+      <HubAdvisorCTA
+        heading="Get advice tailored to your occupation and tax situation"
+        subheading="Occupation-specific tax strategies, super co-contribution rules, and income protection options vary significantly. A financial adviser who understands your profession can build a plan that matches your career stage and salary structure."
+        intent={{ need: "planning", context: ["occupation_investing", "tax_strategy"] }}
+        source="investing_for"
+        ctaLabel="Find a financial adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       <div className="border-t border-slate-200 bg-white">
         <div className="container-custom max-w-4xl py-8 md:py-10">

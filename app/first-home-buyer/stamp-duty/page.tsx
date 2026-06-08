@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -645,6 +646,15 @@ export default function StampDutyConcessionsPage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Find a mortgage broker for your first home purchase"
+        subheading="Stamp duty concessions, first home buyer grants, and lender requirements all vary by state. A mortgage broker can help you structure your purchase, identify all applicable concessions, and compare lenders before you commit."
+        intent={{ need: "mortgage", context: ["stamp_duty", "first_home_buyer"] }}
+        source="first_home_buyer_stamp_duty"
+        ctaLabel="Find a mortgage broker"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100 bg-slate-50">

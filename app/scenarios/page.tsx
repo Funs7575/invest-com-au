@@ -5,6 +5,7 @@ import type { Scenario } from "@/lib/types";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
 
@@ -141,6 +142,15 @@ export default async function ScenariosPage() {
         </ScrollFadeIn>
       </div>
     </div>
+
+    <HubAdvisorCTA
+      heading="Get advice matched to your investing scenario"
+      subheading="Complex situations — expats, SMSFs, active traders, business owners — often span multiple scenarios. A licensed financial adviser can assess your specific circumstances and build a strategy that combines the right tools for your situation."
+      intent={{ need: "planning", context: ["investing_scenario", "portfolio_strategy"] }}
+      source="scenarios"
+      ctaLabel="Find a financial adviser"
+      className="py-12 bg-amber-50 border-t border-amber-200"
+    />
 
     <div className="border-t border-slate-200 bg-white">
       <div className="container-custom max-w-4xl py-8 md:py-10">
