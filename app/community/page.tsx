@@ -2,8 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import Link from "next/link";
 import Icon from "@/components/Icon";
-import CommunityNotifyForm from "./CommunityNotifyForm";
 import { faqJsonLd } from "@/lib/schema-markup";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 // Each category now has ≥3 seeded threads (migration
 // 20260802000000_seed_forum_threads.sql) — safe to index.
@@ -249,11 +249,23 @@ export default async function CommunityPage() {
               ))}
             </div>
 
+            {/* ADV-012: capture intent instead of a dead "check back soon".
+                Reuses the shared newsletter capture (attributed to the
+                community-launch source). */}
             <div className="text-center">
               <p className="text-sm text-slate-500 mb-1">
                 Drop your email and we&apos;ll let you know the moment it goes live.
               </p>
-              <CommunityNotifyForm />
+              <div className="max-w-md mx-auto text-left">
+                <NewsletterSignup
+                  variant="compact"
+                  source="community-launch"
+                  className="justify-center"
+                />
+                <p className="text-[0.65rem] text-slate-400 mt-2 text-center">
+                  We&apos;ll only email you about the community launch. Unsubscribe any time.
+                </p>
+              </div>
             </div>
           </div>
         )}

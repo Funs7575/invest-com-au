@@ -17,7 +17,8 @@ import {
 } from "@/lib/compliance";
 import type { InvestmentListing } from "@/lib/types";
 import { logger } from "@/lib/logger";
-import { listingUrl, categoryForListing } from "@/lib/listing-url";
+import { listingUrl, categoryForListing, rawVerticalVariants } from "@/lib/listing-url";
+import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import { faqJsonLd } from "@/lib/schema-markup";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
@@ -26,6 +27,7 @@ import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 
@@ -194,16 +196,23 @@ export default async function InvestMarketplacePage() {
   const categories = getOpportunityCategories();
   const categoryTabs = categories.map((c) => ({ slug: c.slug, label: c.label }));
 
-  // Discovery-card counts must match what the client filter actually shows
-  // when a card is clicked, so we bucket each listing the same way the
-  // client does — via categoryForListing — rather than summing raw
-  // dbVerticals (which misses drifted vertical strings like
-  // "renewable-energy"/"startups" and double-counts fund sub-categories
-  // that belong to other categories).
+  // Discovery-card counts must match what the sector pages actually fetch.
+  // A listing belongs to a category only if BOTH conditions hold:
+  //   1. categoryForListing(l) === cat.slug
+  //   2. l.vertical is one of the category's alias-expanded dbVerticals
+  //      (for vertical-based categories) — OR there are no dbVerticals
+  //      (kind-based, e.g. listed-securities, which are bucketed purely
+  //      by categoryForListing).
+  // Using rawVerticalVariants expands each canonical vertical to its known
+  // alias set, so slugs like "renewable-energy" / "renewables" / "startups"
+  // all map to the right category rather than falling through to "funds".
   const categoryCounts: Record<string, number> = {};
-  for (const l of listings) {
-    const slug = categoryForListing(l);
-    categoryCounts[slug] = (categoryCounts[slug] || 0) + 1;
+  for (const cat of categories) {
+    const verts = new Set(cat.dbVerticals.flatMap(rawVerticalVariants));
+    const kindBased = verts.size === 0;
+    categoryCounts[cat.slug] = listings.filter(
+      (l) => categoryForListing(l) === cat.slug && (kindBased || verts.has(l.vertical as string)),
+    ).length;
   }
 
   function getCategoryCount(cat: InvestCategory): number {
@@ -268,54 +277,21 @@ export default async function InvestMarketplacePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
       {investFaqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(investFaqLd) }} />}
 
-      {/* ── Dark marketplace hero (v2 confident-fintech) ─────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-ink-900 to-ink-800 text-white">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(242,88,34,.18), transparent 65%)" }}
-        />
-        <div className="container-custom max-w-6xl relative py-8 md:py-12">
-          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-white/55 mb-3">
-            <Link href="/" className="hover:text-white">Home</Link>
-            <span className="mx-2">/</span>
-            <span className="text-white/80">Opportunities</span>
-          </nav>
-          <div className="grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-end">
-            <div>
-              <span className="iv2-pill border border-coral-500/30 bg-coral-500/15 text-coral-300">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral-400" />
-                Live marketplace
-              </span>
-              <h1 className="mt-4 text-3xl font-extrabold leading-[1.04] tracking-tight md:text-5xl">
-                {listings.length.toLocaleString("en-AU")} live opportunities.
-                {aggregateAskCents > 0 && (
-                  <>
-                    <br />
-                    <span className="text-coral-400">{formatAudBig(aggregateAskCents)} in aggregate ask.</span>
-                  </>
-                )}
-              </h1>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/70 md:text-base">
-                Businesses, property, projects, funds, syndicates &amp; collectibles — all filterable in one place.
-                To compare super funds or share-trading platforms,{" "}
-                <Link href="/compare" className="text-coral-300 underline hover:no-underline">visit Compare</Link>.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {heroStats.map((s) => (
-                <div key={s.l} className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-                  <div className="iv2-bignum text-2xl text-white md:text-3xl">{s.v}</div>
-                  <div className="mt-1 text-[11px] font-semibold text-white/55 md:text-xs">{s.l}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Country/FIRB notices + owner link on the light band below the hero */}
-      <div className="container-custom max-w-6xl pt-4">
+      {/* ── Shared dark stat-led directory hero (matches /compare + /advisors) ── */}
+      <DirectoryHero
+        breadcrumbLabel="Opportunities"
+        pill={{ label: "Live marketplace", live: true }}
+        headlineLead={`${listings.length.toLocaleString("en-AU")} live opportunities.`}
+        headlineAccent={aggregateAskCents > 0 ? `${formatAudBig(aggregateAskCents)} in aggregate ask.` : undefined}
+        subtitle={
+          <>
+            Businesses, property, projects, funds, syndicates &amp; collectibles — all filterable in one place.
+            To compare super funds or share-trading platforms,{" "}
+            <Link href="/compare" className="text-coral-300 underline hover:no-underline">visit Compare</Link>.
+          </>
+        }
+        stats={heroStats}
+      >
         <DirectoryBanners surface="invest" />
         {ctx.isListingOwner && (
           <Link
@@ -326,7 +302,7 @@ export default async function InvestMarketplacePage() {
             My listings →
           </Link>
         )}
-      </div>
+      </DirectoryHero>
 
       {/* ── GetMatched CTA — above listings so it's visible before users
             scroll through options. Moved from below results (ADV-126). ── */}
@@ -383,7 +359,7 @@ export default async function InvestMarketplacePage() {
                 return (
                   <Link
                     key={cat.slug}
-                    href={`/invest?category=${cat.slug}`}
+                    href={categoryListingsHref(cat.slug)}
                     className={`group relative block rounded-xl border bg-white p-3 md:p-4 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] ${accent.card}`}
                   >
                     <div className="flex items-start gap-2 mb-2">

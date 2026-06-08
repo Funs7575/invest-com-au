@@ -5,7 +5,6 @@ import type { Professional, AdvisorFirm } from "@/lib/types";
 import type { Metadata } from "next";
 import AdvisorsClient, { type ExpertTeamCard } from "./AdvisorsClient";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
-import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 import NextActions from "@/components/NextActions";
@@ -133,9 +132,8 @@ export default function AdvisorsPage() {
       {advisorFaqLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(advisorFaqLd) }} />
       )}
-      <div className="container-custom pt-4">
-        <DirectoryBanners surface="advisors" />
-      </div>
+      {/* DirectoryBanners now render inside AdvisorsClient, in the canonical slot
+          directly below the shared DirectoryHero (passed in as a prop). */}
       <Suspense fallback={<AdvisorsLoading />}>
         <AdvisorsData />
       </Suspense>

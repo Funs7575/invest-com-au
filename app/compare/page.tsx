@@ -1,14 +1,16 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import CompareClient from "./CompareClient";
-import CompareNav from "./CompareNav";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 import { speakableWebPageJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
+import DirectoryHero from "@/components/directory/DirectoryHero";
+import Icon from "@/components/Icon";
 import NextActions from "@/components/NextActions";
 
 export const metadata = {
@@ -24,6 +26,20 @@ export const metadata = {
 };
 
 export const revalidate = 1800; // ISR: revalidate every 30 min (core product page)
+
+// Dedicated comparison pages that aren't covered by the in-page category pills
+// (separate datasets/guides). Rendered as a quiet secondary link row on the
+// /compare index — see SC-7 in docs/plans/DIRECTORY_UX_UNIFICATION.md.
+const SPECIALISED_COMPARES: { label: string; href: string }[] = [
+  { label: "Share trading", href: "/share-trading" },
+  { label: "ETFs", href: "/compare/etfs" },
+  { label: "Crypto", href: "/crypto" },
+  { label: "Super funds", href: "/compare/super" },
+  { label: "Savings", href: "/savings" },
+  { label: "CFD & forex", href: "/cfd" },
+  { label: "Insurance", href: "/compare/insurance" },
+  { label: "Non-residents", href: "/compare/non-residents" },
+];
 
 function ComparePageSkeleton() {
   return (
@@ -121,7 +137,62 @@ async function CompareData() {
   );
 }
 
-export default function ComparePage() {
+export default async function ComparePage() {
+  // Lightweight head-only count for the hero stat tiles — keeps the dark
+  // stat-led hero consistent with /invest and /advisors without waiting on the
+  // full broker payload (that still streams via <CompareData> in Suspense).
+  type DealBroker = { name: string; slug: string; deal_text: string | null; affiliate_url: string | null };
+  let platformCount = 0;
+  let dealBroker: DealBroker | null = null;
+  try {
+    const supabase = await createClient();
+    const [{ count }, { data: deal }] = await Promise.all([
+      supabase.from("brokers").select("id", { count: "exact", head: true }).eq("status", "active"),
+      // Top live broker deal — surfaced as a slim promo strip inside the hero.
+      supabase
+        .from("brokers")
+        .select("name, slug, deal_text, affiliate_url")
+        .eq("status", "active")
+        .eq("deal", true)
+        .not("deal_text", "is", null)
+        .order("promoted_placement", { ascending: false })
+        .order("affiliate_priority", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
+    platformCount = count ?? 0;
+    dealBroker = (deal as DealBroker | null) ?? null;
+  } catch {
+    platformCount = 0;
+  }
+  const platformLabel = platformCount > 0 ? `${platformCount}` : "100+";
+
+  const dealPromo = dealBroker ? (
+    <div className="flex items-center justify-between gap-3">
+      <p className="flex min-w-0 items-center gap-2 text-[12.5px] text-white/80 md:text-[13px]">
+        <Icon name="flame" size={14} className="shrink-0 text-coral-400" />
+        <span className="truncate">
+          <strong className="font-semibold text-white">{dealBroker.name}</strong>
+          {dealBroker.deal_text ? <span className="text-white/60"> — {dealBroker.deal_text}</span> : null}
+        </span>
+      </p>
+      <a
+        href={dealBroker.affiliate_url ? `/go/${dealBroker.slug}` : `/broker/${dealBroker.slug}`}
+        target="_blank"
+        rel="noopener noreferrer nofollow sponsored"
+        className="shrink-0 rounded-lg bg-coral-500 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-coral-400"
+      >
+        Claim &rarr;
+      </a>
+    </div>
+  ) : null;
+  const heroStats = [
+    { v: platformLabel, l: "Platforms tracked" },
+    { v: "9", l: "Categories" },
+    { v: "Weekly", l: "Fees rechecked" },
+    { v: "Free", l: "Independent" },
+  ];
+
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -163,23 +234,50 @@ export default function ComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
       />
-      <Suspense fallback={<div className="h-12 bg-slate-100 animate-pulse rounded-lg mx-4" aria-hidden />}><CompareNav /></Suspense>
-      {/* Server-rendered H1 for crawlers that don't execute client JS — streams immediately */}
-      <div className="container-custom pt-5 md:pt-10" data-speakable="compare-hero">
+      {/* SC-7: the sticky top CompareNav tab-bar was removed from the /compare
+          index — it duplicated the in-page category pills (the single category
+          control here) and read as a second, conflicting filter row. The
+          specialised comparison pages it linked to are preserved as a quiet,
+          clearly-secondary link row below the toolbar (see SPECIALISED_COMPARES). */}
+      {/* Shared dark stat-led directory hero (matches /invest + /advisors).
+          Server-rendered H1 streams immediately for crawlers; the speakable
+          region is preserved via speakableId. */}
+      <DirectoryHero
+        breadcrumbLabel="Compare Platforms"
+        pill={{ label: "Live fee tracking", live: true }}
+        headlineLead="Compare Australian investing platforms."
+        headlineAccent={`${platformLabel} tracked · fees rechecked weekly.`}
+        subtitle="Side-by-side comparison of fees, features, and safety for Australian share trading, crypto, super and robo-advisor platforms."
+        stats={heroStats}
+        speakableId="compare-hero"
+        promo={dealPromo}
+      >
         <DirectoryBanners surface="compare" />
-        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Compare Australian Investment Platforms — Fees, Features &amp; Safety
-        </h1>
-        <p className="mt-2 text-sm md:text-base text-slate-600 max-w-2xl">
-          Compare 100+ Australian investing platforms. See fees, features, and safety ratings side-by-side. Whether you trade shares, crypto, or super — find your best fit.
-        </p>
-      </div>
-      <div className="container-custom pt-5">
-        <GetMatchedEmbed context="platform_compare" />
-      </div>
+      </DirectoryHero>
+      {/* Specialised comparisons — quiet link row (replaces the duplicate sticky
+          CompareNav). Text links, deliberately not pill-styled, so they read as
+          "go to a dedicated comparison" rather than "filter this table". */}
+      <nav className="container-custom max-w-6xl pt-3" aria-label="Specialised comparisons">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs md:text-sm text-slate-500">
+          <span className="font-semibold text-slate-700">Specialised comparisons:</span>
+          {SPECIALISED_COMPARES.map((item, i) => (
+            <span key={item.href} className="inline-flex items-center gap-x-3">
+              {i > 0 && <span aria-hidden className="text-slate-300">·</span>}
+              <Link href={item.href} className="hover:text-amber-700 hover:underline">
+                {item.label}
+              </Link>
+            </span>
+          ))}
+        </div>
+      </nav>
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareData />
       </Suspense>
+      {/* Get-matched moved below the table — keeps the comparison itself near the
+          fold; this is the "still not sure? build a plan" catch for scrollers. */}
+      <div className="container-custom max-w-6xl pt-6">
+        <GetMatchedEmbed context="platform_compare" />
+      </div>
       {/* Personalised next-action strip — suppresses compare CTA since the user is already here */}
       <Suspense fallback={null}>
         <NextActions surface="compare" />
