@@ -259,7 +259,7 @@ export default async function SwitchTypePage({
                   >
                     <summary className="font-semibold text-sm text-slate-900 cursor-pointer list-none flex justify-between items-center gap-2">
                       {f.q}
-                      <span className="text-slate-400 shrink-0 group-open:rotate-180 transition-transform">▾</span>
+                      <span className="text-slate-400 shrink-0 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                     </summary>
                     <p className="mt-3 text-sm text-slate-600 leading-relaxed">
                       {f.a}
