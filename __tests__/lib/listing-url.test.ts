@@ -68,6 +68,34 @@ describe("categoryForListing", () => {
     ).toBe("mining");
   });
 
+  it("routes listed securities to 'listed-securities' by kind, across verticals", () => {
+    // ASX-listed securities span many (often unmapped) verticals; the
+    // listing_kind takes precedence so they don't fall to the funds fallback.
+    for (const vertical of ["uranium", "hydrogen", "oil-gas", "digital-infrastructure"]) {
+      expect(
+        categoryForListing({
+          vertical: vertical as InvestListingVertical,
+          sub_category: undefined,
+          listing_kind: "listed_security",
+        }),
+      ).toBe("listed-securities");
+    }
+  });
+
+  it("only applies the kind override for listed_security (other kinds use vertical)", () => {
+    expect(
+      categoryForListing({
+        vertical: "mining" as InvestListingVertical,
+        sub_category: undefined,
+        listing_kind: "project_equity",
+      }),
+    ).toBe("mining");
+    // Missing listing_kind keeps the vertical-based behaviour (e.g. state rollups).
+    expect(
+      categoryForListing({ vertical: "mining" as InvestListingVertical, sub_category: undefined }),
+    ).toBe("mining");
+  });
+
   it("normalises drifted vertical strings to the right category", () => {
     // These non-canonical vertical values exist in the DB from earlier
     // seed waves and must not silently fall through to "funds".

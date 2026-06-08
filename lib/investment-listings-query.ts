@@ -128,6 +128,63 @@ export async function countListingsByVertical(
 }
 
 /**
+ * Fetches active listings of a given `listing_kind` across all verticals.
+ * Used by the "listed-securities" category page, which is grouped by
+ * instrument kind (ASX-listed securities span uranium/hydrogen/oil-gas/…
+ * verticals) rather than by a single vertical. Never throws — returns [].
+ */
+export async function fetchListingsByKind(
+  kind: string,
+  limit: number = DEFAULT_LIMIT,
+): Promise<InvestmentListing[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("investment_listings")
+      .select("*")
+      .eq("listing_kind", kind)
+      .eq("status", "active")
+      .order("listing_type", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    if (error) {
+      log.warn("investment_listings kind query failed", { kind, error: error.message, code: error.code });
+      return [];
+    }
+    return (data ?? []) as InvestmentListing[];
+  } catch (err) {
+    log.error("investment_listings kind fetch threw", {
+      kind,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return [];
+  }
+}
+
+/** Count of active listings of a given `listing_kind` (for generateMetadata). */
+export async function countListingsByKind(kind: string): Promise<number> {
+  try {
+    const supabase = await createClient();
+    const { count, error } = await supabase
+      .from("investment_listings")
+      .select("id", { count: "exact", head: true })
+      .eq("listing_kind", kind)
+      .eq("status", "active");
+    if (error) {
+      log.warn("investment_listings kind count failed", { kind, error: error.message });
+      return 0;
+    }
+    return count ?? 0;
+  } catch (err) {
+    log.warn("investment_listings kind count threw", {
+      kind,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return 0;
+  }
+}
+
+/**
  * Sub-categories that belong to the "alternatives" URL category.
  * Source of truth: lib/listing-url.ts FUND_SUB_TO_CATEGORY.
  * Duplicated here to avoid a server/client module boundary issue
@@ -212,7 +269,10 @@ export async function fetchListingBySlug(
     const { data, error } = await supabase
       .from("investment_listings")
       .select("*")
-      .eq("vertical", vertical)
+      // Alias-aware: match drifted vertical strings (e.g. "buy-business"
+      // for "business") so bespoke detail pages resolve them, consistent
+      // with fetchListingsByVertical.
+      .in("vertical", rawVerticalVariants(vertical))
       .eq("slug", slug)
       .maybeSingle();
 

@@ -14,9 +14,15 @@ that were never created or never applied.
 
 ## Class B — migration EXISTS but table is ABSENT in prod (unapplied)
 
-These two migration files are committed but their tables aren't in the live DB —
-the auto-apply (`supabase-migrate.yml`) never landed them (likely errored on
-apply or pre-dated the workflow). The features are dead in prod.
+These two migration files are committed but their tables aren't in the live DB.
+Root cause (confirmed 2026-06-07): the auto-apply workflow `supabase-migrate.yml`
+has **never executed a single apply**. Its `SUPABASE_PROJECT_REF` and
+`SUPABASE_DB_PASSWORD` secrets were never configured (only `SUPABASE_ACCESS_TOKEN`
+was), so the secret-precheck green-skipped every run — the job reported success
+while applying nothing. Every migration that *is* in prod got there via a manual /
+out-of-band apply; these two simply never were. (The workflow now fails loudly on
+missing secrets so this can't recur — see docs/runbooks/MIGRATION_DEPLOY_BACKLOG.md.)
+The features are dead in prod.
 
 | Migration file | Tables missing in prod | Feature broken |
 |---|---|---|

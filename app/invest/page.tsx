@@ -17,7 +17,7 @@ import {
 } from "@/lib/compliance";
 import type { InvestmentListing } from "@/lib/types";
 import { logger } from "@/lib/logger";
-import { listingUrl, categoryForListing } from "@/lib/listing-url";
+import { listingUrl, categoryForListing, rawVerticalVariants } from "@/lib/listing-url";
 import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
@@ -174,16 +174,25 @@ export default async function InvestMarketplacePage() {
   const categories = getOpportunityCategories();
   const categoryTabs = categories.map((c) => ({ slug: c.slug, label: c.label }));
 
-  // Discovery-card counts must match what the client filter actually shows
-  // when a card is clicked, so we bucket each listing the same way the
-  // client does — via categoryForListing — rather than summing raw
-  // dbVerticals (which misses drifted vertical strings like
-  // "renewable-energy"/"startups" and double-counts fund sub-categories
-  // that belong to other categories).
+  // Discovery-card counts must match what each sector's /listings page
+  // actually shows. That page fetches by the category's vertical(s) and then
+  // the client filters by categoryForListing — so a listing counts for a
+  // sector only if it satisfies BOTH: categoryForListing(l) === slug AND
+  // l.vertical is one of the category's (alias-expanded) verticals.
+  // (categoryForListing alone over-counted "funds": cross-vertical listed
+  // securities — uranium/hydrogen/oil-gas ASX stocks — fall to "funds" via
+  // the categoryForListing fallback but aren't fetched by the funds page's
+  // vertical query, so the badge said 55 while the page showed 11.)
   const categoryCounts: Record<string, number> = {};
-  for (const l of listings) {
-    const slug = categoryForListing(l);
-    categoryCounts[slug] = (categoryCounts[slug] || 0) + 1;
+  for (const cat of categories) {
+    const verts = new Set(cat.dbVerticals.flatMap(rawVerticalVariants));
+    // Kind-based categories (no dbVerticals — e.g. listed-securities) are
+    // bucketed purely by categoryForListing; vertical-based ones additionally
+    // require the listing's vertical to be one the sector page fetches.
+    const kindBased = verts.size === 0;
+    categoryCounts[cat.slug] = listings.filter(
+      (l) => categoryForListing(l) === cat.slug && (kindBased || verts.has(l.vertical as string)),
+    ).length;
   }
 
   function getCategoryCount(cat: InvestCategory): number {

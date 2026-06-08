@@ -57,6 +57,25 @@ and wholesale-cert (s708) tables stay held per `REGULATORY-AVOID-LIST.md`.
 every new feature needing a table keeps hitting the same wall (PR #1459, in-app
 charts). This is now the #1 infrastructure blocker.
 
+### 2026-06-07 — Sign-off: factual "Listed Securities (ASX)" category
+
+Founder signed off on adding a **Listed Securities (ASX)** browse category to
+the /invest marketplace. ~32 ASX-listed securities (uranium / hydrogen /
+oil-gas / digital-infrastructure themes) were previously mis-bucketed into
+"Funds" via the `categoryForListing` fallback; `categoryForListing` is now
+keyed on `listing_kind="listed_security"` so they group correctly, with a
+dedicated `/invest/listed-securities/listings` page.
+
+**Regulatory posture (lean lane, per `REGULATORY-AVOID-LIST.md`):** this is a
+**factual listing of already-public securities + referral** ("buy via your own
+broker"), explicitly the sanctioned lean alternative — *not* an escalator. It
+does **not** issue, sell, arrange, facilitate an offer, run a market, or give
+personal advice. `GENERAL_ADVICE_WARNING` + a "general information only, not an
+offer/recommendation" notice are wired onto the page. If legal wants to review
+the securities framing, the category can be flag-gated. (Sign-off recorded here
+per the avoid-list's "founder + legal sign-off recorded in this repo" rule;
+legal review still open if desired.)
+
 ### 2026-06-03 — Bot-QA system: ranked roadmap for the next big projects
 
 Context: the AI-Journey bot found a real P1 in one run (`/api/versus/vote` 500s
