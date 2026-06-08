@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Aged Care Means Test — Assets, Income & Fees (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How the aged care means test works in Australia: income assessment, assets assessment, how your family home is treated, accommodation threshold, and the means-tested care fee calculation. ${UPDATED_LABEL}.`,
+  description: `Australian aged care means test: income and assets assessment, family home treatment, accommodation threshold, and means-tested fee. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Aged Care Means Test (${CURRENT_YEAR}) — Assets, Income & Fees`,
     description: "The aged care means test: income and assets assessment, family home treatment, accommodation threshold, and means-tested care fee calculation.",

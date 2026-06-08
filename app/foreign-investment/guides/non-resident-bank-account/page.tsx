@@ -10,8 +10,7 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const metadata: Metadata = {
   title: "Can Non-Residents Open an Australian Bank Account? (2026 Guide)",
-  description:
-    "Yes — non-residents can open Australian bank accounts remotely. Which major banks accept non-residents, what documents you need, how to open online without visiting Australia, and alternatives like Wise and OFX.",
+  description: "Non-residents can open an Australian bank account remotely. Which banks accept non-residents, required documents, and alternatives like Wise and OFX.",
   openGraph: {
     title: "Can Non-Residents Open an Australian Bank Account? (2026)",
     description:

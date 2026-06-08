@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Home Care vs Residential Aged Care — Which Is Better? (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Comparing home care vs residential aged care for Australians: care complexity suitability, costs, safety, family burden, transition timing, and when to move from home care to residential. ${UPDATED_LABEL}.`,
+  description: `Home care vs residential aged care in Australia: suitability, costs, safety triggers, family burden, timing, and transition checklist. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Home Care vs Residential Aged Care (${CURRENT_YEAR})`,
     description: "When to stay at home vs move to residential care: suitability, costs, safety triggers, family burden, and transition planning for Australian families.",

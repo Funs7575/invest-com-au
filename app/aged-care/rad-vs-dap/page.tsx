@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `RAD vs DAP — Aged Care Accommodation Payments Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `RAD (Refundable Accommodation Deposit) vs DAP (Daily Accommodation Payment) for Australian residential aged care. How to decide, tax treatment, Centrelink impact, and hybrid RAD/DAP options. ${UPDATED_LABEL}.`,
+  description: `RAD vs DAP for Australian residential aged care: lump sum deposit vs daily fee, tax treatment, Centrelink impact, and hybrid options. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `RAD vs DAP: Aged Care Accommodation Payments (${CURRENT_YEAR})`,
     description: "RAD vs DAP decision for Australian aged care: lump sum vs daily fee, Centrelink impact, tax, and the hybrid option.",

@@ -13,8 +13,7 @@ import type { Broker } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "How to Buy Property in Australia as a Foreigner (2026 Guide)",
-  description:
-    "Complete step-by-step guide to buying property in Australia as a foreign buyer. FIRB approval, eligible property types, the 2025–2027 established dwelling ban, stamp duty surcharges, and costs. Updated March 2026.",
+  description: "Buying property in Australia as a foreigner: FIRB approval, the 2025–2027 established dwelling ban, stamp duty surcharges, and costs. Updated 2026.",
   openGraph: {
     title: "How to Buy Property in Australia as a Foreigner (2026 Guide)",
     description:

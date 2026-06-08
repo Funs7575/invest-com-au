@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Best Bond ETFs Australia (${CURRENT_YEAR}) — Fixed Income ETFs Compared`,
-  description: `Compare the best Australian bond and fixed income ETFs: VAF, IAF, BOND, CRED, FLOT and more. Government bonds, corporate bonds, and cash ETFs analysed by yield, duration, and credit quality. ${UPDATED_LABEL}.`,
+  description: `Compare Australian bond ETFs: VAF, IAF, BOND, CRED, FLOT. Government, corporate and cash bonds by yield, duration, and credit quality. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best Bond ETFs Australia (${CURRENT_YEAR}) — Fixed Income ETF Guide`,
     description: "Complete guide to bond and fixed income ETFs in Australia. Compare government bonds, corporate bonds, and inflation-linked ETFs.",

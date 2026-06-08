@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Tax-Loss Harvesting Australia (${CURRENT_YEAR}) — How to Offset Capital Gains Before 30 June`,
-  description: `Reduce your CGT bill by crystallising capital losses before 30 June. How tax-loss harvesting works, the wash sale concern, worked examples, and the year-end checklist for Australian investors. ${UPDATED_LABEL}.`,
+  description: `Australian tax-loss harvesting: crystallise capital losses before 30 June to cut CGT. Wash sale concern, worked examples, and checklist. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Tax-Loss Harvesting Australia (${CURRENT_YEAR}) — Offset Capital Gains Before 30 June`,
     description:
