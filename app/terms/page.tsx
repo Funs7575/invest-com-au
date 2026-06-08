@@ -63,7 +63,7 @@ export default function TermsPage() {
             </div>
 
             <h1 className="text-2xl md:text-4xl font-extrabold mb-2">Terms of Use</h1>
-            <p className="text-xs text-slate-400 mb-8">Version 1.2 — Last updated 18 March 2026</p>
+            <p className="text-xs text-slate-500 mb-8">Version 1.2 — Last updated 18 March 2026</p>
 
             <div className="space-y-6">
               <S n={1} title="Scope of Service">
