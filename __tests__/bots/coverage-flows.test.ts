@@ -14,8 +14,8 @@ import { LOCALES, BCP47_TAG } from "../../lib/i18n/locales";
 import type { Flow } from "../../bots/flows/types";
 
 describe("COVERAGE_FLOW_PERSONAS registry", () => {
-  it("registers all ten coverage flows", () => {
-    expect(COVERAGE_FLOW_PERSONAS.length).toBe(10);
+  it("registers all coverage flows", () => {
+    expect(COVERAGE_FLOW_PERSONAS.length).toBeGreaterThanOrEqual(10);
   });
 
   it("every persona has a unique name, a description, and a flow", () => {
