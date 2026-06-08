@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 }
 
 export const POST = withValidatedBody(Body, async (req: NextRequest, body) => {
-  if (!(await isAllowed("bookmarks_toggle", ipKey(req), { max: 60, windowSeconds: 60 }))) {
+  if (!(await isAllowed("bookmarks_toggle", ipKey(req), { max: 60, refillPerSec: 1 }))) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 

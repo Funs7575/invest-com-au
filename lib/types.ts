@@ -161,6 +161,7 @@ export interface Article {
   reviewed_at?: string;
   changelog?: { date: string; summary: string }[];
   link_density_override?: number | null;
+  view_count?: number;
   created_at: string;
   updated_at: string;
 }

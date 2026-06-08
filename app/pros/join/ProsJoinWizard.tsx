@@ -721,6 +721,9 @@ interface FieldProps {
   placeholder?: string;
   type?: string;
   small?: boolean;
+  autoCapitalize?: string;
+  autoCorrect?: string;
+  spellCheck?: boolean;
 }
 
 function Field({
@@ -730,6 +733,9 @@ function Field({
   placeholder,
   type = "text",
   small,
+  autoCapitalize,
+  autoCorrect,
+  spellCheck,
 }: FieldProps) {
   const id = useId();
   return (
@@ -743,6 +749,9 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        autoCapitalize={autoCapitalize}
+        autoCorrect={autoCorrect}
+        spellCheck={spellCheck}
         className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
       />
     </div>

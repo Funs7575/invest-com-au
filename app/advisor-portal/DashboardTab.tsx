@@ -119,21 +119,21 @@ export default function DashboardTab({
   onNavigate, onDismissOnboarding, billingSummary, dataLoadedAt, onRefresh,
 }: Props) {
   const refreshLabel = useRelativeTime(dataLoadedAt);
-  const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
-  const [respondedLeads, setRespondedLeads] = useState<Set<string>>(new Set());
-  const [leadNotes, setLeadNotes] = useState<Record<string, string>>({});
-  const [noteInput, setNoteInput] = useState<Record<string, string>>({});
+  const [expandedLeadId, setExpandedLeadId] = useState<number | null>(null);
+  const [respondedLeads, setRespondedLeads] = useState<Set<number>>(new Set());
+  const [leadNotes, setLeadNotes] = useState<Record<number, string>>({});
+  const [noteInput, setNoteInput] = useState<Record<number, string>>({});
 
-  const toggleLead = useCallback((id: string) => {
+  const toggleLead = useCallback((id: number) => {
     setExpandedLeadId((prev) => (prev === id ? null : id));
   }, []);
 
-  const markResponded = useCallback((id: string, e: React.MouseEvent) => {
+  const markResponded = useCallback((id: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setRespondedLeads((prev) => { const s = new Set(prev); s.add(id); return s; });
   }, []);
 
-  const saveNote = useCallback((id: string, e: React.MouseEvent) => {
+  const saveNote = useCallback((id: number, e: React.MouseEvent) => {
     e.stopPropagation();
     const text = noteInput[id]?.trim();
     if (!text) return;

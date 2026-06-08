@@ -116,13 +116,6 @@ type ExpertArticle = {
   category: string; published_at: string; reading_time_mins: number | null; view_count: number;
 };
 
-interface ExpertTeamStub {
-  id: number;
-  name: string;
-  slug: string;
-  team_category: string;
-}
-
 export default function AdvisorProfileClient({
   professional: pro,
   similar,
@@ -132,7 +125,6 @@ export default function AdvisorProfileClient({
   firm,
   expertTeams = [],
   expertArticles = [],
-  expertTeams = [],
 }: {
   professional: Professional;
   similar: Professional[];
@@ -144,7 +136,6 @@ export default function AdvisorProfileClient({
   /** Verified, public Expert Teams this advisor belongs to (ADV-013). */
   expertTeams?: { slug: string; name: string; public_title: string | null }[];
   expertArticles?: ExpertArticle[];
-  expertTeams?: ExpertTeamStub[];
 }) {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error" | "unavailable">("idle");
   const [formError, setFormError] = useState("");
@@ -166,7 +157,7 @@ export default function AdvisorProfileClient({
       if (raw) {
         const data = JSON.parse(raw);
         if (data.matchedAdvisors?.some((a: { slug: string }) => a.slug === pro.slug)) {
-           
+          // eslint-disable-next-line react-hooks/set-state-in-effect -- reading from sessionStorage (external system), not cascading from React state
           setAlreadyMatched(true);
            
           if (data.quizData?.firstName) setName(data.quizData.firstName);
@@ -672,7 +663,7 @@ export default function AdvisorProfileClient({
             {/* About */}
             {pro.bio && (
               <SectionCard id="about" title={`About ${pro.name}`} icon="user">
-                <p className={`text-sm md:text-base text-slate-600 leading-relaxed whitespace-pre-line ${!bioExpanded && pro.bio.length > 400 ? "line-clamp-5" : ""}`}>
+                <p className={`text-sm md:text-base text-slate-600 leading-relaxed whitespace-pre-line break-words ${!bioExpanded && pro.bio.length > 400 ? "line-clamp-5" : ""}`}>
                   {pro.bio}
                 </p>
                 {pro.bio.length > 400 && (
@@ -1279,7 +1270,7 @@ export default function AdvisorProfileClient({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 bg-gradient-to-br from-teal-600 to-teal-500 text-white px-5 py-4 rounded-2xl shadow-sm hover:from-teal-500 hover:to-teal-400 transition-all group"
-                onClick={() => phTrack('advisor_booking_click', { advisor_id: pro.id, source: 'sidebar' })}
+                onClick={() => phTrack('advisor_contacted', { advisor_id: pro.id, contact_method: 'booking_link', source_section: 'sidebar' })}
               >
                 <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
                   <Icon name="calendar" size={20} />

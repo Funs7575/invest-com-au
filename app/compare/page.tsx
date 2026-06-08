@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
-import Link from "next/link";
 import Icon from "@/components/Icon";
 import CompareClient from "./CompareClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
