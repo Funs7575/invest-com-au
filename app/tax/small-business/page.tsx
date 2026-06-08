@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Small Business Tax Australia (${CURRENT_YEAR}) — Sole Trader, Company, Trust & Partnership`,
-  description: `Small business tax in Australia: business structure comparison, GST threshold, company tax rates, small business CGT concessions, instant asset write-off, and key deductions. Updated for ${CURRENT_YEAR}. ${UPDATED_LABEL}.`,
+  description: `Small business tax in Australia: GST threshold, company tax rates, CGT concessions, instant asset write-off, and key deductions. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Small Business Tax Australia (${CURRENT_YEAR}) — Sole Trader, Company, Trust & Partnership`,
     description:

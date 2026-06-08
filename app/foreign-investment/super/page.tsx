@@ -11,7 +11,7 @@ import DASPCalculator from "../DASPCalculator";
 export const metadata: Metadata = {
   title: "Superannuation for Foreign Workers in Australia — DASP Guide 2026",
   description:
-    "Complete guide to superannuation for temporary visa holders in Australia. How the super guarantee works, DASP withholding rates (35% or 65%), how to claim, NZ Trans-Tasman portability, and key mistakes to avoid. Updated March 2026.",
+    "Super for temporary visa holders in Australia: how the guarantee works, DASP rates (35%/65%), how to claim, and NZ Trans-Tasman portability. Updated 2026.",
   openGraph: {
     title: "Super & DASP Guide for Foreign Workers — 2026",
     description:

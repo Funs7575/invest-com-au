@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Reverse Mortgages in Australia — How They Work & Risks (${CURRENT_YEAR}) | invest.com.au`,
-  description: `What Australian retirees need to know about reverse mortgages: how interest compounds, NNEG protection, Home Equity Access Scheme alternative, Centrelink treatment, and the impact on estate and aged care costs. ${UPDATED_LABEL}.`,
+  description: `Australian reverse mortgages: compound interest, NNEG, Home Equity Access Scheme alternative, and Centrelink treatment. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Reverse Mortgages Australia (${CURRENT_YEAR}) — Risks & Alternatives`,
     description: "Reverse mortgages: compounding interest risk, NNEG, Home Equity Access Scheme, aged care cost interaction, and estate planning considerations.",

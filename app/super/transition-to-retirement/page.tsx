@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Transition to Retirement (TTR) Pension Guide Australia (${CURRENT_YEAR}) — Strategy, Tax & Rules`,
   description:
-    "Complete guide to transition to retirement (TTR) pensions in Australia. Salary sacrifice + TTR tax strategy, 4–10% drawdown rules, preservation age, earnings tax at 15%, and when to convert to retirement phase. Updated 2025–26.",
+    "Transition to retirement (TTR) pensions: TTR tax strategy, 4–10% drawdown, preservation age, and when to convert to retirement phase. Updated 2026.",
   alternates: { canonical: `${SITE_URL}/super/transition-to-retirement` },
   openGraph: {
     title: `Transition to Retirement (TTR) Pension Guide Australia (${CURRENT_YEAR})`,

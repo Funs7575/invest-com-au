@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Aged Care Costs Australia — What You&apos;ll Pay (${CURRENT_YEAR} Guide) | invest.com.au`,
-  description: `Full breakdown of Australian aged care costs: basic daily fee, means-tested care fee, accommodation costs (RAD/DAP), extra service fees, and what government subsidy covers. Home care vs residential costs compared. ${UPDATED_LABEL}.`,
+  description: `Australian aged care costs: daily fee, means-tested fee, RAD/DAP accommodation, and home care vs residential comparison. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Aged Care Costs Australia (${CURRENT_YEAR}) — What You&apos;ll Pay`,
     description: "Residential aged care fees: basic daily fee, means-tested care fee, RAD/DAP accommodation, extra service charges — and what Medicare/government covers.",

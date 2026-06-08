@@ -7,7 +7,7 @@ import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 export const metadata: Metadata = {
   title: `Digital Infrastructure Investment in Australia (${CURRENT_YEAR})`,
   description:
-    "Invest in Australian data centres, fibre, subsea cables and AI compute. Compare ASX-listed pure-plays (NEXTDC, Macquarie Technology) with institutional placements (AirTrunk, Equinix) — yields, structures, FIRB and how to invest.",
+    "Australian digital infrastructure: data centres, fibre, AI compute. Compare NEXTDC, Macquarie Technology, and Equinix — yields, structures, and FIRB rules.",
   alternates: { canonical: `${SITE_URL}/invest/digital-infrastructure` },
   openGraph: {
     title: `Digital Infrastructure Investment in Australia (${CURRENT_YEAR})`,

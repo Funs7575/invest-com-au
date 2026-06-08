@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Commercial Property Investment in Australia (${CURRENT_YEAR}) — A Plain-English Guide`,
-  description: `What commercial property investment is, how it works, and the ways Australians gain exposure — direct ownership, A-REITs, unlisted trusts, syndicates, and property ETFs. Yields, leases, risks, and tax explained. ${UPDATED_LABEL}.`,
+  description: `Australian commercial property investment: A-REITs, syndicates, unlisted trusts, and direct ownership. Yields, leases, and tax. ${UPDATED_LABEL}.`,
   alternates: { canonical: `${SITE_URL}/invest/commercial-property` },
   openGraph: {
     title: `Commercial Property Investment in Australia (${CURRENT_YEAR})`,
