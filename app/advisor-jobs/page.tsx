@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, absoluteUrl, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 300; // 5 min ISR
 
@@ -26,6 +27,27 @@ export const metadata: Metadata = {
     images: [{ url: `/api/og?title=${encodeURIComponent("Advisor Jobs Australia")}&sub=${encodeURIComponent("Financial Planning · SMSF · Wealth Management · Mortgage Broking")}`, width: 1200, height: 630 }],
   },
 };
+
+const ADVISOR_JOBS_FAQS = [
+  {
+    q: "What types of advisor roles are listed on this job board?",
+    a: "Invest.com.au's advisor jobs board lists open positions at Australian financial advisory firms across four employment types: full-time, part-time, contract, and casual. Roles listed include financial planners (CFP and non-CFP), paraplanning and support roles, SMSF accountants, mortgage brokers, client service managers, and wealth management associates. All roles are posted by verified advisory firms registered on the platform. Job descriptions include the role location, firm name, and a link to apply.",
+  },
+  {
+    q: "How do I apply for a role listed here?",
+    a: "Click on a job listing to go to its detail page. Each listing includes a full description and an 'Apply' button that takes you directly to the firm's own application process — most firms use email applications or their own careers page. Invest.com.au does not process applications or hold candidate data on behalf of firms. Contact the firm directly if you have questions about their recruitment process. If no detail page is available, the firm's profile page is linked from the listing.",
+  },
+  {
+    q: "I'm an advisory firm — how do I post a job?",
+    a: "Log in to your firm portal (/firm-portal/jobs) and click 'Post a job'. Fill in the role title, location, type, and description. Roles are reviewed before going live — typically within one business day. Job posts remain active for 60 days and can be renewed or edited from the portal. Posting is currently included in your firm's Invest.com.au subscription. If your firm is not yet registered, apply via /advisor-apply or contact us at hello@invest.com.au.",
+  },
+  {
+    q: "Are roles on this board limited to licensed advisers?",
+    a: "No. While most roles are for licensed or soon-to-be-licensed professionals, firms also post support roles (paraplanning, client admin, compliance) that don't require an AFSL or individual licence. Check the role description for specific requirements. Roles that require an active AFSL or authorised representative registration will state this in the description. If you're working toward your RG146 or CFP designation, look for firms that mention study support in their listing.",
+  },
+];
+
+const advisorJobsFaqLd = faqJsonLd(ADVISOR_JOBS_FAQS);
 
 const JOB_TYPE_LABELS: Record<string, string> = {
   full_time: "Full-time",
@@ -92,6 +114,12 @@ export default async function AdvisorJobsPage({ searchParams }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {advisorJobsFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(advisorJobsFaqLd) }}
+        />
+      )}
 
       <div className="bg-white min-h-screen">
         {/* Hero */}
@@ -199,6 +227,21 @@ export default async function AdvisorJobsPage({ searchParams }: PageProps) {
             >
               Manage job posts
             </Link>
+          </section>
+
+          <section className="mt-10 border-t border-slate-200 pt-8">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {ADVISOR_JOBS_FAQS.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </section>
         </div>
       </div>
