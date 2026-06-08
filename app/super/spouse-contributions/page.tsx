@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Spouse Super Contributions & Tax Offset Guide 2026 — Up to $540",
   description:
-    "Learn how the spouse super contribution tax offset works in Australia. Contribute to your spouse's super and claim up to $540 tax offset if your spouse earns below $40,000. Eligibility, worked examples, and comparison with super splitting. Updated 2026.",
+    "Spouse super contribution tax offset: claim up to $540/year when your spouse earns under $40,000. Eligibility rules, worked examples, and super splitting comparison. Updated 2026.",
   openGraph: {
     title: "Spouse Super Contributions & Tax Offset Guide 2026 — Up to $540",
     description:

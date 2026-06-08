@@ -8,7 +8,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
 export const metadata: Metadata = {
   title: "Advertise With Us",
-  description: "Reach thousands of Australian investors actively researching brokers. Promote your brokerage on Invest.com.au with CPC campaigns, featured placements, and sponsorship packages.",
+  description: "Reach Australian investors actively comparing brokers. CPC campaigns, featured placements, and sponsorship packages on Invest.com.au.",
   alternates: { canonical: `${siteUrl}/advertise` },
   openGraph: {
     title: "Advertise With Us",

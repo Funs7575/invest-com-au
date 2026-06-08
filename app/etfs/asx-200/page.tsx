@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `ASX 200 ETFs Australia (${CURRENT_YEAR}) — VAS vs A200 vs IOZ vs STW`,
-  description: `The complete guide to ASX 200 and Australian shares ETFs: VAS, A200, IOZ, STW, VHY, and MVW compared on MER, holdings, and franking credits. Concentration risk, returns history, and portfolio building. ${UPDATED_LABEL}.`,
+  description: `ASX 200 ETFs compared — VAS, A200, IOZ, STW, VHY, MVW: fees (MER), holdings, franking credits, and concentration risk. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `ASX 200 ETFs (${CURRENT_YEAR}) — The Cornerstone of Australian Portfolios`,
     description: "Low-cost, diversified exposure to Australia's largest listed companies. Compare the major ASX 200 and ASX 300 index ETFs and understand franking credits, concentration risk, and tax.",

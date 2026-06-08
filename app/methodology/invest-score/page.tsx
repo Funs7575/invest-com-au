@@ -9,6 +9,20 @@ export const metadata = {
   description:
     "How Invest.com.au computes The Invest Score — a daily composite of Australian market signals. Methodology, component weights, and compliance notes.",
   alternates: { canonical: "/methodology/invest-score" },
+  openGraph: {
+    title: `The Invest Score — Methodology | ${SITE_NAME}`,
+    description:
+      "Daily composite of ASX 200, VIX, AUD/USD, and credit spreads. Component weights and compliance notes.",
+    url: "/methodology/invest-score",
+    images: [
+      {
+        url: "/api/og?title=The+Invest+Score&subtitle=Methodology+%7C+Component+Weights+%7C+Compliance+Notes&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 const breadcrumbLd = breadcrumbJsonLd([

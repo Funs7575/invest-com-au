@@ -13,7 +13,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Find a Financial Advisor for Your Life Event | Invest.com.au",
   description:
-    "Major life events need the right financial advice. Whether you're buying your first home, having a baby, selling a business, or approaching retirement — tell us what's happening and we'll match you with the right advisor.",
+    "Major life events — first home, new baby, business sale, retirement. Tell us what's happening and we'll match you with the right licensed financial adviser.",
   alternates: { canonical: `${SITE_URL}/find-advisor/life-event` },
   openGraph: {
     title: "Find a Financial Advisor for Your Life Event",

@@ -9,6 +9,20 @@ export const metadata: Metadata = {
   description:
     "Choose the right plan for your advisory practice. Get qualified leads, priority matching, and premium placement on Invest.com.au.",
   alternates: { canonical: "/for-advisors/pricing" },
+  openGraph: {
+    title: "Advisor Plans & Pricing",
+    description:
+      "Pay-per-lead pricing for Australian financial advisers. Free, Growth, Pro, and Elite tiers — no lock-in contracts.",
+    url: "/for-advisors/pricing",
+    images: [
+      {
+        url: "/api/og?title=Advisor+Plans+%26+Pricing&subtitle=Pay-per-lead+%7C+No+lock-in+%7C+AFSL+verified&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 const PRICING_FAQS = [
