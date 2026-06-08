@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { getETFByTicker, ALL_TICKERS, type ETF } from "@/lib/etf-data";
 import DividendProjectionWidget from "@/components/etf/DividendProjectionWidget";
@@ -90,6 +91,27 @@ export default async function ETFTickerPage({
   };
 
   const aumDisplay = formatAUM(etf.aumMillions);
+
+  const etfFaqs = [
+    {
+      q: `What is ${etf.ticker} and what does it invest in?`,
+      a: `${etf.ticker} is the ${etf.name}, issued by ${etf.provider} and listed on the ASX since ${etf.inceptionYear}. It tracks the ${etf.benchmark} benchmark and provides exposure to ${assetClassLabel(etf.assetClass).toLowerCase()}. As at the most recent data, ${etf.ticker} manages ${aumDisplay} in assets under management.`,
+    },
+    {
+      q: `What are ${etf.ticker}'s fees?`,
+      a: `${etf.ticker} has a management expense ratio (MER) of ${etf.mer}% per year — meaning you pay $${(etf.mer * 10).toFixed(2)} annually for every $1,000 invested, before any market gains or losses. This fee is deducted from the fund's assets daily, so you don't pay it directly. Always compare the MER plus any brokerage you pay to buy/sell ETF units when assessing total cost of ownership.`,
+    },
+    {
+      q: `Is ${etf.ticker} a good investment?`,
+      a: `Whether ${etf.ticker} is suitable depends on your investment goals, risk tolerance, time horizon, and tax situation. ${etf.ticker} provides diversified ${assetClassLabel(etf.assetClass).toLowerCase()} exposure at a MER of ${etf.mer}% p.a. with ${aumDisplay} AUM. This is general information only — it does not take into account your personal circumstances. Speak with an AFSL-licensed financial adviser for personalised advice. Use invest.com.au/find-advisor to connect with a specialist.`,
+    },
+    {
+      q: `How do I buy ${etf.ticker}?`,
+      a: `${etf.ticker} is listed on the ASX under the ticker symbol "${etf.ticker}" and can be purchased through any ASX-connected brokerage account (share trading platform). You place a buy order just as you would for an individual share. Consider comparing brokerage fees, CHESS sponsorship, and minimum trade amounts before choosing a broker. Browse our broker comparison at invest.com.au/best to find the right platform for your needs. Remember that ETF investing carries market risk and past performance is not a reliable indicator of future performance.`,
+    },
+  ];
+  const etfFaqLd = faqJsonLd(etfFaqs);
+
   const grossedUpYield =
     etf.frankingPercent > 0
       ? (etf.distributionYield / (1 - 0.3) * (1 - (1 - etf.frankingPercent / 100) * 0.3)).toFixed(1)
@@ -105,6 +127,10 @@ export default async function ETFTickerPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(etfFaqLd) }}
       />
 
       {/* Hero */}
@@ -291,6 +317,34 @@ export default async function ETFTickerPage({
           </div>
         </section>
       )}
+
+      {/* FAQ */}
+      <section className="py-10 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-xl font-bold text-slate-900 mb-6">
+            Frequently asked questions — {etf.ticker} ETF
+          </h2>
+          <div className="divide-y divide-slate-100">
+            {etfFaqs.map(({ q, a }) => (
+              <details key={q} className="group py-4">
+                <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                  {q}
+                  <svg
+                    className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* CTA */}
       <section className="py-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">

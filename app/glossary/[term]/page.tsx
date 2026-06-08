@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { GlossaryEntry } from "@/lib/glossary";
 import { getGlossaryBySlug, getGlossaryEntries } from "@/lib/glossary-db";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
-import { definedTermPageJsonLd, glossaryTermQaJsonLd } from "@/lib/schema-markup";
+import { definedTermPageJsonLd, glossaryTermQaJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
 
@@ -90,12 +90,29 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
     { name: entry.term },
   ]);
 
+  const glossaryFaqs = [
+    {
+      q: `What does ${entry.term} mean for Australian investors?`,
+      a: `${entry.definition} Understanding ${entry.term} is important${entry.category ? ` for anyone involved in ${entry.category.toLowerCase()} in Australia` : " for Australian investors"} — it influences decisions around portfolio construction, tax planning, and risk management. If you're unsure how ${entry.term} applies to your situation, seek advice from an AFSL-licensed financial adviser.`,
+    },
+    {
+      q: `How does ${entry.term} affect my investment portfolio?`,
+      a: `The impact of ${entry.term} on your portfolio depends on your investment strategy, tax position, and asset allocation. ${entry.category ? `As a concept within ${entry.category.toLowerCase()}, it` : "It"} can affect everything from return calculations to compliance obligations. For personalised guidance on how ${entry.term} applies to your specific investments, consult a licensed financial adviser at invest.com.au/find-advisor.`,
+    },
+    {
+      q: `Is ${entry.term} regulated in Australia?`,
+      a: `Investment activities and financial products related to ${entry.term} are regulated in Australia by ASIC (Australian Securities and Investments Commission) under the Corporations Act 2001. Financial advisers who provide advice about ${entry.term} must hold a valid Australian Financial Services Licence (AFSL). You can verify any adviser's credentials at connect.asic.gov.au. This content is general information only — not personal financial advice.`,
+    },
+  ];
+  const glossaryFaqLd = faqJsonLd(glossaryFaqs);
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* GEO: QAPage — "What is [term]?" canonical answer for AI-answer engines */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(qaLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(glossaryFaqLd) }} />
 
       <div className="min-h-screen bg-slate-50">
         {/* Breadcrumb */}
@@ -180,6 +197,30 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
               </div>
             </div>
           )}
+
+          {/* FAQ accordion */}
+          <div className="mt-8">
+            <h2 className="text-lg font-bold text-slate-900 mb-3">Common questions</h2>
+            <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
+              {glossaryFaqs.map(({ q, a }) => (
+                <details key={q} className="group px-5 py-4">
+                  <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                    {q}
+                    <svg
+                      className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <p className="mt-3 text-sm text-slate-600 leading-relaxed">{a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
 
           {/* Back to glossary */}
           <div className="mt-8 text-center">
