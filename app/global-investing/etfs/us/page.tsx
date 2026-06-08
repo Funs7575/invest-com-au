@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `US ETFs for Australian Investors (${CURRENT_YEAR}) — VOO, IVV, QQQ, NDQ & the VTS Estate-Tax Trap`,
-  description: `How Australians invest in US ETFs: US-domiciled (VOO, SPY, QQQ, VTI) vs ASX-listed US-exposure ETFs (IVV, NDQ, VTS). US estate tax, W-8BEN, currency hedging, FITO and the AMMA tax advantage explained. ${UPDATED_LABEL}.`,
+  description: `US ETFs for Australians: US-domiciled (VOO, SPY, QQQ) vs ASX-listed (IVV, NDQ, VTS). US estate tax, W-8BEN, and FITO explained. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `US ETFs for Australian Investors (${CURRENT_YEAR})`,
     description:

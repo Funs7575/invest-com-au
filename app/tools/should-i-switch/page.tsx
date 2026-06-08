@@ -17,7 +17,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Should I Switch Broker? Savings Calculator (${CURRENT_YEAR}) — ${SITE_NAME}`,
   description:
-    "See how much you'd save per year by switching Australian broker. Enter your current platform, trade size, and frequency — we compute the annual cost across every major broker and rank the top three cheapest alternatives.",
+    "How much could you save by switching broker? Enter your platform, trade size, and frequency — we rank the cheapest Australian alternatives.",
   alternates: { canonical: "/tools/should-i-switch" },
   openGraph: {
     title: "Should I Switch Broker? — Annual Savings Calculator",

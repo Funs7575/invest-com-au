@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Super Co-Contribution Guide — Government Matching Explained (${CURRENT_YEAR})`,
   description:
-    "Complete guide to the Australian government super co-contribution scheme. How to claim up to $500 free government money in your super fund, income thresholds, eligibility requirements, and worked examples. Updated 2024-25.",
+    "Government super co-contribution: claim up to $500 free in your super. Income thresholds, eligibility, and worked examples. Updated 2025–26.",
   alternates: { canonical: `${SITE_URL}/super/co-contribution` },
   openGraph: {
     title: `Super Co-Contribution — Up to $500 Free Government Money in Your Super (${CURRENT_YEAR})`,

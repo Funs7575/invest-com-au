@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: `Investment Concierge — Ask Invest.com.au (${CURRENT_YEAR})`,
   description:
-    "Ask anything about Australian investing platforms, SMSF structures, foreign investor rules, funds, advisors or ETFs. Free AI concierge — no personal financial advice, always points to a licensed adviser for personal questions.",
+    "Free AI concierge for Australian investors: ask about platforms, SMSFs, foreign investor rules, funds, and ETFs. Not personal financial advice.",
   alternates: { canonical: "/concierge" },
   robots: {
     index: true,

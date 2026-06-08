@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Alternative Asset Returns Calculator (${CURRENT_YEAR}) — Watches, Cars, Wine, ASX, Property`,
   description:
-    "Estimate what an investment in luxury watches, classic cars, fine wine, ASX 200 or Australian residential property would be worth today. Compare alternative-asset index returns side by side, using historical annualised averages.",
+    "Compare alternative asset returns — watches, cars, wine, ASX 200, and residential property — using historical annualised averages.",
   alternates: { canonical: "/tools/alternative-returns" },
   openGraph: {
     title: `Alternative Asset Returns Calculator (${CURRENT_YEAR})`,

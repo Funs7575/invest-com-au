@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Best Sector ETFs Australia (${CURRENT_YEAR}) — Technology, Healthcare, Resources & More`,
-  description: `Compare the best sector ETFs in Australia: HACK (cybersecurity), DRUG (healthcare), NDQ (tech), OZR (resources), QFN (financials) and more. Targeted sector exposure analysed by MER, performance, and risk. ${UPDATED_LABEL}.`,
+  description: `Best sector ETFs in Australia: HACK, DRUG, NDQ, OZR, QFN and more. Targeted exposure compared by MER, performance, and risk. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best Sector ETFs Australia (${CURRENT_YEAR})`,
     description: "Complete guide to Australian sector ETFs. Target technology, healthcare, resources, financials and more with a single ETF.",

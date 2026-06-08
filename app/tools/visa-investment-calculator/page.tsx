@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Australian Investor Visa Calculator (${CURRENT_YEAR}) — Business 188, SIV, Premium Investor, Global Talent`,
   description:
-    "Compare Australian investor visa pathways: Business Innovation (188A), Investor (188B), Significant Investor (188C), Premium Investor, and Global Talent. Investment thresholds, stay requirements, and pathway to permanent residency.",
+    "Australian investor visa pathways: 188A, 188B, 188C, Premium Investor, and Global Talent. Investment thresholds, stay requirements, and PR pathways.",
   alternates: { canonical: "/tools/visa-investment-calculator" },
   openGraph: {
     title: `Australian Investor Visa Calculator (${CURRENT_YEAR})`,

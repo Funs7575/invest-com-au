@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `First Home Super Saver (FHSS) Scheme Guide — ${CURRENT_YEAR} | invest.com.au`,
-  description: `Complete FHSS guide for Australian first home buyers: how it works, $15k/year limit, $50k lifetime cap, tax savings, concessional vs non-concessional contributions, the 7-step process, and key gotchas. ${UPDATED_LABEL}.`,
+  description: `FHSS guide: $15k/year and $50k lifetime cap, tax savings, contribution types, and the 7-step claim process. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `First Home Super Saver (FHSS) Scheme Guide (${CURRENT_YEAR})`,
     description:
