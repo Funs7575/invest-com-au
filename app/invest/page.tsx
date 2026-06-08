@@ -18,6 +18,7 @@ import {
 import type { InvestmentListing } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import { listingUrl, categoryForListing } from "@/lib/listing-url";
+import { faqJsonLd } from "@/lib/schema-markup";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { loadInvestPageContext } from "@/lib/listing-page-context";
@@ -28,6 +29,25 @@ import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 
 const log = logger("invest-marketplace");
+
+const INVEST_FAQS = [
+  {
+    q: "What types of investment opportunities are listed on Invest.com.au?",
+    a: "The marketplace lists private Australian investment opportunities across 15+ sectors: businesses for sale (cafes, agencies, e-commerce, practices), mining and exploration tenements (gold, lithium, copper, rare earths), farmland (cropping, dairy, viticulture), commercial property (office, industrial, retail, medical), franchises, renewable energy projects (solar, wind, battery, hydrogen), startups and pre-IPO equity, alternative assets (wine, art, classic cars), private credit, infrastructure, managed funds, royalty streams, income-producing assets (vending, ATMs, car washes), and wholesale-only private equity. Listings are direct from vendors, syndicates, and fund managers — not a secondary market.",
+  },
+  {
+    q: "What does 'FIRB-eligible' mean on investment listings?",
+    a: "FIRB-eligible flags that the listing has been identified by the vendor as suitable for foreign investors subject to Foreign Investment Review Board (FIRB) rules. Foreign persons must obtain FIRB approval to acquire certain Australian assets — including commercial property, agricultural land, and stakes in sensitive businesses above the applicable monetary threshold. Always confirm FIRB requirements with a specialist before investing.",
+  },
+  {
+    q: "How do I list an investment opportunity on the Invest.com.au marketplace?",
+    a: "Go to /invest/list to submit a listing. You can list businesses for sale, investment property, mining tenements, managed fund offers, syndicate placements, or any other private investment opportunity. Basic listings are free; featured placements (pinned position, larger card, more photos, FIRB/SIV badge) are available as paid upgrades. All listings are reviewed for compliance with general advice rules before going live.",
+  },
+  {
+    q: "What is a SIV-complying investment on the marketplace?",
+    a: "SIV-complying (Significant Investor Visa) means the listing has been flagged as potentially eligible as a complying investment under Australia's Significant Investor Visa program (subclass 188C), which requires AUD $5 million deployed into approved fund categories. Note: SIV eligibility must be confirmed with an immigration investment lawyer and the fund manager — Invest.com.au does not make eligibility determinations. The SIV visa class was officially closed to new applications in 2024; existing visa holders may continue to hold complying investments.",
+  },
+];
 
 export const revalidate = 3600;
 
@@ -208,6 +228,8 @@ export default async function InvestMarketplacePage() {
     { name: "Opportunities" },
   ]);
 
+  const investFaqLd = faqJsonLd(INVEST_FAQS);
+
   const webPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -243,6 +265,7 @@ export default async function InvestMarketplacePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
+      {investFaqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(investFaqLd) }} />}
 
       {/* ── Dark marketplace hero (v2 confident-fintech) ─────────── */}
       <section className="relative overflow-hidden bg-gradient-to-b from-ink-900 to-ink-800 text-white">
@@ -435,6 +458,24 @@ export default async function InvestMarketplacePage() {
       </div>
 
       <HomeToolsStrip />
+
+      {/* FAQ accordion — GEO pivot: answer-first FAQ for AI citation */}
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-4xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {INVEST_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* ── Compliance band (page bottom; was above-the-fold before
             the rebuild, eating 4 lines of small print before any
