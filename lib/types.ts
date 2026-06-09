@@ -1509,6 +1509,8 @@ export interface InvestmentListing {
   enquiries?: number;
   created_at: string;
   updated_at: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface InvestmentVertical {

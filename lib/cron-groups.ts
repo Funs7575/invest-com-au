@@ -33,6 +33,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/confirm-lead-notify",
     "/api/cron/lead-sla-check",
     "/api/cron/editorial-auto-publish",
+    "/api/cron/geocode-listings",
   ],
   "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks", "/api/cron/retry-outbound-webhooks", "/api/cron/retry-consumer-webhooks", "/api/cron/auction-close"],
   // every-6h removed: its only member, /api/admin/run-migration, is now

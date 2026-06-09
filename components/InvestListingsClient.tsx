@@ -27,6 +27,10 @@ import SortDropdown from "@/components/directory/SortDropdown";
 import FilterPanel from "@/components/directory/FilterPanel";
 import FacetGroup from "@/components/directory/FacetGroup";
 import RangeSlider from "@/components/directory/RangeSlider";
+import DualRangeSlider from "@/components/directory/DualRangeSlider";
+import SubCategoryChips from "@/components/directory/SubCategoryChips";
+import SmartFilterBar from "@/components/directory/SmartFilterBar";
+import { getSubCategoryChips } from "@/lib/sub-categories";
 
 // ─── Props ───────────────────────────────────────────────────────────
 export interface InvestListingsClientProps {
@@ -135,6 +139,14 @@ export default function InvestListingsClient({
   const activeFreshness = searchParams.get("fresh") ?? ""; // 'new_this_week' | 'closing_soon'
   const activeFeaturedOnly = searchParams.get("featured") === "true";
   const activeMinYield = searchParams.get("min_yield") ?? ""; // numeric % string
+  const activeMaxYield = searchParams.get("max_yield") ?? ""; // numeric % string
+  const activeStages = useMemo(
+    () => new Set((searchParams.get("stage") ?? "").split(",").filter(Boolean)),
+    [searchParams],
+  );
+  const activeAsxSector = searchParams.get("sector") ?? "";
+  const activeAsxMcap = searchParams.get("mcap") ?? "";
+  const activeDivYieldMin = searchParams.get("div_yield_min") ?? "";
   const activeEsicOnly = searchParams.get("esic") === "true";
 
   // Free-text search (URL-backed so back-button works + share-able)
@@ -164,6 +176,7 @@ export default function InvestListingsClient({
     for (const key of [
       "category", "sub", "state", "price", "sort", "q", "firb", "siv",
       "wholesale", "investor", "kind", "fresh", "featured", "min_yield", "esic",
+      "max_yield", "stage", "sector", "mcap", "div_yield_min",
     ]) {
       next.delete(key);
     }
@@ -305,6 +318,20 @@ export default function InvestListingsClient({
     if (activeInvestorType === "siv") {
       result = result.filter((l) => l.siv_complying === true);
     }
+    if (activeInvestorType === "wholesale" || activeInvestorType === "sophisticated") {
+      result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        return km["wholesale_only"] === true || km["s708_required"] === true || km["accredited_only"] === true;
+      });
+    }
+    if (activeInvestorType === "family_office") {
+      result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        const wholesaleGated = km["wholesale_only"] === true || km["s708_required"] === true || km["accredited_only"] === true;
+        const highMin = typeof km["min_investment_cents"] === "number" && km["min_investment_cents"] >= 500_000_00;
+        return wholesaleGated || highMin;
+      });
+    }
 
     if (activeFreshness === "new_this_week") {
       result = result.filter((l) => freshnessSignal(l) === "new_this_week");
@@ -317,25 +344,60 @@ export default function InvestListingsClient({
       result = result.filter((l) => l.listing_type === "featured" || l.listing_type === "premium");
     }
 
-    if (activeMinYield) {
-      const minYield = Number(activeMinYield);
-      if (!Number.isNaN(minYield)) {
+    if (activeMinYield || activeMaxYield) {
+      const lo = Number(activeMinYield) || 0;
+      const hi = Number(activeMaxYield) || Infinity;
+      result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        const candidates = [
+          km["distribution_yield"], km["target_yield_pct"], km["target_yield_pa"],
+          km["dividend_yield"], km["yield_percent"], km["target_irr_percent"],
+          km["target_irr"], km["historical_return_pa"], km["return_5yr_pa"],
+          km["target_return_pa"], km["estimated_return_percent"],
+        ];
+        for (const c of candidates) {
+          let n: number | null = null;
+          if (typeof c === "number") n = c;
+          else if (typeof c === "string") {
+            const parsed = Number(c.replace(/[^\d.]/g, ""));
+            if (!Number.isNaN(parsed)) n = parsed;
+          }
+          if (n !== null && n >= lo && (hi === Infinity || n <= hi)) return true;
+        }
+        return false;
+      });
+    }
+
+    if (activeStages.size > 0) {
+      result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        const stage = km["stage"];
+        return typeof stage === "string" && activeStages.has(stage);
+      });
+    }
+
+    if (activeAsxSector) {
+      result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        return km["sector"] === activeAsxSector;
+      });
+    }
+
+    if (activeAsxMcap) {
+      result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        return km["market_cap_band"] === activeAsxMcap;
+      });
+    }
+
+    if (activeDivYieldMin) {
+      const minDiv = Number(activeDivYieldMin);
+      if (!Number.isNaN(minDiv)) {
         result = result.filter((l) => {
           const km = (l.key_metrics ?? {}) as Record<string, unknown>;
-          const candidates = [
-            km["distribution_yield"], km["target_yield_pct"], km["target_yield_pa"],
-            km["dividend_yield"], km["yield_percent"], km["target_irr_percent"],
-            km["target_irr"], km["historical_return_pa"], km["return_5yr_pa"],
-            km["target_return_pa"], km["estimated_return_percent"],
-          ];
-          for (const c of candidates) {
-            if (typeof c === "number" && c >= minYield) return true;
-            if (typeof c === "string") {
-              const n = Number(c.replace(/[^\d.]/g, ""));
-              if (!Number.isNaN(n) && n >= minYield) return true;
-            }
-          }
-          return false;
+          const dy = km["dividend_yield"];
+          const n = typeof dy === "number" ? dy : typeof dy === "string" ? Number(dy.replace(/[^\d.]/g, "")) : NaN;
+          return !Number.isNaN(n) && n >= minDiv;
         });
       }
     }
@@ -376,6 +438,7 @@ export default function InvestListingsClient({
     listings, activeKinds, activeCategory, activeSubcategory, activeState,
     activeTicket, activeQuery, activeFirbOnly, activeSivOnly, activeWholesaleOnly,
     activeInvestorType, activeFreshness, activeFeaturedOnly, activeMinYield,
+    activeMaxYield, activeStages, activeAsxSector, activeAsxMcap, activeDivYieldMin,
     activeEsicOnly, activeSort,
   ]);
 
@@ -452,7 +515,19 @@ export default function InvestListingsClient({
     });
   }
   if (activeFeaturedOnly) activeChips.push({ label: "Featured only", onClear: () => setParams({ featured: "" }) });
-  if (activeMinYield) activeChips.push({ label: `Yield ≥ ${activeMinYield}%`, onClear: () => setParams({ min_yield: "" }) });
+  if (activeMinYield && activeMaxYield) {
+    activeChips.push({ label: `Yield ${activeMinYield}%–${activeMaxYield}%`, onClear: () => setParams({ min_yield: "", max_yield: "" }) });
+  } else if (activeMinYield) {
+    activeChips.push({ label: `Yield ≥ ${activeMinYield}%`, onClear: () => setParams({ min_yield: "" }) });
+  } else if (activeMaxYield) {
+    activeChips.push({ label: `Yield ≤ ${activeMaxYield}%`, onClear: () => setParams({ max_yield: "" }) });
+  }
+  if (activeStages.size > 0) {
+    activeChips.push({ label: `Stage: ${Array.from(activeStages).join(", ")}`, onClear: () => setParams({ stage: "" }) });
+  }
+  if (activeAsxSector) activeChips.push({ label: `Sector: ${activeAsxSector}`, onClear: () => setParams({ sector: "" }) });
+  if (activeAsxMcap) activeChips.push({ label: `Cap: ${activeAsxMcap}`, onClear: () => setParams({ mcap: "" }) });
+  if (activeDivYieldMin) activeChips.push({ label: `Div ≥ ${activeDivYieldMin}%`, onClear: () => setParams({ div_yield_min: "" }) });
   if (activeEsicOnly) activeChips.push({ label: "ESIC-eligible", onClear: () => setParams({ esic: "" }) });
   if (activeQuery) {
     activeChips.push({
@@ -470,8 +545,13 @@ export default function InvestListingsClient({
     activeWholesaleOnly,
     activeEsicOnly,
     activeMinYield,
+    activeMaxYield,
     activeFreshness,
     activeFeaturedOnly,
+    activeStages.size > 0 ? "stage" : "",
+    activeAsxSector,
+    activeAsxMcap,
+    activeDivYieldMin,
   ].filter(Boolean).length;
 
   // Drive kind-specific filters off the active narrowed kind.
@@ -552,6 +632,12 @@ export default function InvestListingsClient({
             />
           </div>
 
+          {/* AI filter bar — natural language → URL params */}
+          <SmartFilterBar
+            setParams={setParams}
+            surface="invest"
+          />
+
           {/* Primary facet pill-bar + active-filter chips (compliance-safe),
               shown on ALL breakpoints — this is now the single filter
               surface; the long-tail facets open from its "All filters"
@@ -601,6 +687,11 @@ export default function InvestListingsClient({
                 activeFreshness={activeFreshness}
                 activeFeaturedOnly={activeFeaturedOnly}
                 activeMinYield={activeMinYield}
+                activeMaxYield={activeMaxYield}
+                activeStages={activeStages}
+                activeAsxSector={activeAsxSector}
+                activeAsxMcap={activeAsxMcap}
+                activeDivYieldMin={activeDivYieldMin}
                 activeEsicOnly={activeEsicOnly}
                 kindSpec={kindSpec}
                 intentCountry={intentCountry ?? null}
@@ -613,28 +704,34 @@ export default function InvestListingsClient({
 
           {/* Results */}
           <div className="min-w-0">
-            {subCategories.length > 0 && (
-              <div className="mb-5">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">Narrow by sub-type</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {subCategories.map((sub) => {
-                    const isActive = sub === activeSubcategory;
-                    return (
-                      <button
-                        key={sub}
-                        onClick={() => setParams({ sub: isActive ? "" : sub })}
-                        aria-pressed={isActive}
-                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
-                          isActive ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                        }`}
-                      >
-                        {sub.replace(/_/g, " ")}
-                      </button>
-                    );
-                  })}
+            {(() => {
+              const canonicalChips = activeCategory !== "all" ? getSubCategoryChips(activeCategory) : [];
+              const liveSubs = new Set(subCategories);
+              // Merge canonical chips (with defined labels) + any DB subs not in canonical list
+              const chipOptions = [
+                ...canonicalChips.filter((c) => liveSubs.has(c.value)).map((c) => ({
+                  ...c,
+                  count: filtered.filter((l) => l.sub_category === c.value).length,
+                })),
+                ...subCategories
+                  .filter((s) => !canonicalChips.some((c) => c.value === s))
+                  .map((s) => ({
+                    value: s,
+                    label: s.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
+                    count: filtered.filter((l) => l.sub_category === s).length,
+                  })),
+              ];
+              return chipOptions.length > 0 ? (
+                <div className="mb-5">
+                  <SubCategoryChips
+                    options={chipOptions}
+                    value={activeSubcategory}
+                    onChange={(v) => setParams({ sub: v })}
+                    label="Narrow by sub-type"
+                  />
                 </div>
-              </div>
-            )}
+              ) : null;
+            })()}
 
             <p className="text-xs text-slate-500 mb-4">
               <span className="font-bold text-slate-700">{filtered.length}</span> listing{filtered.length !== 1 ? "s" : ""} found
@@ -793,6 +890,11 @@ interface InvestFilterFieldsProps {
   activeFreshness: string;
   activeFeaturedOnly: boolean;
   activeMinYield: string;
+  activeMaxYield: string;
+  activeStages: Set<string>;
+  activeAsxSector: string;
+  activeAsxMcap: string;
+  activeDivYieldMin: string;
   activeEsicOnly: boolean;
   kindSpec: ReturnType<typeof filterSpecForKind>;
   intentCountry: string | null;
@@ -801,17 +903,39 @@ interface InvestFilterFieldsProps {
 }
 
 const YIELD_PRESETS = [
-  { label: "Any", value: 0 },
-  { label: "3%+", value: 3 },
-  { label: "5%+", value: 5 },
-  { label: "8%+", value: 8 },
-  { label: "12%+", value: 12 },
+  { label: "5–10%", low: 5, high: 10 },
+  { label: "10–15%", low: 10, high: 15 },
+  { label: "15%+", low: 15, high: 30 },
+] as const;
+
+const STAGE_OPTIONS = [
+  { value: "pre_seed", label: "Pre-seed" },
+  { value: "seed", label: "Seed" },
+  { value: "series_a", label: "Series A" },
+  { value: "series_b", label: "Series B" },
+  { value: "pre_ipo", label: "Pre-IPO" },
+  { value: "growth", label: "Growth" },
+] as const;
+
+const ASX_SECTORS = [
+  "Energy", "Materials", "Industrials", "Consumer Discretionary",
+  "Consumer Staples", "Health Care", "Financials", "Information Technology",
+  "Communication Services", "Utilities", "Real Estate",
+] as const;
+
+const ASX_MCAP_OPTIONS = [
+  { value: "nano", label: "Nano (< $50M)" },
+  { value: "micro", label: "Micro ($50M–$300M)" },
+  { value: "small", label: "Small ($300M–$2B)" },
+  { value: "mid", label: "Mid ($2B–$10B)" },
+  { value: "large", label: "Large ($10B+)" },
 ] as const;
 
 function InvestFilterFields({
   activeState, activeTicket, activeInvestorType,
   activeFirbOnly, activeSivOnly, activeWholesaleOnly,
-  activeFreshness, activeFeaturedOnly, activeMinYield, activeEsicOnly,
+  activeFreshness, activeFeaturedOnly, activeMinYield, activeMaxYield,
+  activeStages, activeAsxSector, activeAsxMcap, activeDivYieldMin, activeEsicOnly,
   kindSpec, intentCountry, complianceCounts, setParams,
 }: InvestFilterFieldsProps) {
   const complianceOptions = [
@@ -826,6 +950,7 @@ function InvestFilterFields({
   if (activeWholesaleOnly) complianceSelected.add("wholesale");
   if (activeEsicOnly) complianceSelected.add("esic");
   const minYieldValue = Number(activeMinYield) || 0;
+  const maxYieldValue = Number(activeMaxYield) || 30;
 
   return (
     <div className="space-y-5">
@@ -898,19 +1023,73 @@ function InvestFilterFields({
 
           {kindSpec.showYield && (
             <div>
-              <RangeSlider
-                label="Minimum yield / return"
+              <DualRangeSlider
+                label="Yield / return range"
                 min={0}
-                max={15}
+                max={30}
                 step={1}
-                value={minYieldValue}
-                onChange={(v) => setParams({ min_yield: v === 0 ? "" : String(v) })}
-                formatValue={(v) => (v === 0 ? "Any" : `${v}%`)}
+                valueLow={minYieldValue}
+                valueHigh={maxYieldValue}
+                onChangeLow={(v) => setParams({ min_yield: v === 0 ? "" : String(v) })}
+                onChangeHigh={(v) => setParams({ max_yield: v === 30 ? "" : String(v) })}
+                formatValue={(v) => `${v}%`}
                 presets={YIELD_PRESETS}
+                suffix="p.a."
               />
               <p className="text-[10px] text-slate-500 mt-1.5 leading-snug">
-                Matches any of: distribution yield, dividend yield, target IRR, historical return, target return.
+                Matches: distribution yield, dividend yield, target IRR, historical return, target return.
               </p>
+            </div>
+          )}
+
+          {kindSpec.showProjectMetrics && (
+            <div>
+              <FacetGroup
+                label="Raise stage"
+                options={STAGE_OPTIONS}
+                selected={activeStages as Set<string>}
+                onChange={(next) => setParams({ stage: Array.from(next).join(",") })}
+                layout="grid"
+              />
+            </div>
+          )}
+
+          {kindSpec.showAsxFilter && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-600 block mb-1.5">
+                  ASX Sector (GICS)
+                </label>
+                <select
+                  value={activeAsxSector}
+                  onChange={(e) => setParams({ sector: e.target.value })}
+                  aria-label="ASX Sector"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                >
+                  <option value="">All sectors</option>
+                  {ASX_SECTORS.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <FacetGroup
+                  label="Market cap"
+                  options={ASX_MCAP_OPTIONS}
+                  selected={new Set(activeAsxMcap ? [activeAsxMcap] : [])}
+                  onChange={(next) => setParams({ mcap: Array.from(next)[0] ?? "" })}
+                  layout="grid"
+                />
+              </div>
+              <div>
+                <RangeSlider
+                  label="Min dividend yield"
+                  min={0}
+                  max={12}
+                  step={0.5}
+                  value={Number(activeDivYieldMin) || 0}
+                  onChange={(v) => setParams({ div_yield_min: v === 0 ? "" : String(v) })}
+                  formatValue={(v) => v === 0 ? "Any" : `${v}%`}
+                />
+              </div>
             </div>
           )}
 

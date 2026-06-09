@@ -27,6 +27,7 @@ import ResultCount from "@/components/directory/ResultCount";
 import EmptyState from "@/components/directory/EmptyState";
 import CompareBar from "@/components/directory/CompareBar";
 import { FilterPill, FilterPopover } from "@/components/directory/FilterPill";
+import SmartFilterBar from "@/components/directory/SmartFilterBar";
 
 export interface ExpertTeamCard {
   id: number;
@@ -748,6 +749,20 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             ]}
           />
         )}
+
+        {/* AI filter bar — natural language → URL params */}
+        <div className="mb-3">
+          <SmartFilterBar
+            setParams={(updates) => {
+              const p = new URLSearchParams(searchParams.toString());
+              for (const [k, v] of Object.entries(updates)) {
+                if (v) p.set(k, v); else p.delete(k);
+              }
+              router.replace(`/advisors?${p.toString()}`, { scroll: false });
+            }}
+            surface="advisors"
+          />
+        </div>
 
         {/* Toolbar: search · all-filters · sort (mirrors /invest) */}
         <div className="flex gap-2 mb-3 items-center">
