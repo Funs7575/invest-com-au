@@ -18,6 +18,7 @@ vi.mock("@/lib/seo", () => ({
     items,
   })),
   SITE_URL: "https://invest.com.au",
+  SITE_NAME: "Invest.com.au",
   CURRENT_YEAR: 2026,
 }));
 
