@@ -1,21 +1,44 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 import Icon from "@/components/Icon";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Badge } from "@/components/ui/Badge";
+import FormStepper from "@/components/FormStepper";
 import {
   BRIEF_TEMPLATES,
   BRIEF_TEMPLATE_LABELS,
-  BRIEF_TEMPLATE_BLURBS,
   BRIEF_TEMPLATE_FIELDS,
   type FieldHint,
 } from "@/lib/briefs/templates";
 import type { BriefTemplate } from "@/lib/briefs/types";
+import {
+  getIntentById,
+  intentForTemplate,
+  type IntentDef,
+} from "@/lib/briefs/intent-catalog";
+import { scoreBriefStrength } from "@/lib/briefs/brief-strength";
+import IntentPicker from "@/components/briefs/IntentPicker";
+import BriefPreviewCard from "@/components/briefs/BriefPreviewCard";
+import BriefStrengthMeter from "@/components/briefs/BriefStrengthMeter";
+import MatchModeChooser, { type MatchPatch } from "@/components/briefs/MatchModeChooser";
+import BriefSuccess from "@/components/briefs/BriefSuccess";
 import ListingCompanionServices from "./ListingCompanionServices";
 
-type Step = "template" | "details" | "preference" | "contact" | "success";
+type Step = "intent" | "details" | "match" | "contact" | "success";
+
+const STEP_ORDER: Step[] = ["intent", "details", "match", "contact"];
+const STEPPER: { label: string }[] = [
+  { label: "What you need" },
+  { label: "Details" },
+  { label: "Matching" },
+  { label: "Contact" },
+];
 
 const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
 const BUDGETS = [
@@ -27,31 +50,15 @@ const BUDGETS = [
   { value: "not_sure", label: "Budget TBD" },
 ];
 
-const PROVIDER_PREFERENCES = [
-  { value: "any", label: "No preference" },
-  { value: "individual", label: "Individual expert" },
-  { value: "firm", label: "Firm / brokerage" },
-  { value: "expert_team", label: "Expert team" },
-  { value: "multiple", label: "Multiple professional responses" },
-];
+const PROVIDER_PREF_LABELS: Record<string, string> = {
+  any: "Any verified pro",
+  individual: "An individual expert",
+  firm: "A firm / brokerage",
+  expert_team: "An expert team",
+  multiple: "Multiple verified pros",
+};
 
-const ROUTING_MODES = [
-  {
-    value: "smart_match",
-    label: "Smart Match",
-    blurb: "We route to the most relevant verified providers.",
-  },
-  {
-    value: "direct",
-    label: "Send to a specific provider",
-    blurb: "Use a team/firm/individual slug from their profile page.",
-  },
-  {
-    value: "multi_response",
-    label: "Receive multiple responses",
-    blurb: "Open the brief up to several providers in parallel.",
-  },
-];
+const DRAFT_KEY = "brief-studio-draft:v1";
 
 interface FormState {
   brief_template: BriefTemplate | "";
@@ -84,7 +91,7 @@ const INITIAL: FormState = {
   location_state: "",
   payload: {},
   provider_preference: "any",
-  routing_mode: "smart_match",
+  routing_mode: "multi_response",
   target_team_slug: "",
   contact_name: "",
   contact_email: "",
@@ -109,24 +116,25 @@ export interface WorkspaceContext {
 
 interface BriefFormProps {
   /**
-   * Whether the AI co-pilot toggle should render. Resolved server-side
-   * via `isFlagEnabled('ai_match_request_copilot', ...)` in the parent
-   * server page. When false the toggle never renders, so the freeform
-   * textarea + Submit button path is never reachable client-side either.
+   * Whether the AI co-pilot drafting path is enabled. Resolved server-side
+   * via `isFlagEnabled('ai_match_request_copilot', ...)`. The freeform
+   * "describe it in your own words" entry always exists; when this is false
+   * it seeds a general brief from the text instead of calling the AI.
    */
   aiCopilotEnabled?: boolean;
-  /** Server-resolved active workspace — drives the "Filing as <kind>" chip
-   * and prefills contact fields. Null = not signed in or no active kind. */
+  /** Server-resolved active workspace — drives the "Filing as" chip and prefills contact. */
   workspace?: WorkspaceContext | null;
-  /** Server-resolved Investor Pro subscription state — unlocks the
-   * direct-route shortcut that skips the 24h smart-match window. */
+  /** Server-resolved Investor Pro subscription state — unlocks the direct-route perk. */
   proSubscriber?: boolean;
+  /** Honest count of active verified pros, for social proof. Null hides the number. */
+  proSupply?: number | null;
 }
 
 export default function BriefForm({
   aiCopilotEnabled = false,
   workspace = null,
   proSubscriber = false,
+  proSupply = null,
 }: BriefFormProps) {
   const searchParams = useSearchParams();
   const presetTeam = searchParams?.get("team") ?? "";
@@ -134,31 +142,26 @@ export default function BriefForm({
   const presetProviderPreference = searchParams?.get("provider_preference") ?? "";
   const presetRoutingMode = searchParams?.get("routing_mode") ?? "";
   const planId = searchParams?.get("plan_id") ?? "";
+  const hasPreset = !!(presetTeam || presetTemplate || planId);
 
-  // ── AI co-pilot state ───────────────────────────────────────────────
-  // The toggle only renders when the parent server page passed
-  // aiCopilotEnabled=true (feature flag on). When toggled ON, we replace
-  // the multi-step form with a single textarea. On submit the textarea
-  // POSTs to /api/briefs/ai-copilot; if confidence is high enough we
-  // pre-fill the form and drop the user back into step "details" to
-  // review. Otherwise we fall back to the manual flow with a toast.
-  const [copilotMode, setCopilotMode] = useState(false);
-  const [copilotText, setCopilotText] = useState("");
-  const [copilotLoading, setCopilotLoading] = useState(false);
-  const [copilotInfo, setCopilotInfo] = useState<string | null>(null);
+  // ── Freeform / AI co-pilot state ────────────────────────────────────
+  const [freeformMode, setFreeformMode] = useState(false);
+  const [freeformText, setFreeformText] = useState("");
+  const [freeformLoading, setFreeformLoading] = useState(false);
+  const [info, setInfo] = useState<string | null>(null);
 
-  const [step, setStep] = useState<Step>("template");
+  const [step, setStep] = useState<Step>("intent");
+  const [selectedIntentId, setSelectedIntentId] = useState<string | null>(
+    presetTemplate ? intentForTemplate(presetTemplate as BriefTemplate)?.id ?? null : null,
+  );
   const [form, setForm] = useState<FormState>(() => ({
     ...INITIAL,
     target_team_slug: presetTeam || "",
-    routing_mode: presetRoutingMode || (presetTeam ? "direct" : "smart_match"),
+    routing_mode: presetRoutingMode || (presetTeam ? "direct" : "multi_response"),
     provider_preference: presetProviderPreference || "any",
     brief_template: (BRIEF_TEMPLATES.includes(presetTemplate as BriefTemplate)
       ? (presetTemplate as BriefTemplate)
       : "") as BriefTemplate | "",
-    // Workspace-aware prefill: pulls contact name/email/phone from the
-    // signed-in user's active account-kind row so business + listing
-    // owners don't retype their own details.
     contact_name: workspace?.prefillName ?? INITIAL.contact_name,
     contact_email: workspace?.prefillEmail ?? INITIAL.contact_email,
     contact_phone: workspace?.prefillPhone ?? INITIAL.contact_phone,
@@ -171,8 +174,56 @@ export default function BriefForm({
     risk_review_status: string;
   } | null>(null);
   const [planPrefilled, setPlanPrefilled] = useState(false);
+  const [restoredDraft, setRestoredDraft] = useState(false);
+  const draftLoaded = useRef(false);
 
-  // Pre-fill from Get Matched action plan if plan_id present.
+  // ── Draft restore (once, only for clean anonymous starts) ───────────
+  useEffect(() => {
+    if (draftLoaded.current) return;
+    draftLoaded.current = true;
+    if (hasPreset || typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as { form?: FormState; step?: Step; intentId?: string | null };
+      const f = saved.form;
+      if (!f || typeof f !== "object") return;
+      // Only restore if there's meaningful content and a valid template.
+      const validTemplate = f.brief_template && BRIEF_TEMPLATES.includes(f.brief_template);
+      if (!validTemplate && !f.job_title && !f.job_description) return;
+      setForm((prev) => ({ ...prev, ...f }));
+      setSelectedIntentId(saved.intentId ?? null);
+      const restoredStep = saved.step && STEP_ORDER.includes(saved.step) ? saved.step : "details";
+      setStep(restoredStep);
+      setRestoredDraft(true);
+    } catch {
+      /* ignore malformed draft */
+    }
+  }, [hasPreset]);
+
+  // ── Draft autosave ──────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (planId || step === "intent" || step === "success") return;
+    try {
+      window.localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ form, step, intentId: selectedIntentId }),
+      );
+    } catch {
+      /* storage full / disabled — non-fatal */
+    }
+  }, [form, step, selectedIntentId, planId]);
+
+  function clearDraft() {
+    try {
+      if (typeof window !== "undefined") window.localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // ── Pre-fill from Get Matched action plan ───────────────────────────
   useEffect(() => {
     if (!planId) return;
     let cancelled = false;
@@ -195,14 +246,12 @@ export default function BriefForm({
           job_description: data.description ?? "Investment brief from action plan.",
           budget_band: plan?.budget_band ?? "not_sure",
           location_state: plan?.location_state ?? "NSW",
-          provider_preference:
-            presetProviderPreference || providerPrefForRoute(plan?.route),
-          routing_mode: presetRoutingMode || "smart_match",
+          provider_preference: presetProviderPreference || providerPrefForRoute(plan?.route),
+          routing_mode: presetRoutingMode || "multi_response",
           payload: plan?.answers ?? {},
         }));
+        setSelectedIntentId(intentForTemplate(template)?.id ?? null);
         setPlanPrefilled(true);
-        // Skip ahead to contact step since template + details + preference
-        // are now known.
         setStep("contact");
       } catch {
         /* ignore */
@@ -219,6 +268,25 @@ export default function BriefForm({
     return BRIEF_TEMPLATE_FIELDS[form.brief_template] ?? [];
   }, [form.brief_template]);
 
+  const strength = useMemo(
+    () =>
+      scoreBriefStrength({
+        title: form.job_title,
+        description: form.job_description,
+        budgetBand: form.budget_band,
+        locationState: form.location_state,
+        payload: form.payload,
+        fields,
+      }),
+    [form.job_title, form.job_description, form.budget_band, form.location_state, form.payload, fields],
+  );
+
+  const activeIntent = getIntentById(selectedIntentId);
+  const intentLabel =
+    activeIntent?.label ??
+    (form.brief_template ? BRIEF_TEMPLATE_LABELS[form.brief_template] : null);
+  const budgetLabel = BUDGETS.find((b) => b.value === form.budget_band)?.label ?? null;
+
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((p) => ({ ...p, [key]: value }));
   }
@@ -227,55 +295,88 @@ export default function BriefForm({
     setForm((p) => ({ ...p, payload: { ...p.payload, [key]: value } }));
   }
 
-  const canTemplate = !!form.brief_template;
   const canDetails =
     form.job_title.trim().length >= 8 &&
     form.job_description.trim().length >= 30 &&
-    form.budget_band &&
-    form.location_state &&
+    !!form.budget_band &&
+    !!form.location_state &&
     fields
       .filter((f) => f.required)
       .every((f) => {
         const v = form.payload[f.key];
-        if (f.kind === "multiselect") {
-          return Array.isArray(v) && v.length > 0;
-        }
+        if (f.kind === "multiselect") return Array.isArray(v) && v.length > 0;
         return typeof v === "string" && v.length > 0;
       });
-  const canPreference = !!form.provider_preference && !!form.routing_mode;
   const canContact =
     form.contact_name.trim().length > 0 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contact_email) &&
     form.consent;
 
-  async function runCopilot() {
-    if (copilotText.trim().length < 10) {
-      setCopilotInfo("Tell us a bit more — at least 10 characters.");
+  function selectIntent(intent: IntentDef) {
+    setSelectedIntentId(intent.id);
+    setForm((p) => ({
+      ...p,
+      brief_template: intent.template,
+      provider_preference: presetProviderPreference || intent.providerPreference || "any",
+      routing_mode: p.routing_mode || "multi_response",
+    }));
+    setInfo(null);
+    setStep("details");
+  }
+
+  function openFreeform() {
+    setFreeformMode(true);
+    setInfo(null);
+  }
+
+  async function submitFreeform() {
+    const text = freeformText.trim();
+    if (text.length < 10) {
+      setInfo("Tell us a bit more — at least 10 characters.");
       return;
     }
-    setCopilotLoading(true);
-    setCopilotInfo(null);
+    // No AI: seed a general brief from the text and let the user refine.
+    if (!aiCopilotEnabled) {
+      setForm((p) => ({
+        ...p,
+        brief_template: p.brief_template || "general",
+        job_description: p.job_description || text,
+      }));
+      setSelectedIntentId((id) => id ?? "general");
+      setFreeformMode(false);
+      setStep("details");
+      setInfo("We've started your brief — add a title and a few details below.");
+      return;
+    }
+    // AI co-pilot drafting path.
+    setFreeformLoading(true);
+    setInfo(null);
     try {
       const res = await fetch("/api/briefs/ai-copilot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description: copilotText }),
+        body: JSON.stringify({ description: text }),
       });
       if (res.status === 404) {
-        // Feature flag flipped off between server render and submit —
-        // bail back to the manual form silently.
-        setCopilotMode(false);
-        setCopilotInfo(null);
+        // Flag flipped off — fall back to seeding a general brief.
+        setForm((p) => ({
+          ...p,
+          brief_template: p.brief_template || "general",
+          job_description: p.job_description || text,
+        }));
+        setSelectedIntentId((id) => id ?? "general");
+        setFreeformMode(false);
+        setStep("details");
         return;
       }
       if (!res.ok) {
-        setCopilotInfo("We couldn't draft your brief. Use the form below instead.");
-        setCopilotMode(false);
+        setInfo("We couldn't draft your brief. Pick an option below instead.");
+        setFreeformMode(false);
         return;
       }
       const data = (await res.json()) as {
         ok: boolean;
-        payload: Partial<FormState> & {
+        payload: {
           brief_template?: BriefTemplate;
           job_title?: string;
           job_description?: string;
@@ -287,40 +388,33 @@ export default function BriefForm({
         confidence: number;
         missing_fields: string[];
       };
-      const ok =
-        data.ok &&
-        data.confidence >= 0.6 &&
-        (data.missing_fields?.length ?? 0) === 0;
-
-      // Pre-fill what we can regardless — even a low-confidence draft
-      // beats an empty form for the user.
+      const good = data.ok && data.confidence >= 0.6 && (data.missing_fields?.length ?? 0) === 0;
       const p = data.payload || {};
       const template = BRIEF_TEMPLATES.includes(p.brief_template as BriefTemplate)
         ? (p.brief_template as BriefTemplate)
-        : form.brief_template;
+        : form.brief_template || "general";
       setForm((prev) => ({
         ...prev,
         brief_template: template || "general",
         job_title: p.job_title ?? prev.job_title,
-        job_description: p.job_description ?? prev.job_description,
+        job_description: p.job_description ?? text,
         budget_band: p.budget_band ?? prev.budget_band,
         location_state: p.location_state ?? prev.location_state,
         payload: { ...prev.payload, ...(p.brief_payload ?? {}) },
       }));
-
-      // Always drop the user into the manual form so they can review.
-      setCopilotMode(false);
+      setSelectedIntentId(intentForTemplate(template as BriefTemplate)?.id ?? "general");
+      setFreeformMode(false);
       setStep("details");
-      if (ok) {
-        setCopilotInfo("We've drafted your brief — review and submit.");
-      } else {
-        setCopilotInfo("We need a bit more info — please fill in the highlighted fields.");
-      }
+      setInfo(
+        good
+          ? "We've drafted your brief — review and refine it below."
+          : "We've made a start — please fill in the highlighted details below.",
+      );
     } catch {
-      setCopilotInfo("We couldn't draft your brief. Use the form below instead.");
-      setCopilotMode(false);
+      setInfo("We couldn't draft your brief. Pick an option below instead.");
+      setFreeformMode(false);
     } finally {
-      setCopilotLoading(false);
+      setFreeformLoading(false);
     }
   }
 
@@ -328,12 +422,8 @@ export default function BriefForm({
     setLoading(true);
     setError(null);
     try {
-      // If we have a plan_id, use the plan→brief endpoint so the brief is
-      // linked back to the action plan.
       const fromPlan = !!planId && planPrefilled;
-      const url = fromPlan
-        ? `/api/get-matched/plans/${planId}/to-brief`
-        : "/api/briefs";
+      const url = fromPlan ? `/api/get-matched/plans/${planId}/to-brief` : "/api/briefs";
       const body = fromPlan
         ? {
             contact_name: form.contact_name,
@@ -366,6 +456,7 @@ export default function BriefForm({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Failed to create brief.");
+      clearDraft();
       setResult({
         slug: fromPlan ? (data.brief_slug as string) : (data.slug as string),
         accept_credits_cost: data.accept_credits_cost ?? null,
@@ -379,635 +470,449 @@ export default function BriefForm({
     }
   }
 
+  // ── Success ─────────────────────────────────────────────────────────
   if (step === "success" && result) {
-    const heldForReview = result.risk_review_status === "pending_review";
     return (
-      <div className="bg-white border border-emerald-200 rounded-2xl p-8 text-center max-w-2xl mx-auto">
-        <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Icon name="check-circle" size={28} className="text-emerald-600" />
-        </div>
-        <h2 className="text-2xl font-extrabold text-slate-900 mb-2">
-          Match Request sent
-        </h2>
-        <p className="text-slate-600 text-sm leading-relaxed mb-6 max-w-md mx-auto">
-          {heldForReview
-            ? "Your brief mentions topics that need a quick compliance review before verified providers can see it. We'll email you once it's cleared."
-            : `Verified providers can now see a masked preview of your brief. ${
-                result.accept_credits_cost
-                  ? `Accept cost: ~${result.accept_credits_cost} credits.`
-                  : ""
-              } We'll email you when a provider accepts.`}
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href={`/briefs/${result.slug}?email=${encodeURIComponent(
-              form.contact_email,
-            )}`}
-            className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
-          >
-            View your Quote Status
-            <Icon name="arrow-right" size={16} />
-          </Link>
-          <Link
-            href="/advisors"
-            className="inline-flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl hover:border-slate-300 transition-colors"
-          >
-            Browse verified providers
-          </Link>
-        </div>
-      </div>
+      <BriefSuccess
+        slug={result.slug}
+        contactEmail={form.contact_email}
+        riskReviewStatus={result.risk_review_status}
+      />
     );
   }
 
-  // ── AI co-pilot mode — single textarea replaces the multi-step form
-  if (copilotMode && aiCopilotEnabled) {
+  // ── Freeform / AI drafting view ─────────────────────────────────────
+  if (freeformMode) {
     return (
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
-              Beta
-            </span>
-            <h2 className="text-xl font-bold text-slate-900 mt-2">
+            {aiCopilotEnabled && (
+              <Badge variant="warning" size="sm">
+                <Icon name="zap" size={11} /> AI co-pilot · beta
+              </Badge>
+            )}
+            <h2 className="mt-2 text-xl font-bold text-slate-900">
               Tell us what you&apos;re trying to do
             </h2>
-            <p className="text-sm text-slate-500 mt-1">
-              Describe your situation in your own words. We&apos;ll draft a brief for you to review.
+            <p className="mt-1 text-sm text-slate-500">
+              Describe your situation in your own words.{" "}
+              {aiCopilotEnabled
+                ? "We'll draft a structured brief for you to review."
+                : "We'll set up the right brief for you to refine."}
             </p>
           </div>
           <button
             type="button"
             onClick={() => {
-              setCopilotMode(false);
-              setCopilotInfo(null);
+              setFreeformMode(false);
+              setInfo(null);
             }}
-            className="text-xs font-semibold text-slate-500 hover:text-slate-700 underline"
+            className="shrink-0 text-xs font-semibold text-slate-500 underline hover:text-slate-700"
           >
-            Use the regular form
+            Pick from a list
           </button>
         </div>
         <textarea
           rows={8}
           maxLength={3000}
-          value={copilotText}
-          onChange={(e) => setCopilotText(e.target.value)}
+          value={freeformText}
+          onChange={(e) => setFreeformText(e.target.value)}
           placeholder="e.g. I'm a 38-year-old in NSW with a $200k super balance and I'm thinking about setting up an SMSF to buy an investment property in QLD. Budget around $2,000 for advice. Need help in the next 3 months."
-          className="w-full border border-slate-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-y"
+          className="w-full resize-y rounded-xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
-        <p className="text-xs text-slate-400 mt-1">
-          {copilotText.length} / 3000
-        </p>
-        {copilotInfo && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-900 mt-3">
-            {copilotInfo}
+        <p className="mt-1 text-xs text-slate-400">{freeformText.length} / 3000</p>
+        {info && (
+          <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+            {info}
           </div>
         )}
-        <div className="flex justify-end mt-5">
-          <button
-            type="button"
-            disabled={copilotLoading || copilotText.trim().length < 10}
-            onClick={runCopilot}
-            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
+        <div className="mt-5 flex justify-end">
+          <Button
+            onClick={submitFreeform}
+            loading={freeformLoading}
+            disabled={freeformText.trim().length < 10}
+            icon={<Icon name="arrow-right" size={16} />}
           >
-            {copilotLoading ? (
-              <>
-                <div aria-hidden="true" className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
-                Drafting…
-              </>
-            ) : (
-              <>
-                Draft my brief <Icon name="arrow-right" size={16} />
-              </>
-            )}
-          </button>
+            {aiCopilotEnabled ? "Draft my brief" : "Continue"}
+          </Button>
         </div>
-        <p className="text-xs text-slate-400 mt-4 leading-relaxed">
-          AI assists with structuring only — verified providers deliver the actual service under their own licence. We never give personal advice.
+        <p className="mt-4 text-xs leading-relaxed text-slate-400">
+          AI assists with structuring only — verified pros deliver the service
+          under their own licence. We never give personal advice.
         </p>
       </div>
     );
   }
 
+  const currentStepIndex = STEP_ORDER.indexOf(step);
+  const showRail = step === "details" || step === "match" || step === "contact";
+
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-      {/* Workspace chip — tells the user which account-kind context the
-          brief will be filed under (a business owner's contact details
-          differ from their investor profile's). Swappable via
-          /account/select-workspace. Only shown when an active kind
-          resolved (not anonymous). */}
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+      {/* Workspace chip */}
       {workspace && (
-        <div className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 mb-6 flex items-center gap-2 text-xs text-slate-600">
-          <span className="font-semibold uppercase tracking-wide text-slate-500">
-            Filing as
-          </span>
-          <span className="font-bold text-slate-900 truncate">
-            {workspace.label}
-          </span>
-          <span className="text-slate-400">·</span>
-          <span className="text-slate-500 truncate">
-            {workspace.kind === "business_owner" && "Business workspace"}
-            {workspace.kind === "investor" && "Investor workspace"}
-            {workspace.kind === "listing_owner" && "Listing-owner workspace"}
-            {workspace.kind === "advisor" && "Advisor workspace"}
-            {workspace.kind === "broker_partner" && "Broker-partner workspace"}
-          </span>
+        <div className="mb-5 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+          <span className="font-semibold uppercase tracking-wide text-slate-500">Filing as</span>
+          <span className="truncate font-bold text-slate-900">{workspace.label}</span>
           <Link
             href="/account/select-workspace"
-            className="ml-auto text-amber-700 font-semibold hover:underline shrink-0"
+            className="ml-auto shrink-0 font-semibold text-amber-700 hover:underline"
           >
             Switch
           </Link>
         </div>
       )}
-      {aiCopilotEnabled && (
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6 flex items-center justify-between gap-3">
-          <div className="flex items-start gap-2 min-w-0">
-            <Icon name="lightbulb" size={16} className="text-amber-500 mt-0.5 shrink-0" />
-            <p className="text-xs text-slate-600 leading-relaxed">
-              <strong className="text-slate-900">Try AI co-pilot (beta).</strong>{" "}
-              Describe your situation in plain English and we&apos;ll draft the brief for you.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setCopilotMode(true);
-              setCopilotInfo(null);
-            }}
-            className="text-xs font-bold text-amber-700 hover:text-amber-900 underline shrink-0"
-          >
-            Try it
-          </button>
+
+      {/* Restored-draft banner */}
+      {restoredDraft && step !== "intent" && (
+        <div className="mb-5 flex items-start gap-2 rounded-xl border border-blue-200 bg-blue-50 p-3 text-xs text-blue-900">
+          <Icon name="rotate-ccw" size={14} className="mt-0.5 shrink-0 text-blue-500" />
+          <p className="leading-relaxed">
+            <strong>We saved your progress.</strong> Picked up right where you left off.{" "}
+            <button
+              type="button"
+              onClick={() => {
+                clearDraft();
+                setForm({
+                  ...INITIAL,
+                  contact_name: workspace?.prefillName ?? "",
+                  contact_email: workspace?.prefillEmail ?? "",
+                  contact_phone: workspace?.prefillPhone ?? "",
+                });
+                setSelectedIntentId(null);
+                setRestoredDraft(false);
+                setStep("intent");
+              }}
+              className="font-semibold underline hover:text-blue-700"
+            >
+              Start over
+            </button>
+          </p>
         </div>
       )}
-      {copilotInfo && !copilotMode && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-900 mb-4">
-          {copilotInfo}
-        </div>
-      )}
-      {/* Progress */}
-      <div className="flex items-center gap-2 mb-8">
-        {(["template", "details", "preference", "contact"] as Step[]).map(
-          (s, i) => {
-            const order: Step[] = ["template", "details", "preference", "contact"];
-            const cur = order.indexOf(step);
-            const idx = order.indexOf(s);
-            const done = cur > idx;
-            const active = step === s;
-            const labels: Record<string, string> = {
-              template: "Template",
-              details: "Details",
-              preference: "Match",
-              contact: "Contact",
-            };
-            return (
-              <div key={s} className="flex items-center gap-2 flex-1">
-                {i > 0 && (
-                  <div
-                    className={`flex-1 h-px ${done ? "bg-amber-500" : "bg-slate-200"}`}
-                  />
-                )}
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                      done
-                        ? "bg-amber-500 text-slate-900"
-                        : active
-                          ? "bg-slate-900 text-white"
-                          : "bg-slate-200 text-slate-500"
-                    }`}
-                  >
-                    {done ? <Icon name="check" size={13} /> : i + 1}
-                  </div>
-                  <span
-                    className={`text-xs hidden sm:block ${active ? "text-slate-900 font-semibold" : "text-slate-400"}`}
-                  >
-                    {labels[s]}
-                  </span>
-                </div>
-              </div>
-            );
-          },
-        )}
+
+      <div className="mb-7">
+        <FormStepper steps={STEPPER} currentStepIndex={currentStepIndex} />
       </div>
 
-      {step === "template" && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-1">
-              What kind of help do you need?
-            </h2>
-            <p className="text-sm text-slate-500">
-              Pick the closest match. We ask a few structured questions so verified pros can quote you well.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {BRIEF_TEMPLATES.filter(
-              (t) => t !== "listing" && t !== "listing_readiness",
-            ).map((t) => (
-              <button
-                type="button"
-                key={t}
-                onClick={() => setField("brief_template", t)}
-                className={`text-left rounded-xl p-4 border transition-colors ${
-                  form.brief_template === t
-                    ? "border-amber-500 ring-2 ring-amber-300 bg-amber-50"
-                    : "border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <p className="font-bold text-sm text-slate-900">
-                  {BRIEF_TEMPLATE_LABELS[t]}
-                </p>
-                <p className="text-xs text-slate-500 mt-0.5 leading-snug">
-                  {BRIEF_TEMPLATE_BLURBS[t]}
-                </p>
-              </button>
-            ))}
-          </div>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              disabled={!canTemplate}
-              onClick={() => setStep("details")}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
-            >
-              Continue <Icon name="arrow-right" size={16} />
-            </button>
-          </div>
+      {info && (
+        <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          {info}
         </div>
       )}
 
-      {step === "details" && form.brief_template && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-1">
-              {BRIEF_TEMPLATE_LABELS[form.brief_template]}
-            </h2>
-            <p className="text-sm text-slate-500">
-              Be specific — verified providers respond better when the brief is clear.
-            </p>
-          </div>
-
-          <div>
-            <label htmlFor="brief-title" className="block text-sm font-semibold text-slate-700 mb-1.5">
-              Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="brief-title"
-              type="text"
-              maxLength={120}
-              value={form.job_title}
-              onChange={(e) => setField("job_title", e.target.value)}
-              placeholder="e.g. SMSF property strategy in QLD"
-              className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="brief-description" className="block text-sm font-semibold text-slate-700 mb-1.5">
-              Describe the situation <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              id="brief-description"
-              rows={5}
-              maxLength={3000}
-              value={form.job_description}
-              onChange={(e) => setField("job_description", e.target.value)}
-              placeholder="What's the situation, what outcome you want, any deadlines."
-              className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-y"
-            />
-            <p className="text-xs text-slate-400 mt-1">
-              {form.job_description.length} / 3000
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="brief-state" className="block text-sm font-semibold text-slate-700 mb-1.5">
-                State <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="brief-state"
-                value={form.location_state}
-                onChange={(e) => setField("location_state", e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-              >
-                <option value="">Select state</option>
-                {STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor="brief-budget" className="block text-sm font-semibold text-slate-700 mb-1.5">
-                Budget band <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="brief-budget"
-                value={form.budget_band}
-                onChange={(e) => setField("budget_band", e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-              >
-                <option value="">Select budget</option>
-                {BUDGETS.map((b) => (
-                  <option key={b.value} value={b.value}>
-                    {b.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {fields.length > 0 && (
-            <div className="border-t border-slate-100 pt-6 space-y-4">
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Template-specific details
-              </p>
-              {fields.map((field) => (
-                <DynamicField
-                  key={field.key}
-                  field={field}
-                  value={form.payload[field.key]}
-                  onChange={(v) => setPayload(field.key, v)}
-                />
-              ))}
+      <div
+        className={
+          showRail
+            ? "grid items-start gap-6 lg:grid-cols-[1fr_320px] lg:gap-8"
+            : ""
+        }
+      >
+        {/* Main column */}
+        <div key={step} style={{ animation: "slideInRight 0.3s ease-out" }}>
+          {step === "intent" && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">
+                  What do you need help with?
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Post once. Verified pros respond. You compare and choose — your
+                  details stay private until you do.
+                </p>
+              </div>
+              <IntentPicker
+                selectedIntentId={selectedIntentId}
+                onSelect={selectIntent}
+                onFreeform={openFreeform}
+                aiEnabled={aiCopilotEnabled}
+              />
             </div>
           )}
 
-          <div className="flex justify-between">
-            <button
-              type="button"
-              onClick={() => setStep("template")}
-              className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-semibold text-sm px-4 py-2.5"
-            >
-              <Icon name="arrow-left" size={14} /> Back
-            </button>
-            <button
-              type="button"
-              disabled={!canDetails}
-              onClick={() => setStep("preference")}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
-            >
-              Continue <Icon name="arrow-right" size={16} />
-            </button>
-          </div>
+          {step === "details" && form.brief_template && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">
+                  {intentLabel ?? "Tell pros about it"}
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Be specific — clear briefs get more, better responses.
+                </p>
+              </div>
 
-          {(form.brief_template === "listing" ||
-            form.brief_template === "listing_readiness") && (
-            <ListingCompanionServices />
-          )}
-        </div>
-      )}
+              <Input
+                id="brief-title"
+                label="Title"
+                required
+                maxLength={120}
+                value={form.job_title}
+                onChange={(e) => setField("job_title", e.target.value)}
+                placeholder="e.g. SMSF property strategy in QLD"
+                hint={
+                  form.job_title.trim().length > 0 && form.job_title.trim().length < 8
+                    ? undefined
+                    : "A specific one-liner helps pros decide fast."
+                }
+                error={
+                  form.job_title.trim().length > 0 && form.job_title.trim().length < 8
+                    ? "Add a little more — at least 8 characters."
+                    : undefined
+                }
+              />
 
-      {step === "preference" && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-1">
-              Who do you want to hear from?
-            </h2>
-            <p className="text-sm text-slate-500">
-              Pick the provider type and the routing mode. You stay in control.
-            </p>
-          </div>
-
-          {/* Investor Pro perk — skips the smart-match window and sends
-              directly to a chosen verified expert team. Only shown when
-              the parent server page resolves an active subscription. */}
-          {proSubscriber && (
-            <div className="rounded-xl border border-violet-300 bg-violet-50 p-4">
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={
-                    form.routing_mode === "direct" &&
-                    form.provider_preference === "expert_team"
+              <div>
+                <label
+                  htmlFor="brief-description"
+                  className="mb-1.5 block text-sm font-semibold text-slate-700"
+                >
+                  Describe the situation <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="brief-description"
+                  rows={5}
+                  maxLength={3000}
+                  value={form.job_description}
+                  onChange={(e) => setField("job_description", e.target.value)}
+                  placeholder={
+                    activeIntent?.examples[0] ??
+                    "What's the situation, what outcome you want, and any deadlines."
                   }
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setField("routing_mode", "direct");
-                      setField("provider_preference", "expert_team");
-                    } else {
-                      setField("routing_mode", "smart_match");
-                    }
-                  }}
-                  className="mt-0.5 h-4 w-4 rounded border-violet-400 text-violet-600 focus:ring-violet-500"
+                  className="w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm transition-all duration-150 hover:border-slate-300 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
                 />
-                <div>
-                  <p className="text-sm font-bold text-violet-900">
-                    Skip the smart-match queue · Investor Pro
+                <div className="mt-1 flex items-center justify-between">
+                  <span className="text-xs text-slate-400">
+                    {form.job_description.trim().length < 30
+                      ? `${30 - form.job_description.trim().length} more characters for a complete brief`
+                      : "Looking good"}
+                  </span>
+                  <span className="text-xs text-slate-400">{form.job_description.length} / 3000</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Select
+                  id="brief-state"
+                  label="State"
+                  required
+                  value={form.location_state}
+                  onChange={(e) => setField("location_state", e.target.value)}
+                  options={[
+                    { value: "", label: "Select state" },
+                    ...STATES.map((s) => ({ value: s, label: s })),
+                  ]}
+                />
+                <Select
+                  id="brief-budget"
+                  label="Budget band"
+                  required
+                  value={form.budget_band}
+                  onChange={(e) => setField("budget_band", e.target.value)}
+                  options={[{ value: "", label: "Select budget" }, ...BUDGETS]}
+                />
+              </div>
+
+              {fields.length > 0 && (
+                <div className="space-y-4 border-t border-slate-100 pt-5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    A few specifics
                   </p>
-                  <p className="text-xs text-violet-800 mt-0.5">
-                    Route directly to a verified Expert Team of your choice.
-                    Bypasses the 24-hour smart-match window so they see your
-                    brief in their inbox immediately.
+                  {fields.map((field) => (
+                    <DynamicField
+                      key={field.key}
+                      field={field}
+                      value={form.payload[field.key]}
+                      onChange={(v) => setPayload(field.key, v)}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {(form.brief_template === "listing" ||
+                form.brief_template === "listing_readiness") && <ListingCompanionServices />}
+
+              <StepNav
+                onBack={() => setStep("intent")}
+                onNext={() => setStep("match")}
+                nextDisabled={!canDetails}
+                nextLabel="Continue"
+              />
+            </div>
+          )}
+
+          {step === "match" && (
+            <div className="space-y-5">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">How do you want to be matched?</h2>
+                <p className="mt-1 text-sm text-slate-500">You stay in control the whole way.</p>
+              </div>
+              <MatchModeChooser
+                routingMode={form.routing_mode}
+                providerPreference={form.provider_preference}
+                targetSlug={form.target_team_slug}
+                proSubscriber={proSubscriber}
+                proSupply={proSupply}
+                onChange={(patch: MatchPatch) => setForm((p) => ({ ...p, ...patch }))}
+              />
+              <StepNav
+                onBack={() => setStep("details")}
+                onNext={() => setStep("contact")}
+                nextDisabled={false}
+                nextLabel="Continue"
+              />
+            </div>
+          )}
+
+          {step === "contact" && (
+            <div className="space-y-5">
+              {planPrefilled && (
+                <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3">
+                  <Icon name="check-circle" size={14} className="mt-0.5 shrink-0 text-amber-600" />
+                  <p className="text-xs leading-relaxed text-amber-900">
+                    <strong>Pre-filled from your Action Plan.</strong> Edit anything below.
                   </p>
                 </div>
-              </label>
-            </div>
-          )}
-
-          <div>
-            <p className="block text-sm font-semibold text-slate-700 mb-2">
-              Provider preference
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {PROVIDER_PREFERENCES.map((p) => (
-                <button
-                  type="button"
-                  key={p.value}
-                  onClick={() => setField("provider_preference", p.value)}
-                  className={`text-left rounded-lg p-3 border text-sm transition-colors ${
-                    form.provider_preference === p.value
-                      ? "border-amber-500 ring-2 ring-amber-300 bg-amber-50"
-                      : "border-slate-200 hover:border-slate-300"
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="block text-sm font-semibold text-slate-700 mb-2">
-              Routing mode
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              {ROUTING_MODES.map((m) => (
-                <button
-                  type="button"
-                  key={m.value}
-                  onClick={() => setField("routing_mode", m.value)}
-                  className={`text-left rounded-lg p-3 border text-sm transition-colors ${
-                    form.routing_mode === m.value
-                      ? "border-amber-500 ring-2 ring-amber-300 bg-amber-50"
-                      : "border-slate-200 hover:border-slate-300"
-                  }`}
-                >
-                  <p className="font-semibold text-slate-900">{m.label}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{m.blurb}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {form.routing_mode === "direct" && (
-            <div>
-              <label htmlFor="brief-target-slug" className="block text-sm font-semibold text-slate-700 mb-1.5">
-                Target team / firm / individual slug
-              </label>
-              <input
-                id="brief-target-slug"
-                type="text"
-                value={form.target_team_slug}
-                onChange={(e) => setField("target_team_slug", e.target.value)}
-                placeholder="e.g. sydney-smsf-property-team"
-                className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-              />
-              <p className="text-xs text-slate-400 mt-1">
-                Use the slug from a verified team, firm or individual profile URL.
-              </p>
-            </div>
-          )}
-
-          <div className="flex justify-between">
-            <button
-              type="button"
-              onClick={() => setStep("details")}
-              className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-semibold text-sm px-4 py-2.5"
-            >
-              <Icon name="arrow-left" size={14} /> Back
-            </button>
-            <button
-              type="button"
-              disabled={!canPreference}
-              onClick={() => setStep("contact")}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
-            >
-              Continue <Icon name="arrow-right" size={16} />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {step === "contact" && (
-        <div className="space-y-6">
-          {planPrefilled && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
-              <Icon name="check-circle" size={14} className="text-amber-600 mt-0.5 shrink-0" />
-              <p className="text-xs text-amber-900 leading-relaxed">
-                <strong>Pre-filled from your Action Plan.</strong> We&apos;ll send this brief with the goal, budget, timeline and route you already picked. Edit anything you need below.
-              </p>
-            </div>
-          )}
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-1">
-              Your details
-            </h2>
-            <p className="text-sm text-slate-500">
-              Hidden from providers until one accepts your brief.
-            </p>
-          </div>
-
-          <div>
-            <label htmlFor="brief-contact-name" className="block text-sm font-semibold text-slate-700 mb-1.5">
-              Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="brief-contact-name"
-              type="text"
-              value={form.contact_name}
-              onChange={(e) => setField("contact_name", e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="brief-contact-email" className="block text-sm font-semibold text-slate-700 mb-1.5">
-                Email <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="brief-contact-email"
-                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
-                value={form.contact_email}
-                onChange={(e) => setField("contact_email", e.target.value)}
-                placeholder="you@example.com"
-                className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-              />
-            </div>
-            <div>
-              <label htmlFor="brief-contact-phone" className="block text-sm font-semibold text-slate-700 mb-1.5">
-                Phone
-              </label>
-              <input
-                id="brief-contact-phone"
-                type="tel"
-                autoComplete="tel"
-                value={form.contact_phone}
-                onChange={(e) => setField("contact_phone", e.target.value)}
-                placeholder="+61 4XX XXX XXX"
-                className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-              />
-            </div>
-          </div>
-
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.consent}
-              onChange={(e) => setField("consent", e.target.checked)}
-              className="mt-0.5 w-4 h-4 accent-amber-500 shrink-0"
-            />
-            <span className="text-xs text-slate-600 leading-relaxed">
-              I&apos;m happy for my brief details (without contact information) to be shown to relevant verified providers. My contact details are only shared after a provider accepts. I&apos;ve read the{" "}
-              <Link href="/privacy" className="underline hover:text-slate-700">
-                privacy policy
-              </Link>
-              {" "}and{" "}
-              <Link href="/terms" className="underline hover:text-slate-700">
-                terms
-              </Link>
-              . I understand Invest.com.au provides general information only — the professional, firm or team I engage delivers the service under their own licence.
-            </span>
-          </label>
-
-          {error && (
-            <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
-              {error}
-            </div>
-          )}
-
-          <div className="flex justify-between">
-            <button
-              type="button"
-              onClick={() => setStep("preference")}
-              className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-semibold text-sm px-4 py-2.5"
-            >
-              <Icon name="arrow-left" size={14} /> Back
-            </button>
-            <button
-              type="button"
-              disabled={!canContact || loading}
-              onClick={submit}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-amber-300 text-slate-900 font-bold px-8 py-3 rounded-xl"
-            >
-              {loading ? (
-                <>
-                  <div aria-hidden="true" className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
-                  Creating…
-                </>
-              ) : (
-                <>
-                  Send Match Request <Icon name="check" size={16} />
-                </>
               )}
-            </button>
-          </div>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Where should responses go?</h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Hidden from pros until one responds and you choose to share.
+                </p>
+              </div>
+
+              <Input
+                id="brief-contact-name"
+                label="Name"
+                required
+                value={form.contact_name}
+                onChange={(e) => setField("contact_name", e.target.value)}
+                placeholder="Your name"
+              />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Input
+                  id="brief-contact-email"
+                  label="Email"
+                  required
+                  type="email"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  value={form.contact_email}
+                  onChange={(e) => setField("contact_email", e.target.value)}
+                  placeholder="you@example.com"
+                />
+                <Input
+                  id="brief-contact-phone"
+                  label="Phone (optional)"
+                  type="tel"
+                  autoComplete="tel"
+                  value={form.contact_phone}
+                  onChange={(e) => setField("contact_phone", e.target.value)}
+                  placeholder="+61 4XX XXX XXX"
+                />
+              </div>
+
+              <label className="flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={form.consent}
+                  onChange={(e) => setField("consent", e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-amber-500"
+                />
+                <span className="text-xs leading-relaxed text-slate-600">
+                  I&apos;m happy for my brief details (without contact information) to be
+                  shown to relevant verified pros. My contact details are only shared
+                  after a pro responds and I choose to share them. I&apos;ve read the{" "}
+                  <Link href="/privacy" className="underline hover:text-slate-700">
+                    privacy policy
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/terms" className="underline hover:text-slate-700">
+                    terms
+                  </Link>
+                  . I understand Invest.com.au provides general information only — the
+                  professional, firm or team I engage delivers the service under their
+                  own licence.
+                </span>
+              </label>
+
+              {error && (
+                <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+
+              <StepNav
+                onBack={() => setStep("match")}
+                onNext={submit}
+                nextDisabled={!canContact}
+                nextLoading={loading}
+                nextLabel="Post my brief"
+                nextIcon={<Icon name="check" size={16} />}
+              />
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Live rail */}
+        {showRail && (
+          <aside className="space-y-4 lg:sticky lg:top-20">
+            <BriefPreviewCard
+              intentLabel={intentLabel}
+              title={form.job_title}
+              description={form.job_description}
+              budgetLabel={budgetLabel}
+              locationState={form.location_state || null}
+              providerPreferenceLabel={
+                step === "match" || step === "contact"
+                  ? PROVIDER_PREF_LABELS[form.provider_preference] ?? null
+                  : null
+              }
+            />
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <BriefStrengthMeter strength={strength} />
+            </div>
+          </aside>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StepNav({
+  onBack,
+  onNext,
+  nextDisabled,
+  nextLoading,
+  nextLabel,
+  nextIcon,
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  nextDisabled: boolean;
+  nextLoading?: boolean;
+  nextLabel: string;
+  nextIcon?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-t border-slate-100 pt-5">
+      <button
+        type="button"
+        onClick={onBack}
+        className="inline-flex items-center gap-1.5 px-2 py-2 text-sm font-semibold text-slate-600 hover:text-slate-900"
+      >
+        <Icon name="arrow-left" size={14} /> Back
+      </button>
+      <Button
+        onClick={onNext}
+        disabled={nextDisabled}
+        loading={nextLoading}
+        icon={nextIcon ?? <Icon name="arrow-right" size={16} />}
+        className="min-w-[9rem]"
+      >
+        {nextLabel}
+      </Button>
     </div>
   );
 }
@@ -1024,27 +929,21 @@ function DynamicField({
   const id = useId();
   if (field.kind === "text") {
     return (
-      <div>
-        <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1.5">
-          {field.label}
-          {field.required && <span className="text-red-500"> *</span>}
-        </label>
-        <input
-          id={id}
-          type="text"
-          maxLength={field.maxLength}
-          placeholder={field.placeholder}
-          value={typeof value === "string" ? value : ""}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-        />
-      </div>
+      <Input
+        id={id}
+        label={field.label}
+        required={field.required}
+        maxLength={field.maxLength}
+        placeholder={field.placeholder}
+        value={typeof value === "string" ? value : ""}
+        onChange={(e) => onChange(e.target.value)}
+      />
     );
   }
   if (field.kind === "textarea") {
     return (
       <div>
-        <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1.5">
+        <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-slate-700">
           {field.label}
           {field.required && <span className="text-red-500"> *</span>}
         </label>
@@ -1055,52 +954,39 @@ function DynamicField({
           placeholder={field.placeholder}
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-y"
+          className="w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm transition-all duration-150 hover:border-slate-300 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
       </div>
     );
   }
   if (field.kind === "select") {
     return (
-      <div>
-        <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1.5">
-          {field.label}
-          {field.required && <span className="text-red-500"> *</span>}
-        </label>
-        <select
-          id={id}
-          value={typeof value === "string" ? value : ""}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-        >
-          <option value="">Select…</option>
-          {field.options?.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Select
+        id={id}
+        label={field.label}
+        required={field.required}
+        value={typeof value === "string" ? value : ""}
+        onChange={(e) => onChange(e.target.value)}
+        options={[{ value: "", label: "Select…" }, ...(field.options ?? [])]}
+      />
     );
   }
   // multiselect
   const arr = Array.isArray(value) ? (value as string[]) : [];
   return (
     <div>
-      <p className="block text-sm font-semibold text-slate-700 mb-1.5">
+      <p className="mb-1.5 block text-sm font-semibold text-slate-700">
         {field.label}
         {field.required && <span className="text-red-500"> *</span>}
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {field.options?.map((o) => {
           const checked = arr.includes(o.value);
           return (
             <label
               key={o.value}
-              className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm cursor-pointer transition-colors ${
-                checked
-                  ? "border-amber-500 bg-amber-50"
-                  : "border-slate-200 hover:border-slate-300"
+              className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+                checked ? "border-amber-500 bg-amber-50" : "border-slate-200 hover:border-slate-300"
               }`}
             >
               <input
@@ -1108,9 +994,7 @@ function DynamicField({
                 className="accent-amber-500"
                 checked={checked}
                 onChange={() => {
-                  const next = checked
-                    ? arr.filter((x) => x !== o.value)
-                    : [...arr, o.value];
+                  const next = checked ? arr.filter((x) => x !== o.value) : [...arr, o.value];
                   onChange(next);
                 }}
               />
