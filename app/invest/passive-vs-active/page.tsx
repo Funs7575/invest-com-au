@@ -84,7 +84,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Passive vs Active Investing Australia (${CURRENT_YEAR}) — Which Wins?`,
-  description: `Should you invest passively (index ETFs) or with active fund managers? SPIVA data, fee comparison, and when active management can add value in Australia. ${UPDATED_LABEL}.`,
+  description: `Index ETFs vs active fund managers: SPIVA evidence, fee comparison, and when active management adds value in Australia. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Passive vs Active Investing Australia (${CURRENT_YEAR})`,
     description: "SPIVA evidence, the true cost of active management, and a core-satellite framework for Australian investors.",

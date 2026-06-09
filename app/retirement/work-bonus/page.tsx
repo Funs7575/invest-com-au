@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Work Bonus Scheme — Earn While on Age Pension (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How the Work Bonus lets Age Pension recipients earn $300/fortnight tax-free from employment, how the $11,800 balance accumulates, worked examples, and interaction with the income test. ${UPDATED_LABEL}.`,
+  description: `Work Bonus: $300/fn employment income exempt for Age Pension recipients, $11,800 max balance, worked examples, income test interaction. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Work Bonus Scheme — Age Pension Employment Income (${CURRENT_YEAR})`,
     description: "Age Pension Work Bonus: $300/fortnight exempt, up to $11,800 accumulation, worked examples and income test interaction.",

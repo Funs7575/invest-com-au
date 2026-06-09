@@ -47,7 +47,7 @@ const DTA_TABLE = [
 export const metadata: Metadata = {
   title: `Foreign Income Tax Australia (${CURRENT_YEAR}) — Dividends, CGT & DTAs Explained`,
   description:
-    "How foreign income is taxed in Australia: foreign dividends, withholding tax, Double Tax Agreements, Foreign Income Tax Offset, and CGT on overseas assets. Complete investor guide.",
+    "How foreign income is taxed in Australia: dividends, withholding tax, Double Tax Agreements, Foreign Income Tax Offset, and CGT on overseas assets.",
   alternates: { canonical: `${SITE_URL}/tax/foreign-income` },
   openGraph: {
     title: `Foreign Income Tax Australia (${CURRENT_YEAR}) — Dividends, CGT & DTAs`,

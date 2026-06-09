@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `How to Invest in Bonds in Australia (${CURRENT_YEAR})`,
   description:
-    "Complete guide to Australian bonds: government bonds, bond ETFs, corporate bonds, interest rate risk, yield, duration, tax treatment, and portfolio allocation.",
+    "Complete guide to Australian bonds: government bonds, bond ETFs, corporate bonds, interest rate risk, yield, duration, and tax treatment.",
   alternates: { canonical: `${SITE_URL}/invest/bonds` },
   openGraph: {
     title: `How to Invest in Bonds in Australia (${CURRENT_YEAR})`,

@@ -13,7 +13,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Capital Gains Tax Australia (${CURRENT_YEAR}) — Complete CGT Guide for Investors`,
-  description: `How CGT works in Australia: no separate rate, 50% discount, cost base, capital losses, worked examples, property, crypto, and tax minimisation strategies. ${UPDATED_LABEL}.`,
+  description: `How CGT works in Australia: 50% discount, cost base, capital losses, worked examples, shares, property, crypto, and tax strategies. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Capital Gains Tax Australia (${CURRENT_YEAR}) — Complete CGT Guide`,
     description: "CGT explained for Australian investors: 50% discount, cost base, capital losses, shares, property, and crypto.",

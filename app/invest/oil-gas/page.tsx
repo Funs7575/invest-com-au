@@ -43,7 +43,7 @@ export const revalidate = 1800;
 export const metadata: Metadata = {
   title: `Invest in Australian Oil & Gas (${CURRENT_YEAR}) — ASX Stocks, LNG & Refinery Infrastructure`,
   description:
-    "Independent Australian guide to oil & gas investing. ASX majors (WDS, STO), refineries (VEA, ALD), LNG royalties, crude ETFs (OOO), FIRB rules, and fuel security context.",
+    "Australian guide to oil & gas investing. ASX majors (WDS, STO), refineries (VEA, ALD), LNG royalties, crude ETFs (OOO) and FIRB rules.",
   alternates: { canonical: `${SITE_URL}/invest/oil-gas` },
   openGraph: {
     title: `Invest in Australian Oil & Gas (${CURRENT_YEAR})`,

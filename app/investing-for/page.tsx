@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Investing by Occupation — ${CURRENT_YEAR} Guides for Every Profession | Invest.com.au`,
   description:
-    "Occupation-specific investing guides for Australians — doctors, teachers, tradies, public servants, business owners, and 25+ more professions. Tax, super, and wealth strategies tailored to your career.",
+    "Investing guides by occupation — doctors, teachers, tradies, public servants, business owners and more. Tax, super and wealth strategies for your career.",
   alternates: { canonical: `${SITE_URL}/investing-for` },
   openGraph: {
     title: "Investing by Occupation — Guides for Every Australian Profession",

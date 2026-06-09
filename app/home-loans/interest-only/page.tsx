@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Interest-Only Home Loans Explained Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Interest-only home loans in Australia: IO vs P&I repayments, APRA restrictions, repayment shock, tax deductibility, and when IO makes sense. ${UPDATED_LABEL}.`,
+  description: `Interest-only home loans in Australia: IO vs P&I, APRA restrictions, repayment shock, tax deductibility, and when IO makes sense. ${UPDATED_LABEL}`,
   openGraph: {
     title: `Interest-Only Home Loans Explained Australia (${CURRENT_YEAR})`,
     description:

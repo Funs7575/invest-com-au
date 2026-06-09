@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Carbon & Environmental Markets Investment Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian carbon and environmental market investment opportunities. ACCUs, voluntary carbon credits, biodiversity offsets, carbon farming projects, reforestation and land restoration assets.",
+      "Browse Australian carbon and environmental market investment opportunities. ACCUs, voluntary carbon credits, biodiversity offsets and carbon farming.",
     alternates: { canonical: `${SITE_URL}/invest/carbon-environmental-markets/listings` },
     // ACCUs are financial products under the Corporations Act 2001 and may
     // trigger MIS licensing rules. Pending legal sign-off this vertical is

@@ -34,7 +34,7 @@ export const metadata = {
       "Compare Investing Platforms, Browse Investments for Sale, Find Experts — Invest.com.au",
   },
   description:
-    "Compare brokers, crypto, super and savings. Browse Australian investments for sale — businesses, farmland, mining, property. Find a verified expert, or get matched in 60 seconds. Independent. ASIC-registered. General information only.",
+    "Compare brokers, super, crypto and savings. Browse investments for sale — farmland, mining, property. Find a verified expert or get matched fast.",
   openGraph: {
     title:
       "Compare Investing Platforms, Browse Investments for Sale, Find Experts — Invest.com.au",

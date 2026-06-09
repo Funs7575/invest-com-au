@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Investment Income Tax Australia (${CURRENT_YEAR}) — Dividends, Interest & Rent Guide`,
-  description: `How dividends, interest, rental income, and trust distributions are taxed in Australia. Franking credits, deductions, marginal rates, and record-keeping. ${UPDATED_LABEL}.`,
+  description: `How dividends, interest, rent, and trust distributions are taxed in Australia. Franking credits, deductions, and marginal rates. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Investment Income Tax Australia (${CURRENT_YEAR}) — Complete Guide`,
     description:

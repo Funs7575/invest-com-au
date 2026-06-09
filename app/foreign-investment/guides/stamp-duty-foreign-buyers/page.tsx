@@ -33,7 +33,7 @@ const stampDutyFaqLd = faqJsonLd(STAMP_DUTY_FAQS);
 export const metadata: Metadata = {
   title: "Foreign Buyer Stamp Duty by State (2026)",
   description:
-    "Foreign buyer stamp duty surcharges for every Australian state and territory in 2026. NSW, VIC, QLD, WA, SA, TAS and ACT rates, land tax surcharges, and cost examples for $500K, $1M and $2M purchases.",
+    "Foreign buyer stamp duty surcharges for every Australian state in 2026: NSW, VIC, QLD, WA, SA, TAS, ACT rates, land tax surcharges, and cost examples.",
   openGraph: {
     title: "Foreign Buyer Stamp Duty by State (2026) — Australia",
     description:

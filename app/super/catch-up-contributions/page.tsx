@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Catch-Up Super Contributions — Carry-Forward Concessional Rules Explained (${CURRENT_YEAR})`,
   description:
-    "How carry-forward (catch-up) concessional super contributions work in Australia. Use unused caps from the prior 5 years if your Total Super Balance is below $500,000. Updated 2026.",
+    "How carry-forward concessional super contributions work. Use unused caps from the prior 5 years if your Total Super Balance is under $500K. Updated 2026.",
   alternates: { canonical: `${SITE_URL}/super/catch-up-contributions` },
   openGraph: {
     title: `Catch-Up Super Contributions — Carry-Forward Concessional Rules (${CURRENT_YEAR})`,

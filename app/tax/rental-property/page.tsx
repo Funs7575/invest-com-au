@@ -10,7 +10,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Rental Property Tax Australia (${CURRENT_YEAR}) — Complete Deductions Guide`,
-  description: `Everything you can (and cannot) deduct for your Australian rental property: interest, depreciation, repairs, management fees, negative gearing, and record-keeping. ${UPDATED_LABEL}.`,
+  description: `What you can (and cannot) deduct for an Australian rental property: interest, depreciation, repairs, management fees. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Rental Property Tax Australia (${CURRENT_YEAR}) — Deductions, Depreciation & Gearing`,
     description:

@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `CGT on Foreign Shares Australia (${CURRENT_YEAR}) — AUD Conversion, FX Gains & FITO`,
-  description: `How Australian residents calculate CGT on foreign shares: AUD cost base rules, currency conversion, the 50% discount, foreign income tax offset (FITO), and myTax reporting. ${UPDATED_LABEL}.`,
+  description: `CGT on foreign shares for Australians: AUD cost base, currency conversion, 50% discount, FITO, and myTax reporting. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `CGT on Foreign Shares Australia (${CURRENT_YEAR})`,
     description:

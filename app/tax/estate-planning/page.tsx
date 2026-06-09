@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Estate Planning & Tax in Australia (${CURRENT_YEAR}) — CGT, Super & Testamentary Trusts`,
-  description: `How estate planning intersects with Australian tax: CGT at death, super death benefits, testamentary trusts, and no inheritance tax. Complete guide. ${UPDATED_LABEL}.`,
+  description: `Australian estate planning and tax: CGT at death, super death benefits, testamentary trusts, and no inheritance tax. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Estate Planning & Tax Australia (${CURRENT_YEAR})`,
     description:

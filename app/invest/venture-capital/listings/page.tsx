@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Venture Capital Investment Opportunities Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian venture capital investment opportunities for wholesale investors. Early-stage, Series A/B and growth equity fund mandates. Compare VC fund structures, sector focus and minimum commitments.",
+      "Browse Australian VC opportunities for wholesale investors. Early-stage, Series A/B and growth equity. Compare structures, sector focus and minimums.",
     alternates: { canonical: `${SITE_URL}/invest/venture-capital/listings` },
     // No live listings yet — de-indexed until supply threshold is met.
     // Remove when countListingsByVertical("venture-capital") > 0 in prod.

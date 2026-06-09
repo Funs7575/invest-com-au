@@ -28,7 +28,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Australian Venture Capital (${CURRENT_YEAR}) — VC Funds, ESIC & Co-Investing`,
   description:
-    "Guide to venture capital investing in Australia. Blackbird, Square Peg, AirTree, ESIC tax offsets, wholesale access, ASX-listed VC plays and the $3B+ Australian startup ecosystem.",
+    "Guide to VC investing in Australia. Blackbird, Square Peg, AirTree, ESIC tax offsets, wholesale access and ASX-listed VC plays.",
   alternates: { canonical: `${SITE_URL}/invest/venture-capital` },
   openGraph: {
     title: `Invest in Australian Venture Capital (${CURRENT_YEAR})`,

@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Trauma Insurance Australia (${CURRENT_YEAR}) — Critical Illness Cover Guide`,
-  description: `Trauma insurance in Australia: what conditions are covered, how much you need, typical costs, and how it differs from life insurance and TPD. ${UPDATED_LABEL}.`,
+  description: `Trauma insurance in Australia: conditions covered, how much you need, typical costs, and how it differs from life insurance and TPD. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Trauma Insurance Australia (${CURRENT_YEAR}) — Critical Illness Cover`,
     description: "Everything about trauma insurance in Australia — covered conditions, costs, and whether you need it alongside life insurance and income protection.",

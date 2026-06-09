@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Pre-IPO Investment Opportunities Australia — ${countLabel}Wholesale Deals (${CURRENT_YEAR})`,
     description:
-      "Browse Australian pre-IPO opportunities — late-stage private placements, secondary share buys and broker-syndicated rounds. Wholesale and sophisticated investors only (s708).",
+      "Browse Australian pre-IPO opportunities — late-stage private placements, secondary share buys and broker-syndicated rounds. Wholesale only (s708).",
     alternates: { canonical: `${SITE_URL}/invest/pre-ipo/listings` },
     openGraph: {
       title: `Pre-IPO Investment Opportunities Australia — ${countLabel}Wholesale Deals`,

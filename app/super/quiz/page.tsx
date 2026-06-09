@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Is Your Super on Track? Free 3-Question Diagnostic | Invest.com.au",
   description:
-    "Answer 3 quick questions to get a personalised superannuation strategy — fee reduction, extra contributions, consolidation, or transition-to-retirement planning. Free, instant, no login.",
+    "Answer 3 questions to get a personalised super strategy — fee reduction, extra contributions, consolidation, or TTR planning. Free, instant, no login.",
   alternates: { canonical: `${SITE_URL}/super/quiz` },
 };
 

@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `SMSF Eligibility Checker (${CURRENT_YEAR}) — Collectibles, Property & Crypto in Super`,
   description:
-    "Check whether an asset class can be held inside your self-managed super fund. Covers SISA s62A collectables rules, related-party acquisitions, in-house assets, LRBA constraints, and storage / insurance requirements.",
+    "Check whether an asset can be held inside your SMSF. Covers SISA collectables rules, related-party acquisitions, in-house assets, and LRBA constraints.",
   alternates: { canonical: "/tools/smsf-checker" },
   openGraph: {
     title: `SMSF Eligibility Checker (${CURRENT_YEAR})`,

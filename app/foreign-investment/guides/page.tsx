@@ -28,7 +28,7 @@ const fiGuidesFaqLd = faqJsonLd(FI_GUIDES_FAQS);
 export const metadata: Metadata = {
   title: `Investing in Australia as an Expat — Complete Guide Hub (${CURRENT_YEAR})`,
   description:
-    "The complete guide to investing in Australia as a foreign national or expat. Country-specific guides, FIRB, tax residency, bank accounts, and broker access for US, UK, India, NZ, and 10+ countries.",
+    "Investing in Australia as a foreign national or expat: country guides, FIRB, tax residency, bank accounts, and broker access for 10+ countries.",
   openGraph: {
     title: "Investing in Australia as an Expat — Complete Guide Hub",
     description:

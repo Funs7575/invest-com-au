@@ -11,7 +11,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Australian Withholding Tax Calculator (${CURRENT_YEAR}) — DTA Rates by Country`,
   description:
-    "Calculate the Australian withholding tax on dividends, interest, and royalties for non-residents. Includes DTA-reduced rates for 19 countries with live data from our foreign-investment rates database.",
+    "Australian withholding tax for non-residents — dividends, interest, and royalties. DTA-reduced rates for 19 countries from our foreign-investment database.",
   alternates: { canonical: "/tools/withholding-tax-calculator" },
   openGraph: {
     title: `Australian Withholding Tax Calculator (${CURRENT_YEAR})`,

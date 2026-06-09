@@ -40,7 +40,7 @@ const FI_JOURNEY_FAQS = [
 export const metadata: Metadata = {
   title: `Cross-Border Investing Journey — Step-by-Step Guide for Foreign Investors (${CURRENT_YEAR})`,
   description:
-    "Guided step-by-step investing journey for migrants, expats, and non-residents. Select your country to get a personalised path covering FIRB, tax, FX, and advisor handoff.",
+    "Step-by-step investing journey for migrants, expats, and non-residents. Select your country for a personalised path: FIRB, tax, FX, and advisor handoff.",
   openGraph: {
     title: `Cross-Border Investing Journey — Foreign Investor Guide ${CURRENT_YEAR}`,
     description:

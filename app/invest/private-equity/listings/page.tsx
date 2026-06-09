@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Private Equity & Hedge Fund Investment Opportunities Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian private equity and hedge fund investment opportunities. Wholesale investor access (s708 Corporations Act). Compare structures, target returns, minimum investment and manager track records.",
+      "Browse Australian private equity and hedge fund opportunities (s708 wholesale). Compare structures, target returns, minimums and manager track records.",
     alternates: { canonical: `${SITE_URL}/invest/private-equity/listings` },
     openGraph: {
       title: `Private Equity & Hedge Fund Investment Opportunities — ${countLabel}Active Listings`,

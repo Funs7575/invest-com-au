@@ -28,7 +28,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Australian Aquaculture (${CURRENT_YEAR}) — Salmon, Oysters & Marine Farming`,
   description:
-    "Guide to aquaculture investment in Australia. Salmon, oysters, prawns, barramundi and marine farming. Lease structures, biosecurity risks, FIRB rules and private equity access.",
+    "Guide to aquaculture investment in Australia. Salmon, oysters, prawns and marine farming. Lease structures, biosecurity risks, FIRB rules and PE access.",
   alternates: { canonical: `${SITE_URL}/invest/aquaculture` },
   openGraph: {
     title: `Australian Aquaculture Investment (${CURRENT_YEAR})`,

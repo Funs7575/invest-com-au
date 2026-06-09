@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Super Pension Phase Guide Australia (${CURRENT_YEAR}) — Tax-Free Retirement Earnings`,
   description:
-    "Complete guide to the superannuation pension phase. Transfer balance cap ($1.9M), account-based pension drawdown rules, 0% earnings tax, TTR vs retirement phase, and death benefit nominations. Updated 2026.",
+    "Super pension phase: $1.9M transfer balance cap, account-based pension drawdown, 0% earnings tax, TTR vs retirement phase, death benefits. Updated 2026.",
   alternates: { canonical: `${SITE_URL}/super/pension-phase` },
   openGraph: {
     title: `Super Pension Phase Guide Australia (${CURRENT_YEAR})`,

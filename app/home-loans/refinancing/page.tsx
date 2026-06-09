@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Home Loan Refinancing Guide Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How to refinance your home loan in Australia — loyalty tax, break-even calculation, switching costs, cash-out equity, 7-step process, and 2 worked examples. ${UPDATED_LABEL}.`,
+  description: `Home loan refinancing: loyalty tax, break-even calc, switching costs, cash-out equity, 7-step process, and worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Home Loan Refinancing Guide Australia (${CURRENT_YEAR})`,
     description: "Step-by-step refinancing guide: loyalty tax, break-even calculation, switching costs checklist, cash-out equity access, and when NOT to refinance.",

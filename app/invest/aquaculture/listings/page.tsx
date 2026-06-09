@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Aquaculture & Marine Investment Opportunities Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian aquaculture and marine investment opportunities. Salmon farming, oyster leases, abalone, prawn farming, mussel cultivation, land-based recirculating aquaculture systems and fishing licences available for investment.",
+      "Browse Australian aquaculture and marine investments. Salmon farming, oyster leases, abalone, prawn and mussel farming, land-based RAS, fishing licences.",
     alternates: { canonical: `${SITE_URL}/invest/aquaculture/listings` },
     // Aquaculture syndications/leases may be regulated managed investment
     // schemes. De-indexed with a wholesale (s708) gate pending compliance

@@ -54,7 +54,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Shares vs Property — The Australian Comparison (${CURRENT_YEAR})`,
-  description: `Shares vs property: historical returns, leverage, tax, liquidity and costs compared with Australian data. The complete guide for ${CURRENT_YEAR}. ${UPDATED_LABEL}.`,
+  description: `Shares vs property: historical returns, leverage, tax, liquidity and costs compared with Australian data. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Shares vs Property Australia (${CURRENT_YEAR}) — Full Comparison`,
     description: "Historical returns, leverage, tax treatment, liquidity, and transaction costs compared. Which is better for Australian investors?",

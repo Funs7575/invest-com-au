@@ -40,7 +40,7 @@ export const revalidate = 1800;
 export const metadata: Metadata = {
   title: `Invest in Australian Hydrogen (${CURRENT_YEAR}) — ASX Pure-Plays, Majors & HGEN ETF`,
   description:
-    "Australian hydrogen investing — Fortescue, Origin, Hazer, Province, Frontier, the Global X Hydrogen ETF (HGEN), FIRB rules, and the $2B Hydrogen Headstart production credit.",
+    "Australian hydrogen investing — Fortescue, Origin, Hazer, Province, Frontier, Global X HGEN ETF, FIRB rules, and the $2B Hydrogen Headstart credit.",
   alternates: { canonical: `${SITE_URL}/invest/hydrogen` },
   openGraph: {
     title: `Invest in Australian Hydrogen (${CURRENT_YEAR})`,

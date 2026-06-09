@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Compound Interest Calculator Australia — Investment Growth (${CURRENT_YEAR})`,
   description:
-    "Calculate how your investments grow with compound interest. Enter your initial investment, regular contributions, interest rate and time period to see your final balance and total interest earned.",
+    "Free Australian compound interest calculator. Enter your lump sum, contributions, rate and time period to see your final balance and total interest earned.",
   alternates: { canonical: "/compound-interest-calculator" },
   openGraph: {
     title: "Compound Interest Calculator — Investment Growth",

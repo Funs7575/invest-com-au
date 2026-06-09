@@ -12,7 +12,7 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 export const metadata: Metadata = {
   title: "FIRB Application: Complete Step-by-Step Guide (2026)",
   description:
-    "How to lodge a FIRB application to buy Australian property as a foreign investor. Documents required, fees, processing times, approval conditions, and what to do if rejected. Updated March 2026.",
+    "How to lodge a FIRB application: documents, fees, processing times, approval conditions, and what to do if rejected. Updated March 2026.",
   openGraph: {
     title: "FIRB Application: Complete Step-by-Step Guide (2026)",
     description:

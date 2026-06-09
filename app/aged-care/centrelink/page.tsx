@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Centrelink & Aged Care — Income Assessment, ACAT & Forms (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How Services Australia assesses aged care finances: SA486/SA457 forms, the ACAT assessment process, and how Centrelink affects your fees. ${UPDATED_LABEL}.`,
+  description: `How Services Australia assesses aged care: SA486/SA457 forms, the ACAT assessment process, and how Centrelink affects your fees. ${UPDATED_LABEL}`,
   openGraph: {
     title: `Centrelink & Aged Care (${CURRENT_YEAR}) — Assessment, Forms & Fees`,
     description: "Services Australia aged care assessment: SA486/SA457 forms, ACAT assessment, income and assets assessment, and fee impacts.",

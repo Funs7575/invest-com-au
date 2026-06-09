@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Global Crypto Exchanges for Australians (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Binance, Kraken, Bybit, and KuCoin for Australians — AUSTRAC status, AUD on-ramps, fees, and CGT on crypto gains. Compare global vs domestic exchanges. ${UPDATED_LABEL}.`,
+  description: `Binance, Kraken, Bybit, and KuCoin for Australians: AUSTRAC status, AUD on-ramps, fees, and CGT on gains. Global vs domestic exchanges. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Global Crypto Exchanges for Australians (${CURRENT_YEAR})`,
     description: "Binance, Kraken, Bybit — AUSTRAC registration, AUD on-ramp, fees, and Australian CGT treatment for offshore exchange users.",

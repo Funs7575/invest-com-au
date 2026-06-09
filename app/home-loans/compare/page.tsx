@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `How to Compare Home Loans in Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Beyond the headline rate — comparison rates, ongoing fees, offset quality, LMI, LVR tiers, and the 10-point checklist for choosing the right home loan. ${UPDATED_LABEL}.`,
+  description: `Beyond the headline rate — comparison rates, fees, offset quality, LMI, LVR tiers, and a 10-point checklist for choosing a home loan. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `How to Compare Home Loans in Australia (${CURRENT_YEAR})`,
     description: "The comparison rate, offset account quality, ongoing fees, LMI thresholds, and LVR rate tiers — the full checklist for comparing Australian home loans.",

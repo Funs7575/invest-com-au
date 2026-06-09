@@ -8,7 +8,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "What Type of Overseas Investor Are You? Free 3-Question Quiz | Invest.com.au",
   description:
-    "Non-resident, expat, new migrant or visa holder? Answer 3 questions to get guidance on Australian shares, property, super and banking tailored to your situation.",
+    "Non-resident, expat, migrant or visa holder? Answer 3 questions for guidance on Australian shares, property, super and banking for your situation.",
   alternates: { canonical: `${SITE_URL}/foreign-investment/quiz` },
 };
 

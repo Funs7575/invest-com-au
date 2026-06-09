@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Income Protection Insurance Australia (${CURRENT_YEAR})`,
-  description: `Complete guide to income protection insurance in Australia: benefit periods, waiting periods, own vs any occupation definitions, agreed value vs indemnity. ${UPDATED_LABEL}.`,
+  description: `Income protection insurance in Australia: benefit periods, waiting periods, own vs any occupation, and agreed value vs indemnity. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Income Protection Insurance Australia (${CURRENT_YEAR})`,
     description: "How income protection works, what to look for, and why it matters for working Australians.",

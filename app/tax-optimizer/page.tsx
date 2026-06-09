@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata = {
   title: "Tax Optimization Engine — Minimise Your Investment Tax",
   description:
-    "Free CGT calculator and tax optimisation tool for Australian investors. Find tax-loss harvesting opportunities, check CGT discount eligibility, estimate franking credits, and identify your top tax-saving moves.",
+    "Free CGT calculator for Australian investors: tax-loss harvesting, CGT discount eligibility, franking credit estimates, and top tax-saving moves.",
   openGraph: {
     title: "Tax Optimization Engine — Minimise Your Investment Tax",
     description:

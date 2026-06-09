@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Livestock & Equine Investment Opportunities Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian livestock and equine investment opportunities. Thoroughbred racehorse syndications, cattle herd investments, sheep and wool programs, stud breeding rights and equine genetic programs available for investment.",
+      "Browse Australian livestock and equine investments. Thoroughbred syndications, cattle herds, sheep and wool programs, stud breeding rights.",
     alternates: { canonical: `${SITE_URL}/invest/livestock/listings` },
     // Livestock/equine syndications are commonly regulated managed investment
     // schemes. De-indexed with a wholesale (s708) gate pending compliance

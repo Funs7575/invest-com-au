@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Royalty & IP Investment Opportunities Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian royalty and intellectual property investment opportunities. Mining royalties, music catalogue royalties, patent royalties, film residuals and pharmaceutical royalties available for investment.",
+      "Browse Australian royalty and IP investment opportunities. Mining, music catalogue, patent, film residuals and pharmaceutical royalties.",
     alternates: { canonical: `${SITE_URL}/invest/royalties/listings` },
     // No live listings yet — de-indexed until supply threshold is met.
     // Remove when countListingsByVertical("royalties") > 0 in prod.

@@ -4,7 +4,6 @@ import {
   COMPANY_LEGAL_NAME,
   COMPANY_ACN,
   COMPANY_ABN,
-  GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
 
 export const revalidate = 86400;
@@ -12,7 +11,7 @@ export const revalidate = 86400;
 export const metadata = {
   title: "Advisor Services Agreement",
   description:
-    "Terms and conditions for financial advisors, accountants, and mortgage brokers listed on the Invest.com.au directory. Covers eligibility, lead handling, billing, auto-renewal, and compliance obligations.",
+    "Terms for advisors, accountants, and mortgage brokers listed on Invest.com.au. Covers eligibility, lead handling, billing, auto-renewal, and compliance.",
   alternates: { canonical: "/advisor-terms" },
   robots: { index: true, follow: true },
   openGraph: {
@@ -34,18 +33,20 @@ export const metadata = {
 const EFFECTIVE_DATE = "10 March 2026";
 const VERSION = "1.0";
 
-export default function AdvisorTermsPage() {
-  const breadcrumbs = breadcrumbJsonLd([
-    { name: "Home", url: absoluteUrl("/") },
-    { name: "Advisor Services Agreement" },
-  ]);
-
-  const S = ({ n, title, children }: { n: number; title: string; children: React.ReactNode }) => (
+function S({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+  return (
     <section className="bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-6">
       <h2 className="text-base md:text-lg font-bold text-slate-900 mb-2">{n}. {title}</h2>
       <div className="text-sm text-slate-600 leading-relaxed space-y-2">{children}</div>
     </section>
   );
+}
+
+export default function AdvisorTermsPage() {
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Advisor Services Agreement" },
+  ]);
 
   return (
     <>

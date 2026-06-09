@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Age Pension Deeming Rates Australia — Current Rates & How They Work (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Current Age Pension deeming rates (0.25% / 2.25%), thresholds for singles and couples, what assets are deemed, account-based pension rules, and worked examples. ${UPDATED_LABEL}.`,
+  description: `Deeming rates (0.25%/2.25%), thresholds for singles and couples, deemed assets, account-based pension rules, and worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Age Pension Deeming Rates (${CURRENT_YEAR}) — How Deeming Affects Your Pension`,
     description: "Current deeming rates, thresholds, deemed vs actual income, account-based pension rules, and worked examples for Australian Age Pension recipients.",

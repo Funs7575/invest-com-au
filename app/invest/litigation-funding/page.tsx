@@ -28,7 +28,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Litigation Funding in Australia (${CURRENT_YEAR}) — Class Actions & Co-Investment`,
   description:
-    "Guide to litigation funding investment in Australia. Omni Bridgeway, LCM, class action funding structures, target returns, risk factors and retail vs wholesale access.",
+    "Guide to litigation funding investment in Australia. Omni Bridgeway, LCM, class action structures, target returns and retail vs wholesale access.",
   alternates: { canonical: `${SITE_URL}/invest/litigation-funding` },
   openGraph: {
     title: `Litigation Funding Investment in Australia (${CURRENT_YEAR})`,

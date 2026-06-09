@@ -12,7 +12,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Switch Broker, Super, or Savings Account — Step-by-Step Guide (${CURRENT_YEAR}) | ${SITE_NAME}`,
   description:
-    "Factual step-by-step guides for switching your share broker (CHESS transfer), superannuation fund (myGov rollover), or savings account (direct debit migration). Estimate your cost of staying vs switching.",
+    "Step-by-step guides to switch your broker (CHESS transfer), super fund (myGov rollover), or savings account. Estimate your cost of staying vs switching.",
   openGraph: {
     title: "Switch Broker, Super, or Savings — ${SITE_NAME}",
     description:

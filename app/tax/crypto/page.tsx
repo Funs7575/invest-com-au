@@ -13,7 +13,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Crypto Tax Australia (${CURRENT_YEAR}) — ATO Rules for Bitcoin, DeFi & Digital Assets`,
-  description: `ATO crypto tax rules explained: every disposal is a CGT event, staking rewards are ordinary income, DeFi complexity, NFT treatment, exchange collapses, and record-keeping. ${UPDATED_LABEL}.`,
+  description: `ATO crypto tax: every disposal is a CGT event, staking rewards are income, DeFi, NFTs, exchange collapses, and record-keeping. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Crypto Tax Australia (${CURRENT_YEAR}) — ATO Rules Explained`,
     description:

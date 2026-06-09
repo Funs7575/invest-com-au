@@ -9,7 +9,7 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR
 export const metadata: Metadata = {
   title: `Crypto Staking & DeFi Australia — Yields, Platforms & Tax (${CURRENT_YEAR})`,
   description:
-    "Crypto staking yields, DeFi for Australians, crypto ETFs on ASX (Monochrome EBTC, Global X 21Shares), regulated platforms (Swyftx, CoinSpot) and ATO tax treatment.",
+    "Crypto staking yields and DeFi for Australians. ASX crypto ETFs, regulated platforms (Swyftx, CoinSpot) and ATO tax treatment explained.",
   alternates: { canonical: `${SITE_URL}/invest/crypto-staking` },
   openGraph: {
     title: `Crypto Staking & DeFi Australia — Yields, Platforms & Tax (${CURRENT_YEAR})`,

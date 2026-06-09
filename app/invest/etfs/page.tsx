@@ -36,7 +36,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `ETF Guide Australia (${CURRENT_YEAR}) — How ETFs Work, Types & How to Choose`,
   description:
-    "Comprehensive guide to ETFs in Australia. How ETFs work mechanically, major ASX ETF types (VAS, VGS, IVV, VDHG), MER comparison, hedged vs unhedged, tax treatment, and how to build your first ETF portfolio.",
+    "How ETFs work in Australia — major ASX types (VAS, VGS, IVV, VDHG), MER comparison, hedged vs unhedged, tax treatment, and building your first portfolio.",
   alternates: { canonical: `${SITE_URL}/invest/etfs` },
   openGraph: {
     title: `ETF Guide Australia (${CURRENT_YEAR}) — How ETFs Work, Types & How to Choose`,

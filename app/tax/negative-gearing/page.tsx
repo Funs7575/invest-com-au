@@ -11,7 +11,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Negative Gearing Australia (${CURRENT_YEAR}) — How It Works for Property & Shares`,
-  description: `How negative gearing works in Australia for property and shares: tax savings by marginal rate, deductible expenses, CGT interaction, and break-even analysis. ${UPDATED_LABEL}.`,
+  description: `How negative gearing works for property and shares: tax savings by marginal rate, deductible expenses, and CGT interaction. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Negative Gearing Australia (${CURRENT_YEAR}) — Property & Shares Guide`,
     description:

@@ -57,7 +57,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `HECS-HELP Repayments Guide Australia (${CURRENT_YEAR}) — Thresholds, Indexation & Strategies`,
-  description: `How HECS-HELP repayments work in Australia. 2024-25 repayment thresholds, CPI indexation, repayment income definition, worked examples, and whether to pay it off early. ${UPDATED_LABEL}.`,
+  description: `How HECS-HELP repayments work: 2024-25 thresholds, CPI indexation, repayment income, worked examples, and whether to repay early. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `HECS-HELP Repayments Guide Australia (${CURRENT_YEAR})`,
     description: "2024-25 repayment thresholds, CPI indexation, salary sacrifice traps, and whether to pay your student debt off early.",

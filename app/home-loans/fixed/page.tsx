@@ -16,7 +16,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Fixed Rate Home Loans in Australia: Complete Guide (${CURRENT_YEAR})`,
   description:
-    "Everything you need to know about fixed rate home loans in Australia — how they work, break costs, rate lock fees, split loan strategies, and when fixing beats variable.",
+    "Fixed rate home loans in Australia explained — how they work, break costs, rate lock fees, split loan strategies, and when fixing beats variable.",
   alternates: { canonical: "/home-loans/fixed" },
   openGraph: {
     title: `Fixed Rate Home Loans Australia — Complete Guide (${CURRENT_YEAR})`,

@@ -9,7 +9,7 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR
 export const metadata: Metadata = {
   title: `Infrastructure Investment Australia — Funds, ASX Stocks & Unlisted (${CURRENT_YEAR})`,
   description:
-    "How to invest in infrastructure from Australia — toll roads, airports, utilities, ports. Transurban, APA Group, Atlas Arteria, Magellan Infrastructure Fund and unlisted options.",
+    "How to invest in infrastructure from Australia — toll roads, airports, utilities and ports. Transurban, APA Group, Atlas Arteria and unlisted options.",
   alternates: { canonical: `${SITE_URL}/invest/infrastructure` },
   openGraph: {
     title: `Infrastructure Investment Australia — Funds, ASX Stocks & Unlisted (${CURRENT_YEAR})`,

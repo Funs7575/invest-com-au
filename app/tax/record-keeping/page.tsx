@@ -10,7 +10,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Investment Record Keeping Australia (${CURRENT_YEAR}) — ATO Requirements & CGT Records`,
-  description: `ATO record keeping requirements for Australian investors: what to keep, for how long, by asset type (shares, property, crypto, ETFs, SMSF). Complete guide. ${UPDATED_LABEL}.`,
+  description: `ATO record keeping for Australian investors: what to keep and for how long, by asset type — shares, property, crypto, ETFs, SMSF. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Investment Record Keeping Australia (${CURRENT_YEAR}) — ATO Requirements`,
     description: "What investment records to keep for Australian tax purposes: 5-year ATO rule, CGT records, shares, property, crypto, and SMSF obligations.",
