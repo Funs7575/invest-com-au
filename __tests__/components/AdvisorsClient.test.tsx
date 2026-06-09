@@ -124,3 +124,60 @@ describe("AdvisorsClient — filter panel wiring", () => {
     expect(screen.getByRole("button", { name: "Filters (1)" })).toBeInTheDocument();
   });
 });
+
+describe("AdvisorsClient — compact header redesign", () => {
+  beforeEach(() => {
+    mockReplace.mockClear();
+    paramsRef.current = new URLSearchParams();
+  });
+
+  it("renders the light compact header (filter-reactive title, no dark eyebrow pill)", () => {
+    render(<AdvisorsClient professionals={professionals} />);
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toMatch(
+      /Find a Financial Advisor/i,
+    );
+    // The light tone intentionally omits the dark "Verified advisors" eyebrow pill.
+    expect(screen.queryByText("Verified advisors")).not.toBeInTheDocument();
+  });
+
+  it("drops the standalone 'Get matched in 60 seconds' card (folded into the toolbar)", () => {
+    render(<AdvisorsClient professionals={professionals} />);
+    expect(screen.queryByText(/Get matched in 60 seconds/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Not sure which advisor you need/i)).not.toBeInTheDocument();
+  });
+
+  it("exposes the Comfy/Compact density toggle and keeps the concierge link", () => {
+    render(<AdvisorsClient professionals={professionals} />);
+    expect(screen.getByRole("button", { name: /^comfy$/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^compact$/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /Ask the AI concierge/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("Enter routes the search phrase through the AI filter, then clears the box on a successful parse", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ params: { type: "smsf_accountant" } }),
+    });
+    vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
+    try {
+      render(<AdvisorsClient professionals={professionals} />);
+      const input = screen.getByRole("searchbox", {
+        name: /Search advisors/i,
+      }) as HTMLInputElement;
+      fireEvent.change(input, { target: { value: "smsf help in sydney" } });
+      fireEvent.submit(input.closest("form")!);
+      // Enter routes the phrase to /api/smart-filter (the merged AI filter)…
+      await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+      expect(fetchMock.mock.calls[0]?.[0]).toBe("/api/smart-filter");
+      // …and on a successful parse the literal text is cleared so only the
+      // parsed structured filters apply (regression guard: the phrase must not
+      // linger as a substring filter or be re-read back into the box).
+      await waitFor(() => expect(input.value).toBe(""));
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+});

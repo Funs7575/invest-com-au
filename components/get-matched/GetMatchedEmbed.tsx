@@ -11,8 +11,10 @@ interface Props {
   listingId?: number;
   /**
    * Render as a single compact CTA button instead of the full card. Used in
-   * the /invest toolbar so the "build an action plan" entry point lives inline
-   * on the search row rather than as a space-eating standalone card.
+   * directory toolbars (/invest, /advisors) so the matching entry point lives
+   * inline on the search row rather than as a space-eating standalone card.
+   * Per-context button copy comes from `inline_cta` in the embed config;
+   * contexts without it fall back to a generic "Get matched" label.
    */
   inline?: boolean;
 }
@@ -34,17 +36,20 @@ export default function GetMatchedEmbed({ context, listingId, inline }: Props) {
   if (listingId) baseQuery.set("listing_id", String(listingId));
 
   // Compact inline CTA — same destination as the full card, sized to sit on a
-  // toolbar row. The "Need help on a deal?" lead-in is hidden on small screens
-  // so the button stays a single tap target.
+  // toolbar row. Copy comes from the per-context config (`inline_cta`) so each
+  // surface reads correctly; the lead-in is hidden on small screens so the
+  // button stays a single tap target.
   if (inline) {
+    const lead = cfg.inline_cta?.lead;
+    const label = cfg.inline_cta?.label ?? "Get matched";
     return (
       <Link
         href={`/get-matched?${baseQuery.toString()}`}
         className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-coral-300 bg-coral-50 px-3 py-2 text-sm font-semibold text-coral-700 transition-colors hover:border-coral-400 hover:bg-coral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coral-400"
       >
         <Icon name="help-circle" size={14} className="shrink-0" />
-        <span className="hidden sm:inline">Need help on a deal?</span>
-        <span>Build an action plan</span>
+        {lead && <span className="hidden sm:inline">{lead}</span>}
+        <span>{label}</span>
         <Icon name="arrow-right" size={13} className="shrink-0" />
       </Link>
     );
