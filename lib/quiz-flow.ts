@@ -8,7 +8,7 @@
  * tests in __tests__/lib/quiz-flow.test.ts pin it down.
  */
 
-import type { AdvisorNeed } from "./quiz-primary-advisor";
+import { pickPrimary, type AdvisorNeed, type PrimaryAllocation } from "./quiz-primary-advisor";
 
 export type QuestionId =
   | "location"
@@ -41,6 +41,8 @@ export interface UnifiedAnswers {
   amount?: string;
   priority?: string;
   advisor_type?: string;
+  /** Multi-select "who will you need?" — CSV of advisor-need keys. */
+  needs?: string;
   property_sub?: string;
   investor_country?: string;
   visa_status?: string;
@@ -193,6 +195,17 @@ function toNeed(type: string | undefined): AdvisorNeed | null {
   return type && ADVISOR_NEEDS.has(type) ? (type as AdvisorNeed) : null;
 }
 
+/** Parse the multi-select `needs` CSV into a deduped, validated need list. */
+function parseNeeds(csv: string | undefined): AdvisorNeed[] {
+  if (!csv) return [];
+  const out: AdvisorNeed[] = [];
+  for (const tok of csv.split(",")) {
+    const n = toNeed(tok.trim());
+    if (n && !out.includes(n)) out.push(n);
+  }
+  return out;
+}
+
 /**
  * Derive the full plausible advisor need-set from the (currently single-select)
  * quiz answers — the bridge that feeds `pickPrimary` until the multi-select
@@ -211,6 +224,15 @@ export function deriveNeeds(a: UnifiedAnswers): AdvisorNeed[] {
     if (n && n !== "not-sure" && !needs.includes(n)) needs.push(n);
   };
 
+  // Explicit multi-select need-set ("who will you need?"): the user told us the
+  // full set directly, so use it verbatim — no inferred complements.
+  const explicit = parseNeeds(a.needs);
+  if (explicit.length > 0) {
+    explicit.forEach(add);
+    return needs;
+  }
+
+  // Otherwise infer from the single-select / international answers.
   // Anchor on the explicit/inferred primary advisor type (the displayed lead).
   const anchor = toNeed(inferAdvisorType(a));
   add(anchor);
@@ -251,6 +273,37 @@ export function deriveNeeds(a: UnifiedAnswers): AdvisorNeed[] {
   }
 
   return needs;
+}
+
+/** Build the pickPrimary context from the answer model. */
+function primaryContext(a: UnifiedAnswers) {
+  return {
+    stage: a.stage,
+    complexity: a.complexity,
+    isInternational: isInternational(a),
+    goal: a.goal,
+    amount: a.amount,
+    investorGoalIntl: a.investor_goal_intl,
+  };
+}
+
+/**
+ * Allocate the single lead advisor + the secondary "team" from the answers:
+ * `deriveNeeds` → `pickPrimary`. This is the one place that turns answers into
+ * an allocation (used by both the page lead and the results "team").
+ */
+export function allocateAdvisors(a: UnifiedAnswers): PrimaryAllocation {
+  return pickPrimary(deriveNeeds(a), primaryContext(a));
+}
+
+/**
+ * The single advisor type the lead goes to: pickPrimary's allocated primary,
+ * falling back to the inferred single type when there's no concrete allocation
+ * (an all-"not-sure" need-set / international single-select / legacy answers).
+ */
+export function resolveLeadAdvisorType(a: UnifiedAnswers): string {
+  const { primary } = allocateAdvisors(a);
+  return primary !== "post-job" ? primary : inferAdvisorType(a);
 }
 
 // Convert unified answers to a flat string array for the platform scoring engine

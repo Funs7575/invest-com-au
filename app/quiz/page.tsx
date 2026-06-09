@@ -16,6 +16,7 @@ import {
   getNextId,
   getTotalSteps,
   inferAdvisorType,
+  resolveLeadAdvisorType,
   toScoringAnswers,
 } from "@/lib/quiz-flow";
 
@@ -385,6 +386,13 @@ function saveProgress(currentId: QuestionId, answers: UnifiedAnswers, history: Q
   } catch { /* quota exceeded */ }
 }
 
+// Clearing a question's answer (on back / jump-back). The advisor_type slot's
+// answer lives in the multi-select `needs` satellite, so drop that too.
+function clearAnswerKey(answers: UnifiedAnswers, key: QuestionId) {
+  delete answers[key as keyof UnifiedAnswers];
+  if (key === "advisor_type") delete answers.needs;
+}
+
 function clearProgress() {
   try {
     localStorage.removeItem(QUIZ_STORAGE_KEY);
@@ -593,6 +601,44 @@ export default function QuizPage() {
 
   /* ─── Handlers ─── */
 
+  // Commit the answers and move to the next question — or, when the flow ends,
+  // kick off server-side scoring while the analyzing animation masks the
+  // round-trip. Advance only when BOTH the scoring response AND the minimum
+  // animation time complete (no empty flash, animation never cut short). Email
+  // capture is inline in the results screen (warm capture post-value). Shared by
+  // single-select (handleAnswer) and the multi-select needs question.
+  const commitAndAdvance = (fromId: QuestionId, newAnswers: UnifiedAnswers) => {
+    setAnswers(newAnswers);
+    setSelectedKey(null);
+    setAnimating(false);
+
+    const track = resolveTrack(newAnswers);
+    const nextId = getNextId(fromId, newAnswers);
+    const newHistory = [...history, fromId];
+
+    if (nextId === null) {
+      const advisor = track === "advisor";
+      setHistory(newHistory);
+      setPhase(advisor ? "advisor-analyzing" : "analyzing");
+      const minDelay = new Promise<void>((resolve) =>
+        setTimeout(resolve, advisor ? 2200 : 1800),
+      );
+      Promise.all([minDelay, runScoring(newAnswers)]).then(() => {
+        if (!mountedRef.current) return;
+        // Only clear saved progress once results are committed — a refresh
+        // during the analyzing window now resumes at the last question
+        // instead of wiping everything back to Q1.
+        clearProgress();
+        setPhase(advisor ? "advisor-results" : "diy-results");
+      });
+    } else {
+      setHistory(newHistory);
+      setCurrentId(nextId);
+      saveProgress(nextId, newAnswers, newHistory);
+      requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
+    }
+  };
+
   const handleAnswer = (key: string) => {
     if (animating) return;
     if (history.length === 0) {
@@ -612,43 +658,20 @@ export default function QuizPage() {
 
     setTimeout(() => {
       if (!mountedRef.current) return;
-      setAnswers(newAnswers);
-      setSelectedKey(null);
-      setAnimating(false);
-
-      const track = resolveTrack(newAnswers);
-      const nextId = getNextId(currentId, newAnswers);
-
-      const newHistory = [...history, currentId];
-
-      if (nextId === null) {
-        // Last question answered. Kick off server-side scoring now and let the
-        // analyzing animation mask the round-trip. Advance only when BOTH the
-        // scoring response AND the minimum animation time have completed — so
-        // the results are guaranteed ready (no empty flash) and the animation
-        // never feels cut short. Email capture is inline in the results screen
-        // (warm capture post-value, not cold capture pre-value).
-        const advisor = track === "advisor";
-        setHistory(newHistory);
-        setPhase(advisor ? "advisor-analyzing" : "analyzing");
-        const minDelay = new Promise<void>((resolve) =>
-          setTimeout(resolve, advisor ? 2200 : 1800),
-        );
-        Promise.all([minDelay, runScoring(newAnswers)]).then(() => {
-          if (!mountedRef.current) return;
-          // Only clear saved progress once results are committed — a refresh
-          // during the analyzing window now resumes at the last question
-          // instead of wiping everything back to Q1.
-          clearProgress();
-          setPhase(advisor ? "advisor-results" : "diy-results");
-        });
-      } else {
-        setHistory(newHistory);
-        setCurrentId(nextId);
-        saveProgress(nextId, newAnswers, newHistory);
-        requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
-      }
+      commitAndAdvance(currentId, newAnswers);
     }, 350);
+  };
+
+  // Multi-select "who will you need?" submit. Stores the CSV need-set + the
+  // allocated single primary as advisor_type (a clean enum value for the lead
+  // column + back-compat), then advances from the advisor_type slot.
+  const handleNeedsAnswer = (keys: string[]) => {
+    if (animating || keys.length === 0) return;
+    const csv = keys.join(",");
+    const newAnswers: UnifiedAnswers = { ...answers, needs: csv };
+    newAnswers.advisor_type = resolveLeadAdvisorType(newAnswers);
+    trackEvent('quiz_step', { question: 'advisor_type', answer: csv }, '/quiz');
+    commitAndAdvance("advisor_type", newAnswers);
   };
 
   const handleBack = () => {
@@ -659,7 +682,7 @@ export default function QuizPage() {
       setCurrentId(prev);
       // Remove the answer for the question we're going back from
       const newAnswers = { ...answers };
-      delete newAnswers[currentId as keyof UnifiedAnswers];
+      clearAnswerKey(newAnswers, currentId);
       setAnswers(newAnswers);
       saveProgress(prev, newAnswers, newHistory);
       // Move focus + SR cursor to the new question heading (was only done on
@@ -818,7 +841,7 @@ export default function QuizPage() {
   if (phase === "advisor-results") {
     return (
       <AdvisorResultsScreen
-        advisorType={inferAdvisorType(answers)}
+        advisorType={resolveLeadAdvisorType(answers)}
         quizAnswers={answers as Record<string, string>}
         platformResults={results}
         onRestart={handleRestart}
@@ -836,6 +859,16 @@ export default function QuizPage() {
     : UNIFIED_QUESTIONS[currentId];
   const questionIndex = history.length; // 0-based
   const totalSteps = getTotalSteps(answers);
+
+  // The advisor_type slot is multi-select on the domestic track (the "who will
+  // you need?" needs question); international keeps its filtered single-select.
+  const isNeedsQuestion = currentId === "advisor_type" && !isInternational(answers);
+  const needsInitial = answers.needs
+    ? answers.needs.split(",")
+    : (() => {
+        const suggested = inferAdvisorType(answers);
+        return suggested && suggested !== "not-sure" ? [suggested] : [];
+      })();
 
   // Context banner — shown above the question to set expectation about
   // the path the user just selected (currently only used for the international
@@ -887,6 +920,9 @@ export default function QuizPage() {
       contextBanner={contextBanner}
       questionIndex={questionIndex}
       totalQuestions={totalSteps}
+      multiSelect={isNeedsQuestion}
+      selectedKeys={needsInitial}
+      onMultiAnswer={handleNeedsAnswer}
       onAnswer={handleAnswer}
       onBack={handleBack}
       onJumpTo={(targetIndex) => {
@@ -899,10 +935,10 @@ export default function QuizPage() {
         // Clear all answers from history[targetIndex] onwards (the question they're going back to + everything after)
         for (let i = targetIndex; i < history.length; i++) {
           const k = history[i];
-          if (k) delete newAnswers[k as keyof UnifiedAnswers];
+          if (k) clearAnswerKey(newAnswers, k);
         }
         // Also drop the current question's answer if any
-        delete newAnswers[currentId as keyof UnifiedAnswers];
+        clearAnswerKey(newAnswers, currentId);
         setHistory(newHistory);
         setCurrentId(targetId);
         setAnswers(newAnswers);

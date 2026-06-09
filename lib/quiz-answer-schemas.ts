@@ -87,6 +87,11 @@ export const QuizAdvisorTypeSchema = safeEnum([
   "not-sure",
 ]);
 
+// Multi-select advisor need-set (the "who will you need?" question), stored as
+// a comma-separated list of advisor-type keys. Kept as a bounded string here;
+// deriveNeeds parses it and drops unknown tokens, so no enum is enforced.
+export const QuizNeedsSchema = z.string().max(200).optional().catch(undefined);
+
 export const QuizPropertySubSchema = safeEnum([
   "physical",
   "property-reit",
@@ -111,6 +116,7 @@ export const UnifiedAnswersSchema = z
     amount: QuizAmountSchema,
     priority: QuizPrioritySchema,
     advisor_type: QuizAdvisorTypeSchema,
+    needs: QuizNeedsSchema,
     property_sub: QuizPropertySubSchema,
     // Free-text fields: country code + visa status kept as bounded strings
     investor_country: z.string().max(10).optional().catch(undefined),

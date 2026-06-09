@@ -131,6 +131,11 @@ describe("UnifiedAnswersSchema", () => {
     expect(UnifiedAnswersSchema.parse(undefined)).toBeUndefined();
   });
 
+  it("passes through the multi-select needs CSV", () => {
+    const result = UnifiedAnswersSchema.parse({ needs: "mortgage-broker,tax-agent" });
+    expect(result?.needs).toBe("mortgage-broker,tax-agent");
+  });
+
   it("passes through free-text investor_country and visa_status", () => {
     const result = UnifiedAnswersSchema.parse({
       investor_country: "US",

@@ -11,8 +11,8 @@ import QuizComparisonTable from "./QuizComparisonTable";
 import AdvisorLocationStep from "./AdvisorLocationStep";
 import AdvisorMatchedScreen, { type MatchedAdvisor } from "./AdvisorMatchedScreen";
 import type { ScoredQuizAdvisor } from "@/lib/quiz-advisor-scoring";
-import { deriveNeeds } from "@/lib/quiz-flow";
-import { pickPrimary, type AdvisorNeed } from "@/lib/quiz-primary-advisor";
+import { allocateAdvisors } from "@/lib/quiz-flow";
+import type { AdvisorNeed } from "@/lib/quiz-primary-advisor";
 
 // Map the quiz "amount" answer to the AdvisorLocationStep BUDGETS option
 // values so we don't re-ask information the quiz already collected.
@@ -163,24 +163,12 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
   const advisorLabel = ADVISOR_LABELS[advisorType] || "Financial Advisor";
   const advisorHref = ADVISOR_HREFS[advisorType] || "/find-advisor";
 
-  // Derive the full plausible advisor need-set from the answers, then run it
-  // through pickPrimary — the same single-lead allocation ladder the upcoming
-  // multi-select "who will you need?" step will use. The displayed lead
-  // (`advisorType`) respects the user's explicit advisor_type pick; pickPrimary
-  // may elect a different *coordinator* as the structural primary (e.g. the free
-  // mortgage broker that gates a purchase). The "team" is the rest of the
-  // need-set, rendered as directory links — never a second lead postback. Fold
-  // the elected primary back in when it isn't the displayed lead so the
-  // strongest complement is never hidden.
-  const needs = deriveNeeds(quizAnswers);
-  const { primary, secondaries } = pickPrimary(needs, {
-    stage: quizAnswers.stage,
-    complexity: quizAnswers.complexity,
-    isInternational,
-    goal: quizAnswers.goal,
-    amount: quizAnswers.amount,
-    investorGoalIntl: quizAnswers.investor_goal_intl,
-  });
+  // The single lead (`advisorType`) is pickPrimary's allocated primary (see
+  // resolveLeadAdvisorType in page.tsx). The "team" is the rest of the need-set,
+  // rendered as directory links — never a second lead postback. Fold the
+  // elected primary back in on the rare post-job fallback (advisorType then
+  // comes from inferAdvisorType, not the allocation) so nothing is hidden.
+  const { primary, secondaries } = allocateAdvisors(quizAnswers);
   const team: AdvisorNeed[] = [
     ...(primary !== "post-job" && primary !== advisorType ? [primary] : []),
     ...secondaries,

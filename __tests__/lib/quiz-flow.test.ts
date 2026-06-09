@@ -7,6 +7,8 @@ import {
   getTotalSteps,
   inferAdvisorType,
   deriveNeeds,
+  allocateAdvisors,
+  resolveLeadAdvisorType,
   toScoringAnswers,
   type UnifiedAnswers,
 } from "@/lib/quiz-flow";
@@ -183,5 +185,39 @@ describe("deriveNeeds", () => {
     expect(deriveNeeds({ advisor_type: "financial-planner", complexity: "complex", amount: "whale" })).toEqual([
       "financial-planner", "tax-agent", "insurance-broker",
     ]);
+  });
+
+  it("uses an explicit multi-select need-set verbatim (no inferred complements)", () => {
+    expect(deriveNeeds({ needs: "mortgage-broker,tax-agent" })).toEqual(["mortgage-broker", "tax-agent"]);
+    // ...even when the goal would otherwise infer extra complements.
+    expect(deriveNeeds({ needs: "tax-agent", goal: "property", property_sub: "physical" })).toEqual(["tax-agent"]);
+  });
+
+  it("drops unknown/duplicate need tokens; an all-'not-sure' set is empty", () => {
+    expect(deriveNeeds({ needs: "tax-agent,lawyer,tax-agent" })).toEqual(["tax-agent"]);
+    expect(deriveNeeds({ needs: "not-sure" })).toEqual([]);
+  });
+});
+
+describe("allocateAdvisors / resolveLeadAdvisorType", () => {
+  it("allocates one primary + secondary team from a multi-select need-set", () => {
+    const a: UnifiedAnswers = { location: "australia", goal: "help", needs: "smsf-accountant,tax-agent,insurance-broker" };
+    const { primary, secondaries } = allocateAdvisors(a);
+    expect(primary).toBe("smsf-accountant"); // SMSF structure gates the rest (ladder)
+    expect(secondaries).toEqual(["tax-agent", "insurance-broker"]);
+    expect(resolveLeadAdvisorType(a)).toBe("smsf-accountant");
+  });
+
+  it("under-contract + a conveyancer need → conveyancer leads (settlement clock)", () => {
+    const a: UnifiedAnswers = { location: "australia", goal: "home", stage: "under-contract", needs: "mortgage-broker,conveyancer" };
+    expect(resolveLeadAdvisorType(a)).toBe("conveyancer");
+  });
+
+  it("falls back to the inferred single type on an all-'not-sure' (post-job) set", () => {
+    expect(resolveLeadAdvisorType({ location: "australia", goal: "super", needs: "not-sure" })).toBe("smsf-accountant");
+  });
+
+  it("respects the international single-select path (no needs set)", () => {
+    expect(resolveLeadAdvisorType({ location: "international", investor_goal_intl: "property" })).toBe("buyers-agent");
   });
 });
