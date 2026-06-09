@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { AdvisorOptInCheckboxes } from "@/components/AdvisorOptInCheckboxes";
 import type { ProfessionalType } from "@/lib/types";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { useUser } from "@/lib/hooks/useUser";
 
 const VERTICALS = [
   { value: "business", label: "Business for Sale", icon: "💼", desc: "Sell your established business" },
@@ -113,10 +112,26 @@ export default function ListingSubmitForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Phase 1 (listings consolidation): posting requires an account. Gate the
-  // wizard so we never lose a part-filled form to a 401; the submit route
-  // enforces the same requirement server-side as defence-in-depth. useUser()
-  // is already in the shared bundle (Header uses it), so this adds no weight.
-  const { user, loading: authLoading } = useUser();
+  // wizard on the client so we never lose a part-filled form to a 401 — the
+  // submit route enforces the same requirement server-side as defence-in-depth.
+  const [authed, setAuthed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    // Lazy-load the Supabase browser client so it stays out of the shared
+    // client chunk — it's only needed for this one-off session check.
+    import("@/lib/supabase/client")
+      .then(({ createClient }) => createClient().auth.getSession())
+      .then((res) => {
+        if (active && res) setAuthed(Boolean(res.data.session));
+      })
+      .catch(() => {
+        if (active) setAuthed(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function set(key: keyof FormData, value: string | boolean) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -198,7 +213,7 @@ export default function ListingSubmitForm() {
     }
   }
 
-  if (authLoading) {
+  if (authed === null) {
     return (
       <div className="max-w-md mx-auto text-center py-10">
         <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
@@ -206,7 +221,7 @@ export default function ListingSubmitForm() {
     );
   }
 
-  if (!user) {
+  if (!authed) {
     return (
       <div className="max-w-md mx-auto text-center bg-white border border-slate-200 rounded-2xl p-8">
         <div className="w-14 h-14 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -581,7 +596,10 @@ export default function ListingSubmitForm() {
               </label>
               <input
                 id="lsf-contact-email"
-                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
+                type="email"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
                 value={form.contact_email}
                 onChange={(e) => set("contact_email", e.target.value)}
                 placeholder="you@example.com"
