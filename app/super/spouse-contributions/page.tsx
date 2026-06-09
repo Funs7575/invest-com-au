@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Spouse Super Contributions & Tax Offset Guide 2026 — Up to $540",
   description:
-    "Spouse super contribution tax offset: claim up to $540/year when your spouse earns under $40,000. Eligibility rules, worked examples, and super splitting comparison. Updated 2026.",
+    "Spouse super tax offset: up to $540/yr when your spouse earns under $40k. Eligibility, worked examples, and super splitting comparison.",
   openGraph: {
     title: "Spouse Super Contributions & Tax Offset Guide 2026 — Up to $540",
     description:

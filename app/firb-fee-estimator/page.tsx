@@ -11,7 +11,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `FIRB Application Fee Estimator (${CURRENT_YEAR}) — Foreign Investment Australia`,
   description:
-    "Estimate the Australian FIRB application fee for residential, commercial, agricultural, business, or critical-infrastructure acquisitions. Based on the Treasury fee schedule.",
+    "Estimate your FIRB application fee by asset class and deal value: residential, commercial, agribusiness, or critical infrastructure. Uses Treasury rates.",
   alternates: { canonical: "/firb-fee-estimator" },
   openGraph: {
     title: `FIRB Application Fee Estimator (${CURRENT_YEAR})`,

@@ -8,7 +8,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Do You Qualify as a Wholesale Investor? Free 3-Question s708 Test | Invest.com.au",
   description:
-    "Find out if you meet the Australian s708 wholesale investor test (net assets $2.5M or income $250k). Instantly see which wholesale products — PE, hedge funds, private credit — match your profile.",
+    "Free s708 wholesale investor test: qualify on $2.5M net assets or $250k income, then see which PE, hedge fund, and private credit products you can access.",
   alternates: { canonical: `${SITE_URL}/wholesale/quiz` },
 };
 

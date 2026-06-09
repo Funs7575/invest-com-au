@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Commercial Property for Sale Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian commercial properties for sale. Office, industrial, retail, and hotel assets with yield data. Filter by city, property type, and yield range.",
+      "Australian commercial properties for sale. Office, industrial, retail, and hotel assets with yield data. Filter by city, property type, and yield range.",
     alternates: { canonical: `${SITE_URL}/invest/commercial-property/listings` },
     openGraph: {
       title: `Commercial Property for Sale Australia — ${countLabel}Active Listings`,

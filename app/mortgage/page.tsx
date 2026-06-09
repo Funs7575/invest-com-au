@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Home Loans & Mortgages Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Compare Australian home loan types, understand LVR, LMI, offset accounts, and redraw. Find a mortgage broker, use our repayment calculator, and read the essential guides. ${UPDATED_LABEL}.`,
+  description: `Home loan guide: LVR, LMI, offset accounts, redraw, fixed vs variable. Find a mortgage broker or use our repayment calculator. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Home Loans & Mortgages Australia (${CURRENT_YEAR})`,
     description: "Variable vs fixed, offset accounts, LVR, LMI — the essential guide for Australian home buyers and investors.",

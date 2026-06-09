@@ -28,17 +28,17 @@ const META: Record<
   broker: {
     title: `How to Switch Share Brokers in Australia — CHESS Transfer Guide (${CURRENT_YEAR}) | ${SITE_NAME}`,
     description:
-      "Step-by-step guide to transferring your ASX shares to a new broker via CHESS off-market transfer. Covers HIN transfer, cost-base records, US shares, and fees. Estimate your annual saving.",
+      "CHESS off-market transfer guide: HIN transfer, cost-base records, US shares, and fees. Estimate your annual saving.",
   },
   super: {
     title: `How to Switch Super Funds in Australia — Rollover Guide (${CURRENT_YEAR}) | ${SITE_NAME}`,
     description:
-      "Step-by-step guide to rolling over your superannuation via myGov. Covers insurance check, lost super search, beneficiary nomination, and contribution timing. Estimate your annual fee saving.",
+      "Super rollover via myGov: insurance check, lost super search, beneficiary nomination, and contribution timing. Estimate your annual fee saving.",
   },
   savings: {
     title: `How to Switch Savings Accounts in Australia — Guide (${CURRENT_YEAR}) | ${SITE_NAME}`,
     description:
-      "Step-by-step guide to switching savings accounts. Covers migrating direct debits and payroll, intro-rate expiry traps, and closing the old account. Estimate your annual interest gain.",
+      "Switch savings accounts: migrate direct debits and payroll, avoid intro-rate traps, and close your old account. Estimate your annual interest gain.",
   },
 };
 

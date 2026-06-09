@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `How to Wind Up an SMSF in Australia (${CURRENT_YEAR} Guide) | Invest.com.au`,
   description:
-    "Complete guide to winding up an SMSF: 7-step process, tax implications, in-specie transfers, rollover to APRA fund, costs ($2,000–$6,000+) and common mistakes to avoid.",
+    "Wind up an SMSF: 7-step process, tax implications, in-specie transfers, rollover to APRA fund, costs ($2,000–$6,000+) and mistakes to avoid.",
   alternates: { canonical: `${SITE_URL}/smsf/wind-up` },
   openGraph: {
     title: `How to Wind Up an SMSF in Australia (${CURRENT_YEAR} Guide)`,

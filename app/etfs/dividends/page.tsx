@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Best Dividend ETFs Australia (${CURRENT_YEAR}) — Income, Yield & Franking Compared`,
-  description: `Compare income and dividend ETFs for Australian investors: VHY, IHD, SYI, RDV. Yields, franking credits, grossed-up returns, fees, and tax. ${UPDATED_LABEL}.`,
+  description: `Compare dividend ETFs for Australian investors: VHY, IHD, SYI, RDV. Yields, franking credits, grossed-up returns, fees, and tax. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best Dividend ETFs Australia (${CURRENT_YEAR})`,
     description: "Dividend and income ETF comparison for income-focused Australian investors — yield, franking, and tax.",

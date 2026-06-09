@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Ethical Investing Australia (${CURRENT_YEAR}) — ESG, Screening & Greenwashing Guide`,
-  description: `ESG and ethical investing in Australia: top ETFs (ETHI, VESG, IESG), greenwashing red flags, RIAA certification, and the performance debate. ${UPDATED_LABEL}.`,
+  description: `ESG and ethical investing: top ETFs (ETHI, VESG, IESG), greenwashing red flags, RIAA certification, and the performance debate. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Ethical Investing Australia (${CURRENT_YEAR}) — ESG Guide`,
     description:

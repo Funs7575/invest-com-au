@@ -8,7 +8,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Post a Request — Get Quotes from Verified Advisors (${CURRENT_YEAR})`,
   description:
-    "Tell us what you need help with — mortgage, financial planning, tax, SMSF, property — and have verified Australian advisors quote you. Free to post, free to compare, no obligation.",
+    "Post a request for mortgage, financial planning, tax, SMSF, or property advice. Verified advisors quote you — free to post, free to compare, no obligation.",
   alternates: { canonical: `${SITE_URL}/quotes/post` },
 };
 

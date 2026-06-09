@@ -6,7 +6,7 @@ import { faqJsonLd } from "@/lib/schema-markup";
 export const metadata = {
   title: "Investment Property Listings — Australian Property Opportunities (2026)",
   description:
-    "Browse illustrative investment property listings across Australia. Compare yields, rental returns, and suburbs to find your next investment property opportunity.",
+    "Browse illustrative investment property listings across Australia. Compare yields, rental returns, and suburbs to find your next opportunity.",
   openGraph: {
     title: "Investment Property Listings — Australian Property Opportunities (2026)",
     description:

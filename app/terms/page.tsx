@@ -13,7 +13,7 @@ export const revalidate = 86400;
 export const metadata = {
   title: "Terms of Use",
   description:
-    "Terms and conditions governing your use of Invest.com.au. Covers subscriptions, billing, 7-day refund policy, user content, affiliate disclosures, and dispute resolution.",
+    "Terms governing use of Invest.com.au. Covers subscriptions, billing, 7-day refund policy, user content, affiliate disclosures, and dispute resolution.",
   alternates: { canonical: "/terms" },
   robots: { index: true, follow: true },
   openGraph: {

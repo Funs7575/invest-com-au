@@ -32,7 +32,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Non-Resident CGT Checker (${CURRENT_YEAR}) — Section 855-10 Eligibility`,
   description:
-    "Interactive check: does the Australian CGT exemption for non-residents apply to your asset? Covers listed shares, direct mining, real property, and the Taxable Australian Property tests.",
+    "Does the Australian CGT exemption apply to your asset? Covers listed shares, direct mining, real property, and the Taxable Australian Property tests.",
   alternates: { canonical: "/non-resident-cgt-checker" },
   openGraph: {
     title: `Non-Resident CGT Checker (${CURRENT_YEAR})`,

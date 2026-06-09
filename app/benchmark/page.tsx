@@ -10,7 +10,7 @@ import { faqJsonLd } from "@/lib/schema-markup";
 export const metadata = {
   title: "Platform Fee Benchmarking Dashboard — Percentile Rankings",
   description:
-    "See where your platform ranks on every fee dimension: ASX brokerage, US fees, FX rates, platform quality, and more. Visual radar chart with percentile rankings.",
+    "Percentile rankings across every fee dimension: ASX brokerage, US fees, FX rates, platform quality, and more. Visual radar chart comparison.",
   openGraph: {
     title: "Fee Benchmarking Dashboard",
     description:

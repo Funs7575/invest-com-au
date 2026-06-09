@@ -115,7 +115,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: `Get Quotes from Verified Australian Pros (${CURRENT_YEAR}) — Invest.com.au`,
   description:
-    "Send a Match Request to verified Australian professionals, firms or Pro Squads. They see a masked preview and respond only if it's a fit. You stay in control of who sees your contact details.",
+    "Match Request: verified professionals see a masked brief and respond only if it's a fit. You control who sees your contact details.",
   alternates: { canonical: `${SITE_URL}/briefs/new` },
   robots: { index: true, follow: true },
 };

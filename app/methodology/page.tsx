@@ -27,7 +27,7 @@ export const revalidate = 86400;
 export const metadata = {
   title: `Ranking Methodology — How We Rate & Sort Platforms | ${SITE_NAME}`,
   description:
-    "Full transparency on how Invest.com.au rates and ranks Australian investing platforms — scoring weights, sponsorship relationships, affiliate fees, and our editorial change log.",
+    "How Invest.com.au rates and ranks investing platforms — scoring weights, sponsorship relationships, affiliate fees, and our editorial change log.",
   openGraph: {
     title: "Ranking Methodology — How We Rate & Sort Platforms",
     description:

@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata = {
   title: "Regulatory & Tax Change Alerts — Australian Investing Updates",
   description:
-    "Stay informed on ASIC regulations, ATO tax changes, superannuation rules, and reporting requirements that affect Australian investors and their broker accounts.",
+    "Curated ASIC, ATO, and super rule changes that affect Australian investors and their broker accounts — stay informed.",
   robots: { index: false, follow: true },
   openGraph: {
     title: "Regulatory & Tax Alerts",

@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Foreign Bonds for Australian Investors (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How Australian investors access foreign bonds — US Treasuries via IBKR, AU-listed global bond ETFs (IAF, VBND, IHCB), yield, currency hedging, and tax treatment. ${UPDATED_LABEL}.`,
+  description: `Foreign bonds: US Treasuries via IBKR, ASX-listed ETFs (IAF, VBND, IHCB), yield, currency hedging, and Australian tax treatment. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Foreign Bonds for Australian Investors (${CURRENT_YEAR})`,
     description: "US Treasuries direct via IBKR, AU-listed global bond ETFs, yield, hedging, and Australian tax treatment.",

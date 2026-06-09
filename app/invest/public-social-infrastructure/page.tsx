@@ -28,7 +28,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Public Social Infrastructure in Australia (${CURRENT_YEAR}) — SDA, Social Housing & SIBs`,
   description:
-    "Guide to social infrastructure investing in Australia. NDIS Specialist Disability Accommodation (SDA), social housing, social impact bonds, and government-backed income streams.",
+    "Social infrastructure investing: NDIS Specialist Disability Accommodation (SDA), social housing, social impact bonds, and government-backed income streams.",
   alternates: { canonical: `${SITE_URL}/invest/public-social-infrastructure` },
   openGraph: {
     title: `Australian Public Social Infrastructure Investment (${CURRENT_YEAR})`,

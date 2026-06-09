@@ -10,7 +10,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: `Australian Broker Fee Tracker — Every Fee Change, Tracked (${CURRENT_YEAR})`,
-  description: `The only site that tracks every Australian broker fee change. Brokerage, FX, and platform fee changes across 20+ brokers — verified and recorded with dates. ${UPDATED_LABEL}.`,
+  description: `Every Australian broker fee change tracked: brokerage, FX, and platform fees across 20+ brokers — verified and dated. ${UPDATED_LABEL}.`,
   openGraph: {
     title: "Australian Broker Fee Tracker — Every Fee Change, Tracked",
     description:

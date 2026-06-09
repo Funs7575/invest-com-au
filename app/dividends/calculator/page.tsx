@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Franking Credits Calculator: Your After-Tax Dividend Income | Invest.com.au",
   description:
-    "Free calculator: enter dividend, franking % and tax rate. See franking credit, grossed-up dividend, tax payable, and net after-tax income. Includes SMSF pension-phase.",
+    "Enter dividend, franking % and tax rate — see franking credit, grossed-up dividend, tax payable, and after-tax income. Covers SMSF pension-phase.",
   alternates: { canonical: `${SITE_URL}/dividends/calculator` },
   openGraph: {
     title: "Franking Credits Calculator: Your After-Tax Dividend Income",

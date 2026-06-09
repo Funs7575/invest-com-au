@@ -31,7 +31,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Industry Growth Program ${CURRENT_YEAR}: Up to $5M for Australian SMEs | Invest.com.au`,
   description:
-    "The IGP funds commercialisation in Future Made in Australia priority sectors. Two streams ($50K–$5M), advisory-first process, and a closing window — here's the playbook.",
+    "IGP funds commercialisation in Future Made in Australia sectors. Two streams ($50K–$5M), advisory-first process, and a closing pool — full playbook.",
   alternates: { canonical: `${SITE_URL}/grants/industry-growth-program` },
   openGraph: {
     title: `Industry Growth Program ${CURRENT_YEAR}: Up to $5M for Australian SMEs`,

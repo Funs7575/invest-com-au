@@ -17,7 +17,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `SMSF Borrowing (LRBA) ${CURRENT_YEAR}: How Limited Recourse Borrowing Arrangements Work | Invest.com.au`,
   description:
-    "Limited Recourse Borrowing Arrangements explained: bare trust structure, ATO safe-harbour conditions, eligible assets, active lenders, costs, and key risks for SMSF trustees.",
+    "LRBA explained: bare trust structure, ATO safe-harbour conditions, eligible assets, active lenders, costs, and key risks for SMSF trustees.",
   alternates: { canonical: `${SITE_URL}/smsf/borrowing` },
   openGraph: {
     title: `SMSF Borrowing (LRBA) ${CURRENT_YEAR}`,

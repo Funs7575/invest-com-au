@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Best US Market ETFs for Australians (${CURRENT_YEAR}) — IVV, NDQ, VTS, QUS Compared`,
-  description: `Compare the best US share market ETFs for Australian investors: IVV (S&P 500), NDQ (NASDAQ 100), VTS, QUS. MER, currency risk, hedged vs unhedged. ${UPDATED_LABEL}.`,
+  description: `Best US market ETFs for Australians: IVV (S&P 500), NDQ (NASDAQ 100), VTS, QUS. MER, currency risk, hedged vs unhedged. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best US Market ETFs for Australians (${CURRENT_YEAR})`,
     description: "S&P 500, NASDAQ 100, and total US market ETFs compared for Australian investors.",

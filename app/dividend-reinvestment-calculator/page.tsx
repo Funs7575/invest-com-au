@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Dividend Reinvestment Calculator (DRP) Australia (${CURRENT_YEAR})`,
   description:
-    "Calculate how reinvesting dividends grows your share portfolio through compounding. Model DRP vs cash dividends, share price growth and your final portfolio value.",
+    "Model DRP vs cash dividends: see how reinvesting compounding dividends grows your portfolio. Enter share price growth and compare final portfolio values.",
   alternates: { canonical: "/dividend-reinvestment-calculator" },
   openGraph: {
     title: "Dividend Reinvestment Calculator (DRP)",

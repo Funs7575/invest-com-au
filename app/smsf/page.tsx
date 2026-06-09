@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Self-Managed Super Funds (SMSF) Guide (${CURRENT_YEAR}) — Costs, Rules & Setup`,
   description:
-    "Comprehensive guide to SMSFs in Australia. Learn about setup costs, trustee obligations, what you can invest in, LRBA borrowing, and whether an SMSF suits your situation.",
+    "SMSF guide: setup costs, trustee obligations, investment rules, LRBA borrowing, and whether a self-managed super fund suits your situation.",
   alternates: { canonical: `${SITE_URL}/smsf` },
   openGraph: {
     title: `Self-Managed Super Funds (SMSF) Guide (${CURRENT_YEAR})`,

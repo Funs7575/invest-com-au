@@ -11,7 +11,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `LIC Screener — Compare ASX Listed Investment Companies (${CURRENT_YEAR})`,
   description:
-    "Screen 15 ASX-listed investment companies (LICs) by dividend yield, franking credits, NTA premium/discount, management cost, and investment focus. Free tool — no sign-up.",
+    "Screen ASX LICs by dividend yield, franking credits, NTA premium/discount, management cost, and investment focus. Free — no sign-up required.",
   alternates: { canonical: `${SITE_URL}/lic-screener` },
   openGraph: {
     title: `LIC Screener — ASX Listed Investment Companies (${CURRENT_YEAR})`,

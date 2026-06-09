@@ -15,7 +15,7 @@ export const revalidate = 86400;
 export const metadata = {
   title: "Complaints & Dispute Resolution",
   description:
-    "How to resolve complaints about financial products listed on Invest.com.au. Contact the provider, escalate to AFCA, or report content issues to our editorial team.",
+    "Resolve complaints about financial products on Invest.com.au: contact the provider, escalate to AFCA, or report content errors to our editorial team.",
   alternates: { canonical: "/complaints" },
   openGraph: {
     title: "Complaints & Dispute Resolution",

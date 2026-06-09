@@ -6,7 +6,7 @@ export const revalidate = 86400;
 export const metadata = {
   title: "API Documentation | Invest.com.au",
   description:
-    "API documentation for financial planners and developers. Access Australian broker and advisor data, fee comparisons, and the AU brokerage fee index via a RESTful JSON API.",
+    "REST API for broker and advisor data, fee comparisons, and the AU brokerage fee index. Built for financial planners and fintech developers.",
   alternates: { canonical: "/api-docs" },
   openGraph: {
     title: "API Documentation | Invest.com.au",

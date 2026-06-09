@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Best Global ETFs for Australian Investors (${CURRENT_YEAR}) — VGS, IVV, NDQ Compared`,
-  description: `Compare the best global ETFs on the ASX for Australians: VGS, IVV, NDQ, VGE, BGBL, ETHI and more. MER, hedging, tax, and portfolio guides. ${UPDATED_LABEL}.`,
+  description: `Best global ETFs on the ASX: VGS, IVV, NDQ, VGE, BGBL, ETHI and more. MER, hedged vs unhedged, tax treatment, and portfolio guides. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best Global ETFs for Australian Investors (${CURRENT_YEAR})`,
     description:
