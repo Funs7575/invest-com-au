@@ -28,7 +28,8 @@ import ResultCount from "@/components/directory/ResultCount";
 import EmptyState from "@/components/directory/EmptyState";
 import CompareBar from "@/components/directory/CompareBar";
 import { FilterPill, FilterPopover } from "@/components/directory/FilterPill";
-import SmartFilterBar from "@/components/directory/SmartFilterBar";
+import { useSmartFilter } from "@/lib/hooks/useSmartFilter";
+import { useDensity } from "@/lib/hooks/useDensity";
 
 export interface ExpertTeamCard {
   id: number;
@@ -677,48 +678,65 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return [...ordered, ...extra];
   }, [professionals]);
 
+  // ── Comfy/Compact result density (localStorage-backed; reusable hook) ──
+  const [density, setDensity] = useDensity();
+  // AI smart-filter folded into the main search box: pressing Enter routes the
+  // phrase through /api/smart-filter and applies the parsed filters to the
+  // page's local filter state directly (the URL-mirror effect then reflects
+  // them). /advisors derives results from local state, so applying to state —
+  // not just writing the URL — is what makes the filters actually take effect
+  // and avoids the raw phrase being re-read back into the search box.
+  const applySmartFilters = useCallback((updates: Record<string, string>) => {
+    if (
+      updates.provider_type === "individual" ||
+      updates.provider_type === "firm" ||
+      updates.provider_type === "team"
+    ) {
+      setProviderType(updates.provider_type);
+    }
+    if (updates.type) {
+      const types = updates.type
+        .split(",")
+        .filter((v) => TYPE_FILTERS.some((f) => f.key === v)) as ProfessionalType[];
+      if (types.length > 0) setTypeFilters(new Set(types));
+    }
+    if (updates.state && (AU_STATES as readonly string[]).includes(updates.state)) {
+      setStateFilter(updates.state);
+    }
+    if (updates.specialty) setSpecialtyFilters(updates.specialty.split(",").filter(Boolean));
+    if (updates.language) setLanguageFilter(updates.language);
+    if (updates.fee) setFeeFilter(updates.fee);
+    if (updates.min_rating) {
+      const r = Number(updates.min_rating);
+      if (!Number.isNaN(r)) setMinRating(r);
+    }
+    if (updates.verified === "true") setVerifiedOnly(true);
+    if (updates.sort) setSortBy(updates.sort as SortKey);
+  }, []);
+  const smartFilter = useSmartFilter("advisors", applySmartFilters);
+  const resultsGridCls =
+    density === "compact"
+      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-3.5"
+      : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5";
+
   return (
     <>
-      {/* Shared full-bleed dark stat-led hero (SC-4) — matches /invest + /compare.
-          Headline + breadcrumb stay filter-reactive; banners render in the
-          canonical slot directly below the hero. */}
+      {/* Compact light directory header (matches the /invest treatment):
+          title + breadcrumb stay filter-reactive, the stats ride as small
+          inline pills, banners render in the canonical slot below. The old
+          standalone "Get matched in 60s" card is folded into the toolbar. */}
       <DirectoryHero
+        tone="light"
         containerClassName="container-custom"
         breadcrumbLabel={activeTypeLabel || "Find an Advisor"}
-        pill={{ label: "Verified advisors", live: true }}
-        headlineLead={
-          activeTypeLabel
-            ? `${providerTypeCounts.all} ${dynamicTitle.replace(/^Find\s+/, "").toLowerCase()}`
-            : `${providerTypeCounts.all} licensed advisors.`
-        }
-        headlineAccent="Three free intros."
+        headlineLead={dynamicTitle}
         subtitle={dynamicDescription}
         stats={advisorHeroStats}
       >
         {banners}
       </DirectoryHero>
-      <div className="py-5 md:py-12">
+      <div className="py-4 md:py-6">
         <div className="container-custom">
-        {/* Advisor matching + concierge — light band below the hero */}
-        <div className="mb-4 md:mb-6">
-          <p className="text-sm font-medium text-slate-600 mb-2 text-center">Not sure which advisor you need? Get matched in 60 seconds.</p>
-          <GetMatchedEmbed context="advisor_directory" />
-          <p className="text-[0.65rem] md:text-xs text-slate-500 mt-3 text-center">
-            Prefer to chat?{" "}
-            <Link
-              href="/concierge?finder=advisor-finder"
-              onClick={() =>
-                trackEvent("concierge_seed_clicked", {
-                  finder: "advisor-finder",
-                  source: "advisors_hero",
-                })
-              }
-              className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
-            >
-              Ask the AI concierge →
-            </Link>
-          </p>
-        </div>
 
         {/* Compare/shortlist bar — canonical primitive (slate/amber). Replaces
             the bespoke violet bar that broke the design system. */}
@@ -751,30 +769,23 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           />
         )}
 
-        {/* AI filter bar — natural language → URL params */}
-        <div className="mb-3">
-          <SmartFilterBar
-            setParams={(updates) => {
-              const p = new URLSearchParams(searchParams.toString());
-              for (const [k, v] of Object.entries(updates)) {
-                if (v) p.set(k, v); else p.delete(k);
-              }
-              router.replace(`/advisors?${p.toString()}`, { scroll: false });
-            }}
-            surface="advisors"
-          />
-        </div>
-
-        {/* Toolbar: search · all-filters · sort (mirrors /invest) */}
-        <div className="flex gap-2 mb-3 items-center">
+        {/* Toolbar: search (press Enter for AI filtering) · Get Matched ·
+            all-filters · sort. The standalone AI bar is folded into the search
+            via useSmartFilter; the Get-matched card is now this inline CTA. */}
+        <div className="flex flex-wrap gap-2 mb-1.5 items-center">
           <SearchInput
             className="flex-1"
             value={search}
             onChange={setSearch}
-            placeholder="Search name, firm, team, specialty, suburb…"
-            ariaLabel="Search advisors"
+            onSubmit={async (q) => {
+              const applied = await smartFilter.run(q);
+              if (applied) setSearch("");
+            }}
+            placeholder="Search name, firm, specialty, suburb — or try “SMSF advisor in Sydney”"
+            ariaLabel="Search advisors — or press Enter to filter by description"
             id="advisor-search"
           />
+          <GetMatchedEmbed context="advisor_directory" inline />
           <button
             type="button"
             onClick={() => setFiltersOpen(true)}
@@ -788,6 +799,38 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             value={sortBy}
             onChange={(v) => setSortBy(v as SortKey)}
           />
+        </div>
+
+        {/* AI smart-filter status + concierge fallback (replaces the old
+            standalone "Get matched in 60 seconds" band). */}
+        <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+          {smartFilter.isLoading && (
+            <span className="font-medium text-amber-600">Parsing your search…</span>
+          )}
+          {!smartFilter.isLoading && smartFilter.status !== "idle" && (
+            <span
+              role="status"
+              aria-live="polite"
+              className={`font-medium ${smartFilter.status === "success" ? "text-emerald-600" : "text-rose-600"}`}
+            >
+              {smartFilter.message}
+            </span>
+          )}
+          <span className="text-slate-500">
+            Prefer to chat?{" "}
+            <Link
+              href="/concierge?finder=advisor-finder"
+              onClick={() =>
+                trackEvent("concierge_seed_clicked", {
+                  finder: "advisor-finder",
+                  source: "advisors_hero",
+                })
+              }
+              className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
+            >
+              Ask the AI concierge →
+            </Link>
+          </span>
         </div>
 
         {/* Primary facet pills — mirrors /invest + /compare (shared FilterPill). */}
@@ -1025,7 +1068,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         />
 
         {/* Result count — canonical primitive */}
-        <div className="flex items-center justify-between mb-3 md:mb-4">
+        <div className="flex items-center justify-between gap-3 mb-3 md:mb-4">
           {nearbyLoading ? (
             <span className="text-sm text-slate-500">Searching nearby advisors…</span>
           ) : (
@@ -1039,7 +1082,23 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               })()}
             />
           )}
-          {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-500">Page {page} of {totalPages}</p>}
+          <div className="flex items-center gap-3 shrink-0">
+            {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-500">Page {page} of {totalPages}</p>}
+            {/* Comfy/Compact result density — personal view pref (localStorage). */}
+            <div className="hidden sm:inline-flex rounded-lg border border-slate-200 bg-white p-0.5" role="group" aria-label="Result density">
+              {(["comfy", "compact"] as const).map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  aria-pressed={density === d}
+                  onClick={() => setDensity(d)}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold capitalize transition-colors ${density === d ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:bg-slate-50"}`}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Firm sub-filter — narrows individual results to one firm.
@@ -1078,7 +1137,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
         {/* Results */}
         {nearbyLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
+          <div className={resultsGridCls}>
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="bg-white border border-slate-100 rounded-2xl overflow-hidden animate-pulse shadow-sm flex flex-col">
                 <div className="h-44 bg-slate-100" />
@@ -1105,7 +1164,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             ))}
           </div>
         ) : paginatedFeed.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
+          <div className={resultsGridCls}>
             {paginatedFeed.map((item, index) => {
               if (item.kind === "firm") {
                 const firm = item.firm;

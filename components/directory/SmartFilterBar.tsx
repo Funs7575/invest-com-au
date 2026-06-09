@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import Icon from "@/components/Icon";
+import { useSmartFilter } from "@/lib/hooks/useSmartFilter";
 
 export interface SmartFilterBarProps {
   setParams: (updates: Record<string, string>) => void;
@@ -15,8 +16,11 @@ const PLACEHOLDERS: Record<string, string> = {
   invest: 'Try: "commercial property Brisbane with yield over 7%"',
 };
 
-type Status = "idle" | "loading" | "success" | "error" | "empty";
-
+/**
+ * Standalone natural-language filter bar. The parse/apply engine lives in
+ * `useSmartFilter` so the same behaviour can be folded inline into a search
+ * box on surfaces that prefer one input (see /advisors).
+ */
 export default function SmartFilterBar({
   setParams,
   surface,
@@ -24,56 +28,13 @@ export default function SmartFilterBar({
   className = "",
 }: SmartFilterBarProps) {
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<Status>("idle");
-  const [message, setMessage] = useState("");
-  const cooldownRef = useRef(false);
+  const { run, status, message, isLoading } = useSmartFilter(surface, setParams);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!query.trim() || cooldownRef.current) return;
-
-    setStatus("loading");
-    setMessage("");
-    cooldownRef.current = true;
-    setTimeout(() => { cooldownRef.current = false; }, 1000);
-
-    try {
-      const res = await fetch("/api/smart-filter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim(), surface }),
-      });
-
-      if (res.status === 429) {
-        setStatus("error");
-        setMessage("Too many requests — wait a moment and try again.");
-        return;
-      }
-      if (!res.ok) {
-        setStatus("error");
-        setMessage("Couldn't parse that — try a shorter phrase.");
-        return;
-      }
-
-      const data = (await res.json()) as { params?: Record<string, string> };
-      if (!data.params || Object.keys(data.params).length === 0) {
-        setStatus("empty");
-        setMessage("No filters found — try being more specific.");
-        return;
-      }
-
-      setParams(data.params);
-      setStatus("success");
-      setMessage(`Applied ${Object.keys(data.params).length} filter${Object.keys(data.params).length !== 1 ? "s" : ""}`);
-      setQuery("");
-      setTimeout(() => setStatus("idle"), 2000);
-    } catch {
-      setStatus("error");
-      setMessage("Couldn't parse that — try a shorter phrase.");
-    }
+    const applied = await run(query);
+    if (applied) setQuery("");
   };
-
-  const isLoading = status === "loading";
 
   return (
     <div className={`w-full ${className}`}>
