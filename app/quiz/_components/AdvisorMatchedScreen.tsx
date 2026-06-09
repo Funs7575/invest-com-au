@@ -155,6 +155,18 @@ export default function AdvisorMatchedScreen({
           </div>
         )}
 
+        {/* Closest-match honesty — when the best fit is only "possible", set
+            expectations and offer the describe-and-quote path. */}
+        {currentMatch.confidence === "fair" && (
+          <div className="mt-3 mx-auto max-w-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-600">
+            This is the closest match to your criteria. Want more options?{" "}
+            <Link href="/quotes/post?context=quiz" className="font-semibold text-amber-700 hover:text-amber-800">
+              Describe your situation
+            </Link>{" "}
+            and verified pros reply with quotes.
+          </div>
+        )}
+
         {/* Match counter */}
         {allMatches.length > 1 && (
           <div className="inline-flex items-center gap-1.5 mt-2 bg-amber-50 border border-amber-200 rounded-full px-3 py-1">
