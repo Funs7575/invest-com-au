@@ -41,6 +41,15 @@ export const QuizGoalSchema = safeEnum([
   "other",
 ]);
 
+// Readiness/stage. "learning" is the education-first exit; "under-contract"
+// is the urgent tier (and feeds pickPrimary's settlement-clock rule).
+export const QuizStageSchema = safeEnum([
+  "under-contract",
+  "ready",
+  "exploring",
+  "learning",
+]);
+
 export const QuizModeSchema = safeEnum(["diy", "help", "unsure"]);
 
 export const QuizExperienceSchema = safeEnum([
@@ -95,6 +104,7 @@ export const UnifiedAnswersSchema = z
   .object({
     location: QuizLocationSchema,
     goal: QuizGoalSchema,
+    stage: QuizStageSchema,
     mode: QuizModeSchema,
     experience: QuizExperienceSchema,
     complexity: QuizComplexitySchema,

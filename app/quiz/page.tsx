@@ -93,6 +93,15 @@ const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: stri
       { key: "other",      label: "Something else / I'll describe it",       sub: "We'll route you to the right pro via post-a-job",       emoji: "❓" },
     ],
   },
+  stage: {
+    text: "Where are you up to?",
+    options: [
+      { key: "under-contract", label: "I need help right now",     sub: "I'm on a deadline — an offer, settlement, or tax/EOFY date", emoji: "⏳" },
+      { key: "ready",          label: "I'm ready to get started",  sub: "Looking to take action in the next few weeks",              emoji: "🚀" },
+      { key: "exploring",      label: "I'm weighing up my options", sub: "Researching before I commit to anything",                  emoji: "🔍" },
+      { key: "learning",       label: "Just learning for now",     sub: "Building my understanding — not ready to act yet",          emoji: "📚" },
+    ],
+  },
   mode: {
     text: "Do you want to do this yourself or get expert help?",
     options: [

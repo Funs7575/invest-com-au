@@ -6,6 +6,7 @@ import {
   shouldShowStackQuestions,
   getTotalSteps,
   inferAdvisorType,
+  deriveNeeds,
   toScoringAnswers,
   type UnifiedAnswers,
 } from "@/lib/quiz-flow";
@@ -32,6 +33,12 @@ describe("resolveTrack", () => {
   });
   it("diy otherwise", () => {
     expect(resolveTrack({ location: "australia", goal: "grow", mode: "diy" })).toBe("diy");
+  });
+  it("'just learning' overrides the advisor track → education-first DIY", () => {
+    expect(resolveTrack({ location: "australia", goal: "help", stage: "learning" })).toBe("diy");
+    expect(resolveTrack({ location: "australia", goal: "home", stage: "learning" })).toBe("diy");
+    // ...but international keeps its own specialised flow.
+    expect(resolveTrack({ location: "international", stage: "learning" })).toBe("international");
   });
 });
 
@@ -64,13 +71,29 @@ describe("getNextId", () => {
     expect(getNextId("stack_savings", g)).toBeNull();
   });
 
-  it("advisor flow (help): goal → complexity → amount → advisor_type → end", () => {
+  it("advisor flow (help): goal → stage → complexity → amount → advisor_type → end", () => {
     const adv: UnifiedAnswers = { location: "australia", goal: "help" };
     expect(getNextId("location", adv)).toBe("goal");
-    expect(getNextId("goal", adv)).toBe("complexity");
+    expect(getNextId("goal", adv)).toBe("stage");
+    expect(getNextId("stage", adv)).toBe("complexity");
     expect(getNextId("complexity", adv)).toBe("amount");
     expect(getNextId("amount", adv)).toBe("advisor_type");
     expect(getNextId("advisor_type", adv)).toBeNull();
+  });
+
+  it("mode=help enters the advisor track via the readiness question", () => {
+    const a: UnifiedAnswers = { location: "australia", goal: "grow", mode: "help" };
+    expect(getNextId("goal", a)).toBe("mode");
+    expect(getNextId("mode", a)).toBe("stage");
+    expect(getNextId("stage", a)).toBe("complexity");
+  });
+
+  it("'just learning' exits early (education-first); other stages continue", () => {
+    const learning: UnifiedAnswers = { location: "australia", goal: "help", stage: "learning" };
+    expect(getNextId("goal", learning)).toBe("stage");
+    expect(getNextId("stage", learning)).toBeNull();
+    const ready: UnifiedAnswers = { location: "australia", goal: "home", stage: "under-contract" };
+    expect(getNextId("stage", ready)).toBe("complexity");
   });
 });
 
@@ -89,8 +112,13 @@ describe("getTotalSteps", () => {
   it("counts each path", () => {
     expect(getTotalSteps({ location: "international" })).toBe(6);
     expect(getTotalSteps({ location: "australia", goal: "crypto", mode: "diy" })).toBe(6);
-    expect(getTotalSteps({ location: "australia", goal: "help" })).toBe(5);
+    expect(getTotalSteps({ location: "australia", goal: "help" })).toBe(6); // +1 readiness/stage
     expect(getTotalSteps({ location: "australia", goal: "grow", mode: "diy" })).toBe(9);
+  });
+  it("readiness adds a step on advisor entry; 'just learning' exits early", () => {
+    expect(getTotalSteps({ location: "australia", goal: "grow", mode: "help" })).toBe(7);
+    expect(getTotalSteps({ location: "australia", goal: "help", stage: "learning" })).toBe(3);
+    expect(getTotalSteps({ location: "australia", goal: "grow", mode: "help", stage: "learning" })).toBe(4);
   });
 });
 
@@ -116,5 +144,44 @@ describe("toScoringAnswers", () => {
       "grow", "beginner", "medium", "fees",
     ]);
     expect(toScoringAnswers({ goal: "grow", amount: "medium" })).toEqual(["grow", "medium"]);
+  });
+});
+
+describe("deriveNeeds", () => {
+  it("anchors on an explicit planner and pairs it with tax + protection", () => {
+    expect(deriveNeeds({ advisor_type: "financial-planner" })).toEqual([
+      "financial-planner", "tax-agent", "insurance-broker",
+    ]);
+  });
+
+  it("home buyer → broker + protection (no tax — owner-occupier)", () => {
+    expect(deriveNeeds({ goal: "home" })).toEqual(["mortgage-broker", "insurance-broker"]);
+  });
+
+  it("physical investment property → buyer's agent + finance + protection + tax", () => {
+    expect(deriveNeeds({ goal: "property", property_sub: "physical" })).toEqual([
+      "buyers-agent", "mortgage-broker", "insurance-broker", "tax-agent",
+    ]);
+  });
+
+  it("super goal → SMSF accountant + protection + a coordinating planner", () => {
+    expect(deriveNeeds({ goal: "super" })).toEqual([
+      "smsf-accountant", "insurance-broker", "financial-planner",
+    ]);
+  });
+
+  it("crypto → tax agent (CGT) + a planner", () => {
+    expect(deriveNeeds({ goal: "crypto" })).toEqual(["tax-agent", "financial-planner"]);
+  });
+
+  it("never emits 'not-sure' — an unsure pick with no signals yields an empty set", () => {
+    expect(deriveNeeds({ advisor_type: "not-sure" })).toEqual([]);
+  });
+
+  it("dedupes when multiple signals imply the same need", () => {
+    // complex + whale both add planner + tax; the planner anchor adds them too.
+    expect(deriveNeeds({ advisor_type: "financial-planner", complexity: "complex", amount: "whale" })).toEqual([
+      "financial-planner", "tax-agent", "insurance-broker",
+    ]);
   });
 });

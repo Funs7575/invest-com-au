@@ -6,6 +6,7 @@ import {
   QuizAmountSchema,
   QuizAdvisorTypeSchema,
   QuizLocationSchema,
+  QuizStageSchema,
   UnifiedAnswersSchema,
 } from "@/lib/quiz-answer-schemas";
 
@@ -71,6 +72,19 @@ describe("QuizAdvisorTypeSchema", () => {
   });
 });
 
+describe("QuizStageSchema", () => {
+  it("accepts the readiness stages", () => {
+    expect(QuizStageSchema.parse("under-contract")).toBe("under-contract");
+    expect(QuizStageSchema.parse("ready")).toBe("ready");
+    expect(QuizStageSchema.parse("exploring")).toBe("exploring");
+    expect(QuizStageSchema.parse("learning")).toBe("learning");
+  });
+
+  it("returns undefined for unknown stage values", () => {
+    expect(QuizStageSchema.parse("someday")).toBeUndefined();
+  });
+});
+
 describe("QuizLocationSchema", () => {
   it("accepts the values the live quiz actually emits", () => {
     // Regression: the quiz emits `australia` (not `au`); the old enum
@@ -90,6 +104,7 @@ describe("UnifiedAnswersSchema", () => {
     const result = UnifiedAnswersSchema.parse({
       location: "australia",
       goal: "grow",
+      stage: "ready",
       mode: "diy",
       experience: "beginner",
       complexity: "simple",
@@ -98,6 +113,7 @@ describe("UnifiedAnswersSchema", () => {
     });
     expect(result?.location).toBe("australia");
     expect(result?.goal).toBe("grow");
+    expect(result?.stage).toBe("ready");
     expect(result?.mode).toBe("diy");
     expect(result?.experience).toBe("beginner");
   });

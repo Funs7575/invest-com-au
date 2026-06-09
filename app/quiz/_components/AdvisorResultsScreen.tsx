@@ -11,6 +11,8 @@ import QuizComparisonTable from "./QuizComparisonTable";
 import AdvisorLocationStep from "./AdvisorLocationStep";
 import AdvisorMatchedScreen, { type MatchedAdvisor } from "./AdvisorMatchedScreen";
 import type { ScoredQuizAdvisor } from "@/lib/quiz-advisor-scoring";
+import { deriveNeeds } from "@/lib/quiz-flow";
+import { pickPrimary, type AdvisorNeed } from "@/lib/quiz-primary-advisor";
 
 // Map the quiz "amount" answer to the AdvisorLocationStep BUDGETS option
 // values so we don't re-ask information the quiz already collected.
@@ -22,29 +24,19 @@ const QUIZ_AMOUNT_TO_BUDGET: Record<string, string> = {
 };
 
 /* ─── Constants ─── */
-const COMBO_MAP: Record<string, { type: string; label: string; reason: string; icon: string }[]> = {
-  "mortgage-broker": [
-    { type: "insurance-broker", label: "Insurance Broker", reason: "Protect your new home and income", icon: "shield" },
-    { type: "tax-agent", label: "Tax Agent", reason: "Maximise mortgage interest deductions", icon: "file-text" },
-  ],
-  "financial-planner": [
-    { type: "tax-agent", label: "Tax Agent", reason: "Optimise your tax position alongside your plan", icon: "file-text" },
-    { type: "insurance-broker", label: "Insurance Broker", reason: "Ensure adequate protection as your wealth grows", icon: "shield" },
-  ],
-  "buyers-agent": [
-    { type: "mortgage-broker", label: "Mortgage Broker", reason: "Secure the best loan for your purchase", icon: "home" },
-    { type: "insurance-broker", label: "Insurance Broker", reason: "Protect your investment property", icon: "shield" },
-  ],
-  "tax-agent": [
-    { type: "financial-planner", label: "Financial Planner", reason: "Align your tax strategy with long-term goals", icon: "briefcase" },
-  ],
-  "insurance-broker": [
-    { type: "financial-planner", label: "Financial Planner", reason: "Review your overall financial protection", icon: "briefcase" },
-  ],
-  "smsf-accountant": [
-    { type: "financial-planner", label: "Financial Planner", reason: "Investment strategy for your SMSF", icon: "briefcase" },
-    { type: "insurance-broker", label: "Insurance Broker", reason: "Life and TPD cover through your SMSF", icon: "shield" },
-  ],
+// Per-need copy + icon for the "team" rendered from the derived need-set
+// (replaces the old static primary→combos COMBO_MAP — the team is now derived
+// from the user's answers via deriveNeeds + pickPrimary).
+const TEAM_META: Record<AdvisorNeed, { reason: string; icon: string }> = {
+  "mortgage-broker":   { reason: "Finance or refinance the purchase",    icon: "home" },
+  "buyers-agent":      { reason: "Find and negotiate the right property", icon: "search" },
+  "conveyancer":       { reason: "Handle the legal side of settlement",   icon: "file-text" },
+  "financial-planner": { reason: "Coordinate your overall strategy",      icon: "briefcase" },
+  "smsf-accountant":   { reason: "Set up and run your SMSF correctly",    icon: "landmark" },
+  "tax-agent":         { reason: "Optimise tax, CGT and deductions",      icon: "file-text" },
+  "insurance-broker":  { reason: "Protect your assets and income",        icon: "shield" },
+  "estate-planner":    { reason: "Plan your estate and succession",       icon: "file-text" },
+  "not-sure":          { reason: "Help working out who you need",         icon: "users" },
 };
 
 const ADVISOR_LABELS: Record<string, string> = {
@@ -170,7 +162,30 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
 
   const advisorLabel = ADVISOR_LABELS[advisorType] || "Financial Advisor";
   const advisorHref = ADVISOR_HREFS[advisorType] || "/find-advisor";
-  const combos = COMBO_MAP[advisorType] || [];
+
+  // Derive the full plausible advisor need-set from the answers, then run it
+  // through pickPrimary — the same single-lead allocation ladder the upcoming
+  // multi-select "who will you need?" step will use. The displayed lead
+  // (`advisorType`) respects the user's explicit advisor_type pick; pickPrimary
+  // may elect a different *coordinator* as the structural primary (e.g. the free
+  // mortgage broker that gates a purchase). The "team" is the rest of the
+  // need-set, rendered as directory links — never a second lead postback. Fold
+  // the elected primary back in when it isn't the displayed lead so the
+  // strongest complement is never hidden.
+  const needs = deriveNeeds(quizAnswers);
+  const { primary, secondaries } = pickPrimary(needs, {
+    stage: quizAnswers.stage,
+    complexity: quizAnswers.complexity,
+    isInternational,
+    goal: quizAnswers.goal,
+    amount: quizAnswers.amount,
+    investorGoalIntl: quizAnswers.investor_goal_intl,
+  });
+  const team: AdvisorNeed[] = [
+    ...(primary !== "post-job" && primary !== advisorType ? [primary] : []),
+    ...secondaries,
+  ].filter((n, i, arr) => n !== advisorType && n !== "not-sure" && arr.indexOf(n) === i);
+
   const topPlatforms = platformResults.filter((r) => r.broker).slice(0, 3);
   const canSubmitContact = name.trim().length >= 2 && phone.trim().length >= 8 && email.includes("@");
 
@@ -672,7 +687,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
         </div>
 
         {/* Recommended Team */}
-        {combos.length > 0 && (
+        {team.length > 0 && (
           <div className="bg-gradient-to-br from-amber-50 to-slate-50 border border-amber-200/60 rounded-xl p-4 md:p-5 mb-5">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
@@ -684,24 +699,27 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               These professionals complement your primary advisor:
             </p>
             <div className="space-y-2">
-              {combos.map((combo) => (
-                <div key={combo.type} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg p-3">
-                  <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                    <Icon name={combo.icon} size={18} className="text-slate-500" />
+              {team.map((need) => {
+                const meta = TEAM_META[need];
+                return (
+                  <div key={need} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg p-3">
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+                      <Icon name={meta.icon} size={18} className="text-slate-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-bold text-slate-900">{ADVISOR_LABELS[need] ?? need}</span>
+                      <p className="text-xs text-slate-500 mt-0.5">{meta.reason}</p>
+                    </div>
+                    <Link
+                      href={`/find-advisor?need=${need}`}
+                      onClick={() => trackEvent("advisor_combo_click", { primary: advisorType, allocated_primary: primary, combo_type: need }, "/quiz")}
+                      className="shrink-0 self-center px-3 py-1.5 text-[0.65rem] md:text-xs font-bold text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors whitespace-nowrap"
+                    >
+                      Find one
+                    </Link>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-bold text-slate-900">{combo.label}</span>
-                    <p className="text-xs text-slate-500 mt-0.5">{combo.reason}</p>
-                  </div>
-                  <Link
-                    href={`/find-advisor?need=${combo.type}`}
-                    onClick={() => trackEvent("advisor_combo_click", { primary: advisorType, combo_type: combo.type }, "/quiz")}
-                    className="shrink-0 self-center px-3 py-1.5 text-[0.65rem] md:text-xs font-bold text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors whitespace-nowrap"
-                  >
-                    Find one
-                  </Link>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

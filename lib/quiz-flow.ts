@@ -8,9 +8,12 @@
  * tests in __tests__/lib/quiz-flow.test.ts pin it down.
  */
 
+import type { AdvisorNeed } from "./quiz-primary-advisor";
+
 export type QuestionId =
   | "location"
   | "goal"
+  | "stage"
   | "mode"
   | "experience"
   | "complexity"
@@ -30,6 +33,8 @@ export type QuizTrack = "diy" | "advisor" | "international";
 export interface UnifiedAnswers {
   location?: string;
   goal?: string;
+  /** Readiness/stage: "under-contract" | "ready" | "exploring" | "learning". */
+  stage?: string;
   mode?: string;
   experience?: string;
   complexity?: string;
@@ -52,6 +57,10 @@ export function isInternational(a: UnifiedAnswers): boolean {
 
 export function resolveTrack(a: UnifiedAnswers): QuizTrack {
   if (isInternational(a)) return "international";
+  // "Just learning" → education-first: never push a learner into the advisor
+  // lead funnel, whatever their goal/mode. The readiness/stage question's
+  // first-class education exit (QUIZ_REDESIGN §5.5).
+  if (a.stage === "learning") return "diy";
   if (a.goal === "help" || a.goal === "home") return "advisor";
   if (a.mode === "help") return "advisor";
   if (a.property_sub === "physical") return "advisor";
@@ -92,9 +101,16 @@ export function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null 
     case "location":
       return "goal";
     case "goal":
-      return (a.goal === "help" || a.goal === "home") ? "complexity" : "mode";
+      // Advisor-bound goals get the readiness question before the specifics;
+      // DIY-leaning goals go through `mode` first.
+      return (a.goal === "help" || a.goal === "home") ? "stage" : "mode";
     case "mode":
-      return track === "advisor" ? "complexity" : "experience";
+      // mode === "help" enters the advisor track → ask readiness next.
+      return track === "advisor" ? "stage" : "experience";
+    case "stage":
+      // "Just learning" exits early to the education/self-serve results
+      // (resolveTrack routes it to DIY); everyone else continues.
+      return a.stage === "learning" ? null : "complexity";
     case "experience":
     case "complexity":
       return "amount";
@@ -128,10 +144,18 @@ export function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null 
 export function getTotalSteps(a: UnifiedAnswers): number {
   if (isInternational(a)) return 6; // location + country + visa + goal + amount + advisor_type
   const skipMode = a.goal === "help" || a.goal === "home";
+  // The readiness/stage question is asked once we enter the advisor track
+  // (help/home goal, or mode === "help").
+  const advisorEntry = skipMode || a.mode === "help";
+  // "Just learning" exits early to education: location + goal [+ mode] + stage.
+  if (advisorEntry && a.stage === "learning") {
+    return 1 + 1 + (skipMode ? 0 : 1) + 1;
+  }
+  const stageExtra = advisorEntry ? 1 : 0;
   const hasPropertySub = a.goal === "property";
   const hasStackQuestions = shouldShowStackQuestions(a) && a.mode !== "help";
   const stackExtra = hasStackQuestions ? 3 : 0; // stack_risk + stack_super + stack_savings
-  return 1 + (skipMode ? 4 : 5) + (hasPropertySub ? 1 : 0) + stackExtra; // +1 for location
+  return 1 + (skipMode ? 4 : 5) + stageExtra + (hasPropertySub ? 1 : 0) + stackExtra; // +1 for location
 }
 
 export function inferAdvisorType(a: UnifiedAnswers): string {
@@ -151,6 +175,82 @@ export function inferAdvisorType(a: UnifiedAnswers): string {
   if (a.goal === "crypto") return "tax-agent";
   if (a.amount === "large" || a.amount === "whale") return "financial-planner";
   return a.advisor_type || "financial-planner";
+}
+
+const ADVISOR_NEEDS: ReadonlySet<string> = new Set<AdvisorNeed>([
+  "mortgage-broker",
+  "buyers-agent",
+  "conveyancer",
+  "financial-planner",
+  "smsf-accountant",
+  "tax-agent",
+  "insurance-broker",
+  "estate-planner",
+  "not-sure",
+]);
+
+function toNeed(type: string | undefined): AdvisorNeed | null {
+  return type && ADVISOR_NEEDS.has(type) ? (type as AdvisorNeed) : null;
+}
+
+/**
+ * Derive the full plausible advisor need-set from the (currently single-select)
+ * quiz answers — the bridge that feeds `pickPrimary` until the multi-select
+ * "who will you need?" question lands (QUIZ_REDESIGN §5.5). Anchored on the
+ * explicit/inferred primary (same source as the displayed lead), then adds the
+ * complements the answers genuinely imply: a property purchase needs finance +
+ * protection; an investment property adds tax; a planner pairs with tax +
+ * protection; SMSF/tax anchors pair with a coordinating planner; complex or
+ * larger situations pull in a planner + tax. Every added need traces to a
+ * specific answer signal — no static lookup. Pure, order-preserving, deduped,
+ * and never emits "not-sure".
+ */
+export function deriveNeeds(a: UnifiedAnswers): AdvisorNeed[] {
+  const needs: AdvisorNeed[] = [];
+  const add = (n: AdvisorNeed | null) => {
+    if (n && n !== "not-sure" && !needs.includes(n)) needs.push(n);
+  };
+
+  // Anchor on the explicit/inferred primary advisor type (the displayed lead).
+  const anchor = toNeed(inferAdvisorType(a));
+  add(anchor);
+
+  const investmentProperty =
+    a.property_sub === "physical" ||
+    a.investor_goal_intl === "property" ||
+    (a.goal === "property" &&
+      a.property_sub !== "property-reit" &&
+      a.property_sub !== "property-super");
+
+  // Buying/financing property → loan + protection (+ tax for an investment).
+  if (investmentProperty || a.goal === "home") {
+    add("mortgage-broker");
+    add("insurance-broker");
+    if (investmentProperty) add("tax-agent");
+  }
+  // Retirement/super or SMSF property → SMSF structure + protection.
+  if (a.goal === "super" || a.property_sub === "property-super") {
+    add("smsf-accountant");
+    add("insurance-broker");
+  }
+  // Crypto → CGT.
+  if (a.goal === "crypto") add("tax-agent");
+  // A planner engagement almost always pairs with tax + protection.
+  if (anchor === "financial-planner") {
+    add("tax-agent");
+    add("insurance-broker");
+  }
+  // Structure/tax anchors pair with a planner for investment strategy.
+  if (anchor === "smsf-accountant" || anchor === "tax-agent") {
+    add("financial-planner");
+  }
+  // Complex or larger situations → a coordinating planner + tax.
+  if (a.complexity === "complex" || a.amount === "large" || a.amount === "whale") {
+    add("financial-planner");
+    add("tax-agent");
+  }
+
+  return needs;
 }
 
 // Convert unified answers to a flat string array for the platform scoring engine

@@ -10,12 +10,12 @@ Shipped on **PR #1477** (branch `claude/epic-newton-g5ml7l`), all green:
 - **Phase 0 ✓** — data-integrity P0s + client robustness (§4).
 - **Phase 2 (advisor matching) ✓** — `lib/quiz-advisor-scoring.ts` + `POST /api/advisor-match` (server-side scored matching · country-eligibility gate · confidence band · whitelisted no-leak); verified dynamic "Why we matched you" (`lib/quiz-advisor-match-reasons.ts`); closest-match fallback; keyboard/SR a11y pass.
 - **Phase 3 foundations ✓** — `lib/quiz-primary-advisor.ts` (`pickPrimary` allocation ladder, 12 tests) + `lib/quiz-flow.ts` (the routing state machine, extracted verbatim + **15 tests** — the regression net that makes question changes safe).
+- **Phase 3 steps 1–2 ✓** — `deriveNeeds(answers)` (`lib/quiz-flow.ts`, signal-driven need-set, 7 tests) now feeds `pickPrimary` to render `AdvisorResultsScreen`'s "Recommended Team" (the static `COMBO_MAP` is gone). The **readiness/stage** question is live on the advisor track (`UNIFIED_QUESTIONS.stage`, `QuizStageSchema`): asked after `goal`/`mode`, "just learning" routes to the education-first DIY exit via `resolveTrack`, `under-contract` is the urgent tier that feeds `pickPrimary`. Flow + total-steps + schema all test-covered.
 
 **Next — the question-graph rebuild (now safe to do because `lib/quiz-flow.ts` is tested):**
-1. Wire `pickPrimary` + a new `deriveNeeds(answers)` into `AdvisorResultsScreen`'s "Recommended Team" (replace the hardcoded `COMBO_MAP`).
-2. Add the **readiness/stage** question (single-select; "just learning" → education-first exit) — extend `lib/quiz-flow.ts` (`getNextId`/`getTotalSteps`) **+ its tests**, the `quiz-answer-schemas` enum, and `UNIFIED_QUESTIONS`.
-3. Convert single-select `advisor_type` → **multi-select "needs"** feeding `pickPrimary` (needs a multi-select interaction in `QuizQuestionScreen`).
-4. Expose stranded advisor types (conveyancer / commercial / estate) in the routing maps.
+1. Convert single-select `advisor_type` → **multi-select "needs"** feeding `pickPrimary` (needs a multi-select interaction in `QuizQuestionScreen`). Once landed, `AdvisorResultsScreen` can switch the displayed lead from `inferAdvisorType` to `pickPrimary`'s `primary` (the `allocated_primary` analytics field already logs the divergence).
+2. Expose stranded advisor types (conveyancer / commercial / estate) in the routing maps — then `deriveNeeds`/the team can emit them (today the team is limited to the non-stranded vocabulary so links never 404).
+3. Extend readiness to the **international** track + the `property_sub === "physical"`-via-DIY entry (both currently skip the stage question), and build the richer **education-first outcome** (§5.3 `resolveBestOutcome`) for "just learning" rather than reusing DIY results.
 
 Rule of thumb: change `lib/quiz-flow.ts`, run `npm test -- __tests__/lib/quiz-flow.test.ts` — the net catches flow regressions before they ship.
 
