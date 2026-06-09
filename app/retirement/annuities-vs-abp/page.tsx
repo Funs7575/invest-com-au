@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Annuity vs Account-Based Pension — Which Is Right for You? (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Head-to-head: lifetime annuity vs account-based pension for Australian retirees. Centrelink assets test, longevity risk, flexibility, fees, and the case for combining both. ${UPDATED_LABEL}.`,
+  description: `Lifetime annuity vs account-based pension in Australia: Centrelink test, longevity risk, flexibility, fees, and when to combine both. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Annuity vs Account-Based Pension (${CURRENT_YEAR})`,
     description: "Lifetime annuity vs ABP for Australian retirees: Centrelink, longevity, flexibility, and fees compared.",

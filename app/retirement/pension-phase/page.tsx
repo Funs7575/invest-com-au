@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Pension Phase Super — Account-Based Pension Guide (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How pension phase works in Australia: moving super from accumulation to pension phase, tax-free income rules, minimum drawdown requirements, TTR pensions, and transfer balance cap. ${UPDATED_LABEL}.`,
+  description: `How super pension phase works in Australia: tax-free income, minimum drawdowns, TTR pensions, and the transfer balance cap. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Pension Phase Super — Account-Based Pension Guide (${CURRENT_YEAR})`,
     description: "Account-based pensions, TTR, minimum drawdowns, tax-free income, and the transfer balance cap explained for Australian retirees.",

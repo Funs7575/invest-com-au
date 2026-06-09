@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Trusts & Trust Taxation in Australia (${CURRENT_YEAR}) — Complete Guide`,
-  description: `How trusts are taxed in Australia: discretionary family trusts, income streaming, the minor beneficiary trap, section 100A, testamentary trusts, and when a trust makes sense. ${UPDATED_LABEL}.`,
+  description: `How Australian trusts are taxed: family trust income streaming, the minor beneficiary trap, section 100A, testamentary trusts, and when to use a trust. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Trusts & Trust Taxation in Australia (${CURRENT_YEAR})`,
     description:

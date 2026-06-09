@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: `How to refinance your home loan in Australia — loyalty tax, break-even calculation, switching costs, cash-out equity, 7-step process, and 2 worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Home Loan Refinancing Guide Australia (${CURRENT_YEAR})`,
-    description: "Step-by-step refinancing guide: loyalty tax explained, break-even calculation, switching costs checklist, cash-out equity access, loan restructuring, and when NOT to refinance.",
+    description: "Step-by-step refinancing guide: loyalty tax, break-even calculation, switching costs checklist, cash-out equity access, and when NOT to refinance.",
     url: `${SITE_URL}/home-loans/refinancing`,
     images: [{ url: `/api/og?title=Home+Loan+Refinancing+Guide`, width: 1200, height: 630 }],
   },

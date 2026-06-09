@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Alternative Assets Australia — Whisky, Wine, Art, Watches, Farmland (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Australian guide to investing in alternative assets: whisky, wine, watches, art, farmland, carbon credits, and collectibles. Returns, risks, liquidity, tax treatment, and where to buy. ${UPDATED_LABEL}.`,
+  description: `Alternative assets for Australian investors: whisky, wine, watches, art, farmland, and carbon credits. Returns, risks, liquidity, and tax treatment. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Alternative Assets Australia (${CURRENT_YEAR})`,
     description: "Whisky, wine, watches, art, farmland, carbon credits — how Australian investors access alternative asset classes beyond shares and property.",

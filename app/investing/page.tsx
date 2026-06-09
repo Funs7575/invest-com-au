@@ -36,7 +36,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: `Investing in Australia by City (${CURRENT_YEAR}) — Compare Platforms & Advisors`,
-  description: `Explore investing resources for Australia's major cities. Compare share trading platforms, financial advisors, and investment options in Sydney, Melbourne, Brisbane, Perth, and more.`,
+  description: `Compare share trading platforms and financial advisors across Australian cities — Sydney, Melbourne, Brisbane, Perth, and more.`,
   alternates: { canonical: "/investing" },
   openGraph: {
     title: `Investing in Australia by City (${CURRENT_YEAR})`,

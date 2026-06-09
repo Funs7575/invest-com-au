@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Foreign Income Tax Offset (FITO) — Australian Guide (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Claim the FITO to offset Australian tax by foreign tax already paid on dividends, interest, and royalties. How it works, limits, worked examples, and how to claim on your ATO tax return. ${UPDATED_LABEL}.`,
+  description: `Claim the FITO to offset Australian tax on foreign dividends, interest, and royalties. How it works, limits, and worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Foreign Income Tax Offset (FITO) — Australian Guide (${CURRENT_YEAR})`,
     description: "Offset Australian tax by the foreign tax you've already paid. Worked examples and ATO return instructions.",
