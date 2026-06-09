@@ -30,10 +30,7 @@ export async function GET(request: NextRequest) {
     const lng = lngParam ? parseFloat(lngParam) : null;
     const radius = parseInt(searchParams.get("radius") || String(DEFAULT_RADIUS), 10);
 
-    // type accepts comma-separated multi-type: ?type=smsf_specialist,tax_agent
-    const typeRaw = searchParams.get("type");
-    const types = typeRaw ? typeRaw.split(",").filter(Boolean) : [];
-    const type = types.length === 1 ? types[0]! : null; // single value for RPC compat
+    const type = searchParams.get("type");
     const state = searchParams.get("state");
     const feeStructure = searchParams.get("fee_structure");
     const specialty = searchParams.get("specialty");
@@ -74,11 +71,7 @@ export async function GET(request: NextRequest) {
         .select("id, slug, name, firm_name, type, specialties, location_state, location_suburb, location_display, location_postcode, photo_url, fee_structure, fee_description, hourly_rate_cents, flat_fee_cents, aum_percentage, initial_consultation_free, rating, review_count, verified, offer_text, offer_active, created_at, avg_response_minutes, total_leads, featured_until, account_type", { count: "exact" })
         .eq("status", "active");
 
-      if (types.length === 1) {
-        query = query.eq("type", types[0]!);
-      } else if (types.length > 1) {
-        query = query.in("type", types);
-      }
+      if (type) query = query.eq("type", type);
       if (state) query = query.eq("location_state", state);
       if (feeStructure) query = query.eq("fee_structure", feeStructure);
       if (specialty) query = query.contains("specialties", [specialty]);

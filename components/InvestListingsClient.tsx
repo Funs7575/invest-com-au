@@ -30,7 +30,6 @@ import RangeSlider from "@/components/directory/RangeSlider";
 import DualRangeSlider from "@/components/directory/DualRangeSlider";
 import SubCategoryChips from "@/components/directory/SubCategoryChips";
 import SmartFilterBar from "@/components/directory/SmartFilterBar";
-import MapPanel from "@/components/directory/MapPanel";
 import { getSubCategoryChips } from "@/lib/sub-categories";
 
 // ─── Props ───────────────────────────────────────────────────────────
@@ -73,23 +72,12 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
 ];
 
 // ─── View modes ──────────────────────────────────────────────────────
-type ViewMode = "grid" | "list" | "table" | "map";
+type ViewMode = "grid" | "list" | "table";
 const VIEW_MODES: { value: ViewMode; label: string; icon: string }[] = [
   { value: "grid", label: "Grid", icon: "grid" },
   { value: "list", label: "List", icon: "list" },
   { value: "table", label: "Table", icon: "table" },
-  { value: "map", label: "Map", icon: "map-pin" },
 ];
-
-// Notice shown on non-location verticals when in map view
-const MAP_NOTICE_VERTICALS: Record<string, string> = {
-  startup: "startup & fund",
-  fund: "startup & fund",
-  alternatives: "alternatives",
-  royalty: "royalties",
-  listed_security: "listed securities",
-  private_credit: "private credit",
-};
 
 function resolveTicketBucketKey(raw: string | null): string {
   if (!raw) return "";
@@ -169,10 +157,6 @@ export default function InvestListingsClient({
 
   // Filter drawer open state — kept local, never persisted
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  // Map hover/select state — local only, syncs list↔map without URL noise
-  const [mapHoveredId, setMapHoveredId] = useState<number | null>(null);
-  const [mapSelectedId, setMapSelectedId] = useState<number | null>(null);
 
   // ── URL update helper ──
   const setParams = useCallback(
@@ -758,83 +742,7 @@ export default function InvestListingsClient({
 
             {filtered.length === 0 ? (
               <EmptyState onClearAll={clearAllFilters} hasFilters={activeChips.length > 0} />
-            ) : activeView === "map" ? (() => {
-              const mapItems = filtered
-                .filter((l) => l.latitude != null && l.longitude != null)
-                .map((l) => ({
-                  id: l.id,
-                  lat: l.latitude!,
-                  lng: l.longitude!,
-                  label: l.title,
-                  sublabel: l.sub_category ?? l.listing_kind ?? undefined,
-                  href: listingUrl(l),
-                }));
-              const ungeocodedCount = filtered.length - mapItems.length;
-              const verticalNotice = activeCategory !== "all" ? MAP_NOTICE_VERTICALS[activeCategory] : null;
-              return (
-                <>
-                  {verticalNotice && (
-                    <p className="text-xs text-slate-500 mb-3 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-                      <Icon name="info" size={13} className="inline mr-1 text-amber-500" />
-                      Map view shows fewer results for <span className="font-medium">{verticalNotice}</span> — most are headquartered, not site-based.
-                    </p>
-                  )}
-                  <MapPanel
-                    items={mapItems}
-                    hoveredId={mapHoveredId}
-                    selectedId={mapSelectedId}
-                    onHover={setMapHoveredId}
-                    onSelect={setMapSelectedId}
-                  >
-                    <div className="p-3 space-y-2">
-                      <p className="text-xs text-slate-500 px-1 pb-1">
-                        <span className="font-bold text-slate-700">{mapItems.length}</span> mapped
-                        {ungeocodedCount > 0 && <span className="text-slate-400"> · {ungeocodedCount} without location</span>}
-                      </p>
-                      {mapItems.map((item) => {
-                        const l = filtered.find((x) => x.id === item.id)!;
-                        return (
-                          <div
-                            key={l.id}
-                            onMouseEnter={() => setMapHoveredId(l.id)}
-                            onMouseLeave={() => setMapHoveredId(null)}
-                            onClick={() => setMapSelectedId(l.id === mapSelectedId ? null : l.id)}
-                            className={`rounded-lg border cursor-pointer transition-colors ${l.id === mapSelectedId ? "border-amber-400 bg-amber-50" : l.id === mapHoveredId ? "border-slate-300 bg-slate-50" : "border-slate-100 bg-white"}`}
-                          >
-                            <InvestListingCard
-                              listing={l}
-                              variant="list"
-                              showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
-                              matchScore={matchScores?.[l.id] ?? null}
-                              advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
-                              showClaimBadge={false}
-                            />
-                          </div>
-                        );
-                      })}
-                      {ungeocodedCount > 0 && (
-                        <div className="pt-3 border-t border-slate-100">
-                          <p className="text-xs font-semibold text-slate-500 mb-2 px-1">Location not yet geocoded</p>
-                          {filtered
-                            .filter((l) => l.latitude == null || l.longitude == null)
-                            .map((l) => (
-                              <InvestListingCard
-                                key={l.id}
-                                listing={l}
-                                variant="list"
-                                showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
-                                matchScore={matchScores?.[l.id] ?? null}
-                                advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
-                                showClaimBadge={false}
-                              />
-                            ))}
-                        </div>
-                      )}
-                    </div>
-                  </MapPanel>
-                </>
-              );
-            })() : activeView === "table" ? (
+            ) : activeView === "table" ? (
               <TableView listings={filtered} showFirbBadge={Boolean(intentCountry) || activeFirbOnly} />
             ) : activeView === "list" ? (
               <div className="flex flex-col gap-3">
