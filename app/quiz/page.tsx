@@ -481,12 +481,19 @@ function buildLocalStack(
 }
 
 const QUIZ_STORAGE_KEY = "invest-quiz-v2-progress";
+const QUIZ_PROGRESS_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function loadSavedProgress(): { currentId: QuestionId; answers: UnifiedAnswers; history: QuestionId[] } | null {
   try {
     const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
+    // Expire stale in-progress quizzes so abandoned answers don't linger on a
+    // shared device (and a months-old "Welcome back" never shows).
+    if (typeof parsed?.savedAt === "number" && Date.now() - parsed.savedAt > QUIZ_PROGRESS_TTL_MS) {
+      clearProgress();
+      return null;
+    }
     if (parsed && parsed.currentId && parsed.answers && Array.isArray(parsed.history)) {
       return parsed;
     }
@@ -496,7 +503,7 @@ function loadSavedProgress(): { currentId: QuestionId; answers: UnifiedAnswers; 
 
 function saveProgress(currentId: QuestionId, answers: UnifiedAnswers, history: QuestionId[]) {
   try {
-    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify({ currentId, answers, history }));
+    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify({ currentId, answers, history, savedAt: Date.now() }));
   } catch { /* quota exceeded */ }
 }
 
