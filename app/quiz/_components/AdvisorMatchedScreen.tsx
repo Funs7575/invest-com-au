@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { buildAdvisorMatchReasons, type AdvisorMatchContext } from "@/lib/quiz-advisor-match-reasons";
 
 export interface MatchedAdvisor {
   id: number;
@@ -18,6 +19,13 @@ export interface MatchedAdvisor {
   specialties: string[];
   fee_description: string | null;
   verified: boolean;
+  location_state?: string | null;
+  accepts_international_clients?: boolean | null;
+  international_tax_specialist?: boolean | null;
+  firb_specialist?: boolean | null;
+  languages?: string[] | null;
+  available_in_countries?: string[] | null;
+  years_experience?: number | null;
 }
 
 function typeLabel(type: string): string {
@@ -59,12 +67,13 @@ interface Props {
   submitError: string | null;
   onConfirm: (advisor: MatchedAdvisor) => void;
   confirming: boolean;
+  matchContext?: AdvisorMatchContext;
 }
 
 export default function AdvisorMatchedScreen({
   userEmail: _userEmail, userFirstName, currentMatch, allMatches,
   matchIndex, onRematch, rematching, noMoreMatches, onRestart,
-  submitError, onConfirm, confirming,
+  submitError, onConfirm, confirming, matchContext,
 }: Props) {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -97,6 +106,8 @@ export default function AdvisorMatchedScreen({
       </div>
     );
   }
+
+  const matchReasons = buildAdvisorMatchReasons(currentMatch, matchContext ?? {});
 
   return (
     <div ref={cardRef} className="space-y-5 advisor-step-enter">
@@ -195,6 +206,28 @@ export default function AdvisorMatchedScreen({
                   {s}
                 </span>
               ))}
+            </div>
+          )}
+
+          {/* Why we matched you — ties the user's quiz answers to this advisor's real attributes */}
+          {matchReasons.length > 0 && (
+            <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-3.5 mb-5">
+              <p className="text-[0.6rem] font-bold text-emerald-700 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                <svg className="w-3 h-3 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                Why we matched you with {currentMatch.name.split(" ")[0]}
+              </p>
+              <ul className="space-y-1.5">
+                {matchReasons.map((reason, i) => (
+                  <li key={i} className="text-xs text-slate-700 flex items-start gap-2 leading-relaxed">
+                    <svg className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {reason}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 

@@ -79,6 +79,13 @@ const TYPE_DB_MAP: Record<string, string> = {
   "not-sure": "",
 };
 
+// Shared column projection for advisor-matching queries. Includes the
+// attributes the "why we matched you" reason builder consumes (corridor /
+// FIRB / intl flags, languages, location_state, experience) — all existing
+// columns on `professionals`, no schema change.
+const ADVISOR_COLS =
+  "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, accepts_international_clients, international_tax_specialist, firb_specialist, languages, available_in_countries, years_experience";
+
 type FlowStep = "contact" | "location" | "matching";
 
 interface PlatformResult {
@@ -256,9 +263,16 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
         rating: (p.rating as number) ?? 0,
         review_count: (p.review_count as number) ?? 0,
         location_display: (p.location_display as string) ?? null,
+        location_state: (p.location_state as string) ?? null,
         specialties: (p.specialties as string[]) ?? [],
         fee_description: (p.fee_description as string) ?? null,
         verified: (p.verified as boolean) ?? false,
+        accepts_international_clients: (p.accepts_international_clients as boolean) ?? null,
+        international_tax_specialist: (p.international_tax_specialist as boolean) ?? null,
+        firb_specialist: (p.firb_specialist as boolean) ?? null,
+        languages: (p.languages as string[]) ?? null,
+        available_in_countries: (p.available_in_countries as string[]) ?? null,
+        years_experience: (p.years_experience as number) ?? null,
       });
 
       let matched: MatchedAdvisor[] = [];
@@ -267,7 +281,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
         // For international investors: first try advisors with international flags
         let intlQuery = supabase
           .from("professionals")
-          .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, accepts_international_clients, international_tax_specialist, firb_specialist, languages")
+          .select(ADVISOR_COLS)
           .eq("status", "active")
           .eq("verified", true)
           .eq("accepts_international_clients", true);
@@ -279,7 +293,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
         if (matched.length < 3) {
           const { data: specData } = await supabase
             .from("professionals")
-            .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
+            .select(ADVISOR_COLS)
             .eq("status", "active")
             .eq("verified", true)
             .contains("specialties", ["International Clients"])
@@ -292,7 +306,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
       } else {
         let query = supabase
           .from("professionals")
-          .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
+          .select(ADVISOR_COLS)
           .eq("status", "active")
           .eq("verified", true);
         if (dbType) query = query.eq("type", dbType);
@@ -304,7 +318,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
         if (matched.length === 0 && stateValue) {
           let fallbackQuery = supabase
             .from("professionals")
-            .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
+            .select(ADVISOR_COLS)
             .eq("status", "active")
             .eq("verified", true);
           if (dbType) fallbackQuery = fallbackQuery.eq("type", dbType);
@@ -423,6 +437,17 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                 submitError={submitError}
                 onConfirm={handleConfirm}
                 confirming={confirming}
+                matchContext={{
+                  advisorType,
+                  goal: quizAnswers.goal,
+                  amount: quizAnswers.amount,
+                  budget: budgetValue || undefined,
+                  userState: stateValue || undefined,
+                  isInternational,
+                  investorCountry,
+                  visaStatus,
+                  investorGoalIntl,
+                }}
               />
 
               {/* Platform cross-sell below matched screen */}
