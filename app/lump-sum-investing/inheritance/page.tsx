@@ -28,7 +28,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "What to Do With an Inheritance in Australia | Invest.com.au",
   description:
-    "There's no inheritance tax in Australia — but there is CGT, super inheritance rules and a lot of behavioural risk. The right sequence for a sudden lump sum.",
+    "No inheritance tax in Australia — but there is CGT, super inheritance rules and behavioural risk. The right sequence for investing a sudden lump sum.",
   alternates: { canonical: `${SITE_URL}/lump-sum-investing/inheritance` },
   openGraph: {
     title: "What to Do With an Inheritance in Australia",

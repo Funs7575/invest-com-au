@@ -19,7 +19,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Should I Salary Sacrifice Into Super? Decision Tool (${CURRENT_YEAR}) — ${SITE_NAME}`,
   description:
-    "Answer 3 questions about your income, employment type, and contributions cap to find out whether salary sacrificing into super makes financial sense for you.",
+    "Answer 3 questions about your income, employment type and concessional cap to find out whether salary sacrificing into super makes financial sense for you.",
   alternates: { canonical: "/tools/salary-sacrifice" },
   openGraph: {
     title: "Should I Salary Sacrifice Into Super? — Decision Tool",

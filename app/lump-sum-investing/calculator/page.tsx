@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Lump-Sum Compound Growth Calculator Australia | Invest.com.au",
   description:
-    "Project a lump sum's growth over 1–30 years. Three-scenario comparison, monthly contribution and tax-on-returns option. SMSF, marginal and tax-free outcomes.",
+    "Project a lump sum's growth over 1–30 years. Three-scenario comparison, monthly contribution and tax-on-returns option. SMSF, marginal, tax-free outcomes.",
   alternates: { canonical: `${SITE_URL}/lump-sum-investing/calculator` },
   openGraph: {
     title: "Lump-Sum Compound Growth Calculator Australia",

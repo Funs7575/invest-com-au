@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Negative Gearing Calculator: Property Investment Cash Flow & Tax | Invest.com.au",
   description:
-    "Free negative-gearing calculator. Enter your rent, costs and tax rate. See annual loss, tax benefit, net out-of-pocket and 10-year capital-growth projection.",
+    "Free negative-gearing calculator. Enter rent, costs and tax rate. See annual loss, tax benefit, net out-of-pocket and 10-year capital-growth projection.",
   alternates: { canonical: `${SITE_URL}/negative-gearing/calculator` },
   openGraph: {
     title: "Negative Gearing Calculator",

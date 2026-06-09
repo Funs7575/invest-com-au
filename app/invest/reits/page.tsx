@@ -10,7 +10,7 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR
 export const metadata: Metadata = {
   title: `A-REITs — Australian Real Estate Investment Trusts (${CURRENT_YEAR})`,
   description:
-    "Compare ASX-listed A-REITs by sector, yield, NTA discount and fees. Goodman Group, Stockland, Dexus, Scentre, Charter Hall — plus REIT ETFs like VAP and MVA.",
+    "Compare ASX-listed A-REITs by sector, yield, NTA discount and fees. Goodman, Stockland, Dexus, Scentre, Charter Hall — plus REIT ETFs like VAP and MVA.",
   alternates: { canonical: `${SITE_URL}/invest/reits` },
   openGraph: {
     title: `A-REITs — Australian Real Estate Investment Trusts (${CURRENT_YEAR})`,

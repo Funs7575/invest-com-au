@@ -7,7 +7,7 @@ import { faqJsonLd } from "@/lib/schema-markup";
 export const metadata = {
   title: "Best Financial Tools & Apps in Australia (2026)",
   description:
-    "Discover the best fintech tools and apps for Australian investors and savers. Compare budgeting apps, investing platforms, tax software, super tools, and more.",
+    "Discover the best fintech tools for Australian investors. Compare budgeting apps, investing platforms, tax software, super tools, and more.",
   openGraph: {
     title: "Best Financial Tools & Apps in Australia (2026)",
     description:

@@ -10,7 +10,7 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR
 export const metadata: Metadata = {
   title: `Options & Derivatives Trading Australia (${CURRENT_YEAR})`,
   description:
-    "How to trade options, CFDs, warrants and futures in Australia. Best platforms (Interactive Brokers, CMC, IG), ASIC regulation, strategies, and tax treatment.",
+    "How to trade options, CFDs, warrants and futures in Australia. Best platforms (IBKR, CMC, IG), ASIC regulation, strategies, and tax treatment.",
   alternates: { canonical: `${SITE_URL}/invest/options-trading` },
   openGraph: {
     title: `Options & Derivatives Trading Australia (${CURRENT_YEAR})`,
