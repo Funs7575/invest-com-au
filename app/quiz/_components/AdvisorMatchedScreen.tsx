@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { buildAdvisorMatchReasons, type AdvisorMatchContext } from "@/lib/quiz-advisor-match-reasons";
+import { confidenceLabel, type MatchConfidence } from "@/lib/quiz-advisor-scoring";
 
 export interface MatchedAdvisor {
   id: number;
@@ -26,6 +27,8 @@ export interface MatchedAdvisor {
   languages?: string[] | null;
   available_in_countries?: string[] | null;
   years_experience?: number | null;
+  matchScore?: number;
+  confidence?: MatchConfidence;
 }
 
 function typeLabel(type: string): string {
@@ -129,6 +132,25 @@ export default function AdvisorMatchedScreen({
         <p className="text-sm text-slate-500 max-w-sm mx-auto">
           {userFirstName ? `${userFirstName}, review` : "Review"} this advisor and confirm if you&apos;d like to connect — it&apos;s 100% free.
         </p>
+
+        {/* Match-confidence band — a qualitative cue from the server fit score
+            (specialty · budget · location/corridor · quality), not a fake % */}
+        {currentMatch.confidence && (
+          <div
+            className={`mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
+              currentMatch.confidence === "strong"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : currentMatch.confidence === "good"
+                  ? "bg-amber-50 text-amber-700 border-amber-200"
+                  : "bg-slate-100 text-slate-600 border-slate-200"
+            }`}
+          >
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            {confidenceLabel(currentMatch.confidence)}
+          </div>
+        )}
 
         {/* Match counter */}
         {allMatches.length > 1 && (

@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import QuizComparisonTable from "./QuizComparisonTable";
 import AdvisorLocationStep from "./AdvisorLocationStep";
 import AdvisorMatchedScreen, { type MatchedAdvisor } from "./AdvisorMatchedScreen";
+import type { ScoredQuizAdvisor } from "@/lib/quiz-advisor-scoring";
 
 // Map the quiz "amount" answer to the AdvisorLocationStep BUDGETS option
 // values so we don't re-ask information the quiz already collected.
@@ -79,12 +80,33 @@ const TYPE_DB_MAP: Record<string, string> = {
   "not-sure": "",
 };
 
-// Shared column projection for advisor-matching queries. Includes the
-// attributes the "why we matched you" reason builder consumes (corridor /
-// FIRB / intl flags, languages, location_state, experience) — all existing
-// columns on `professionals`, no schema change.
-const ADVISOR_COLS =
-  "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, accepts_international_clients, international_tax_specialist, firb_specialist, languages, available_in_countries, years_experience";
+// Map a scored API match → the MatchedAdvisor shape the cards render, carrying
+// the match score + confidence band through for display.
+function toMatchedAdvisor(a: ScoredQuizAdvisor): MatchedAdvisor {
+  return {
+    id: a.id,
+    slug: a.slug,
+    name: a.name,
+    firm_name: a.firm_name ?? null,
+    type: a.type,
+    photo_url: a.photo_url ?? null,
+    rating: a.rating ?? 0,
+    review_count: a.review_count ?? 0,
+    location_display: a.location_display ?? null,
+    location_state: a.location_state ?? null,
+    specialties: a.specialties ?? [],
+    fee_description: a.fee_description ?? null,
+    verified: a.verified ?? false,
+    accepts_international_clients: a.accepts_international_clients ?? null,
+    international_tax_specialist: a.international_tax_specialist ?? null,
+    firb_specialist: a.firb_specialist ?? null,
+    languages: a.languages ?? null,
+    available_in_countries: a.available_in_countries ?? null,
+    years_experience: a.years_experience ?? null,
+    matchScore: a.matchScore,
+    confidence: a.confidence,
+  };
+}
 
 type FlowStep = "contact" | "location" | "matching";
 
@@ -256,86 +278,30 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
       trackEvent("advisor_lead_error", { advisor_type: advisorType, status: 0 }, "/quiz");
     }
 
-    // Fetch matched advisors from Supabase
+    // Fetch scored, eligibility-filtered matches from the server. The ranking
+    // and the advisor column set stay off the client (see /api/advisor-match);
+    // this also applies the country-eligibility gate the old client query
+    // skipped, and ranks by fit instead of raw rating.
     try {
-      const supabase = createClient();
-      const dbType = TYPE_DB_MAP[advisorType];
-
-      const mapAdvisor = (p: Record<string, unknown>): MatchedAdvisor => ({
-        id: p.id as number,
-        slug: p.slug as string,
-        name: p.name as string,
-        firm_name: (p.firm_name as string) ?? null,
-        type: p.type as string,
-        photo_url: (p.photo_url as string) ?? null,
-        rating: (p.rating as number) ?? 0,
-        review_count: (p.review_count as number) ?? 0,
-        location_display: (p.location_display as string) ?? null,
-        location_state: (p.location_state as string) ?? null,
-        specialties: (p.specialties as string[]) ?? [],
-        fee_description: (p.fee_description as string) ?? null,
-        verified: (p.verified as boolean) ?? false,
-        accepts_international_clients: (p.accepts_international_clients as boolean) ?? null,
-        international_tax_specialist: (p.international_tax_specialist as boolean) ?? null,
-        firb_specialist: (p.firb_specialist as boolean) ?? null,
-        languages: (p.languages as string[]) ?? null,
-        available_in_countries: (p.available_in_countries as string[]) ?? null,
-        years_experience: (p.years_experience as number) ?? null,
+      const res = await fetch("/api/advisor-match", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          advisorType,
+          goal: quizAnswers.goal,
+          amount: quizAnswers.amount,
+          budget: budgetValue || undefined,
+          state: stateValue || undefined,
+          isInternational,
+          investorCountry,
+          visaStatus,
+          investorGoalIntl,
+          limit: 5,
+        }),
       });
-
-      let matched: MatchedAdvisor[] = [];
-
-      if (isInternational) {
-        // For international investors: first try advisors with international flags
-        let intlQuery = supabase
-          .from("professionals")
-          .select(ADVISOR_COLS)
-          .eq("status", "active")
-          .eq("verified", true)
-          .eq("accepts_international_clients", true);
-        if (dbType) intlQuery = intlQuery.eq("type", dbType);
-        const { data: intlData } = await intlQuery.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(5);
-        matched = (intlData || []).map(mapAdvisor);
-
-        // Fallback: search by international specialty keywords
-        if (matched.length < 3) {
-          const { data: specData } = await supabase
-            .from("professionals")
-            .select(ADVISOR_COLS)
-            .eq("status", "active")
-            .eq("verified", true)
-            .contains("specialties", ["International Clients"])
-            .order("rating", { ascending: false })
-            .limit(5);
-          const specMapped = (specData || []).map(mapAdvisor);
-          const existingIds = new Set(matched.map(m => m.id));
-          matched.push(...specMapped.filter(m => !existingIds.has(m.id)));
-        }
-      } else {
-        let query = supabase
-          .from("professionals")
-          .select(ADVISOR_COLS)
-          .eq("status", "active")
-          .eq("verified", true);
-        if (dbType) query = query.eq("type", dbType);
-        if (stateValue) query = query.eq("location_state", stateValue);
-        const { data } = await query.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(5);
-        matched = (data || []).map(mapAdvisor);
-
-        // Fallback: try without state filter if empty
-        if (matched.length === 0 && stateValue) {
-          let fallbackQuery = supabase
-            .from("professionals")
-            .select(ADVISOR_COLS)
-            .eq("status", "active")
-            .eq("verified", true);
-          if (dbType) fallbackQuery = fallbackQuery.eq("type", dbType);
-          const { data: fallbackData } = await fallbackQuery.order("rating", { ascending: false }).limit(5);
-          matched.push(...(fallbackData || []).map(mapAdvisor));
-        }
-      }
-
-      setAllMatches(matched);
+      if (!res.ok) throw new Error(`advisor-match ${res.status}`);
+      const data = (await res.json()) as { advisors: ScoredQuizAdvisor[] };
+      setAllMatches((data.advisors ?? []).map(toMatchedAdvisor));
       setMatchIndex(0);
     } catch {
       setAllMatches([]);
