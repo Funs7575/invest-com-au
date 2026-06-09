@@ -146,38 +146,15 @@ describe("AdvisorsClient — compact header redesign", () => {
     expect(screen.queryByText(/Not sure which advisor you need/i)).not.toBeInTheDocument();
   });
 
-  it("exposes the Comfy/Compact density toggle and keeps the concierge link", () => {
+  it("restores the standalone AI filter bar + concierge link, with no density toggle (matches /invest)", () => {
     render(<AdvisorsClient professionals={professionals} />);
-    expect(screen.getByRole("button", { name: /^comfy$/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /^compact$/i })).toBeInTheDocument();
+    // Standalone AI filter bar (its own input), like /invest — not merged into the search.
+    expect(screen.getByPlaceholderText(/SMSF advisor Sydney/i)).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /Ask the AI concierge/i }),
     ).toBeInTheDocument();
-  });
-
-  it("Enter routes the search phrase through the AI filter, then clears the box on a successful parse", async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => ({ params: { type: "smsf_accountant" } }),
-    });
-    vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
-    try {
-      render(<AdvisorsClient professionals={professionals} />);
-      const input = screen.getByRole("searchbox", {
-        name: /Search advisors/i,
-      }) as HTMLInputElement;
-      fireEvent.change(input, { target: { value: "smsf help in sydney" } });
-      fireEvent.submit(input.closest("form")!);
-      // Enter routes the phrase to /api/smart-filter (the merged AI filter)…
-      await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-      expect(fetchMock.mock.calls[0]?.[0]).toBe("/api/smart-filter");
-      // …and on a successful parse the literal text is cleared so only the
-      // parsed structured filters apply (regression guard: the phrase must not
-      // linger as a substring filter or be re-read back into the box).
-      await waitFor(() => expect(input.value).toBe(""));
-    } finally {
-      vi.unstubAllGlobals();
-    }
+    // Phase-2 density toggle was reverted — no Comfy/Compact control.
+    expect(screen.queryByRole("button", { name: /^comfy$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^compact$/i })).not.toBeInTheDocument();
   });
 });
