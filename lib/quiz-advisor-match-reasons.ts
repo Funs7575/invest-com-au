@@ -73,8 +73,9 @@ const BUDGET_LABELS: Record<string, string> = {
 };
 
 /** Keyword sets per quiz advisor_type — used to surface a *matching*
- *  specialty from the advisor's own free-text specialties list. */
-const TYPE_KEYWORDS: Record<string, string[]> = {
+ *  specialty from the advisor's own free-text specialties list. Exported so
+ *  the advisor scorer (lib/quiz-advisor-scoring.ts) reuses the same source. */
+export const TYPE_KEYWORDS: Record<string, string[]> = {
   "mortgage-broker": ["mortgage", "home loan", "lending", "refinanc", "finance broker"],
   "buyers-agent": ["buyer", "acquisition", "property"],
   "financial-planner": ["financial plan", "wealth", "retirement", "investment strategy", "advice"],
@@ -84,7 +85,7 @@ const TYPE_KEYWORDS: Record<string, string[]> = {
   "estate-planner": ["estate", "will", "succession", "trust"],
 };
 
-const INTL_KEYWORDS = [
+export const INTL_KEYWORDS = [
   "international", "firb", "non-resident", "non resident", "expat",
   "cross-border", "cross border", "foreign", "overseas", "migration",
 ];
