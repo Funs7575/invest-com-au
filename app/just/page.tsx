@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Life Event Financial Checklists (${CURRENT_YEAR}) — ${SITE_NAME}`,
   description:
-    "Financial checklists for every major Australian life event: retirement, inheritance, redundancy, marriage, having a baby, buying a house, selling a business. What to do and in what order.",
+    "Financial checklists for Australian life events — retirement, inheritance, redundancy, marriage, baby, home purchase, business sale. What to do and when.",
   alternates: { canonical: `${SITE_URL}/just` },
   openGraph: {
     title: `Life Event Financial Checklists (${CURRENT_YEAR})`,

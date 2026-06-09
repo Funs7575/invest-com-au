@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `CGT Calculator (${CURRENT_YEAR}) — Capital Gains Tax Estimator Australia`,
   description:
-    "Calculate capital gains tax on shares, property, crypto, or other assets. Includes 50% CGT discount for assets held over 12 months, FY2025-26 marginal rates, and net profit after tax.",
+    "Calculate capital gains tax on shares, property or crypto — 50% CGT discount for 12+ month holdings, FY2025-26 marginal rates and net profit after tax.",
   alternates: { canonical: `${SITE_URL}/tools/cgt-calculator` },
   openGraph: {
     title: `CGT Calculator (${CURRENT_YEAR}) — Capital Gains Tax Australia`,

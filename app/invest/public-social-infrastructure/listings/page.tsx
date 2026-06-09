@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Public & Social Infrastructure Investment Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian public and social infrastructure investment opportunities. Toll roads, water utilities, hospitals, schools, social housing and PPP assets available for co-investment.",
+      "Browse Australian public and social infrastructure investments — toll roads, water utilities, hospitals, schools, social housing and PPP assets.",
     alternates: { canonical: `${SITE_URL}/invest/public-social-infrastructure/listings` },
     openGraph: {
       title: `Public & Social Infrastructure Investment Australia — ${countLabel}Active Listings`,

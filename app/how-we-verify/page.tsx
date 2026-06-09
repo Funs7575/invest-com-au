@@ -6,7 +6,7 @@ export const revalidate = 86400;
 
 export const metadata = {
   title: "How We Verify Fees — Our Data Process",
-  description: `Learn how ${SITE_NAME} verifies platform fees. We cross-check pricing pages, PDSs, and T&Cs quarterly to ensure accuracy across every platform review.`,
+  description: `How ${SITE_NAME} verifies platform fees: cross-checking pricing pages, PDSs, and T&Cs quarterly to ensure accuracy across every platform review.`,
   alternates: { canonical: "/how-we-verify" },
   openGraph: {
     title: "How We Verify Fees — Our Data Process",

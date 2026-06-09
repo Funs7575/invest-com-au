@@ -133,7 +133,7 @@ const RISKS = [
 export const metadata: Metadata = {
   title: `Accessing Home Equity in Australia (${CURRENT_YEAR}) — Cash-Out, LOC & Debt Recycling`,
   description:
-    "How Australian property owners can access equity to invest, renovate, or supplement income — cash-out refinancing, home equity loans, lines of credit, and debt recycling explained.",
+    "How Australian property owners access equity to invest or renovate — cash-out refinancing, home equity loans, lines of credit and debt recycling explained.",
   alternates: { canonical: absoluteUrl("/property/equity-access") },
   openGraph: {
     title: `Accessing Home Equity in Australia (${CURRENT_YEAR})`,

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
 import { getListingHeroImage } from "@/lib/listing-vertical-images";
+import { normaliseVertical } from "@/lib/listing-url";
 
 /**
  * Loose, tolerant type for ListingCard — accepts both the strict
@@ -139,7 +140,7 @@ function getKeyMetric(listing: InvestmentListing): string | null {
 }
 
 function getDetailPath(vertical: string, slug: string): string {
-  switch (vertical) {
+  switch (normaliseVertical(vertical)) {
     case "business":
       return `/invest/buy-business/listings/${slug}`;
     case "mining":
@@ -164,6 +165,25 @@ function getDetailPath(vertical: string, slug: string): string {
       return `/invest/private-credit/listings/${slug}`;
     case "infrastructure":
       return `/invest/infrastructure/listings/${slug}`;
+    case "aquaculture":
+      return `/invest/aquaculture/listings/${slug}`;
+    case "carbon-environmental-markets":
+      return `/invest/carbon-environmental-markets/listings/${slug}`;
+    case "digital-infrastructure":
+      return `/invest/digital-infrastructure/listings/${slug}`;
+    case "litigation-funding":
+      return `/invest/litigation-funding/listings/${slug}`;
+    case "livestock":
+      return `/invest/livestock/listings/${slug}`;
+    case "private-equity":
+    case "hedge-fund":
+      return `/invest/private-equity/listings/${slug}`;
+    case "public-social-infrastructure":
+      return `/invest/public-social-infrastructure/listings/${slug}`;
+    case "royalties":
+      return `/invest/royalties/listings/${slug}`;
+    case "venture-capital":
+      return `/invest/venture-capital/listings/${slug}`;
     default:
       return `/invest/listings/${slug}`;
   }

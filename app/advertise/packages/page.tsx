@@ -10,7 +10,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 export const metadata: Metadata = {
   title: `Advertise on ${SITE_NAME} — Sponsorship Packages`,
   description:
-    "Self-serve sponsorship packages for brokers and financial brands. Featured Partner, Category Sponsor, and Deal of the Month placements on Australia's leading investing comparison site.",
+    "Sponsorship packages for brokers and financial brands — Featured Partner, Category Sponsor and Deal of the Month on Australia's leading investing site.",
   alternates: { canonical: `${siteUrl}/advertise/packages` },
   openGraph: {
     title: `Advertise on ${SITE_NAME} — Sponsorship Packages`,

@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "What Kind of Property Investor Are You? Free 3-Question Quiz | Invest.com.au",
   description:
-    "Answer 3 quick questions to get a personalised property investment path — capital growth corridor, rental yield market, first-home buyer strategy, or portfolio scaling. Free, instant, no login.",
+    "Answer 3 questions for a personalised property path — capital growth, rental yield, first-home or portfolio scaling strategy. Free, instant, no login.",
   alternates: { canonical: `${SITE_URL}/property/quiz` },
 };
 

@@ -49,7 +49,7 @@ const GOLD_METHODS = [
 export const metadata: Metadata = {
   title: `How to Invest in Gold in Australia (${CURRENT_YEAR}) — Physical, ETFs & ASX Miners`,
   description:
-    "Four ways to invest in gold in Australia: physical bullion via Perth Mint, gold ETFs (GOLD, PMGOLD, QAU), ASX gold miners (NST, EVN, NEM), and the Perth Mint Certificate Programme.",
+    "Four ways to invest in gold: Perth Mint bullion, ASX ETFs (GOLD, PMGOLD, QAU), gold miners (NST, EVN) and the Perth Mint Certificate Programme.",
   alternates: { canonical: `${SITE_URL}/invest/gold` },
   openGraph: {
     title: `How to Invest in Gold in Australia (${CURRENT_YEAR}) — Physical, ETFs & ASX Miners`,

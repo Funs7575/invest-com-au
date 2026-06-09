@@ -38,7 +38,7 @@ const listingsFaqLd = faqJsonLd(LISTINGS_FAQS);
 export const metadata: Metadata = {
   title: `Australian Investment Listings (${CURRENT_YEAR}) — Invest.com.au`,
   description:
-    "Browse owner-listed investment opportunities across property, businesses, syndicates and other Australian assets. Admin-reviewed listings. Get matched to the right pros for due diligence.",
+    "Browse owner-listed investment opportunities — property, businesses, syndicates and other assets. Admin-reviewed with pro matching for due diligence.",
   alternates: { canonical: `${SITE_URL}/listings` },
   robots: { index: true, follow: true },
 };

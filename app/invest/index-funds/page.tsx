@@ -20,12 +20,12 @@ import {
 export const metadata: Metadata = {
   title: `Index Fund Investing Australia — Complete Guide (${CURRENT_YEAR})`,
   description:
-    "The complete guide to index fund investing in Australia — ASX 200, global ETFs, fee comparisons, SPIVA data, portfolio templates and how to get started with VAS, A200, VGS and VDHG.",
+    "Complete guide to index fund investing in Australia — ASX 200, global ETFs, fee comparisons, SPIVA data, and how to start with VAS, VGS and VDHG.",
   alternates: { canonical: absoluteUrl("/invest/index-funds") },
   openGraph: {
     title: `Index Fund Investing Australia — Complete Guide (${CURRENT_YEAR})`,
     description:
-      "The complete guide to index fund investing in Australia — ASX 200, global ETFs, fee comparisons, SPIVA data, portfolio templates and how to get started with VAS, A200, VGS and VDHG.",
+      "Complete guide to index fund investing in Australia — ASX 200, global ETFs, fee comparisons, SPIVA data, and how to start with VAS, VGS and VDHG.",
     url: absoluteUrl("/invest/index-funds"),
     images: [{ url: `/api/og?title=${encodeURIComponent("Index Funds Australia")}&sub=${encodeURIComponent("Passive Investing · Vanguard · iShares · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },

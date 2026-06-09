@@ -11,7 +11,7 @@ export const revalidate = 86400;
 export const metadata = {
   title: "Advertiser & Affiliate Partner Terms",
   description:
-    "Terms governing commercial partnerships, affiliate arrangements, and sponsored content on Invest.com.au. Covers editorial independence, commission attribution, disclosure obligations, and GST.",
+    "Terms governing commercial partnerships, affiliate arrangements and sponsored content on Invest.com.au — editorial independence, commission and disclosure.",
   alternates: { canonical: "/advertiser-terms" },
   robots: { index: true, follow: true },
   openGraph: {
@@ -33,18 +33,20 @@ export const metadata = {
 const EFFECTIVE_DATE = "16 March 2026";
 const VERSION = "1.0";
 
-export default function AdvertiserTermsPage() {
-  const breadcrumbs = breadcrumbJsonLd([
-    { name: "Home", url: absoluteUrl("/") },
-    { name: "Advertiser Terms" },
-  ]);
-
-  const S = ({ n, title, children }: { n: number; title: string; children: React.ReactNode }) => (
+function S({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+  return (
     <section className="bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-6">
       <h2 className="text-base md:text-lg font-bold text-slate-900 mb-2">{n}. {title}</h2>
       <div className="text-sm text-slate-600 leading-relaxed space-y-2">{children}</div>
     </section>
   );
+}
+
+export default function AdvertiserTermsPage() {
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Advertiser Terms" },
+  ]);
 
   return (
     <>

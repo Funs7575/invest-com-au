@@ -29,7 +29,7 @@ export const revalidate = 86400;
 
 const PAGE_TITLE = `Positive Gearing: Australian Property Guide (${CURRENT_YEAR})`;
 const PAGE_DESC =
-  "What is positive gearing? How to calculate cash flow, where to find positively geared properties in Australia, tax treatment of surplus rental income, and the cash-flow vs capital-growth trade-off. General information only.";
+  "What is positive gearing? Calculate cash flow, find positively geared properties, understand tax on rental income and the yield vs growth trade-off.";
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,

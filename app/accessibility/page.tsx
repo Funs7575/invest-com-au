@@ -7,7 +7,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Accessibility Statement",
   description:
-    "Invest.com.au is committed to making our website accessible to all users, including those with disabilities, in accordance with WCAG 2.1 and the Disability Discrimination Act 1992.",
+    "Invest.com.au is committed to WCAG 2.1 AA accessibility and equal access for all users, including those with disabilities, under Australian law.",
   alternates: { canonical: "/accessibility" },
   openGraph: {
     title: "Accessibility Statement",

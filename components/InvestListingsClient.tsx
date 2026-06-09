@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { InvestmentListing, ListingKind } from "@/lib/types";
-import { categoryForListing } from "@/lib/listing-url";
+import { categoryForListing, listingUrl } from "@/lib/listing-url";
 import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import {
   TICKET_BUCKETS,
@@ -737,7 +737,7 @@ function TableView({ listings, showFirbBadge }: { listings: InvestmentListing[];
             return (
               <tr key={l.id} className="hover:bg-slate-50">
                 <td className="px-4 py-3">
-                  <Link href={`/invest/listings/${l.slug}`} className="font-bold text-slate-900 hover:text-amber-700 line-clamp-1">
+                  <Link href={listingUrl(l)} className="font-bold text-slate-900 hover:text-amber-700 line-clamp-1">
                     {l.title}
                   </Link>
                   {l.industry && <div className="text-[0.62rem] text-slate-500 mt-0.5">{l.industry}</div>}
@@ -768,7 +768,7 @@ function TableView({ listings, showFirbBadge }: { listings: InvestmentListing[];
                   </div>
                 </td>
                 <td className="px-3 py-3 text-right">
-                  <Link href={`/invest/listings/${l.slug}`} className="text-xs font-bold text-amber-700 hover:text-amber-900 inline-flex items-center gap-0.5">
+                  <Link href={listingUrl(l)} className="text-xs font-bold text-amber-700 hover:text-amber-900 inline-flex items-center gap-0.5">
                     View
                     <Icon name="chevron-right" size={11} />
                   </Link>

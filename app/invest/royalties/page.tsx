@@ -15,7 +15,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Royalty Streams in Australia (${CURRENT_YEAR}) — Mining, Music & IP Royalties`,
   description:
-    "Independent guide to royalty investing in Australia. Mining royalties (Deterra DRR), music catalogue royalties, IP / patent royalties, oil & gas overriding royalties — structures, tax and access.",
+    "Guide to royalty investing in Australia — mining royalties (Deterra DRR), music catalogue, IP/patent royalties, and oil & gas royalties. Structures, tax.",
   alternates: { canonical: `${SITE_URL}/invest/royalties` },
   openGraph: {
     title: `Invest in Royalty Streams in Australia (${CURRENT_YEAR})`,

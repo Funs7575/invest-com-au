@@ -28,7 +28,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Insurance-Linked Securities in Australia (${CURRENT_YEAR}) — Cat Bonds & ILS`,
   description:
-    "Guide to insurance-linked securities (ILS) investing for Australian investors. Catastrophe bonds, collateralised reinsurance, ILS funds, risk-return profiles and Australian peril exposure.",
+    "Guide to ILS investing for Australians — catastrophe bonds, collateralised reinsurance, ILS funds, risk-return profiles and Australian peril exposure.",
   alternates: { canonical: `${SITE_URL}/invest/insurance-linked-securities` },
   openGraph: {
     title: `Insurance-Linked Securities for Australian Investors (${CURRENT_YEAR})`,

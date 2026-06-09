@@ -9,12 +9,12 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Growth Investing Australia — ASX Strategy, Metrics & Portfolio Building (${CURRENT_YEAR})`,
   description:
-    "Complete guide to growth investing on the ASX — revenue growth metrics, PEG ratios, ASX tech stocks, growth vs value comparison, rate sensitivity, and how to build a growth portfolio in Australia.",
+    "Complete guide to growth investing on the ASX — revenue metrics, PEG ratios, ASX tech stocks, growth vs value, rate sensitivity, and portfolio building.",
   alternates: { canonical: `${SITE_URL}/invest/growth-investing` },
   openGraph: {
     title: `Growth Investing Australia — ASX Strategy, Metrics & Portfolio Building (${CURRENT_YEAR})`,
     description:
-      "Complete guide to growth investing on the ASX — revenue growth metrics, PEG ratios, ASX tech stocks, growth vs value comparison, rate sensitivity, and how to build a growth portfolio in Australia.",
+      "Complete guide to growth investing on the ASX — revenue metrics, PEG ratios, ASX tech stocks, growth vs value, rate sensitivity, and portfolio building.",
     url: `${SITE_URL}/invest/growth-investing`,
     images: [{ url: `/api/og?title=${encodeURIComponent("Growth Investing Australia")}&sub=${encodeURIComponent("High-Growth Stocks · ETFs · Strategy · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },

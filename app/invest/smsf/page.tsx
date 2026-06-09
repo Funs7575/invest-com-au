@@ -9,12 +9,12 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR
 export const metadata: Metadata = {
   title: `SMSF Investment Guide — What SMSFs Actually Invest In (${CURRENT_YEAR})`,
   description:
-    "Comprehensive SMSF investment strategy guide — property through SMSF (LRBA), shares, crypto, collectibles, in-house asset rules, limited recourse borrowing, and platform comparison.",
+    "SMSF investment strategy guide — property via LRBA, shares, crypto, collectibles, in-house asset rules, limited recourse borrowing and platform comparison.",
   alternates: { canonical: `${SITE_URL}/invest/smsf` },
   openGraph: {
     title: `SMSF Investment Guide — What SMSFs Actually Invest In (${CURRENT_YEAR})`,
     description:
-      "Comprehensive SMSF investment strategy guide — property through SMSF (LRBA), shares, crypto, collectibles, in-house asset rules, limited recourse borrowing, and platform comparison.",
+      "SMSF investment strategy guide — property via LRBA, shares, crypto, collectibles, in-house asset rules, limited recourse borrowing and platform comparison.",
     url: `${SITE_URL}/invest/smsf`,
     images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Investment Guide Australia")}&sub=${encodeURIComponent("Property · Shares · Crypto · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
