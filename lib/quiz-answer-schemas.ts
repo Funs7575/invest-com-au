@@ -81,9 +81,12 @@ export const QuizPrioritySchema = safeEnum([
 export const QuizAdvisorTypeSchema = safeEnum([
   "mortgage-broker",
   "buyers-agent",
+  "conveyancer",
   "financial-planner",
   "smsf-accountant",
   "tax-agent",
+  "estate-planner",
+  "commercial-property-agent",
   "not-sure",
 ]);
 

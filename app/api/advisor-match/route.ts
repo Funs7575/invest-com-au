@@ -26,23 +26,11 @@ import {
   type QuizAdvisorCandidate,
   type QuizAdvisorScoringContext,
 } from "@/lib/quiz-advisor-scoring";
+import { dbTypeForNeed } from "@/lib/quiz-advisor-types";
 
 const log = logger("api:advisor-match");
 
 export const runtime = "nodejs";
-
-// Quiz advisor_type slug → DB `type`. Mirrors TYPE_DB_MAP in
-// app/quiz/_components/AdvisorResultsScreen.tsx. "not-sure"/unknown → no type
-// filter (match broadly, then rank).
-const TYPE_DB_MAP: Record<string, string> = {
-  "mortgage-broker": "mortgage_broker",
-  "buyers-agent": "buyers_agent",
-  "financial-planner": "financial_planner",
-  "smsf-accountant": "smsf_accountant",
-  "tax-agent": "tax_agent",
-  "insurance-broker": "insurance_broker",
-  "estate-planner": "estate_planner",
-};
 
 const Body = z.object({
   advisorType: z.string().max(40),
@@ -115,7 +103,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
   const input = parsed.data;
-  const dbType = TYPE_DB_MAP[input.advisorType] ?? "";
+  // "not-sure"/unknown → "" → no type filter (match broadly, then rank).
+  const dbType = dbTypeForNeed(input.advisorType);
 
   const supabase = createAdminClient();
   let query = supabase

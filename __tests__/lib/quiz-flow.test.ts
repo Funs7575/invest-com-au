@@ -156,13 +156,13 @@ describe("deriveNeeds", () => {
     ]);
   });
 
-  it("home buyer → broker + protection (no tax — owner-occupier)", () => {
-    expect(deriveNeeds({ goal: "home" })).toEqual(["mortgage-broker", "insurance-broker"]);
+  it("home buyer → broker + conveyancer + protection (no tax — owner-occupier)", () => {
+    expect(deriveNeeds({ goal: "home" })).toEqual(["mortgage-broker", "conveyancer", "insurance-broker"]);
   });
 
-  it("physical investment property → buyer's agent + finance + protection + tax", () => {
+  it("physical investment property → buyer's agent + finance + conveyancer + protection + tax", () => {
     expect(deriveNeeds({ goal: "property", property_sub: "physical" })).toEqual([
-      "buyers-agent", "mortgage-broker", "insurance-broker", "tax-agent",
+      "buyers-agent", "mortgage-broker", "conveyancer", "insurance-broker", "tax-agent",
     ]);
   });
 
@@ -180,10 +180,11 @@ describe("deriveNeeds", () => {
     expect(deriveNeeds({ advisor_type: "not-sure" })).toEqual([]);
   });
 
-  it("dedupes when multiple signals imply the same need", () => {
-    // complex + whale both add planner + tax; the planner anchor adds them too.
+  it("substantial wealth (whale) → estate planning, deduped", () => {
+    // complex + whale both add planner + tax; the planner anchor adds them too;
+    // whale also pulls in the estate planner.
     expect(deriveNeeds({ advisor_type: "financial-planner", complexity: "complex", amount: "whale" })).toEqual([
-      "financial-planner", "tax-agent", "insurance-broker",
+      "financial-planner", "tax-agent", "insurance-broker", "estate-planner",
     ]);
   });
 
@@ -191,6 +192,12 @@ describe("deriveNeeds", () => {
     expect(deriveNeeds({ needs: "mortgage-broker,tax-agent" })).toEqual(["mortgage-broker", "tax-agent"]);
     // ...even when the goal would otherwise infer extra complements.
     expect(deriveNeeds({ needs: "tax-agent", goal: "property", property_sub: "physical" })).toEqual(["tax-agent"]);
+  });
+
+  it("emits the formerly-stranded types (conveyancer / estate / commercial)", () => {
+    expect(deriveNeeds({ needs: "conveyancer,estate-planner,commercial-property-agent" })).toEqual([
+      "conveyancer", "estate-planner", "commercial-property-agent",
+    ]);
   });
 
   it("drops unknown/duplicate need tokens; an all-'not-sure' set is empty", () => {

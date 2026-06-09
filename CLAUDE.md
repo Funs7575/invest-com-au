@@ -62,6 +62,7 @@ npm run test:watch                 # watch mode
 | SEO helpers (`CURRENT_YEAR`, `UPDATED_LABEL`, `absoluteUrl`, `breadcrumbJsonLd`, `SITE_*`) | `lib/seo.ts` |
 | Affiliate links + benefit CTAs + star rendering | `lib/tracking.ts`                                      |
 | Sponsorship ranking helpers                  | `lib/sponsorship.ts`                                      |
+| Quiz advisor-type registry (need slug → DB `type`, label, directory href, team copy) | `lib/quiz-advisor-types.ts` (`dbTypeForNeed`/`labelForNeed`/`hrefForNeed`) — used by `AdvisorResultsScreen` AND `/api/advisor-match`; don't re-add a local `TYPE_DB_MAP` |
 | Vertical config (pillar pages, categories)   | `lib/verticals.ts`                                        |
 | Canonical sector-listings href + which sectors have a `/listings` page | `lib/invest-listing-routes.ts` (`categoryListingsHref`, `LISTING_PAGE_SLUGS`) — each /invest sector has ONE home: `/invest/<slug>/listings`; the legacy `/invest?category=<slug>` filter 307-redirects there in `proxy.ts`. Link sectors via this helper, never hand-write `?category=`. |
 | Country Mode (priority chain, filters, supply thresholds) | `lib/country-mode/` + `lib/intent-context.ts` + `lib/foreign-investment-country-data.ts` (see `docs/architecture/country-mode.md`) |

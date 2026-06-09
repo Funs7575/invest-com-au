@@ -150,9 +150,13 @@ const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: stri
     options: [
       { key: "mortgage-broker",   label: "Mortgage broker",           sub: "Home loans, refinancing, investment loans",     emoji: "🏠" },
       { key: "buyers-agent",      label: "Buyer's agent",             sub: "Find and negotiate property purchases",         emoji: "🔍" },
+      { key: "conveyancer",       label: "Conveyancer",               sub: "Property settlement, contracts, title",         emoji: "📑" },
       { key: "financial-planner", label: "Financial planner",         sub: "Investment strategy, tax, retirement planning", emoji: "📊" },
       { key: "smsf-accountant",   label: "SMSF accountant",           sub: "Set up and manage a self-managed super fund",   emoji: "🏦" },
       { key: "tax-agent",         label: "Tax agent",                 sub: "Tax returns, crypto CGT, deductions",           emoji: "📋" },
+      { key: "insurance-broker",  label: "Insurance broker",          sub: "Life, income, and asset protection",            emoji: "🛡️" },
+      { key: "estate-planner",    label: "Estate planner",            sub: "Wills, succession, asset protection",           emoji: "📜" },
+      { key: "commercial-property-agent", label: "Commercial property agent", sub: "Buy or lease commercial property",      emoji: "🏢" },
       { key: "not-sure",          label: "I'm not sure what I need",  sub: "Help me figure out the right expert",           emoji: "🤔" },
     ],
   },
@@ -232,14 +236,29 @@ function getDynamicAdvisorTypeQuestion(a: UnifiedAnswers): { text: string; optio
     return { text: baseText, options: sortByInferred(filtered, inferred) };
   }
 
-  // Home goal: mortgage broker is the only logical answer
-  if (a.goal === "home") {
-    const opts = allOptions.filter(o => o.key === "mortgage-broker" || o.key === "not-sure");
-    return { text: baseText, options: opts };
-  }
+  // Domestic: curate the need options to those relevant to the goal so the
+  // multi-select isn't a wall of every advisor type, then put the inferred
+  // pick first ("Suggested").
+  const relevantKeys = domesticNeedKeys(a);
+  const filtered = allOptions.filter(o => relevantKeys.includes(o.key));
+  return { text: baseText, options: sortByInferred(filtered, inferred) };
+}
 
-  // All other domestic cases: reorder to put inferred type first
-  return { text: baseText, options: sortByInferred(allOptions, inferred) };
+// The relevant advisor needs to offer for a domestic goal (multi-select).
+function domesticNeedKeys(a: UnifiedAnswers): string[] {
+  if (a.goal === "home") {
+    return ["mortgage-broker", "conveyancer", "insurance-broker", "not-sure"];
+  }
+  if (a.goal === "property" || a.property_sub === "physical") {
+    return ["buyers-agent", "mortgage-broker", "conveyancer", "insurance-broker", "tax-agent", "commercial-property-agent", "not-sure"];
+  }
+  if (a.goal === "super") {
+    return ["smsf-accountant", "financial-planner", "insurance-broker", "tax-agent", "not-sure"];
+  }
+  if (a.goal === "crypto") {
+    return ["tax-agent", "financial-planner", "not-sure"];
+  }
+  return ["financial-planner", "tax-agent", "insurance-broker", "estate-planner", "smsf-accountant", "not-sure"];
 }
 
 

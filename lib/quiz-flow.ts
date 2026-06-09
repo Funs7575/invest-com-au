@@ -188,6 +188,7 @@ const ADVISOR_NEEDS: ReadonlySet<string> = new Set<AdvisorNeed>([
   "tax-agent",
   "insurance-broker",
   "estate-planner",
+  "commercial-property-agent",
   "not-sure",
 ]);
 
@@ -244,9 +245,13 @@ export function deriveNeeds(a: UnifiedAnswers): AdvisorNeed[] {
       a.property_sub !== "property-reit" &&
       a.property_sub !== "property-super");
 
-  // Buying/financing property → loan + protection (+ tax for an investment).
+  // Buying/financing property → loan + settlement + protection (+ tax for an
+  // investment). Conveyancing is legally required for any purchase, so it's a
+  // genuine need — and it makes pickPrimary's under-contract → conveyancer rule
+  // reachable from the inference path.
   if (investmentProperty || a.goal === "home") {
     add("mortgage-broker");
+    add("conveyancer");
     add("insurance-broker");
     if (investmentProperty) add("tax-agent");
   }
@@ -271,6 +276,8 @@ export function deriveNeeds(a: UnifiedAnswers): AdvisorNeed[] {
     add("financial-planner");
     add("tax-agent");
   }
+  // Substantial wealth → estate / succession planning.
+  if (a.amount === "whale") add("estate-planner");
 
   return needs;
 }

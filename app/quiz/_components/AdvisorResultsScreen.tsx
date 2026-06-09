@@ -13,6 +13,7 @@ import AdvisorMatchedScreen, { type MatchedAdvisor } from "./AdvisorMatchedScree
 import type { ScoredQuizAdvisor } from "@/lib/quiz-advisor-scoring";
 import { allocateAdvisors } from "@/lib/quiz-flow";
 import type { AdvisorNeed } from "@/lib/quiz-primary-advisor";
+import { QUIZ_ADVISOR_TYPES, dbTypeForNeed, labelForNeed, hrefForNeed } from "@/lib/quiz-advisor-types";
 
 // Map the quiz "amount" answer to the AdvisorLocationStep BUDGETS option
 // values so we don't re-ask information the quiz already collected.
@@ -23,54 +24,9 @@ const QUIZ_AMOUNT_TO_BUDGET: Record<string, string> = {
   whale: "500k_2m",
 };
 
-/* ─── Constants ─── */
-// Per-need copy + icon for the "team" rendered from the derived need-set
-// (replaces the old static primary→combos COMBO_MAP — the team is now derived
-// from the user's answers via deriveNeeds + pickPrimary).
-const TEAM_META: Record<AdvisorNeed, { reason: string; icon: string }> = {
-  "mortgage-broker":   { reason: "Finance or refinance the purchase",    icon: "home" },
-  "buyers-agent":      { reason: "Find and negotiate the right property", icon: "search" },
-  "conveyancer":       { reason: "Handle the legal side of settlement",   icon: "file-text" },
-  "financial-planner": { reason: "Coordinate your overall strategy",      icon: "briefcase" },
-  "smsf-accountant":   { reason: "Set up and run your SMSF correctly",    icon: "landmark" },
-  "tax-agent":         { reason: "Optimise tax, CGT and deductions",      icon: "file-text" },
-  "insurance-broker":  { reason: "Protect your assets and income",        icon: "shield" },
-  "estate-planner":    { reason: "Plan your estate and succession",       icon: "file-text" },
-  "not-sure":          { reason: "Help working out who you need",         icon: "users" },
-};
-
-const ADVISOR_LABELS: Record<string, string> = {
-  "mortgage-broker": "Mortgage Broker",
-  "buyers-agent": "Buyer's Agent",
-  "financial-planner": "Financial Planner",
-  "smsf-accountant": "SMSF Accountant",
-  "tax-agent": "Tax Agent",
-  "insurance-broker": "Insurance Broker",
-  "estate-planner": "Estate Planner",
-  "not-sure": "Financial Advisor",
-};
-
-const ADVISOR_HREFS: Record<string, string> = {
-  "mortgage-broker": "/advisors/mortgage-brokers",
-  "buyers-agent": "/advisors/buyers-agents",
-  "financial-planner": "/advisors/financial-planners",
-  "smsf-accountant": "/advisors/smsf-accountants",
-  "tax-agent": "/advisors/tax-agents",
-  "insurance-broker": "/advisors/insurance-brokers",
-  "not-sure": "/find-advisor",
-};
-
-// Map quiz advisor_type slug → DB `type` field (underscore format)
-const TYPE_DB_MAP: Record<string, string> = {
-  "mortgage-broker": "mortgage_broker",
-  "buyers-agent": "buyers_agent",
-  "financial-planner": "financial_planner",
-  "smsf-accountant": "smsf_accountant",
-  "tax-agent": "tax_agent",
-  "insurance-broker": "insurance_broker",
-  "estate-planner": "estate_planner",
-  "not-sure": "",
-};
+// Advisor-type metadata (label / directory href / DB type / team copy) lives in
+// the shared registry lib/quiz-advisor-types.ts — single source of truth across
+// this screen and /api/advisor-match.
 
 // Map a scored API match → the MatchedAdvisor shape the cards render, carrying
 // the match score + confidence band through for display.
@@ -160,8 +116,8 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
   // the right type, no location filter (location is collected next step).
   const [previewAdvisor, setPreviewAdvisor] = useState<MatchedAdvisor | null>(null);
 
-  const advisorLabel = ADVISOR_LABELS[advisorType] || "Financial Advisor";
-  const advisorHref = ADVISOR_HREFS[advisorType] || "/find-advisor";
+  const advisorLabel = labelForNeed(advisorType);
+  const advisorHref = hrefForNeed(advisorType);
 
   // The single lead (`advisorType`) is pickPrimary's allocated primary (see
   // resolveLeadAdvisorType in page.tsx). The "team" is the rest of the need-set,
@@ -183,7 +139,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
   // matched with so the contact form feels less blind.
   useEffect(() => {
     let cancelled = false;
-    const dbType = TYPE_DB_MAP[advisorType];
+    const dbType = dbTypeForNeed(advisorType);
     if (!dbType) return; // "not-sure" or unknown — skip preview
     (async () => {
       try {
@@ -688,18 +644,18 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             </p>
             <div className="space-y-2">
               {team.map((need) => {
-                const meta = TEAM_META[need];
+                const meta = QUIZ_ADVISOR_TYPES[need];
                 return (
                   <div key={need} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg p-3">
                     <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                      <Icon name={meta.icon} size={18} className="text-slate-500" />
+                      <Icon name={meta.teamIcon} size={18} className="text-slate-500" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-sm font-bold text-slate-900">{ADVISOR_LABELS[need] ?? need}</span>
-                      <p className="text-xs text-slate-500 mt-0.5">{meta.reason}</p>
+                      <span className="text-sm font-bold text-slate-900">{meta.label}</span>
+                      <p className="text-xs text-slate-500 mt-0.5">{meta.teamReason}</p>
                     </div>
                     <Link
-                      href={`/find-advisor?need=${need}`}
+                      href={meta.href}
                       onClick={() => trackEvent("advisor_combo_click", { primary: advisorType, allocated_primary: primary, combo_type: need }, "/quiz")}
                       className="shrink-0 self-center px-3 py-1.5 text-[0.65rem] md:text-xs font-bold text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors whitespace-nowrap"
                     >
