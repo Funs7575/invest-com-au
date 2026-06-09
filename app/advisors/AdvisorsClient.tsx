@@ -1467,6 +1467,39 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           </div>
         )}
 
+        {/* Reverse-marketplace CTA \u2014 post a brief to get competing quotes from
+            verified individuals, firms or Pro Squads. Mirrors the /briefs/new
+            hero branding (dark + amber) so the destination feels connected. */}
+        <section className="mt-8 md:mt-12">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 px-6 py-8 shadow-sm md:px-10 md:py-10">
+            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between md:gap-8">
+              <div className="max-w-2xl">
+                <p className="mb-2 text-[0.7rem] font-semibold uppercase tracking-widest text-amber-400">
+                  Match Request \u00b7 Australia
+                </p>
+                <h2 className="text-xl font-extrabold text-white md:text-2xl">
+                  Get quotes from verified pros
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-slate-300">
+                  Tell verified Australian professionals, firms or Pro Squads what you
+                  need help with. They&apos;ll see a masked preview and respond only if
+                  it&apos;s a fit \u2014 you stay in control of who sees your contact details.
+                </p>
+              </div>
+              <Link
+                href="/briefs/new"
+                onClick={() =>
+                  trackEvent("get_quotes_cta_clicked", { source: "advisors_directory" })
+                }
+                className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-amber-500 px-5 py-3 text-sm font-bold text-slate-900 transition-colors hover:bg-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+              >
+                Get quotes
+                <Icon name="arrow-right" size={15} />
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Editorial content */}
         {editorial && (
           <section className="mt-8 md:mt-12 space-y-4">
