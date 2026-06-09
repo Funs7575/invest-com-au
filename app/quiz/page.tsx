@@ -652,6 +652,9 @@ export default function QuizPage() {
           stack,
           campaignWinners: quizCampaignWinners.map((w) => ({ broker_slug: w.broker_slug })),
         }),
+        // Bound the wait so a hung request falls into the local-score
+        // fallback below instead of stranding the user on "analyzing".
+        signal: AbortSignal.timeout(8000),
       });
       if (!res.ok) throw new Error(`quiz score ${res.status}`);
       const data = (await res.json()) as {
@@ -740,7 +743,6 @@ export default function QuizPage() {
         // the results are guaranteed ready (no empty flash) and the animation
         // never feels cut short. Email capture is inline in the results screen
         // (warm capture post-value, not cold capture pre-value).
-        clearProgress();
         const advisor = track === "advisor";
         setHistory(newHistory);
         setPhase(advisor ? "advisor-analyzing" : "analyzing");
@@ -749,6 +751,10 @@ export default function QuizPage() {
         );
         Promise.all([minDelay, runScoring(newAnswers)]).then(() => {
           if (!mountedRef.current) return;
+          // Only clear saved progress once results are committed — a refresh
+          // during the analyzing window now resumes at the last question
+          // instead of wiping everything back to Q1.
+          clearProgress();
           setPhase(advisor ? "advisor-results" : "diy-results");
         });
       } else {

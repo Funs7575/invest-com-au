@@ -222,7 +222,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
 
     try {
       // Submit lead with full data
-      await fetch("/api/advisor-lead", {
+      const leadRes = await fetch("/api/advisor-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -243,9 +243,17 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           source_page: "/quiz",
         }),
       });
-      trackEvent("advisor_lead_submit", { advisor_type: advisorType, state: stateValue }, "/quiz");
+      if (leadRes.ok) {
+        trackEvent("advisor_lead_submit", { advisor_type: advisorType, state: stateValue }, "/quiz");
+      } else {
+        // Don't block the match preview, but make the dropped enquiry visible
+        // — a 429/500 here was previously swallowed silently. The confirm step
+        // re-submits and surfaces errors to the user.
+        trackEvent("advisor_lead_error", { advisor_type: advisorType, status: leadRes.status }, "/quiz");
+      }
     } catch {
-      // Non-blocking — still proceed to matching
+      // Network failure — non-blocking, but record it (was silent).
+      trackEvent("advisor_lead_error", { advisor_type: advisorType, status: 0 }, "/quiz");
     }
 
     // Fetch matched advisors from Supabase
