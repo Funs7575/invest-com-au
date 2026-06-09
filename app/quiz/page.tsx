@@ -777,6 +777,9 @@ export default function QuizPage() {
       delete newAnswers[currentId as keyof UnifiedAnswers];
       setAnswers(newAnswers);
       saveProgress(prev, newAnswers, newHistory);
+      // Move focus + SR cursor to the new question heading (was only done on
+      // forward nav — back left keyboard/SR users stranded on <body>).
+      requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
     }
   };
 
@@ -1020,6 +1023,7 @@ export default function QuizPage() {
         setAnswers(newAnswers);
         saveProgress(targetId, newAnswers, newHistory);
         trackEvent("quiz_jump_back", { from: currentId, to: targetId, target_index: targetIndex }, "/quiz");
+        requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
       }}
       onResume={() => {
         const saved = loadSavedProgress();
@@ -1029,6 +1033,7 @@ export default function QuizPage() {
           setHistory(saved.history);
         }
         setResumePrompt(false);
+        requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
       }}
       onStartOver={() => { clearProgress(); setResumePrompt(false); handleRestart(); }}
       questionHeadingRef={questionHeadingRef}

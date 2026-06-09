@@ -204,7 +204,10 @@ export default function QuizQuestionScreen({
           </div>
         </div>
 
-        <div key={displayIndex} className="quiz-question-enter" aria-live="polite">
+        {/* No aria-live here — it would re-announce the back button + every
+            option on each step. Per-step announcement is handled by moving
+            focus to the question heading (see page.tsx handlers). */}
+        <div key={displayIndex} className="quiz-question-enter">
           {/* Back button — single instance above the question */}
           {displayIndex > 0 && (
             <button
@@ -227,7 +230,10 @@ export default function QuizQuestionScreen({
             {current.question_text}
           </h1>
 
-          <div className="space-y-2.5 md:space-y-3" role="radiogroup" aria-label={current.question_text}>
+          {/* role="group" (not radiogroup): the options auto-advance on click,
+              so they're buttons, not a persistent radio selection — "button"
+              is the truthful semantic and needs no arrow-key model. */}
+          <div className="space-y-2.5 md:space-y-3" role="group" aria-label={current.question_text}>
             {current.options.map((opt) => {
               const emoji = opt.emoji ?? (isGoalQuestion ? GOAL_EMOJI[opt.key] : undefined);
               const isSelected = selectedKey === opt.key;
@@ -236,8 +242,6 @@ export default function QuizQuestionScreen({
                   key={opt.key}
                   onClick={() => onAnswer(opt.key)}
                   disabled={animating}
-                  role="radio"
-                  aria-checked={isSelected}
                   aria-label={opt.label}
                   className={`w-full text-left border rounded-xl px-4 py-3.5 md:px-5 md:py-4 min-h-13 transition-all font-medium text-sm md:text-base ${
                     isSelected
