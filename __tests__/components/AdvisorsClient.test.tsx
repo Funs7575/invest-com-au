@@ -157,4 +157,13 @@ describe("AdvisorsClient — compact header redesign", () => {
     expect(screen.queryByRole("button", { name: /^comfy$/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^compact$/i })).not.toBeInTheDocument();
   });
+
+  it("renders the 'Get quotes from verified pros' CTA linking to the brief flow", () => {
+    render(<AdvisorsClient professionals={professionals} />);
+    expect(
+      screen.getByRole("heading", { name: /Get quotes from verified pros/i }),
+    ).toBeInTheDocument();
+    const cta = screen.getByRole("link", { name: /^Get quotes$/i });
+    expect(cta).toHaveAttribute("href", "/briefs/new");
+  });
 });
