@@ -12,10 +12,16 @@ import { z } from "zod";
 const safeEnum = <T extends string>(values: [T, ...T[]]) =>
   z.enum(values).optional().catch(undefined);
 
+// NOTE: the live quiz (app/quiz/page.tsx) emits `australia` for the
+// resident option — NOT `au`. The old enum silently dropped every
+// domestic location to `undefined` (nulling `quiz_leads.location`).
+// Keep the legacy `au`/`au_expat` values too so older clients still
+// degrade gracefully.
 export const QuizLocationSchema = safeEnum([
-  "au",
+  "australia",
   "international",
   "expat",
+  "au",
   "au_expat",
 ]);
 

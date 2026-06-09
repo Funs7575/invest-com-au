@@ -4,12 +4,8 @@ import {
   QuizModeSchema,
   QuizExperienceSchema,
   QuizAmountSchema,
-  QuizPrioritySchema,
   QuizAdvisorTypeSchema,
-  QuizComplexitySchema,
   QuizLocationSchema,
-  QuizPropertySubSchema,
-  QuizInvestorGoalIntlSchema,
   UnifiedAnswersSchema,
 } from "@/lib/quiz-answer-schemas";
 
@@ -75,10 +71,24 @@ describe("QuizAdvisorTypeSchema", () => {
   });
 });
 
+describe("QuizLocationSchema", () => {
+  it("accepts the values the live quiz actually emits", () => {
+    // Regression: the quiz emits `australia` (not `au`); the old enum
+    // dropped it to undefined, nulling location on every domestic lead.
+    expect(QuizLocationSchema.parse("australia")).toBe("australia");
+    expect(QuizLocationSchema.parse("international")).toBe("international");
+    expect(QuizLocationSchema.parse("expat")).toBe("expat");
+  });
+
+  it("returns undefined for unknown location values", () => {
+    expect(QuizLocationSchema.parse("mars")).toBeUndefined();
+  });
+});
+
 describe("UnifiedAnswersSchema", () => {
   it("parses a complete valid submission", () => {
     const result = UnifiedAnswersSchema.parse({
-      location: "au",
+      location: "australia",
       goal: "grow",
       mode: "diy",
       experience: "beginner",
@@ -86,6 +96,7 @@ describe("UnifiedAnswersSchema", () => {
       amount: "medium",
       priority: "fees",
     });
+    expect(result?.location).toBe("australia");
     expect(result?.goal).toBe("grow");
     expect(result?.mode).toBe("diy");
     expect(result?.experience).toBe("beginner");
