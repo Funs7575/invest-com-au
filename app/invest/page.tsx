@@ -20,7 +20,6 @@ import { logger } from "@/lib/logger";
 import { listingUrl, categoryForListing, rawVerticalVariants } from "@/lib/listing-url";
 import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import { faqJsonLd } from "@/lib/schema-markup";
-import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { loadInvestPageContext } from "@/lib/listing-page-context";
 import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
@@ -264,8 +263,8 @@ export default async function InvestMarketplacePage() {
   };
   const heroStats = (
     [
-      aggregateAskCents > 0 ? { v: formatAudBig(aggregateAskCents), l: "Aggregate ask" } : null,
       { v: listings.length.toLocaleString("en-AU"), l: "Live opportunities" },
+      aggregateAskCents > 0 ? { v: formatAudBig(aggregateAskCents), l: "Aggregate ask" } : null,
       { v: String(sectorCount), l: "Sectors" },
       firbCount > 0 ? { v: String(firbCount), l: "FIRB-eligible" } : null,
       sivCount > 0 ? { v: String(sivCount), l: "SIV-complying" } : null,
@@ -279,17 +278,19 @@ export default async function InvestMarketplacePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
       {investFaqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(investFaqLd) }} />}
 
-      {/* ── Shared dark stat-led directory hero (matches /compare + /advisors) ── */}
+      {/* ── Compact light marketplace header. Replaces the dark gradient hero +
+            standalone Get Matched card that together pushed the listings below
+            the fold — stats now ride as small pills beside the title and the
+            "build an action plan" CTA lives inline on the search row below. ── */}
       <DirectoryHero
+        tone="light"
         breadcrumbLabel="Opportunities"
-        pill={{ label: "Live marketplace", live: true }}
-        headlineLead={`${listings.length.toLocaleString("en-AU")} live opportunities.`}
-        headlineAccent={aggregateAskCents > 0 ? `${formatAudBig(aggregateAskCents)} in aggregate ask.` : undefined}
+        headlineLead="Investment marketplace"
         subtitle={
           <>
             Businesses, property, projects, funds, syndicates &amp; collectibles — all filterable in one place.
             To compare super funds or share-trading platforms,{" "}
-            <Link href="/compare" className="text-coral-300 underline hover:no-underline">visit Compare</Link>.
+            <Link href="/compare" className="text-coral-600 underline hover:no-underline">visit Compare</Link>.
           </>
         }
         stats={heroStats}
@@ -306,12 +307,10 @@ export default async function InvestMarketplacePage() {
         )}
       </DirectoryHero>
 
-      {/* ── GetMatched CTA — above listings so it's visible before users
-            scroll through options. Moved from below results (ADV-126). ── */}
-      <div className="container-custom max-w-5xl mt-4 mb-2">
-        <GetMatchedEmbed context="opportunity" />
-      </div>
-      {/* ── Marketplace (primary — no two-step) ───────────────── */}
+      {/* ── Marketplace (primary — no two-step). The Get Matched CTA now lives
+            inline on the toolbar's search row via showActionPlanCta, rather
+            than as a standalone card above the listings (ADV-126 → compact
+            header rebuild). ── */}
       {/* Suspense required: InvestListingsClient calls useSearchParams(), which
           causes Next.js to bail out of SSR for the whole page when unwrapped.
           The fallback keeps the listings area visible while the client hydrates. */}
@@ -336,6 +335,7 @@ export default async function InvestMarketplacePage() {
           matchScores={matchScores}
           advisorOptInCounts={ctx.advisorOptInCounts}
           claimedSlugs={ctx.claimedSlugs}
+          showActionPlanCta
         />
       </Suspense>
 

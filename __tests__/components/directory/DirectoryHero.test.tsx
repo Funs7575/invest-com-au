@@ -46,6 +46,32 @@ describe("DirectoryHero", () => {
     expect(screen.getByText("Four")).toBeTruthy();
   });
 
+  it("light tone hides the eyebrow pill but keeps breadcrumb, headline, subtitle and stats", () => {
+    render(
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Opportunities"
+        pill={{ label: "Live marketplace", live: true }}
+        headlineLead="Investment marketplace"
+        subtitle="Businesses, property, projects."
+        stats={[
+          { v: "247", l: "Live opportunities" },
+          { v: "$1.2B", l: "Aggregate ask" },
+        ]}
+      />,
+    );
+    // The pill is intentionally omitted in the compact light treatment — the
+    // live count rides in the first stat pill instead.
+    expect(screen.queryByText("Live marketplace")).toBeNull();
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
+      "Investment marketplace",
+    );
+    expect(screen.getByText("Opportunities")).toBeTruthy();
+    expect(screen.getByText("Businesses, property, projects.")).toBeTruthy();
+    expect(screen.getByText("Live opportunities")).toBeTruthy();
+    expect(screen.getByText("247")).toBeTruthy();
+  });
+
   it("stamps data-speakable on the headline block when speakableId is set", () => {
     const { container } = render(
       <DirectoryHero
