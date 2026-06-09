@@ -9,6 +9,7 @@ import {
   formatListingPrice,
   freshnessSignal,
 } from "@/lib/listing-kind";
+import { humanizeTitle, listingDisplayMetrics } from "@/lib/listing-format";
 import Icon from "@/components/Icon";
 import EnquireButton from "@/components/marketplace/EnquireButton";
 import ListingShortlistButton from "@/components/invest/ListingShortlistButton";
@@ -17,11 +18,6 @@ import ListingClaimLink from "@/components/invest/ListingClaimLink";
 function formatLocation(state?: string, city?: string): string | null {
   if (city && state) return `${city}, ${state}`;
   return state || city || null;
-}
-
-function formatKeyMetricValue(value: string | number | boolean): string {
-  if (typeof value === "boolean") return value ? "Yes" : "No";
-  return String(value);
 }
 
 /**
@@ -120,9 +116,7 @@ export default function InvestListingCard({
   const location = formatLocation(listing.location_state, listing.location_city);
   const stripColor = KIND_STRIP[kind];
 
-  const metricEntries = listing.key_metrics
-    ? Object.entries(listing.key_metrics).slice(0, 3)
-    : [];
+  const displayMetrics = listingDisplayMetrics(listing.key_metrics);
   const dbHeroImage = listing.images?.[0];
   const commodityKey =
     listing.sub_category ??
@@ -147,14 +141,14 @@ export default function InvestListingCard({
     </span>
   );
 
-  // Inline metric line ("$720k EBITDA · 3.6× · 18.8% margin").
-  const metricLine = metricEntries.length > 0 && (
+  // Inline metric line ("3 bedrooms · 2025 build year · SIL provider").
+  const metricLine = displayMetrics.length > 0 && (
     <p className="text-xs leading-relaxed text-slate-600">
-      {metricEntries.map(([k, v], i) => (
-        <span key={k}>
+      {displayMetrics.map((m, i) => (
+        <span key={m.key}>
           {i > 0 && <span className="text-slate-300"> · </span>}
-          <span className="font-bold text-ink-800">{formatKeyMetricValue(v)}</span>{" "}
-          <span className="text-slate-500">{k.replace(/_/g, " ")}</span>
+          <span className="font-bold text-ink-800">{m.value}</span>{" "}
+          <span className="text-slate-500">{m.label}</span>
         </span>
       ))}
     </p>
@@ -359,8 +353,8 @@ export default function InvestListingCard({
         </h3>
 
         {(listing.industry || listing.sub_category) && (
-          <p className="-mt-1 text-xs capitalize text-slate-500">
-            {[listing.industry, listing.sub_category?.replace(/_/g, " ")].filter(Boolean).join(" · ")}
+          <p className="-mt-1 text-xs text-slate-500">
+            {[humanizeTitle(listing.industry), humanizeTitle(listing.sub_category)].filter(Boolean).join(" · ")}
           </p>
         )}
 
