@@ -72,8 +72,6 @@ async function loadWorkspaceContext(): Promise<WorkspaceContext | null> {
         prefillPhone: null,
       };
     }
-    // advisor / broker_partner — generic label, no prefill (those kinds
-    // don't typically file briefs).
     return {
       kind: active,
       label: active.replace(/_/g, " "),
@@ -106,40 +104,74 @@ async function isProSubscriber(): Promise<boolean> {
   }
 }
 
-// Flag-gated AI co-pilot toggle reads from feature_flags on every request.
-// We can't ISR-cache when the response branches on a feature flag — the
-// flag's 30-second in-process cache (see lib/feature-flags.ts) already
-// absorbs the read cost.
+/**
+ * Honest social proof: count active, publicly-listable verified pros via the
+ * anon client so RLS scopes us to exactly the rows a visitor could see in the
+ * directory. Returns null on any error — the form then shows qualitative copy
+ * rather than a fabricated number.
+ */
+async function loadProviderSupply(): Promise<number | null> {
+  try {
+    const supabase = await createClient();
+    const { count, error } = await supabase
+      .from("professionals")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active");
+    if (error) return null;
+    return typeof count === "number" ? count : null;
+  } catch {
+    return null;
+  }
+}
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: `Get Quotes from Verified Australian Pros (${CURRENT_YEAR}) — Invest.com.au`,
+  title: `Post a Brief — Get Responses from Verified Australian Pros (${CURRENT_YEAR}) — Invest.com.au`,
   description:
-    "Match Request: verified professionals see a masked brief and respond only if it's a fit. You control who sees your contact details.",
+    "Post one brief and verified Australian professionals, firms and expert teams respond. Compare them and choose — your contact details stay private until you do.",
   alternates: { canonical: `${SITE_URL}/briefs/new` },
   robots: { index: true, follow: true },
 };
 
 const TRUST_BLOCKS = [
   {
-    icon: "shield-check",
-    title: "Verified providers only",
-    desc: "Every professional, firm and team is verified before they can receive briefs.",
+    icon: "users",
+    title: "Pros come to you",
+    desc: "Post once — verified pros respond. No cold-calling a dozen firms yourself.",
   },
   {
     icon: "lock",
-    title: "Your contact details stay private",
-    desc: "Providers see a masked preview. Contact details only unlock after a provider accepts.",
+    title: "Your details stay private",
+    desc: "Pros see a masked brief. Your contact details unlock only when you choose.",
   },
   {
-    icon: "users",
-    title: "You stay in control",
-    desc: "Route to an individual, a firm, or an expert team. Pick the response that fits.",
+    icon: "shield-check",
+    title: "Verified pros only",
+    desc: "Every professional, firm and team is verified before they can respond.",
   },
   {
-    icon: "info",
-    title: "General information",
-    desc: "We are a marketplace, not an adviser. Services are delivered by the provider you engage.",
+    icon: "thumbs-up",
+    title: "You choose",
+    desc: "Compare responses side by side and pick the pro that fits. No obligation.",
+  },
+];
+
+const HOW_IT_WORKS = [
+  {
+    n: 1,
+    title: "Tell us what you need",
+    desc: "Pick what you're after or describe it in your own words. A few smart questions, that's it.",
+  },
+  {
+    n: 2,
+    title: "Verified pros respond",
+    desc: "Matching individuals, firms and expert teams see your masked brief and respond if it's a fit.",
+  },
+  {
+    n: 3,
+    title: "Compare & choose",
+    desc: "Line up the responses, message your favourites, and choose. The service sits with the pro under their licence.",
   },
 ];
 
@@ -150,9 +182,6 @@ export default async function NewBriefPage({
 }) {
   void searchParams;
 
-  // Stable per-visitor key for the feature flag's percentage rollout —
-  // IP from the proxy headers. We don't have a user session at this
-  // point (anonymous brief flow), so IP is the best stable signal.
   const h = await headers();
   const visitorIp =
     h.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -162,16 +191,19 @@ export default async function NewBriefPage({
     userKey: visitorIp,
   });
 
-  const [workspace, proSubscriber] = await Promise.all([
+  const [workspace, proSubscriber, proSupply] = await Promise.all([
     loadWorkspaceContext(),
     isProSubscriber(),
+    loadProviderSupply(),
   ]);
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
-    { name: "Match Requests", url: `${SITE_URL}/briefs` },
+    { name: "Briefs", url: `${SITE_URL}/briefs` },
     { name: "New" },
   ]);
+
+  const showSupply = proSupply != null && proSupply >= 12;
 
   return (
     <>
@@ -181,31 +213,34 @@ export default async function NewBriefPage({
       />
 
       <section className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-white">
-        <div className="max-w-5xl mx-auto px-4 py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl px-4 py-14 sm:py-20">
           <div className="text-center">
-            <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-3">
-              Match Request · Australia
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-amber-400">
+              Briefs · Australia
             </p>
-            <h1 className="text-3xl sm:text-5xl font-extrabold mb-4">
-              Get quotes from verified pros
+            <h1 className="mb-4 text-3xl font-extrabold sm:text-5xl">
+              Post a brief.
+              <br className="hidden sm:block" /> Get responses. Choose your pro.
             </h1>
-            <p className="text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              Tell verified Australian professionals, firms or Pro Squads what
-              you need help with. They&apos;ll see a masked preview and respond
-              only if it&apos;s a fit. You stay in control of who sees your
-              contact details.
+            <p className="mx-auto max-w-2xl leading-relaxed text-slate-300">
+              Tell verified Australian professionals, firms and expert teams what you
+              need. They respond to you — you compare and pick the right fit. Your
+              contact details stay private until you choose to share them.
             </p>
+            {showSupply && (
+              <p className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-semibold text-emerald-300">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" aria-hidden />
+                {proSupply} verified pros ready to respond
+              </p>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 max-w-4xl mx-auto mt-12">
+          <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-6">
             {TRUST_BLOCKS.map((t) => (
-              <div
-                key={t.title}
-                className="bg-white/5 rounded-xl p-4 border border-white/10"
-              >
-                <Icon name={t.icon} size={20} className="text-amber-400 mb-2" />
-                <p className="text-sm font-bold text-white mb-1">{t.title}</p>
-                <p className="text-xs text-slate-400 leading-snug">{t.desc}</p>
+              <div key={t.title} className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <Icon name={t.icon} size={20} className="mb-2 text-amber-400" />
+                <p className="mb-1 text-sm font-bold text-white">{t.title}</p>
+                <p className="text-xs leading-snug text-slate-400">{t.desc}</p>
               </div>
             ))}
           </div>
@@ -213,50 +248,35 @@ export default async function NewBriefPage({
       </section>
 
       <section className="bg-slate-50 py-12 sm:py-16">
-        <div className="max-w-3xl mx-auto px-4">
+        <div className="mx-auto max-w-5xl px-4">
           <BriefForm
             aiCopilotEnabled={aiCopilotEnabled}
             workspace={workspace}
             proSubscriber={proSubscriber}
+            proSupply={proSupply}
           />
         </div>
       </section>
 
       <section className="bg-white py-12 sm:py-16">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2 text-center">
-            How Match Requests work
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="mb-2 text-center text-2xl font-extrabold text-slate-900 sm:text-3xl">
+            How it works
           </h2>
-          <p className="text-sm text-slate-500 mb-10 text-center max-w-2xl mx-auto">
-            A structured way to bring verified providers into your decision.
-            Invest.com.au never gives personal advice — the professional or
-            firm you engage delivers the service under their own licence.
+          <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-slate-500">
+            A simpler way to bring verified pros into your decision. Invest.com.au never
+            gives personal advice — the professional, firm or team you engage delivers the
+            service under their own licence.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {[
-              {
-                n: 1,
-                title: "Tell us what you need",
-                desc: "Pick a template, answer a few structured questions, and set how you want to be matched.",
-              },
-              {
-                n: 2,
-                title: "Verified pros may respond",
-                desc: "Eligible individuals, firms or Pro Squads see a masked preview and can accept with credits to unlock your details.",
-              },
-              {
-                n: 3,
-                title: "Track your quotes in one place",
-                desc: "Status, next step, and accepted pro — all visible to you. The service itself sits with the professional under their licence.",
-              },
-            ].map((s) => (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            {HOW_IT_WORKS.map((s) => (
               <div key={s.n} className="text-center">
-                <div className="w-12 h-12 bg-amber-500 text-slate-900 rounded-full font-extrabold flex items-center justify-center mx-auto mb-3 text-lg">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500 text-lg font-extrabold text-slate-900">
                   {s.n}
                 </div>
-                <p className="font-bold text-slate-900 mb-1">{s.title}</p>
-                <p className="text-sm text-slate-600 leading-relaxed">{s.desc}</p>
+                <p className="mb-1 font-bold text-slate-900">{s.title}</p>
+                <p className="text-sm leading-relaxed text-slate-600">{s.desc}</p>
               </div>
             ))}
           </div>
