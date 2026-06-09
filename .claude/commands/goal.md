@@ -10,7 +10,7 @@ Hold every one of these lenses at once and let them argue internally before you 
 - **UX designer** — flow, friction, intent coverage, step order, abandonment risk, "not sure" paths.
 - **UI designer** — hierarchy, spacing, type, CTA primacy, mobile-first responsiveness, trust signals.
 - **Frontend engineer** — clean, typed, maintainable, reuses the single-source helpers.
-- **Backend/data engineer** — does this *actually* need a DB change? (Almost always no — see constraints.)
+- **Backend/data engineer** — does this *actually* need a DB change? Usually not — prefer existing tables. Migrations are open again post-squash; if you must change schema, follow the DB Migration Rules (constraint 1).
 - **QA lead** — edge cases, empty/invalid/error states, refresh, abandoned flow, localStorage, mobile + desktop.
 - **Accessibility reviewer** — keyboard, contrast, labels, focus, screen-reader clarity.
 - **SEO/GEO strategist** — scenario hubs, intent-driven pages, answer-first structure, schema.
@@ -33,7 +33,7 @@ Before touching anything, ground yourself in the actual codebase — the brief b
 
 ## 1. Hard constraints (non-negotiable in THIS repo)
 
-1. **The database is frozen.** The local migration tree has forked from prod (FIN_NOTEBOOK 2026-06-07); the baseline-squash is a founder-gated **Tier-E** item. **Do NOT author new migrations.** Build frontend-first against the tables that already exist (`quiz_leads`, `user_quiz_history`, `quiz_weights`, `professionals`, `anonymous_saves`, `advisor_sessions`). If a task *genuinely* needs a new column/table, STOP, state the blocker, and do the adjacent non-DB work instead — never silently write a migration.
+1. **Migrations are un-frozen — but disciplined (read `CLAUDE.md` › *DB Migration Rules*).** The forked ledger was **baseline-squashed on 2026-06-09** (PR #1479): the prod ledger, the repo, and one source-of-truth file `supabase/migrations/00000000000000_baseline.sql` are back in sync (the 411 legacy files archived). You **may** ship forward migrations again — but treat schema as expensive: prefer frontend-first and build against existing tables (`quiz_leads`, `user_quiz_history`, `quiz_weights`, `professionals`, `anonymous_saves`, `advisor_sessions`) unless a change is genuinely required. When it is: exactly one `YYYYMMDDHHMMSS_<desc>.sql` per change **in the same PR**, idempotent + RLS-enabled with explicit policies on any user-data table; **never** run DDL straight to prod via MCP, and **never run `supabase db push` autonomously** (it is human-triggered after review). Any `supabase migration list` file↔ledger mismatch is **Tier E** — stop and flag.
 2. **Compliance.** AFSL is not granted (≈ late 2027). Never build, un-draft, or enable a REGULATORY-AVOID-LIST escalator (personal advice, client money, product issuing, CSF/securities, credit assistance, CDR ingestion, FIRB *legal* advice). Wire general-advice warnings via `lib/compliance.ts`. The funnel **guides users to a professional — it never replaces one.** Careful wording + disclaimers on every advice-adjacent surface.
 3. **Single-lead allocation.** One lead → **one** advisor/broker (not up to three). The ranker already resolves a single top pick (specialty+corridor → specialty → corridor → top); verify `lib/getmatched/`, the submit-lead path, and `advisor-ranker`, and remove any surface that fans one lead out to multiple recipients.
 4. **Reuse the single sources of truth** (see the CLAUDE.md table): `lib/tracking.ts` (affiliate links, CTAs, stars), `lib/seo.ts`, `lib/compliance.ts`, `lib/verticals.ts`, `lib/country-mode/` + `lib/intent-context.ts`, `lib/page-recommendations.ts`, `lib/schema-markup.ts`, `lib/logger.ts` (never `console.*`), `lib/rate-limit.ts`, `components/directory/*`, `components/foreign-investment/DirectoryBanners`. Reaching for a hardcoded disclaimer / new affiliate URL builder / fresh JSON-LD object means you missed a helper — search `lib/` first.
@@ -69,7 +69,7 @@ The quiz was rebuilt in PR #434 and is substantial. Real surface:
 - **"Why we matched you" ALREADY EXISTS:** `getMatchReasons(answers, broker)` → 3–4 dynamic bullets rendered in `QuizTopMatch.tsx`. *The brief's "no match explanation" is FALSE — your job is to make it genuinely intelligent and advisor-attribute-driven, not generic.*
 - **Scoring/matching:** `lib/quiz-scoring.ts` (8 weight dims: `beginner, low_fee, us_shares, smsf, crypto, advanced, property, robo` + amount multipliers + per-vertical `scoreVertical`), `lib/quiz-outcome.ts` (7-outcome resolver: `post-job, advisor-match, advisor-browse, calculator-first, education-first, diy-broker, bundle-stack`), `lib/quiz-vertical-router.ts`, `lib/quiz-profile.ts`, `lib/quiz-answer-schemas.ts`, `lib/quiz-history.ts`, `lib/getmatched/top-match.ts`.
 - **APIs:** `POST /api/quiz/score` (server-side weights, never sent to browser), `GET /api/quiz/data` (broker display metadata, commercial fields stripped), `POST /api/quiz/submit` (embeds → `quiz_leads`).
-- **Data (no new migrations):** `quiz_leads` (structured cols + drip), `user_quiz_history` (auth user + anon session, `resumed_from`), `quiz_weights` (commercially sensitive — server-only). Follow-up drips: 27 vertical templates, gated by `isFeatureDisabled('abandoned_quiz_drip')`.
+- **Data (no schema change needed):** `quiz_leads` (structured cols + drip), `user_quiz_history` (auth user + anon session, `resumed_from`), `quiz_weights` (commercially sensitive — server-only). Follow-up drips: 27 vertical templates, gated by `isFeatureDisabled('abandoned_quiz_drip')`.
 
 ### The mandate
 
@@ -107,7 +107,7 @@ Design, build, and QA every one of these explicitly:
 - Questions/options improved where the audit found weakness; every listed intent has a real route; "not sure" is a valid path throughout.
 - Each result card shows a dynamic, attribute-driven 3-bullet "Why we matched you"; matching reflects both quiz answers and real advisor data; edit-answers re-resolves matches.
 - Empty + closest-matches fallbacks exist with clear next steps; primary + secondary CTAs present; single-advisor allocation honoured.
-- Clean on mobile + desktop; no major a11y issues; **no console errors; no broken routes; no new DB migration**; existing quiz behaviour preserved; tests/QA done (extend the existing `__tests__/lib/quiz-*` + `__tests__/api/quiz-*` suites).
+- Clean on mobile + desktop; no major a11y issues; **no console errors; no broken routes; no schema change required** (matching/scoring run on existing tables); existing quiz behaviour preserved; tests/QA done (extend the existing `__tests__/lib/quiz-*` + `__tests__/api/quiz-*` suites).
 
 > Strategic tie-in: the **concierge wealth-stack builder** (FIN_NOTEBOOK ship-now #1) extends this exact quiz to super/savings/robo — design with that headroom in mind. Keep it answer-first for GEO/scenario-hub citability.
 
@@ -118,7 +118,7 @@ Design, build, and QA every one of these explicitly:
 Today there's a 3-step **signup** form (`app/advisor-signup/page.tsx`) and a firm portal (`app/firm-portal/*`) — but **no guided onboarding, no profile-completeness indicator, no "next best action."** New advisors land on blank tabs. Build a guided 5-step wizard: **(1) photo · (2) bio · (3) specialties · (4) fees · (5) availability.**
 
 - Sticky progress banner + completion %; always-obvious next action ("40% complete — add your bio →"); save progress; allow skipping but surface what's incomplete; empty-state guidance on blank tabs; frame completeness as a commercial benefit (better matching/conversion).
-- **No DB migration:** there is no `profile_completeness` column and you can't add one — **derive** completeness client/server-side from existing `professionals` fields (`photo_url`, `bio`, `specialties`, `fee_*`, availability/`booking_link`).
+- **Profile completeness:** there's no `profile_completeness` column today. Migrations are open again post-squash, so you *could* add one — but prefer to **derive** completeness client/server-side from existing `professionals` fields (`photo_url`, `bio`, `specialties`, `fee_*`, availability/`booking_link`): it stays always-fresh and needs no schema. Only persist a stored value if a real requirement (e.g. sorting/analytics on completeness) demands it.
 - **Acceptance:** guided path exists; completeness visible; next action obvious; blank tabs no longer feel abandoned; data saves via the existing profile PATCH allowlist; mobile + desktop clean.
 
 ---
