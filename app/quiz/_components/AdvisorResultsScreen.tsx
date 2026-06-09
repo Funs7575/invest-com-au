@@ -594,13 +594,17 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           <div className="space-y-3">
             <div>
               <label htmlFor="ars-name" className="block text-xs font-semibold text-slate-700 mb-1">
-                Full name <span className="text-red-400">*</span>
+                Full name <span className="text-red-400" aria-hidden="true">*</span>
               </label>
               <input
                 id="ars-name"
                 type="text"
                 placeholder="Alex Smith"
                 autoComplete="name"
+                required
+                aria-required="true"
+                aria-invalid={!!contactError}
+                aria-describedby={contactError ? "ars-contact-error" : undefined}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
@@ -608,13 +612,17 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             </div>
             <div>
               <label htmlFor="ars-phone" className="block text-xs font-semibold text-slate-700 mb-1">
-                Phone number <span className="text-red-400">*</span>
+                Phone number <span className="text-red-400" aria-hidden="true">*</span>
               </label>
               <input
                 id="ars-phone"
                 type="tel"
                 placeholder="04xx xxx xxx"
                 autoComplete="tel"
+                required
+                aria-required="true"
+                aria-invalid={!!contactError}
+                aria-describedby={contactError ? "ars-contact-error" : undefined}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
@@ -622,20 +630,24 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             </div>
             <div>
               <label htmlFor="ars-email" className="block text-xs font-semibold text-slate-700 mb-1">
-                Email address <span className="text-red-400">*</span>
+                Email address <span className="text-red-400" aria-hidden="true">*</span>
               </label>
               <input
                 id="ars-email"
                 type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 placeholder="you@email.com"
                 autoComplete="email"
+                required
+                aria-required="true"
+                aria-invalid={!!contactError}
+                aria-describedby={contactError ? "ars-contact-error" : undefined}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
               />
             </div>
           </div>
-          {contactError && <p role="alert" className="text-xs text-red-500 mt-2">{contactError}</p>}
+          {contactError && <p id="ars-contact-error" role="alert" className="text-xs text-red-500 mt-2">{contactError}</p>}
           <button
             onClick={handleContactNext}
             disabled={!canSubmitContact}
