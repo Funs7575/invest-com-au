@@ -27,6 +27,9 @@ export interface MatchedAdvisor {
   languages?: string[] | null;
   available_in_countries?: string[] | null;
   years_experience?: number | null;
+  avg_response_minutes?: number | null;
+  response_time_hours?: number | null;
+  initial_consultation_free?: boolean | null;
   matchScore?: number;
   confidence?: MatchConfidence;
 }

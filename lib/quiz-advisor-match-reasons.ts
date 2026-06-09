@@ -28,6 +28,9 @@ export interface AdvisorMatchAttrs {
   languages?: string[] | null;
   available_in_countries?: string[] | null;
   years_experience?: number | null;
+  avg_response_minutes?: number | null;
+  response_time_hours?: number | null;
+  initial_consultation_free?: boolean | null;
 }
 
 export interface AdvisorMatchContext {
@@ -145,28 +148,40 @@ export function buildAdvisorMatchReasons(
     pushUnique(reasons, `Based in ${advisor.location_display || ctx.userState} — local to you`);
   }
 
-  // 3) Trust / rating.
+  // 3) Free initial consultation — a verified, conversion-relevant signal.
+  if (advisor.initial_consultation_free) pushUnique(reasons, "Free initial consultation");
+
+  // 4) Trust / rating.
   if (typeof advisor.rating === "number" && advisor.rating >= 4.5 && (advisor.review_count ?? 0) >= 3) {
     pushUnique(reasons, `Rated ${advisor.rating.toFixed(1)}/5 from ${advisor.review_count} client reviews`);
   } else if (typeof advisor.rating === "number" && advisor.rating >= 4 && (advisor.review_count ?? 0) > 0) {
     pushUnique(reasons, `Well rated — ${advisor.rating.toFixed(1)}/5 from clients`);
   }
 
-  // 4) Experience.
+  // 5) Responsiveness — verified, replaces the old hardcoded "replies within 24h".
+  const respMin = advisor.avg_response_minutes ?? (advisor.response_time_hours != null ? advisor.response_time_hours * 60 : null);
+  if (respMin != null) {
+    if (respMin <= 60) pushUnique(reasons, "Typically replies within the hour");
+    else if (respMin <= 240) pushUnique(reasons, `Typically replies in ~${Math.round(respMin / 60)} hours`);
+    else if (respMin <= 1440) pushUnique(reasons, "Usually replies same business day");
+  }
+
+  // 6) Experience.
   if (typeof advisor.years_experience === "number" && advisor.years_experience >= 5) {
     pushUnique(reasons, `${advisor.years_experience}+ years' experience`);
   }
 
-  // 5) Budget fit.
+  // 7) Budget fit.
   const budgetLabel = ctx.budget ? BUDGET_LABELS[ctx.budget] : undefined;
   if (budgetLabel) pushUnique(reasons, `Works with ${budgetLabel}`);
 
-  // 6) Generic-but-true fallbacks (only to reach `max`).
+  // 8) Generic-but-true fallbacks (only to reach `max`).
   if (reasons.length < max) {
     const fallbacks = [
       ctx.advisorType ? `Matched to your ${typeLabel(ctx.advisorType).toLowerCase()} needs` : null,
       advisor.verified ? "ASIC-verified & accepting new clients" : "Accepting new clients",
-      "Free, no-obligation intro call",
+      // Don't double up if the advisor's own free consult already surfaced above.
+      advisor.initial_consultation_free ? null : "Free, no-obligation intro call",
     ];
     for (const f of fallbacks) {
       if (reasons.length >= max) break;

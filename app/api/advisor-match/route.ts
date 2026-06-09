@@ -178,6 +178,9 @@ export async function POST(request: NextRequest) {
     languages: a.languages,
     available_in_countries: a.available_in_countries,
     years_experience: a.years_experience,
+    avg_response_minutes: a.avg_response_minutes,
+    response_time_hours: a.response_time_hours,
+    initial_consultation_free: a.initial_consultation_free,
     matchScore: a.matchScore,
     confidence: a.confidence,
   }));

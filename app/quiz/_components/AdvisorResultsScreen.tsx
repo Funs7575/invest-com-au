@@ -103,6 +103,9 @@ function toMatchedAdvisor(a: ScoredQuizAdvisor): MatchedAdvisor {
     languages: a.languages ?? null,
     available_in_countries: a.available_in_countries ?? null,
     years_experience: a.years_experience ?? null,
+    avg_response_minutes: a.avg_response_minutes ?? null,
+    response_time_hours: a.response_time_hours ?? null,
+    initial_consultation_free: a.initial_consultation_free ?? null,
     matchScore: a.matchScore,
     confidence: a.confidence,
   };

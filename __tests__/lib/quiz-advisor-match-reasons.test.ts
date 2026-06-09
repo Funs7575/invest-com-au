@@ -104,4 +104,17 @@ describe("buildAdvisorMatchReasons", () => {
     const reasons = buildAdvisorMatchReasons(advisor, { budget: "500k_2m" }, 5);
     expect(reasons.some((r) => r.includes("$500k–$2m"))).toBe(true);
   });
+
+  it("surfaces a verified free initial consultation (and drops the generic one)", () => {
+    const advisor: AdvisorMatchAttrs = { ...base, type: "financial_planner", initial_consultation_free: true };
+    const reasons = buildAdvisorMatchReasons(advisor, {}, 4);
+    expect(reasons).toContain("Free initial consultation");
+    expect(reasons).not.toContain("Free, no-obligation intro call");
+  });
+
+  it("surfaces a verified response time", () => {
+    expect(buildAdvisorMatchReasons({ ...base, type: "tax_agent", avg_response_minutes: 45 }, {}, 4)).toContain("Typically replies within the hour");
+    expect(buildAdvisorMatchReasons({ ...base, type: "tax_agent", avg_response_minutes: 180 }, {}, 4)).toContain("Typically replies in ~3 hours");
+    expect(buildAdvisorMatchReasons({ ...base, type: "tax_agent", response_time_hours: 12 }, {}, 4)).toContain("Usually replies same business day");
+  });
 });
