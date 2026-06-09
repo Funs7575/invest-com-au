@@ -23,6 +23,8 @@ vi.mock("@/lib/request-cache", () => ({
 vi.mock("@/lib/seo", () => ({
   absoluteUrl: (p: string) => `https://invest.com.au${p}`,
   breadcrumbJsonLd: () => ({}),
+  SITE_NAME: "Invest.com.au",
+  SITE_URL: "https://invest.com.au",
   CURRENT_YEAR: "2026",
 }));
 

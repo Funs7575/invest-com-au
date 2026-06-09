@@ -28,6 +28,7 @@ vi.mock("@/lib/seo", () => ({
   absoluteUrl: (p: string) => `https://invest.com.au${p}`,
   breadcrumbJsonLd: () => ({}),
   SITE_URL: "https://invest.com.au",
+  SITE_NAME: "Invest.com.au",
 }));
 
 vi.mock("@/lib/compliance", () => ({
