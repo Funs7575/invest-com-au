@@ -20,7 +20,7 @@ import ComplianceFooter from "@/components/ComplianceFooter";
 export const metadata: Metadata = {
   title: "Foreign Investment in Australian Property — FIRB Guide 2026",
   description:
-    "Complete guide to buying Australian property as a foreign investor. FIRB approval process, state stamp duty surcharges, application fees, eligible property types, and step-by-step checklist.",
+    "Buying property as a foreign investor: FIRB approval, state stamp duty surcharges, application fees, eligible property types, and a step-by-step checklist.",
   openGraph: {
     title: "Foreign Investment in Australian Property — FIRB Guide 2026",
     description:

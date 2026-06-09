@@ -11,7 +11,7 @@ export const revalidate = 1800;
 export const metadata: Metadata = {
   title: `Expert Teams — Specialist Adviser Squads in Australia (${CURRENT_YEAR})`,
   description:
-    "Browse verified expert teams — squads of complementary financial professionals (SMSF, tax, property, planning) who collaborate on complex briefs. Compare teams or post a request.",
+    "Verified expert teams: SMSF, tax, property, and planning specialists who collaborate on complex briefs. Compare teams or post a request.",
   openGraph: {
     title: "Expert Teams — Specialist Adviser Squads",
     description:

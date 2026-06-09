@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Family Home in Aged Care — Exempt Assets & Selling Decisions (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How the family home is treated in aged care: 2-year exemption, spouse remaining at home, when to sell, CGT on primary residence, using proceeds for RAD, and estate planning implications. ${UPDATED_LABEL}.`,
+  description: `The family home in aged care: the 2-year exemption, when to sell, CGT on sale, using proceeds for a RAD, and estate planning. ${UPDATED_LABEL}`,
   openGraph: {
     title: `Family Home in Aged Care (${CURRENT_YEAR}) — What Happens to Your House`,
     description: "Family home aged care treatment: 2-year exemption, spouse staying, when to sell, CGT, RAD funding, and estate implications.",

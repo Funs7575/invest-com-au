@@ -15,7 +15,7 @@ import type { Broker } from "@/lib/types";
 export const metadata: Metadata = {
   title: "Australia's Foreign Buyer Property Ban 2025–2027: What You Can (and Can't) Buy",
   description:
-    "From 1 April 2025 to 31 March 2027, foreign persons are banned from buying established dwellings in Australia. Learn who is affected, what you can still buy, exemptions, and what to do next. Updated March 2026.",
+    "Australia's foreign buyer property ban (1 Apr 2025–31 Mar 2027): who is affected, what you can still buy, exemptions, and next steps. Updated March 2026.",
   openGraph: {
     title: "Australia's Foreign Buyer Property Ban 2025–2027",
     description:

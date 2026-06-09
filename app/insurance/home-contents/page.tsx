@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Home & Contents Insurance Australia (${CURRENT_YEAR}) — Complete Guide`,
-  description: `Building vs contents insurance, underinsurance risks, what's covered and excluded, and how to get the right sum insured. Guide for homeowners and renters. ${UPDATED_LABEL}.`,
+  description: `Building vs contents insurance, underinsurance risks, what's covered and excluded, and the right sum insured. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Home & Contents Insurance Australia (${CURRENT_YEAR})`,
     description: "Building vs contents insurance, underinsurance, and what's covered — complete guide for Australian homeowners and renters.",

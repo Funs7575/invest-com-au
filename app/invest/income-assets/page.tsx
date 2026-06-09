@@ -15,7 +15,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Income-Generating Asset Businesses in Australia (${CURRENT_YEAR}) — Vending, ATMs, Self-Storage & More`,
   description:
-    "Independent guide to income-asset businesses for sale in Australia — vending routes, ATM networks, car washes, laundromats, self-storage, billboards. Yields, capex profile, finance options.",
+    "Guide to income-asset businesses in Australia — vending routes, ATM networks, car washes, laundromats, self-storage and billboards. Yields and finance.",
   alternates: { canonical: `${SITE_URL}/invest/income-assets` },
   openGraph: {
     title: `Income-Generating Asset Businesses in Australia (${CURRENT_YEAR})`,

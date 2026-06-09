@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Australians Buying Property Overseas (${CURRENT_YEAR}) — US, Bali, UK, NZ, Portugal | invest.com.au`,
-  description: `What Australian residents need to know before buying foreign property — financing, foreign buyer rules, FIRB overlap, CGT, foreign rental income, and the key risks by country. ${UPDATED_LABEL}.`,
+  description: `Buying foreign property as an Australian resident: financing, FIRB overlap, CGT, foreign rental income, and key risks by country. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Australians Buying Property Overseas (${CURRENT_YEAR})`,
     description: "Buying in the US, Bali, UK, NZ, or Portugal as an Australian resident — financing, tax, legal, and foreign-buyer restrictions explained.",

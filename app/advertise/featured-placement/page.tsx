@@ -11,7 +11,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Sponsored Placement for Australian Brokers — ${SITE_NAME}`,
   description:
-    "Book Featured Partner, Editor's Pick, or Deal-of-Month placement on invest.com.au. Transparent pricing, month-to-month, book your own slot with Stripe checkout.",
+    "Book Featured Partner, Editor's Pick, or Deal-of-Month placement on invest.com.au. Transparent pricing, month-to-month, self-serve Stripe checkout.",
   alternates: { canonical: "/advertise/featured-placement" },
   openGraph: {
     title: "Sponsored Placement for Australian Brokers — invest.com.au",

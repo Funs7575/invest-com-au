@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title:
     "First Home Buyer Eligibility Quiz — FHSS, FHG & State Grants | Invest.com.au",
   description:
-    "Answer 3 quick questions to find out which first-home-buyer schemes you qualify for: First Home Super Saver, First Home Guarantee, and your state's grants and stamp-duty concessions.",
+    "Find out which first-home-buyer schemes you qualify for: FHSS, First Home Guarantee, and your state's grants and stamp-duty concessions.",
   alternates: { canonical: `${SITE_URL}/first-home-buyer/quiz` },
 };
 

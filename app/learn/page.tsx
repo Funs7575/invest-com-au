@@ -14,7 +14,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Learning Paths & Guides: Learn to Invest in Australia ${CURRENT_YEAR} | Invest.com.au`,
   description:
-    "Structured learning paths for Australian investors — new investor starter kit, choosing a broker, retirement & super, tax-smart investing, and foreign investor guide. Track your progress.",
+    "Structured learning paths for Australians — new investor starter kit, broker selection, retirement & super, tax-smart investing and foreign investor guide.",
   alternates: { canonical: `${SITE_URL}/learn` },
   openGraph: {
     title: `Learning Paths: Learn to Invest in Australia ${CURRENT_YEAR}`,

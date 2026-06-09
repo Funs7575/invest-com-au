@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `State Grants Calculator (${CURRENT_YEAR}) — First Home Owner Grant by State`,
   description:
-    "See your state's First Home Owner Grant amount, stamp-duty concession, and First Home Guarantee eligibility in one place. Covers NSW, VIC, QLD, WA, SA, TAS, ACT and NT — federal and state levers stacked.",
+    "First Home Owner Grant, stamp-duty concession, and First Home Guarantee eligibility in one place. Covers NSW, VIC, QLD, WA, SA, TAS, ACT and NT.",
   alternates: { canonical: `${SITE_URL}/tools/state-grants-calculator` },
   openGraph: {
     title: `First Home Owner Grant Calculator by State (${CURRENT_YEAR})`,

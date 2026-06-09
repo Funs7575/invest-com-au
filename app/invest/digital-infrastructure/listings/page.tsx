@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Digital Infrastructure Investment Opportunities Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian digital infrastructure investment opportunities. Data centres, fibre networks, subsea cables, AI compute facilities and tower assets available for investment.",
+      "Browse Australian digital infrastructure investment opportunities. Data centres, fibre networks, subsea cables, AI compute facilities and tower assets.",
     alternates: { canonical: `${SITE_URL}/invest/digital-infrastructure/listings` },
     openGraph: {
       title: `Digital Infrastructure Investment Opportunities Australia — ${countLabel}Active Listings`,

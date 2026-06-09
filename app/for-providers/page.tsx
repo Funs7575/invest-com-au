@@ -8,7 +8,7 @@ export const revalidate = 3600; // 1 hour
 export const metadata: Metadata = {
   title: "List Your Training Courses — Reach 30,000+ Australian Advisors",
   description:
-    "List CPD courses on Invest.com.au. Reach 30,000+ financial advisors and 70,000+ registered tax agents. Platform handles enrolment, payments, and CPD certificates.",
+    "List CPD courses on Invest.com.au — reach 30,000+ financial advisors and 70,000+ tax agents. Platform handles enrolment, payments, and CPD certificates.",
   alternates: { canonical: "/for-providers" },
   openGraph: {
     title: "List Your Courses — Reach Australian Financial Professionals",

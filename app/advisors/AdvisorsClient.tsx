@@ -22,11 +22,13 @@ import SortDropdown from "@/components/directory/SortDropdown";
 import TabBar from "@/components/directory/TabBar";
 import FilterChips from "@/components/directory/FilterChips";
 import FilterPanel from "@/components/directory/FilterPanel";
+import FilterGroupHeader from "@/components/directory/FilterGroupHeader";
 import FacetGroup from "@/components/directory/FacetGroup";
 import ResultCount from "@/components/directory/ResultCount";
 import EmptyState from "@/components/directory/EmptyState";
 import CompareBar from "@/components/directory/CompareBar";
 import { FilterPill, FilterPopover } from "@/components/directory/FilterPill";
+import SmartFilterBar from "@/components/directory/SmartFilterBar";
 
 export interface ExpertTeamCard {
   id: number;
@@ -749,6 +751,20 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           />
         )}
 
+        {/* AI filter bar — natural language → URL params */}
+        <div className="mb-3">
+          <SmartFilterBar
+            setParams={(updates) => {
+              const p = new URLSearchParams(searchParams.toString());
+              for (const [k, v] of Object.entries(updates)) {
+                if (v) p.set(k, v); else p.delete(k);
+              }
+              router.replace(`/advisors?${p.toString()}`, { scroll: false });
+            }}
+            surface="advisors"
+          />
+        </div>
+
         {/* Toolbar: search · all-filters · sort (mirrors /invest) */}
         <div className="flex gap-2 mb-3 items-center">
           <SearchInput
@@ -868,61 +884,28 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           resultCount={feed.length}
           variant="drawer"
         >
-          <div className="space-y-5">
+          <div>
             {/* Sort — mobile-reachable (toolbar SortDropdown is desktop-only) */}
-            <div className="md:hidden">
+            <div className="md:hidden border-b border-slate-100 pb-3 mb-1">
               <label htmlFor="advisor-sort-m" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Sort</label>
               <select id="advisor-sort-m" value={sortBy} onChange={(e) => setSortBy(e.target.value as SortKey)} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
                 {SORT_OPTIONS.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
               </select>
             </div>
 
-            {/* Location / near me */}
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5"><Icon name="map-pin" size={13} className="text-amber-500" />Location</span>
+            <FilterGroupHeader
+              label="Location"
+              icon="map-pin"
+              activeCount={isLocationActive ? 1 : (stateFilter !== "all" ? 1 : 0)}
+              defaultOpen
+            >
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div className="sm:col-span-2"><LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} /></div>
                 <select aria-label="Search radius" value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isLocationActive}>
                   {RADIUS_OPTIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </select>
               </div>
-              <div className="mt-1.5"><UseMyLocation onLocate={(lat, lng) => { setUserLat(lat); setUserLng(lng); setSortBy("distance"); setLocationSearch({ postcode: "", locality: "My location", state: "", latitude: lat, longitude: lng }); }} /></div>
-            </div>
-
-            <FacetGroup
-              label="Advisor type"
-              layout="grid"
-              counts={typeCounts}
-              selected={typeFilters}
-              onChange={(next) => setTypeFilters(next)}
-              options={TYPE_FILTERS.filter((f) => f.key !== "all").map((f) => ({ value: f.key as ProfessionalType, label: f.label }))}
-            />
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="adv-fee" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Fee structure</label>
-                <select id="adv-fee" value={feeFilter} onChange={(e) => setFeeFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
-                  <option value="all">Any</option>
-                  <option value="fee-for-service">Fee for Service</option>
-                  <option value="commission">Commission</option>
-                  <option value="hybrid">Hybrid</option>
-                  <option value="percentage of AUM">% of AUM</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="adv-firm" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Advisory firm</label>
-                <select id="adv-firm" value={firmFilter} onChange={(e) => setFirmFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
-                  <option value="all">All Firms</option>
-                  {allFirmNames.map((f) => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="adv-lang" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Language</label>
-                <select id="adv-lang" value={languageFilter} onChange={(e) => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
-                  <option value="all">Any</option>
-                  {allLanguages.map((l) => <option key={l} value={l}>{l}</option>)}
-                </select>
-              </div>
+              <div className="mt-1.5 mb-2"><UseMyLocation onLocate={(lat, lng) => { setUserLat(lat); setUserLng(lng); setSortBy("distance"); setLocationSearch({ postcode: "", locality: "My location", state: "", latitude: lat, longitude: lng }); }} /></div>
               <div>
                 <label htmlFor="adv-state" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">State</label>
                 <select id="adv-state" value={stateFilter} onChange={(e) => setStateFilter(e.target.value)} disabled={isLocationActive} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -930,24 +913,94 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   {AU_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
-            </div>
+            </FilterGroupHeader>
 
-            <FacetGroup
-              label="Availability & focus"
-              selected={new Set([verifiedOnly ? "verified" : "", internationalOnly ? "international" : "", acceptingOnly ? "accepting" : "", videoOnly ? "video" : ""].filter(Boolean))}
-              onChange={(next) => { setVerifiedOnly(next.has("verified")); setInternationalOnly(next.has("international")); setAcceptingOnly(next.has("accepting")); setVideoOnly(next.has("video")); }}
-              options={[{ value: "verified", label: "Verified only" }, { value: "international", label: "International clients" }, { value: "accepting", label: "Accepting new clients" }, { value: "video", label: "Has intro video" }]}
-            />
+            <FilterGroupHeader
+              label="Advisor type"
+              icon="users"
+              activeCount={typeFilters.size}
+              defaultOpen
+            >
+              <FacetGroup
+                label=""
+                layout="grid"
+                counts={typeCounts}
+                selected={typeFilters}
+                onChange={(next) => setTypeFilters(next)}
+                options={TYPE_FILTERS.filter((f) => f.key !== "all").map((f) => ({ value: f.key as ProfessionalType, label: f.label }))}
+              />
+            </FilterGroupHeader>
+
+            <FilterGroupHeader
+              label="Fee & cost"
+              icon="credit-card"
+              activeCount={feeFilter !== "all" ? 1 : 0}
+              defaultOpen={false}
+            >
+              <label htmlFor="adv-fee" className="sr-only">Fee structure</label>
+              <select id="adv-fee" value={feeFilter} onChange={(e) => setFeeFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                <option value="all">Any</option>
+                <option value="fee-for-service">Fee for Service</option>
+                <option value="commission">Commission</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="percentage of AUM">% of AUM</option>
+              </select>
+            </FilterGroupHeader>
+
+            <FilterGroupHeader
+              label="Availability"
+              icon="check-circle"
+              activeCount={[verifiedOnly, internationalOnly, acceptingOnly, videoOnly].filter(Boolean).length}
+              defaultOpen={false}
+            >
+              <FacetGroup
+                label=""
+                selected={new Set([verifiedOnly ? "verified" : "", internationalOnly ? "international" : "", acceptingOnly ? "accepting" : "", videoOnly ? "video" : ""].filter(Boolean))}
+                onChange={(next) => { setVerifiedOnly(next.has("verified")); setInternationalOnly(next.has("international")); setAcceptingOnly(next.has("accepting")); setVideoOnly(next.has("video")); }}
+                options={[{ value: "verified", label: "Verified only" }, { value: "international", label: "International clients" }, { value: "accepting", label: "Accepting new clients" }, { value: "video", label: "Has intro video" }]}
+              />
+            </FilterGroupHeader>
+
+            <FilterGroupHeader
+              label="Language"
+              icon="globe"
+              activeCount={languageFilter !== "all" ? 1 : 0}
+              defaultOpen={false}
+            >
+              <select id="adv-lang" value={languageFilter} onChange={(e) => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                <option value="all">Any</option>
+                {allLanguages.map((l) => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </FilterGroupHeader>
 
             {allSpecialties.length > 0 && (
-              <FacetGroup
+              <FilterGroupHeader
                 label="Specialties"
-                layout="grid"
-                selected={new Set(specialtyFilters)}
-                onChange={(next) => setSpecialtyFilters(Array.from(next))}
-                options={allSpecialties.map((s) => ({ value: s, label: s }))}
-              />
+                icon="star"
+                activeCount={specialtyFilters.length}
+                defaultOpen={false}
+              >
+                <FacetGroup
+                  label=""
+                  layout="grid"
+                  selected={new Set(specialtyFilters)}
+                  onChange={(next) => setSpecialtyFilters(Array.from(next))}
+                  options={allSpecialties.map((s) => ({ value: s, label: s }))}
+                />
+              </FilterGroupHeader>
             )}
+
+            <FilterGroupHeader
+              label="Advisory firm"
+              icon="briefcase"
+              activeCount={firmFilter !== "all" ? 1 : 0}
+              defaultOpen={false}
+            >
+              <select id="adv-firm" value={firmFilter} onChange={(e) => setFirmFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                <option value="all">All Firms</option>
+                {allFirmNames.map((f) => <option key={f} value={f}>{f}</option>)}
+              </select>
+            </FilterGroupHeader>
           </div>
         </FilterPanel>
 

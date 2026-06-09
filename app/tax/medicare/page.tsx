@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Medicare Levy & Surcharge Australia (${CURRENT_YEAR}) — Investor's Guide`,
-  description: `Medicare Levy (2%) and Medicare Levy Surcharge (1–1.5%): 2025–26 thresholds, how to avoid the MLS, and why negative gearing won't reduce it. ${UPDATED_LABEL}.`,
+  description: `Medicare Levy (2%) and Surcharge (1–1.5%): 2025–26 thresholds, how to avoid the MLS, and why negative gearing won't reduce it. ${UPDATED_LABEL}`,
   openGraph: {
     title: `Medicare Levy & Medicare Levy Surcharge Australia (${CURRENT_YEAR})`,
     description:

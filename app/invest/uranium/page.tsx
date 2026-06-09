@@ -40,7 +40,7 @@ export const revalidate = 1800;
 export const metadata: Metadata = {
   title: `Invest in Australian Uranium (${CURRENT_YEAR}) — ASX Producers, Developers & ETFs`,
   description:
-    "Australian uranium investing — Paladin (PDN), Boss Energy (BOE), Deep Yellow (DYL), Bannerman (BMN), the Global X ATOM ETF, FIRB rules, and SMR demand thesis.",
+    "Australian uranium investing — Paladin (PDN), Boss Energy (BOE), Deep Yellow (DYL), Bannerman (BMN), Global X ATOM ETF, FIRB rules, and SMR thesis.",
   alternates: { canonical: `${SITE_URL}/invest/uranium` },
   openGraph: {
     title: `Invest in Australian Uranium (${CURRENT_YEAR})`,

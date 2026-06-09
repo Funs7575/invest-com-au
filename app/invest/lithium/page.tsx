@@ -39,7 +39,7 @@ export const revalidate = 1800;
 export const metadata: Metadata = {
   title: `Invest in Australian Lithium (${CURRENT_YEAR}) — ASX Miners, Processing & Battery Minerals`,
   description:
-    "Australian lithium investing — ASX spodumene producers (PLS, MIN, LTR, IGO), Kwinana downstream processing, battery-mineral ETFs, FIRB rules and the EU-Australia FTA pathway.",
+    "Australian lithium investing — ASX spodumene producers (PLS, MIN, LTR, IGO), downstream processing, battery-mineral ETFs, FIRB rules and FTA pathways.",
   alternates: { canonical: `${SITE_URL}/invest/lithium` },
   openGraph: {
     title: `Invest in Australian Lithium (${CURRENT_YEAR})`,

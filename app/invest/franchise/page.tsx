@@ -31,7 +31,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Franchise Opportunities Australia (${CURRENT_YEAR})`,
   description:
-    "Browse franchise investment opportunities in Australia. Food, fitness, cleaning, automotive, education, and retail franchises. Investment levels, training, and support outlined.",
+    "Franchise investment opportunities in Australia. Food, fitness, cleaning, automotive, education and retail franchises with investment levels and support.",
   alternates: { canonical: `${SITE_URL}/invest/franchise` },
   openGraph: {
     title: `Franchise Opportunities Australia (${CURRENT_YEAR})`,

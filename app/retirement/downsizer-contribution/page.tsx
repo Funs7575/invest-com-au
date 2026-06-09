@@ -9,10 +9,10 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Downsizer Contribution to Super — Complete Guide (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How the downsizer contribution works for Australians aged 55+: eligibility, the $300,000 per person cap, Age Pension impact, 90-day deadline, and how to make the contribution. ${UPDATED_LABEL}.`,
+  description: `Downsizer contribution: up to $300,000 per person from a home sale into super, outside caps (age 55+). Eligibility, Centrelink impact. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Downsizer Contribution to Super (${CURRENT_YEAR}) — Eligibility, Limits & Strategy`,
-    description: "Contribute up to $300,000 per person from your home sale into super — outside the normal contribution caps. Eligibility, Age Pension interaction, and common traps.",
+    description: "Contribute up to $300,000 per person from your home sale into super outside contribution caps. Eligibility, Age Pension impact, and common traps.",
     url: absoluteUrl("/retirement/downsizer-contribution"),
     images: [{ url: `/api/og?title=${encodeURIComponent("Downsizer Contribution")}&sub=${encodeURIComponent("$300k per person · No TSB limit · Age 55+ · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },

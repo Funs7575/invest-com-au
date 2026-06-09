@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Home Care Packages Australia — Levels, Costs & Wait Times (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Complete guide to Australian Home Care Packages: Levels 1–4, government subsidy amounts, income-tested fees, approved providers, CHSP, wait times, and how to register with My Aged Care. ${UPDATED_LABEL}.`,
+  description: `Australian Home Care Packages: Levels 1–4, subsidies, income-tested fees, approved providers, wait times, and My Aged Care registration. ${UPDATED_LABEL}`,
   openGraph: {
     title: `Home Care Packages Australia (${CURRENT_YEAR}) — Levels, Costs & Wait Times`,
     description: "Home Care Packages Levels 1–4: government subsidy, income-tested fees, wait times, CHSP, and how to register with My Aged Care.",

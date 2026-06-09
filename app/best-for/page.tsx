@@ -18,7 +18,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Best Broker For Every Scenario (${CURRENT_YEAR}) — Invest.com.au`,
   description:
-    "Ranked broker picks for every kind of Australian investor. Day traders, long-term buy-hold, SMSF, first-time, ESG, international — compare the top match for each scenario.",
+    "Top broker picks for every investor type: day traders, buy-hold, SMSF, beginners, ESG, international — compare the best match for each scenario.",
   alternates: { canonical: `${SITE_URL}/best-for` },
   openGraph: {
     title: `Best Broker For Every Scenario (${CURRENT_YEAR})`,

@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `How to Transfer From Your Current Broker (${CURRENT_YEAR}) — Step-by-Step Guides`,
   description:
-    "Step-by-step guides for transferring shares, ETFs and cash out of every major Australian broker. Chess transfer fees, in-specie support, exit fees and realistic timelines.",
+    "Transfer shares, ETFs and cash out of every major broker. CHESS transfer fees, in-specie support, exit fees, and realistic timelines.",
   alternates: { canonical: `${SITE_URL}/how-to/transfer-from` },
 };
 

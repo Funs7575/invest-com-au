@@ -30,7 +30,7 @@ const quotesFaqLd = faqJsonLd(QUOTES_FAQS);
 export const metadata: Metadata = {
   title: `Live Advisor Marketplace — Open Quote Requests (${CURRENT_YEAR})`,
   description:
-    "Browse open quote requests from Australians who need financial, mortgage, tax, SMSF, or property advice. Verified advisors compete with quotes — the consumer picks. Free to post.",
+    "Quote requests for financial, mortgage, tax, SMSF, or property advice. Verified advisors compete — the consumer picks. Free to post.",
   alternates: { canonical: `${SITE_URL}/quotes` },
 };
 

@@ -12,7 +12,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "How Much Am I Paying? — Quick Broker Fee Audit",
   description:
-    "Free 30-second audit. Find out how much you're paying in broker fees and how much you could save by switching. Compares all major Australian brokers instantly.",
+    "Free 30-second broker fee audit. See how much you're overpaying and how much you'd save by switching — compares all major brokers instantly.",
   openGraph: {
     title: "How Much Am I Paying in Broker Fees?",
     description:

@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "SMSF Australia: Complete Guide to Self-Managed Super Funds (2026)",
   description:
-    "Everything you need to know about SMSFs: setup costs, investment options, compliance, property in super, and whether an SMSF is right for you. Updated 2026.",
+    "SMSF guide for Australians: setup costs, investment options, compliance, property in super, and whether an SMSF is right for you. Updated 2026.",
   openGraph: {
     title: "SMSF Australia: Complete Guide to Self-Managed Super Funds (2026)",
     description:

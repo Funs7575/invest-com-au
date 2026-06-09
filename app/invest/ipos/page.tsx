@@ -29,7 +29,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Australian IPO Calendar ${CURRENT_YEAR} — Upcoming ASX Listings`,
   description:
-    `How to participate in Australian IPOs — the application process, broker access, allocation rules, recent notable ASX listings, and what to watch in ${CURRENT_YEAR}.`,
+    `How to participate in Australian IPOs — application process, broker access, allocation rules and ASX listings in ${CURRENT_YEAR}.`,
   alternates: { canonical: `${SITE_URL}/invest/ipos` },
   openGraph: {
     title: `Australian IPO Calendar ${CURRENT_YEAR} — Upcoming ASX Listings`,

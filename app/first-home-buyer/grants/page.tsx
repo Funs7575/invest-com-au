@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `First Home Owner Grants by State (${CURRENT_YEAR}) — FHOG Guide | invest.com.au`,
-  description: `State-by-state FHOG guide: NSW $10K, QLD $30K, TAS $30K, SA $15K, WA $10K, NT $10K. Eligibility rules, property caps, how to claim, and stacking with stamp duty concessions. ${UPDATED_LABEL}.`,
+  description: `FHOG by state: NSW $10K, QLD $30K, TAS $30K, SA $15K, WA $10K, NT $10K. Eligibility, caps, and stamp duty stacking. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `First Home Owner Grants by State (${CURRENT_YEAR}) — FHOG Guide`,
     description: "Complete state-by-state FHOG guide: grant amounts, property caps, eligibility rules, and how to combine with stamp duty concessions.",

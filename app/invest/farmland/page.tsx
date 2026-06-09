@@ -31,7 +31,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Australian Farmland & Agriculture (${CURRENT_YEAR})`,
   description:
-    "Guide to farmland investment in Australia. Cropping, grazing, dairy, horticulture, and water rights. FIRB rules for foreign buyers, typical returns, and state-by-state overview.",
+    "Guide to farmland investment in Australia. Cropping, grazing, dairy, horticulture and water rights. FIRB rules, typical returns and access options.",
   alternates: { canonical: `${SITE_URL}/invest/farmland` },
   openGraph: {
     title: `Invest in Australian Farmland & Agriculture (${CURRENT_YEAR})`,

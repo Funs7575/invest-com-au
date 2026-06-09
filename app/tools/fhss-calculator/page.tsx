@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `FHSS Calculator (${CURRENT_YEAR}) — First Home Super Saver Deposit Estimator`,
   description:
-    "Calculate how much deposit you can save via the First Home Super Saver Scheme and how much tax you save vs saving outside super. Covers all income brackets and concessional + non-concessional contributions.",
+    "Calculate your FHSS deposit and tax saving vs saving outside super. Covers all income brackets and concessional + non-concessional contributions.",
   alternates: { canonical: `${SITE_URL}/tools/fhss-calculator` },
   openGraph: {
     title: `FHSS Deposit Calculator (${CURRENT_YEAR})`,

@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Salary Sacrifice Optimiser (${CURRENT_YEAR}) — Calculate Your Super Tax Saving`,
   description:
-    "Calculate the real dollar benefit of salary sacrificing into super. Shows income tax saving, 15% contributions tax, Division 293 impact, and net annual advantage. FY2025-26 Australian tax rates.",
+    "Calculate the benefit of salary sacrificing into super — income tax saving, contributions tax, Division 293 impact and net annual advantage. FY2025-26.",
   alternates: { canonical: `${SITE_URL}/tools/salary-sacrifice-optimiser` },
   openGraph: {
     title: `Salary Sacrifice Optimiser (${CURRENT_YEAR})`,

@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `ETF Screener Australia (${CURRENT_YEAR}) — Filter & Compare ASX ETFs`,
   description:
-    "Screen and compare Australian ETFs by asset class, MER, AUM, yield, and franking credits. Filter 25+ ASX-listed ETFs across Vanguard, iShares, BetaShares, SPDR, and VanEck.",
+    "Screen 25+ ASX ETFs by asset class, MER, AUM, yield, and franking credits. Filter across Vanguard, iShares, BetaShares, SPDR, and VanEck.",
   alternates: { canonical: `${SITE_URL}/etfs/screener` },
   openGraph: {
     title: `ETF Screener Australia (${CURRENT_YEAR}) — Filter ASX ETFs by MER, Yield & Asset Class`,

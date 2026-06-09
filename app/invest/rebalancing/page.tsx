@@ -70,7 +70,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Portfolio Rebalancing Australia (${CURRENT_YEAR}) — How and When to Rebalance`,
-  description: `Complete guide to portfolio rebalancing in Australia. How drift happens, the 5%/25% threshold rule, tax-efficient strategies, super rebalancing, and a step-by-step worked example. ${UPDATED_LABEL}.`,
+  description: `Portfolio rebalancing in Australia: how drift happens, the 5%/25% rule, tax-efficient strategies and super rebalancing. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Portfolio Rebalancing Australia (${CURRENT_YEAR})`,
     description: "How drift happens, 4 rebalancing methods, tax-efficient strategies for Australia, and the hidden cost of never rebalancing.",

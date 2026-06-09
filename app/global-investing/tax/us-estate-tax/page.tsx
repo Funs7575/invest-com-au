@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `US Estate Tax for Australian Investors (${CURRENT_YEAR}) | invest.com.au`,
-  description: `US estate tax for Australians: up to 40% on US-situs assets above US$60,000. No AU-US treaty — how AU-domiciled ETFs eliminate the risk. ${UPDATED_LABEL}.`,
+  description: `US estate tax for Australians: 40% on US-situs assets above US$60k. No AU-US treaty — how AU-domiciled ETFs eliminate the risk. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `US Estate Tax for Australian Investors (${CURRENT_YEAR})`,
     description:

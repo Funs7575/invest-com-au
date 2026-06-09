@@ -11,7 +11,7 @@ export const revalidate = 1800;
 export const metadata: Metadata = {
   title: `Yearly TCO Calculator — Total Broker Cost Comparison (${CURRENT_YEAR})`,
   description:
-    "Calculate your true annual cost at every Australian broker: brokerage fees + FX margins combined. Enter your trading habits to find the cheapest platform for your style.",
+    "True annual broker cost: brokerage + FX margins combined. Enter your trading habits to find the cheapest platform for your style.",
   alternates: { canonical: "/tco-calculator" },
   openGraph: {
     title: "Yearly TCO Calculator — Total Broker Cost",

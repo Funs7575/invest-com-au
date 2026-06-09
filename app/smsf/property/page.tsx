@@ -13,7 +13,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `SMSF Property Investment ${CURRENT_YEAR}: Rules, Tax & Compliance | Invest.com.au`,
   description:
-    "Comprehensive guide to buying property inside an SMSF — residential vs commercial rules, LRBA borrowing, tax treatment, valuation requirements, and the compliance traps that cost trustees.",
+    "Guide to buying property inside an SMSF — residential vs commercial rules, LRBA borrowing, tax treatment, valuation requirements and compliance traps.",
   alternates: { canonical: `${SITE_URL}/smsf/property` },
   openGraph: {
     title: `SMSF Property Investment ${CURRENT_YEAR}: Rules, Tax & Compliance`,

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: `First home buyer stamp duty: state exemption thresholds and worked examples. NSW ($800K), VIC ($600K), QLD ($700K), WA ($430K). ${UPDATED_LABEL}.`,
   openGraph: {
     title: `First Home Buyer Stamp Duty (${CURRENT_YEAR}) — State Concessions & NSW Property Tax`,
-    description: "Stamp duty concessions for first home buyers in every state: exemption thresholds, partial concessions, worked dollar examples, NSW annual property tax option, off-the-plan rules, and foreign purchaser surcharges.",
+    description: "Stamp duty concessions for first home buyers: exemption thresholds, worked examples, NSW annual property tax option, off-the-plan rules, and surcharges.",
     url: `${SITE_URL}/first-home-buyer/stamp-duty`,
     images: [{ url: `/api/og?title=${encodeURIComponent("First Home Buyer Stamp Duty")}&sub=${encodeURIComponent("NSW · VIC · QLD · All States · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },

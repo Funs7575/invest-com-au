@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Value Investing Australia — ASX Strategy, Metrics & Margin of Safety (${CURRENT_YEAR})`,
   description:
-    "Complete guide to value investing on the ASX — intrinsic value, P/E and P/B ratios, margin of safety, value traps, and how franking credits affect Australian value analysis.",
+    "Complete guide to value investing on the ASX — intrinsic value, P/E and P/B ratios, margin of safety, value traps and franking credits.",
   alternates: { canonical: `${SITE_URL}/invest/value-investing` },
   openGraph: {
     title: `Value Investing Australia — ASX Strategy, Metrics & Margin of Safety (${CURRENT_YEAR})`,

@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `ETP Calculator (${CURRENT_YEAR}) — Employment Termination Payment Tax Estimator`,
   description:
-    "Calculate the tax on your genuine redundancy Employment Termination Payment (ETP). Shows tax-free threshold, concessional ETP rate (17% or 32%), and how much you keep vs leaving at your marginal rate.",
+    "Calculate tax on your Employment Termination Payment (ETP) — tax-free threshold, concessional ETP rate (17% or 32%), and net payout vs marginal rate.",
   alternates: { canonical: `${SITE_URL}/tools/etp-calculator` },
   openGraph: {
     title: `ETP Tax Calculator (${CURRENT_YEAR})`,

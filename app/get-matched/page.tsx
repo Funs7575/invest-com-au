@@ -7,7 +7,7 @@ import { faqJsonLd } from "@/lib/schema-markup";
 export const metadata: Metadata = {
   title: `Get Matched — Build your Investment Action Plan (${CURRENT_YEAR})`,
   description:
-    "Tell us what you're trying to do. We'll build your action plan and guide you to the right next step — compare platforms, browse opportunities, or get quotes from verified Australian professionals.",
+    "Tell us your goal. We'll build your action plan — compare platforms, browse opportunities or get quotes from verified Australian financial professionals.",
   alternates: { canonical: `${SITE_URL}/get-matched` },
   robots: { index: true, follow: true },
 };

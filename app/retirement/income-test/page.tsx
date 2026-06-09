@@ -10,7 +10,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Age Pension Income Test — How It Works & Taper Rate (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How the Age Pension income test works: income-free area ($212/fortnight single, $372/fortnight couple), 50-cent taper rate, deeming, Work Bonus, and worked examples. ${UPDATED_LABEL}.`,
+  description: `Age Pension income test: income-free area ($212/fn single, $372/fn couple), 50c taper rate, deeming, Work Bonus, and worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Age Pension Income Test — Taper Rate, Thresholds & Worked Examples (${CURRENT_YEAR})`,
     description:

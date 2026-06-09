@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Mortgage Stress Test Calculator (${CURRENT_YEAR}) — Can You Handle Rate Rises?`,
   description:
-    "See how your mortgage repayments change as interest rates rise and find out when you'd hit housing stress (30% of gross income). Tests up to +5% above your current rate including the APRA buffer scenario.",
+    "See how repayments change as rates rise and when you'd hit housing stress (30% of income). Tests up to +5% above your rate with the APRA buffer.",
   alternates: { canonical: `${SITE_URL}/tools/mortgage-stress-test` },
   openGraph: {
     title: `Mortgage Stress Test Calculator (${CURRENT_YEAR})`,

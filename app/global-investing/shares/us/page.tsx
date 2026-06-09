@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `How to Buy US Shares from Australia (${CURRENT_YEAR}) — Brokers, Tax, FX Compared`,
-  description: `The complete guide to buying US shares from Australia. Compare 10 brokers, FX spreads, W-8BEN, US estate tax, CGT in AUD, and direct US shares vs AU-listed ETFs. ${UPDATED_LABEL}.`,
+  description: `Buy US shares from Australia: 10 brokers compared, FX spreads, W-8BEN, US estate tax, CGT in AUD, direct shares vs ASX ETFs. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `How to Buy US Shares from Australia (${CURRENT_YEAR})`,
     description:

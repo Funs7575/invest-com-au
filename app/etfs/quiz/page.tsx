@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Which ETFs Suit Your Investing Style? Free 3-Question Quiz | Invest.com.au",
   description:
-    "Answer 3 quick questions to find the right ETF strategy: dividend income, global growth, diversification, or simplification. Personalised Australian ETF recommendations, free and instant.",
+    "3 questions to find your ETF strategy — income, global growth, diversification, or simplification. Personalised recommendations, free and instant.",
   alternates: { canonical: `${SITE_URL}/etfs/quiz` },
 };
 

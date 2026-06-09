@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Super Contributions Calculator — Concessional Caps & Tax Savings (${CURRENT_YEAR})`,
   description:
-    "Calculate how much you can contribute to super in FY2026. See your concessional cap usage, tax savings from salary sacrifice, and whether carry-forward rules apply.",
+    "Calculate super contributions for FY2026. See concessional cap usage, tax savings from salary sacrifice, and whether carry-forward rules apply.",
   alternates: { canonical: "/super-contributions-calculator" },
   openGraph: {
     title: "Super Contributions Calculator — Concessional Caps & Tax Savings",

@@ -29,13 +29,13 @@ export default function ScenarioNotFound() {
         <div className="border-t border-slate-100 pt-5">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Popular scenarios</p>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link href="/scenarios" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/scenarios" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Browse all
             </Link>
-            <Link href="/quiz" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/quiz" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Platform quiz
             </Link>
-            <Link href="/compare" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/compare" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Compare brokers
             </Link>
           </div>

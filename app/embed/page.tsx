@@ -9,7 +9,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: `Embed Financial Widgets — ${SITE_NAME}`,
-  description: `Add free, self-contained broker comparison, fee calculator, advisor directory, fee index, or broker health-score widgets to your website. Multiple styles, dark/light themes, and always up-to-date data from ${SITE_NAME}.`,
+  description: `Embed free broker comparison tables, fee calculators, and advisor directory widgets. Always up-to-date data from ${SITE_NAME}.`,
   openGraph: {
     title: "Embed Financial Widgets",
     description:

@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Post a Listing — Sell with Us (${CURRENT_YEAR}) — Invest.com.au`,
   description:
-    "List your property, business, syndicate or asset opportunity for Australian investors to discover. Admin-reviewed before going live. You stay in control of who you talk to.",
+    "List your property, business, syndicate, or asset for investors to discover. Admin-reviewed before going live. You stay in control of who you talk to.",
   alternates: { canonical: `${SITE_URL}/listings/new` },
   robots: { index: true, follow: true },
 };

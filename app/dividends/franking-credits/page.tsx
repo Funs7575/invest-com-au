@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Franking Credits Explained (${CURRENT_YEAR}) — Australian Dividend Imputation Guide | Invest.com.au`,
-  description: `How franking credits work in Australia: the grossing-up formula, tax refunds for low-income earners and SMSFs, ETF pass-through, DRP treatment, and how to report on your tax return. ${UPDATED_LABEL}.`,
+  description: `Franking credits: grossing-up formula, SMSF refunds, ETF pass-through, DRP treatment, and how to report on your tax return. ${UPDATED_LABEL}.`,
   alternates: { canonical: `${SITE_URL}/dividends/franking-credits` },
   openGraph: {
     title: `Franking Credits Explained (${CURRENT_YEAR}) — Australian Dividend Imputation`,

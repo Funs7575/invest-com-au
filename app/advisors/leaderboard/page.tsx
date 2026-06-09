@@ -12,7 +12,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Top Advisors Leaderboard — May 2026 | Invest.com.au",
   description:
-    "See Australia's top-ranked financial advisors on invest.com.au. Rankings are based on leads, CPD hours, client ratings, and profile completeness — updated monthly.",
+    "Australia's top-ranked financial advisors: scored on leads, CPD hours, client ratings, and profile completeness — updated monthly.",
   alternates: { canonical: "/advisors/leaderboard" },
   openGraph: {
     title: "Top Advisors Leaderboard",

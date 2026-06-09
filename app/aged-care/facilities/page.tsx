@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Choosing a Residential Aged Care Facility in Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How to evaluate and choose an Australian aged care facility: accreditation, star ratings, extra service designation, memory care units, RAD levels, inspection reports, and key questions to ask. ${UPDATED_LABEL}.`,
+  description: `How to choose an Australian aged care facility: star ratings, accreditation, RAD levels, memory care units, and inspection reports. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Choosing a Residential Aged Care Facility (${CURRENT_YEAR})`,
     description: "Aged care facility types, star ratings, accreditation, memory care, extra service, RAD levels, and questions to ask before signing.",

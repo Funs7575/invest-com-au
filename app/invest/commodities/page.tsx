@@ -9,7 +9,7 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR
 export const metadata: Metadata = {
   title: `How to Invest in Commodities from Australia (${CURRENT_YEAR})`,
   description:
-    "Invest in commodities from Australia — gold, silver, oil, natural gas, agricultural. ASX commodity ETFs, ETCs, Perth Mint, and commodity futures via ASIC-regulated brokers.",
+    "Invest in commodities from Australia — gold, silver, oil, natural gas and agriculture. ASX ETFs, Perth Mint and futures via ASIC-regulated brokers.",
   alternates: { canonical: `${SITE_URL}/invest/commodities` },
   openGraph: {
     title: `How to Invest in Commodities from Australia (${CURRENT_YEAR})`,

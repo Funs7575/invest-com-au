@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata = {
   title: "Portfolio X-Ray — Analyse Your Investment Holdings",
   description:
-    "Free portfolio analysis tool for Australian investors. Get diversification scores, sector breakdowns, concentration risk alerts, fee drag analysis, and personalised recommendations.",
+    "Free portfolio analysis: diversification scores, sector breakdowns, concentration risk alerts, fee drag analysis, and personalised recommendations.",
   openGraph: {
     title: "Portfolio X-Ray — Analyse Your Investment Holdings",
     description:

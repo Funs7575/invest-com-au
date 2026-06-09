@@ -15,7 +15,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const metadata: Metadata = {
   title: "Crypto for Non-Residents in Australia — AUSTRAC, KYC & Tax — 2026 Guide",
   description:
-    "Can non-residents use Australian crypto exchanges? AUSTRAC KYC requirements, CGT treatment for non-residents, which exchanges accept non-residents, and Australian crypto tax rules. Updated March 2026.",
+    "Crypto for non-residents in Australia: AUSTRAC KYC rules, CGT treatment, exchanges that accept non-residents, and crypto tax. Updated March 2026.",
   openGraph: {
     title: "Australian Crypto for Non-Residents — AUSTRAC, KYC & Tax — 2026",
     description:

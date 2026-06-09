@@ -8,7 +8,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Is Negative Gearing Right for You? Free 3-Question Tax Quiz | Invest.com.au",
   description:
-    "Answer 3 quick questions to find out whether the negative gearing tax maths works at your income level — property, shares, or both. Free, instant, no login.",
+    "Answer 3 quick questions to find out whether negative gearing tax maths works at your income level — property, shares, or both. Free, instant, no login.",
   alternates: { canonical: `${SITE_URL}/negative-gearing/quiz` },
 };
 

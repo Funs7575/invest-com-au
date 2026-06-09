@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Investment Income Tax Calculator — Australia ${CURRENT_YEAR}`,
   description:
-    "Estimate the tax on your investment income — interest, franked and unfranked dividends, and capital gains — at Australia's progressive resident tax rates plus Medicare levy.",
+    "Estimate tax on investment income — interest, franked/unfranked dividends, and capital gains — at Australia's progressive tax rates plus Medicare levy.",
   alternates: { canonical: "/investment-income-tax-calculator" },
   openGraph: {
     title: `Investment Income Tax Calculator ${CURRENT_YEAR} — Australia`,

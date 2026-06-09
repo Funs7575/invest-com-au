@@ -31,7 +31,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Renewable Energy Australia (${CURRENT_YEAR})`,
   description:
-    "Guide to renewable energy investment in Australia. Solar, wind, battery storage, and hydrogen projects. Government incentives, ARENA grants, and direct project investment.",
+    "Guide to renewable energy investment in Australia. Solar, wind, battery storage and hydrogen. Government incentives, ARENA grants and project access.",
   alternates: { canonical: `${SITE_URL}/invest/renewable-energy` },
   openGraph: {
     title: `Invest in Renewable Energy Australia (${CURRENT_YEAR})`,

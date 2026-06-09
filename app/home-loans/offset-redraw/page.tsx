@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Offset Account vs Redraw Facility: Complete Guide (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How offset accounts and redraw facilities work, how much you can save, the investor tax trap with redraw, salary parking strategy, and worked examples. ${UPDATED_LABEL}.`,
+  description: `How offset accounts and redraw facilities work, how much you can save, the investor tax trap with redraw, and salary parking strategy. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Offset Account vs Redraw Facility: Complete Guide (${CURRENT_YEAR})`,
     description:

@@ -11,7 +11,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Broker switch scripts — negotiation + transfer guides | ${SITE_NAME}`,
   description:
-    "Editorial scripts for negotiating with your current broker AND step-by-step instructions for switching. CHESS in-specie transfer, ACATS for US holdings, AU tax considerations.",
+    "Scripts for negotiating with your broker + step-by-step switching instructions. CHESS in-specie transfer, ACATS for US holdings, AU tax considerations.",
   alternates: { canonical: absoluteUrl("/switch-scripts") },
 };
 

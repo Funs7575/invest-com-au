@@ -31,7 +31,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `EMDG Grant ${CURRENT_YEAR}: Up to $80,000 for Export Marketing | Invest.com.au`,
   description:
-    "The Export Market Development Grant reimburses up to 50% of overseas marketing spend, up to $80K/year. Tier breakdown, eligible costs and how to stack with R&D.",
+    "EMDG reimburses up to 50% of overseas marketing spend (max $80K/year). Three tiers, eligible costs, and how to stack with the R&D Tax Incentive.",
   alternates: { canonical: `${SITE_URL}/grants/emdg` },
   openGraph: {
     title: `EMDG Grant ${CURRENT_YEAR}: Up to $80,000 for Export Marketing`,

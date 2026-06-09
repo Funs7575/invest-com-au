@@ -30,7 +30,7 @@ const healthFaqLd = faqJsonLd(HEALTH_SCORE_FAQS);
 export const metadata = {
   title: "Platform Health Scores — Safety Ratings for Investors",
   description:
-    "Proprietary safety scores for every Australian investing platform. Regulatory compliance, client money handling, financial stability, platform reliability, and insurance — all in one dashboard.",
+    "Safety scores for every investing platform: regulatory compliance, client money handling, financial stability, platform reliability, and insurance.",
   openGraph: {
     title: "Platform Health & Risk Scores",
     description:

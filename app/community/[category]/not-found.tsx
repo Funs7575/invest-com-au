@@ -29,13 +29,13 @@ export default function CategoryNotFound() {
         <div className="border-t border-slate-100 pt-5">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Popular categories</p>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link href="/community/general" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/community/general" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               General
             </Link>
-            <Link href="/community/brokers" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/community/brokers" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Brokers
             </Link>
-            <Link href="/community/etfs" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/community/etfs" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               ETFs
             </Link>
           </div>

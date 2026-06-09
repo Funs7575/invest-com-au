@@ -28,7 +28,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Carbon & Environmental Markets in Australia (${CURRENT_YEAR})`,
   description:
-    "Guide to carbon credit investing in Australia. ACCUs, voluntary carbon markets, Safeguard Mechanism, biodiversity offsets, and ASX-listed carbon-exposed companies.",
+    "Guide to carbon credit investing in Australia. ACCUs, voluntary carbon markets, Safeguard Mechanism, and ASX-listed carbon-exposed companies.",
   alternates: { canonical: `${SITE_URL}/invest/carbon-environmental-markets` },
   openGraph: {
     title: `Australian Carbon & Environmental Markets (${CURRENT_YEAR})`,

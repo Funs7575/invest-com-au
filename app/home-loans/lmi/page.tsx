@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Lenders Mortgage Insurance (LMI) Explained Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `What LMI is, who it protects, how much it costs by LVR, and how to avoid it in Australia — 20% deposit, guarantor loans, the First Home Guarantee, and professional waivers. ${UPDATED_LABEL}.`,
+  description: `What LMI costs by LVR and how to avoid it: 20% deposit, guarantor loans, the First Home Guarantee, and professional waivers. ${UPDATED_LABEL}`,
   openGraph: {
     title: `Lenders Mortgage Insurance (LMI) Explained Australia (${CURRENT_YEAR})`,
     description:

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: `ASX 200 ETFs compared — VAS, A200, IOZ, STW, VHY, MVW: fees (MER), holdings, franking credits, and concentration risk. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `ASX 200 ETFs (${CURRENT_YEAR}) — The Cornerstone of Australian Portfolios`,
-    description: "Low-cost, diversified exposure to Australia's largest listed companies. Compare the major ASX 200 and ASX 300 index ETFs and understand franking credits, concentration risk, and tax.",
+    description: "Low-cost exposure to Australia's largest companies. Compare ASX 200 and ASX 300 index ETFs — fees, franking credits, and concentration risk.",
     url: `${SITE_URL}/etfs/asx-200`,
     images: [{ url: `/api/og?title=${encodeURIComponent("ASX 200 ETFs — Invest.com.au")}&sub=${encodeURIComponent("VAS · A200 · IOZ · STW · Franking Credits · 2026")}`, width: 1200, height: 630 }],
   },

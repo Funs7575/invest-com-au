@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Consolidate Your Super — How to Find &amp; Merge Multiple Accounts (${CURRENT_YEAR} Guide)`,
   description:
-    "Step-by-step guide to consolidating multiple super accounts in Australia. How to find lost super via myGov and the ATO, insurance warnings, employer stapling, and tax-free rollovers. Updated 2026.",
+    `How to consolidate super: find lost accounts via myGov/ATO, check insurance before rolling over, and complete a tax-free rollover. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Consolidate Your Super — Find &amp; Merge Multiple Accounts — ${CURRENT_YEAR}`,
     description:

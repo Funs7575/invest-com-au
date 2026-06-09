@@ -29,7 +29,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Private Equity & Hedge Fund Investment in Australia (${CURRENT_YEAR})`,
   description:
-    "How Australians and foreign investors access private equity and hedge funds — wholesale investor routes, ASX-listed PE, SIV complying funds, returns, and tax treatment.",
+    "Access private equity and hedge funds — wholesale investor routes, ASX-listed PE, SIV complying funds, returns, and tax treatment.",
   alternates: { canonical: `${SITE_URL}/invest/private-equity` },
   openGraph: {
     title: `Private Equity & Hedge Fund Investment in Australia (${CURRENT_YEAR})`,

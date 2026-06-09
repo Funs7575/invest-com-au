@@ -47,7 +47,7 @@ const DIV40_ITEMS = [
 export const metadata: Metadata = {
   title: `Property Depreciation Australia (${CURRENT_YEAR}) — Division 40 & 43 Guide`,
   description:
-    "How tax depreciation works for investment properties in Australia. Division 43 building allowance, Division 40 plant and equipment, the 2017 rule change for second-hand properties, and worked examples.",
+    "How tax depreciation works for Australian investment properties — Div 43 building allowance, Div 40 plant and equipment, and the 2017 rule change.",
   alternates: { canonical: absoluteUrl("/property/depreciation") },
   openGraph: {
     title: `Property Depreciation Australia (${CURRENT_YEAR}) — Div 40 & 43 Explained`,

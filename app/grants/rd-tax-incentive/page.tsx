@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `R&D Tax Incentive Australia ${CURRENT_YEAR}: Complete Guide & Calculator | Invest.com.au`,
   description:
-    "The R&D Tax Incentive returns up to 43.5% on eligible R&D spend as cash. FY2025 registration deadline 30 April 2026 — calculator, eligibility and how to claim.",
+    "R&D Tax Incentive: up to 43.5% cash offset on eligible spend. FY2025 deadline 30 April 2026 — calculator, eligibility checklist and how to claim.",
   alternates: { canonical: `${SITE_URL}/grants/rd-tax-incentive` },
   openGraph: {
     title: `R&D Tax Incentive Australia ${CURRENT_YEAR}: Complete Guide`,

@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Best ETFs Australia (${CURRENT_YEAR}) — Complete ETF Guide & Comparison`,
-  description: `Compare the best Australian ETFs by category: ASX 200, US exposure, dividends, international, bonds, and sector ETFs. MER fees, performance data, and expert analysis. ${UPDATED_LABEL}.`,
+  description: `Best Australian ETFs by category: ASX 200, US, dividends, international, bonds, and sector. MER fees, performance data, and analysis. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best ETFs Australia (${CURRENT_YEAR}) — ETF Hub`,
     description: "The complete guide to Australian ETFs. Compare ETFs by category, fee, performance, and provider.",

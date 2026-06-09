@@ -11,7 +11,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Subscription Audit Tool — See What You're Really Spending (${CURRENT_YEAR})`,
   description:
-    "Add your streaming, software, news, fitness and other subscriptions to see your true annual spend. Identify your highest-cost services and find savings opportunities — free tool, no sign-up.",
+    "Add your streaming, software, news and fitness subscriptions to see true annual spend. Identify high-cost services and find savings — free, no sign-up.",
   alternates: { canonical: `${SITE_URL}/tools/subscription-audit` },
   openGraph: {
     title: `Subscription Audit Tool (${CURRENT_YEAR}) — Find Hidden Spending`,

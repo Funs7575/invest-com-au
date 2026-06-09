@@ -7,7 +7,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Portfolio Fee Monitor — Are You Overpaying?",
   description:
-    "Track your investing platform fees in real-time. Get instant alerts when fees change or a cheaper broker appears. Free portfolio monitoring for Australian investors.",
+    "Track your broker fees in real-time. Get instant alerts when fees change or a cheaper platform appears. Free portfolio monitoring.",
   openGraph: {
     title: "Portfolio Fee Monitor",
     description: "Track your broker fees. Get alerts when prices change. Never overpay again.",

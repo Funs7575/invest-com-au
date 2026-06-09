@@ -31,7 +31,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Suburb Research — Property Investment Data — invest.com.au",
   description:
-    "Research Australian suburbs with median prices, rental yields, vacancy rates, capital growth, and population data. Data-driven property investment decisions.",
+    "Research Australian suburbs by median prices, rental yields, vacancy rates, capital growth and population data. Data-driven property investment decisions.",
   openGraph: {
     title: "Suburb Research — invest.com.au",
     description: "Research suburbs with median prices, rental yields, and capital growth data.",

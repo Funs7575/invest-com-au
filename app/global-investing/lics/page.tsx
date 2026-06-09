@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Global LICs — Australian Guide to Listed Investment Companies (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Compare Australian-listed global LICs: MFF, WGB, PMC, FGG, PGF. NTA discount/premium, fees, mandate, and how LICs differ from ETFs for long-term global exposure. ${UPDATED_LABEL}.`,
+  description: `ASX-listed global LICs: MFF, WGB, PMC, FGG, PGF. NTA discount/premium, fees, mandate, and LICs vs ETFs for long-term global exposure. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Global LICs — Australian Guide (${CURRENT_YEAR})`,
     description: "MFF, WGB, PMC, FGG, PGF — compare NTA, fees, mandate, and premium/discount for ASX-listed global LICs.",

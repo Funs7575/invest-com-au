@@ -30,6 +30,7 @@ import AskQuestionForm from "@/components/AskQuestionForm";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import ClaimListingButton from "@/components/claims/ClaimListingButton";
 import FeeAlertCapture from "@/components/FeeAlertCapture";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -361,6 +362,8 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewFaqLd) }}
         />
       )}
+      <ArticleReadingProgress />
+
       <Suspense fallback={null}>
         <BrokerReviewClient
           broker={b}

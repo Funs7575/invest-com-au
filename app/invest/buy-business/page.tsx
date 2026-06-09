@@ -31,7 +31,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Buy a Business in Australia (${CURRENT_YEAR})`,
   description:
-    "Comprehensive guide to buying a business in Australia. Types of businesses, valuation methods, due diligence, visa pathways, and FIRB rules for foreign buyers.",
+    "How to buy a business in Australia: valuation methods, due diligence, broker listings, visa pathways, and FIRB rules for foreign buyers.",
   alternates: { canonical: `${SITE_URL}/invest/buy-business` },
   openGraph: {
     title: `Buy a Business in Australia (${CURRENT_YEAR})`,

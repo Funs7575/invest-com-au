@@ -9,7 +9,7 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR
 export const metadata: Metadata = {
   title: `Dividend Investing Australia — High-Yield ASX Stocks & ETFs (${CURRENT_YEAR})`,
   description:
-    "Guide to dividend investing in Australia — high-yield ASX stocks, franking credits explained, DRPs, dividend ETFs (VHY, SYI, DVDY) and SMSF dividend strategies.",
+    "Guide to dividend investing in Australia — high-yield ASX stocks, franking credits, DRPs, dividend ETFs (VHY, SYI, DVDY) and SMSF strategies.",
   alternates: { canonical: `${SITE_URL}/invest/dividend-investing` },
   openGraph: {
     title: `Dividend Investing Australia — High-Yield ASX Stocks & ETFs (${CURRENT_YEAR})`,

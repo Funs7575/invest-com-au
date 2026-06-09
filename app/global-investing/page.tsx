@@ -10,7 +10,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Global Investing for Australians (${CURRENT_YEAR}) — ETFs, US Shares, Currency & Tax`,
-  description: `How Australians invest globally: compare VGS, IVV, NDQ and other ASX-listed ETFs; buy US shares via IBKR, Stake and CMC; understand currency risk, W-8BEN, FITO, and US estate tax. ${UPDATED_LABEL}.`,
+  description: `How Australians invest globally: VGS, IVV, NDQ ETFs; US shares via IBKR, Stake, CMC; currency risk, W-8BEN, and FITO explained. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Global Investing for Australians (${CURRENT_YEAR})`,
     description:

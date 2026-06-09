@@ -29,13 +29,13 @@ export default function BestCategoryNotFound() {
         <div className="border-t border-slate-100 pt-5">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Popular rankings</p>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link href="/best/brokers" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/best/brokers" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Best brokers
             </Link>
-            <Link href="/best/etf-platforms" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/best/etf-platforms" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Best for ETFs
             </Link>
-            <Link href="/best/beginners" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/best/beginners" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Best for beginners
             </Link>
           </div>

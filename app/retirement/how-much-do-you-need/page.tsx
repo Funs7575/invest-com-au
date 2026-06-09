@@ -10,7 +10,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `How Much Super Do You Need to Retire in Australia? (${CURRENT_YEAR} Guide) | invest.com.au`,
-  description: `ASFA Retirement Standard June 2025, the 4% rule, Age Pension interaction, super benchmarks by age, and three worked examples. Calculate your retirement number. ${UPDATED_LABEL}.`,
+  description: `ASFA benchmarks, the 4% rule, Age Pension interaction, super by age, and three worked examples to calculate your retirement number. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `How Much Super Do You Need to Retire? (${CURRENT_YEAR})`,
     description:

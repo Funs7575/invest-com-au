@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Farmland for Sale Australia — ${countLabel}Agricultural Properties (${CURRENT_YEAR})`,
     description:
-      "Browse Australian farmland and agricultural properties for sale. Filter by state, property type (grazing, cropping, dairy, horticulture), and size. FIRB-eligible listings highlighted.",
+      "Browse Australian farmland for sale. Filter by state and property type (grazing, cropping, dairy, horticulture). FIRB-eligible listings highlighted.",
     alternates: { canonical: `${SITE_URL}/invest/farmland/listings` },
     openGraph: {
       title: `Farmland for Sale Australia — ${countLabel}Agricultural Properties`,

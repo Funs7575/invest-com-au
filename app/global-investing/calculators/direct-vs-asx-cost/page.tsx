@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Direct US Shares vs ASX ETFs: Total Cost Comparison (${CURRENT_YEAR})`,
-  description: `Compare the total annual cost of buying US shares directly vs AU-listed ETFs like IVV. FX spread, brokerage, MER, and tax friction at $5K–$500K investment amounts. ${UPDATED_LABEL}.`,
+  description: `Total cost: direct US shares vs ASX-listed ETFs. FX spread, brokerage, MER, and tax friction compared at $5K–$500K investment sizes. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Direct US Shares vs ASX-Listed ETFs: True Cost (${CURRENT_YEAR})`,
     description: "Total cost comparison across investment sizes. At what amount does direct US share investing beat AU-listed ETFs?",

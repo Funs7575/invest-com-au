@@ -13,7 +13,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Franking Credits Australia (${CURRENT_YEAR}) — How They Work & How to Maximise Them`,
-  description: `Complete guide to franking credits for Australian investors: how imputation works, how to calculate your benefit by tax bracket, cash refunds, and maximising franking in super. ${UPDATED_LABEL}.`,
+  description: `Franking credits in Australia: how dividend imputation works, benefit by bracket, cash refunds for low earners, and franking in super. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Franking Credits Australia (${CURRENT_YEAR}) — Complete Guide`,
     description: "How franking credits work, who benefits most, and how to maximise them through shares, ETFs, and super.",

@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Investment Property Loans Australia (${CURRENT_YEAR}) Guide | invest.com.au`,
-  description: `Investment home loans explained — rate differentials vs owner-occupied, interest-only periods, APRA LVR caps, negative gearing, debt recycling, and loan structure. ${UPDATED_LABEL}.`,
+  description: `Investment home loans: rate differentials vs owner-occupied, IO periods, APRA LVR caps, negative gearing, and debt recycling. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Investment Property Loans Australia (${CURRENT_YEAR}) Guide`,
     description:

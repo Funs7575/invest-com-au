@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `FIRE Calculator Australia — Financial Independence Number (${CURRENT_YEAR})`,
   description:
-    "Calculate your FIRE number and how many years until financial independence. Uses the 4% safe withdrawal rule to estimate when your investments can sustain your lifestyle indefinitely.",
+    "Calculate your FIRE number and years to financial independence using the 4% safe withdrawal rule — estimating when investments can sustain your lifestyle.",
   alternates: { canonical: "/fire-calculator" },
   openGraph: {
     title: "FIRE Calculator — Financial Independence, Retire Early",

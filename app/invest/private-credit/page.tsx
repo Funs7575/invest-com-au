@@ -9,12 +9,12 @@ import { SHOW_ADVISOR_RATINGS, SHOW_ADVISOR_VERIFIED_BADGE, ADVISOR_DIRECTORY_HE
 export const metadata: Metadata = {
   title: `Private Credit & P2P Lending in Australia (${CURRENT_YEAR})`,
   description:
-    "Compare Australian private credit funds and P2P lending platforms — La Trobe Financial, Qualitas, Metrics Credit Partners, Plenti. Yields, risks, SMSF eligibility and how to invest.",
+    "Compare Australian private credit funds and P2P platforms — La Trobe, Qualitas, Metrics, Plenti. Yields, risks, SMSF eligibility and how to invest.",
   alternates: { canonical: `${SITE_URL}/invest/private-credit` },
   openGraph: {
     title: `Private Credit & P2P Lending in Australia (${CURRENT_YEAR})`,
     description:
-      "Compare Australian private credit funds and P2P lending platforms — La Trobe Financial, Qualitas, Metrics Credit Partners, Plenti. Yields, risks, SMSF eligibility and how to invest.",
+      "Compare Australian private credit funds and P2P platforms — La Trobe, Qualitas, Metrics, Plenti. Yields, risks, SMSF eligibility and how to invest.",
     url: `${SITE_URL}/invest/private-credit`,
     images: [{ url: `/api/og?title=${encodeURIComponent("Private Credit & P2P Lending Australia")}&sub=${encodeURIComponent("Private Credit · P2P · SMSF · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },

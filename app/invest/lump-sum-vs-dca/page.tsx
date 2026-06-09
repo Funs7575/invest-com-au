@@ -45,7 +45,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Lump Sum vs Dollar-Cost Averaging Australia (${CURRENT_YEAR}) — Which Wins?`,
-  description: `Should you invest $100,000 today or spread it over 12 months? Vanguard research, cash drag explained, and when DCA beats lump sum for Australian investors. ${UPDATED_LABEL}.`,
+  description: `Lump sum vs DCA for Australians: Vanguard research, cash drag and when dollar-cost averaging beats investing at once. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Lump Sum vs DCA Australia (${CURRENT_YEAR}) — The Evidence`,
     description: "Lump sum outperforms DCA two-thirds of the time — but behavioural factors often make DCA the better practical choice for Australians.",

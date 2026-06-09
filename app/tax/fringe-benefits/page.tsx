@@ -84,7 +84,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Fringe Benefits Tax (FBT) Guide Australia (${CURRENT_YEAR}) — How It Works for Employers & Employees`,
   description:
-    "Complete guide to Fringe Benefits Tax (FBT) in Australia. FBT rate 47%, Type 1 and Type 2 gross-up rates, novated leases, reportable fringe benefits, EV exemption, and exempt benefits explained.",
+    "FBT in Australia: 47% rate, Type 1 and 2 gross-up, novated leases, reportable fringe benefits, EV exemption, and exempt benefits explained.",
   alternates: { canonical: `${SITE_URL}/tax/fringe-benefits` },
   openGraph: {
     title: `Fringe Benefits Tax (FBT) Guide Australia (${CURRENT_YEAR})`,

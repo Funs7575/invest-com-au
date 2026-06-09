@@ -8,10 +8,10 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Construction Loans Explained Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How construction loans work in Australia — progress drawdowns, the 5 build stages, eligibility requirements, costs, key risks, and owner-builder restrictions. ${UPDATED_LABEL}.`,
+  description: `Construction loans in Australia: progress drawdowns, the 5 build stages, eligibility, costs, key risks, and owner-builder restrictions. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Construction Loans Explained Australia (${CURRENT_YEAR})`,
-    description: "How construction (building) loans work — progress drawdowns, the 5 build stages, fixed-price contracts, eligibility, costs beyond the loan, and key risks explained.",
+    description: "How construction loans work: progress drawdowns, the 5 build stages, fixed-price contracts, eligibility, costs beyond the loan, and key risks.",
     url: `${SITE_URL}/home-loans/construction-loans`,
     images: [{ url: `/api/og?title=Construction+Loans+Explained`, width: 1200, height: 630 }],
   },

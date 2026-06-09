@@ -9,7 +9,7 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR
 export const metadata: Metadata = {
   title: `Forex Trading Australia — AUD/USD, Brokers & ASIC Guide (${CURRENT_YEAR})`,
   description:
-    "How to trade forex in Australia. Compare ASIC-regulated forex brokers, AUD/USD spreads, leverage limits, CFDs vs spot forex, and tax treatment for Australian traders.",
+    "How to trade forex in Australia. ASIC-regulated brokers, AUD/USD spreads, leverage limits, CFDs vs spot forex, and tax treatment.",
   alternates: { canonical: `${SITE_URL}/invest/forex` },
   openGraph: {
     title: `Forex Trading Australia — AUD/USD, Brokers & ASIC Guide (${CURRENT_YEAR})`,

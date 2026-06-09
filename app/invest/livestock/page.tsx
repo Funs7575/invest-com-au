@@ -28,7 +28,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Invest in Australian Livestock & Pastoral Stations (${CURRENT_YEAR})`,
   description:
-    "Guide to livestock investment in Australia. Cattle stations, sheep properties, AACo, Elders, FIRB rules, water rights, carbon credits and agricultural managed funds.",
+    "Guide to livestock investment in Australia. Cattle stations, sheep properties, AACo, Elders, FIRB rules, water rights and agricultural managed funds.",
   alternates: { canonical: `${SITE_URL}/invest/livestock` },
   openGraph: {
     title: `Australian Livestock & Pastoral Investment (${CURRENT_YEAR})`,

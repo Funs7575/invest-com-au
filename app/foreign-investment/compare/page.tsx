@@ -40,7 +40,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Compare Countries for Investing in Australia (${CURRENT_YEAR}) — Side-by-Side Tax & FIRB Rules`,
   description:
-    "Compare any two countries side-by-side: withholding tax rates, FIRB rules, FX corridors, pension-transfer eligibility, and migration pathways. All 66 pairs from 12 hub countries.",
+    "Compare any two countries: withholding tax, FIRB rules, FX corridors, pension-transfer, and migration pathways. All 66 pairs from 12 hub countries.",
   alternates: { canonical: absoluteUrl("/foreign-investment/compare") },
   openGraph: {
     title: `Compare Countries — Investing in Australia (${CURRENT_YEAR})`,

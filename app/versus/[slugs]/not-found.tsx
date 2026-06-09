@@ -29,13 +29,13 @@ export default function VersusNotFound() {
         <div className="border-t border-slate-100 pt-5">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Popular matchups</p>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link href="/versus/commsec-vs-stake" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/versus/commsec-vs-stake" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               CommSec vs Stake
             </Link>
-            <Link href="/versus/selfwealth-vs-pearler" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/versus/selfwealth-vs-pearler" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               SelfWealth vs Pearler
             </Link>
-            <Link href="/versus/ig-vs-cmc-markets" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/versus/ig-vs-cmc-markets" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               IG vs CMC
             </Link>
           </div>

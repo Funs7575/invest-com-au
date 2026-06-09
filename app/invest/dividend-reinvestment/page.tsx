@@ -53,7 +53,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Dividend Reinvestment Plans (DRP) Australia (${CURRENT_YEAR}) — How DRP Works`,
-  description: `Complete guide to Dividend Reinvestment Plans in Australia. How DRP works, tax treatment, CGT cost base, compounding examples, ETF vs share DRP, and how to enrol. ${UPDATED_LABEL}.`,
+  description: `Complete guide to Dividend Reinvestment Plans in Australia — DRP mechanics, tax, CGT cost base, ETF vs share DRP, and how to enrol. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Dividend Reinvestment Plans (DRP) Australia (${CURRENT_YEAR})`,
     description: "How DRP works step by step, tax treatment of reinvested dividends, compounding worked examples, and how to enrol for ASX shares and ETFs.",

@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Redundancy Payout: How It's Taxed & What to Do (${CURRENT_YEAR}) | Invest.com.au`,
   description:
-    "A redundancy payout is often the biggest lump sum you'll receive. Understand the genuine redundancy tax-free threshold, ETP tax, unused leave, the super opportunity and what to do with the money first.",
+    `Redundancy payout tax: genuine redundancy tax-free threshold, ETP caps, unused leave, the super top-up, and where to invest the money. ${UPDATED_LABEL}.`,
   alternates: { canonical: `${SITE_URL}/lump-sum-investing/redundancy` },
   openGraph: {
     title: "Redundancy Payout: How It's Taxed & What to Do With the Money",

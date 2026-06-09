@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Health Insurance Australia (${CURRENT_YEAR}) — Private vs Medicare Guide`,
-  description: `Do you need private health insurance in Australia? MLS thresholds, Lifetime Health Cover loading, Gold/Silver/Bronze tiers, and the government rebate explained. ${UPDATED_LABEL}.`,
+  description: `Private health insurance in Australia: MLS thresholds, LHC loading, Gold/Silver/Bronze tiers, and the government rebate explained. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Health Insurance Australia (${CURRENT_YEAR}) — Do You Need It?`,
     description: "Medicare vs private health insurance in Australia: MLS, LHC loading, tiers, and the rebate explained.",

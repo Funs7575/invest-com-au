@@ -32,7 +32,7 @@ export const revalidate = 86400;
 
 export const metadata = {
   title: "About Us",
-  description: "Learn about Invest.com.au, Australia's independent investing hub — platforms and advisors. Our mission, editorial independence pledge, and review methodology.",
+  description: "Learn about Invest.com.au — Australia's independent investing hub for platforms and advisors. Our mission, editorial independence, and review methodology.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About Us",

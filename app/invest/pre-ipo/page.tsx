@@ -15,7 +15,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Pre-IPO Investing in Australia (${CURRENT_YEAR}) — Wholesale-Only Late-Stage Private Deals`,
   description:
-    "Independent guide to pre-IPO investing in Australia. Wholesale-only — sophisticated investor (s708) requirements, common deal structures, Australian platforms (PrimaryMarkets, OnMarket Pre-IPO) and risks.",
+    "Pre-IPO investing in Australia — wholesale-only (s708). Deal structures, platforms (PrimaryMarkets, OnMarket Pre-IPO), requirements and risks explained.",
   alternates: { canonical: `${SITE_URL}/invest/pre-ipo` },
   openGraph: {
     title: `Pre-IPO Investing in Australia (${CURRENT_YEAR})`,

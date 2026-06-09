@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "New Developments & Property Listings — invest.com.au",
   description:
-    "Browse off-the-plan apartments, townhouses, and house & land packages across Sydney, Melbourne, Brisbane, Perth, and Adelaide. Free enquiries, no obligation.",
+    "Browse off-the-plan apartments, townhouses and house & land packages across Sydney, Melbourne, Brisbane, Perth and Adelaide. Free enquiries, no obligation.",
   openGraph: {
     title: "New Developments & Property Listings — invest.com.au",
     description: "Browse new developments across Australia. Free enquiries, no obligation.",

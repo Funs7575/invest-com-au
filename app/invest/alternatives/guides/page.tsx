@@ -20,7 +20,7 @@ export const revalidate = 3600;
 
 const PAGE_TITLE = `Alternative Investment Guides — How to Invest in Wine, Art & Collectibles`;
 const PAGE_DESCRIPTION =
-  "In-depth guides on alternative investing in Australia. Learn how to invest in wine, art, collectibles, understand SMSF rules, CGT treatment, insurance, and platform comparisons.";
+  "In-depth guides on alternative investing in Australia — wine, art, collectibles, SMSF rules, CGT treatment, insurance, and platform comparisons.";
 const CANONICAL = "/invest/alternatives/guides";
 
 export const metadata: Metadata = {

@@ -8,7 +8,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Advisor billing & refund policy — Invest.com.au ${CURRENT_YEAR}`,
   description:
-    "How Invest.com.au charges advisors: no lock-in, end-of-cycle downgrades, refunds default to portal credit (cash for billing errors / outages / fraud / dispute wins), 24-month credit expiry, self-service Stripe portal.",
+    "Invest.com.au advisor billing: no lock-in, end-of-cycle downgrades, refunds as portal credit, 24-month credit expiry, self-service Stripe portal.",
   alternates: { canonical: absoluteUrl("/billing-policy") },
   openGraph: {
     title: "Advisor billing & refund policy",

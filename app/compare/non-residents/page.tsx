@@ -14,7 +14,7 @@ import CompareNav from "../CompareNav";
 export const metadata: Metadata = {
   title: "Best ASX Brokers That Accept Non-Residents (2026)",
   description:
-    "Compare ASX share brokers that accept non-Australian residents. Most Australian brokers require a local address — these don't. Includes fees, ratings, non-resident notes, and affiliate links. " + UPDATED_LABEL,
+    "ASX brokers that accept non-residents: fees, ratings, and eligibility notes. Most require an Australian address — these don't. " + UPDATED_LABEL,
   openGraph: {
     title: "Best ASX Brokers for Non-Residents",
     description:

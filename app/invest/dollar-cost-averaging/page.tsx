@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Dollar-Cost Averaging (DCA) in Australia ${CURRENT_YEAR}: How It Works | Invest.com.au`,
   description:
-    "Dollar-cost averaging explained for Australian investors — how DCA works, DCA vs lump sum, the best assets to use it on, tax implications, common mistakes, and a step-by-step setup guide.",
+    "Dollar-cost averaging for Australian investors — how DCA works, DCA vs lump sum, best assets, tax implications, common mistakes, and a step-by-step guide.",
   alternates: { canonical: `${SITE_URL}/invest/dollar-cost-averaging` },
   openGraph: {
     title: `Dollar-Cost Averaging (DCA) in Australia ${CURRENT_YEAR}`,

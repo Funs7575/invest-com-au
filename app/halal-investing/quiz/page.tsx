@@ -8,7 +8,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "Which Halal Investment Pathway Fits You? Free 3-Question Quiz | Invest.com.au",
   description:
-    "Answer 3 quick questions to find the right Sharia-compliant investment approach — super (Crescent Wealth), home finance (MCCA), or shares (AAOIFI-screened ETFs).",
+    "3 questions to find your Sharia-compliant investment approach — super (Crescent Wealth), home finance (MCCA), or shares (AAOIFI-screened ETFs).",
   alternates: { canonical: `${SITE_URL}/halal-investing/quiz` },
 };
 

@@ -14,7 +14,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "What data we collect — Invest.com.au",
   description:
-    "A plain-language breakdown of every category of personal data Invest.com.au collects, why we collect it, how long we keep it, and who we share it with — Australian Privacy Act 1988 + GDPR.",
+    "Plain-language breakdown of what personal data Invest.com.au collects, why, how long we keep it, and who we share it with — Privacy Act 1988 + GDPR.",
   alternates: { canonical: "/privacy/data-collection" },
   robots: { index: true, follow: true },
   openGraph: {

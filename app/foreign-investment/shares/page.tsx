@@ -16,7 +16,7 @@ type ForeignBroker = Broker & {
 export const metadata: Metadata = {
   title: "Investing in Australian Shares as a Non-Resident — 2026 Guide",
   description:
-    "Can non-residents buy Australian shares? Which brokers accept non-residents? How withholding tax works on dividends, CGT exemption for non-residents, CHESS sponsorship, and W-8BEN for US shares. Updated March 2026.",
+    "Non-residents buying Australian shares: which brokers accept them, dividend withholding tax, CGT exemption, and W-8BEN. Updated March 2026.",
   openGraph: {
     title: "Australian Share Investing for Non-Residents — 2026",
     description:

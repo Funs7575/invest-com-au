@@ -10,7 +10,7 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR
 export const metadata: Metadata = {
   title: `Best Managed Funds & Index Funds Australia (${CURRENT_YEAR})`,
   description:
-    "Compare Australia's best managed funds and index funds — Vanguard, Betashares, iShares, Magellan, Platinum. Fees, returns, minimum investment and platform comparison.",
+    "Compare Australia's best managed funds and index funds — Vanguard, Betashares, iShares, Magellan, Platinum. Fees, returns and minimums compared.",
   alternates: { canonical: `${SITE_URL}/invest/managed-funds` },
   openGraph: {
     title: `Best Managed Funds & Index Funds Australia (${CURRENT_YEAR})`,

@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Non-Resident Australian Dividend Calculator (${CURRENT_YEAR}) — Withholding Tax & Franking`,
   description:
-    "Calculate the final cash you receive on an Australian fully/partially/unfranked dividend as a non-resident. Includes Double Tax Agreement rates for major jurisdictions.",
+    "Calculate the net cash on an Australian fully/partially/unfranked dividend as a non-resident. Includes DTA withholding rates for major jurisdictions.",
   alternates: { canonical: "/non-resident-dividend-calculator" },
   openGraph: {
     title: `Non-Resident Dividend Calculator (${CURRENT_YEAR})`,

@@ -31,7 +31,7 @@ export const revalidate = 1800;
 export const metadata: Metadata = {
   title: `Find an ASIC-Approved SMSF Auditor in Australia (${CURRENT_YEAR})`,
   description:
-    "Compare ASIC-approved SMSF auditors across Australia. Every SMSF must be audited annually by an independent approved auditor with an SMSF Auditor Number (SAN). Filter by state and fee range.",
+    "SMSF auditor directory for Australia — compare ASIC-approved, independent auditors with valid SMSF Auditor Numbers (SANs). Filter by state and fee range.",
   alternates: { canonical: `${SITE_URL}/smsf/auditors` },
   openGraph: {
     title: `Find an SMSF Auditor — ASIC-Approved (${CURRENT_YEAR})`,

@@ -10,7 +10,7 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 export const metadata = {
   title: "Community Forum",
   description:
-    "Join thousands of Australian investors discussing share trading, ETFs, crypto, super, property, tax strategy, and broker reviews. Ask questions and share insights.",
+    "Australian investing forum: share trading, ETFs, crypto, super, property, tax strategy, and broker reviews. Ask questions, share insights.",
   robots: { index: true, follow: true },
   openGraph: {
     title: "Community Forum",

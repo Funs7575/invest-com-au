@@ -9,10 +9,10 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Shared Equity Home Loans Australia (${CURRENT_YEAR}) — Help to Buy & State Schemes | invest.com.au`,
-  description: `Shared equity for first home buyers: federal Help to Buy (up to 40%) and state programs. Income caps, property caps, and repayment explained. ${UPDATED_LABEL}.`,
+  description: `Shared equity home loans: Help to Buy (up to 40%), state programs, income and property caps, and how repayment works on sale. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Shared Equity Home Loans Australia (${CURRENT_YEAR}) — Help to Buy & State Schemes`,
-    description: "Shared equity home loans: government takes an equity stake to reduce your loan. Federal Help to Buy (up to 40%), state programs, income caps, property caps, and how repayment works on sale.",
+    description: "Shared equity home loans: Help to Buy (up to 40%), state programs, income and property caps, and how repayment works on sale.",
     url: `${SITE_URL}/first-home-buyer/shared-equity`,
     images: [{ url: `/api/og?title=${encodeURIComponent("Shared Equity Home Loans")}&sub=${encodeURIComponent("Help to Buy · Up to 40% · 2% Deposit · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },

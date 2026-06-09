@@ -145,7 +145,7 @@ export async function generateMetadata({
   if (!broker) return { title: `How to transfer (${CURRENT_YEAR})` };
   return {
     title: `How to Transfer From ${broker.name} (${CURRENT_YEAR}) — Step-by-Step Guide`,
-    description: `Close your ${broker.name} account or transfer your ASX shares to another Australian broker. Step-by-step walkthrough, CHESS transfer fee, in-specie support and realistic timelines.`,
+    description: `Transfer from ${broker.name}: CHESS off-market transfer steps, transfer fee, in-specie support, exit fees, and realistic timelines.`,
     alternates: {
       canonical: `${SITE_URL}/how-to/transfer-from/${broker_slug}`,
     },

@@ -31,7 +31,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Selling a Business in Australia: Complete ${CURRENT_YEAR} Guide | Invest.com.au`,
   description:
-    "From valuation to settlement: prepare, price, market and negotiate the sale of an Australian SME. Small-business CGT concessions, broker fees and the 12-month plan.",
+    "Prepare, price, market and negotiate the sale of an Australian SME. Small-business CGT concessions, broker fees and the 12-month exit plan.",
   alternates: { canonical: `${SITE_URL}/sell-business` },
   openGraph: {
     title: `Selling a Business in Australia: Complete ${CURRENT_YEAR} Guide`,

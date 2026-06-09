@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Borrowing Power Calculator (${CURRENT_YEAR}) — How Much Can I Borrow?`,
   description:
-    "Estimate your borrowing power across three lender types (major bank, mid-tier, specialist). Uses APRA assessment rates, HEM living expenses, and credit card commitments. Australian mortgage calculator.",
+    "Estimate borrowing power across three lender types (major bank, mid-tier, specialist). Uses APRA assessment rates, HEM expenses, and liabilities.",
   alternates: { canonical: `${SITE_URL}/tools/borrowing-power-calculator` },
   openGraph: {
     title: `Borrowing Power Calculator (${CURRENT_YEAR})`,

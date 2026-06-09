@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Fund Investment Opportunities Australia — ${countLabel}Managed, Syndicated & Wholesale Funds (${CURRENT_YEAR})`,
     description:
-      "Browse Australian fund investment opportunities — managed funds, syndicated property funds, infrastructure funds and wholesale vehicles. Compare structures, minimums and target returns.",
+      "Browse Australian fund investments — managed funds, syndicated property funds, infrastructure and wholesale vehicles. Compare structures and minimums.",
     alternates: { canonical: `${SITE_URL}/invest/funds/listings` },
     openGraph: {
       title: `Fund Investment Opportunities Australia — ${countLabel}Active Listings`,

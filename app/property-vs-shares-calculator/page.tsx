@@ -8,7 +8,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Property vs Shares Calculator Australia (${CURRENT_YEAR})`,
   description:
-    "Compare the long-term returns of leveraged property investment against an equivalent shares portfolio. Model capital growth, rental yield, mortgage costs and dividends side by side.",
+    "Compare long-term returns of leveraged property against shares. Model capital growth, rental yield, mortgage costs and dividends side by side.",
   alternates: { canonical: "/property-vs-shares-calculator" },
   openGraph: {
     title: "Property vs Shares Calculator",

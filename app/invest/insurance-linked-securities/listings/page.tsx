@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `Insurance-Linked Securities (ILS) Investment Opportunities Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian insurance-linked securities (ILS) investment opportunities for wholesale investors. Catastrophe bonds, sidecars, collateralised reinsurance and ILW structures. Non-correlated alternative yield.",
+      "Browse Australian ILS investment opportunities for wholesale investors. Catastrophe bonds, sidecars, collateralised reinsurance and ILW structures.",
     alternates: { canonical: `${SITE_URL}/invest/insurance-linked-securities/listings` },
     // No live listings yet — de-indexed until supply threshold is met.
     // Remove when countListingsByVertical("insurance-linked-securities") > 0 in prod.

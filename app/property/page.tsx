@@ -34,7 +34,7 @@ const propFaqLdStatic = faqJsonLd(PROPERTY_HUB_FAQS);
 export const metadata = {
   title: "Property Investment Australia — New Developments, Buyer's Agents & Suburb Data",
   description:
-    "Australia's property investment hub. Browse new developments, find a buyer's agent, research suburb data, and compare investment loans. Independent, free, no obligation.",
+    "Property investment hub. New developments, buyer's agents, suburb data, and investment loan comparisons. Independent, free, no obligation.",
   openGraph: {
     title: "Property Investment Australia",
     description: "Browse new developments, find buyer's agents, research suburbs, and compare investment loans.",

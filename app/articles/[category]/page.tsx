@@ -40,7 +40,7 @@ export async function generateMetadata({
   const title = `${label} Articles & Guides (${CURRENT_YEAR}) — Invest.com.au`;
   return {
     title,
-    description: `${label} articles and guides for Australian investors. Beginner-friendly explanations, tax strategies, and broker reviews curated by Invest.com.au.`,
+    description: `${label} articles and guides for Australian investors. Beginner-friendly explanations, tax strategies, and broker reviews from Invest.com.au.`,
     alternates: { canonical: absoluteUrl(`/articles/${category}`) },
     openGraph: {
       title,

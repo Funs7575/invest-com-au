@@ -84,7 +84,7 @@ export async function generateMetadata({
   }
   return {
     title: `ASX ${sector.display_name} Stocks (${CURRENT_YEAR}) — Compare Australian ${sector.display_name} Investment Opportunities`,
-    description: `Compare ASX-listed ${sector.display_name.toLowerCase()} stocks in Australia. Market cap, dividend yield, P/E ratio, and foreign-ownership risk flags for every active company on the register.`,
+    description: `ASX-listed ${sector.display_name.toLowerCase()} stocks: market cap, dividend yield, P/E ratio, and foreign-ownership risk flags for every active company on the register.`,
     alternates: {
       canonical: `${SITE_URL}/invest/${slug}/stocks`,
     },

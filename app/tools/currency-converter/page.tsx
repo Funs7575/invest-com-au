@@ -8,7 +8,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: "AUD Currency Converter — Australian Dollar to USD, GBP, EUR + 12 more",
   description:
-    "Convert Australian dollars to and from 15 currencies. Includes a reference table of key Australian thresholds (FIRB, visa minimums, super caps) in the target currency.",
+    "Convert AUD to and from 15 currencies. Includes a reference table of Australian thresholds (FIRB, visa minimums, super caps) in the target currency.",
   alternates: { canonical: absoluteUrl("/tools/currency-converter") },
   openGraph: {
     title: "AUD Currency Converter",

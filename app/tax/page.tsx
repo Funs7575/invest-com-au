@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Australian Investor Tax Guide (${CURRENT_YEAR}) — CGT, Franking Credits & Strategies`,
-  description: `Complete tax guide for Australian investors: capital gains tax, franking credits, negative gearing, crypto tax, and tax strategies. Independent, updated for ${CURRENT_YEAR}. ${UPDATED_LABEL}.`,
+  description: `Australian investor tax guide: CGT, franking credits, negative gearing, crypto tax, and tax strategies. Independent, updated for ${CURRENT_YEAR}. ${UPDATED_LABEL}.`,
   openGraph: {
     title: "Tax Strategy Hub",
     description: "Complete tax guide for Australian investors. CGT, franking credits, negative gearing, crypto tax, and tax strategies.",
