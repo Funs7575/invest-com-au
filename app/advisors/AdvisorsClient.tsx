@@ -28,8 +28,7 @@ import ResultCount from "@/components/directory/ResultCount";
 import EmptyState from "@/components/directory/EmptyState";
 import CompareBar from "@/components/directory/CompareBar";
 import { FilterPill, FilterPopover } from "@/components/directory/FilterPill";
-import { useSmartFilter } from "@/lib/hooks/useSmartFilter";
-import { useDensity } from "@/lib/hooks/useDensity";
+import SmartFilterBar from "@/components/directory/SmartFilterBar";
 
 export interface ExpertTeamCard {
   id: number;
@@ -678,14 +677,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return [...ordered, ...extra];
   }, [professionals]);
 
-  // ── Comfy/Compact result density (localStorage-backed; reusable hook) ──
-  const [density, setDensity] = useDensity();
-  // AI smart-filter folded into the main search box: pressing Enter routes the
-  // phrase through /api/smart-filter and applies the parsed filters to the
-  // page's local filter state directly (the URL-mirror effect then reflects
-  // them). /advisors derives results from local state, so applying to state —
-  // not just writing the URL — is what makes the filters actually take effect
-  // and avoids the raw phrase being re-read back into the search box.
+  // Natural-language → filters for the standalone AI bar (below). /advisors
+  // derives results from local state, so the parsed params are applied to the
+  // local filter setters directly (the URL-mirror effect then reflects them) —
+  // writing the URL instead wouldn't take effect here.
   const applySmartFilters = useCallback((updates: Record<string, string>) => {
     if (
       updates.provider_type === "individual" ||
@@ -713,11 +708,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     if (updates.verified === "true") setVerifiedOnly(true);
     if (updates.sort) setSortBy(updates.sort as SortKey);
   }, []);
-  const smartFilter = useSmartFilter("advisors", applySmartFilters);
-  const resultsGridCls =
-    density === "compact"
-      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-3.5"
-      : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5";
 
   return (
     <>
@@ -769,20 +759,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           />
         )}
 
-        {/* Toolbar: search (press Enter for AI filtering) · Get Matched ·
-            all-filters · sort. The standalone AI bar is folded into the search
-            via useSmartFilter; the Get-matched card is now this inline CTA. */}
-        <div className="flex flex-wrap gap-2 mb-1.5 items-center">
+        {/* Toolbar: search · Get Matched · all-filters · sort (mirrors /invest) */}
+        <div className="flex flex-wrap gap-2 mb-3 items-center">
           <SearchInput
             className="flex-1"
             value={search}
             onChange={setSearch}
-            onSubmit={async (q) => {
-              const applied = await smartFilter.run(q);
-              if (applied) setSearch("");
-            }}
-            placeholder="Search name, firm, specialty, suburb — or try “SMSF advisor in Sydney”"
-            ariaLabel="Search advisors — or press Enter to filter by description"
+            placeholder="Search name, firm, team, specialty, suburb…"
+            ariaLabel="Search advisors"
             id="advisor-search"
           />
           <GetMatchedEmbed context="advisor_directory" inline />
@@ -801,37 +785,27 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           />
         </div>
 
-        {/* AI smart-filter status + concierge fallback (replaces the old
-            standalone "Get matched in 60 seconds" band). */}
-        <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-          {smartFilter.isLoading && (
-            <span className="font-medium text-amber-600">Parsing your search…</span>
-          )}
-          {!smartFilter.isLoading && smartFilter.status !== "idle" && (
-            <span
-              role="status"
-              aria-live="polite"
-              className={`font-medium ${smartFilter.status === "success" ? "text-emerald-600" : "text-rose-600"}`}
-            >
-              {smartFilter.message}
-            </span>
-          )}
-          <span className="text-slate-500">
-            Prefer to chat?{" "}
-            <Link
-              href="/concierge?finder=advisor-finder"
-              onClick={() =>
-                trackEvent("concierge_seed_clicked", {
-                  finder: "advisor-finder",
-                  source: "advisors_hero",
-                })
-              }
-              className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
-            >
-              Ask the AI concierge →
-            </Link>
-          </span>
+        {/* AI filter bar — natural language → filters (standalone, mirrors /invest) */}
+        <div className="mb-3">
+          <SmartFilterBar setParams={applySmartFilters} surface="advisors" />
         </div>
+
+        {/* Concierge fallback — compact secondary path. */}
+        <p className="mb-3 text-xs text-slate-500">
+          Prefer to chat?{" "}
+          <Link
+            href="/concierge?finder=advisor-finder"
+            onClick={() =>
+              trackEvent("concierge_seed_clicked", {
+                finder: "advisor-finder",
+                source: "advisors_hero",
+              })
+            }
+            className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
+          >
+            Ask the AI concierge →
+          </Link>
+        </p>
 
         {/* Primary facet pills — mirrors /invest + /compare (shared FilterPill). */}
         <p className="text-sm font-semibold text-slate-700 mb-2">Narrow by type, location, and fees — or search by name.</p>
@@ -1068,7 +1042,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         />
 
         {/* Result count — canonical primitive */}
-        <div className="flex items-center justify-between gap-3 mb-3 md:mb-4">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
           {nearbyLoading ? (
             <span className="text-sm text-slate-500">Searching nearby advisors…</span>
           ) : (
@@ -1082,23 +1056,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               })()}
             />
           )}
-          <div className="flex items-center gap-3 shrink-0">
-            {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-500">Page {page} of {totalPages}</p>}
-            {/* Comfy/Compact result density — personal view pref (localStorage). */}
-            <div className="hidden sm:inline-flex rounded-lg border border-slate-200 bg-white p-0.5" role="group" aria-label="Result density">
-              {(["comfy", "compact"] as const).map((d) => (
-                <button
-                  key={d}
-                  type="button"
-                  aria-pressed={density === d}
-                  onClick={() => setDensity(d)}
-                  className={`px-2.5 py-1 rounded-md text-xs font-semibold capitalize transition-colors ${density === d ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:bg-slate-50"}`}
-                >
-                  {d}
-                </button>
-              ))}
-            </div>
-          </div>
+          {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-500">Page {page} of {totalPages}</p>}
         </div>
 
         {/* Firm sub-filter — narrows individual results to one firm.
@@ -1137,7 +1095,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
         {/* Results */}
         {nearbyLoading ? (
-          <div className={resultsGridCls}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="bg-white border border-slate-100 rounded-2xl overflow-hidden animate-pulse shadow-sm flex flex-col">
                 <div className="h-44 bg-slate-100" />
@@ -1164,7 +1122,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             ))}
           </div>
         ) : paginatedFeed.length > 0 ? (
-          <div className={resultsGridCls}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
             {paginatedFeed.map((item, index) => {
               if (item.kind === "firm") {
                 const firm = item.firm;
