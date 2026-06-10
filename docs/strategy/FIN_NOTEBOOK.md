@@ -822,6 +822,23 @@ no UI), QotD ritual + 24h Research-Team SLA (needs founder call on §11 D2/D3),
 confessions composer bug (`?thread_type=` ignored — Confess CTA makes a
 normal thread).
 
+**Update 3 (same day) — "continue": Phase 1 grounding + increment 2 shipped.**
+Grepping before building (again the lesson): quick-post composer
+(`advisor-portal/FeedTab.tsx` → `/api/advisor-auth/posts`), Follow button
+(`components/FollowAdvisorButton.tsx` on advisor profiles, follower_count
+live) and `/feed` All/Following tabs **already existed** — the master plan's
+1.2/1.3 were stale-scoped from the June audit; corrected in place. What was
+genuinely missing, now shipped on #1493: (1) **advisor posts had NO publish
+gate** (same hole as the forum, worse optics — authoritative voices) →
+`classifyText` with new `advisor_post` surface; non-clean verdicts bounce
+with the specific rule (RG 170 forward-looking message) rather than a hidden
+hold; (2) **follower notifications** — follows previously had zero pull;
+publishing now fans out capped (500) deduped announcements to followers;
+(3) confessions composer fixed (`?thread_type=` honoured, anonymity toggle,
+confession banner). Remaining genuinely-unbuilt Phase 1: QotD + 24h SLA
+(founder §11 D2/D3), article→thread cross-links, newsletter community-digest
+block, Founding-Experts BD motion.
+
 ---
 
 ## Open commitments / revisit-by dates

@@ -19,6 +19,11 @@ export default function NewThreadClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedCategory = searchParams.get("category") ?? "";
+  // The confessions CTA links /community/new?thread_type=confessions — the
+  // param was previously ignored, silently creating a normal public thread.
+  const rawType = searchParams.get("thread_type");
+  const threadType: "discussion" | "confessions" | "debate" =
+    rawType === "confessions" || rawType === "debate" ? rawType : "discussion";
 
   const [categories, setCategories] = useState<ForumCategory[]>([]);
   const [loadingCats, setLoadingCats] = useState(true);
@@ -26,6 +31,7 @@ export default function NewThreadClient() {
   const [categorySlug, setCategorySlug] = useState(preselectedCategory);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(threadType === "confessions");
   const [showPreview, setShowPreview] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [heldForReview, setHeldForReview] = useState<string | null>(null);
@@ -102,6 +108,8 @@ export default function NewThreadClient() {
           category_slug: categorySlug,
           title: title.trim(),
           body: body.trim(),
+          thread_type: threadType,
+          is_anonymous: isAnonymous,
         }),
       });
 
@@ -192,8 +200,18 @@ export default function NewThreadClient() {
 
       <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8">
         <h1 className="text-2xl text-slate-900 font-extrabold mb-6">
-          Start a New Thread
+          {threadType === "confessions" ? "Post an Investment Confession" : "Start a New Thread"}
         </h1>
+
+        {threadType === "confessions" && (
+          <div className="bg-slate-800 text-white text-sm rounded-xl px-4 py-3 mb-6 flex items-center gap-2">
+            <span aria-hidden="true">🤫</span>
+            <span>
+              Confessions are anonymous by default — readers see &quot;Anonymous
+              Investor&quot;. Moderators can still see who posted.
+            </span>
+          </div>
+        )}
 
         {errors.submit && (
           <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3 mb-6">
@@ -351,6 +369,19 @@ export default function NewThreadClient() {
               {body.length.toLocaleString()}/10,000
             </span>
           </div>
+        </div>
+
+        {/* Anonymity toggle */}
+        <div className="mb-5">
+          <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={isAnonymous}
+              onChange={(e) => setIsAnonymous(e.target.checked)}
+              className="w-4 h-4 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500"
+            />
+            Post anonymously (shown as &quot;Anonymous Investor&quot;)
+          </label>
         </div>
 
         {/* Pre-submit compliance nudge — non-blocking */}

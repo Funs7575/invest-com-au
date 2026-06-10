@@ -9,6 +9,7 @@
  *   - advisor articles (advisor_articles)
  *   - broker Q&A answers (broker_answers)
  *   - community forum threads + replies (forum_threads / forum_posts)
+ *   - advisor feed quick posts (advisor_posts)
  *
  * Same pure-classifier pattern as the dispute resolver, listing
  * scam classifier, and advisor verification classifier. Takes text
@@ -44,7 +45,8 @@ export interface ModerationContext {
     | "advisor_article"
     | "qa_answer"
     | "forum_thread"
-    | "forum_post";
+    | "forum_post"
+    | "advisor_post";
   /** Author identifier — used only for duplicate detection (cross-surface) */
   authorId?: string | null;
   /** Whether the author is a verified identity (auth'd user with history) */
@@ -313,6 +315,7 @@ export function classifyText(ctx: ModerationContext): ModerationResult {
     ctx.surface === "qa_answer" ? 30 :
     ctx.surface === "forum_post" ? 2 :
     ctx.surface === "forum_thread" ? 20 :
+    ctx.surface === "advisor_post" ? 10 :
     50;
   if (trimmed.length < minLength) {
     return {
