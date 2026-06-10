@@ -487,9 +487,9 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             <div className="flex items-center gap-2 mb-2">
               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[0.6rem] md:text-[0.65rem] font-bold uppercase tracking-wider rounded-full">
                 <Icon name="check" size={10} className="text-emerald-600" />
-                Sample match
+                Example profile
               </span>
-              <span className="text-[0.6rem] md:text-[0.65rem] text-slate-500">— typical advisor of this type</span>
+              <span className="text-[0.6rem] md:text-[0.65rem] text-slate-500">— the kind of professional we match you with; your match comes next</span>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
@@ -522,10 +522,15 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                       {previewAdvisor.review_count > 0 && <span>({previewAdvisor.review_count})</span>}
                     </span>
                   )}
-                  <span className="inline-flex items-center gap-0.5">
-                    <Icon name="clock" size={10} />
-                    Replies within 24h
-                  </span>
+                  {/* No response-time chip here: the API deliberately keeps
+                      response metrics server-side, so any figure would be a
+                      hardcoded claim. Verified signals only. */}
+                  {previewAdvisor.location_display && (
+                    <span className="inline-flex items-center gap-0.5">
+                      <Icon name="map-pin" size={10} />
+                      {previewAdvisor.location_display}
+                    </span>
+                  )}
                 </div>
                 {previewAdvisor.specialties && previewAdvisor.specialties.length > 0 && (
                   <div className="mt-1.5 flex flex-wrap gap-1">
