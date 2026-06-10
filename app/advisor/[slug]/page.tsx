@@ -23,6 +23,7 @@ import AdvisorReputationSummary from "./components/AdvisorReputationSummary";
 import RecentAdvisorInsights from "./components/RecentAdvisorInsights";
 import FollowAdvisorButton from "@/components/FollowAdvisorButton";
 import { computeIdealClientBoost, type UserMatchProfile, type IdealClientCriteria } from "@/lib/advisor-profile-match";
+import { describeIdealClientCriteria } from "@/lib/ideal-client-display";
 import { getRelatedForAdvisor } from "@/lib/related-content";
 import RelatedRail from "@/components/RelatedRail";
 import { ADVISOR_PUBLIC_COLUMNS } from "./public-columns";
@@ -261,13 +262,18 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     // Social proof queries failed — continue with defaults
   }
 
-  // Outcome flywheel display data + endorsements + user session — fetched in parallel.
-  const [outcomeBadge, testimonials, endorsementsResult, sessionResult] = await Promise.all([
+  // Outcome flywheel display data + endorsements + user session + ideal-client
+  // criteria (public-read; powers the "Who I Work With" chips) — in parallel.
+  const [outcomeBadge, testimonials, endorsementsResult, sessionResult, idealClientResult] = await Promise.all([
     getProviderOutcomeBadge({ professionalId: pro.id }),
     getPublicTestimonials({ professionalId: pro.id, limit: 5 }),
     supabase.from("advisor_endorsements").select("skill, user_id").eq("professional_id", pro.id).limit(500),
     supabase.auth.getUser(),
+    supabase.from("advisor_ideal_clients").select("criteria").eq("professional_id", pro.id).maybeSingle(),
   ]);
+
+  const idealClientCriteria = (idealClientResult.data?.criteria ?? null) as IdealClientCriteria | null;
+  const idealClientGroups = describeIdealClientCriteria(idealClientCriteria);
 
   const endorsementRows: { skill: string; user_id: string }[] = endorsementsResult.data ?? [];
   const sessionUser = sessionResult.data.user;
@@ -276,7 +282,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   let initialFollowing = false;
   let isGoodFit = false;
   if (sessionUser) {
-    const [followRow, investorProfileRow, idealClientRow] = await Promise.all([
+    const [followRow, investorProfileRow] = await Promise.all([
       supabase
         .from("advisor_follows")
         .select("id")
@@ -288,15 +294,10 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         .select("primary_vertical, budget_band, is_fhb, is_hnw, is_pre_retiree, experience_level, location_state")
         .eq("auth_user_id", sessionUser.id)
         .maybeSingle(),
-      supabase
-        .from("advisor_ideal_clients")
-        .select("criteria")
-        .eq("professional_id", pro.id)
-        .maybeSingle(),
     ]);
     initialFollowing = !!followRow.data;
 
-    if (investorProfileRow.data && idealClientRow.data) {
+    if (investorProfileRow.data && idealClientCriteria) {
       const ip = investorProfileRow.data as {
         primary_vertical: string | null;
         budget_band: string | null;
@@ -315,7 +316,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         experience_level: ip.experience_level,
         location_state: ip.location_state,
       };
-      const boost = computeIdealClientBoost(userProfile, idealClientRow.data.criteria as IdealClientCriteria);
+      const boost = computeIdealClientBoost(userProfile, idealClientCriteria);
       isGoodFit = boost >= 5; // at least 50% of criteria match
     }
   }
@@ -437,7 +438,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
           })),
         }) }} />
       )}
-      <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} reviewTotalCount={reviewTotalCount} teamMembers={teamMembers} firm={firm} expertTeams={expertTeams} expertArticles={expertArticles} />
+      <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} reviewTotalCount={reviewTotalCount} teamMembers={teamMembers} firm={firm} expertTeams={expertTeams} expertArticles={expertArticles} idealClientGroups={idealClientGroups} />
       {/* Good-fit hint — shown when logged-in user's profile matches ideal-client criteria */}
       {isGoodFit && (
         <div className="container-custom max-w-4xl mt-4">

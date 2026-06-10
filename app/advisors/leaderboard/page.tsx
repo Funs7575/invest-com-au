@@ -9,18 +9,25 @@ import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Top Advisors Leaderboard — May 2026 | Invest.com.au",
-  description:
-    "Australia's top-ranked financial advisors: scored on leads, CPD hours, client ratings, and profile completeness — updated monthly.",
-  alternates: { canonical: "/advisors/leaderboard" },
-  openGraph: {
-    title: "Top Advisors Leaderboard",
-    description: "Monthly rankings for Australia's most active and highly-rated financial advisors.",
-    images: [{ url: "/api/og?title=Top+Advisors+Leaderboard&subtitle=Monthly+Rankings&type=default", width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const monthLabel = new Date().toLocaleDateString("en-AU", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+  return {
+    title: `Top Advisors Leaderboard — ${monthLabel} | Invest.com.au`,
+    description:
+      "Australia's top-ranked financial advisors: scored on client ratings, response time, community contribution, and profile completeness — updated monthly.",
+    alternates: { canonical: "/advisors/leaderboard" },
+    openGraph: {
+      title: "Top Advisors Leaderboard",
+      description: "Monthly rankings for Australia's most active and highly-rated financial advisors.",
+      images: [{ url: "/api/og?title=Top+Advisors+Leaderboard&subtitle=Monthly+Rankings&type=default", width: 1200, height: 630 }],
+    },
+    twitter: { card: "summary_large_image" },
+  };
+}
 
 type LeaderboardEntry = {
   rank: number;
@@ -31,6 +38,9 @@ type LeaderboardEntry = {
   response_score: number;
   profile_score: number;
   year_month: string;
+  forum_answers_count: number;
+  post_engagement_score: number;
+  brief_completions_count: number;
   professional: {
     id: number;
     name: string;
@@ -96,29 +106,50 @@ export default async function LeaderboardPage() {
   const supabase = await createClient();
   const ym = getCurrentYearMonth();
 
-  const { data: rows } = await supabase
+  const proJoin = `professional:professionals!advisor_leaderboard_monthly_professional_id_fkey(
+         id, name, slug, photo_url, type, location_display, verified, firm_name
+       )`;
+
+  // Community-signal columns ship with the ecosystem migration — fall back
+  // to the legacy column set if they don't exist yet.
+  const extendedResult = await supabase
     .from("advisor_leaderboard_monthly")
     .select(
       `rank, score, review_count, avg_rating, badge_count, response_score, profile_score, year_month,
-       professional:professionals!advisor_leaderboard_monthly_professional_id_fkey(
-         id, name, slug, photo_url, type, location_display, verified, firm_name
-       )`
+       forum_answers_count, post_engagement_score, brief_completions_count, ${proJoin}`,
     )
     .eq("year_month", ym)
     .order("rank", { ascending: true })
     .limit(20);
 
-  const entries: LeaderboardEntry[] = (rows ?? []).flatMap((row) => {
+  let rows: unknown[] = extendedResult.data ?? [];
+  if (extendedResult.error) {
+    const legacyResult = await supabase
+      .from("advisor_leaderboard_monthly")
+      .select(
+        `rank, score, review_count, avg_rating, badge_count, response_score, profile_score, year_month, ${proJoin}`,
+      )
+      .eq("year_month", ym)
+      .order("rank", { ascending: true })
+      .limit(20);
+    rows = legacyResult.data ?? [];
+  }
+
+  type RawRow = Record<string, unknown> & { professional: unknown };
+  const entries: LeaderboardEntry[] = (rows as RawRow[]).flatMap((row) => {
     if (!row.professional || Array.isArray(row.professional)) return [];
     return [{
-      rank: row.rank,
-      score: row.score,
-      review_count: row.review_count,
+      rank: row.rank as number,
+      score: row.score as number,
+      review_count: row.review_count as number,
       avg_rating: row.avg_rating as number | null,
-      badge_count: row.badge_count,
-      response_score: row.response_score,
-      profile_score: row.profile_score,
-      year_month: row.year_month,
+      badge_count: row.badge_count as number,
+      response_score: row.response_score as number,
+      profile_score: row.profile_score as number,
+      year_month: row.year_month as string,
+      forum_answers_count: (row.forum_answers_count as number | undefined) ?? 0,
+      post_engagement_score: (row.post_engagement_score as number | undefined) ?? 0,
+      brief_completions_count: (row.brief_completions_count as number | undefined) ?? 0,
       professional: row.professional as LeaderboardEntry["professional"],
     }];
   });
@@ -135,7 +166,7 @@ export default async function LeaderboardPage() {
   const leaderboardFaq = faqJsonLd([
     {
       q: "How are advisors ranked on the leaderboard?",
-      a: "Advisors are ranked using a composite monthly score that combines client leads received, CPD (Continuing Professional Development) hours logged, verified client ratings and review count, response time to enquiries, profile completeness, and earned platform badges. The score resets on the 1st of each month.",
+      a: "Advisors are ranked using a composite monthly score that combines verified client ratings and review count, response time to enquiries, profile completeness, earned platform badges, and community contribution — answering investor questions on the forum, engagement with their published insights, and completed squad briefs. The score resets on the 1st of each month.",
     },
     {
       q: "What criteria determine an advisor's ranking?",
@@ -303,6 +334,43 @@ export default async function LeaderboardPage() {
               </div>
             )}
 
+            {/* Community contribution highlights — only when signals exist */}
+            {entries.some((e) => e.forum_answers_count > 0 || e.post_engagement_score > 0 || e.brief_completions_count > 0) && (
+              <div className="mt-8 bg-white border border-slate-200 rounded-2xl p-6">
+                <h2 className="text-sm font-bold text-slate-900 mb-1">Community contribution this month</h2>
+                <p className="text-xs text-slate-500 mb-4">
+                  Engagement counts toward the score — answering investor questions, publishing insights, and completing squad briefs.
+                </p>
+                <ul className="space-y-2">
+                  {entries
+                    .filter((e) => e.forum_answers_count > 0 || e.post_engagement_score > 0 || e.brief_completions_count > 0)
+                    .slice(0, 5)
+                    .map((e) => (
+                      <li key={e.professional.id} className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                        <Link href={`/advisor/${e.professional.slug}`} className="font-semibold text-slate-800 hover:text-teal-700">
+                          {e.professional.name}
+                        </Link>
+                        {e.forum_answers_count > 0 && (
+                          <span className="bg-teal-50 text-teal-700 border border-teal-100 rounded-full px-2 py-0.5">
+                            {e.forum_answers_count} forum answer{e.forum_answers_count === 1 ? "" : "s"}
+                          </span>
+                        )}
+                        {e.post_engagement_score > 0 && (
+                          <span className="bg-violet-50 text-violet-700 border border-violet-100 rounded-full px-2 py-0.5">
+                            {e.post_engagement_score} post reaction{e.post_engagement_score === 1 ? "" : "s"}
+                          </span>
+                        )}
+                        {e.brief_completions_count > 0 && (
+                          <span className="bg-amber-50 text-amber-700 border border-amber-100 rounded-full px-2 py-0.5">
+                            {e.brief_completions_count} brief{e.brief_completions_count === 1 ? "" : "s"} completed
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+
             {/* How ranking works */}
             <div className="mt-10 bg-teal-50 border border-teal-200 rounded-2xl p-6">
               <h2 className="text-sm font-bold text-teal-900 mb-2">How rankings are calculated</h2>
@@ -312,8 +380,13 @@ export default async function LeaderboardPage() {
                 <li>Response time to client enquiries</li>
                 <li>Profile completeness and verifications</li>
                 <li>Earned badges and platform activity</li>
+                <li>Community contribution — forum answers, insight-post engagement, completed squad briefs</li>
               </ul>
-              <p className="text-xs text-teal-600 mt-3">Rankings reset on the 1st of each month. Only verified advisors on invest.com.au are included.</p>
+              <p className="text-xs text-teal-600 mt-3">
+                Rankings reset on the 1st of each month. Only verified advisors on invest.com.au are included.
+                The score measures platform engagement and client satisfaction — it is not a rating of advice
+                quality, and a high rank is not a recommendation for your circumstances.
+              </p>
             </div>
           </>
         )}

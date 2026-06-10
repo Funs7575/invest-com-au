@@ -125,6 +125,7 @@ export default function AdvisorProfileClient({
   firm,
   expertTeams = [],
   expertArticles = [],
+  idealClientGroups = [],
 }: {
   professional: Professional;
   similar: Professional[];
@@ -136,6 +137,9 @@ export default function AdvisorProfileClient({
   /** Verified, public Expert Teams this advisor belongs to (ADV-013). */
   expertTeams?: { slug: string; name: string; public_title: string | null }[];
   expertArticles?: ExpertArticle[];
+  /** Plain-English groups from the advisor's structured ideal-client criteria
+   *  (pre-computed server-side so the mapping tables stay out of the bundle). */
+  idealClientGroups?: { key: string; label: string; values: string[] }[];
 }) {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error" | "unavailable">("idle");
   const [formError, setFormError] = useState("");
@@ -698,15 +702,43 @@ export default function AdvisorProfileClient({
               </SectionCard>
             )}
 
-            {/* Who I work with */}
-            {pro.ideal_client && (
+            {/* Who I work with — free-text blurb + structured criteria chips.
+                Factual restatement of the advisor's stated preferences, never
+                a suitability claim. */}
+            {(pro.ideal_client || idealClientGroups.length > 0) && (
               <div className="flex items-start gap-4 bg-amber-50 border border-amber-200 rounded-2xl p-5">
                 <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
                   <Icon name="user" size={18} className="text-amber-600" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-bold text-amber-900 mb-1">Who I Work With</h3>
-                  <p className="text-sm text-amber-700 leading-relaxed">{pro.ideal_client!}</p>
+                  {pro.ideal_client && (
+                    <p className="text-sm text-amber-700 leading-relaxed">{pro.ideal_client}</p>
+                  )}
+                  {idealClientGroups.length > 0 && (
+                    <dl className={`space-y-2.5 ${pro.ideal_client ? "mt-3 pt-3 border-t border-amber-200/70" : ""}`}>
+                      {idealClientGroups.map((group) => (
+                        <div key={group.key}>
+                          <dt className="text-[11px] font-bold uppercase tracking-wide text-amber-800/70 mb-1">
+                            {group.label}
+                          </dt>
+                          <dd className="m-0 flex flex-wrap gap-1.5">
+                            {group.values.map((value) => (
+                              <span
+                                key={value}
+                                className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-white/70 text-amber-800 border border-amber-200"
+                              >
+                                {value}
+                              </span>
+                            ))}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                  <p className="text-[10px] text-amber-600/80 mt-2.5 mb-0">
+                    The advisor&rsquo;s stated client focus — factual information, not personal advice.
+                  </p>
                 </div>
               </div>
             )}

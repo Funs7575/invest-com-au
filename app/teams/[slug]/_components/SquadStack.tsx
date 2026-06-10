@@ -26,6 +26,8 @@ interface Member {
   pro_photo_url: string | null;
   /** Pulled from professionals.tagline_short — may be null. */
   pro_tagline: string | null;
+  pro_rating?: number | null;
+  pro_review_count?: number | null;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -115,6 +117,17 @@ export default function SquadStack({ members }: Props) {
                 <p className="text-xs text-slate-600 mb-1">
                   <Icon name={roleIcon} size={11} className="inline mr-1 text-slate-400" />
                   {m.public_title ?? role}
+                  {typeof m.pro_rating === "number" &&
+                    m.pro_rating > 0 &&
+                    (m.pro_review_count ?? 0) > 0 && (
+                      <span className="ml-2 inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700">
+                        <Icon name="star" size={10} className="text-amber-500" />
+                        {m.pro_rating.toFixed(1)}
+                        <span className="font-normal text-slate-400">
+                          ({m.pro_review_count})
+                        </span>
+                      </span>
+                    )}
                 </p>
                 {m.pro_tagline && (
                   <p className="text-xs text-slate-500 leading-snug line-clamp-2">

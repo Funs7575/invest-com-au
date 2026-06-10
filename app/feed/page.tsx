@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { itemListJsonLd } from "@/lib/schema-markup";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import FeedPageClient from "./FeedPageClient";
 import CheckinTrigger from "@/components/streak/CheckinTrigger";
 
@@ -100,8 +101,11 @@ export default async function FeedPage() {
             <h1 style={{ fontSize: "clamp(22px, 4vw, 30px)", fontWeight: 800, color: "var(--color-ink-900)", lineHeight: 1.2, marginBottom: 8 }}>
               Insights from Australia&rsquo;s top financial advisors
             </h1>
-            <p style={{ fontSize: 15, color: "var(--color-ink-500)", lineHeight: 1.5, marginBottom: 0 }}>
+            <p style={{ fontSize: 15, color: "var(--color-ink-500)", lineHeight: 1.5, marginBottom: 12 }}>
               Updates, insights and questions from Australia&rsquo;s licensed financial advisers. Follow professionals you trust.
+            </p>
+            <p style={{ fontSize: 12, color: "var(--color-ink-500)", lineHeight: 1.5, marginBottom: 0, padding: "10px 14px", background: "white", border: "1px solid #e5e7eb", borderRadius: 8 }}>
+              {GENERAL_ADVICE_WARNING}
             </p>
           </div>
 

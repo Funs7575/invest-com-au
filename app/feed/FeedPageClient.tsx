@@ -38,10 +38,57 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
 }
 
+const REACTION_OPTIONS: { type: ReactionType; emoji: string; label: string }[] = [
+  { type: "like", emoji: "👍", label: "Like" },
+  { type: "insightful", emoji: "💡", label: "Insightful" },
+  { type: "celebrate", emoji: "🎉", label: "Celebrate" },
+];
+
+type ReactionType = "like" | "insightful" | "celebrate";
+
 function PostCard({ post }: { post: PostRow }) {
   const pro = post.professional;
   const typeConfig = POST_TYPE_CONFIG[post.post_type] ?? POST_TYPE_CONFIG.update;
   const initials = pro?.name ? getInitials(pro.name) : "?";
+  const [reactionCount, setReactionCount] = useState(post.reaction_count);
+  const [myReaction, setMyReaction] = useState<ReactionType | null>(null);
+  const [reactPending, setReactPending] = useState(false);
+
+  async function handleReact(type: ReactionType) {
+    if (reactPending) return;
+    setReactPending(true);
+    // Optimistic: toggling the same reaction removes it; switching keeps count.
+    const prev = { count: reactionCount, mine: myReaction };
+    if (myReaction === type) {
+      setMyReaction(null);
+      setReactionCount((c) => Math.max(0, c - 1));
+    } else {
+      if (myReaction === null) setReactionCount((c) => c + 1);
+      setMyReaction(type);
+    }
+    try {
+      const res = await fetch("/api/feed/react", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId: post.id, reaction_type: type }),
+      });
+      if (res.status === 401) {
+        setReactionCount(prev.count);
+        setMyReaction(prev.mine);
+        window.location.href = `/auth/login?next=${encodeURIComponent("/feed")}`;
+        return;
+      }
+      if (!res.ok) throw new Error("react failed");
+      const data = (await res.json()) as { reaction_count: number; reaction_type: ReactionType | null };
+      setReactionCount(data.reaction_count);
+      setMyReaction(data.reaction_type);
+    } catch {
+      setReactionCount(prev.count);
+      setMyReaction(prev.mine);
+    } finally {
+      setReactPending(false);
+    }
+  }
 
   return (
     <article className="iv2-card iv2-card-hover" style={{ padding: 20 }}>
@@ -76,10 +123,43 @@ function PostCard({ post }: { post: PostRow }) {
         </a>
       )}
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14, paddingTop: 12, borderTop: "1px solid #f1f3f5" }}>
-        <div style={{ fontSize: 12, color: "var(--color-ink-400)", display: "flex", gap: 14 }}>
-          {post.reaction_count > 0 && <span>{post.reaction_count} {post.reaction_count === 1 ? "reaction" : "reactions"}</span>}
-          {post.comment_count > 0 && <span>{post.comment_count} {post.comment_count === 1 ? "comment" : "comments"}</span>}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap", marginTop: 14, paddingTop: 12, borderTop: "1px solid #f1f3f5" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          {REACTION_OPTIONS.map((opt) => {
+            const active = myReaction === opt.type;
+            return (
+              <button
+                key={opt.type}
+                type="button"
+                onClick={() => handleReact(opt.type)}
+                disabled={reactPending}
+                aria-pressed={active}
+                aria-label={`${opt.label} this post`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  padding: "4px 10px",
+                  borderRadius: 99,
+                  border: active ? "1px solid var(--color-ink-700)" : "1px solid #e5e7eb",
+                  background: active ? "var(--color-ink-900)" : "white",
+                  color: active ? "white" : "var(--color-ink-500)",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: reactPending ? "wait" : "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                <span aria-hidden="true">{opt.emoji}</span>
+                <span>{opt.label}</span>
+              </button>
+            );
+          })}
+          {reactionCount > 0 && (
+            <span style={{ fontSize: 12, color: "var(--color-ink-400)", marginLeft: 4 }}>
+              {reactionCount} {reactionCount === 1 ? "reaction" : "reactions"}
+            </span>
+          )}
         </div>
         {pro?.slug && (
           <div style={{ display: "flex", gap: 12 }}>
@@ -127,11 +207,40 @@ interface Props {
   initialPosts: PostRow[];
 }
 
+const PAGE_SIZE = 20;
+
 export default function FeedPageClient({ initialPosts }: Props) {
   const [activeTab, setActiveTab] = useState<"all" | "following">("all");
   const [followingPosts, setFollowingPosts] = useState<PostRow[] | null>(null);
   const [followingError, setFollowingError] = useState<"unauthenticated" | "error" | null>(null);
   const fetchedFollowing = useRef(false);
+  const [allPosts, setAllPosts] = useState<PostRow[]>(initialPosts);
+  const [hasMore, setHasMore] = useState(initialPosts.length >= PAGE_SIZE);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState(false);
+
+  async function loadMore() {
+    if (loadingMore) return;
+    const last = allPosts[allPosts.length - 1];
+    if (!last) return;
+    setLoadingMore(true);
+    setLoadMoreError(false);
+    try {
+      const res = await fetch(`/api/feed/posts?before=${last.id}`);
+      if (!res.ok) throw new Error("load failed");
+      const data = (await res.json()) as { posts: PostRow[]; hasMore: boolean };
+      setAllPosts((prev) => {
+        // Defend against duplicates if the cursor raced a cache refresh.
+        const seen = new Set(prev.map((p) => p.id));
+        return [...prev, ...data.posts.filter((p) => !seen.has(p.id))];
+      });
+      setHasMore(data.hasMore);
+    } catch {
+      setLoadMoreError(true);
+    } finally {
+      setLoadingMore(false);
+    }
+  }
 
   // Loading state derived: "following" tab selected, not yet fetched (null) and no error
   const loadingFollowing = activeTab === "following" && followingPosts === null && followingError === null;
@@ -183,12 +292,31 @@ export default function FeedPageClient({ initialPosts }: Props) {
 
       {/* All tab */}
       {activeTab === "all" && (
-        initialPosts.length === 0 ? (
+        allPosts.length === 0 ? (
           <EmptyState tab="all" />
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {initialPosts.map((post) => <PostCard key={post.id} post={post} />)}
-          </div>
+          <>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {allPosts.map((post) => <PostCard key={post.id} post={post} />)}
+            </div>
+            {hasMore && (
+              <div style={{ textAlign: "center", marginTop: 20 }}>
+                <button
+                  type="button"
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                  style={{ padding: "10px 26px", borderRadius: 8, border: "1px solid #e5e7eb", background: "white", color: "var(--color-ink-700)", fontSize: 13, fontWeight: 700, cursor: loadingMore ? "wait" : "pointer", fontFamily: "inherit" }}
+                >
+                  {loadingMore ? "Loading…" : "Load more posts"}
+                </button>
+                {loadMoreError && (
+                  <p style={{ fontSize: 12, color: "var(--color-ink-500)", marginTop: 8 }}>
+                    Couldn&rsquo;t load more right now — try again.
+                  </p>
+                )}
+              </div>
+            )}
+          </>
         )
       )}
 

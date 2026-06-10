@@ -5,6 +5,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { SITE_URL, absoluteUrl } from "@/lib/seo";
 import { SPONSORED_ARTICLE_DISCLOSURE } from "@/lib/compliance";
+import { listAcceptedCoAuthors } from "@/lib/article-co-authors";
 import SocialShareButtons from "@/components/SocialShareButtons";
 
 export const revalidate = 3600;
@@ -53,24 +54,36 @@ export default async function ExpertArticlePage({ params }: Props) {
   // Increment view
   await supabase.from("advisor_articles").update({ view_count: (article.view_count || 0) + 1 }).eq("id", article.id);
 
-  // Related articles by same author or category
-  const { data: related } = await supabase
-    .from("advisor_articles")
-    .select("title, slug, author_name, published_at, excerpt")
-    .eq("status", "published")
-    .neq("id", article.id)
-    .or(`professional_id.eq.${article.professional_id},category.eq.${article.category}`)
-    .order("published_at", { ascending: false })
-    .limit(3);
+  // Related articles by same author or category + accepted co-authors
+  // (dual byline) — in parallel.
+  const [{ data: related }, coAuthors] = await Promise.all([
+    supabase
+      .from("advisor_articles")
+      .select("title, slug, author_name, published_at, excerpt")
+      .eq("status", "published")
+      .neq("id", article.id)
+      .or(`professional_id.eq.${article.professional_id},category.eq.${article.category}`)
+      .order("published_at", { ascending: false })
+      .limit(3),
+    listAcceptedCoAuthors(article.id),
+  ]);
 
-  // JSON-LD
+  // JSON-LD — Person array when co-authored.
+  const authorLd = [
+    { "@type": "Person", name: article.author_name, url: absoluteUrl(`/advisor/${article.author_slug}`) },
+    ...coAuthors.map((c) => ({
+      "@type": "Person",
+      name: c.name,
+      url: absoluteUrl(`/advisor/${c.slug}`),
+    })),
+  ];
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: article.title,
     description: article.excerpt,
     datePublished: article.published_at,
-    author: { "@type": "Person", name: article.author_name, url: absoluteUrl(`/advisor/${article.author_slug}`) },
+    author: authorLd.length === 1 ? authorLd[0] : authorLd,
     publisher: { "@type": "Organization", name: "Invest.com.au", url: SITE_URL },
     mainEntityOfPage: absoluteUrl(`/expert/${slug}`),
   };
@@ -135,11 +148,22 @@ export default async function ExpertArticlePage({ params }: Props) {
                 )}
               </Link>
               <div>
-                <Link href={`/advisor/${pro?.slug}`} className="text-sm font-bold text-slate-900 hover:text-violet-700 transition-colors">
-                  {article.author_name}
-                </Link>
+                <span className="text-sm font-bold text-slate-900">
+                  <Link href={`/advisor/${pro?.slug}`} className="hover:text-violet-700 transition-colors">
+                    {article.author_name}
+                  </Link>
+                  {coAuthors.map((c, i) => (
+                    <span key={c.professional_id}>
+                      {i === coAuthors.length - 1 ? " & " : ", "}
+                      <Link href={`/advisor/${c.slug}`} className="hover:text-violet-700 transition-colors">
+                        {c.name}
+                      </Link>
+                    </span>
+                  ))}
+                </span>
                 <div className="text-xs text-slate-500">
                   {article.author_firm && <span>{article.author_firm} · </span>}
+                  {coAuthors.length > 0 && <span>Co-authored · </span>}
                   {publishDate}
                 </div>
               </div>

@@ -47,6 +47,10 @@ export interface ExpertTeam {
   rejection_reason: string | null;
   created_at: string;
   updated_at: string;
+  specialty_tags?: string[];
+  /** Long-form public "our story" prose. Column ships with the
+   *  advisor-ecosystem migration; undefined until it is applied. */
+  team_story?: string | null;
 }
 
 export interface ExpertTeamMember {
@@ -151,6 +155,69 @@ export async function getTeamById(id: number): Promise<ExpertTeam | null> {
   const admin = createAdminClient();
   const { data } = await admin.from("expert_teams").select("*").eq("id", id).maybeSingle();
   return (data as ExpertTeam) ?? null;
+}
+
+export interface UpdateTeamSettingsInput {
+  description?: string | null;
+  niche?: string | null;
+  teamStory?: string | null;
+  specialtyTags?: string[];
+}
+
+export interface UpdateTeamSettingsResult {
+  team: ExpertTeam;
+  /** True when team_story was requested but the column doesn't exist yet
+   *  (ecosystem migration pending) — caller surfaces a soft warning. */
+  teamStoryPending: boolean;
+}
+
+/**
+ * Update the owner-editable presentation fields on a team. The caller is
+ * responsible for the owner/lead authorisation check.
+ */
+export async function updateTeamSettings(
+  teamId: number,
+  input: UpdateTeamSettingsInput,
+): Promise<UpdateTeamSettingsResult> {
+  const admin = createAdminClient();
+
+  const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (input.description !== undefined) updates.description = input.description;
+  if (input.niche !== undefined) updates.niche = input.niche;
+  if (input.specialtyTags !== undefined) updates.specialty_tags = input.specialtyTags;
+  if (input.teamStory !== undefined) updates.team_story = input.teamStory;
+
+  let { data, error } = await admin
+    .from("expert_teams")
+    .update(updates)
+    .eq("id", teamId)
+    .select("*")
+    .maybeSingle();
+
+  let teamStoryPending = false;
+  if (error && input.teamStory !== undefined && isMissingColumnError(error)) {
+    // Migration not applied yet — save everything else so the advisor's
+    // work isn't lost, and tell them the story will need a retry.
+    teamStoryPending = true;
+    delete updates.team_story;
+    ({ data, error } = await admin
+      .from("expert_teams")
+      .update(updates)
+      .eq("id", teamId)
+      .select("*")
+      .maybeSingle());
+  }
+
+  if (error || !data) {
+    throw new Error(`updateTeamSettings failed: ${error?.message ?? "no row"}`);
+  }
+  return { team: data as ExpertTeam, teamStoryPending };
+}
+
+function isMissingColumnError(err: { message?: string; code?: string }): boolean {
+  if (err.code === "42703" || err.code === "PGRST204") return true;
+  const msg = (err.message ?? "").toLowerCase();
+  return msg.includes("column") && (msg.includes("does not exist") || msg.includes("schema cache"));
 }
 
 export async function getTeamBySlug(slug: string): Promise<ExpertTeam | null> {

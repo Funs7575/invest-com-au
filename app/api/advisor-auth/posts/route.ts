@@ -7,6 +7,7 @@ import { logger } from "@/lib/logger";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import { classifyText } from "@/lib/text-moderation";
 import { notifyUser } from "@/lib/notifications";
+import { sendAdminNotification } from "@/lib/advisor-emails";
 
 const log = logger("advisor-auth:posts");
 
@@ -158,6 +159,35 @@ export const POST = withValidatedBody(PostSchema, async (request, body) => {
   }
 
   await notifyFollowers(admin, professionalId, post.id, body.post_type, body.body);
+
+  // New-poster review signal: an advisor's first few posts get a post-publish
+  // human look (COMMUNITY_MASTER_PLAN 1.2). Deliberately NOT a pre-publish
+  // hold — professional accounts publish immediately (classifyText already
+  // hard-gates RG 170 breaches); this just puts early posts in front of an
+  // admin. Failure here must never fail the post.
+  try {
+    const { count } = await admin
+      .from("advisor_posts")
+      .select("id", { count: "exact", head: true })
+      .eq("professional_id", professionalId)
+      .neq("status", "deleted");
+    if ((count ?? 0) <= 3) {
+      const { data: pro } = await admin
+        .from("professionals")
+        .select("name, slug")
+        .eq("id", professionalId)
+        .single();
+      await sendAdminNotification(
+        `New advisor poster: ${pro?.name ?? `professional #${professionalId}`} (post ${count ?? 1} of first 3)`,
+        `Post body:\n\n${body.body}\n\nReview at: /advisor/${pro?.slug ?? ""}/insights/${post.id}`,
+      );
+    }
+  } catch (err) {
+    log.warn("First-posts admin notification failed", {
+      professionalId,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
 
   return NextResponse.json({ post }, { status: 201 });
 });
