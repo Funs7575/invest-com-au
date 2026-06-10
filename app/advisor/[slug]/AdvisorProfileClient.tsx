@@ -286,7 +286,7 @@ export default function AdvisorProfileClient({
       <div className="container-custom max-w-[1280px] py-5 md:py-8">
 
         {/* ── Breadcrumb ─────────────────────────────── */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-slate-400 mb-5">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-slate-500 mb-5">
           <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
           <Icon name="chevron-right" size={14} className="text-slate-300" />
           <Link href="/advisors" className="hover:text-slate-700 transition-colors">Advisors</Link>
@@ -416,7 +416,7 @@ export default function AdvisorProfileClient({
                     <a href="#reviews" className="flex items-center gap-1.5 hover:text-amber-700 transition-colors">
                       <Stars rating={pro.rating} className="text-base" />
                       <span className="font-bold text-slate-700">{pro.rating.toFixed(1)}</span>
-                      <span className="text-slate-400">({pro.review_count} {pro.review_count === 1 ? "review" : "reviews"})</span>
+                      <span className="text-slate-500">({pro.review_count} {pro.review_count === 1 ? "review" : "reviews"})</span>
                     </a>
                   )}
                   {pro.years_experience ? (
@@ -444,7 +444,7 @@ export default function AdvisorProfileClient({
                     </span>
                   )}
                   {lastUpdatedLabel && (
-                    <span className="flex items-center gap-1.5 text-slate-400" title="When this advisor last updated their profile">
+                    <span className="flex items-center gap-1.5 text-slate-500" title="When this advisor last updated their profile">
                       <Icon name="clock" size={14} className="text-slate-300" />
                       Profile updated {lastUpdatedLabel}
                     </span>
@@ -554,7 +554,7 @@ export default function AdvisorProfileClient({
               <div key={f.label} className="flex items-center gap-3 px-5 py-4">
                 <Icon name={f.icon} size={16} className="text-amber-500 shrink-0" />
                 <div className="min-w-0">
-                  <div className="text-[0.68rem] font-bold text-slate-400 uppercase tracking-wider mb-0.5">{f.label}</div>
+                  <div className="text-[0.68rem] font-bold text-slate-500 uppercase tracking-wider mb-0.5">{f.label}</div>
                   <div className="text-xs md:text-sm font-semibold text-slate-700 truncate">{f.value}</div>
                 </div>
               </div>
@@ -608,7 +608,7 @@ export default function AdvisorProfileClient({
                       )}
                     </div>
                     {firm.bio && <p className="text-sm text-slate-500 mb-2 line-clamp-2">{firm.bio}</p>}
-                    <div className="flex items-center gap-4 text-xs text-slate-400 flex-wrap">
+                    <div className="flex items-center gap-4 text-xs text-slate-500 flex-wrap">
                       {firm.afsl_number && <span>AFSL {firm.afsl_number}</span>}
                       {firm.abn && <span>ABN {firm.abn}</span>}
                       <span className="text-blue-600 font-semibold">{teamMembers.length + 1} team members</span>
@@ -620,7 +620,7 @@ export default function AdvisorProfileClient({
                 </div>
                 {teamMembers.length > 0 && (
                   <div className="border-t border-slate-100 pt-4">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Other team members</p>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Other team members</p>
                     <div className="flex gap-3 overflow-x-auto pb-1">
                       {teamMembers.map((m) => (
                         <Link key={m.id} href={`/advisor/${m.slug}`}
@@ -634,7 +634,7 @@ export default function AdvisorProfileClient({
                           )}
                           <div>
                             <div className="text-xs font-bold text-slate-800">{m.name}</div>
-                            <div className="text-[0.65rem] text-slate-400">{PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</div>
+                            <div className="text-[0.65rem] text-slate-500">{PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</div>
                           </div>
                         </Link>
                       ))}
@@ -648,7 +648,7 @@ export default function AdvisorProfileClient({
                   <Icon name="user" size={13} className="text-slate-500" />
                 </div>
                 <span className="text-sm font-semibold text-slate-600">Independent Advisor</span>
-                <span className="text-xs text-slate-400 hidden md:block">— Not aligned to any product provider or dealer group</span>
+                <span className="text-xs text-slate-500 hidden md:block">— Not aligned to any product provider or dealer group</span>
               </div>
             ) : null}
 
@@ -753,7 +753,7 @@ export default function AdvisorProfileClient({
 
                   {(pro.education)?.length ? (
                     <div>
-                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Education</h3>
+                      <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Education</h3>
                       <div className="space-y-3">
                         {(pro.education!).map((e, i) => (
                           <div key={i} className="flex items-start gap-3">
@@ -772,7 +772,7 @@ export default function AdvisorProfileClient({
 
                   {(pro.memberships)?.length ? (
                     <div>
-                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Professional Memberships</h3>
+                      <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Professional Memberships</h3>
                       <div className="flex flex-wrap gap-2.5">
                         {(pro.memberships!).map((m) => (
                           <span key={m} className="text-sm font-bold px-4 py-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200">
@@ -792,7 +792,7 @@ export default function AdvisorProfileClient({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {(pro.languages)?.length && (pro.languages!).length > 1 ? (
                     <div>
-                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Languages</h3>
+                      <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">Languages</h3>
                       <div className="flex flex-wrap gap-2">
                         {(pro.languages!).map((l) => (
                           <span key={l} className="text-sm px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-100">{l}</span>
@@ -802,7 +802,7 @@ export default function AdvisorProfileClient({
                   ) : null}
                   {(pro.service_areas)?.length ? (
                     <div>
-                      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Service Areas</h3>
+                      <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">Service Areas</h3>
                       <div className="flex flex-wrap gap-2">
                         {(pro.service_areas!).map((a) => (
                           <span key={a} className="text-sm px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600">{a}</span>
@@ -838,12 +838,12 @@ export default function AdvisorProfileClient({
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                   <div className="bg-white rounded-xl p-4 border border-slate-100">
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Primary Licence</div>
+                    <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Primary Licence</div>
                     <div className="text-sm font-bold text-slate-800 mb-0.5">{vConfig.primaryLicence.name}</div>
                     <div className="text-xs text-slate-500">Regulated by {vConfig.primaryLicence.regulatorShort}</div>
                   </div>
                   <div className="bg-white rounded-xl p-4 border border-slate-100">
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Insurance</div>
+                    <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Insurance</div>
                     <div className="text-sm font-bold text-slate-800 mb-0.5">{vConfig.insurance.split(" — ")[0]}</div>
                     <div className="text-xs text-slate-500">{vConfig.edr.split(".")[0]}</div>
                   </div>
@@ -891,7 +891,7 @@ export default function AdvisorProfileClient({
                   ) : null}
                 </div>
                 {pro.fee_structure && (
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     Fee model:{" "}
                     <span className="font-semibold text-slate-600">
                       {pro.fee_structure === "percentage of AUM"
@@ -935,7 +935,7 @@ export default function AdvisorProfileClient({
                       <p className="text-sm md:text-base text-slate-600 italic leading-relaxed">
                         &ldquo;{t.quote}&rdquo;
                       </p>
-                      <footer className="text-xs text-slate-400 mt-2 font-semibold">
+                      <footer className="text-xs text-slate-500 mt-2 font-semibold">
                         — {t.author}{t.date ? ` · ${t.date}` : ""}
                       </footer>
                     </blockquote>
@@ -1020,7 +1020,7 @@ export default function AdvisorProfileClient({
                   <h2 className="text-base font-bold text-slate-900">
                     Reviews
                     {totalReviews > 0 && (
-                      <span className="ml-2 text-sm font-normal text-slate-400">({totalReviews})</span>
+                      <span className="ml-2 text-sm font-normal text-slate-500">({totalReviews})</span>
                     )}
                   </h2>
                 </div>
@@ -1039,7 +1039,7 @@ export default function AdvisorProfileClient({
                       <div className="text-6xl font-black text-amber-600 leading-none">{pro.rating.toFixed(1)}</div>
                       <div>
                         <Stars rating={pro.rating} className="text-xl sm:text-2xl" />
-                        <div className="text-xs text-slate-400 text-center mt-0.5">{reviews.length} reviews</div>
+                        <div className="text-xs text-slate-500 text-center mt-0.5">{reviews.length} reviews</div>
                       </div>
                     </div>
                     {(avgComm > 0 || avgExp > 0 || avgVal > 0) && (
@@ -1087,7 +1087,7 @@ export default function AdvisorProfileClient({
                               {r.used_services && (
                                 <span className="text-xs font-semibold px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full">Used Services</span>
                               )}
-                              <span className="text-xs text-slate-400 ml-auto">
+                              <span className="text-xs text-slate-500 ml-auto">
                                 {new Date(r.created_at).toLocaleDateString("en-AU", { month: "short", year: "numeric" })}
                               </span>
                             </div>
@@ -1099,13 +1099,13 @@ export default function AdvisorProfileClient({
                         {(r.communication_rating || r.expertise_rating || r.value_for_money_rating) && (
                           <div className="flex flex-wrap gap-4 mt-3">
                             {r.communication_rating ? (
-                              <span className="text-xs text-slate-400">Comms: <span className="text-amber-500">{"★".repeat(r.communication_rating)}</span></span>
+                              <span className="text-xs text-slate-500">Comms: <span className="text-amber-500">{"★".repeat(r.communication_rating)}</span></span>
                             ) : null}
                             {r.expertise_rating ? (
-                              <span className="text-xs text-slate-400">Expertise: <span className="text-amber-500">{"★".repeat(r.expertise_rating)}</span></span>
+                              <span className="text-xs text-slate-500">Expertise: <span className="text-amber-500">{"★".repeat(r.expertise_rating)}</span></span>
                             ) : null}
                             {r.value_for_money_rating ? (
-                              <span className="text-xs text-slate-400">Value: <span className="text-amber-500">{"★".repeat(r.value_for_money_rating)}</span></span>
+                              <span className="text-xs text-slate-500">Value: <span className="text-amber-500">{"★".repeat(r.value_for_money_rating)}</span></span>
                             ) : null}
                           </div>
                         )}
@@ -1147,7 +1147,7 @@ export default function AdvisorProfileClient({
                       <Icon name="star" size={24} className="text-slate-300" />
                     </div>
                     <p className="text-sm font-bold text-slate-600 mb-1">No reviews yet</p>
-                    <p className="text-xs text-slate-400 mb-4">
+                    <p className="text-xs text-slate-500 mb-4">
                       Be the first to share your experience with {firstName}
                     </p>
                     <button
@@ -1198,10 +1198,10 @@ export default function AdvisorProfileClient({
                             <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg">{article.category}</span>
                           )}
                           {article.reading_time_mins ? (
-                            <span className="text-xs text-slate-400">{article.reading_time_mins} min read</span>
+                            <span className="text-xs text-slate-500">{article.reading_time_mins} min read</span>
                           ) : null}
                           {article.published_at && (
-                            <span className="text-xs text-slate-400">
+                            <span className="text-xs text-slate-500">
                               {new Date(article.published_at).toLocaleDateString("en-AU", { month: "short", year: "numeric" })}
                             </span>
                           )}
@@ -1234,11 +1234,11 @@ export default function AdvisorProfileClient({
                         )}
                         <div className="min-w-0">
                           <div className="font-bold text-sm text-slate-900 truncate group-hover:text-amber-700 transition-colors">{s.name}</div>
-                          {s.firm_name && <div className="text-xs text-slate-400 truncate">{s.firm_name}</div>}
+                          {s.firm_name && <div className="text-xs text-slate-500 truncate">{s.firm_name}</div>}
                         </div>
                       </div>
                       {s.location_display && (
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
                           <Icon name="map-pin" size={11} />
                           {s.location_display}
                         </div>
@@ -1247,10 +1247,10 @@ export default function AdvisorProfileClient({
                         <div className="flex items-center gap-1.5 text-xs">
                           <Stars rating={s.rating} className="text-sm" />
                           <span className="font-bold text-slate-600">{s.rating}</span>
-                          <span className="text-slate-400">· {s.review_count} reviews</span>
+                          <span className="text-slate-500">· {s.review_count} reviews</span>
                         </div>
                       ) : (
-                        <div className="text-xs text-slate-400">{s.fee_description || "Contact for pricing"}</div>
+                        <div className="text-xs text-slate-500">{s.fee_description || "Contact for pricing"}</div>
                       )}
                     </Link>
                   ))}
@@ -1259,7 +1259,7 @@ export default function AdvisorProfileClient({
             )}
 
             {/* Compliance */}
-            <div className="text-xs text-slate-400 leading-relaxed space-y-2 pt-2 pb-4">
+            <div className="text-xs text-slate-500 leading-relaxed space-y-2 pt-2 pb-4">
               <p>
                 Invest.com.au does not provide financial advice, deal in financial products, or hold an Australian Financial Services Licence (AFSL).
                 We are an information and directory service only. We facilitate connections between users and registered financial professionals but do not supervise, endorse, or take responsibility for any advice provided.
@@ -1456,7 +1456,7 @@ export default function AdvisorProfileClient({
                         </button>
                       </p>
                     )}
-                    <p className="text-[0.68rem] text-slate-400 text-center leading-relaxed">
+                    <p className="text-[0.68rem] text-slate-500 text-center leading-relaxed">
                       By submitting, you consent to sharing your details with {firstName}.
                       No obligation. See our{" "}
                       <Link href="/privacy" className="underline hover:text-slate-600">Privacy Policy</Link>.
@@ -1468,7 +1468,7 @@ export default function AdvisorProfileClient({
 
             {/* Trust signals */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider">Why trust this profile?</h3>
+              <h3 className="text-xs font-black text-slate-500 uppercase tracking-wider">Why trust this profile?</h3>
               <div className="space-y-3.5">
                 {pro.verified && (
                   <div className="flex items-center gap-3">
@@ -1477,7 +1477,7 @@ export default function AdvisorProfileClient({
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-700">Independently verified</p>
-                      <p className="text-xs text-slate-400">Credentials checked by our team</p>
+                      <p className="text-xs text-slate-500">Credentials checked by our team</p>
                     </div>
                   </div>
                 )}
@@ -1487,7 +1487,7 @@ export default function AdvisorProfileClient({
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-700">Registered professional</p>
-                    <p className="text-xs text-slate-400">{vConfig.primaryLicence.name}</p>
+                    <p className="text-xs text-slate-500">{vConfig.primaryLicence.name}</p>
                   </div>
                 </div>
                 {pro.review_count > 0 && (
@@ -1497,7 +1497,7 @@ export default function AdvisorProfileClient({
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-700">{pro.review_count} verified {pro.review_count === 1 ? "review" : "reviews"}</p>
-                      <p className="text-xs text-slate-400">Average rating: {pro.rating.toFixed(1)} / 5</p>
+                      <p className="text-xs text-slate-500">Average rating: {pro.rating.toFixed(1)} / 5</p>
                     </div>
                   </div>
                 )}
@@ -1507,7 +1507,7 @@ export default function AdvisorProfileClient({
             {/* Contact details */}
             {(pro.website || pro.linkedin_url) && (
               <div className="bg-white border border-slate-200 rounded-2xl p-5">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-3">Contact Details</h3>
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-3">Contact Details</h3>
                 <div className="space-y-2">
                   {pro.website && (
                     <a
@@ -1538,7 +1538,7 @@ export default function AdvisorProfileClient({
             {/* Related Platforms */}
             {TYPE_TO_PLATFORMS[pro.type]?.length > 0 && (
               <div className="bg-white border border-slate-200 rounded-2xl p-5">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-3">Related Platforms</h3>
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-wider mb-3">Related Platforms</h3>
                 <div className="space-y-1">
                   {TYPE_TO_PLATFORMS[pro.type].map((p) => (
                     <Link key={p.href} href={p.href}
@@ -1609,7 +1609,7 @@ export default function AdvisorProfileClient({
               {pro.verified && (
                 <span className="ml-2 text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Verified</span>
               )}
-              {pro.firm_name && <span className="ml-2 text-xs text-slate-400">{pro.firm_name}</span>}
+              {pro.firm_name && <span className="ml-2 text-xs text-slate-500">{pro.firm_name}</span>}
             </div>
           </div>
           <div className="flex items-center gap-3">

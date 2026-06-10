@@ -74,7 +74,7 @@ export default function ListingCompanionServices() {
             <Icon
               name={s.icon}
               size={18}
-              className="text-slate-400 group-hover:text-amber-600 shrink-0 mt-0.5"
+              className="text-slate-500 group-hover:text-amber-600 shrink-0 mt-0.5"
             />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-slate-900">
@@ -92,7 +92,7 @@ export default function ListingCompanionServices() {
           </Link>
         ))}
       </div>
-      <p className="text-[11px] text-slate-400 mt-3">
+      <p className="text-[11px] text-slate-500 mt-3">
         These are optional — your listing still works on its own. Pick any of the above before, during, or after you submit it.
       </p>
     </section>
