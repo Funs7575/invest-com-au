@@ -131,14 +131,14 @@ export default function ListInvestmentPage() {
       </section>
 
       {/* Form section */}
-      <section className="py-14 bg-slate-50">
+      <section className="py-8 md:py-10 bg-slate-50">
         <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main form */}
             <div className="lg:col-span-2">
-              <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-sm">
                 <h2 className="text-xl font-extrabold text-slate-900 mb-1">Submit Your Listing</h2>
-                <p className="text-sm text-slate-500 mb-8">Complete the steps below. Our team will review and publish within 1–2 business days.</p>
+                <p className="text-sm text-slate-500 mb-6">Complete the steps below. Our team will review and publish within 1–2 business days.</p>
                 <ListingSubmitForm />
               </div>
             </div>
@@ -207,10 +207,10 @@ export default function ListInvestmentPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-14 bg-white border-t border-slate-100">
+      <section className="py-8 md:py-10 bg-white border-t border-slate-100">
         <div className="container-custom max-w-3xl">
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-8 text-center">Frequently Asked Questions</h2>
-          <div className="space-y-5">
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6 text-center">Frequently Asked Questions</h2>
+          <div className="space-y-2.5">
             {[
               {
                 q: "How long does it take for my listing to go live?",
@@ -247,7 +247,7 @@ export default function ListInvestmentPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-12 bg-amber-50 border-t border-amber-100">
+      <section className="py-8 bg-amber-50 border-t border-amber-100">
         <div className="container-custom text-center">
           <h2 className="text-xl font-extrabold text-slate-900 mb-2">Looking to Invest, Not Sell?</h2>
           <p className="text-slate-500 text-sm mb-6 max-w-md mx-auto">
