@@ -308,6 +308,12 @@ function primaryContext(a: UnifiedAnswers) {
     goal: a.goal,
     amount: a.amount,
     investorGoalIntl: a.investor_goal_intl,
+    // The user's explicit pick (quiz single-select / get-matched help_sub).
+    // Ladder rule 0: user agency beats the inference rules. On the
+    // multi-select needs path advisor_type is unset at first allocation;
+    // page.tsx then stores the allocated primary there, so later
+    // re-allocations re-pin the same value — idempotent, never drifting.
+    namedType: toNeed(a.advisor_type) ?? undefined,
   };
 }
 

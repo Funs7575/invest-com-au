@@ -13,10 +13,8 @@ vi.mock("@/lib/getmatched/top-match", () => ({ computeTopMatches: mockComputeTop
 import { topMatchesForRoute, computeTopAdvisors } from "@/lib/getmatched/advisor-top-match";
 import type { RouteType } from "@/lib/getmatched/types";
 
-// NOTE: a named financial_planner allocates a tax-agent primary today
-// (pickPrimary rule 6 — planner's tax complement claims the lead before the
-// first-stated need). Pinned engine behaviour; flagged for the P3 ladder
-// review. The scenario here names a tax agent so allocation == named type.
+// P3 ladder rule 0 (user agency): a named type now always claims the lead, so
+// the named tax agent here allocates exactly as stated.
 const ADVISOR_ROW = {
   id: 1, slug: "jane-tax", name: "Jane Tax", firm_name: "Acme",
   type: "tax_agent", photo_url: "p.jpg", rating: 4.8, review_count: 21,

@@ -100,6 +100,17 @@ const GOAL_INTL_MAP: Record<string, string> = {
   // `tax_legal` is handled as a tax-agent advisor signal, not a goal.
 };
 
+// Explicit visa answers we trust verbatim (P3 question). Anything else falls
+// back to the starting_point-derived value; "not_sure" stays broad.
+const KNOWN_VISA = new Set(["non_resident", "temp_visa", "new_pr", "au_expat"]);
+
+/** AU state code or undefined — "any"/"prefer_not" mean no location signal. */
+function stateOrUndefined(v: unknown): string | undefined {
+  const s = str(v);
+  if (!s || s === "any" || s === "prefer_not") return undefined;
+  return s;
+}
+
 function helpPreferenceToMode(p?: string): string | undefined {
   if (!p) return undefined;
   if (p === "info_only" || p === "compare") return "diy";
@@ -132,7 +143,15 @@ export function actionPlanToUnified(a: ActionPlanAnswers): UnifiedAnswers {
     advisor_type: helpSub ? ADVISOR_TYPE_MAP[helpSub] : undefined,
     mode: helpPreferenceToMode(str(a.help_preference)),
     investor_country: isIntl ? str(a.country_of_residence) : undefined,
-    visa_status: sp === "expat" ? "au_expat" : sp === "overseas" ? "non_resident" : undefined,
+    // Explicit visa answer (P3 question) wins; otherwise derive from the
+    // starting point. temp_visa is the DASP corridor — load-bearing.
+    visa_status: !isIntl
+      ? undefined
+      : KNOWN_VISA.has(str(a.visa_status) ?? "")
+        ? str(a.visa_status)
+        : sp === "expat"
+          ? "au_expat"
+          : "non_resident",
     investor_goal_intl: isIntl
       ? GOAL_INTL_MAP[foreign ?? ""] ?? (intent === "property" ? "property" : undefined)
       : undefined,
@@ -175,7 +194,7 @@ export function allocateAdvisorsFromActionPlan(
     goal: unified.goal,
     amount: unified.amount,
     budget: SCORER_BUDGET_MAP[str(a.budget_band) ?? ""],
-    userState: str(a.location_state),
+    userState: stateOrUndefined(a.location_state),
     isInternational: unified.location !== "australia",
     investorCountry: unified.investor_country,
     visaStatus: unified.visa_status,

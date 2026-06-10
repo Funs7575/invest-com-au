@@ -75,6 +75,8 @@ describe("allocateAdvisorsFromActionPlan — intent coverage via the shared engi
     { name: "ready to settle now → conveyancer (settlement clock)", answers: { intent: "property", property_sub: "physical", timeline: "now" }, expectType: "conveyancer" },
     { name: "SMSF", answers: { intent: "super", super_sub: "smsf_setup", property_sub: "smsf" }, expectType: "smsf-accountant" },
     { name: "named a tax agent", answers: { intent: "help", help_sub: "tax_agent", help_preference: "individual" }, expectType: "tax-agent" },
+    { name: "named a financial planner → planner (rule 0: user agency beats the tax complement)", answers: { intent: "help", help_sub: "financial_planner", help_preference: "individual" }, expectType: "financial-planner" },
+    { name: "named an estate planner → estate planner", answers: { intent: "help", help_sub: "estate_planner", help_preference: "individual" }, expectType: "estate-planner" },
     { name: "crypto → CGT", answers: { intent: "crypto" }, expectType: "tax-agent" },
     { name: "non-resident foreign property buyer → buyer's agent (FIRB act)", answers: { starting_point: "overseas", intent: "property", foreign_focus: "property" }, expectType: "buyers-agent" },
   ];
@@ -112,6 +114,20 @@ describe("allocateAdvisorsFromActionPlan — intent coverage via the shared engi
       amount: "whale",
       budget: "over_2m", // scorer vocab, not the raw band
     });
+  });
+
+  it("P3 signals: explicit visa beats derived; 'any' state means no location signal", () => {
+    // temp_visa is the DASP corridor — must survive verbatim.
+    const dasp = allocateAdvisorsFromActionPlan({
+      starting_point: "overseas", intent: "super", visa_status: "temp_visa", country_of_residence: "uk",
+    });
+    expect(dasp.scoringContext.visaStatus).toBe("temp_visa");
+    // not_sure falls back to the derived non_resident.
+    const unsure = allocateAdvisorsFromActionPlan({ starting_point: "overseas", visa_status: "not_sure" });
+    expect(unsure.scoringContext.visaStatus).toBe("non_resident");
+    // "any" / "prefer_not" state = location-neutral scoring, not a fake state.
+    expect(allocateAdvisorsFromActionPlan({ location_state: "any" }).scoringContext.userState).toBeUndefined();
+    expect(allocateAdvisorsFromActionPlan({ location_state: "QLD" }).scoringContext.userState).toBe("QLD");
   });
 
   it("empty answers degrade to a sane default (domestic generalist), never throws", () => {
