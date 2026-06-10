@@ -39,6 +39,8 @@ describe("resolveTrack", () => {
   it("'just learning' overrides the advisor track → education-first DIY", () => {
     expect(resolveTrack({ location: "australia", goal: "help", stage: "learning" })).toBe("diy");
     expect(resolveTrack({ location: "australia", goal: "home", stage: "learning" })).toBe("diy");
+    // ...even a physical-property buyer (otherwise the prime advisor lead).
+    expect(resolveTrack({ location: "australia", property_sub: "physical", stage: "learning" })).toBe("diy");
     // ...but international keeps its own specialised flow.
     expect(resolveTrack({ location: "international", stage: "learning" })).toBe("international");
   });
@@ -97,6 +99,27 @@ describe("getNextId", () => {
     const ready: UnifiedAnswers = { location: "australia", goal: "home", stage: "under-contract" };
     expect(getNextId("stage", ready)).toBe("complexity");
   });
+
+  it("physical-property DIY entry gets the readiness gate after property_sub", () => {
+    // goal=property + DIY mode reaches property_sub without ever seeing stage.
+    const a: UnifiedAnswers = { location: "australia", goal: "property", mode: "diy" };
+    expect(getNextId("priority", a)).toBe("property_sub");
+    const physical: UnifiedAnswers = { ...a, property_sub: "physical" };
+    expect(getNextId("property_sub", physical)).toBe("stage"); // readiness gate inserted
+    // From that late stage gate it's straight to results (no re-asking specifics).
+    expect(getNextId("stage", { ...physical, stage: "ready" })).toBeNull();
+    // ...and "just learning" still exits to education even for a physical buyer.
+    expect(getNextId("stage", { ...physical, stage: "learning" })).toBeNull();
+  });
+
+  it("does not re-ask readiness when an advisor entry already asked it", () => {
+    // mode=help asks stage up front → property_sub=physical must not re-ask it.
+    const viaHelp: UnifiedAnswers = { location: "australia", goal: "property", mode: "help", stage: "ready" };
+    expect(getNextId("advisor_type", viaHelp)).toBe("property_sub");
+    expect(getNextId("property_sub", { ...viaHelp, property_sub: "physical" })).toBeNull();
+    // REIT/super sub-paths still route to the wealth-stack questions, not stage.
+    expect(getNextId("property_sub", { location: "australia", goal: "property", mode: "diy", property_sub: "property-reit" })).toBe("stack_risk");
+  });
 });
 
 describe("shouldShowStackQuestions", () => {
@@ -121,6 +144,14 @@ describe("getTotalSteps", () => {
     expect(getTotalSteps({ location: "australia", goal: "grow", mode: "help" })).toBe(7);
     expect(getTotalSteps({ location: "australia", goal: "help", stage: "learning" })).toBe(3);
     expect(getTotalSteps({ location: "australia", goal: "grow", mode: "help", stage: "learning" })).toBe(4);
+  });
+  it("physical-property DIY: no wealth-stack questions, +1 for the readiness gate", () => {
+    // Before property_sub is known, the property DIY path estimates the stacks (10).
+    expect(getTotalSteps({ location: "australia", goal: "property", mode: "diy" })).toBe(10);
+    // Once physical is chosen: location+goal+mode+experience+amount+priority+property_sub+stage = 8.
+    expect(getTotalSteps({ location: "australia", goal: "property", mode: "diy", property_sub: "physical" })).toBe(8);
+    // A REIT sub-path keeps the stacks (no readiness gate).
+    expect(getTotalSteps({ location: "australia", goal: "property", mode: "diy", property_sub: "property-reit" })).toBe(10);
   });
 });
 

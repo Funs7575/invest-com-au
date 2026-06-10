@@ -112,7 +112,12 @@ export function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null 
     case "stage":
       // "Just learning" exits early to the education/self-serve results
       // (resolveTrack routes it to DIY); everyone else continues.
-      return a.stage === "learning" ? null : "complexity";
+      if (a.stage === "learning") return null;
+      // The physical-property readiness gate is asked last (after property_sub),
+      // so from there it goes straight to results rather than re-asking the
+      // advisor-track specifics the DIY entry already covered.
+      if (a.property_sub === "physical") return null;
+      return "complexity";
     case "experience":
     case "complexity":
       return "amount";
@@ -126,8 +131,14 @@ export function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null 
     case "advisor_type":
       return a.goal === "property" ? "property_sub" : null;
     case "property_sub":
-      // After property sub, offer stack questions for REITs/super paths
-      if (a.property_sub !== "physical" && shouldShowStackQuestions(a)) return "stack_risk";
+      // A physical purchase is the prime advisor lead, but a goal=property →
+      // DIY-mode user reaches it without ever seeing the readiness question
+      // (stage is asked up front only on advisor entries). Gate it here so we
+      // still learn urgency (under-contract → conveyancer tiering) and can offer
+      // the "just learning" education exit. Advisor entries already set `stage`.
+      if (a.property_sub === "physical") return a.stage ? null : "stage";
+      // Otherwise (REIT/super paths) offer the wealth-stack questions.
+      if (shouldShowStackQuestions(a)) return "stack_risk";
       return null;
     case "stack_risk":
       return "stack_super";
@@ -155,9 +166,13 @@ export function getTotalSteps(a: UnifiedAnswers): number {
   }
   const stageExtra = advisorEntry ? 1 : 0;
   const hasPropertySub = a.goal === "property";
-  const hasStackQuestions = shouldShowStackQuestions(a) && a.mode !== "help";
+  const physical = a.property_sub === "physical";
+  // Physical property shows no wealth-stack questions; a DIY-entry physical
+  // buyer instead gets the readiness/stage gate appended after property_sub.
+  const hasStackQuestions = shouldShowStackQuestions(a) && a.mode !== "help" && !physical;
   const stackExtra = hasStackQuestions ? 3 : 0; // stack_risk + stack_super + stack_savings
-  return 1 + (skipMode ? 4 : 5) + stageExtra + (hasPropertySub ? 1 : 0) + stackExtra; // +1 for location
+  const physicalStageExtra = physical && !advisorEntry ? 1 : 0;
+  return 1 + (skipMode ? 4 : 5) + stageExtra + (hasPropertySub ? 1 : 0) + stackExtra + physicalStageExtra; // +1 for location
 }
 
 export function inferAdvisorType(a: UnifiedAnswers): string {
