@@ -20,6 +20,7 @@ import {
   toScoringAnswers,
 } from "@/lib/quiz-flow";
 import { UNIFIED_QUESTIONS } from "@/lib/quiz-questions";
+import { getMatchReasons } from "@/lib/quiz-platform-match-reasons";
 
 import QuizQuestionScreen from "./_components/QuizQuestionScreen";
 import QuizAnalyzingScreen from "./_components/QuizAnalyzingScreen";
@@ -614,55 +615,7 @@ export default function QuizPage() {
     setShowScoring(false);
   };
 
-  // Generate match reasons for platform results
-  const getMatchReasons = (userAnswers: string[], broker: Broker): string[] => {
-    const reasons: string[] = [];
-    const pt = broker.platform_type;
-    if (pt === 'robo_advisor') {
-      reasons.push('Automated portfolio management — hands-off investing');
-      if (userAnswers.includes('beginner') || userAnswers.includes('simple') || userAnswers.includes('automate'))
-        reasons.push('Perfect for investors who want a set-and-forget approach');
-    } else if (pt === 'research_tool') {
-      reasons.push('Powerful analysis tools to research before you invest');
-      if (userAnswers.includes('tools') || userAnswers.includes('pro'))
-        reasons.push('Advanced charting, screening, and data analytics');
-    } else if (pt === 'super_fund') {
-      reasons.push('Superannuation fund — grow your retirement savings');
-      if (userAnswers.includes('super') || userAnswers.includes('grow'))
-        reasons.push('Strong long-term performance track record');
-    } else if (pt === 'property_platform') {
-      reasons.push('Property investing without buying a whole house');
-      if (userAnswers.some(a => a.startsWith('property')))
-        reasons.push('Fractional property ownership with rental income');
-    } else if (pt === 'cfd_forex') {
-      reasons.push('Access to leveraged trading across multiple markets');
-      if (userAnswers.includes('pro'))
-        reasons.push('Advanced tools for experienced active traders');
-    } else if (pt === 'crypto_exchange' || broker.is_crypto) {
-      reasons.push('Regulated Australian crypto exchange');
-      if (userAnswers.includes('crypto'))
-        reasons.push('Wide range of cryptocurrencies available');
-    } else {
-      if (userAnswers.includes('fees') || userAnswers.includes('income'))
-        reasons.push(`Low brokerage fees (${broker.asx_fee || 'competitive rates'})`);
-      if (userAnswers.includes('safety') && broker.chess_sponsored)
-        reasons.push('CHESS sponsorship — your shares are held in your name');
-      if (userAnswers.includes('tools') || userAnswers.includes('pro'))
-        reasons.push('Advanced charting and research tools');
-      if (broker.smsf_support && (userAnswers.includes('super') || userAnswers.includes('grow')))
-        reasons.push('Supports SMSF accounts for tax-effective investing');
-    }
-    if (userAnswers.includes('beginner') || userAnswers.includes('simple') || userAnswers.includes('automate'))
-      if (!reasons.some(r => r.includes('beginner') || r.includes('hands-off') || r.includes('set-and-forget')))
-        reasons.push('Simple, beginner-friendly platform and interface');
-    if (userAnswers.includes('large') || userAnswers.includes('whale'))
-      if (pt === 'share_broker' || !pt)
-        reasons.push('Competitive international fees for larger portfolios');
-    if (broker.rating && broker.rating >= 4.5)
-      reasons.push(`Highly rated (${broker.rating}/5) by our editorial team`);
-    if (!reasons.length) reasons.push('Strong overall score across your selected criteria');
-    return reasons.slice(0, 4);
-  };
+  // getMatchReasons is imported from lib/quiz-platform-match-reasons.ts — used directly below.
 
   /* ─── Render ─── */
 

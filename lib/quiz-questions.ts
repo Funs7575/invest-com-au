@@ -116,18 +116,18 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
   complexity: {
     text: "How complex is your situation?",
     options: [
-      { key: "simple", label: "Simple", sub: "Just getting started, straightforward situation" },
-      { key: "moderate", label: "Moderate", sub: "Some assets, want to make good decisions" },
-      { key: "complex", label: "Complex", sub: "Tax, SMSF, property, business, or multiple goals" },
+      { key: "simple",   label: "Simple",   sub: "Single goal, few or no existing assets — standard investor situation" },
+      { key: "moderate", label: "Moderate", sub: "Some investments already in place, a few things to juggle" },
+      { key: "complex",  label: "Complex",  sub: "Multiple goals, SMSF, investment property, business, or cross-border situation" },
     ],
   },
   amount: {
     text: "How much are you looking to invest?",
     options: [
-      { key: "small", label: "Under $10,000", sub: "Starting small" },
-      { key: "medium", label: "$10,000 – $100,000", sub: "Building a portfolio" },
-      { key: "large", label: "$100,000 – $500,000", sub: "Significant savings" },
-      { key: "whale", label: "$500,000+", sub: "Major wealth decisions" },
+      { key: "small", label: "Under $10,000",        sub: "Starting out — low minimums and zero-fee platforms matter most" },
+      { key: "medium", label: "$10,000 – $100,000",  sub: "Building a solid portfolio — most platforms are well suited" },
+      { key: "large", label: "$100,000 – $500,000",  sub: "Significant savings — fee structure and tax efficiency become critical" },
+      { key: "whale", label: "$500,000+",             sub: "Major wealth decisions — a financial planner is often worth it here" },
     ],
   },
   priority: {
@@ -159,9 +159,10 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
   property_sub: {
     text: "How do you want to invest in property?",
     options: [
-      { key: "physical", label: "Buy physical property", sub: "Direct ownership — house, apartment, or investment property" },
-      { key: "property-reit", label: "Invest in REITs / fractional property", sub: "Property funds, BrickX, or listed property trusts" },
-      { key: "property-super", label: "Use super for property (SMSF)", sub: "Self-managed super fund property strategy" },
+      { key: "physical",       label: "Buy residential property",             sub: "Direct ownership — house, apartment, or investment property", emoji: "🏠" },
+      { key: "commercial",     label: "Commercial property",                  sub: "Office, retail, warehouse, or industrial — typically higher yields", emoji: "🏢" },
+      { key: "property-reit",  label: "REITs / fractional property",          sub: "Property funds, BrickX, or listed property trusts",            emoji: "📊" },
+      { key: "property-super", label: "Property through super (SMSF)",        sub: "Self-managed super fund property strategy",                    emoji: "🏦" },
     ],
   },
   // ─── Wealth-stack supplementary questions (DIY track only) ───────────

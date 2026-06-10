@@ -100,6 +100,7 @@ export const QuizNeedsSchema = z.string().max(200).optional().catch(undefined);
 
 export const QuizPropertySubSchema = safeEnum([
   "physical",
+  "commercial",
   "property-reit",
   "property-super",
 ]);

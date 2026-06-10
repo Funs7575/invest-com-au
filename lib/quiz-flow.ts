@@ -65,7 +65,7 @@ export function resolveTrack(a: UnifiedAnswers): QuizTrack {
   if (a.stage === "learning") return "diy";
   if (a.goal === "help" || a.goal === "home") return "advisor";
   if (a.mode === "help") return "advisor";
-  if (a.property_sub === "physical") return "advisor";
+  if (a.property_sub === "physical" || a.property_sub === "commercial") return "advisor";
   return "diy";
 }
 
@@ -113,10 +113,9 @@ export function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null 
       // "Just learning" exits early to the education/self-serve results
       // (resolveTrack routes it to DIY); everyone else continues.
       if (a.stage === "learning") return null;
-      // The physical-property readiness gate is asked last (after property_sub),
-      // so from there it goes straight to results rather than re-asking the
-      // advisor-track specifics the DIY entry already covered.
-      if (a.property_sub === "physical") return null;
+      // The physical/commercial-property readiness gate is asked last (after
+      // property_sub), so from there it goes straight to results.
+      if (a.property_sub === "physical" || a.property_sub === "commercial") return null;
       return "complexity";
     case "experience":
     case "complexity":
@@ -131,12 +130,12 @@ export function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null 
     case "advisor_type":
       return a.goal === "property" ? "property_sub" : null;
     case "property_sub":
-      // A physical purchase is the prime advisor lead, but a goal=property →
-      // DIY-mode user reaches it without ever seeing the readiness question
-      // (stage is asked up front only on advisor entries). Gate it here so we
-      // still learn urgency (under-contract → conveyancer tiering) and can offer
-      // the "just learning" education exit. Advisor entries already set `stage`.
-      if (a.property_sub === "physical") return a.stage ? null : "stage";
+      // Physical or commercial purchase → prime advisor lead. A goal=property →
+      // DIY-mode user reaches here without seeing the readiness question, so
+      // gate it to learn urgency and offer the "just learning" exit.
+      // Advisor entries already set `stage`, so skip it.
+      if (a.property_sub === "physical" || a.property_sub === "commercial")
+        return a.stage ? null : "stage";
       // Otherwise (REIT/super paths) offer the wealth-stack questions.
       if (shouldShowStackQuestions(a)) return "stack_risk";
       return null;
@@ -166,12 +165,12 @@ export function getTotalSteps(a: UnifiedAnswers): number {
   }
   const stageExtra = advisorEntry ? 1 : 0;
   const hasPropertySub = a.goal === "property";
-  const physical = a.property_sub === "physical";
-  // Physical property shows no wealth-stack questions; a DIY-entry physical
-  // buyer instead gets the readiness/stage gate appended after property_sub.
-  const hasStackQuestions = shouldShowStackQuestions(a) && a.mode !== "help" && !physical;
+  const physicalOrCommercial = a.property_sub === "physical" || a.property_sub === "commercial";
+  // Physical/commercial property shows no wealth-stack questions; a DIY-entry
+  // physical/commercial buyer gets the readiness/stage gate after property_sub.
+  const hasStackQuestions = shouldShowStackQuestions(a) && a.mode !== "help" && !physicalOrCommercial;
   const stackExtra = hasStackQuestions ? 3 : 0; // stack_risk + stack_super + stack_savings
-  const physicalStageExtra = physical && !advisorEntry ? 1 : 0;
+  const physicalStageExtra = physicalOrCommercial && !advisorEntry ? 1 : 0;
   return 1 + (skipMode ? 4 : 5) + stageExtra + (hasPropertySub ? 1 : 0) + stackExtra + physicalStageExtra; // +1 for location
 }
 
@@ -185,6 +184,7 @@ export function inferAdvisorType(a: UnifiedAnswers): string {
     return "tax-agent";
   }
   // Domestic track
+  if (a.property_sub === "commercial") return "commercial-property-agent";
   if (a.property_sub === "physical") return "buyers-agent";
   if (a.goal === "home") return "mortgage-broker";
   if (a.goal === "property") return "buyers-agent";
@@ -257,6 +257,7 @@ export function deriveNeeds(a: UnifiedAnswers): AdvisorNeed[] {
 
   const investmentProperty =
     a.property_sub === "physical" ||
+    a.property_sub === "commercial" ||
     a.investor_goal_intl === "property" ||
     (a.goal === "property" &&
       a.property_sub !== "property-reit" &&

@@ -424,6 +424,50 @@ export default function QuizResultsScreen({
           <QuizRunnerUps runnerUps={runnerUps} answers={answers} getMatchReasons={getMatchReasons} />
         )}
 
+        {/* "I'm not sure" advisor bridge — shown only when the user chose
+            mode=unsure ("Show me both"). The sub-label on that option promises
+            to show both options; this fulfils that promise. Rendered after
+            the DIY results so the user sees the platform value first. */}
+        {unifiedAnswers.mode === "unsure" && (
+          <div className="mb-4 md:mb-6 result-card-in result-card-in-delay-3">
+            <div className="bg-gradient-to-br from-indigo-50 to-slate-50 border border-indigo-200/60 rounded-xl p-4 md:p-5">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                  <Icon name="users" size={20} className="text-indigo-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[0.58rem] md:text-[0.62rem] font-bold uppercase tracking-wider text-indigo-600 mb-0.5">
+                    You asked to see both options
+                  </p>
+                  <h3 className="text-sm md:text-base font-bold text-slate-900 mb-1">
+                    Prefer to talk to a professional instead?
+                  </h3>
+                  <p className="text-xs md:text-sm text-slate-500 mb-3 leading-relaxed">
+                    A financial advisor or mortgage broker can review your full situation and give you a
+                    tailored recommendation — often worth more than the fee.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Link
+                      href="/find-advisor"
+                      className="px-3 py-1.5 md:px-4 md:py-2 bg-indigo-600 text-white text-[0.65rem] md:text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors"
+                      onClick={() => trackEvent("quiz_unsure_advisor_click", { context: "mode_unsure_bridge" })}
+                    >
+                      Find a verified advisor →
+                    </Link>
+                    <Link
+                      href="/quiz"
+                      className="px-3 py-1.5 md:px-4 md:py-2 border border-indigo-200 text-indigo-700 text-[0.65rem] md:text-xs font-semibold rounded-lg hover:bg-indigo-50 transition-colors"
+                      onClick={() => trackEvent("quiz_unsure_retake", { context: "mode_unsure_bridge" })}
+                    >
+                      Retake as &ldquo;Get expert help&rdquo;
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Inline email capture — warm-capture sweet spot. The user has
             seen the primary action hero AND the broker results above, so
             they know the value before being asked. Dismissable; success
