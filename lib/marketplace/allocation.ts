@@ -1,12 +1,6 @@
-// eslint-disable-next-line no-restricted-imports -- service-role legitimate per CLAUDE.md: allocation resolves placements on anonymous public-page renders (no JWT) and does cross-broker queries (campaigns/wallets/stats across all brokers) that can't be scoped to auth.uid()
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Campaign, MarketplacePlacement } from "@/lib/types";
 import { debitWallet } from "./wallet";
-import {
-  computeQualityScores,
-  effectiveRateCents,
-  type CampaignQualityInputs,
-} from "./quality-score";
 import { logger } from "@/lib/logger";
 
 const log = logger("allocation");
@@ -40,28 +34,19 @@ interface CandidateEntry {
   broker_slug: string;
   campaign_id: number;
   rate_cents: number;
-  quality_multiplier?: number;
-  effective_rate_cents?: number;
 }
 
 /**
  * Resolve the winning campaign(s) for a given placement.
  *
- * Algorithm (the hybrid auction: editorial filter → bid → quality):
- * 1. Find active campaigns for this placement (already admin-reviewed —
- *    the editorial filter happens at campaign approval)
- * 2. Filter out budget-exhausted, expired, below-reserve, daily-capped,
- *    suspended-broker, and wallet-empty campaigns
- * 3. Rank by quality-weighted effective rate (rate_cents × quality
- *    multiplier) DESC → priority DESC → created_at ASC. Quality is the
- *    campaign's 30-day CTR/CR relative to the competing cohort
- *    (lib/marketplace/quality-score.ts); cold-start campaigns are neutral.
- *    Billing always uses the stated rate_cents — quality affects rank only.
+ * Algorithm:
+ * 1. Find active campaigns for this placement
+ * 2. Filter out budget-exhausted, expired, daily-capped, and wallet-empty campaigns
+ * 3. Rank by rate_cents DESC → priority DESC → created_at ASC
  * 4. Return top N (max_slots)
  * 5. Fallback: if no campaigns, returns empty array (callers fall back to sponsorship_tier)
  *
- * EVERY call is logged to allocation_decisions for auditability, including
- * each candidate's quality multiplier and effective rate.
+ * EVERY call is logged to allocation_decisions for auditability.
  */
 export async function getWinningCampaigns(
   placementSlug: string,
@@ -146,11 +131,7 @@ export async function getWinningCampaigns(
     });
   }
 
-  // 3. Filter out budget-exhausted, expired, and below-reserve campaigns.
-  // The reserve (placement.base_rate_cents) is enforced client-side at
-  // campaign creation, but rates and reserves can drift after approval —
-  // this is the server-side safety net.
-  const reserveCents = (placement as MarketplacePlacement).base_rate_cents || 0;
+  // 3. Filter out budget-exhausted and expired campaigns
   const eligible: Campaign[] = [];
   for (const c of campaigns as Campaign[]) {
     if (c.total_budget_cents && c.total_spent_cents >= c.total_budget_cents) {
@@ -159,10 +140,6 @@ export async function getWinningCampaigns(
     }
     if (c.end_date && c.end_date < today) {
       rejections.push({ broker_slug: c.broker_slug, campaign_id: c.id, reason: "end_date_passed" });
-      continue;
-    }
-    if (reserveCents > 0 && c.rate_cents < reserveCents) {
-      rejections.push({ broker_slug: c.broker_slug, campaign_id: c.id, reason: "below_reserve" });
       continue;
     }
     eligible.push(c);
@@ -239,34 +216,19 @@ export async function getWinningCampaigns(
     return [];
   }
 
-  // 5. Check wallet balance > 0 AND broker account standing, in parallel.
-  // The status gate rejects only on a positive "not active" signal —
-  // a broker without a portal account row (legacy/admin-created campaigns)
-  // is not penalised. Suspended and pending brokers must not serve.
+  // 5. Check wallet balance > 0
   const brokerSlugsToCheck = [...new Set(withBudget.map((c) => c.broker_slug))];
-  const [{ data: wallets }, { data: inactiveAccounts }] = await Promise.all([
-    supabase
-      .from("broker_wallets")
-      .select("broker_slug, balance_cents")
-      .in("broker_slug", brokerSlugsToCheck)
-      .gt("balance_cents", 0),
-    supabase
-      .from("broker_accounts")
-      .select("broker_slug, status")
-      .in("broker_slug", brokerSlugsToCheck)
-      .neq("status", "active"),
-  ]);
+  const { data: wallets } = await supabase
+    .from("broker_wallets")
+    .select("broker_slug, balance_cents")
+    .in("broker_slug", brokerSlugsToCheck)
+    .gt("balance_cents", 0);
 
   const fundedSlugs = new Set((wallets || []).map((w: { broker_slug: string }) => w.broker_slug));
-  const inactiveSlugs = new Set(
-    (inactiveAccounts || []).map((a: { broker_slug: string }) => a.broker_slug)
-  );
   const funded: Campaign[] = [];
 
   for (const c of withBudget) {
-    if (inactiveSlugs.has(c.broker_slug)) {
-      rejections.push({ broker_slug: c.broker_slug, campaign_id: c.id, reason: "broker_not_active" });
-    } else if (!fundedSlugs.has(c.broker_slug)) {
+    if (!fundedSlugs.has(c.broker_slug)) {
       rejections.push({ broker_slug: c.broker_slug, campaign_id: c.id, reason: "zero_wallet_balance" });
     } else {
       funded.push(c);
@@ -290,81 +252,20 @@ export async function getWinningCampaigns(
     return [];
   }
 
-  // 6. Quality-weighted re-rank: 30-day CTR/CR relative to this cohort.
-  // Stats come from campaign_daily_stats (maintained by the marketplace-stats
-  // cron). Campaigns without enough history score a neutral 1.0, so a fresh
-  // campaign competes on its stated rate alone. Billing is untouched —
-  // recordCpcClick always charges the DB rate_cents, never the effective rate.
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
-  const { data: statRows } = await supabase
-    .from("campaign_daily_stats")
-    .select("campaign_id, impressions, clicks, conversions")
-    .in("campaign_id", funded.map((c) => c.id))
-    .gte("stat_date", thirtyDaysAgo);
-
-  const aggregates = new Map<number, CampaignQualityInputs>();
-  for (const c of funded) {
-    aggregates.set(c.id, {
-      campaign_id: c.id,
-      impressions_30d: 0,
-      clicks_30d: 0,
-      conversions_30d: 0,
-    });
-  }
-  for (const s of (statRows || []) as {
-    campaign_id: number;
-    impressions: number | null;
-    clicks: number | null;
-    conversions: number | null;
-  }[]) {
-    const agg = aggregates.get(s.campaign_id);
-    if (!agg) continue;
-    agg.impressions_30d += s.impressions || 0;
-    agg.clicks_30d += s.clicks || 0;
-    agg.conversions_30d += s.conversions || 0;
-  }
-
-  const qualityScores = computeQualityScores([...aggregates.values()]);
-
-  const ranked = funded
-    .map((c) => {
-      const multiplier = qualityScores.get(c.id)?.multiplier ?? 1.0;
-      return { campaign: c, multiplier, effective: effectiveRateCents(c.rate_cents, multiplier) };
-    })
-    .sort(
-      (a, b) =>
-        b.effective - a.effective ||
-        b.campaign.priority - a.campaign.priority ||
-        a.campaign.created_at.localeCompare(b.campaign.created_at)
-    );
-
-  // Annotate candidates log with quality data for auditability
-  for (const r of ranked) {
-    const entry = allCandidates.find((c) => c.campaign_id === r.campaign.id);
-    if (entry) {
-      entry.quality_multiplier = r.multiplier;
-      entry.effective_rate_cents = r.effective;
-    }
-  }
-
-  // 7. Return top N winners
+  // 6. Return top N winners
   const maxSlots = (placement as MarketplacePlacement).max_slots || 1;
-  const winnersRanked = ranked.slice(0, maxSlots);
+  const winners = funded.slice(0, maxSlots);
 
   // Log losers (campaigns that passed all filters but didn't get a slot)
-  for (const loser of ranked.slice(maxSlots)) {
-    rejections.push({
-      broker_slug: loser.campaign.broker_slug,
-      campaign_id: loser.campaign.id,
-      reason: "outbid_no_slot",
-    });
+  for (let i = maxSlots; i < funded.length; i++) {
+    rejections.push({ broker_slug: funded[i].broker_slug, campaign_id: funded[i].id, reason: "outbid_no_slot" });
   }
 
-  const winnerResult = winnersRanked.map((r) => ({
-    campaign_id: r.campaign.id,
-    broker_slug: r.campaign.broker_slug,
-    inventory_type: r.campaign.inventory_type as "featured" | "cpc",
-    rate_cents: r.campaign.rate_cents,
+  const winnerResult = winners.map((c) => ({
+    campaign_id: c.id,
+    broker_slug: c.broker_slug,
+    inventory_type: c.inventory_type as "featured" | "cpc",
+    rate_cents: c.rate_cents,
     placement_slug: placementSlug,
   }));
 
@@ -375,13 +276,11 @@ export async function getWinningCampaigns(
     scenario: context?.scenario,
     device_type: context?.device_type,
     candidates: allCandidates,
-    winners: winnersRanked.map((r) => ({
-      broker_slug: r.campaign.broker_slug,
-      campaign_id: r.campaign.id,
-      rate_cents: r.campaign.rate_cents,
-      inventory_type: r.campaign.inventory_type,
-      quality_multiplier: r.multiplier,
-      effective_rate_cents: r.effective,
+    winners: winnerResult.map((w) => ({
+      broker_slug: w.broker_slug,
+      campaign_id: w.campaign_id,
+      rate_cents: w.rate_cents,
+      inventory_type: w.inventory_type,
     })),
     rejection_log: rejections,
     winner_count: winnerResult.length,
@@ -617,14 +516,7 @@ interface DecisionLogData {
   scenario?: string;
   device_type?: string;
   candidates: CandidateEntry[];
-  winners: {
-    broker_slug: string;
-    campaign_id: number;
-    rate_cents: number;
-    inventory_type?: string;
-    quality_multiplier?: number;
-    effective_rate_cents?: number;
-  }[];
+  winners: { broker_slug: string; campaign_id: number; rate_cents: number; inventory_type?: string }[];
   rejection_log: RejectionEntry[];
   winner_count: number;
   candidate_count: number;

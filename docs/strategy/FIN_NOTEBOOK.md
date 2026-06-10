@@ -14,35 +14,6 @@
 
 ## Active strategic decisions log
 
-### 2026-06-10 — Hybrid auction (#5 ship-now): quality multiplier SHIPPED; engineering now complete, blocker is legal only
-
-The 2026-04-30 decision approved the hybrid auction as "editorial filter +
-bid + quality multiplier". Audit found the first two were live but the
-multiplier had never been built — `getWinningCampaigns` ranked purely on
-`rate_cents`, so a low-quality campaign could buy the top slot indefinitely
-(the exact adverse-selection risk the hybrid model exists to prevent).
-
-**Shipped (branch `claude/exciting-dijkstra-4htd5f`, PR #1498):**
-- `lib/marketplace/quality-score.ts` — cohort-relative 30d CTR/CR scorer,
-  0.6/0.4 blend, clamped [0.5, 1.5], neutral 1.0 cold-start (new brokers
-  never penalised). Quality affects **rank only, never billing** —
-  `recordCpcClick` still charges the stated DB rate.
-- Allocation now also enforces the placement reserve server-side
-  (`below_reserve`; was client-side-only at creation) and gates suspended/
-  pending `broker_accounts` out of serving (`broker_not_active`; fails open
-  for legacy campaigns with no portal account row). Every decision logs
-  `quality_multiplier` + `effective_rate_cents` to `allocation_decisions`.
-
-**Corrections to the audit that scoped this** (logged so future sessions
-don't re-plan from bad data): broker self-serve onboarding ALREADY existed
-(`/broker-portal/register` + admin approval queue), as did analytics CSV
-export; and `/invest/alternatives` is live (~80%), not "0% greenfield".
-Full corrections in `docs/audits/TOP10_CODEBASE_BENCHMARK.md`.
-
-**Remaining for revenue to land:** RG 246 conflicted-remuneration legal
-sign-off (founder + lawyer, non-code) and pilot-broker BD. **Revisit:**
-2026-07-10 — has legal reviewed the tier/quality-multiplier framing?
-
 ### 2026-06-10 — Decision Engine vision locked: multi-lane outcome router on /get-matched
 
 Founder vision set the bar: not a quiz or directory — a decision engine that
