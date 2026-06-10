@@ -3,7 +3,11 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, UPDATED_LABEL } from "@/lib/seo";
-import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
+import {
+  BROKER_NON_RESIDENT_NOTE,
+  FOREIGN_INVESTOR_GENERAL_DISCLAIMER,
+  NON_RESIDENT_TAX_NOTE,
+} from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 import SectionHeading from "@/components/SectionHeading";
 import ComplianceFooter from "@/components/ComplianceFooter";
@@ -499,7 +503,9 @@ export default async function NonResidentBrokersPage() {
           </div>
         </section>
 
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+          <p className="text-xs text-slate-500 leading-relaxed">{BROKER_NON_RESIDENT_NOTE}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{NON_RESIDENT_TAX_NOTE}</p>
           <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER}</p>
         </div>
 
