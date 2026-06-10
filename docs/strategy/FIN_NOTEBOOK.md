@@ -14,6 +14,26 @@
 
 ## Active strategic decisions log
 
+### 2026-06-10 — OTP wall relocated on /find-advisor (decision: keep the funnel, don't 301)
+
+Founder delegated the §5.6/§6 either-or. Evidence decided it: /get-matched
+writes NO leads (action-plan router — no contact capture, no advisor
+auto-match, no professional_leads insert), while /find-advisor is the only
+direct advisor-lead funnel (submit-lead dry-run preview + confirm →
+leads + professional_leads, round-robin, country gate, dedup). A 301 would
+have pointed lead intent at a funnel that cannot take a lead.
+
+Shipped instead: the audit's "single biggest expected lift" — the flow now
+shows the dry-run match preview BEFORE the contact+OTP wall (steps: quiz →
+preview → "Connect with {name}" → contact + email verification at the
+side-effecting confirm → lead). /api/submit-lead allows a contact-less
+dry_run only (side-effecting paths stay email-gated; email-keyed dedup
+re-runs at confirm). Preview copy rewritten to promise-not-claim (it used
+to say "has been notified" pre-lead).
+
+**Revisit:** 301 /find-advisor → /get-matched only after get-matched gains
+advisor lead capture (Phase-5 prerequisite, see QUIZ_REDESIGN §6 port-list).
+
 ### 2026-06-10 — Merged #1477 (matching brain + portal wizard); canonical-surface integration finding
 
 Squash-merged PR #1477 to main (f167d58, founder-instructed): server-side

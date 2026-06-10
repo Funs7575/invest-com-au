@@ -486,7 +486,9 @@ function FindAdvisorQuiz() {
   const [quiz, setQuiz] = useState<QuizState>(() => {
     if (savedMatch) {
       return {
-        step: 5,
+        // Confirmed → the post-lead screen; otherwise back to the preview
+        // (contact+OTP now comes AFTER the preview — §5.6).
+        step: savedMatch.confirmedAdvisorId ? 6 : 4,
         intent: (savedMatch.quizData.intent as Intent) ?? (initialIntent ?? null),
         context: savedMatch.quizData.context ?? [],
         state: savedMatch.quizData.state ?? "",
@@ -551,6 +553,9 @@ function FindAdvisorQuiz() {
   const [confirming, setConfirming] = useState(false);
   const [confirmedAdvisorId, setConfirmedAdvisorId] = useState<number | null>(() => savedMatch?.confirmedAdvisorId ?? null);
   const [noMoreMatches, setNoMoreMatches] = useState(false);
+  // The previewed advisor the user clicked "Connect" on — the contact+OTP step
+  // confirms THIS advisor (one lead, one advisor) once the email verifies.
+  const [pendingAdvisor, setPendingAdvisor] = useState<MatchedAdvisor | null>(null);
   const [rematching, setRematching] = useState(false);
   const [otpStage, setOtpStage] = useState<"idle" | "sending" | "sent" | "verifying">("idle");
   const [otpCode, setOtpCode] = useState("");
@@ -637,6 +642,7 @@ function FindAdvisorQuiz() {
     setQuiz({ step: 1, intent: null, context: [], state: "", postcode: "", suburb: "", budget: "", firstName: "", email: "", phone: "", consent: false });
     setErrors({}); setSubmitError(null); setSubmitted(false);
     setMatchedAdvisors([]); setExcludeIds([]); setNoMoreMatches(false);
+    setPendingAdvisor(null);
     setShowResumePrompt(false);
     clearMatchStorage();
     clearQuizProgress(); // ADV-008
@@ -677,10 +683,60 @@ function FindAdvisorQuiz() {
     trackEvent("find_advisor_step2", { context: quiz.context }, "/find-advisor");
   };
 
-  const handleStep3Next = () => {
+  // §5.6: show the match preview BEFORE asking for contact details. The
+  // dry-run match needs no PII (the API allows a contact-less dry run), so
+  // the user sees who they'd be connected with before any wall.
+  const handleStep3Next = async () => {
     if (!quiz.state) { setErrors({ state: "Please enter a postcode or select your state or territory" }); return; }
     setErrors({});
-    update({ step: 4 });
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const data = await findMatch([]);
+      if (data.matched) {
+        const advisor = data.matched as MatchedAdvisor;
+        setMatchedAdvisors([advisor]);
+        setExcludeIds([advisor.id]);
+        setLeadIds([]);
+        setConfirmedAdvisorId(null);
+        saveMatchToStorage({
+          matchedAdvisors: [advisor],
+          excludeIds: [advisor.id],
+          leadIds: [],
+          confirmedAdvisorId: null,
+          quizData: {
+            intent: quiz.intent || "",
+            context: quiz.context,
+            state: quiz.state,
+            postcode: quiz.postcode,
+            suburb: quiz.suburb,
+            budget: quiz.budget,
+            firstName: quiz.firstName,
+            email: quiz.email,
+          },
+          timestamp: Date.now(),
+        });
+      } else {
+        // No match — the preview screen renders its honest empty state.
+        setMatchedAdvisors([]);
+        setNoMoreMatches(true);
+      }
+      update({ step: 4 });
+      trackEvent("find_advisor_match_previewed", { intent: quiz.intent, matched: !!data.matched }, "/find-advisor");
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  /** Preview → "Connect with {advisor}": remember the pick, then collect
+   *  verified contact details at the side-effecting confirm (step 5). */
+  const handleConnectClick = (advisor: MatchedAdvisor) => {
+    setPendingAdvisor(advisor);
+    setSubmitError(null);
+    update({ step: 5 });
+    trackEvent("find_advisor_connect_clicked", { intent: quiz.intent, advisor: advisor.slug }, "/find-advisor");
   };
 
   /** Find a matching advisor WITHOUT creating a lead or sending any emails (dry run). */
@@ -782,40 +838,46 @@ function FindAdvisorQuiz() {
       setOtpStage("sent");
       return;
     }
-    // OTP verified — find a match preview (no lead created, no email sent yet)
+    // OTP verified at the side-effecting moment (§5.6): the user has already
+    // seen and chosen their advisor on the preview step — create the lead now.
+    const advisor = pendingAdvisor ?? currentMatch;
+    if (!advisor) {
+      setOtpError("Your matched advisor expired — please go back and rematch.");
+      setOtpStage("sent");
+      return;
+    }
     setSubmitting(true);
     setSubmitError(null);
 
     try {
-      const data = await findMatch([]);
-      if (data.matched) {
-        const advisor = data.matched as MatchedAdvisor;
-        setMatchedAdvisors([advisor]);
-        setExcludeIds([advisor.id]);
-        setLeadIds([]);
-        setConfirmedAdvisorId(null);
-        saveMatchToStorage({
-          matchedAdvisors: [advisor],
-          excludeIds: [advisor.id],
-          leadIds: [],
-          confirmedAdvisorId: null,
-          quizData: {
-            intent: quiz.intent || "",
-            context: quiz.context,
-            state: quiz.state,
-            postcode: quiz.postcode,
-            suburb: quiz.suburb,
-            budget: quiz.budget,
-            firstName: quiz.firstName,
-            email: quiz.email,
-          },
-          timestamp: Date.now(),
-        });
+      const data = await confirmMatch(advisor.id);
+      if (!data.lead_id) {
+        throw new Error((data as { error?: string }).error || "Couldn't confirm. Please try again.");
       }
+      setConfirmedAdvisorId(advisor.id);
+      setLeadIds([data.lead_id as number]);
+      saveMatchToStorage({
+        matchedAdvisors,
+        excludeIds,
+        leadIds: [data.lead_id as number],
+        confirmedAdvisorId: advisor.id,
+        quizData: {
+          intent: quiz.intent || "",
+          context: quiz.context,
+          state: quiz.state,
+          postcode: quiz.postcode,
+          suburb: quiz.suburb,
+          budget: quiz.budget,
+          firstName: quiz.firstName,
+          email: quiz.email,
+        },
+        timestamp: Date.now(),
+      });
       setSubmitted(true);
-      update({ step: 5 });
+      update({ step: 6 });
       clearQuizProgress(); // ADV-008: quiz finished — drop the resume snapshot.
-      trackEvent("find_advisor_complete", { intent: quiz.intent, matched: !!data.matched }, "/find-advisor");
+      trackEvent("find_advisor_confirmed", { intent: quiz.intent, advisor: advisor.slug }, "/find-advisor");
+      trackEvent("find_advisor_complete", { intent: quiz.intent, matched: true }, "/find-advisor");
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Network error. Please try again.");
     } finally {
@@ -823,6 +885,8 @@ function FindAdvisorQuiz() {
     }
   };
 
+  // Legacy direct-confirm (used by the confirmed screen's internals if ever
+  // re-triggered); the primary path now confirms inside handleVerifyAndSubmit.
   const handleConfirm = async (advisor: MatchedAdvisor) => {
     setConfirming(true);
     setSubmitError(null);
@@ -971,9 +1035,11 @@ function FindAdvisorQuiz() {
         )}
 
         {/* Progress bar */}
-        {quiz.step <= 4 && (
+        {/* Bar covers the form steps (3 questions + contact); the step-4
+            match preview is a result moment, not a form step. */}
+        {(quiz.step <= 3 || quiz.step === 5) && (
           <div className="mb-8">
-            <ProgressBar currentStep={quiz.step} totalSteps={4} />
+            <ProgressBar currentStep={quiz.step <= 3 ? quiz.step : 4} totalSteps={4} />
           </div>
         )}
 
@@ -1021,13 +1087,35 @@ function FindAdvisorQuiz() {
           />
         )}
 
-        {/* Step 4 */}
+        {/* Step 4: match preview (§5.6 — value BEFORE the contact wall).
+            Connect → step 5 collects verified contact details. */}
         {quiz.step === 4 && (
+          <MatchConfirmation
+            userEmail={quiz.email}
+            userFirstName={quiz.firstName}
+            userIntent={quiz.intent}
+            userState={quiz.state}
+            currentMatch={currentMatch}
+            allMatches={matchedAdvisors}
+            onRematch={handleRematch}
+            rematching={rematching}
+            noMoreMatches={noMoreMatches}
+            onRestart={restart}
+            submitError={submitError}
+            onConfirm={handleConnectClick}
+            confirming={false}
+            confirmedAdvisorId={null}
+          />
+        )}
+
+        {/* Step 5: contact + email verification, at the side-effecting confirm */}
+        {quiz.step === 5 && (
           <Step4
             firstName={quiz.firstName}
             email={quiz.email}
             phone={quiz.phone}
             consent={quiz.consent}
+            advisorName={(pendingAdvisor ?? currentMatch)?.name ?? null}
             onChange={(f, v) => update({ [f]: v } as Partial<QuizState>)}
             onSubmit={handleSendOtp}
             onBack={goBack}
@@ -1048,14 +1136,14 @@ function FindAdvisorQuiz() {
           />
         )}
 
-        {/* Step 5: success */}
-        {quiz.step === 5 && submitted && (
+        {/* Step 6: confirmed — the lead is created and the advisor notified */}
+        {quiz.step === 6 && submitted && (
           <MatchConfirmation
             userEmail={quiz.email}
             userFirstName={quiz.firstName}
             userIntent={quiz.intent}
             userState={quiz.state}
-            currentMatch={currentMatch}
+            currentMatch={(pendingAdvisor ?? currentMatch)}
             allMatches={matchedAdvisors}
             onRematch={handleRematch}
             rematching={rematching}
@@ -1069,7 +1157,7 @@ function FindAdvisorQuiz() {
         )}
 
         {/* Legal footer */}
-        {quiz.step <= 4 && (
+        {quiz.step <= 5 && (
           <p className="text-center text-xs text-slate-400 mt-8 leading-relaxed">
             This is not financial advice. We help you find the right type of professional — the choice is always yours.
           </p>
@@ -1436,12 +1524,14 @@ function Step3({
 // ─── Step 4 ───────────────────────────────────────────────────────────────────
 
 function Step4({
-  firstName, email, phone, consent, onChange, onSubmit, onBack,
+  firstName, email, phone, consent, advisorName, onChange, onSubmit, onBack,
   submitting, errors, submitError,
   otpStage, otpCode, otpError, onOtpCodeChange, onOtpVerify, onOtpResend,
   otpSentAt, otpSecondsLeft, otpExpired, otpCanResend, otpResendInSeconds,
 }: {
   firstName: string; email: string; phone: string; consent: boolean;
+  /** The previewed advisor being connected (the user has already chosen them). */
+  advisorName?: string | null;
   onChange: (field: string, value: string | boolean) => void;
   onSubmit: (e: React.FormEvent) => void; onBack: () => void;
   submitting: boolean; errors: Record<string, string>; submitError: string | null;
@@ -1472,10 +1562,12 @@ function Step4({
     <Card variant="default" padding="lg">
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-tight">
-          Almost there — where should we send your match?
+          {advisorName
+            ? <>Almost there — where should {advisorName.split(" ")[0]} reach you?</>
+            : <>Almost there — where should your advisor reach you?</>}
         </h1>
         <p className="text-slate-500 text-sm leading-relaxed">
-          We&apos;ll connect you with a verified professional in your area within 24 hours.
+          Verify your email and we&apos;ll make the introduction — usually within 24 hours.
         </p>
       </div>
 
@@ -1596,7 +1688,7 @@ function Step4({
               onClick={onOtpVerify}
               className="w-full"
             >
-              {otpStage === "verifying" || submitting ? "Verifying\u2026" : "Verify & Get Matched \u2192"}
+              {otpStage === "verifying" || submitting ? "Verifying\u2026" : "Verify & Connect \u2192"}
             </Button>
 
             {/* ADV-015: when the code expires, surface an unmissable resend
@@ -1668,14 +1760,14 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
           </svg>
         </div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">
-          {isCurrentConfirmed ? "You\u2019re connected!" : currentMatch ? "We found a match!" : "Request Received!"}
+          {isCurrentConfirmed ? "You\u2019re connected!" : currentMatch ? "We found a match!" : "No instant match just yet"}
         </h1>
         <p className="text-sm text-slate-500">
           {isCurrentConfirmed
             ? `${currentMatch!.name} has been notified and will be in touch shortly`
             : currentMatch
-            ? `${userFirstName}, review this advisor and confirm if you\u2019d like to connect`
-            : "We'll match you with a verified professional shortly"}
+            ? `${userFirstName ? `${userFirstName}, review` : "Review"} this advisor and connect if they look right`
+            : "No available advisor matched your exact criteria \u2014 try again shortly, or browse the full directory below"}
         </p>
         {allMatches.length > 1 && (
           <p className="text-xs text-amber-600 font-semibold mt-1">
@@ -1974,15 +2066,18 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
           </div>
         ) : (
           <ol className="space-y-3">
+            {/* Preview stage: NO lead exists yet (the advisor has not been
+                contacted) \u2014 the copy must promise, not claim. Contact details
+                are collected on the next step, so no email is shown here. */}
             {(currentMatch
               ? [
-                  `${currentMatch.name} has been notified of your enquiry`,
-                  `They'll reach out to you at ${userEmail} within 24 hours`,
+                  `Click Connect and we'll introduce you to ${currentMatch.name}`,
+                  "They'll reach out within 24 hours of your introduction",
                   "You'll book a free initial consultation \u2014 no obligation",
                 ]
               : [
                   "We'll find the best-matched advisor for your situation",
-                  `They'll reach out to you at ${userEmail} within 24 hours`,
+                  "They'll reach out within 24 hours of your introduction",
                   "You'll book a free initial consultation \u2014 no obligation",
                 ]
             ).map((step, i) => (
