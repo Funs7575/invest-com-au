@@ -692,7 +692,7 @@ export default function PositiveGearingPage() {
             <ul className="list-disc pl-6 space-y-3 text-slate-700 mb-5">
               <li>
                 <strong>Division 43 (building structure allowance):</strong> 2.5% p.a. of
-                the original construction cost of buildings built after 16 September 1987{/* dated-ok — fixed legislative date */}
+                the original construction cost of buildings built after 16 September 1987{/* // dated-ok — fixed legislative date */}
                 (2.5% for most; 4% for certain structures). On a $300,000 construction
                 cost, that is $7,500/year in non-cash deductions for up to 40 years.
               </li>
@@ -701,7 +701,7 @@ export default function PositiveGearingPage() {
                 &ldquo;removable&rdquo; items — appliances, carpet, blinds, hot water
                 systems, air conditioning — at ATO-prescribed effective life rates. New
                 properties or properties with recent renovations have the largest pools.
-                Note: legislation from 1 July 2017 restricts second-hand plant and{/* dated-ok — fixed legislative date */}
+                Note: legislation from 1 July 2017 restricts second-hand plant and{/* // dated-ok — fixed legislative date */}
                 equipment claims for residential properties purchased from that date (the
                 claim passes to the vendor, not the purchaser, on established properties).
               </li>
