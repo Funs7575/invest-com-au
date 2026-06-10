@@ -153,6 +153,7 @@ export default async function HomeMarketToday() {
 
   if (!score && !rateOfDay && changes.length === 0) return null;
 
+  const hasRightColumn = !!rateOfDay || changes.length > 0;
   const latestChange = changes[0];
   const dayLabel = latestChange
     ? new Date(latestChange.logged_at).toLocaleDateString("en-AU", {
@@ -182,7 +183,7 @@ export default async function HomeMarketToday() {
           </Link>
         </div>
 
-        <div className="home-market-grid" style={{ display: "grid", gridTemplateColumns: score ? "auto 1fr" : "1fr", gap: 0 }}>
+        <div className="home-market-grid" style={{ display: "grid", gridTemplateColumns: score && hasRightColumn ? "auto 1fr" : "1fr", gap: 0 }}>
           {score && (
             <div
               className="home-market-gauge md:border-r border-slate-100"
@@ -238,6 +239,7 @@ export default async function HomeMarketToday() {
             </div>
           )}
 
+          {hasRightColumn && (
           <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
             {rateOfDay && (
               <Link
@@ -315,6 +317,7 @@ export default async function HomeMarketToday() {
               </div>
             )}
           </div>
+          )}
         </div>
 
         <p
