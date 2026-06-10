@@ -177,7 +177,7 @@ export function ResultBox({ label, value, positive, negative }: {
   return (
     <div className={`rounded-xl p-3.5 border ${bg}`}>
       <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">{label}</div>
-      <div className={`text-xl font-extrabold tracking-tight ${textColor}`}>{value}</div>
+      <div className={`iv2-bignum text-xl ${textColor}`}>{value}</div>
     </div>
   );
 }

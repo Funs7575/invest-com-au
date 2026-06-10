@@ -28,6 +28,7 @@ type Placement = {
   slug: string;
   is_active: boolean;
   max_slots?: number;
+  base_rate_cents?: number;
 };
 
 type Campaign = {
@@ -47,6 +48,14 @@ type Campaign = {
 };
 
 type Wallet = { broker_slug: string; balance_cents: number };
+type BrokerAccount = { broker_slug: string; status: string };
+type DailyStat = {
+  campaign_id: number;
+  stat_date: string;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+};
 type CampaignEvent = {
   id?: number;
   campaign_id: number;
@@ -65,6 +74,8 @@ const state = {
   placements: [] as Placement[],
   campaigns: [] as Campaign[],
   wallets: [] as Wallet[],
+  brokerAccounts: [] as BrokerAccount[],
+  dailyStats: [] as DailyStat[],
   events: [] as CampaignEvent[],
   decisionsInserted: [] as Record<string, unknown>[],
   campaignEventsInserted: [] as Record<string, unknown>[],
@@ -77,6 +88,8 @@ function reset() {
   state.placements = [];
   state.campaigns = [];
   state.wallets = [];
+  state.brokerAccounts = [];
+  state.dailyStats = [];
   state.events = [];
   state.decisionsInserted = [];
   state.campaignEventsInserted = [];
@@ -156,6 +169,24 @@ function buildSelectChain(table: string) {
         error: null,
       };
     }
+    if (table === "broker_accounts") {
+      const inFilter = filters.find((f) => f.col === "broker_slug" && f.op === "in");
+      const neqStatus = filters.find((f) => f.col === "status" && f.op === "neq");
+      let rows = [...state.brokerAccounts];
+      if (inFilter)
+        rows = rows.filter((a) => (inFilter.val as unknown[]).includes(a.broker_slug));
+      if (neqStatus) rows = rows.filter((a) => a.status !== neqStatus.val);
+      return { data: rows, error: null };
+    }
+    if (table === "campaign_daily_stats") {
+      const inFilter = filters.find((f) => f.col === "campaign_id" && f.op === "in");
+      const gteDate = filters.find((f) => f.col === "stat_date" && f.op === "gte");
+      let rows = [...state.dailyStats];
+      if (inFilter)
+        rows = rows.filter((s) => (inFilter.val as unknown[]).includes(s.campaign_id));
+      if (gteDate) rows = rows.filter((s) => s.stat_date >= (gteDate.val as string));
+      return { data: rows, error: null };
+    }
     if (table === "campaign_events") {
       const campaignIdFilter = filters.find((f) => f.col === "campaign_id");
       const inFilter = filters.find(
@@ -200,6 +231,10 @@ function buildSelectChain(table: string) {
     },
     gt: (col: string, val: unknown) => {
       filters.push({ col, op: "gt", val });
+      return chain;
+    },
+    neq: (col: string, val: unknown) => {
+      filters.push({ col, op: "neq", val });
       return chain;
     },
     in: (col: string, val: unknown[]) => {
@@ -492,6 +527,145 @@ describe("marketplace/allocation", () => {
       const winners = await getWinningCampaigns("homepage-hero");
       expect(winners).toHaveLength(1);
       expect(winners[0].campaign_id).toBe(41);
+    });
+  });
+
+  describe("getWinningCampaigns — reserve price", () => {
+    it("rejects campaigns bidding below the placement reserve with reason below_reserve", async () => {
+      state.placements = [defaultPlacement({ max_slots: 2, base_rate_cents: 300 })];
+      state.campaigns = [
+        defaultCampaign({ id: 50, broker_slug: "cheap", rate_cents: 200 }),
+        defaultCampaign({ id: 51, broker_slug: "fair", rate_cents: 300 }),
+      ];
+      state.wallets = [
+        { broker_slug: "cheap", balance_cents: 500 },
+        { broker_slug: "fair", balance_cents: 500 },
+      ];
+      const winners = await getWinningCampaigns("homepage-hero");
+      expect(winners).toHaveLength(1);
+      expect(winners[0].broker_slug).toBe("fair");
+      await Promise.resolve();
+      await Promise.resolve();
+      const log = JSON.parse(
+        state.decisionsInserted[0].rejection_log as string,
+      ) as { broker_slug: string; reason: string }[];
+      const rejection = log.find((r) => r.reason === "below_reserve");
+      expect(rejection?.broker_slug).toBe("cheap");
+    });
+
+    it("does not enforce a reserve when base_rate_cents is unset", async () => {
+      state.placements = [defaultPlacement({ max_slots: 2 })];
+      state.campaigns = [defaultCampaign({ id: 52, rate_cents: 1 })];
+      state.wallets = [{ broker_slug: "stake", balance_cents: 500 }];
+      const winners = await getWinningCampaigns("homepage-hero");
+      expect(winners).toHaveLength(1);
+    });
+  });
+
+  describe("getWinningCampaigns — broker account standing", () => {
+    it("rejects campaigns whose broker account is suspended", async () => {
+      state.placements = [defaultPlacement({ max_slots: 2 })];
+      state.campaigns = [
+        defaultCampaign({ id: 60, broker_slug: "good-broker", rate_cents: 300 }),
+        defaultCampaign({ id: 61, broker_slug: "bad-broker", rate_cents: 900 }),
+      ];
+      state.wallets = [
+        { broker_slug: "good-broker", balance_cents: 500 },
+        { broker_slug: "bad-broker", balance_cents: 500 },
+      ];
+      state.brokerAccounts = [
+        { broker_slug: "good-broker", status: "active" },
+        { broker_slug: "bad-broker", status: "suspended" },
+      ];
+      const winners = await getWinningCampaigns("homepage-hero");
+      expect(winners).toHaveLength(1);
+      expect(winners[0].broker_slug).toBe("good-broker");
+      await Promise.resolve();
+      await Promise.resolve();
+      const log = JSON.parse(
+        state.decisionsInserted[0].rejection_log as string,
+      ) as { broker_slug: string; reason: string }[];
+      const rejection = log.find((r) => r.reason === "broker_not_active");
+      expect(rejection?.broker_slug).toBe("bad-broker");
+    });
+
+    it("does NOT reject brokers without a portal account row (legacy campaigns fail open)", async () => {
+      state.placements = [defaultPlacement({ max_slots: 1 })];
+      state.campaigns = [defaultCampaign({ id: 62, broker_slug: "legacy", rate_cents: 100 })];
+      state.wallets = [{ broker_slug: "legacy", balance_cents: 500 }];
+      state.brokerAccounts = []; // no account row at all
+      const winners = await getWinningCampaigns("homepage-hero");
+      expect(winners).toHaveLength(1);
+      expect(winners[0].broker_slug).toBe("legacy");
+    });
+
+    it("rejects pending (unapproved) brokers", async () => {
+      state.placements = [defaultPlacement({ max_slots: 1 })];
+      state.campaigns = [defaultCampaign({ id: 63, broker_slug: "newbie", rate_cents: 100 })];
+      state.wallets = [{ broker_slug: "newbie", balance_cents: 500 }];
+      state.brokerAccounts = [{ broker_slug: "newbie", status: "pending" }];
+      const winners = await getWinningCampaigns("homepage-hero");
+      expect(winners).toHaveLength(0);
+    });
+  });
+
+  describe("getWinningCampaigns — quality-weighted ranking", () => {
+    const TODAY_DATE = new Date().toISOString().slice(0, 10);
+
+    it("lets a lower bid with strong CTR/CR outrank a higher bid with weak performance", async () => {
+      state.placements = [defaultPlacement({ max_slots: 1 })];
+      state.campaigns = [
+        defaultCampaign({ id: 70, broker_slug: "big-bid", rate_cents: 500 }),
+        defaultCampaign({ id: 71, broker_slug: "quality", rate_cents: 400 }),
+      ];
+      state.wallets = [
+        { broker_slug: "big-bid", balance_cents: 5000 },
+        { broker_slug: "quality", balance_cents: 5000 },
+      ];
+      // big-bid: 1000 impressions, 10 clicks (1% CTR), 0 conversions
+      // quality: 1000 impressions, 50 clicks (5% CTR), 10 conversions (20% CR)
+      state.dailyStats = [
+        { campaign_id: 70, stat_date: TODAY_DATE, impressions: 1000, clicks: 10, conversions: 0 },
+        { campaign_id: 71, stat_date: TODAY_DATE, impressions: 1000, clicks: 50, conversions: 10 },
+      ];
+      // big-bid: relCtr = 0.01/0.03 = 0.33 → clamped 0.5 → eff 500×0.5 = 250
+      // quality: 0.6×(0.05/0.03) + 0.4×(0.2/0.2) = 1.4 → eff 400×1.4 = 560 → wins
+      const winners = await getWinningCampaigns("homepage-hero");
+      expect(winners).toHaveLength(1);
+      expect(winners[0].broker_slug).toBe("quality");
+      // Billing rate is the STATED rate, never the effective rate
+      expect(winners[0].rate_cents).toBe(400);
+    });
+
+    it("preserves pure bid order when no campaign has enough data (cold start)", async () => {
+      state.placements = [defaultPlacement({ max_slots: 2 })];
+      state.campaigns = [
+        defaultCampaign({ id: 80, broker_slug: "low", rate_cents: 100 }),
+        defaultCampaign({ id: 81, broker_slug: "high", rate_cents: 500 }),
+      ];
+      state.wallets = [
+        { broker_slug: "low", balance_cents: 500 },
+        { broker_slug: "high", balance_cents: 500 },
+      ];
+      state.dailyStats = []; // no history at all
+      const winners = await getWinningCampaigns("homepage-hero");
+      expect(winners[0].broker_slug).toBe("high");
+      expect(winners[1].broker_slug).toBe("low");
+    });
+
+    it("logs quality_multiplier and effective_rate_cents in the decision winners", async () => {
+      state.placements = [defaultPlacement({ max_slots: 1 })];
+      state.campaigns = [defaultCampaign({ id: 90, broker_slug: "stake", rate_cents: 300 })];
+      state.wallets = [{ broker_slug: "stake", balance_cents: 500 }];
+      await getWinningCampaigns("homepage-hero");
+      await Promise.resolve();
+      await Promise.resolve();
+      const winners = JSON.parse(state.decisionsInserted[0].winners as string) as {
+        quality_multiplier: number;
+        effective_rate_cents: number;
+      }[];
+      expect(winners[0].quality_multiplier).toBe(1.0);
+      expect(winners[0].effective_rate_cents).toBe(300);
     });
   });
 

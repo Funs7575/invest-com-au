@@ -23,6 +23,8 @@ import {
 
 import { listMessagesForBrief, type BriefMessageRow } from "@/lib/brief-messages";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import DirectoryHero from "@/components/directory/DirectoryHero";
+import Icon from "@/components/Icon";
 
 import BookConsultationPanel from "./BookConsultationPanel";
 import BriefChatPanel from "./BriefChatPanel";
@@ -303,299 +305,297 @@ export default async function BriefTrackerPage({
       />
 
       <div className="min-h-screen bg-slate-50">
-        <div className="max-w-3xl mx-auto px-4 py-8 sm:py-12">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
-            <Link href="/" className="hover:text-slate-700">
-              Home
-            </Link>
-            <span>/</span>
-            <Link href="/briefs/new" className="hover:text-slate-700">
-              Match Requests
-            </Link>
-            <span>/</span>
-            <span className="text-slate-700">Quote Status</span>
-          </div>
+        <DirectoryHero
+          tone="light"
+          breadcrumbLabel="Quote status"
+          headlineLead={brief.job_title}
+          subtitle={
+            <>
+              {brief.brief_template ? BRIEF_TEMPLATE_LABELS[brief.brief_template] : ""}
+              {brief.location ? ` · ${brief.location}` : ""}
+            </>
+          }
+        />
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1">
-            {brief.job_title}
-          </h1>
-          <p className="text-sm text-slate-500 mb-6">
-            {brief.brief_template ? BRIEF_TEMPLATE_LABELS[brief.brief_template] : ""}
-            {brief.location ? ` · ${brief.location}` : ""}
-          </p>
+        <div className="container-custom max-w-6xl pb-12 pt-3 md:pt-4">
+          <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-5">
+            {/* ── Status rail — first on mobile (the page's headline answer),
+                  sticky right column on desktop. ── */}
+            <aside className="space-y-3 lg:order-2 lg:sticky lg:top-20">
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  Status
+                </p>
+                <h2 className="mb-3 text-lg font-bold text-slate-900">
+                  {brief.status === "closed"
+                    ? "Closed"
+                    : STATUS_LABELS[brief.tracker_status] ?? brief.tracker_status}
+                </h2>
 
-          {/* Status banner */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-            <p className="text-xs uppercase tracking-widest text-slate-500 mb-2">
-              Status
-            </p>
-            <h2 className="text-lg font-bold text-slate-900 mb-3">
-              {brief.status === "closed"
-                ? "Closed"
-                : STATUS_LABELS[brief.tracker_status] ?? brief.tracker_status}
-            </h2>
+                {brief.risk_review_status === "pending_review" && (
+                  <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                    Your brief mentions topics that need a quick compliance review
+                    before verified providers can see it. We&apos;ll email you once it&apos;s cleared.
+                  </div>
+                )}
 
-            {brief.risk_review_status === "pending_review" && (
-              <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs text-amber-800">
-                Your brief mentions topics that need a quick compliance review
-                before verified providers can see it. We&apos;ll email you once it&apos;s cleared.
-              </div>
-            )}
+                <ol className="grid grid-cols-5 gap-1.5">
+                  {STATUS_ORDER.map((s, idx) => {
+                    const reached = idx <= stepIndex;
+                    return (
+                      <li key={s} className="text-center">
+                        <div
+                          className={`mx-auto flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold ${
+                            reached
+                              ? "bg-amber-500 text-slate-900"
+                              : "bg-slate-100 text-slate-400"
+                          }`}
+                        >
+                          {idx + 1}
+                        </div>
+                        <p
+                          className={`mt-1 text-[9px] leading-tight ${
+                            reached ? "font-semibold text-slate-700" : "text-slate-400"
+                          }`}
+                        >
+                          {STATUS_LABELS[s]}
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ol>
 
-            <ol className="mt-4 grid grid-cols-5 gap-2">
-              {STATUS_ORDER.map((s, idx) => {
-                const reached = idx <= stepIndex;
-                return (
-                  <li key={s} className="text-center">
-                    <div
-                      className={`w-7 h-7 rounded-full mx-auto flex items-center justify-center text-[10px] font-bold ${
-                        reached
-                          ? "bg-amber-500 text-slate-900"
-                          : "bg-slate-100 text-slate-400"
-                      }`}
-                    >
-                      {idx + 1}
+                {emailMatches &&
+                  !accepted.professional &&
+                  brief.status !== "closed" &&
+                  brief.status !== "withdrawn" && (
+                    <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs leading-relaxed text-slate-600">
+                      <span className="font-semibold text-slate-700">What happens next:</span>{" "}
+                      Verified providers who match your request are reviewing it now. You&apos;ll
+                      get an email the moment one accepts — their contact details then appear
+                      here and you can message them or book a call. Most requests see a
+                      response within a couple of business days.
                     </div>
-                    <p
-                      className={`text-[10px] mt-1 ${
-                        reached ? "text-slate-700 font-semibold" : "text-slate-400"
-                      }`}
-                    >
-                      {STATUS_LABELS[s]}
-                    </p>
-                  </li>
-                );
-              })}
-            </ol>
+                  )}
+              </div>
 
-            {emailMatches &&
-              !accepted.professional &&
-              brief.status !== "closed" &&
-              brief.status !== "withdrawn" && (
-                <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600">
-                  <span className="font-semibold text-slate-700">What happens next:</span>{" "}
-                  Verified providers who match your request are reviewing it now. You&apos;ll
-                  get an email the moment one accepts — their contact details then appear
-                  here and you can message them or book a call. Most requests see a
-                  response within a couple of business days.
+              {/* Withdraw — the verified owner can close an open request (AJ-3).
+                  Email-as-key auth on the route; hidden once closed/withdrawn. */}
+              {emailMatches &&
+                brief.status !== "closed" &&
+                brief.status !== "withdrawn" && (
+                  <WithdrawBriefButton slug={slug} contactEmail={email} />
+                )}
+
+              {/* Consumer "mark complete" → opens the review immediately (AJ-6),
+                  shown only to the verified owner of an accepted brief that doesn't
+                  already have a review request (else the banner covers it). */}
+              {emailMatches &&
+                !outcomeReviewToken &&
+                (accepted.professional || accepted.team) && (
+                  <MarkCompleteButton slug={slug} contactEmail={email} />
+                )}
+
+              {/* Email-key reveal */}
+              {emailMatches ? (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs leading-relaxed text-emerald-800">
+                  You&apos;re viewing your request status. We&apos;ll email{" "}
+                  <strong>{brief.contact_email}</strong> when a verified pro responds
+                  or anything changes.
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-slate-200 bg-slate-100 p-3.5 text-xs leading-relaxed text-slate-600">
+                  Looking for the full owner view? Use the link we emailed you, or
+                  add <code>?email=&lt;your-email&gt;</code> to this page.
                 </div>
               )}
-          </div>
+            </aside>
 
-          {/* Withdraw — the verified owner can close an open request (AJ-3).
-              Email-as-key auth on the route; hidden once closed/withdrawn. */}
-          {emailMatches &&
-            brief.status !== "closed" &&
-            brief.status !== "withdrawn" && (
-              <WithdrawBriefButton slug={slug} contactEmail={email} />
-            )}
-
-          {/* Intake-question prompt — surfaces unanswered required questions
-              that the accepting provider published. Skipped silently when
-              questions are zero or all answered. */}
-          {intakeOutstanding > 0 && (
-            <div className="bg-amber-50 border border-amber-300 rounded-2xl p-5 mb-6 flex items-start gap-3">
-              <div className="text-2xl leading-none">✍️</div>
-              <div className="flex-1">
-                <p className="text-sm font-bold text-amber-900">
-                  Your provider has {intakeOutstanding} quick question
-                  {intakeOutstanding === 1 ? "" : "s"} before your first call
-                </p>
-                <p className="text-xs text-amber-800 mt-1">
-                  Answering these now means the first call lands with the context they need.
-                </p>
-                <Link
-                  href={`/briefs/${brief.slug}/intake${email ? `?email=${encodeURIComponent(email)}` : ""}`}
-                  className="inline-block mt-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-semibold px-3 py-2"
-                >
-                  Answer now →
-                </Link>
-              </div>
-            </div>
-          )}
-
-          {/* Consumer "mark complete" → opens the review immediately (AJ-6),
-              shown only to the verified owner of an accepted brief that doesn't
-              already have a review request (else the banner below covers it). */}
-          {emailMatches &&
-            !outcomeReviewToken &&
-            (accepted.professional || accepted.team) && (
-              <MarkCompleteButton slug={slug} contactEmail={email} />
-            )}
-
-          {/* Outcome review prompt — once the 4-week cron has issued a
-              review_token for this brief, surface a small banner so the
-              consumer can submit feedback. Drives provider_outcome_scores. */}
-          {outcomeReviewToken && (
-            <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5 mb-6 flex items-start gap-3">
-              <div className="text-2xl leading-none">⭐</div>
-              <div className="flex-1">
-                <p className="text-sm font-bold text-violet-900">
-                  How did your engagement go?
-                </p>
-                <p className="text-xs text-violet-800 mt-1">
-                  A two-minute review helps other investors and bumps your provider on their scoreboard.
-                </p>
-                <Link
-                  href={`/review/${outcomeReviewToken}`}
-                  className="inline-block mt-3 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold px-3 py-2"
-                >
-                  Leave a review →
-                </Link>
-              </div>
-            </div>
-          )}
-
-          {/* Accepted provider */}
-          {(accepted.professional || accepted.team) && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <p className="text-xs uppercase tracking-widest text-slate-500">
-                  Accepted by
-                </p>
-                {unreadFromPro > 0 && (
-                  <span
-                    className="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-0.5"
-                    title="Unread messages from your provider"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden />
-                    {unreadFromPro} new message{unreadFromPro === 1 ? "" : "s"}
-                  </span>
-                )}
-              </div>
-              {accepted.team && (
-                <p className="text-base font-bold text-slate-900">
-                  {accepted.team.name}{" "}
-                  <Link
-                    href={`/teams/${accepted.team.slug}`}
-                    className="text-xs text-amber-600 ml-1 hover:underline"
-                  >
-                    View team
-                  </Link>
-                </p>
-              )}
-              {accepted.professional && (
-                <p className="text-sm text-slate-700 mt-1">
-                  Lead contact:{" "}
-                  <span className="font-semibold">{accepted.professional.name}</span>
-                  {accepted.professional.slug && (
+            {/* ── Main column ── */}
+            <div className="space-y-4 lg:order-1">
+              {/* Intake-question prompt — surfaces unanswered required questions
+                  that the accepting provider published. Skipped silently when
+                  questions are zero or all answered. */}
+              {intakeOutstanding > 0 && (
+                <div className="flex items-start gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4">
+                  <Icon name="edit-3" size={20} className="mt-0.5 shrink-0 text-amber-600" />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-amber-900">
+                      Your provider has {intakeOutstanding} quick question
+                      {intakeOutstanding === 1 ? "" : "s"} before your first call
+                    </p>
+                    <p className="mt-1 text-xs text-amber-800">
+                      Answering these now means the first call lands with the context they need.
+                    </p>
                     <Link
-                      href={`/advisor/${accepted.professional.slug}`}
-                      className="text-xs text-amber-600 ml-1 hover:underline"
+                      href={`/briefs/${brief.slug}/intake${email ? `?email=${encodeURIComponent(email)}` : ""}`}
+                      className="mt-2.5 inline-block rounded-lg bg-amber-500 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-amber-400"
                     >
-                      View profile
+                      Answer now →
                     </Link>
-                  )}
-                </p>
+                  </div>
+                </div>
               )}
-              <p className="text-xs text-slate-500 mt-3">
-                Advice and services are provided by the professional, firm or
-                team you engage — under their own licence and terms.
-              </p>
-            </div>
-          )}
 
-          {/* Book consultation — only shown once the brief is accepted */}
-          {accepted.professional?.slug && (
-            <div className="mb-6">
-              <BookConsultationPanel
-                briefSlug={brief.slug}
-                proSlug={accepted.professional.slug}
-                proName={accepted.professional.name}
-                contactEmail={emailMatches ? email : null}
-                existingBooking={existingBooking}
-                existingSlot={existingSlot}
-              />
-            </div>
-          )}
+              {/* Outcome review prompt — once the 4-week cron has issued a
+                  review_token for this brief, surface a small banner so the
+                  consumer can submit feedback. Drives provider_outcome_scores. */}
+              {outcomeReviewToken && (
+                <div className="flex items-start gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-4">
+                  <Icon name="star" size={20} className="mt-0.5 shrink-0 text-violet-600" />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-violet-900">
+                      How did your engagement go?
+                    </p>
+                    <p className="mt-1 text-xs text-violet-800">
+                      A two-minute review helps other investors and bumps your provider on their scoreboard.
+                    </p>
+                    <Link
+                      href={`/review/${outcomeReviewToken}`}
+                      className="mt-2.5 inline-block rounded-lg bg-violet-600 px-3 py-2 text-xs font-semibold text-white hover:bg-violet-500"
+                    >
+                      Leave a review →
+                    </Link>
+                  </div>
+                </div>
+              )}
 
-          {/* Chat — visible to the brief owner and the accepted advisor only.
-               A general-advice compliance notice is shown above the panel per
-               AFSL obligations: messages may contain general information but
-               no personal advice is given via this channel. */}
-          {showChat && (
-            <div className="mb-6">
-              <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 mb-3 text-xs text-amber-900">
-                <strong>General information only.</strong>{" "}
-                {GENERAL_ADVICE_WARNING} Messages sent here do not constitute
-                personal financial advice.
+              {/* Accepted provider */}
+              {(accepted.professional || accepted.team) && (
+                <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                      Accepted by
+                    </p>
+                    {unreadFromPro > 0 && (
+                      <span
+                        className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700"
+                        title="Unread messages from your provider"
+                      >
+                        <span className="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden />
+                        {unreadFromPro} new message{unreadFromPro === 1 ? "" : "s"}
+                      </span>
+                    )}
+                  </div>
+                  {accepted.team && (
+                    <p className="text-base font-bold text-slate-900">
+                      {accepted.team.name}{" "}
+                      <Link
+                        href={`/teams/${accepted.team.slug}`}
+                        className="ml-1 text-xs text-amber-600 hover:underline"
+                      >
+                        View team
+                      </Link>
+                    </p>
+                  )}
+                  {accepted.professional && (
+                    <p className="mt-1 text-sm text-slate-700">
+                      Lead contact:{" "}
+                      <span className="font-semibold">{accepted.professional.name}</span>
+                      {accepted.professional.slug && (
+                        <Link
+                          href={`/advisor/${accepted.professional.slug}`}
+                          className="ml-1 text-xs text-amber-600 hover:underline"
+                        >
+                          View profile
+                        </Link>
+                      )}
+                    </p>
+                  )}
+                  <p className="mt-2.5 text-xs text-slate-500">
+                    Advice and services are provided by the professional, firm or
+                    team you engage — under their own licence and terms.
+                  </p>
+                </div>
+              )}
+
+              {/* Book consultation — only shown once the brief is accepted */}
+              {accepted.professional?.slug && (
+                <BookConsultationPanel
+                  briefSlug={brief.slug}
+                  proSlug={accepted.professional.slug}
+                  proName={accepted.professional.name}
+                  contactEmail={emailMatches ? email : null}
+                  existingBooking={existingBooking}
+                  existingSlot={existingSlot}
+                />
+              )}
+
+              {/* Chat — visible to the brief owner and the accepted advisor only.
+                   A general-advice compliance notice is shown above the panel per
+                   AFSL obligations: messages may contain general information but
+                   no personal advice is given via this channel. */}
+              {showChat && (
+                <div>
+                  <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900">
+                    <strong>General information only.</strong>{" "}
+                    {GENERAL_ADVICE_WARNING} Messages sent here do not constitute
+                    personal financial advice.
+                  </div>
+                  <BriefChatPanel
+                    slug={brief.slug}
+                    briefId={brief.id}
+                    initialMessages={chatMessages}
+                    viewerSide={viewerIsAdvisor ? "pro" : "consumer"}
+                    viewerName={
+                      viewerIsAdvisor
+                        ? (accepted.professional?.name ?? "You")
+                        : "You"
+                    }
+                    counterpartyName={
+                      viewerIsAdvisor
+                        ? "Client"
+                        : (accepted.professional?.name ??
+                          accepted.team?.name ??
+                          "Your advisor")
+                    }
+                  />
+                </div>
+              )}
+
+              {/* Dispute / mediation panel */}
+              {emailMatches && brief.accepted_at && (disputeRow || canOpenDispute) && (
+                <DisputePanel
+                  slug={brief.slug}
+                  briefId={brief.id}
+                  initialDispute={disputeRow}
+                  initialMessages={disputeMessages}
+                  canViewerOpen={canOpenDispute}
+                  viewerName="You"
+                />
+              )}
+
+              {/* Brief summary */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  Brief summary
+                </p>
+                <p className="whitespace-pre-line break-words text-sm text-slate-700">
+                  {brief.job_description}
+                </p>
+                <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-slate-600">
+                  <dt className="font-semibold">Template</dt>
+                  <dd>
+                    {brief.brief_template
+                      ? BRIEF_TEMPLATE_LABELS[brief.brief_template]
+                      : "—"}
+                  </dd>
+                  <dt className="font-semibold">Provider preference</dt>
+                  <dd>{brief.provider_preference ?? "—"}</dd>
+                  <dt className="font-semibold">Routing mode</dt>
+                  <dd>{brief.routing_mode ?? "—"}</dd>
+                  <dt className="font-semibold">Budget band</dt>
+                  <dd>{brief.budget_band}</dd>
+                  <dt className="font-semibold">Accept cost</dt>
+                  <dd>
+                    {brief.accept_credits_cost
+                      ? `${brief.accept_credits_cost} credits`
+                      : "—"}
+                  </dd>
+                </dl>
               </div>
-              <BriefChatPanel
-                slug={brief.slug}
-                briefId={brief.id}
-                initialMessages={chatMessages}
-                viewerSide={viewerIsAdvisor ? "pro" : "consumer"}
-                viewerName={
-                  viewerIsAdvisor
-                    ? (accepted.professional?.name ?? "You")
-                    : "You"
-                }
-                counterpartyName={
-                  viewerIsAdvisor
-                    ? "Client"
-                    : (accepted.professional?.name ??
-                      accepted.team?.name ??
-                      "Your advisor")
-                }
-              />
             </div>
-          )}
-
-          {/* Dispute / mediation panel */}
-          {emailMatches && brief.accepted_at && (disputeRow || canOpenDispute) && (
-            <DisputePanel
-              slug={brief.slug}
-              briefId={brief.id}
-              initialDispute={disputeRow}
-              initialMessages={disputeMessages}
-              canViewerOpen={canOpenDispute}
-              viewerName="You"
-            />
-          )}
-
-          {/* Brief summary */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-            <p className="text-xs uppercase tracking-widest text-slate-500 mb-2">
-              Brief summary
-            </p>
-            <p className="text-sm text-slate-700 whitespace-pre-line break-words">
-              {brief.job_description}
-            </p>
-            <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-slate-600">
-              <dt className="font-semibold">Template</dt>
-              <dd>
-                {brief.brief_template
-                  ? BRIEF_TEMPLATE_LABELS[brief.brief_template]
-                  : "—"}
-              </dd>
-              <dt className="font-semibold">Provider preference</dt>
-              <dd>{brief.provider_preference ?? "—"}</dd>
-              <dt className="font-semibold">Routing mode</dt>
-              <dd>{brief.routing_mode ?? "—"}</dd>
-              <dt className="font-semibold">Budget band</dt>
-              <dd>{brief.budget_band}</dd>
-              <dt className="font-semibold">Accept cost</dt>
-              <dd>
-                {brief.accept_credits_cost
-                  ? `${brief.accept_credits_cost} credits`
-                  : "—"}
-              </dd>
-            </dl>
           </div>
-
-          {/* Email-key reveal */}
-          {emailMatches && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-800">
-              You&apos;re viewing your Match Request status. We&apos;ll
-              email <strong>{brief.contact_email}</strong> when a verified pro responds or anything changes.
-            </div>
-          )}
-          {!emailMatches && (
-            <div className="bg-slate-100 border border-slate-200 rounded-2xl p-4 text-xs text-slate-600">
-              Looking for the full owner view? Use the link we emailed you, or
-              add <code>?email=&lt;your-email&gt;</code> to this page.
-            </div>
-          )}
         </div>
       </div>
     </>
