@@ -14,6 +14,30 @@
 
 ## Active strategic decisions log
 
+### 2026-06-10 — Quiz elevation (Task-1 brief) shipped in 4 waves; booking-CTA primacy changes funnel economics
+
+Four merged PRs (#1530, #1534, #1536, #1537 pending CI) close the find-advisor
+quiz brief's acceptance criteria against the post-#434 engine:
+- **Goal-driven cross-border corridors** — India/China/HK/Singapore/UAE →AU
+  journeys now hit first-class specialty matching (SIV / investor-visa /
+  international-tax) instead of the generic intl pool; the passport-driven
+  corridors (UK pension, US FATCA/PFIC, DASP) are unchanged.
+- **"Not sure" is a valid path on every judgment question** (experience /
+  complexity / amount / priority), degrading to a neutral no-signal.
+- **stage=ready / under-contract is now an urgency signal**: fast responders
+  get a small scoring bonus; explicitly-closed books damp harder. Get-matched
+  lanes unaffected (stage optional in context).
+- **Booking-CTA primacy** (strategic): when an advisor publishes a
+  `booking_link`, "Book a call" is the primary CTA on the matched screen and
+  the introduction-request becomes secondary. This trades a captured lead row
+  for a direct calendar booking on a fraction of matches — by design per the
+  product brief (conversion > capture). `advisor_booking_click` (source
+  `quiz_match`) tracks the volume; revisit if booking clicks materially
+  cannibalise `/api/advisor-lead` volume without producing engagements.
+- Audit also confirmed already-met criteria (no PII in quiz localStorage,
+  7-day TTL resume, closest-match fallbacks, focus-based a11y announcements)
+  — don't re-scope these from older briefs.
+
 ### 2026-06-10 — Decision Engine COMPLETE: P1–P9 all merged; /find-advisor folded; engine now learns from outcomes
 
 The 9-phase program from the same-day "vision locked" entry below is fully
