@@ -37,7 +37,7 @@ import path from "node:path";
 
 const MIGRATION_PATH = path.join(
   process.cwd(),
-  "supabase/migrations/20260429_o_iter6_rls_forum.sql",
+  "supabase/migrations/archive/20260429_o_iter6_rls_forum.sql",
 );
 
 const FORUM_TABLES = [
