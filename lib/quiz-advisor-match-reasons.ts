@@ -47,6 +47,8 @@ export interface AdvisorMatchContext {
   investorCountry?: string;
   visaStatus?: string;
   investorGoalIntl?: string;
+  /** Quiz stage answer — "under-contract" signals urgency. */
+  stage?: string;
 }
 
 const COUNTRY_LABELS: Record<string, string> = {

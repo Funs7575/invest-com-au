@@ -458,6 +458,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                   investorCountry,
                   visaStatus,
                   investorGoalIntl,
+                  stage: quizAnswers.stage,
                 }}
               />
 

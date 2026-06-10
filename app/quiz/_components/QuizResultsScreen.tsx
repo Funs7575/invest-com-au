@@ -102,9 +102,12 @@ export default function QuizResultsScreen({
       <div className="pt-4 pb-8 md:pt-6 md:pb-10">
         <div className="container-custom max-w-2xl mx-auto text-center">
           <Icon name="alert-triangle" size={48} className="text-amber-500 mx-auto mb-4" />
-          <h1 className="text-xl md:text-2xl font-extrabold mb-2">No Results Found</h1>
-          <p className="text-sm text-slate-600 mb-6">
-            We couldn&apos;t find platforms matching your criteria right now. This may be a temporary issue.
+          <h1 className="text-xl md:text-2xl font-extrabold mb-2">No Platforms Found</h1>
+          <p className="text-sm text-slate-600 mb-2">
+            We couldn&apos;t find platforms matching your criteria right now — this may be a temporary issue.
+          </p>
+          <p className="text-sm text-slate-500 mb-6">
+            If you&apos;d prefer expert guidance, a financial advisor can review your situation directly.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
@@ -118,6 +121,12 @@ export default function QuizResultsScreen({
               className="px-5 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
             >
               Browse All Platforms
+            </Link>
+            <Link
+              href="/find-advisor"
+              className="px-5 py-2.5 border border-indigo-200 text-indigo-700 text-sm font-semibold rounded-lg hover:bg-indigo-50 transition-colors"
+            >
+              Find an advisor instead
             </Link>
           </div>
         </div>

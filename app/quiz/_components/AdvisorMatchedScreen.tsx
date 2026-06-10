@@ -115,9 +115,23 @@ export default function AdvisorMatchedScreen({
   }
 
   const matchReasons = buildAdvisorMatchReasons(currentMatch, matchContext ?? {});
+  const isUrgent = matchContext?.stage === "under-contract";
 
   return (
     <div ref={cardRef} className="space-y-5 advisor-step-enter">
+
+      {/* Urgency banner — shown when user said they're on a deadline */}
+      {isUrgent && (
+        <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-300 rounded-xl px-4 py-3" role="alert">
+          <svg className="w-4 h-4 text-amber-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+          </svg>
+          <p className="text-xs font-semibold text-amber-800">
+            You&apos;re on a deadline — reply promptly when your advisor reaches out so there&apos;s enough time to act.
+          </p>
+        </div>
+      )}
+
       {/* Header */}
       <div className="text-center py-4">
         <div className="relative w-16 h-16 mx-auto mb-4">
