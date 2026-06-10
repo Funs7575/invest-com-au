@@ -24,6 +24,7 @@ import {
 } from "@/lib/quiz-advisor-scoring";
 import { buildAdvisorMatchReasons } from "@/lib/quiz-advisor-match-reasons";
 import { dbTypeForNeed } from "@/lib/quiz-advisor-types";
+import { fetchAdvisorOutcomeStats, rankByOutcomes } from "@/lib/advisor-match-ranking";
 import { allocateAdvisorsFromActionPlan } from "./advisor-allocation";
 import { computeTopMatches } from "./top-match";
 import type { ActionPlanAnswers, RouteType, TopMatch, Vertical } from "./types";
@@ -77,7 +78,26 @@ export async function computeTopAdvisors(
   }
 
   const candidates = (data ?? []) as unknown as QuizAdvisorCandidate[];
-  const ranked = scoreQuizAdvisors(candidates, scoringContext, limit);
+  let ranked = scoreQuizAdvisors(candidates, scoringContext, limit);
+
+  // P9 outcome learning: blend the engine's fit scores with real historical
+  // engagement (professional_leads outcomes) via the shared rankByOutcomes.
+  // Fail-soft — stats unavailable or empty preserves the pure engine order.
+  try {
+    const stats = await fetchAdvisorOutcomeStats(supabase);
+    if (stats.length > 0) {
+      const blended = rankByOutcomes(
+        ranked.map((a) => ({ id: a.id, matchScore: a.matchScore })),
+        stats,
+      );
+      const pos = new Map(blended.map((b, i) => [b.id, i]));
+      ranked = [...ranked].sort(
+        (x, y) => (pos.get(x.id) ?? 999) - (pos.get(y.id) ?? 999),
+      );
+    }
+  } catch {
+    /* keep engine order */
+  }
 
   return ranked.map((a, i) => {
     const reasons = buildAdvisorMatchReasons(

@@ -93,11 +93,11 @@ Listing "recommendations" are **factual criteria matches** ("matches your stated
 - **P2 ✅** Advisor lane live in `resolve` behind `advisor_match_v2_get_matched`: load candidates (reuse `/api/advisor-match` SELECT), `scoreQuizAdvisors`, return `TopMatch{kind:"advisor"}` + reasons + confidence (carousel already renders advisors). Flag off = zero change.
 - **P3 ✅** Ladder rule 0 (user-named type wins) + missing-signal questions — shipped CODE-SIDE in FALLBACK_QUESTIONS (prod runs on fallbacks + ephemeral plans; the get_matched_questions DB seed rides the #1479 ledger repair). Original scope: missing-signal questions (AU state; country+visa for overseas/expat; advisor-type confirm) — one migration, sharpens P2 (engine already degrades gracefully).
 - **P4 ✅ (scorer)** `lib/listings/match-listings.ts` — pure, 8 tests; CSF equity_raise hard-excluded; FIRB gate for non-residents; factual-criteria reasons only. Resolve/UI wiring lands with P5's result surface.
-- **P5** `resolveLanes` composite resolver + `saved_items` migration + workspace rail + result-surface redesign v1. **Device QA gate.**
-- **P6 ✅ (pending merge #1512)** In-funnel lead capture: ConnectAdvisorModal (contact → OTP verify → submit-lead confirm fast-path), TopMatch.ref_id, Connect-primary on advisor cards with single-lead UI lockout, /plans/[id]/connected stamp for P9's outcome join.
-- **P6** Lead capture in-funnel (preview→connect→verify at confirm → `professional_leads`) — port of the proven find-advisor flow.
-- **P7** Comparison tools (advisor table, cross-lane board) + lane-aware drips/alerts.
-- **P8** `/find-advisor` 301 → one funnel. **P9** outcome-learning per lane + ranking-weight review cadence.
+- **P5 ✅** `resolveLanes` composite resolver (COMPOSITE_BAND 25, education-first researching inversion) + `saved_items` (gm05) + share-token save API + LaneResults multi-lane surface with My Options rail. Device QA pass still owed once a deploy target is restored.
+- **P6 ✅** In-funnel lead capture: ConnectAdvisorModal (contact → OTP verify → submit-lead confirm fast-path), TopMatch.ref_id, Connect-primary on advisor cards with single-lead UI lockout, /plans/[id]/connected stamp for P9's outcome join.
+- **P7a ✅** Advisor comparison table in LaneResults — display-safe fields (location/fees/specialties) ride TopMatch; comparing never contacts anyone. Cross-lane board + lane-aware drips remain backlog (§4).
+- **P8 ✅** `/find-advisor` 301 → /get-matched at lead-capture parity. Cross-border deep-links (`?specialty=` / `?country=`) keep the dedicated flow until get-matched consumes those params; sitemap + quiz not-sure hrefs repointed to the one funnel.
+- **P9 ✅** Outcome learning in the advisor lane: `fetchAdvisorOutcomeStats` + the shared `rankByOutcomes` blended into `computeTopAdvisors` ordering — fail-soft, empty history preserves pure engine order. Ranking-weight review cadence: revisit blend weighting once `/plans/[id]/connected` accumulates real outcome rows (~3 months).
 
 **QA bar per phase:** unit tests on every pure module; contract tests on answer→lane mapping; bot-smoke on the funnel; device pass before any visual phase ships; merge tiers respected.
 

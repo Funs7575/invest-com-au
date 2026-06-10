@@ -43,7 +43,7 @@ export const QUIZ_ADVISOR_TYPES: Record<AdvisorNeed, QuizAdvisorTypeMeta> = {
   "commercial-property-agent": { dbType: "commercial_property_agent", label: "Commercial Property Agent", href: "/advisors/commercial-property-agents", teamReason: "Buy or lease commercial property", teamIcon: "building" },
   "aged-care-advisor": { dbType: "aged_care_advisor", label: "Aged Care Advisor",        href: "/advisors/aged-care-advisors",        teamReason: "Plan aged-care costs and entitlements", teamIcon: "heart" },
   "debt-counsellor":   { dbType: "debt_counsellor",   label: "Debt Counsellor",          href: "/advisors/debt-counsellors",          teamReason: "Get on top of debt before investing",   teamIcon: "piggy-bank" },
-  "not-sure":          { dbType: "",                  label: "Financial Advisor",        href: "/find-advisor",                       teamReason: "Help working out who you need",         teamIcon: "users" },
+  "not-sure":          { dbType: "",                  label: "Financial Advisor",        href: "/get-matched",                       teamReason: "Help working out who you need",         teamIcon: "users" },
 };
 
 const meta = (need: string): QuizAdvisorTypeMeta | undefined =>
@@ -55,5 +55,5 @@ export const dbTypeForNeed = (need: string): string => meta(need)?.dbType ?? "";
 /** Display label for a need-slug (falls back to a generic advisor label). */
 export const labelForNeed = (need: string): string => meta(need)?.label ?? "Financial Advisor";
 
-/** Directory href for a need-slug (falls back to the find-advisor funnel). */
-export const hrefForNeed = (need: string): string => meta(need)?.href ?? "/find-advisor";
+/** Directory href for a need-slug (falls back to the canonical funnel). */
+export const hrefForNeed = (need: string): string => meta(need)?.href ?? "/get-matched";
