@@ -62,6 +62,9 @@ export interface QuizAdvisorCandidate {
   avg_response_minutes?: number | null;
   response_time_hours?: number | null;
   initial_consultation_free?: boolean | null;
+  /** Advisor's published booking URL (same field the profile BookingWidget
+   *  uses) — drives the "Book a call" primary CTA on the matched screen. */
+  booking_link?: string | null;
   trust_score_overall?: number | null;
   country_eligibility?: CountryEligibility | Record<string, unknown> | null;
 }
@@ -80,6 +83,18 @@ export interface QuizAdvisorScoringContext {
   investorCountry?: string;
   visaStatus?: string;
   investorGoalIntl?: string;
+  /**
+   * Quiz readiness stage. "ready" / "under-contract" mark a high-urgency
+   * user: a fast responder earns a small additive bonus and an explicitly
+   * closed advisor is damped harder. Optional — callers that don't collect
+   * stage (e.g. the get-matched lanes) are completely unaffected.
+   */
+  stage?: string;
+}
+
+/** True when the user signalled urgency (ready to act / settlement clock). */
+function isUrgentStage(stage?: string): boolean {
+  return stage === "ready" || stage === "under-contract";
 }
 
 export interface ScoredQuizAdvisor extends QuizAdvisorCandidate {
@@ -213,13 +228,25 @@ function scoreOne(c: QuizAdvisorCandidate, ctx: QuizAdvisorScoringContext): numb
   }
   score += Math.min(20, quality);
 
+  // 4b) Urgency (stage = ready / under-contract): the user wants to act NOW,
+  //     so verified responsiveness earns a small bonus on top of the capped
+  //     quality block. Additive and urgency-gated — a no-stage call scores
+  //     identically to before.
+  const urgent = isUrgentStage(ctx.stage);
+  if (urgent && respMin != null) {
+    if (respMin <= 120) score += 4;
+    else if (respMin <= 1440) score += 2;
+  }
+
   // 5) Availability damp — if the advisor is EXPLICITLY not taking clients,
   //    damp (don't exclude; the flag is often unset = unknown = assume open).
+  //    A closed book matters far more to someone ready to engage this week,
+  //    so urgency damps harder.
   const explicitlyClosed =
     c.accepts_new_clients === false ||
     c.accepting_new_clients === false ||
     (typeof c.availability_status === "string" && /closed|paused|full|not[_-]?accepting/i.test(c.availability_status));
-  if (explicitlyClosed) score *= 0.7;
+  if (explicitlyClosed) score *= urgent ? 0.5 : 0.7;
 
   return Math.round(Math.max(0, Math.min(100, score)));
 }

@@ -100,10 +100,24 @@ export const INTL_KEYWORDS = [
 /**
  * Corridor-specific specialty keywords for an international user's situation
  * (§5.5: route international by corridor specialty). Matches the canonical
- * CROSS_BORDER_SPECIALTIES strings in lib/advisor-specialties.ts — without
- * these, "UK Pension Transfer" / "DASP Processing" contain no generic
- * INTL_KEYWORD at all, so the exact-corridor specialist scored as if they had
- * no relevant specialty. Shared by the scorer and the match reasons.
+ * cross-border specialty strings in lib/advisor-specialties.ts — without these,
+ * "UK Pension Transfer" / "DASP Processing" / "Significant Investor Visa"
+ * contain no generic INTL_KEYWORD at all, so the exact-corridor specialist
+ * scored as if they had no relevant specialty. Shared by the scorer and the
+ * match reasons.
+ *
+ * Two kinds of corridor:
+ *  - **Country-driven** (UK pension, US FATCA/PFIC, departing-visa DASP): the
+ *    passport/visa alone selects the AU specialty, because the asset itself is
+ *    country-specific (a transferable UK pension; FATCA/PFIC reporting).
+ *  - **Goal-driven** (property → FIRB; business → investor-visa/SIV; shares or
+ *    savings → international tax): for the non-UK/US source markets the brief
+ *    names — India→AU, China→AU, Hong Kong, Singapore, the UAE — there is no
+ *    country-specific AU specialty, so the *journey* (the stated international
+ *    goal) selects it. Before this, those corridors fell through to the generic
+ *    INTL pool and an exact-fit specialist (e.g. a Significant Investor Visa
+ *    structurer for a migrating HNW investor) ranked no better than a
+ *    generalist and surfaced a generic "why matched" reason.
  */
 export function corridorKeywordsFor(ctx: {
   investorCountry?: string;
@@ -111,12 +125,41 @@ export function corridorKeywordsFor(ctx: {
   investorGoalIntl?: string;
 }): string[] {
   const out: string[] = [];
+
+  // ── Country-driven corridors ──
   if (ctx.investorCountry === "uk") out.push("uk pension", "pension transfer", "qrops");
-  if (ctx.investorCountry === "usa") out.push("fatca", "us expat", "us tax");
+  if (ctx.investorCountry === "usa") out.push("fatca", "us expat", "us tax", "pfic");
   // DASP (Departing Australia Superannuation Payment) is specifically the
   // temporary-visa-holder pathway.
   if (ctx.visaStatus === "temp_visa") out.push("dasp", "departing australia");
-  if (ctx.investorGoalIntl === "property") out.push("firb", "non-resident property");
+
+  // ── Goal-driven corridors (country-agnostic; the journey selects the
+  //    specialty for every market that lacks a country-specific AU asset) ──
+  switch (ctx.investorGoalIntl) {
+    case "property":
+      out.push("firb", "non-resident property");
+      break;
+    case "business":
+      // Migrating-investor / business-setup journey — the classic Significant
+      // Investor Visa source markets (China, Hong Kong, India, Singapore, …).
+      out.push(
+        "significant investor visa",
+        "siv",
+        "investor visa",
+        "business innovation",
+        "skilled migration",
+        "international tax",
+        "business structuring",
+      );
+      break;
+    case "shares":
+    case "savings":
+      // Cross-border portfolio / cash → non-resident tax treatment is the
+      // first-order need.
+      out.push("international tax", "non-resident");
+      break;
+  }
+
   return out;
 }
 

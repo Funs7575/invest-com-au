@@ -46,6 +46,61 @@ Strategic decisions made (this session):
   is founder-triggered** (3 new tables + team_story + 3 leaderboard columns,
   all RLS-enabled). All shipped code fails soft until applied — nothing breaks
   if the push waits.
+### 2026-06-10 — Quiz elevation (Task-1 brief) shipped in 4 waves; booking-CTA primacy changes funnel economics
+
+Four merged PRs (#1530, #1534, #1536, #1537 pending CI) close the find-advisor
+quiz brief's acceptance criteria against the post-#434 engine:
+- **Goal-driven cross-border corridors** — India/China/HK/Singapore/UAE →AU
+  journeys now hit first-class specialty matching (SIV / investor-visa /
+  international-tax) instead of the generic intl pool; the passport-driven
+  corridors (UK pension, US FATCA/PFIC, DASP) are unchanged.
+- **"Not sure" is a valid path on every judgment question** (experience /
+  complexity / amount / priority), degrading to a neutral no-signal.
+- **stage=ready / under-contract is now an urgency signal**: fast responders
+  get a small scoring bonus; explicitly-closed books damp harder. Get-matched
+  lanes unaffected (stage optional in context).
+- **Booking-CTA primacy** (strategic): when an advisor publishes a
+  `booking_link`, "Book a call" is the primary CTA on the matched screen and
+  the introduction-request becomes secondary. This trades a captured lead row
+  for a direct calendar booking on a fraction of matches — by design per the
+  product brief (conversion > capture). `advisor_booking_click` (source
+  `quiz_match`) tracks the volume; revisit if booking clicks materially
+  cannibalise `/api/advisor-lead` volume without producing engagements.
+- Audit also confirmed already-met criteria (no PII in quiz localStorage,
+  7-day TTL resume, closest-match fallbacks, focus-based a11y announcements)
+  — don't re-scope these from older briefs.
+
+### 2026-06-10 — Decision Engine COMPLETE: P1–P9 all merged; /find-advisor folded; engine now learns from outcomes
+
+The 9-phase program from the same-day "vision locked" entry below is fully
+on main (final PR #1524, squash da0c9db). One engine end-to-end: translator
+→ single-lead allocation → shared advisor scoring (P1–P2); user-named type
+always wins + missing-signal questions (P3); listings scorer with CSF
+exclusion + FIRB gate (P4); multi-lane composite results + My Options
+workspace + saved_items (P5); in-funnel lead capture with OTP at confirm +
+single-lead UI lockout (P6); side-by-side advisor comparison (P7a); P8 —
+this CLOSES the "Revisit: 301 /find-advisor only after get-matched gains
+lead capture" item below: /find-advisor now 308s to /get-matched, with
+?specialty= / ?country= deep-links carved out so the 1.75× cross-border
+corridor keeps its wizard until get-matched consumes those params; P9 —
+advisor ordering now blends engine fit with real engagement history via the
+shared Wilson ranker (fail-soft; fed by the /plans/[id]/connected stamp).
+
+Live state: advisor_match_v2_get_matched at 100%, prod schema applied
+(ledger 3⇄3, first persisted plan verified). **Sole live-path blocker is
+founder-side: restore a deploy target (Netlify credits or Vercel unblock)
+— everything queues at HEAD until then.**
+
+Open engineering backlog (post-program, none block launch): listings lane
+renders lane-level links, not the P4 scorer's specific listing cards —
+that resolve/UI wiring is the last gap vs the vision statement; get-matched
+consuming ?specialty=/?country= (then the wizard folds entirely and the
+~40 hardcoded /find-advisor literals can be repointed); P5 saved-criteria
+alerts.
+
+**Revisit:** 2026-06-17 — deploy restored? Founder device/visual pass on
+the new result surface. **Revisit:** 2026-09-10 — P9 ranking-weight review
+once professional_leads/connected has ~3 months of real outcome rows.
 
 ### 2026-06-10 — Branch estate audited: 291 dead branches deleted, 4 held platforms inventoried, api-billing schema gap found
 
@@ -57,10 +112,10 @@ Strategic items surfaced (decisions pending, founder-owned):
 
 - **API billing is half-shipped.** #1241/#1244 merged code for the tiered/billed
   API + consumer webhooks, but the schema never reached prod — `/api/v1/webhooks`
-  errors on use and the 30-min retry cron fails silently every run. Recovered
-  schema parked in **#1526 (DO-NOT-MERGE)**. Decide: land schema + env vars and
-  activate the revenue line, or strip the dead code. (Revenue backlog adjacency:
-  this is the "API data platform" monetisation thread.)
+  errors on use and the 30-min retry cron fails silently every run. Schema
+  recovered in **#1529 (merged)**; activate by running `supabase db push` locally.
+  Next: set `STRIPE_PRICE_ID_*` env vars and flip the billing feature flag to
+  open the revenue line. (Revenue backlog: "API data platform" monetisation.)
 - **Identity-platform expansion** (81 files, 25 staged migrations, master plan
   docs) sits unmerged on `claude/audit-account-architecture-7186H`; the
   `principals` foundation is already in prod. Biggest held bet in the estate.
@@ -72,6 +127,8 @@ Strategic items surfaced (decisions pending, founder-owned):
   **#1525**. The guard test that would have prevented the fork sat unmerged
   since 2026-04-26 — same lesson as 2026-05-02: trackers and branches lag the
   code; verify against main before scoping or deleting.
+
+### 2026-06-10 — "Complete everything unblocked" wave: 12 parallel workstreams launched; CI unblocked; coordination lesson
 
 Founder directive: finish every unblocked TOP-10 / backlog opportunity to
 production quality, skipping quiz/Decision-Engine surfaces (owned by a

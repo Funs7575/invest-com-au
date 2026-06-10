@@ -6,6 +6,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import { buildAdvisorMatchReasons, type AdvisorMatchContext } from "@/lib/quiz-advisor-match-reasons";
 import { confidenceLabel, type MatchConfidence } from "@/lib/quiz-advisor-scoring";
+import { trackEvent } from "@/lib/tracking";
 
 export interface MatchedAdvisor {
   id: number;
@@ -30,6 +31,7 @@ export interface MatchedAdvisor {
   avg_response_minutes?: number | null;
   response_time_hours?: number | null;
   initial_consultation_free?: boolean | null;
+  booking_link?: string | null;
   matchScore?: number;
   confidence?: MatchConfidence;
 }
@@ -319,10 +321,37 @@ export default function AdvisorMatchedScreen({
           )}
 
           <div className="space-y-2.5">
+            {/* CTA primacy: when the advisor publishes a booking link, "Book a
+                call" is the unmistakable primary action (the user picks a time
+                directly — still ONE advisor); the request-introduction flow
+                stays available as the secondary path. Without a booking link
+                the introduction request remains primary, unchanged. */}
+            {currentMatch.booking_link && (
+              <a
+                href={currentMatch.booking_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() =>
+                  trackEvent(
+                    "advisor_booking_click",
+                    { advisor_slug: currentMatch.slug, source: "quiz_match" },
+                    "/quiz",
+                  )
+                }
+                className="w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md shadow-amber-200"
+              >
+                <Icon name="calendar" size={16} />
+                Book a call with {currentMatch.name.split(" ")[0]} — free, no obligation
+              </a>
+            )}
             <button
               onClick={() => onConfirm(currentMatch)}
               disabled={confirming}
-              className="w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md shadow-amber-200"
+              className={
+                currentMatch.booking_link
+                  ? "w-full py-3 bg-white border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-700 font-bold text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  : "w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md shadow-amber-200"
+              }
             >
               {confirming ? (
                 <>
@@ -332,6 +361,8 @@ export default function AdvisorMatchedScreen({
                   </svg>
                   Connecting you…
                 </>
+              ) : currentMatch.booking_link ? (
+                <>Or send my details and let {currentMatch.name.split(" ")[0]} reach out</>
               ) : (
                 <>
                   Yes, send my details to {currentMatch.name.split(" ")[0]} — it&apos;s free
@@ -361,7 +392,14 @@ export default function AdvisorMatchedScreen({
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Show me a different advisor
+                    {/* Remaining-count keeps the choice honest: the user knows
+                        whether "different" means one more option or several. */}
+                    {(() => {
+                      const remaining = allMatches.length - matchIndex - 1;
+                      return remaining > 0
+                        ? `Show me a different advisor (${remaining} more)`
+                        : "Show me a different advisor";
+                    })()}
                   </>
                 )}
               </button>

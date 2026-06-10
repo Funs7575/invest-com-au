@@ -1,0 +1,195 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# AI Journey workflow — runs the full in-session journey suite on a real GitHub
+# runner (clean network, no TLS-MITM proxy), which enables:
+#   • Full quiz completion — /api/get-matched start/answer/resolve go through
+#   • Multi-step form driving to a confirmed result screen
+#   • Lead payload capture and well-formedness verification
+#   • Broker comparison table rendering
+#   • Account signup flow detection
+#
+# Cost model: ZERO Anthropic spend — all journey scripts are deterministic
+# heuristic crawlers. Claude judges the JSON + screenshots in-session after
+# downloading the artifact. No API key required.
+#
+# Side-effect firewall is ALWAYS active: payments, Stripe, affiliate /go/,
+# lead writes, Supabase auth, and all non-functional API writes are mocked.
+# The quiz's own compute endpoints are allowed (they create only anonymous
+# session rows, no PII/payment).
+#
+# Schedules:
+#   • Weekly: Fridays 16:00 UTC (~02:00 AEST Saturday) — full suite
+#   • Manual: workflow_dispatch with target, flows, and persona overrides
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: AI journey
+
+on:
+  schedule:
+    - cron: "0 16 * * 5"    # Fridays 16:00 UTC
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Target base URL (leave blank for Netlify preview)"
+        required: false
+      flows:
+        description: "Flows to run: all | journey | forms | leads"
+        required: false
+        default: "all"
+      persona:
+        description: "Single persona name to run (blank = run all)"
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-journey
+  cancel-in-progress: false
+
+jobs:
+  journey:
+    name: AI journey suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      # Resolve target: input → repo var → Netlify default
+      JOURNEY_BASE: ${{ github.event.inputs.target || vars.BOTS_TARGET_URL || 'https://lambent-sawine-17c3dd.netlify.app' }}
+      LEAD_BASE:    ${{ github.event.inputs.target || vars.BOTS_TARGET_URL || 'https://lambent-sawine-17c3dd.netlify.app' }}
+      FORM_BASE:    ${{ github.event.inputs.target || vars.BOTS_TARGET_URL || 'https://lambent-sawine-17c3dd.netlify.app' }}
+      JOURNEY_OUT:  /tmp/journey
+      LEAD_OUT:     /tmp/journey
+      FORM_OUT:     /tmp/journey
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Confirm target is reachable
+        run: |
+          TARGET="${{ github.event.inputs.target || vars.BOTS_TARGET_URL || 'https://lambent-sawine-17c3dd.netlify.app' }}"
+          echo "::notice::AI journey target: $TARGET"
+          curl -sf --max-time 15 "$TARGET" -o /dev/null \
+            && echo "::notice::Target reachable ✓" \
+            || echo "::warning::Target did not return 200 — journey will still run but results may show errors"
+
+      # ── A) Link crawler — one step per persona ──────────────────────────────
+
+      - name: Journey — new-investor (desktop)
+        if: >-
+          (github.event_name == 'schedule' ||
+           !inputs.flows || inputs.flows == 'all' || inputs.flows == 'journey') &&
+          (!inputs.persona || inputs.persona == 'new-investor')
+        continue-on-error: true
+        env:
+          JOURNEY_NAME: new-investor
+          JOURNEY_START: /
+          JOURNEY_GOAL: "Find and compare investment platforms suitable for a beginner and reach the point of opening an account. Flag anything confusing, broken, or missing fees/risk disclosures."
+          JOURNEY_KEYWORDS: compare,broker,shares,etf,fees,open account
+          JOURNEY_VIEWPORT: desktop
+          JOURNEY_STEPS: "15"
+        run: NODE_PATH=node_modules node bots/journey/ai-journey.cjs
+
+      - name: Journey — advice-seeker (desktop)
+        if: >-
+          (github.event_name == 'schedule' ||
+           !inputs.flows || inputs.flows == 'all' || inputs.flows == 'journey') &&
+          (!inputs.persona || inputs.persona == 'advice-seeker')
+        continue-on-error: true
+        env:
+          JOURNEY_NAME: advice-seeker
+          JOURNEY_START: /advisors
+          JOURNEY_GOAL: "Find a financial adviser who suits someone near retirement. Reach a point where I could make contact. Flag dead ends, confusing steps, or missing AFSL/fee disclosures."
+          JOURNEY_KEYWORDS: adviser,retirement,super,plan,contact,enquire
+          JOURNEY_VIEWPORT: desktop
+          JOURNEY_STEPS: "12"
+        run: NODE_PATH=node_modules node bots/journey/ai-journey.cjs
+
+      - name: Journey — quiz-taker (desktop)
+        if: >-
+          (github.event_name == 'schedule' ||
+           !inputs.flows || inputs.flows == 'all' || inputs.flows == 'journey') &&
+          (!inputs.persona || inputs.persona == 'quiz-taker')
+        continue-on-error: true
+        env:
+          JOURNEY_NAME: quiz-taker
+          JOURNEY_START: /get-matched
+          JOURNEY_GOAL: "Complete the get-matched quiz as a long-term growth investor and reach a personalised action plan. Judge whether the result is clear and trustworthy."
+          JOURNEY_KEYWORDS: long-term,growth,shares,etf,balanced,yes,high
+          JOURNEY_VIEWPORT: desktop
+          JOURNEY_STEPS: "14"
+        run: NODE_PATH=node_modules node bots/journey/ai-journey.cjs
+
+      - name: Journey — mobile-shopper (iPhone)
+        if: >-
+          (github.event_name == 'schedule' ||
+           !inputs.flows || inputs.flows == 'all' || inputs.flows == 'journey') &&
+          (!inputs.persona || inputs.persona == 'mobile-shopper')
+        continue-on-error: true
+        env:
+          JOURNEY_NAME: mobile-shopper
+          JOURNEY_START: /
+          JOURNEY_GOAL: "Compare investment platforms on mobile. Flag tap targets < 44 px, horizontal overflow, or anything hard to use on a phone."
+          JOURNEY_KEYWORDS: compare,broker,fees,account,open
+          JOURNEY_VIEWPORT: mobile
+          JOURNEY_STEPS: "10"
+        run: NODE_PATH=node_modules node bots/journey/ai-journey.cjs
+
+      # ── B) Form driver — get-matched quiz to result ─────────────────────────
+
+      - name: Form — get-matched quiz (desktop)
+        if: >-
+          github.event_name == 'schedule' ||
+          !inputs.flows || inputs.flows == 'all' || inputs.flows == 'forms'
+        continue-on-error: true
+        env:
+          FORM_NAME: get-matched-desktop
+          FORM_START: /get-matched
+          FORM_GOAL: "Complete the get-matched quiz as a long-term growth investor and reach a personalised action plan."
+          FORM_KEYWORDS: long-term,growth,shares,etf,balanced,yes,high
+          FORM_VIEWPORT: desktop
+          FORM_STEPS: "14"
+        run: NODE_PATH=node_modules node bots/journey/ai-form.cjs
+
+      - name: Form — get-matched quiz (mobile)
+        if: >-
+          github.event_name == 'schedule' ||
+          !inputs.flows || inputs.flows == 'all' || inputs.flows == 'forms'
+        continue-on-error: true
+        env:
+          FORM_NAME: get-matched-mobile
+          FORM_START: /get-matched
+          FORM_GOAL: "Complete the get-matched quiz on a mobile device and reach a result. Flag any tap-target issues or mobile layout problems."
+          FORM_KEYWORDS: long-term,growth,shares,etf,balanced
+          FORM_VIEWPORT: mobile
+          FORM_STEPS: "14"
+        run: NODE_PATH=node_modules node bots/journey/ai-form.cjs
+
+      # ── C) Lead flows — quiz + adviser enquiry + comparison + signup ─────────
+
+      - name: Lead flows (all four)
+        if: >-
+          github.event_name == 'schedule' ||
+          !inputs.flows || inputs.flows == 'all' || inputs.flows == 'leads'
+        continue-on-error: true
+        run: NODE_PATH=node_modules node bots/journey/lead-flows.cjs
+
+      # ── Upload all reports + screenshots ────────────────────────────────────
+
+      - name: Upload journey artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-journey-${{ github.run_id }}
+          path: /tmp/journey/**
+          if-no-files-found: warn
+          retention-days: 14

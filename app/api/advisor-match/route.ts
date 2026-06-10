@@ -42,6 +42,8 @@ const Body = z.object({
   investorCountry: z.string().max(20).optional(),
   visaStatus: z.string().max(40).optional(),
   investorGoalIntl: z.string().max(40).optional(),
+  /** Quiz readiness stage — "ready"/"under-contract" boost responsiveness. */
+  stage: z.string().max(20).optional(),
   excludeIds: z.array(z.number()).max(50).optional(),
   limit: z.number().int().min(1).max(10).optional(),
 });
@@ -84,6 +86,7 @@ function toCandidate(row: Record<string, unknown>): QuizAdvisorCandidate {
     avg_response_minutes: asNum(row.avg_response_minutes),
     response_time_hours: asNum(row.response_time_hours),
     initial_consultation_free: asBool(row.initial_consultation_free),
+    booking_link: asStr(row.booking_link),
     trust_score_overall: asNum(row.trust_score_overall),
     country_eligibility: (row.country_eligibility ?? null) as QuizAdvisorCandidate["country_eligibility"],
   };
@@ -142,6 +145,7 @@ export async function POST(request: NextRequest) {
     investorCountry: input.investorCountry,
     visaStatus: input.visaStatus,
     investorGoalIntl: input.investorGoalIntl,
+    stage: input.stage,
   };
 
   // Whitelist the OUTPUT too — the client only needs display + reason fields
@@ -170,6 +174,7 @@ export async function POST(request: NextRequest) {
     avg_response_minutes: a.avg_response_minutes,
     response_time_hours: a.response_time_hours,
     initial_consultation_free: a.initial_consultation_free,
+    booking_link: a.booking_link,
     matchScore: a.matchScore,
     confidence: a.confidence,
   }));

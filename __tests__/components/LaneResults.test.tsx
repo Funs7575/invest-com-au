@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 
 import LaneResults from "@/app/get-matched/_components/LaneResults";
 import type { LaneResolution } from "@/lib/getmatched/resolve-lanes";
-import type { TopMatch } from "@/lib/getmatched/types";
+import type { ListingMatch, TopMatch } from "@/lib/getmatched/types";
 
 const RESOLUTION: LaneResolution = {
   hero: "advisor",
@@ -39,6 +39,18 @@ const ADVISOR2: TopMatch = {
   fee_description: "From $250/hr",
   specialties_preview: ["Crypto Tax", "CGT"],
   cta_href: "/advisor/tom-tax",
+};
+
+const LISTING: ListingMatch = {
+  id: 11,
+  slug: "syd-office-asset",
+  title: "Sydney Office Asset",
+  vertical: "commercial_property",
+  location_state: "NSW",
+  price_display: "A$250,000",
+  image_url: null,
+  reasons: ["Within your stated budget (A$100k–A$500k)"],
+  href: "/invest/commercial-property/listings/syd-office-asset",
 };
 
 function renderLanes(over: Partial<Parameters<typeof LaneResults>[0]> = {}) {
@@ -111,6 +123,29 @@ describe("LaneResults (Decision Engine P5 surface)", () => {
     expect(screen.getByText(/Comparing never contacts anyone/)).toBeInTheDocument();
     // No lead side-effects from comparing.
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("renders specific listing cards in the listings lane — save works, no Connect", async () => {
+    renderLanes({ listingMatches: [LISTING] });
+    const lane = within(screen.getByRole("region", { name: "Browse matching opportunities" }));
+
+    expect(lane.getByText("Sydney Office Asset")).toBeInTheDocument();
+    expect(lane.getByText(/commercial property · NSW · A\$250,000/)).toBeInTheDocument();
+    expect(lane.getByText("Within your stated budget (A$100k–A$500k)")).toBeInTheDocument();
+    expect(lane.getByRole("link", { name: "View listing" })).toHaveAttribute(
+      "href",
+      "/invest/commercial-property/listings/syd-office-asset",
+    );
+    // Factual-match framing, never a recommendation.
+    expect(lane.getByText(/not a recommendation to invest/)).toBeInTheDocument();
+    // Listings never get a Connect button — leads are an advisor-lane concept.
+    expect(lane.queryByRole("button", { name: "Connect" })).not.toBeInTheDocument();
+
+    fireEvent.click(lane.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(screen.getByText("My options (1)")).toBeInTheDocument());
+    const call = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]!;
+    const body = JSON.parse((call[1] as RequestInit).body as string);
+    expect(body).toMatchObject({ action: "add", item: { kind: "listing", ref: "11" } });
   });
 
   it("hides saving entirely in ephemeral mode (no plan to save to)", () => {

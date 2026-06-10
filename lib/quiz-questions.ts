@@ -111,6 +111,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "beginner", label: "Complete beginner", sub: "Just getting started" },
       { key: "intermediate", label: "Some experience", sub: "I've invested before but want to improve" },
       { key: "pro", label: "Advanced / professional", sub: "I know what I'm doing" },
+      { key: "not_sure", label: "Not sure", sub: "We'll keep things clear either way" },
     ],
   },
   complexity: {
@@ -119,6 +120,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "simple", label: "Simple", sub: "Just getting started, straightforward situation" },
       { key: "moderate", label: "Moderate", sub: "Some assets, want to make good decisions" },
       { key: "complex", label: "Complex", sub: "Tax, SMSF, property, business, or multiple goals" },
+      { key: "not_sure", label: "I'm not sure", sub: "We'll start simple — you can add detail later" },
     ],
   },
   amount: {
@@ -128,6 +130,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "medium", label: "$10,000 – $100,000", sub: "Building a portfolio" },
       { key: "large", label: "$100,000 – $500,000", sub: "Significant savings" },
       { key: "whale", label: "$500,000+", sub: "Major wealth decisions" },
+      { key: "not_sure", label: "Not sure yet", sub: "We'll show options across the range" },
     ],
   },
   priority: {
@@ -137,6 +140,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "safety", label: "Safety (CHESS sponsored)", sub: "Shares held directly in your name" },
       { key: "tools", label: "Best tools & research", sub: "Advanced charting, analysis, screeners" },
       { key: "simple", label: "Simplicity / set & forget", sub: "Easy, automated, and stress-free" },
+      { key: "not_sure", label: "No strong preference", sub: "Show me well-rounded options" },
     ],
   },
   advisor_type: {

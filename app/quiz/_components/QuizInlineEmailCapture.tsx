@@ -31,7 +31,21 @@ export default function QuizInlineEmailCapture({ onSubmit, status }: Props) {
   const isLoading = status === "loading";
   const canSubmit = isValidEmail && !isLoading;
 
-  if (dismissed) return null;
+  // Dismissed → keep a quiet re-entry point instead of vanishing entirely.
+  // Cold recovery used to be impossible: once the ✕ was tapped the only way
+  // back to the PDF/email option was retaking the quiz.
+  if (dismissed) {
+    return (
+      <div className="mb-4 md:mb-6 text-center">
+        <button
+          onClick={() => setDismissed(false)}
+          className="text-xs text-slate-500 hover:text-slate-700 underline underline-offset-2 transition-colors"
+        >
+          Changed your mind? Email me my results
+        </button>
+      </div>
+    );
+  }
 
   // Success state — replace the form with a thank-you so the user knows
   // their submission landed.

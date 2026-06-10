@@ -52,16 +52,23 @@ export const QuizStageSchema = safeEnum([
 
 export const QuizModeSchema = safeEnum(["diy", "help", "unsure"]);
 
+// "not_sure" is a first-class, neutral no-signal answer on the four subjective
+// judgment questions (experience / complexity / amount / priority) — it lets an
+// undecided user proceed instead of abandoning. It degrades safely everywhere:
+// amount → AMOUNT_MULTIPLIER fallback 1.0; experience/priority → not in
+// ANSWER_WEIGHT_MAP, so no weight; complexity → `=== "complex"` is false.
 export const QuizExperienceSchema = safeEnum([
   "beginner",
   "intermediate",
   "pro",
+  "not_sure",
 ]);
 
 export const QuizComplexitySchema = safeEnum([
   "simple",
   "moderate",
   "complex",
+  "not_sure",
 ]);
 
 export const QuizAmountSchema = safeEnum([
@@ -69,6 +76,7 @@ export const QuizAmountSchema = safeEnum([
   "medium",
   "large",
   "whale",
+  "not_sure",
 ]);
 
 export const QuizPrioritySchema = safeEnum([
@@ -76,6 +84,7 @@ export const QuizPrioritySchema = safeEnum([
   "safety",
   "tools",
   "simple",
+  "not_sure",
 ]);
 
 export const QuizAdvisorTypeSchema = safeEnum([
