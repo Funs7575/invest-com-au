@@ -806,6 +806,22 @@ counter killed in #1489). Plan's Phase 0 fixes both schema-free (migration
 ledger still frozen). These two are worth fixing even if community is never
 promoted.
 
+**Update 2 (same day) — founder said "do it all"; Phase 0 BUILT on PR #1493:**
+publish gate (classifyText, new forum surfaces) on thread/reply POSTs with
+held-for-review path into forum_reports; `/admin/community` queue
+(approve/remove/dismiss + live-row recounts); kill switch + hold_all raid dial;
+expert-answer elevation + licence-mode-aware adviser CTA on threads (the
+user-asks→expert-answers wire into the lead funnel); per-thread noindex until
+pinned/voted/expert-answered (migration protection); reply notifications;
+composer held-state + advice-phrasing nudge; /community/guidelines; footer
+link; PostHog gate events; DML-only counter-reconciliation script (run
+post-merge: `npx tsx --env-file=.env.local scripts/community-reconcile-counters.ts`
+— also seeds the Ask-an-Advisor category). 101 tests green, tsc/eslint clean.
+**Next up (Phase 1):** advisor quick-post UI + follow button (tables exist,
+no UI), QotD ritual + 24h Research-Team SLA (needs founder call on §11 D2/D3),
+confessions composer bug (`?thread_type=` ignored — Confess CTA makes a
+normal thread).
+
 ---
 
 ## Open commitments / revisit-by dates
