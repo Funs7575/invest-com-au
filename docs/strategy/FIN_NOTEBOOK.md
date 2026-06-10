@@ -14,6 +14,29 @@
 
 ## Active strategic decisions log
 
+### 2026-06-10 — Decision Engine vision locked: multi-lane outcome router on /get-matched
+
+Founder vision set the bar: not a quiz or directory — a decision engine that
+resolves the right destination(s) per user: matched advisors when a
+professional is the answer, SPECIFIC scored listings when browsing is, both
+lanes side-by-side when both apply; shortlists, comparison, a "My Options"
+workspace, resumable journeys, full why-this transparency. Full product plan
++ architecture: docs/plans/UNIFIED_MATCHING_ENGINE.md (v2) — lanes
+(advisor/listings/platforms/brief/education), weighting by intent + urgency +
+certainty + real supply, composite results, edge-case table, compliance
+redlines (listing matches are factual criteria only; CSF verticals excluded
+pending s708 gate), 9 phases each flag-gated + tested.
+
+P1 shipped same day (PR #1497): lib/getmatched/advisor-allocation.ts — the
+translator that drives get-matched's answers through the ONE advisor engine
+(deriveNeeds → pickPrimary single-lead + scoring context), 17 intent-matrix
+tests. Next: P2 (advisor lane live in resolve behind
+advisor_match_v2_get_matched), then listings scorer (P4) and the workspace
+(P5, needs device QA).
+
+**Revisit:** after P2 ships, before P5 — founder eyes on the result-surface
+redesign on the Netlify mirror.
+
 ### 2026-06-10 — OTP wall relocated on /find-advisor (decision: keep the funnel, don't 301)
 
 Founder delegated the §5.6/§6 either-or. Evidence decided it: /get-matched

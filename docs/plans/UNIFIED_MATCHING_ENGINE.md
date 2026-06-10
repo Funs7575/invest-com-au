@@ -1,65 +1,104 @@
-# Unified Matching Engine — "one engine to be jealous of"
+# The Decision Engine — universal outcome router (v2, founder vision 2026-06-10)
 
-**Goal:** `/get-matched` becomes the single matching funnel, powered by the rebuilt advisor-matching brain, covering every user intent with world-class intelligence + UX. Decided 2026-06-10 (founder). Supersedes the dual-funnel state; folds in `/find-advisor`.
+**Vision (founder):** not a quiz, not a directory — a **smart decision engine**. It resolves the *right destination(s)* for each user: matched **advisors** when a professional is the answer, **specific scored listings** when browsing is, **both lanes at once** when both apply — handling multiple matches, shortlists, mixed goals, urgency and uncertainty gracefully, with transparency ("why this?"), side-by-side comparison, saving/managing, and journeys that resume without losing context.
 
-## The moat (what makes it world-class — ✅ exists / 🔨 build)
+**Surface:** `/get-matched` is the one funnel (decided). `/find-advisor` folds in at parity (P8).
 
-- ✅ **Single-lead integrity.** One lead → one advisor (`pickPrimary`), never resold to a panel. Most marketplaces spam 5 advisors; we don't. Compliance-aligned *and* the advisor-trust differentiator.
-- ✅ **Multi-signal scored matching** — specialty/goal · budget · location · cross-border corridor · quality · availability · country-eligibility (`lib/quiz-advisor-scoring.ts`).
-- ✅ **Explainable matches** — attribute-driven "why we matched you," never generic (`buildAdvisorMatchReasons`).
-- ✅ **Corridor intelligence** — UK pension / FATCA / DASP / FIRB first-class (`corridorKeywordsFor`).
-- ✅ **Confidence honesty** — qualitative bands, no fake-precise %.
-- ✅ **Outcome-learning re-rank** — `applyOutcomesRanking` already re-ranks providers by real lead outcomes. Extend to advisors.
-- 🔨 **Total intent coverage** — every situation in the matrix routes to a real outcome (below).
-- 🔨 **Lead capture in-funnel** — get-matched writes no advisor lead today; port the preview→connect→OTP→confirm flow.
-- 🔨 **Redesigned result UX** — the match moment, not an "action-plan checklist."
+---
 
-## Architecture — one engine, two front-ends, a thin translator
+## 1. Core architecture — lanes, not a single route
+
+Today `inferRoute()` picks ONE `RouteType`. The engine becomes a **multi-lane resolver**:
 
 ```
-/get-matched questions (DB)  ─┐
-                              ├─►  actionPlanToUnified()  ─►  UnifiedAnswers ─► [ deriveNeeds → pickPrimary ]  ─► one lead
-quiz UNIFIED_QUESTIONS (code) ─┘     (lib/getmatched/             (canonical)      scoreQuizAdvisors (rank real
-                                      advisor-allocation.ts)                       professionals) + buildAdvisorMatchReasons
+answers ─► actionPlanToUnified() ─► UnifiedAnswers          (P1 ✅ shipped)
+                 │
+                 ▼
+        resolveLanes(unified) ─► RankedLane[]                (P2/P5)
+        lane = { kind, weight 0–100, reasons[], urgency, confidence }
 ```
 
-The engine never forks. Each surface only owns its question model + result presentation; the brain is shared. `/find-advisor` becomes a thin entry that hands off to the same engine, then 301s.
+**Lane kinds** (each has a scorer, a result block, and a "why"):
 
-## Phased build (each phase: shippable, flag-gated where it touches the live funnel, tested)
+| Lane | Engine | Status |
+|---|---|---|
+| `advisor` | `deriveNeeds → pickPrimary` (ONE lead) + `scoreQuizAdvisors` ranking real `professionals` + `buildAdvisorMatchReasons` | ✅ built + translator shipped |
+| `listings` | **NEW `lib/listings/match-listings.ts`** — score `investment_listings`: vertical fit, ticket size vs budget band, state/location, `listing_type` quality, recency. Pattern: `lib/home-listing-curation.ts` (pure+tested) | 🔨 P4 |
+| `platforms` | `computeTopMatches` (brokers via `quiz_weights`) | ✅ exists |
+| `brief` | Brief Studio `/briefs/new` — when supply is thin or needs are bespoke ("describe it, pros respond") | ✅ exists |
+| `education` | learning exit → guides/courses/calculators (never a lead push) | ✅ exists |
 
-- **P1 — Translator + allocation (THIS PR).** `lib/getmatched/advisor-allocation.ts`: map every get-matched answer → `UnifiedAnswers`, reuse `allocateAdvisors`/`resolveLeadAdvisorType`, emit the `QuizAdvisorScoringContext`. Pure, exhaustively tested per intent. No live-funnel change. *This is the keystone — proves one engine drives get-matched's data.*
-- **P2 — Match core extraction + wire into resolve (flag: `advisor_match_v2_get_matched`).** Extract the candidate-load+score core (shared by `/api/advisor-match`), call it in `resolve` for advisor-shaped routes (`individual`/`firm`/`expert_team`/`investor_brief`), return real ranked advisors in the existing `TopMatch{kind:"advisor"}` shape (carousel already renders them). Falls back to today's path when the flag is off.
-- **P3 — Collect the missing signals.** Migration adds the questions the engine needs but get-matched lacks: **AU state** (domestic), **investor country + visa** (overseas/expat branch), and a clean **advisor-type** confirm. Improves match precision; engine already degrades gracefully without them (location-neutral).
-- **P4 — Result-UX redesign + lead capture.** Redesign the advisor outcome as a *match* moment (advisor card · why-matched · confidence · single primary CTA), preview-before-contact, then `/api/get-matched/plans/[id]/submit-lead` writes `professional_leads`. **Needs device QA.**
-- **P5 — Fold in `/find-advisor`.** Once get-matched captures advisor leads at parity, 301 `/find-advisor` → `/get-matched`. One funnel.
+**Lane weighting logic** (`resolveLanes`, pure + exhaustively tested):
+- *Intent* sets base weights (property+physical → advisor high, listings med; browse/alt-assets → listings high; help_sub named → advisor very high).
+- *Urgency* (`timeline`): `now` boosts advisor (and conveyancer rule), damps education; `researching` inverts — education/listings lead, advisor becomes a quiet secondary.
+- *Certainty* (`help_preference`, count of "not sure" answers): low certainty → composite result + brief lane raised; high certainty → single dominant hero.
+- *Supply check*: each lane reports real result counts; an empty lane (no matching listings / thin advisor supply) is demoted with an honest note and the brief lane backfills. **Never render an empty hero.**
+- **Composite rule:** top lane is the hero; any lane within 25 weight-points ALSO renders as a full secondary block (not a link) — "both paths, side by side."
 
-## Intent coverage matrix → route (the bar: every row has a real home)
+**Single-lead integrity is untouched:** multiple *lanes* ≠ multiple advisor leads. The advisor lane allocates ONE primary (team as directory links); shortlisting ≠ contacting; a lead only exists at explicit confirm.
 
-| Intent | get-matched signal | Engine advisor type | Outcome |
-|---|---|---|---|
-| First-time / existing property | intent=property, property_sub | buyers-agent (+ mortgage, conveyancer, tax team) | advisor match |
-| Ready to settle now | timeline=now → stage=under-contract | **conveyancer** (settlement clock) | advisor match (urgent) |
-| SMSF | intent=super, super_sub=smsf* | smsf-accountant | advisor match |
-| Home loan | intent=home | mortgage-broker | advisor match |
-| Tax / accounting | help_sub=tax_agent | tax-agent | advisor match |
-| Financial planning / HNW | intent=grow + budget whale | financial-planner (+ estate) | advisor match |
-| Expat AU investing home | starting_point=expat | corridor-aware (DASP/au_expat) | advisor match (intl) |
-| Non-resident foreign buyer | starting_point=overseas + property | buyers-agent + FIRB corridor | advisor match (intl) |
-| UK/India/China→AU | country_of_residence | corridor specialty (pension/FATCA) | advisor match (intl) |
-| Commercial property | (new option) | commercial-property-agent | advisor match |
-| Don't know what I need | help_preference=not_sure / "not-sure" | pickPrimary fallback / post-job | guided / brief |
-| Just learning | timeline=researching → stage=learning | — | education-first outcome (no lead push) |
-| Just browsing | intent=browse | — | browse opportunities (current action-plan UX) |
+## 2. Result surface — the match moment (UX redesign)
 
-## UI/UX redesign principles (P4 spec — build to these, sign off on mirror)
+Adaptive hero by top lane; qualifying secondary lanes stacked below; workspace strip persistent.
 
-- **Match moment, not a form.** Result leads with the matched advisor (photo · specialism · location/remote · trust signal · confidence band · 3 attribute-driven reasons), one hero CTA. Action-plan checklist demoted to the DIY/browse outcomes.
-- **Value before the wall.** Show the match before asking for contact (the §5.6 win — already shipped on /find-advisor).
-- **Adaptive + minimal.** ≤6–8 steps; "I'm not sure" everywhere; readiness gate offers a first-class *education* exit.
-- **Trust-forward.** "Free · No obligation · One advisor, never a call centre." Verified/licensed signals. No fabricated stats.
-- **Mobile-first, AA contrast, full keyboard/SR.** Focus moves to the result on every transition.
+- **Advisor hero:** photo · specialism · location/remote · trust signal · confidence band · 3 attribute-driven reasons · `Connect` (preview→contact-at-confirm, the §5.6 pattern) · `Save to my options` · rematch ("show me another").
+- **Listings hero/block:** 3–6 *specific* matched listings (cards with the real criteria they matched: "NSW · $50k ticket · agriculture"), each `Save` + `View`; "see all N matching" deep-links the filtered directory (`categoryListingsHref` + params). Factual criteria matching only (see §6).
+- **Platforms block:** existing TopMatch carousel.
+- **Composite:** "Your situation points two ways" framing + a compare rail.
+- **Every block:** its own "Why this is here" line from the lane's `reasons[]` — full transparency, never generic.
+- Design system: existing tokens (slate/amber, directory primitives, AA contrast, ≥44px, focus management). Mobile-first; sticky bottom action bar (`StickyCTABar` pattern) holding `My options (N)`.
 
-## Honesty / guardrails
-- Compliance: general-advice only; guide to a professional, never advise. No REGULATORY-AVOID-LIST escalators.
-- Single-lead is non-negotiable — verify at every seam.
-- Visual redesign (P4) requires device QA; the headless build env can verify logic/tests, not pixels.
+## 3. The workspace — "My Options" (manage multiple, resume, follow up)
+
+The thing that makes it feel like a product, not a quiz. **Built on existing plumbing:**
+- `action_plans` row (exists: persisted answers, `share_token`, email-save) = the journey spine. Add `saved_items jsonb` (P5 migration, RLS) holding `{kind: advisor|listing|platform, id, saved_at, note?}`.
+- `anonymous_saves` + `claimAnonymousSaves` (exist) = anonymous→account continuity.
+- Surfaces: results-page rail + `/plans/[share_token]` page (exists, extend) as the durable hub: matched advisor + status (previewed/connected/responded), shortlisted listings, platform picks, checklist, "what changed since you left" (new listings matching saved criteria — feeds the rate-alerts/drip infra).
+- Resume: partial-plan recall (exists) + funnel events already instrumented.
+- Follow-ups: drip templates (exist, flag-gated) get lane-aware variants; advisor `lead_outcome` events close the loop into `applyOutcomesRanking` so **the engine learns from real outcomes per lane**.
+
+## 4. Comparison tools
+
+- **Advisors:** extend the shortlist → side-by-side table (fees, specialties, response time, rating, corridor) — reuse `QuizComparisonTable`/directory `CompareBar` patterns. Compare ≠ contact; single-lead holds at confirm.
+- **Listings:** `ListingCompareBar` (exists) wired into saved items.
+- **Cross-lane "options board" (P7):** one screen — your advisor vs your listings vs DIY platform — with an honest "these aren't substitutes; here's how they fit together" explainer (general-advice framing).
+
+## 5. Decision logic — explicit edge cases (each gets a test)
+
+| Case | Behaviour |
+|---|---|
+| Conflicting signals (help_sub named + "browse" preference) | Named professional wins the advisor lane; listings still render as secondary (composite) |
+| Total uncertainty (everything "not sure") | Guided composite: education hero + brief + "talk to someone" tertiary; NO hard lead push |
+| Urgent + uncertain | Advisor hero (under-contract rule) + reassurance copy, education demoted not hidden |
+| No listing supply in vertical/state | Lane demoted + honest note + brief backfill + "save criteria → alert me" |
+| Thin advisor supply | Closest-match fallback (exists) + brief lane raised |
+| Equity-raise / CSF verticals | **Excluded from listing lane** until the s708 wholesale gate exists (REGULATORY-AVOID-LIST §A; same rule as homepage teaser) |
+| International user | Corridor-aware advisors (exists); listings filtered to `available to overseas buyers` flags only — never FIRB-blind suggestions; FIRB *explainer* links, never advice |
+| Returning user / changed answers | Re-resolve lanes; diff badge ("your matches changed because you changed budget"); saved items persist |
+| Anonymous vs auth | Everything works anonymous (plan token); account claim merges saves |
+| Refresh / multi-device | Plan token is the source of truth; localStorage only caches position; no PII in localStorage |
+
+## 6. Compliance redlines (general advice, AFSL ≈ late 2027)
+
+Listing "recommendations" are **factual criteria matches** ("matches your stated budget/state/vertical") — never quality endorsements, performance claims, or "you should invest". Copy reviewed against `lib/compliance.ts`; disclaimer on every lane block; licence-mode gates respected (no rating renders in factual_only). Advisor lane = introduction service framing (exists). Brief lane never auto-shares contact details. **Anything touching capital-raising/CSF/credit stays out without founder+legal sign-off.**
+
+## 7. Data & measurement
+
+- New events on the existing typed schema: `lane_resolved` (kinds+weights), `lane_engaged`, `option_saved`, `options_compared`, `plan_revisited`. Funnel dashboards per lane; outcome loop per lane.
+- No new tables except the `saved_items` column (P5) — everything else rides existing schema.
+
+## 8. Build phases (each shippable, tested, flag-gated where live)
+
+- **P1 ✅** Translator + single-lead allocation from get-matched answers (shipped, 17 tests).
+- **P2 🔨 next** Advisor lane live in `resolve` behind `advisor_match_v2_get_matched`: load candidates (reuse `/api/advisor-match` SELECT), `scoreQuizAdvisors`, return `TopMatch{kind:"advisor"}` + reasons + confidence (carousel already renders advisors). Flag off = zero change.
+- **P3** Missing-signal questions (AU state; country+visa for overseas/expat; advisor-type confirm) — one migration, sharpens P2 (engine already degrades gracefully).
+- **P4** `lib/listings/match-listings.ts` + listings lane (pure scorer + tests; CSF exclusions; supply-aware).
+- **P5** `resolveLanes` composite resolver + `saved_items` migration + workspace rail + result-surface redesign v1. **Device QA gate.**
+- **P6** Lead capture in-funnel (preview→connect→verify at confirm → `professional_leads`) — port of the proven find-advisor flow.
+- **P7** Comparison tools (advisor table, cross-lane board) + lane-aware drips/alerts.
+- **P8** `/find-advisor` 301 → one funnel. **P9** outcome-learning per lane + ranking-weight review cadence.
+
+**QA bar per phase:** unit tests on every pure module; contract tests on answer→lane mapping; bot-smoke on the funnel; device pass before any visual phase ships; merge tiers respected.
+
+---
+*P1 artifacts: `lib/getmatched/advisor-allocation.ts`, `__tests__/lib/getmatched-advisor-allocation.test.ts`. The §6 port-list in QUIZ_REDESIGN.md is absorbed into P2–P6 here.*
