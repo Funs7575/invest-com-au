@@ -120,3 +120,51 @@ describe("InvestListingsClient — filter primitives wiring", () => {
     expect(screen.queryByText("Filtering:")).not.toBeInTheDocument();
   });
 });
+
+describe("InvestListingsClient — sub-category chips vs SubCategoryNav tabs", () => {
+  const miningCategories = [{ slug: "mining", label: "Mining" }];
+  const goldListing = makeListing({
+    id: 2,
+    slug: "gold-project",
+    title: "Gold Project",
+    vertical: "mining",
+    sub_category: "gold",
+    listing_kind: "project_equity",
+  });
+
+  it("shows the 'Filter results by type' chips on a locked-category page by default", () => {
+    render(
+      <InvestListingsClient
+        listings={[goldListing]}
+        categories={miningCategories}
+        lockedCategory="mining"
+      />,
+    );
+    expect(screen.getByRole("group", { name: /Filter results by type/i })).toBeInTheDocument();
+  });
+
+  it("hides the chips when hideSubCategoryChips is set (pages with a SubCategoryNav tab bar)", () => {
+    render(
+      <InvestListingsClient
+        listings={[goldListing]}
+        categories={miningCategories}
+        lockedCategory="mining"
+        hideSubCategoryChips
+      />,
+    );
+    expect(screen.queryByRole("group", { name: /Filter results by type/i })).not.toBeInTheDocument();
+  });
+
+  it("hiding the chips leaves the rest of the filter chrome intact", () => {
+    render(
+      <InvestListingsClient
+        listings={[goldListing]}
+        categories={miningCategories}
+        lockedCategory="mining"
+        hideSubCategoryChips
+      />,
+    );
+    expect(screen.getByRole("button", { name: /All filters/i })).toBeInTheDocument();
+    expect(screen.getByText("Gold Project")).toBeInTheDocument();
+  });
+});

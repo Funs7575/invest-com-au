@@ -60,6 +60,9 @@ export default async function FundsListingsPage() {
           // returns the slug "funds" — so "fund" matched nothing and the page
           // rendered "0 listings" despite 78 fund rows.
           lockedCategory="funds"
+          // Mirrors the SubCategoryNav render condition above — when the tab
+          // bar shows, the in-results chips would duplicate it.
+          hideSubCategoryChips={Boolean(category && category.subcategories.length > 0)}
           pageTitle="Fund Investment Listings"
           pageSubtitle="Browse Australian fund investment opportunities — managed funds, syndicated property funds, infrastructure funds and wholesale vehicles open to qualified investors."
         />
