@@ -151,6 +151,8 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "insurance-broker",  label: "Insurance broker",          sub: "Life, income, and asset protection",            emoji: "🛡️" },
       { key: "estate-planner",    label: "Estate planner",            sub: "Wills, succession, asset protection",           emoji: "📜" },
       { key: "commercial-property-agent", label: "Commercial property agent", sub: "Buy or lease commercial property",      emoji: "🏢" },
+      { key: "aged-care-advisor", label: "Aged care advisor",         sub: "Aged-care costs, RADs, Centrelink planning",    emoji: "🏥" },
+      { key: "debt-counsellor",   label: "Debt counsellor",           sub: "Budgeting help and getting on top of debt",     emoji: "🧮" },
       { key: "not-sure",          label: "I'm not sure what I need",  sub: "Help me figure out the right expert",           emoji: "🤔" },
     ],
   },

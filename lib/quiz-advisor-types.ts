@@ -41,6 +41,8 @@ export const QUIZ_ADVISOR_TYPES: Record<AdvisorNeed, QuizAdvisorTypeMeta> = {
   "insurance-broker":  { dbType: "insurance_broker",  label: "Insurance Broker",         href: "/advisors/insurance-brokers",         teamReason: "Protect your assets and income",        teamIcon: "shield" },
   "estate-planner":    { dbType: "estate_planner",    label: "Estate Planner",           href: "/advisors/estate-planners",           teamReason: "Plan your estate and succession",       teamIcon: "file-text" },
   "commercial-property-agent": { dbType: "commercial_property_agent", label: "Commercial Property Agent", href: "/advisors/commercial-property-agents", teamReason: "Buy or lease commercial property", teamIcon: "building" },
+  "aged-care-advisor": { dbType: "aged_care_advisor", label: "Aged Care Advisor",        href: "/advisors/aged-care-advisors",        teamReason: "Plan aged-care costs and entitlements", teamIcon: "heart" },
+  "debt-counsellor":   { dbType: "debt_counsellor",   label: "Debt Counsellor",          href: "/advisors/debt-counsellors",          teamReason: "Get on top of debt before investing",   teamIcon: "piggy-bank" },
   "not-sure":          { dbType: "",                  label: "Financial Advisor",        href: "/find-advisor",                       teamReason: "Help working out who you need",         teamIcon: "users" },
 };
 

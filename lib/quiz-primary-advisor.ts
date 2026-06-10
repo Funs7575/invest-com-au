@@ -34,6 +34,8 @@ export type AdvisorNeed =
   | "insurance-broker"
   | "estate-planner"
   | "commercial-property-agent"
+  | "aged-care-advisor"
+  | "debt-counsellor"
   | "not-sure";
 
 export interface PrimaryContext {

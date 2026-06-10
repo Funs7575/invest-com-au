@@ -204,6 +204,8 @@ const ADVISOR_NEEDS: ReadonlySet<string> = new Set<AdvisorNeed>([
   "insurance-broker",
   "estate-planner",
   "commercial-property-agent",
+  "aged-care-advisor",
+  "debt-counsellor",
   "not-sure",
 ]);
 

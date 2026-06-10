@@ -89,12 +89,14 @@ function domesticNeedKeys(a: UnifiedAnswers): string[] {
     return ["buyers-agent", "mortgage-broker", "conveyancer", "insurance-broker", "tax-agent", "commercial-property-agent", "not-sure"];
   }
   if (a.goal === "super") {
-    return ["smsf-accountant", "financial-planner", "insurance-broker", "tax-agent", "not-sure"];
+    return ["smsf-accountant", "financial-planner", "insurance-broker", "tax-agent", "aged-care-advisor", "not-sure"];
   }
   if (a.goal === "crypto") {
     return ["tax-agent", "financial-planner", "not-sure"];
   }
-  return ["financial-planner", "tax-agent", "insurance-broker", "estate-planner", "smsf-accountant", "not-sure"];
+  // Default (incl. goal=help): the general advisory set. Debt counselling sits
+  // here — "get expert help" is the entry someone in financial difficulty picks.
+  return ["financial-planner", "tax-agent", "insurance-broker", "estate-planner", "smsf-accountant", "debt-counsellor", "not-sure"];
 }
 
 

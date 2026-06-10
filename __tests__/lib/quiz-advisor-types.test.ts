@@ -25,6 +25,10 @@ describe("quiz advisor-type registry", () => {
     expect(hrefForNeed("commercial-property-agent")).toBe("/advisors/commercial-property-agents");
     expect(dbTypeForNeed("estate-planner")).toBe("estate_planner");
     expect(hrefForNeed("estate-planner")).toBe("/advisors/estate-planners");
+    expect(dbTypeForNeed("aged-care-advisor")).toBe("aged_care_advisor");
+    expect(hrefForNeed("aged-care-advisor")).toBe("/advisors/aged-care-advisors");
+    expect(dbTypeForNeed("debt-counsellor")).toBe("debt_counsellor");
+    expect(hrefForNeed("debt-counsellor")).toBe("/advisors/debt-counsellors");
   });
 
   it("falls back gracefully for unknown / not-sure", () => {

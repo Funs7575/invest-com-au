@@ -88,6 +88,8 @@ export const TYPE_KEYWORDS: Record<string, string[]> = {
   "insurance-broker": ["insurance", "life cover", "income protection", "tpd"],
   "estate-planner": ["estate", "will", "succession", "trust"],
   "commercial-property-agent": ["commercial property", "commercial real estate", "office", "retail", "industrial", "leasing", "tenant", "warehouse"],
+  "aged-care-advisor": ["aged care", "aged-care", "rad", "refundable accommodation", "centrelink", "home care"],
+  "debt-counsellor": ["debt", "budget", "hardship", "consolidat", "credit repair"],
 };
 
 export const INTL_KEYWORDS = [
