@@ -290,11 +290,11 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <HomeFridayBriefing />
+        <CountryToolsStripWrapper />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <CountryToolsStripWrapper />
+        <HomeFridayBriefing />
       </ScrollFadeIn>
     </div>
   );
