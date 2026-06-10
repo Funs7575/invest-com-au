@@ -14,6 +14,45 @@
 
 ## Active strategic decisions log
 
+### 2026-06-10 — Homepage cleanup: 24 sections → 13; paid-placement policy for the marketplace teaser
+
+Founder call ("way too long and bloated") + expert review. Decisions:
+
+1. **Cut/merge, don't redesign.** Removed `HomeCompareDeepDive` (278-line
+   client re-implementation of /compare), `HomeCPDCourses` (B2B content on
+   a consumer surface), `HomeActivitySection` (third "welcome back" surface
+   — `HomepagePersonalisedStrip` is the one canonical returning-user strip)
+   and the inline tool chips. Merged the three market strips
+   (rate-of-the-day + Invest Score gauge + rate changes) into one
+   `HomeMarketToday` band. Squad-of-the-month shrunk from a full-bleed
+   violet band to a one-row spotlight strip docked under the experts grid
+   (ranking logic unchanged); events shrunk to a 3-row strip; post-a-request
+   shrunk to a one-row CTA strip. Net: 24 sections → 13 modules.
+2. **Marketplace teaser paid-placement policy:** hybrid. Diversity
+   round-robin (max 2/vertical) + image-first ranking stays; paid
+   (`listing_type` featured/premium) capped at **3 of the 6 visible
+   cards**, always labelled (SponsorChip + `ADVERTISER_DISCLOSURE_SHORT`).
+   Placement stays a **flat-fee tier upgrade — no bidding** (RG 246
+   conflicted-remuneration + adverse-selection risk). Logic is pure +
+   unit-tested in `lib/home-listing-curation.ts`.
+3. **Equity raises excluded from the homepage teaser** while
+   /invest/startups has no s708 wholesale gate (CSF escalator,
+   REGULATORY-AVOID-LIST §A). Re-include only behind the wholesale gate.
+4. **Bug found during the work:** homepage teaser cards hand-rolled
+   `/invest/<vertical>/<slug>` — a 404 for every vertical (canonical shape
+   is `/invest/<category>/listings/<slug>` via `lib/listing-url`). Fixed +
+   pinned by test. Also: `lib/listing-url` + `formatListingPrice` widened
+   to accept drifted string verticals; teaser chips now humanise unknown
+   verticals (`carbon-environmental-markets` was rendering raw).
+5. **Data drift noted, not migrated:** `vertical='fund'` (60 collectibles),
+   `commercial_property` underscore variant (4 rows). Handled in code via
+   existing VERTICAL_ALIASES; root-cause normalisation migration stays a
+   separate queue item (URL/SEO impact needs its own review).
+
+Revisit: when listing supply grows past ~300 or a homepage-placement SKU is
+actually sold, revisit the 3-of-6 cap and whether the teaser needs an admin
+curation override.
+
 ### 2026-06-10 — Licence-mode gates wired into money surfaces; hero claims reworded; compare default changed (PR #1489)
 
 Skeptical-first-time-investor funnel audit (full report:

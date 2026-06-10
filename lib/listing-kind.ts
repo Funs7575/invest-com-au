@@ -360,8 +360,10 @@ export function freshnessSignal(l: Pick<InvestmentListing, "created_at" | "expir
 
 /** Returns a price-display string for a listing, picking the right
  *  prefix for its kind. Falls back to `price_display` when set on the
- *  row (sellers can override), else formats `asking_price_cents`. */
-export function formatListingPrice(l: Pick<InvestmentListing, "listing_kind" | "vertical" | "price_display" | "asking_price_cents" | "key_metrics">): {
+ *  row (sellers can override), else formats `asking_price_cents`.
+ *  Accepts the structural `DerivableListing` shape so callers holding
+ *  raw DB rows (string vertical, drifted values) don't need a cast. */
+export function formatListingPrice(l: DerivableListing & { price_display?: string | null }): {
   label: string;   // "Asking" / "Min investment" / "Raising" / "Market cap"
   value: string;   // "$2.5M" / "$100k" / "ASX: TLS"
 } | null {

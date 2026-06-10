@@ -1,4 +1,4 @@
-import type { InvestmentListing, InvestListingVertical, ListingKind } from "@/lib/types";
+import type { InvestListingVertical, ListingKind } from "@/lib/types";
 
 /**
  * Maps each `vertical` value from the database to its corresponding
@@ -113,14 +113,24 @@ export const FUND_SUB_TO_CATEGORY: Record<string, string> = {
 };
 
 /**
+ * Structural input for {@link categoryForListing} / {@link listingUrl}.
+ * Deliberately wider than `InvestmentListing`: `vertical` is a plain
+ * string because prod rows carry drifted values outside the
+ * `InvestListingVertical` union (see VERTICAL_ALIASES) — both functions
+ * normalise and fall back gracefully, so callers holding raw DB rows
+ * don't need to cast.
+ */
+export interface ListingUrlInput {
+  vertical: string;
+  sub_category?: string | null;
+  listing_kind?: ListingKind | string | null;
+}
+
+/**
  * Returns the canonical category slug for an investment listing.
  * Used to construct correct URLs for listing detail pages.
  */
-export function categoryForListing(
-  listing: Pick<InvestmentListing, "vertical" | "sub_category"> & {
-    listing_kind?: ListingKind | null;
-  },
-): string {
+export function categoryForListing(listing: ListingUrlInput): string {
   // ASX-listed securities are an instrument class that spans many sectors
   // (uranium, hydrogen, oil & gas, …). Group them into one factual
   // "listed-securities" category instead of scattering them by vertical —
@@ -128,7 +138,7 @@ export function categoryForListing(
   // fallback. (listing_kind is optional: callers passing only vertical/
   // sub_category — e.g. state rollups — keep the vertical-based behaviour.)
   if (listing.listing_kind === "listed_security") return "listed-securities";
-  const vertical = normaliseVertical(listing.vertical as string);
+  const vertical = normaliseVertical(listing.vertical);
   if (vertical === "fund" && listing.sub_category) {
     const override = FUND_SUB_TO_CATEGORY[listing.sub_category];
     if (override) return override;
@@ -143,10 +153,6 @@ export function categoryForListing(
  * Use this everywhere instead of hardcoded URL templates to ensure links
  * always go to the correct category-specific route.
  */
-export function listingUrl(
-  listing: Pick<InvestmentListing, "vertical" | "sub_category" | "slug"> & {
-    listing_kind?: ListingKind | null;
-  },
-): string {
+export function listingUrl(listing: ListingUrlInput & { slug: string }): string {
   return `/invest/${categoryForListing(listing)}/listings/${listing.slug}`;
 }
