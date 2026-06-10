@@ -30,6 +30,7 @@ import {
   CATEGORY_SCHEMAS,
   DEFAULT_COST_INPUTS,
   SCENARIOS,
+  applyComplianceGates,
   filterBrokers,
   rankBrokers,
   scenarioCategory,
@@ -41,6 +42,13 @@ import {
   type ScenarioMode,
   type SortCol,
 } from "@/lib/compare-engine";
+import { SHOW_EDITORIAL_BADGES, SHOW_RATINGS } from "@/lib/compliance-config";
+
+// Licence-mode default: rating sort implies an editorial ranking, which
+// factual_only mode (no AFSL) must not lead with — cheapest-first is the
+// factual ordering. See lib/compliance-config.ts.
+const DEFAULT_SORT_COL: SortCol = SHOW_RATINGS ? "rating" : "estimated_annual_cost";
+const DEFAULT_SORT_DIR: 1 | -1 = SHOW_RATINGS ? -1 : 1;
 
 const platformTypes: { key: CompareCategory; label: string; short?: string }[] = Object.values(CATEGORY_SCHEMAS).map((schema) => ({
   key: schema.key,
@@ -121,6 +129,13 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const initialFilter: CompareCategory = (() => {
     if (urlFilter && platformTypes.some(fl => fl.key === urlFilter)) return urlFilter as CompareCategory;
     if (urlCategory && CATEGORY_TO_FILTER[urlCategory]) return CATEGORY_TO_FILTER[urlCategory];
+    // Cold organic landing (no params at all): open on share trading — the
+    // category a first-time visitor means by "compare brokers". The mixed
+    // "All" view put three same-rated affiliate rows on top, which read as
+    // pay-to-play (2026-06-10 funnel audit). 'All' stays one tap away.
+    // Param-driven entries (search, quiz ?ids handoff) keep the full set so
+    // pre-selected items can't be filtered out of view.
+    if (!searchParams.get("q") && !searchParams.get("ids")) return "share-trading";
     return 'all';
   })();
   const urlQuery = searchParams.get("q") || "";
@@ -132,9 +147,9 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const urlSortCol = searchParams.get("sort");
   const initialSortCol: SortCol = (urlSortCol && (validSortCols as string[]).includes(urlSortCol))
     ? (urlSortCol as SortCol)
-    : 'rating';
+    : DEFAULT_SORT_COL;
   const urlSortDir = searchParams.get("dir");
-  const initialSortDir: 1 | -1 = urlSortDir === 'asc' ? 1 : -1;
+  const initialSortDir: 1 | -1 = urlSortDir === 'asc' ? 1 : urlSortDir ? -1 : DEFAULT_SORT_DIR;
 
   // Quiz handoff: when the quiz routes here with ?ids=slug1,slug2,slug3 and
   // optional ?quiz_priority signals, seed the comparison so the user lands
@@ -193,7 +208,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     } else {
       url.searchParams.delete('q');
     }
-    if (sortCol === 'rating') {
+    if (sortCol === DEFAULT_SORT_COL) {
       url.searchParams.delete('sort');
     } else {
       url.searchParams.set('sort', sortCol);
@@ -322,7 +337,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   }
 
   const effectiveCategory = scenarioCategory(scenario, activeFilter);
-  const schema = CATEGORY_SCHEMAS[effectiveCategory];
+  const schema = applyComplianceGates(CATEGORY_SCHEMAS[effectiveCategory]);
   const filtered = useMemo(() => filterBrokers(brokers, {
     category: activeFilter,
     features: activeFeatures,
@@ -348,9 +363,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
   const sorted = useMemo(() => sortedRows.map(row => row.broker), [sortedRows]);
 
-  // Compute editor picks
+  // Compute editor picks — "Editor's Choice" / "Best Value" / "Lowest Fees"
+  // are editorial labels, gated off in factual_only licence mode.
   const editorPicks = useMemo(() => {
     const picks: Record<string, string> = {};
+    if (!SHOW_EDITORIAL_BADGES) return picks;
     const nonCrypto = sorted.filter(b => !b.is_crypto && !isSponsored(b));
     if (nonCrypto.length > 0) {
       const cheapest = nonCrypto.reduce((a, b) => (a.asx_fee_value ?? 999) <= (b.asx_fee_value ?? 999) ? a : b);
@@ -632,6 +649,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 </div>
               </FilterPopover>
             </div>
+            {SHOW_RATINGS && (
             <div className="relative">
               <FilterPill icon="star" label="Rating" active={minRating > 0} open={openPill === "rating"}
                 value={minRating > 0 ? minRatingOptions.find((o) => o.value === minRating)?.label : undefined}
@@ -648,6 +666,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 </div>
               </FilterPopover>
             </div>
+            )}
           </div>
           {/* Active filter chips — one removable chip per active filter */}
           <FilterChips
@@ -678,7 +697,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               ? platformTypes.find(f => f.key === activeFilter)?.label
               : activeFeatures.size > 0
                 ? `${activeFeatures.size} filter${activeFeatures.size > 1 ? 's' : ''}`
-                : (sortCol !== 'rating' || sortDir !== -1)
+                : (sortCol !== DEFAULT_SORT_COL || sortDir !== DEFAULT_SORT_DIR)
                   ? `Sort: ${schema.sortOptions.find(s => s.col === sortCol)?.label ?? sortCol} ${sortDir === 1 ? '↑' : '↓'}`
                   : 'Filter & Sort'}
           </button>
@@ -765,12 +784,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   {maxFeeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
+              {SHOW_RATINGS && (
               <div>
                 <label htmlFor="compare-min-rating" className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Min Rating</label>
                 <select id="compare-min-rating" value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
                   {minRatingOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
+              )}
             </div>
             <div className="flex gap-3 pt-2 border-t border-slate-100">
               <button
@@ -937,7 +958,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="font-bold text-slate-900">{row.broker.name}</p>
-                        <p className="text-xs text-slate-500">Annual cost: ${row.estimatedAnnualCost.toLocaleString('en-AU')}</p>
+                        <p className="text-xs text-slate-500">{row.hasCostInputs ? `Annual cost: $${row.estimatedAnnualCost.toLocaleString('en-AU')}` : "Fee data incomplete"}</p>
                       </div>
                       <button onClick={() => toggleSelected(slug)} className="text-xs font-bold text-red-500">Remove</button>
                     </div>

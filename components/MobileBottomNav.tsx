@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SHOW_MATCH_LANGUAGE } from "@/lib/compliance-config";
 
 // Sticky mobile bottom navigation — four tabs that mirror the homepage
 // route cards: Compare / Opportunities / Experts / Get Matched. The
@@ -45,7 +46,7 @@ const TABS: ReadonlyArray<{ label: string; href: string; icon: React.ReactNode; 
     ),
   },
   {
-    label: "Get Matched",
+    label: SHOW_MATCH_LANGUAGE ? "Get Matched" : "Quiz",
     href: "/get-matched",
     matchPrefix: "/get-matched",
     icon: (

@@ -5,8 +5,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getVariant, type ABTestConfig, type ABVariant } from "@/lib/ab-test";
 import { DesignIcon } from "@/components/design/DesignIcon";
+import { SHOW_MATCH_LANGUAGE } from "@/lib/compliance-config";
 
-const DEFAULT_TEXT = "Get matched in 60 seconds";
+const DEFAULT_TEXT = SHOW_MATCH_LANGUAGE ? "Get matched in 60 seconds" : "Take the 60-second quiz";
 
 export default function HomeHeroCTA() {
   const [activeTest, setActiveTest] = useState<ABTestConfig | null>(null);

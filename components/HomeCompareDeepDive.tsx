@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
 import { SponsorChip } from "@/components/design/Atoms";
+import { SHOW_EDITORIAL_BADGES } from "@/lib/compliance-config";
 import { Logo } from "@/components/design/Atoms";
 
 export interface CompareBroker {
@@ -158,7 +159,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                 </div>
                 {rows.map((row, j) => {
                   const isPromoted = !!row.promoted_placement || row.sponsorship_tier === "featured_partner" || row.sponsorship_tier === "deal_of_month";
-                  const isEditor = !!row.editors_pick;
+                  const isEditor = SHOW_EDITORIAL_BADGES && !!row.editors_pick;
                   const initials = row.name
                     .split(/\s+/)
                     .map((p) => p[0])

@@ -788,7 +788,7 @@ export function Navigation() {
               href="/get-matched"
               className="bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:from-amber-700 active:to-orange-700 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] inline-flex items-center gap-2 cursor-pointer"
             >
-              Get matched
+              {SHOW_MATCH_LANGUAGE ? "Get matched" : "Take the quiz"}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -811,7 +811,7 @@ export function Navigation() {
               href="/get-matched"
               className="bg-gradient-to-br from-amber-500 to-orange-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:from-amber-600 hover:to-orange-600 min-h-11 inline-flex items-center cursor-pointer"
             >
-              Get Matched
+              {SHOW_MATCH_LANGUAGE ? "Get Matched" : "Take the quiz"}
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}

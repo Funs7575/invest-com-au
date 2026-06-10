@@ -4,6 +4,7 @@ import {
   CATEGORY_SCHEMAS,
   calculateAnnualCost,
   dataFreshnessFor,
+  hasAnnualCostInputs,
   filterBrokers,
   getMobileCardFields,
   rankBrokers,
@@ -130,5 +131,35 @@ describe("freshness column", () => {
     expect(f.feesLastChecked).toBe("2026-01-01T00:00:00Z"); // updated_at fallback
     expect(f.offerExpiry).toBeNull();
     expect(f.sourceNote).toBeNull();
+  });
+});
+
+describe("missing-fee-data handling (the '$0 est. annual cost' artifact)", () => {
+  const noFees = broker({ id: 9, slug: "nofees", name: "NoFees Super", platform_type: "super_fund", asx_fee_value: undefined, us_fee_value: undefined, fx_rate: undefined, rating: 4.5 });
+  const costCol = CATEGORY_SCHEMAS.all.columns.find((c) => c.key === "estimatedAnnualCost")!;
+
+  it("hasAnnualCostInputs distinguishes missing data from a genuine $0", () => {
+    expect(hasAnnualCostInputs(noFees)).toBe(false);
+    expect(hasAnnualCostInputs(broker({ asx_fee_value: 0 }))).toBe(true);
+  });
+
+  it("renders 'Fee data incomplete' instead of $0 when no fee field is recorded", () => {
+    const [ranked] = rankBrokers([noFees], "none");
+    expect(costCol.value(noFees, ranked)).toBe("Fee data incomplete");
+    expect(ranked.why[0]).toMatch(/not yet recorded/);
+  });
+
+  it("sinks fee-less rows to the bottom of a cost sort in both directions", () => {
+    const rows = rankBrokers([noFees, alpha, beta], "none");
+    const asc = sortRankedBrokers(rows, "estimated_annual_cost", 1);
+    const desc = sortRankedBrokers(rows, "estimated_annual_cost", -1);
+    expect(asc[asc.length - 1].broker.slug).toBe("nofees");
+    expect(desc[desc.length - 1].broker.slug).toBe("nofees");
+  });
+
+  it("does not award the perfect cost score to missing data", () => {
+    const [withFees] = rankBrokers([broker({ id: 10, slug: "freebie", asx_fee_value: 0, rating: 4.5 })], "none");
+    const [withoutFees] = rankBrokers([noFees], "none");
+    expect(withoutFees.rankScore).toBeLessThan(withFees.rankScore);
   });
 });

@@ -5,6 +5,7 @@ import { HOMEPAGE_GOAL_CHIPS } from "@/lib/getmatched/embeds";
 import { intentCountryMeta } from "@/lib/intent-context";
 import { getIntentCountry } from "@/lib/intent-context-server";
 import ResumeBanner from "@/components/get-matched/ResumeBanner";
+import { SHOW_MATCH_LANGUAGE } from "@/lib/compliance-config";
 
 // Single consolidated "Get matched" band.
 //
@@ -50,7 +51,7 @@ export default async function HomeGetMatched() {
         {/* Left — the pitch + primary CTA */}
         <div>
           <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-            ● Get matched · 60-second flow
+            ● {SHOW_MATCH_LANGUAGE ? "Get matched" : "60-second quiz"} · no email needed
           </span>
           <h2
             className="font-display"
@@ -64,7 +65,7 @@ export default async function HomeGetMatched() {
               textWrap: "balance",
             }}
           >
-            Still deciding? Get matched in 60 seconds.
+            Still deciding? {SHOW_MATCH_LANGUAGE ? "Get matched in 60 seconds." : "Answer 4 quick questions."}
           </h2>
           <p
             style={{
@@ -114,7 +115,7 @@ export default async function HomeGetMatched() {
             className="iv2-cta"
             style={{ fontSize: 14.5, padding: "13px 24px", borderRadius: 11 }}
           >
-            Get matched in 60 seconds{" "}
+            {SHOW_MATCH_LANGUAGE ? "Get matched in 60 seconds" : "Take the 60-second quiz"}{" "}
             <DesignIcon name="arrow-right" size={14} strokeWidth={2.6} />
           </Link>
         </div>
