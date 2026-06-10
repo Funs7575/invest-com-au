@@ -200,7 +200,7 @@ export default async function HomePage() {
             "@context": "https://schema.org",
             ...ORGANIZATION_JSONLD,
             description:
-              "Compare brokers, crypto, super and savings. Browse Australian investments for sale — businesses, farmland, mining, property. Find a verified expert, or get matched in 60 seconds. Independent. ASIC-registered. General information only.",
+              "Compare brokers, crypto, super and savings. Browse Australian investments for sale — businesses, farmland, mining, property. Find a verified expert, or get matched in 60 seconds. Independent since 1996. General information only.",
           }),
         }}
       />

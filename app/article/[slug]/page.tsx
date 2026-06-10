@@ -570,7 +570,7 @@ export default async function ArticlePage({
                       Compare &rarr;
                     </Link>
                     <Link
-                      href="/quiz"
+                      href="/get-matched"
                       className="flex-1 sm:flex-none text-center px-4 py-2.5 border border-slate-700 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-100 transition-colors"
                     >
                       Quiz
@@ -865,7 +865,7 @@ export default async function ArticlePage({
                     Compare All Platforms
                   </Link>
                   <Link
-                    href="/quiz"
+                    href="/get-matched"
                     className="w-full sm:w-auto px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
                   >
                     Take the Quiz

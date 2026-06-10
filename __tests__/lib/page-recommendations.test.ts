@@ -47,4 +47,12 @@ describe("buildPageRecommendation", () => {
     expect(rec).not.toBeNull();
     expect(rec!.title).toBe("Cross-border tax accountants for Singapore clients");
   });
+
+  it("keeps the advisors body copy country-agnostic (the card shows for all 12 intent countries)", () => {
+    const rec = buildPageRecommendation("advisors", "Singapore investors", true);
+    expect(rec).not.toBeNull();
+    // QROPS / "UK/AU" are UK-specific — they read as a mail-merge bug to
+    // any non-UK visitor the card is shown to.
+    expect(rec!.body).not.toMatch(/QROPS|UK\/AU/);
+  });
 });

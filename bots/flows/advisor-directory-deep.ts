@@ -5,7 +5,7 @@
  * features: type-specific sub-pages, state filtering, leaderboard,
  * comparison page render, and the advisor search API directly.
  *
- *   1. /advisors/financial-advisors sub-type page renders
+ *   1. /advisors/financial-planners sub-type page renders
  *   2. /advisors/mortgage-brokers sub-type page renders
  *   3. /advisors/leaderboard renders with ranked entries
  *   4. /advisors/compare renders (or compare sub-page after selecting 2)
@@ -14,10 +14,13 @@
  *   7. /api/advisor-search returns valid JSON with results
  */
 
+// Canonical slugs from SLUG_TO_TYPE in app/advisors/[type]/page.tsx —
+// "financial-advisors" / "accountants" don't exist there and soft-404
+// with a streamed React #419 (flagged critical by the 2026-06-10 smoke).
 const BASE_SUB_TYPES = [
-  { path: "/advisors/financial-advisors", label: "financial-advisors" },
+  { path: "/advisors/financial-planners", label: "financial-planners" },
   { path: "/advisors/mortgage-brokers", label: "mortgage-brokers" },
-  { path: "/advisors/accountants", label: "accountants" },
+  { path: "/advisors/smsf-accountants", label: "smsf-accountants" },
 ];
 
 const SPECIALIST_PAGES = [

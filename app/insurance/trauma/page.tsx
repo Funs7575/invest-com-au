@@ -209,7 +209,7 @@ export default function TraumaInsurancePage() {
               illness cover in Australia.
             </p>
             <div className="flex flex-wrap gap-3 mt-5">
-              <Link href="/quiz" className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-lg transition-colors">
+              <Link href="/get-matched" className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold rounded-lg transition-colors">
                 Find an Insurance Adviser →
               </Link>
               <Link href="/insurance" className="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg transition-colors border border-slate-200">
@@ -374,7 +374,7 @@ export default function TraumaInsurancePage() {
             the right cover for your situation and health history.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/quiz" className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm rounded-xl transition-colors">
+            <Link href="/get-matched" className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm rounded-xl transition-colors">
               Find an Insurance Adviser →
             </Link>
             <Link href="/insurance" className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-sm rounded-xl transition-colors">

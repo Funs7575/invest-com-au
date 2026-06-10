@@ -83,7 +83,7 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
           <Link href="/advisors" className="iv2-cta-ghost" style={{ fontSize: 12.5 }}>
             Browse all {totalCount.toLocaleString("en-AU")}
           </Link>
-          <Link href="/quiz" className="iv2-cta" style={{ fontSize: 12.5 }}>
+          <Link href="/get-matched" className="iv2-cta" style={{ fontSize: 12.5 }}>
             Get matched
           </Link>
         </div>

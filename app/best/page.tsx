@@ -178,7 +178,7 @@ export default function BestBrokersHub() {
               for your situation.
             </p>
             <Link
-              href="/quiz"
+              href="/get-matched"
               className="inline-block px-5 py-2.5 md:px-6 md:py-3 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
             >
               Take the 60-Second Quiz →

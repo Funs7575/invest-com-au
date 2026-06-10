@@ -144,9 +144,10 @@ export default async function ComparePage() {
   type DealBroker = { name: string; slug: string; deal_text: string | null; affiliate_url: string | null };
   let platformCount = 0;
   let dealBroker: DealBroker | null = null;
+  let latestFeeCheck: string | null = null;
   try {
     const supabase = await createClient();
-    const [{ count }, { data: deal }] = await Promise.all([
+    const [{ count }, { data: deal }, { data: fresh }] = await Promise.all([
       supabase.from("brokers").select("id", { count: "exact", head: true }).eq("status", "active"),
       // Top live broker deal — surfaced as a slim promo strip inside the hero.
       supabase
@@ -159,13 +160,37 @@ export default async function ComparePage() {
         .order("affiliate_priority", { ascending: false })
         .limit(1)
         .maybeSingle(),
+      // Most recent fee check — drives the hero freshness claim.
+      supabase
+        .from("brokers")
+        .select("fee_last_checked")
+        .eq("status", "active")
+        .not("fee_last_checked", "is", null)
+        .order("fee_last_checked", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
     ]);
     platformCount = count ?? 0;
     dealBroker = (deal as DealBroker | null) ?? null;
+    latestFeeCheck = (fresh as { fee_last_checked: string | null } | null)?.fee_last_checked ?? null;
   } catch {
     platformCount = 0;
   }
   const platformLabel = platformCount > 0 ? `${platformCount}` : "100+";
+
+  // Only claim "rechecked weekly" while the data backs it. The page also
+  // renders FeesFreshnessIndicator ("Fees checked N days ago") from the same
+  // column, so a hardcoded "weekly" goes visibly false the moment the recheck
+  // pipeline stalls — a skeptical visitor sees both lines on one screen.
+  const checkedAt = latestFeeCheck ? new Date(latestFeeCheck) : null;
+  const checkedAtValid = checkedAt !== null && !isNaN(checkedAt.getTime());
+  const daysSinceFeeCheck = checkedAtValid
+    ? Math.floor((Date.now() - checkedAt.getTime()) / 86_400_000)
+    : null;
+  const feesCheckedWeekly = daysSinceFeeCheck !== null && daysSinceFeeCheck <= 8;
+  const lastVerifiedLabel = checkedAtValid
+    ? checkedAt.toLocaleDateString("en-AU", { day: "numeric", month: "short" })
+    : null;
 
   const dealPromo = dealBroker ? (
     <div className="flex items-center justify-between gap-3">
@@ -189,7 +214,9 @@ export default async function ComparePage() {
   const heroStats = [
     { v: platformLabel, l: "Platforms tracked" },
     { v: "9", l: "Categories" },
-    { v: "Weekly", l: "Fees rechecked" },
+    feesCheckedWeekly
+      ? { v: "Weekly", l: "Fees rechecked" }
+      : { v: lastVerifiedLabel ?? "Dated", l: "Fees last verified" },
     { v: "Free", l: "Independent" },
   ];
 
@@ -244,9 +271,15 @@ export default async function ComparePage() {
           region is preserved via speakableId. */}
       <DirectoryHero
         breadcrumbLabel="Compare Platforms"
-        pill={{ label: "Live fee tracking", live: true }}
+        pill={feesCheckedWeekly ? { label: "Live fee tracking", live: true } : undefined}
         headlineLead="Compare Australian investing platforms."
-        headlineAccent={`${platformLabel} tracked · fees rechecked weekly.`}
+        headlineAccent={
+          feesCheckedWeekly
+            ? `${platformLabel} tracked · fees rechecked weekly.`
+            : lastVerifiedLabel
+              ? `${platformLabel} tracked · fees last verified ${lastVerifiedLabel}.`
+              : `${platformLabel} tracked.`
+        }
         subtitle="Side-by-side comparison of fees, features, and safety for Australian share trading, crypto, super and robo-advisor platforms."
         stats={heroStats}
         speakableId="compare-hero"

@@ -225,7 +225,7 @@ export default function HowWeVerifyPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/quiz"
+                href="/get-matched"
                 className="inline-block px-8 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
               >
                 Take the Platform Quiz

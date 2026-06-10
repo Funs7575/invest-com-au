@@ -55,7 +55,7 @@ export default async function AccountQuizHistoryPage() {
               You haven&rsquo;t taken the quiz yet.
             </p>
             <Link
-              href="/quiz"
+              href="/get-matched"
               className="mt-4 inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
             >
               Take the quiz →
@@ -97,7 +97,7 @@ export default async function AccountQuizHistoryPage() {
 
         <div className="mt-6 text-center">
           <Link
-            href="/quiz"
+            href="/get-matched"
             className="text-xs font-medium text-primary hover:underline"
           >
             Take the quiz again →

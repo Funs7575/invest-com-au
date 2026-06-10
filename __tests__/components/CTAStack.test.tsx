@@ -74,7 +74,7 @@ describe("CTAStack", () => {
     ).toHaveAttribute("href", "/compare");
     expect(
       screen.getByRole("link", { name: "Platform Quiz" }),
-    ).toHaveAttribute("href", "/quiz");
+    ).toHaveAttribute("href", "/get-matched");
     expect(
       screen.getByRole("link", { name: "Find Advisor" }),
     ).toHaveAttribute("href", "/find-advisor");

@@ -3,7 +3,7 @@
  *
  * Covers:
  *   1. The component renders its nav tabs after mount.
- *   2. Hidden on HIDDEN_PREFIXES routes (/admin, /auth, /quiz, /broker-portal).
+ *   2. Hidden on HIDDEN_PREFIXES routes (/admin, /auth, /quiz, /get-matched, /broker-portal).
  *   3. Active tab highlighted when pathname matches a tab prefix.
  *   4. Double-mount guard — verifies app/page.tsx no longer imports
  *      MobileBottomNav directly, so the nav is only mounted once via LayoutShell.
@@ -12,6 +12,17 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
+// The assertions below describe general_advice-mode rendering (labels like
+// "Get Matched" / "Editor's Pick"). Pin the licence flags so the tests are
+// stable regardless of the NEXT_PUBLIC_LICENCE_MODE the runner happens to
+// have (CI runs factual_only, where the gated variants render instead).
+vi.mock("@/lib/compliance-config", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/compliance-config")>()),
+  SHOW_MATCH_LANGUAGE: true,
+  SHOW_EDITORIAL_BADGES: true,
+  SHOW_RATINGS: true,
+}));
+
 
 // ── Mock next/navigation so we can control usePathname ───────────────────────
 
@@ -76,7 +87,7 @@ describe("MobileBottomNav — render", () => {
     expect(screen.getByRole("link", { name: /compare/i })).toHaveAttribute("href", "/compare");
     expect(screen.getByRole("link", { name: /opportunities/i })).toHaveAttribute("href", "/invest");
     expect(screen.getByRole("link", { name: /experts/i })).toHaveAttribute("href", "/advisors");
-    expect(screen.getByRole("link", { name: /get matched/i })).toHaveAttribute("href", "/quiz");
+    expect(screen.getByRole("link", { name: /get matched/i })).toHaveAttribute("href", "/get-matched");
   });
 });
 
@@ -87,6 +98,7 @@ describe("MobileBottomNav — hidden routes", () => {
     ["/auth"],
     ["/auth/signin"],
     ["/quiz"],
+    ["/get-matched"],
     ["/quiz/results"],
     ["/broker-portal"],
     ["/broker-portal/dashboard"],
