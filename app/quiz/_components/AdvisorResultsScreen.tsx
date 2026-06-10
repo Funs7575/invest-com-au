@@ -258,6 +258,9 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           investorCountry,
           visaStatus,
           investorGoalIntl,
+          // Readiness stage — "ready"/"under-contract" lets the scorer favour
+          // fast responders with an open book for users who want to act now.
+          stage: quizAnswers.stage || undefined,
           limit: 5,
         }),
       });

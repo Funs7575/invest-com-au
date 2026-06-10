@@ -158,4 +158,41 @@ describe("scoreQuizAdvisors", () => {
     const out3 = scoreQuizAdvisors([dasp], { advisorType: "tax-agent", isInternational: true, investorCountry: "uk" });
     expect(scoreOf(out3, "dasp")).toBeLessThan(scoreOf(out2, "dasp"));
   });
+
+  describe("urgency (stage = ready / under-contract)", () => {
+    const fast = () => adv({ id: 1, slug: "fast", avg_response_minutes: 60 });
+    const slow = () => adv({ id: 2, slug: "slow", avg_response_minutes: 2000 });
+    const base: QuizAdvisorScoringContext = { advisorType: "financial-planner" };
+
+    it("boosts a fast responder for an urgent user", () => {
+      const calm = scoreQuizAdvisors([fast(), slow()], base);
+      const urgent = scoreQuizAdvisors([fast(), slow()], { ...base, stage: "ready" });
+      // The fast responder gains under urgency; the slow one doesn't.
+      expect(scoreOf(urgent, "fast")).toBeGreaterThan(scoreOf(calm, "fast"));
+      expect(scoreOf(urgent, "slow")).toBe(scoreOf(calm, "slow"));
+      expect(urgent[0]?.slug).toBe("fast");
+    });
+
+    it("treats under-contract as urgent too", () => {
+      const calm = scoreQuizAdvisors([fast()], base);
+      const urgent = scoreQuizAdvisors([fast()], { ...base, stage: "under-contract" });
+      expect(scoreOf(urgent, "fast")).toBeGreaterThan(scoreOf(calm, "fast"));
+    });
+
+    it("damps an explicitly closed book harder for an urgent user", () => {
+      const closed = () => adv({ id: 3, slug: "closed", accepts_new_clients: false });
+      const calm = scoreQuizAdvisors([closed()], base);
+      const urgent = scoreQuizAdvisors([closed()], { ...base, stage: "ready" });
+      expect(scoreOf(urgent, "closed")).toBeLessThan(scoreOf(calm, "closed"));
+    });
+
+    it("is a no-op for exploring/learning and when stage is absent (regression)", () => {
+      for (const stage of [undefined, "exploring", "learning"] as const) {
+        const out = scoreQuizAdvisors([fast(), slow()], { ...base, stage });
+        const baseline = scoreQuizAdvisors([fast(), slow()], base);
+        expect(scoreOf(out, "fast")).toBe(scoreOf(baseline, "fast"));
+        expect(scoreOf(out, "slow")).toBe(scoreOf(baseline, "slow"));
+      }
+    });
+  });
 });

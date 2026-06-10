@@ -42,6 +42,8 @@ const Body = z.object({
   investorCountry: z.string().max(20).optional(),
   visaStatus: z.string().max(40).optional(),
   investorGoalIntl: z.string().max(40).optional(),
+  /** Quiz readiness stage — "ready"/"under-contract" boost responsiveness. */
+  stage: z.string().max(20).optional(),
   excludeIds: z.array(z.number()).max(50).optional(),
   limit: z.number().int().min(1).max(10).optional(),
 });
@@ -142,6 +144,7 @@ export async function POST(request: NextRequest) {
     investorCountry: input.investorCountry,
     visaStatus: input.visaStatus,
     investorGoalIntl: input.investorGoalIntl,
+    stage: input.stage,
   };
 
   // Whitelist the OUTPUT too — the client only needs display + reason fields
