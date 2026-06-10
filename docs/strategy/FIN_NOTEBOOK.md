@@ -14,7 +14,31 @@
 
 ## Active strategic decisions log
 
-### 2026-06-10 — "Complete everything unblocked" wave: 12 parallel workstreams launched; CI unblocked; coordination lesson
+### 2026-06-10 — Branch estate audited: 291 dead branches deleted, 4 held platforms inventoried, api-billing schema gap found
+
+Full audit of the ~335-branch estate (founder-requested). Permanent record with
+method, SHA recovery manifest and per-branch dispositions:
+`docs/audits/BRANCH_CLEANUP_2026-06-10.md` (PR #1527).
+
+Strategic items surfaced (decisions pending, founder-owned):
+
+- **API billing is half-shipped.** #1241/#1244 merged code for the tiered/billed
+  API + consumer webhooks, but the schema never reached prod — `/api/v1/webhooks`
+  errors on use and the 30-min retry cron fails silently every run. Recovered
+  schema parked in **#1526 (DO-NOT-MERGE)**. Decide: land schema + env vars and
+  activate the revenue line, or strip the dead code. (Revenue backlog adjacency:
+  this is the "API data platform" monetisation thread.)
+- **Identity-platform expansion** (81 files, 25 staged migrations, master plan
+  docs) sits unmerged on `claude/audit-account-architecture-7186H`; the
+  `principals` foundation is already in prod. Biggest held bet in the estate.
+- **Advisor-community wave** (CPD, courses, endorsements, gamification, orgs —
+  2026-05-22) held on `rescue/seo-infra-wave2` + `claude/inspiring-planck-c7u3s`.
+- **Sharesight portfolio sync** fully built, never merged
+  (`pre-launch/sharesight-oauth-*`) — needs partner API keys + product call.
+- Live taxonomy fork fixed + 69 orphaned test files (~950 tests) rescued in
+  **#1525**. The guard test that would have prevented the fork sat unmerged
+  since 2026-04-26 — same lesson as 2026-05-02: trackers and branches lag the
+  code; verify against main before scoping or deleting.
 
 Founder directive: finish every unblocked TOP-10 / backlog opportunity to
 production quality, skipping quiz/Decision-Engine surfaces (owned by a
