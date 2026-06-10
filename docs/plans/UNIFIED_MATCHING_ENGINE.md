@@ -89,10 +89,10 @@ Listing "recommendations" are **factual criteria matches** ("matches your stated
 
 ## 8. Build phases (each shippable, tested, flag-gated where live)
 
-- **P1 ✅** Translator + single-lead allocation from get-matched answers (shipped, 17 tests).
-- **P2 🔨 next** Advisor lane live in `resolve` behind `advisor_match_v2_get_matched`: load candidates (reuse `/api/advisor-match` SELECT), `scoreQuizAdvisors`, return `TopMatch{kind:"advisor"}` + reasons + confidence (carousel already renders advisors). Flag off = zero change.
-- **P3** Missing-signal questions (AU state; country+visa for overseas/expat; advisor-type confirm) — one migration, sharpens P2 (engine already degrades gracefully).
-- **P4** `lib/listings/match-listings.ts` + listings lane (pure scorer + tests; CSF exclusions; supply-aware).
+- **P1 ✅** Translator + single-lead allocation from get-matched answers (17 tests).
+- **P2 ✅** Advisor lane live in `resolve` behind `advisor_match_v2_get_matched`: load candidates (reuse `/api/advisor-match` SELECT), `scoreQuizAdvisors`, return `TopMatch{kind:"advisor"}` + reasons + confidence (carousel already renders advisors). Flag off = zero change.
+- **P3 ✅** Ladder rule 0 (user-named type wins) + missing-signal questions — shipped CODE-SIDE in FALLBACK_QUESTIONS (prod runs on fallbacks + ephemeral plans; the get_matched_questions DB seed rides the #1479 ledger repair). Original scope: missing-signal questions (AU state; country+visa for overseas/expat; advisor-type confirm) — one migration, sharpens P2 (engine already degrades gracefully).
+- **P4 ✅ (scorer)** `lib/listings/match-listings.ts` — pure, 8 tests; CSF equity_raise hard-excluded; FIRB gate for non-residents; factual-criteria reasons only. Resolve/UI wiring lands with P5's result surface.
 - **P5** `resolveLanes` composite resolver + `saved_items` migration + workspace rail + result-surface redesign v1. **Device QA gate.**
 - **P6** Lead capture in-funnel (preview→connect→verify at confirm → `professional_leads`) — port of the proven find-advisor flow.
 - **P7** Comparison tools (advisor table, cross-lane board) + lane-aware drips/alerts.
