@@ -753,7 +753,7 @@ export default function InvestListingsClient({
                     options={chipOptions}
                     value={activeSubcategory}
                     onChange={(v) => setParams({ sub: v })}
-                    label="Narrow by sub-type"
+                    label="Filter results by type"
                   />
                 </div>
               ) : null;
