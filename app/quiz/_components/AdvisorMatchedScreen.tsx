@@ -30,6 +30,7 @@ export interface MatchedAdvisor {
   avg_response_minutes?: number | null;
   response_time_hours?: number | null;
   initial_consultation_free?: boolean | null;
+  booking_link?: string | null;
   matchScore?: number;
   confidence?: MatchConfidence;
 }
@@ -319,28 +320,44 @@ export default function AdvisorMatchedScreen({
           )}
 
           <div className="space-y-2.5">
-            <button
-              onClick={() => onConfirm(currentMatch)}
-              disabled={confirming}
-              className="w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md shadow-amber-200"
-            >
-              {confirming ? (
-                <>
-                  <svg aria-hidden="true" className="w-4 h-4 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                  </svg>
-                  Connecting you…
-                </>
-              ) : (
-                <>
-                  Yes, send my details to {currentMatch.name.split(" ")[0]} — it&apos;s free
-                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                </>
-              )}
-            </button>
+            {/* Primary CTA: "Book a call" when advisor has a booking link, else "Request introduction" */}
+            {currentMatch.booking_link ? (
+              <Link
+                href={currentMatch.booking_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md shadow-amber-200"
+                onClick={() => onConfirm(currentMatch)}
+              >
+                Book a call with {currentMatch.name.split(" ")[0]}
+                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </Link>
+            ) : (
+              <button
+                onClick={() => onConfirm(currentMatch)}
+                disabled={confirming}
+                className="w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md shadow-amber-200"
+              >
+                {confirming ? (
+                  <>
+                    <svg aria-hidden="true" className="w-4 h-4 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Connecting you…
+                  </>
+                ) : (
+                  <>
+                    Yes, send my details to {currentMatch.name.split(" ")[0]} — it&apos;s free
+                    <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </>
+                )}
+              </button>
+            )}
 
             {!noMoreMatches && (
               <button

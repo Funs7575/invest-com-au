@@ -64,10 +64,10 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
   investor_goal_intl: {
     text: "What are you looking to do in Australia?",
     options: [
-      { key: "property",  label: "Buy property",            sub: "Residential or investment property",          emoji: "🏠" },
-      { key: "shares",    label: "Invest in ASX shares",    sub: "Stocks, ETFs, or managed funds",              emoji: "📈" },
-      { key: "savings",   label: "Park money in AUD",       sub: "High-interest savings or term deposits",      emoji: "💰" },
-      { key: "business",  label: "Set up a business",       sub: "Company registration, structuring",           emoji: "🏢" },
+      { key: "property",  label: "Buy property",            sub: "Residential or investment property — subject to FIRB approval", emoji: "🏠" },
+      { key: "shares",    label: "Invest in ASX shares",    sub: "Stocks, ETFs, or managed funds",                               emoji: "📈" },
+      { key: "savings",   label: "Park money in AUD",       sub: "High-interest savings or term deposits",                       emoji: "💰" },
+      { key: "business",  label: "Set up a business",       sub: "Company registration, structuring, or migration",              emoji: "🏢" },
     ],
   },
   goal: {
@@ -84,8 +84,8 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "alt-assets", label: "Alternative / collectible assets",        sub: "Whisky, wine, art, watches, classic cars, coins",       emoji: "🥃" },
       { key: "royalties",  label: "Royalties / income-producing assets",     sub: "Music, mining, IP royalties + vending / ATM income",    emoji: "📜" },
       { key: "pre-ipo",    label: "Pre-IPO / wholesale-investor deals",      sub: "Late-stage private equity, IPO calendar, s708 deals",   emoji: "🚀" },
-      { key: "help",       label: "Get expert help",                         sub: "I'd like professional guidance",                        emoji: "🤝" },
-      { key: "other",      label: "Something else / I'll describe it",       sub: "We'll route you to the right pro via post-a-job",       emoji: "❓" },
+      { key: "help",       label: "Get expert help / I'm not sure",         sub: "A free advisor consultation can clarify your best next step", emoji: "🤝" },
+      { key: "other",      label: "Something else / I'll describe it",       sub: "Tell us more and we'll route you to the right professional", emoji: "❓" },
     ],
   },
   stage: {

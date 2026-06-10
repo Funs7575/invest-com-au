@@ -54,10 +54,10 @@ function sortByInferred(
 function getDynamicAdvisorTypeQuestion(a: UnifiedAnswers): { text: string; options: { key: string; label: string; sub?: string; emoji?: string }[] } {
   const allOptions = UNIFIED_QUESTIONS.advisor_type.options;
   const inferred = inferAdvisorType(a);
-  const baseText = UNIFIED_QUESTIONS.advisor_type.text;
 
-  // International track: filter to options relevant for their investment goal
+  // International track: single-select, filter to goal-relevant options
   if (isInternational(a)) {
+    const baseText = UNIFIED_QUESTIONS.advisor_type.text;
     let relevantKeys: string[];
     const goal = a.investor_goal_intl;
     if (goal === "property") {
@@ -73,12 +73,13 @@ function getDynamicAdvisorTypeQuestion(a: UnifiedAnswers): { text: string; optio
     return { text: baseText, options: sortByInferred(filtered, inferred) };
   }
 
-  // Domestic: curate the need options to those relevant to the goal so the
-  // multi-select isn't a wall of every advisor type, then put the inferred
-  // pick first ("Suggested").
+  // Domestic: multi-select "which professionals will you need?" — curate to
+  // goal-relevant types so the list isn't a wall. The inferred pick is pre-
+  // checked and floated to the top ("Suggested").
+  const domesticText = "Which professionals will you need?";
   const relevantKeys = domesticNeedKeys(a);
   const filtered = allOptions.filter(o => relevantKeys.includes(o.key));
-  return { text: baseText, options: sortByInferred(filtered, inferred) };
+  return { text: domesticText, options: sortByInferred(filtered, inferred) };
 }
 
 // The relevant advisor needs to offer for a domestic goal (multi-select).

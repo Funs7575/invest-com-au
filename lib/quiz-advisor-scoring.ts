@@ -64,6 +64,7 @@ export interface QuizAdvisorCandidate {
   initial_consultation_free?: boolean | null;
   trust_score_overall?: number | null;
   country_eligibility?: CountryEligibility | Record<string, unknown> | null;
+  booking_link?: string | null;
 }
 
 export interface QuizAdvisorScoringContext {

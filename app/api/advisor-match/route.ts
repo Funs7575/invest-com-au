@@ -86,6 +86,7 @@ function toCandidate(row: Record<string, unknown>): QuizAdvisorCandidate {
     initial_consultation_free: asBool(row.initial_consultation_free),
     trust_score_overall: asNum(row.trust_score_overall),
     country_eligibility: (row.country_eligibility ?? null) as QuizAdvisorCandidate["country_eligibility"],
+    booking_link: asStr(row.booking_link),
   };
 }
 
@@ -170,6 +171,7 @@ export async function POST(request: NextRequest) {
     avg_response_minutes: a.avg_response_minutes,
     response_time_hours: a.response_time_hours,
     initial_consultation_free: a.initial_consultation_free,
+    booking_link: a.booking_link,
     matchScore: a.matchScore,
     confidence: a.confidence,
   }));
