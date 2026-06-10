@@ -158,6 +158,8 @@ export const POST = withValidatedBody(PostSchema, async (request, body) => {
     return NextResponse.json({ error: "Failed to create post" }, { status: 500 });
   }
 
+  await notifyFollowers(admin, professionalId, post.id, body.post_type, body.body);
+
   // New-poster review signal: an advisor's first few posts get a post-publish
   // human look (COMMUNITY_MASTER_PLAN 1.2). Deliberately NOT a pre-publish
   // hold — professional accounts publish immediately (classifyText already
@@ -186,8 +188,6 @@ export const POST = withValidatedBody(PostSchema, async (request, body) => {
       err: err instanceof Error ? err.message : String(err),
     });
   }
-
-  await notifyFollowers(admin, professionalId, post.id, body.post_type, body.body);
 
   return NextResponse.json({ post }, { status: 201 });
 });

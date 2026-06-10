@@ -14,6 +14,39 @@
 
 ## Active strategic decisions log
 
+### 2026-06-10 — Advisor ecosystem social layer shipped (7 workstreams, 1 migration)
+
+Built on `claude/confident-feynman-qdq82c` (plan: `docs/plans/ADVISOR_ECOSYSTEM_BUILD.md`).
+Audit-first scope — half the original wishlist already existed (public /feed,
+insights permalinks, leaderboard page + cron, squad inbox), so the build elevated
+real gaps instead of rebuilding: ideal-client criteria now public on profiles;
+feed got reactions-for-everyone + pagination + advice banner; team pages got
+story/case-studies/ratings; squads got private per-brief comment threads;
+articles got co-author dual bylines; leads got advisor→advisor referrals;
+leaderboard got community-contribution signals.
+
+Strategic decisions made (this session):
+
+- **Advisor→advisor lead referrals are lean-lane**: receiver gets the lead FREE
+  (adoption over short-term revenue — referral volume is engagement + future
+  monetisation data); referrer bonus is a flat platform credit via the existing
+  `referral_payout` kind. **Bonus crediting is flag-gated OFF**
+  (`advisor_lead_referral_bonus`) until founder + legal sign-off per
+  REGULATORY-AVOID-LIST (RG 246: flat fee, never %-of-advice-fee).
+- **No pre-publish hold on advisor posts** — kept the existing "no hidden-hold
+  queue for professional accounts" posture; first-3-posts get a post-publish
+  admin review email instead.
+- **Dropped team contact_email** from team pages — a free email bypass around
+  the monetised brief flow is commercially negative; the brief CTA stays the
+  single contact path.
+- **No reputation_events table** — leaderboard signals computed directly from
+  source tables in the cron; revisit a dedicated accrual table only if badges
+  (Phase 3 community plan) need per-event history.
+- **`supabase db push` for `20260610120000_advisor_ecosystem_social_layer.sql`
+  is founder-triggered** (3 new tables + team_story + 3 leaderboard columns,
+  all RLS-enabled). All shipped code fails soft until applied — nothing breaks
+  if the push waits.
+
 ### 2026-06-10 — Branch estate audited: 291 dead branches deleted, 4 held platforms inventoried, api-billing schema gap found
 
 Full audit of the ~335-branch estate (founder-requested). Permanent record with
