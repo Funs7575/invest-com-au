@@ -3,6 +3,7 @@
 import { useState, useCallback, useTransition } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { Select } from "@/components/ui/Select";
 import CountdownBadge from "./CountdownBadge";
 import type { JobRow } from "./page";
 
@@ -111,57 +112,49 @@ export default function QuotesFilterClient({ initialJobs }: Props) {
 
   return (
     <>
-      {/* Hero */}
-      <section className="bg-gradient-to-b from-slate-900 to-slate-800 text-white">
-        <div className="max-w-6xl mx-auto px-4 py-14 sm:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            <div>
-              <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-2">
-                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                Live advisor marketplace
-              </p>
-              <h1 className="text-3xl sm:text-5xl font-extrabold mb-4">
-                Real Australians. Real quotes. Live now.
-              </h1>
-              <p className="text-slate-300 leading-relaxed mb-6 max-w-xl">
-                Like a marketplace for advice — consumers post what they need help with, verified Australian advisors quote, the consumer picks. Free to post, free to compare, no obligation.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Link
-                  href="/quotes/post"
-                  className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-7 py-3 rounded-xl"
-                >
-                  Get a quote — free
-                  <Icon name="arrow-right" size={16} />
-                </Link>
-                <Link
-                  href="/advisors"
-                  className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-7 py-3 rounded-xl border border-white/20"
-                >
-                  Browse advisors directly
-                </Link>
-              </div>
-            </div>
-            <div className="hidden lg:flex items-center justify-center">
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-6 w-full max-w-sm">
-                <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                  Live now
-                </p>
-                <p className="text-5xl font-extrabold text-white mb-1">{initialJobs.length}</p>
-                <p className="text-sm text-slate-300">open requests accepting quotes</p>
-                <div className="border-t border-white/10 my-4" />
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Average request gets <span className="text-white font-semibold">3–5 quotes</span> within the first 24 hours.
-                </p>
-              </div>
-            </div>
+      {/* Compact light header (B10) — live count as one honest stat pill */}
+      <section className="bg-white border-b border-slate-200">
+        <div className="max-w-6xl mx-auto px-4 pt-4 pb-5 md:pt-5">
+          <nav aria-label="Breadcrumb" className="mb-1.5 text-[11px] md:text-xs text-slate-500">
+            <Link href="/" className="hover:text-slate-700">Home</Link>
+            <span className="mx-1.5" aria-hidden>/</span>
+            <span className="text-slate-600">Quotes</span>
+          </nav>
+          <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-[1.9rem]">
+            Real Australians. Real quotes. <span className="text-coral-600">Live now.</span>
+          </h1>
+          <p className="mt-1 max-w-2xl text-[12.5px] leading-snug text-slate-500 md:text-[13.5px]">
+            Like a marketplace for advice — consumers post what they need help with, verified Australian advisors quote, the consumer picks. Free to post, free to compare, no obligation.
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+              <span aria-hidden className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+              {initialJobs.length} open {initialJobs.length === 1 ? "request" : "requests"} accepting quotes
+            </span>
+            <span className="text-xs text-slate-500">
+              Average request gets <span className="font-semibold text-slate-700">3–5 quotes</span> within the first 24 hours.
+            </span>
+          </div>
+          <div className="mt-4 flex flex-col sm:flex-row gap-2.5">
+            <Link
+              href="/quotes/post"
+              className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 text-sm font-bold px-5 py-2.5 rounded-lg"
+            >
+              Get a quote — free
+              <Icon name="arrow-right" size={14} />
+            </Link>
+            <Link
+              href="/advisors"
+              className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold px-5 py-2.5 rounded-lg border border-slate-200"
+            >
+              Browse advisors directly
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Listings */}
-      <section className="bg-slate-50 py-12 sm:py-16">
+      <section className="bg-slate-50 py-8">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-end justify-between mb-4">
             <div>
@@ -183,40 +176,37 @@ export default function QuotesFilterClient({ initialJobs }: Props) {
             </Link>
           </div>
 
-          {/* Filter bar */}
+          {/* Filter bar — house Select (B11) */}
           <div className="flex flex-wrap items-center gap-2 mb-6">
-            <select
-              value={advisorType}
-              onChange={(e) => handleAdvisorType(e.target.value)}
-              className="text-sm border border-slate-200 bg-white rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400"
-              aria-label="Filter by advisor type"
-            >
-              {ADVISOR_TYPE_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
+            <div className="w-full sm:w-52">
+              <Select
+                id="quotes-filter-advisor-type"
+                aria-label="Filter by advisor type"
+                value={advisorType}
+                onChange={(e) => handleAdvisorType(e.target.value)}
+                options={ADVISOR_TYPE_OPTIONS}
+              />
+            </div>
 
-            <select
-              value={state}
-              onChange={(e) => handleState(e.target.value)}
-              className="text-sm border border-slate-200 bg-white rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400"
-              aria-label="Filter by state"
-            >
-              {STATE_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
+            <div className="w-full sm:w-36">
+              <Select
+                id="quotes-filter-state"
+                aria-label="Filter by state"
+                value={state}
+                onChange={(e) => handleState(e.target.value)}
+                options={STATE_OPTIONS}
+              />
+            </div>
 
-            <select
-              value={budget}
-              onChange={(e) => handleBudget(e.target.value)}
-              className="text-sm border border-slate-200 bg-white rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400"
-              aria-label="Filter by budget"
-            >
-              {BUDGET_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
+            <div className="w-full sm:w-44">
+              <Select
+                id="quotes-filter-budget"
+                aria-label="Filter by budget"
+                value={budget}
+                onChange={(e) => handleBudget(e.target.value)}
+                options={BUDGET_OPTIONS}
+              />
+            </div>
 
             {hasFilters && (
               <button
@@ -307,7 +297,7 @@ export default function QuotesFilterClient({ initialJobs }: Props) {
       </section>
 
       {/* How it works */}
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white py-8">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2 text-center">How it works</h2>
           <p className="text-sm text-slate-500 mb-10 text-center">A two-sided marketplace for financial advice — built on top of our verified advisor directory.</p>
