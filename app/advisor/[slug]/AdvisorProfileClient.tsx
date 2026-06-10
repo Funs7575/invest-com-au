@@ -97,16 +97,16 @@ function SectionCard({ id, title, icon, children, className = "" }: {
   return (
     <div id={id} className={`bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
       {title && (
-        <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center gap-2.5 px-4 py-3 border-b border-slate-100">
           {icon && (
-            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-              <Icon name={icon} size={16} className="text-amber-600" />
+            <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
+              <Icon name={icon} size={15} className="text-amber-600" />
             </div>
           )}
           <h2 className="text-base font-bold text-slate-900">{title}</h2>
         </div>
       )}
-      <div className="p-6">{children}</div>
+      <div className="p-4">{children}</div>
     </div>
   );
 }
@@ -283,25 +283,25 @@ export default function AdvisorProfileClient({
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 lg:pb-20">
-      <div className="container-custom max-w-[1280px] py-5 md:py-8">
+      <div className="container-custom max-w-[1280px] py-3 md:py-4">
 
         {/* ── Breadcrumb ─────────────────────────────── */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-slate-400 mb-5">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-400 mb-2">
           <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
-          <Icon name="chevron-right" size={14} className="text-slate-300" />
+          <Icon name="chevron-right" size={12} className="text-slate-300" />
           <Link href="/advisors" className="hover:text-slate-700 transition-colors">Advisors</Link>
-          <Icon name="chevron-right" size={14} className="text-slate-300" />
+          <Icon name="chevron-right" size={12} className="text-slate-300" />
           <span className="text-slate-700 font-medium truncate">{pro.name}</span>
         </nav>
 
         {/* ── HERO CARD ──────────────────────────────── */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-4">
           {/* Accent bar */}
           <div className="h-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400" />
 
           {/* Profile content */}
-          <div className="px-5 md:px-10 pt-8 pb-7 relative">
-            <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
+          <div className="px-4 md:px-6 pt-4 pb-3.5 relative">
+            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-5">
               {/* Avatar */}
               {pro.photo_url ? (
                 <Image
@@ -586,7 +586,7 @@ export default function AdvisorProfileClient({
         </nav>
 
         {/* ── TWO-COLUMN LAYOUT ──────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_320px] lg:grid-cols-[minmax(0,1fr)_380px] gap-4 md:gap-5 items-start">
 
           {/* ── LEFT: Main content ─────────────────── */}
           <div className="space-y-5">
@@ -863,7 +863,7 @@ export default function AdvisorProfileClient({
             {/* Fee Structure */}
             {(pro.hourly_rate_cents || pro.flat_fee_cents || pro.aum_percentage) && (
               <SectionCard title="Fee Structure" icon="coins">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 mb-3">
                   {pro.initial_consultation_free && (
                     <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
                       <div className="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-1.5">Initial Consult</div>

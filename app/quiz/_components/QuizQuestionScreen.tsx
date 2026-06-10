@@ -163,7 +163,7 @@ export default function QuizQuestionScreen({
   const isGoalQuestion = displayIndex === 0;
 
   return (
-    <div className="pt-5 pb-8 md:py-12">
+    <div className="pt-4 pb-8 md:pt-6 md:pb-10">
       <div className="container-custom max-w-2xl mx-auto">
         {/* Data fetch error notice */}
         {fetchError && (
