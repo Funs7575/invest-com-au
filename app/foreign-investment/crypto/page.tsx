@@ -204,7 +204,7 @@ export default async function ForeignCryptoPage() {
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-xs text-slate-400 leading-relaxed">{BROKER_NON_RESIDENT_NOTE}</p>
+            <p className="mt-4 text-xs text-slate-500 leading-relaxed">{BROKER_NON_RESIDENT_NOTE}</p>
           </div>
         </section>
       )}
@@ -271,7 +271,7 @@ export default async function ForeignCryptoPage() {
 
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER} {CRYPTO_REGULATORY_NOTE}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER} {CRYPTO_REGULATORY_NOTE}</p>
         </div>
       </section>
     </div>

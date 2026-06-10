@@ -326,7 +326,7 @@ export default async function GrantsIndustryPage({ params }: Props) {
       />
 
       <div className="container-custom py-8">
-        <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-6 flex flex-wrap gap-1">
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6 flex flex-wrap gap-1">
           <Link href="/" className="hover:text-slate-600">
             Home
           </Link>

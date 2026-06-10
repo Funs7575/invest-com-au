@@ -55,7 +55,7 @@ export default function FullServiceBrokerCard({ firm }: Props) {
             {firm.firm_type && (
               <p className="text-xs text-slate-500 capitalize">{firm.firm_type}</p>
             )}
-            <div className="flex items-center gap-3 mt-1 text-[0.65rem] text-slate-400">
+            <div className="flex items-center gap-3 mt-1 text-[0.65rem] text-slate-500">
               {firm.afsl_number && <span>AFSL {firm.afsl_number}</span>}
               {firm.year_founded && <span>Est. {firm.year_founded}</span>}
               {firm.aum_aud_billions && (
@@ -75,15 +75,15 @@ export default function FullServiceBrokerCard({ firm }: Props) {
         {/* Key facts grid: minimum + fee model + offices */}
         <dl className="grid grid-cols-3 gap-3 mb-4 pt-4 border-t border-slate-100">
           <div>
-            <dt className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+            <dt className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 mb-0.5">
               Minimum
             </dt>
             <dd className="text-sm font-bold text-slate-900">
-              {minimum || <span className="text-slate-400 font-normal">Enquire</span>}
+              {minimum || <span className="text-slate-500 font-normal">Enquire</span>}
             </dd>
           </div>
           <div>
-            <dt className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+            <dt className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 mb-0.5">
               Fee model
             </dt>
             <dd className="text-sm font-bold text-slate-900">
@@ -91,7 +91,7 @@ export default function FullServiceBrokerCard({ firm }: Props) {
             </dd>
           </div>
           <div>
-            <dt className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+            <dt className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 mb-0.5">
               Offices
             </dt>
             <dd className="text-sm font-bold text-slate-900">

@@ -45,7 +45,7 @@ function RatingBar({ star, count, total }: { star: number; count: number; total:
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="w-6 text-slate-400 text-right">{count}</span>
+      <span className="w-6 text-slate-500 text-right">{count}</span>
     </div>
   );
 }
@@ -125,7 +125,7 @@ export default function UserReviewsList({ reviews, stats, brokerSlug, brokerName
                   <StarDisplay rating={review.rating} />
                   <h4 className="text-sm font-bold text-slate-900 mt-1">{review.title}</h4>
                 </div>
-                <div className="text-xs text-slate-400 shrink-0">
+                <div className="text-xs text-slate-500 shrink-0">
                   {new Date(review.created_at).toLocaleDateString("en-AU", {
                     day: "numeric",
                     month: "short",
@@ -155,7 +155,7 @@ export default function UserReviewsList({ reviews, stats, brokerSlug, brokerName
                 </div>
               )}
 
-              <div className="flex items-center gap-2 text-xs text-slate-400">
+              <div className="flex items-center gap-2 text-xs text-slate-500">
                 <span>— {review.display_name}</span>
                 <VerifiedClientBadge
                   isVerified={!!review.is_verified_client}

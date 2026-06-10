@@ -151,22 +151,22 @@ export default function PropertyVsSharesCalculator({ searchParams }: Props) {
                   <p className="text-xl font-extrabold text-slate-900">{fmt(result.finalEquity)}</p>
                   <p className="text-xs text-slate-500">Equity after {years} yrs</p>
                   <p className="text-xs font-semibold text-blue-600 mt-1">{fmtPct(result.propertyROI)} ROI on deposit</p>
-                  <p className="text-xs text-slate-400">Net rent: {fmt(result.totalNetRental)}</p>
-                  <p className="text-xs text-slate-400">LVR: {(result.lvr * 100).toFixed(0)}%</p>
+                  <p className="text-xs text-slate-500">Net rent: {fmt(result.totalNetRental)}</p>
+                  <p className="text-xs text-slate-500">LVR: {(result.lvr * 100).toFixed(0)}%</p>
                 </div>
                 <div className={`rounded-xl p-4 border ${result.winner === "shares" ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-slate-50"}`}>
                   <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500 mb-1">📈 Shares</p>
                   <p className="text-xl font-extrabold text-slate-900">{fmt(result.finalSharesValue)}</p>
                   <p className="text-xs text-slate-500">Portfolio after {years} yrs</p>
                   <p className="text-xs font-semibold text-emerald-600 mt-1">{fmtPct(result.sharesROI)} ROI</p>
-                  <p className="text-xs text-slate-400">Total gain: {fmt(result.sharesTotalReturn)}</p>
-                  <p className="text-xs text-slate-400">No leverage</p>
+                  <p className="text-xs text-slate-500">Total gain: {fmt(result.sharesTotalReturn)}</p>
+                  <p className="text-xs text-slate-500">No leverage</p>
                 </div>
               </div>
 
               {/* Equity chart */}
               <div className="space-y-1.5">
-                <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400 mb-2">Equity / Portfolio Over Time</p>
+                <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500 mb-2">Equity / Portfolio Over Time</p>
                 {result.propSnapshots.filter((_, i) => i % Math.max(1, Math.floor(result.propSnapshots.length / 6)) === 0 || i === result.propSnapshots.length - 1).map((s) => {
                   const sharesSnap = result.sharesSnapshots.find(ss => ss.year === s.year);
                   return (
@@ -193,13 +193,13 @@ export default function PropertyVsSharesCalculator({ searchParams }: Props) {
                 </div>
               </div>
 
-              <p className="text-[0.65rem] text-slate-400 mt-4">
+              <p className="text-[0.65rem] text-slate-500 mt-4">
                 Assumes 6.5% mortgage rate on a 30-year P&amp;I loan. Property figures use deposit as equity with leverage. Past performance is not indicative of future returns.
               </p>
             </div>
           ) : (
             <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 md:p-12 text-center h-full flex flex-col items-center justify-center">
-              <p className="text-slate-400 text-sm">Enter your deposit and property price to compare investment options.</p>
+              <p className="text-slate-500 text-sm">Enter your deposit and property price to compare investment options.</p>
             </div>
           )}
         </div>

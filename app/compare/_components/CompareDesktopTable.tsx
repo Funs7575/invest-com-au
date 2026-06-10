@@ -110,7 +110,7 @@ export default function CompareDesktopTable({
                     </div>
                     <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
                   </div>
-                  <p className="mt-1 text-[0.68rem] uppercase tracking-wide text-slate-400">{row.commercialDisclosure}</p>
+                  <p className="mt-1 text-[0.68rem] uppercase tracking-wide text-slate-500">{row.commercialDisclosure}</p>
                 </td>
                 {schema.columns.map((column) => (
                   <td key={column.key} className={`px-4 py-3 text-sm align-top ${column.align === 'center' ? 'text-center' : ''}`}>{column.value(broker, row)}</td>

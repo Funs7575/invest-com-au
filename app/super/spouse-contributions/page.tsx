@@ -253,7 +253,7 @@ export default function SpouseContributionsPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-3 text-xs text-slate-500">
             Offset formula: 18% &times; (Contributions &minus; max(0, Spouse Income &minus; $37,000)). Spouse income includes assessable income, reportable fringe benefits, and reportable employer super contributions.
           </p>
         </div>
@@ -344,7 +344,7 @@ export default function SpouseContributionsPage() {
                 <span className="text-green-700">$117,000 + $10,800 in tax saved</span>
               </div>
             </div>
-            <p className="mt-4 text-xs text-slate-400">
+            <p className="mt-4 text-xs text-slate-500">
               Illustrative only. Assumes consistent 7% p.a. net return and spouse income remaining below $37,000. Actual returns will vary.
             </p>
           </div>
@@ -379,7 +379,7 @@ export default function SpouseContributionsPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-3 text-xs text-slate-500">
             Both strategies can be used in the same financial year and serve complementary purposes.
           </p>
         </div>

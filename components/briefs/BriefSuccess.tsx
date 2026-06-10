@@ -99,7 +99,7 @@ export default function BriefSuccess({
         </Button>
       </div>
 
-      <p className="mt-5 text-xs leading-relaxed text-slate-400">
+      <p className="mt-5 text-xs leading-relaxed text-slate-500">
         Invest.com.au provides general information only — the professional, firm
         or team you engage delivers the service under their own licence.
       </p>

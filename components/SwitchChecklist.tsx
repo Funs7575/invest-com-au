@@ -131,7 +131,7 @@ export default function SwitchChecklist({
             <span className="truncate">Verify (1d)</span>
           </div>
         </div>
-        <p className="text-xs text-slate-400 mt-1.5">
+        <p className="text-xs text-slate-500 mt-1.5">
           Total: approximately {totalTimeline} business days
         </p>
       </div>
@@ -325,7 +325,7 @@ export default function SwitchChecklist({
                 around the end of financial year (30 June).
               </p>
             </div>
-            <p className="text-[0.69rem] text-slate-400 italic">
+            <p className="text-[0.69rem] text-slate-500 italic">
               This is general information only and does not constitute tax
               advice. Consult a registered tax agent for advice specific to your
               situation.
@@ -430,7 +430,7 @@ function StepItem({
           {step.title}
         </div>
         <p className="text-xs text-slate-500 mt-0.5">{step.description}</p>
-        <span className="text-[0.69rem] text-slate-400 mt-1 inline-block">
+        <span className="text-[0.69rem] text-slate-500 mt-1 inline-block">
           ⏱ {step.time_estimate}
         </span>
         {step.warning && (

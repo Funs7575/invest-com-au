@@ -286,7 +286,7 @@ export default async function NonResidentBrokersPage() {
             /* Fallback when no DB data */
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
               <p className="text-slate-500 mb-4">Loading broker data...</p>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-500">
                 In the meantime, <Link href="/compare" className="text-amber-600 underline">see all brokers</Link> and filter for non-resident eligibility.
               </p>
             </div>

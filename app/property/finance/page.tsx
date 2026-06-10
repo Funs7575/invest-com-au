@@ -343,7 +343,7 @@ export default function PropertyFinancePage() {
                   </tr>))}</tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             Indicative ranges based on publicly available market data. Individual lender pricing and
             policy vary. General information only — not a credit recommendation.
           </p>

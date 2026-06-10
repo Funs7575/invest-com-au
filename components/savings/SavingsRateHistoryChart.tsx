@@ -84,7 +84,7 @@ export default async function SavingsRateHistoryChart({ brokerId, productKind, b
         formatValue={bpsToPercent}
       />
 
-      <p className="mt-3 text-[10px] text-slate-400">
+      <p className="mt-3 text-[10px] text-slate-500">
         Rate snapshots are captured from published rate tables. Current rate: {bpsToPercent(newest)} p.a.
         Past rate changes are not a reliable indicator of future rates. General information only — verify with the provider.
       </p>

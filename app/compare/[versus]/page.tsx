@@ -110,7 +110,7 @@ function YesNo({ value }: { value: boolean }) {
   return value ? (
     <span className="text-emerald-600 font-semibold">✓ Yes</span>
   ) : (
-    <span className="text-slate-400">✗ No</span>
+    <span className="text-slate-500">✗ No</span>
   );
 }
 
@@ -344,7 +344,7 @@ export default async function BrokerVersusPage({
                     />
                   </tbody>
                 </table>
-                <p className="text-[10px] text-slate-400 mt-3">
+                <p className="text-[10px] text-slate-500 mt-3">
                   ✦ = lower fee highlighted. Always verify on the broker&rsquo;s
                   official fee schedule before trading.
                 </p>

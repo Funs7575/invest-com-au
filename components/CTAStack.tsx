@@ -35,15 +35,15 @@ export default function CTAStack({
 
       {/* Secondary — cross-links */}
       <div className="flex flex-wrap items-center justify-center gap-3 mt-4 text-sm">
-        <Link href="/compare" className="text-slate-400 hover:text-white transition-colors">
+        <Link href="/compare" className="text-slate-500 hover:text-white transition-colors">
           Compare Platforms
         </Link>
         <span className="text-slate-600">·</span>
-        <Link href="/get-matched" className="text-slate-400 hover:text-white transition-colors">
+        <Link href="/get-matched" className="text-slate-500 hover:text-white transition-colors">
           Platform Quiz
         </Link>
         <span className="text-slate-600">·</span>
-        <Link href="/find-advisor" className="text-slate-400 hover:text-white transition-colors">
+        <Link href="/find-advisor" className="text-slate-500 hover:text-white transition-colors">
           Find Advisor
         </Link>
       </div>

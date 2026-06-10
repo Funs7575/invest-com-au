@@ -61,7 +61,7 @@ export default async function BuyerAgentProfilePage({ params }: { params: Promis
       />
 
       <div className="container-custom py-6 md:py-8">
-        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>/</span>
           <Link href="/property" className="hover:text-slate-600">Property</Link>
@@ -133,18 +133,18 @@ export default async function BuyerAgentProfilePage({ params }: { params: Promis
             {/* Key Details */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div className="bg-slate-50 rounded-xl p-3">
-                <p className="text-xs text-slate-400">States Covered</p>
+                <p className="text-xs text-slate-500">States Covered</p>
                 <p className="font-bold text-slate-900">{(agent.states_covered as string[]).join(", ")}</p>
               </div>
               {agent.fee_structure && (
                 <div className="bg-slate-50 rounded-xl p-3">
-                  <p className="text-xs text-slate-400">Fee Structure</p>
+                  <p className="text-xs text-slate-500">Fee Structure</p>
                   <p className="font-bold text-slate-900">{agent.fee_structure}</p>
                 </div>
               )}
               {agent.avg_property_value && (
                 <div className="bg-slate-50 rounded-xl p-3">
-                  <p className="text-xs text-slate-400">Avg Property Value</p>
+                  <p className="text-xs text-slate-500">Avg Property Value</p>
                   <p className="font-bold text-slate-900">{agent.avg_property_value}</p>
                 </div>
               )}
@@ -161,7 +161,7 @@ export default async function BuyerAgentProfilePage({ params }: { params: Promis
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-slate-900">{p.type} in {p.suburb}</p>
-                      <p className="text-xs text-slate-400">{p.price} &middot; {p.saving}</p>
+                      <p className="text-xs text-slate-500">{p.price} &middot; {p.saving}</p>
                     </div>
                   </div>
                 ))}

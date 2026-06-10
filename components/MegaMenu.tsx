@@ -95,7 +95,7 @@ export function MegaMenu({
                         {item.label}
                       </div>
                       {item.desc && (
-                        <div className="text-[0.68rem] text-slate-400 leading-tight">{item.desc}</div>
+                        <div className="text-[0.68rem] text-slate-500 leading-tight">{item.desc}</div>
                       )}
                     </Link>
                   ))}

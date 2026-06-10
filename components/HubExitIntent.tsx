@@ -154,7 +154,7 @@ export default function HubExitIntent({ segmentSlug, hubName }: HubExitIntentPro
               </button>
             </form>
 
-            <p className="text-[11px] text-slate-400 mt-3">
+            <p className="text-[11px] text-slate-500 mt-3">
               By subscribing you agree to our{" "}
               <a href="/privacy" className="underline hover:text-slate-600">Privacy Policy</a>.
             </p>

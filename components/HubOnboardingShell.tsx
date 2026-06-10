@@ -145,7 +145,7 @@ function HubResultPanel({
           <form onSubmit={handleCapture} noValidate>
             <p className="text-sm font-medium text-slate-800 mb-3">
               Get personalised {hubName} tips by email{" "}
-              <span className="text-slate-400 font-normal">(optional)</span>
+              <span className="text-slate-500 font-normal">(optional)</span>
             </p>
             <div className="flex flex-col sm:flex-row gap-2 mb-2">
               <input
@@ -182,7 +182,7 @@ function HubResultPanel({
                 {errorMsg}
               </p>
             )}
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               No spam. Unsubscribe any time.
             </p>
           </form>
@@ -191,7 +191,7 @@ function HubResultPanel({
 
       <button
         onClick={reset}
-        className="w-full text-center text-sm text-slate-400 hover:text-slate-600 transition-colors pt-2"
+        className="w-full text-center text-sm text-slate-500 hover:text-slate-600 transition-colors pt-2"
       >
         ← Restart quiz
       </button>

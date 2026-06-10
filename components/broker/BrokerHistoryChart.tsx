@@ -116,7 +116,7 @@ export default async function BrokerHistoryChart({
         formatValue={label.format}
       />
 
-      <p className="mt-3 text-[10px] text-slate-400">
+      <p className="mt-3 text-[10px] text-slate-500">
         Snapshots captured hourly. {label.format(newest)} is the most recent
         value, {label.format(oldest)} was the value {daysBack} days ago.
         Past fee changes are not a reliable indicator of future changes.

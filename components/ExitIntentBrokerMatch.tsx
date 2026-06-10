@@ -255,7 +255,7 @@ export default function ExitIntentBrokerMatch() {
 
               <button
                 onClick={dismiss}
-                className="w-full text-xs text-slate-400 hover:text-slate-600 text-center"
+                className="w-full text-xs text-slate-500 hover:text-slate-600 text-center"
               >
                 No thanks, I&apos;ll keep looking
               </button>
@@ -263,7 +263,7 @@ export default function ExitIntentBrokerMatch() {
           ) : (
             <div className="text-center py-6">
               <p className="text-sm text-slate-500">Couldn&apos;t load recommendation.</p>
-              <button onClick={dismiss} className="mt-2 text-xs text-slate-400 hover:text-slate-600">
+              <button onClick={dismiss} className="mt-2 text-xs text-slate-500 hover:text-slate-600">
                 Close
               </button>
             </div>

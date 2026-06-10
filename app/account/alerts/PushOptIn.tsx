@@ -164,7 +164,7 @@ export default function PushOptIn({ initialEnabled }: Props) {
               Notifications are blocked in your browser settings.
             </p>
           )}
-          <p className="mt-2 text-[0.65rem] text-slate-400">
+          <p className="mt-2 text-[0.65rem] text-slate-500">
             Factual rate/fee data alerts only — not personal financial advice.
           </p>
         </div>

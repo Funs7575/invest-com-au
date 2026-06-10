@@ -82,11 +82,11 @@ function FeeChangeItem({ change }: { change: FeeChange }) {
         </strong>{" "}
         {isDecrease ? "dropped" : isIncrease ? "raised" : "changed"}{" "}
         {formatFieldName(change.field)}{" "}
-        <span className="text-slate-400">
+        <span className="text-slate-500">
           {change.old_value} → {change.new_value}
         </span>
       </span>
-      <span className="shrink-0 text-[0.6rem] text-slate-400">
+      <span className="shrink-0 text-[0.6rem] text-slate-500">
         {timeAgo(change.changed_at)}
       </span>
     </Link>
@@ -107,7 +107,7 @@ function ComparisonItem({ comparison }: { comparison: PopularComparison }) {
           {comparison.names[0]} vs {comparison.names[1]}
         </strong>
       </span>
-      <span className="shrink-0 text-[0.6rem] text-slate-400 tabular-nums">
+      <span className="shrink-0 text-[0.6rem] text-slate-500 tabular-nums">
         {comparison.count} this week
       </span>
     </Link>
@@ -157,7 +157,7 @@ export default function LiveActivityTicker({
               className={`px-2 py-0.5 text-[0.6rem] md:text-[0.65rem] font-medium rounded-full transition-colors ${
                 activeTab === "fees"
                   ? "bg-slate-900 text-white"
-                  : "text-slate-400 hover:text-slate-600"
+                  : "text-slate-500 hover:text-slate-600"
               }`}
             >
               Fee Changes
@@ -167,7 +167,7 @@ export default function LiveActivityTicker({
               className={`px-2 py-0.5 text-[0.6rem] md:text-[0.65rem] font-medium rounded-full transition-colors ${
                 activeTab === "popular"
                   ? "bg-slate-900 text-white"
-                  : "text-slate-400 hover:text-slate-600"
+                  : "text-slate-500 hover:text-slate-600"
               }`}
             >
               Trending
@@ -191,7 +191,7 @@ export default function LiveActivityTicker({
       <div className="px-3 py-1.5 md:px-4 md:py-2 border-t border-slate-100 text-center">
         <Link
           href={activeTab === "fees" ? "/compare" : "/versus"}
-          className="text-[0.6rem] md:text-[0.65rem] text-slate-400 hover:text-slate-600 transition-colors font-medium"
+          className="text-[0.6rem] md:text-[0.65rem] text-slate-500 hover:text-slate-600 transition-colors font-medium"
         >
           {activeTab === "fees" ? "View all fee changes →" : "Browse all comparisons →"}
         </Link>

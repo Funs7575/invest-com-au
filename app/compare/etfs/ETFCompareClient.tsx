@@ -156,7 +156,7 @@ export default function ETFCompareClient() {
                   </td>
                   <td className="px-4 py-3 text-slate-900 font-medium">
                     <div>{etf.name}</div>
-                    <div className="text-xs text-slate-400 mt-0.5 max-w-md">{etf.description}</div>
+                    <div className="text-xs text-slate-500 mt-0.5 max-w-md">{etf.description}</div>
                   </td>
                   <td className="px-4 py-3 text-slate-600">{etf.provider}</td>
                   <td className="px-4 py-3 text-right font-semibold tabular-nums">
@@ -203,7 +203,7 @@ export default function ETFCompareClient() {
                     {etf.ticker}
                   </Link>
                   <p className="text-xs text-slate-900 font-medium">{etf.name}</p>
-                  <p className="text-[0.65rem] text-slate-400 mt-0.5">{etf.provider}</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">{etf.provider}</p>
                 </div>
                 <span className={`text-sm font-bold tabular-nums ${etf.mer <= 0.10 ? "text-emerald-600" : etf.mer >= 0.50 ? "text-amber-600" : "text-slate-900"}`}>
                   {etf.mer.toFixed(2)}%
@@ -299,7 +299,7 @@ export default function ETFCompareClient() {
 
         {/* ─── Disclaimer ─── */}
         <div className="border-t border-slate-200 pt-4 pb-6">
-          <p className="text-[0.65rem] text-slate-400 leading-relaxed max-w-3xl">
+          <p className="text-[0.65rem] text-slate-500 leading-relaxed max-w-3xl">
             <strong>Disclaimer:</strong> ETF data shown is indicative and sourced from public product
             disclosure statements. MERs may change. This page is for informational purposes only and
             does not constitute financial advice. Past performance is not indicative of future returns.

@@ -268,7 +268,7 @@ export default function ManualBalancesPanel({
         <p className="mt-2 text-xs text-red-600" role="alert">{error}</p>
       )}
 
-      <p className="mt-3 text-xs text-slate-400">
+      <p className="mt-3 text-xs text-slate-500">
         General information only. Values are self-reported and not verified against statements.
       </p>
     </section>

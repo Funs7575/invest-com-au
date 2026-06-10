@@ -174,7 +174,7 @@ export default function NotificationPreferences({ isPro }: { isPro?: boolean }) 
       {/* Status indicators */}
       <div className="h-5 flex items-center">
         {saving && (
-          <span className="text-xs text-slate-400">Saving...</span>
+          <span className="text-xs text-slate-500">Saving...</span>
         )}
         {saved && (
           <span className="text-xs text-emerald-600 font-medium">Saved</span>

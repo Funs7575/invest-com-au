@@ -28,7 +28,7 @@ export default function TestimonialList({ testimonials }: Props) {
         <h2 className="text-base font-bold text-slate-900">
           What clients say
         </h2>
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-slate-500">
           ({testimonials.length} verified review{testimonials.length === 1 ? "" : "s"})
         </span>
       </div>
@@ -54,13 +54,13 @@ export default function TestimonialList({ testimonials }: Props) {
             <p className="text-sm text-slate-700 leading-relaxed mb-1.5">
               &ldquo;{t.testimonial}&rdquo;
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               — Verified client · {formatDate(t.submitted_at)}
             </p>
           </article>
         ))}
       </div>
-      <p className="text-[10px] text-slate-400 mt-4">
+      <p className="text-[10px] text-slate-500 mt-4">
         Testimonials are collected anonymously from consumers ~4 weeks after engagement. General information only.
       </p>
     </section>

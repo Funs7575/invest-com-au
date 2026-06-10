@@ -293,7 +293,7 @@ export default async function AnnualCheckPage() {
         >
           Find a financial advisor
         </Link>
-        <p className="text-xs text-slate-400 mt-3">
+        <p className="text-xs text-slate-500 mt-3">
           This checklist is general information. It does not account for your personal circumstances.
           Always seek advice from a licensed financial adviser before making investment decisions.
         </p>

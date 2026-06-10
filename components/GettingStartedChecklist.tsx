@@ -200,7 +200,7 @@ export default function GettingStartedChecklist({
               style={{ width: `${progress * 100}%` }}
             />
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             {completedCount} of {totalCount} complete
           </p>
         </div>
@@ -239,7 +239,7 @@ export default function GettingStartedChecklist({
 
               {/* Label */}
               {item.done ? (
-                <span className="text-xs text-slate-400 line-through flex-1">
+                <span className="text-xs text-slate-500 line-through flex-1">
                   {item.label}
                 </span>
               ) : (
@@ -281,7 +281,7 @@ export default function GettingStartedChecklist({
         <div className="px-4 pb-3 pt-1">
           <button
             onClick={dismiss}
-            className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-600 transition-colors"
           >
             Dismiss
           </button>

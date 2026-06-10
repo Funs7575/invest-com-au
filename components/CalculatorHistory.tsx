@@ -29,7 +29,7 @@ export default function CalculatorHistory({ entries, onLoad, onClear }: Calculat
         </h3>
         <button
           onClick={onClear}
-          className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+          className="text-xs text-slate-500 hover:text-slate-600 transition-colors"
         >
           Clear all
         </button>
@@ -43,7 +43,7 @@ export default function CalculatorHistory({ entries, onLoad, onClear }: Calculat
             <div className="min-w-0 mr-3">
               <p className="text-xs font-semibold text-slate-800 truncate">{entry.label}</p>
               <p className="text-xs text-emerald-600 font-bold">{entry.summary}</p>
-              <p className="text-[0.65rem] text-slate-400 mt-0.5">{formatTimestamp(entry.timestamp)}</p>
+              <p className="text-[0.65rem] text-slate-500 mt-0.5">{formatTimestamp(entry.timestamp)}</p>
             </div>
             <button
               onClick={() => onLoad(entry.inputs)}

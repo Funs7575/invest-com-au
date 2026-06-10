@@ -147,7 +147,7 @@ export default function QuestionCaptureForm({ category: initialCategory = "gener
           ) : (
             <span />
           )}
-          <span className="text-xs text-slate-400 tabular-nums">
+          <span className="text-xs text-slate-500 tabular-nums">
             {question.length}/{Q_MAX}
           </span>
         </div>
@@ -227,7 +227,7 @@ export default function QuestionCaptureForm({ category: initialCategory = "gener
         {submitting ? "Submitting…" : "Ask the research desk →"}
       </button>
 
-      <p className="text-xs text-slate-400 text-center leading-relaxed">
+      <p className="text-xs text-slate-500 text-center leading-relaxed">
         General information only. Not personal financial advice.{" "}
         <span className="text-slate-500">Questions are reviewed before publishing.</span>
       </p>

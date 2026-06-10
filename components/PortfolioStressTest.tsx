@@ -88,7 +88,7 @@ function ScenarioCard({
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="text-sm font-semibold text-slate-900">{meta.name}</p>
-          <p className="text-xs text-slate-400">{meta.period}</p>
+          <p className="text-xs text-slate-500">{meta.period}</p>
         </div>
         <span
           className="text-base font-extrabold tabular-nums shrink-0"
@@ -194,7 +194,7 @@ export default function PortfolioStressTest() {
             if (!meta) return null;
             return <ScenarioCard key={r.scenarioId} result={r} meta={meta} />;
           })}
-          <p className="text-[11px] text-slate-400 leading-relaxed">{result.disclaimer}</p>
+          <p className="text-[11px] text-slate-500 leading-relaxed">{result.disclaimer}</p>
         </div>
       )}
     </section>

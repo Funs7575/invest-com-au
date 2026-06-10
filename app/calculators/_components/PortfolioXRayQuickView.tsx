@@ -136,7 +136,7 @@ export default function PortfolioXRayQuickView({ brokers }: Props) {
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Enter your portfolio details to get a snapshot.</p>
+          <p className="text-slate-500 text-sm">Enter your portfolio details to get a snapshot.</p>
         </div>
       )}
 

@@ -62,13 +62,13 @@ export default function RetirementQuickView({ searchParams }: Props) {
             <ResultBox label="Annual Income (4% rule)" value={fmt(result.annualIncome)} />
             <ResultBox label="Years of Contributions" value={`${result.years}`} />
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             i — FV = PV(1+r)ⁿ + PMT × ((1+r)ⁿ − 1) / r. Retirement income uses the 4% safe withdrawal rule.
           </p>
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Retirement age must be greater than current age.</p>
+          <p className="text-slate-500 text-sm">Retirement age must be greater than current age.</p>
         </div>
       )}
 

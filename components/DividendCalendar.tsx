@@ -186,7 +186,7 @@ export default function DividendCalendar() {
 
         {disclaimer && (
           <div className="px-4 py-3 border-t border-slate-100">
-            <p className="text-[11px] text-slate-400">{disclaimer}</p>
+            <p className="text-[11px] text-slate-500">{disclaimer}</p>
           </div>
         )}
       </div>

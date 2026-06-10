@@ -189,7 +189,7 @@ export default function ClubDetail({
         <div>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-3">
             {messages.length === 0 ? (
-              <p className="px-4 py-8 text-center text-sm text-slate-400">No messages yet. Say hello!</p>
+              <p className="px-4 py-8 text-center text-sm text-slate-500">No messages yet. Say hello!</p>
             ) : (
               <div className="max-h-96 overflow-y-auto divide-y divide-slate-100">
                 {messages.map((msg) => (
@@ -199,7 +199,7 @@ export default function ClubDetail({
                       {msg.authorRole === "owner" && (
                         <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-semibold">Owner</span>
                       )}
-                      <span className="text-[11px] text-slate-400">{timeAgo(msg.createdAt)}</span>
+                      <span className="text-[11px] text-slate-500">{timeAgo(msg.createdAt)}</span>
                     </div>
                     <p className="text-sm text-slate-800 leading-relaxed">{msg.body}</p>
                   </div>
@@ -257,7 +257,7 @@ export default function ClubDetail({
         <div>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-4">
             {watchlistItems.length === 0 ? (
-              <p className="px-4 py-8 text-center text-sm text-slate-400">Nothing on the watchlist yet.</p>
+              <p className="px-4 py-8 text-center text-sm text-slate-500">Nothing on the watchlist yet.</p>
             ) : (
               <ul className="divide-y divide-slate-100">
                 {watchlistItems.map((item) => (
@@ -306,7 +306,7 @@ export default function ClubDetail({
               {adding ? "Adding…" : "Add"}
             </button>
           </div>
-          <p className="text-[10px] text-slate-400 mt-2">
+          <p className="text-[10px] text-slate-500 mt-2">
             General information only. Not a recommendation to buy or hold any product.
           </p>
         </div>
@@ -323,7 +323,7 @@ export default function ClubDetail({
               <li key={member.id} className="px-4 py-3 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold text-slate-700">{member.displayName}</p>
-                  <p className="text-[11px] text-slate-400">Joined {new Date(member.joinedAt).toLocaleDateString("en-AU", { month: "short", day: "numeric" })}</p>
+                  <p className="text-[11px] text-slate-500">Joined {new Date(member.joinedAt).toLocaleDateString("en-AU", { month: "short", day: "numeric" })}</p>
                 </div>
                 {member.role === "owner" && (
                   <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold">Owner</span>
@@ -355,7 +355,7 @@ export default function ClubDetail({
                   Copy
                 </button>
               </div>
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px] text-slate-500">
                 The person joining will choose their own display name.
               </p>
             </div>

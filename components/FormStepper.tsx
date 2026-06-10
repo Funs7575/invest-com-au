@@ -72,7 +72,7 @@ export default function FormStepper({ steps, currentStepIndex, className = "" }:
                     ? "bg-emerald-500 border-emerald-500 text-white"
                     : state === "current"
                       ? "bg-white border-amber-400 text-amber-700 ring-4 ring-amber-100"
-                      : "bg-white border-slate-300 text-slate-400"
+                      : "bg-white border-slate-300 text-slate-500"
                 }`}
                 aria-hidden="true"
               >

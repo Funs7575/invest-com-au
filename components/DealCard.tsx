@@ -221,7 +221,7 @@ export default memo(function DealCard({
         {broker.deal_terms && (
           <button
             onClick={() => setTermsOpen(!termsOpen)}
-            className="flex items-center gap-0.5 text-[0.62rem] md:text-[0.69rem] text-slate-400 hover:text-slate-600 transition-colors ml-auto"
+            className="flex items-center gap-0.5 text-[0.62rem] md:text-[0.69rem] text-slate-500 hover:text-slate-600 transition-colors ml-auto"
             aria-expanded={termsOpen}
           >
             <svg className={`w-3 h-3 transition-transform duration-200 ${termsOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

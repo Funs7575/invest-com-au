@@ -83,7 +83,7 @@ export default async function MyPlansPage() {
                             ? "text-emerald-700"
                             : p.status === "saved"
                               ? "text-slate-700"
-                              : "text-slate-400"
+                              : "text-slate-500"
                         }`}
                       >
                         {p.status}

@@ -102,7 +102,7 @@ export default async function AccountTimelinePage() {
                       </p>
                     )}
                   </div>
-                  <span className="text-xs text-slate-400 shrink-0">
+                  <span className="text-xs text-slate-500 shrink-0">
                     {timeAgo(it.at)}
                   </span>
                 </div>

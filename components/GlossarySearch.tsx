@@ -37,7 +37,7 @@ export default function GlossarySearch({ entries }: { entries: GlossaryEntry[] }
         )}
         {hasQuery && filtered.length > 0 && (
           <div className="space-y-2">
-            <p className="text-xs text-slate-400">{filtered.length} result{filtered.length !== 1 ? "s" : ""}</p>
+            <p className="text-xs text-slate-500">{filtered.length} result{filtered.length !== 1 ? "s" : ""}</p>
             {filtered.slice(0, 20).map(entry => (
               <div key={entry.term} className="bg-white border border-slate-200 rounded-lg p-3">
                 <h3 className="text-sm font-bold text-slate-900">{entry.term}</h3>

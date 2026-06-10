@@ -712,7 +712,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filter & Sort">
             {/* Sort */}
             <div className="mb-4">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Sort by</p>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 mb-2">Sort by</p>
               <div className="flex flex-wrap gap-2">
                 {schema.sortOptions.map(s => (
                   <button
@@ -731,7 +731,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             </div>
             {/* Platform Type */}
             <div className="mb-4">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Platform type</p>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 mb-2">Platform type</p>
               <div className="flex flex-wrap gap-2">
                 {platformTypes.map(f => (
                   <button
@@ -753,7 +753,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             </div>
             {/* Features */}
             <div className="mb-4">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Features</p>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 mb-2">Features</p>
               <div className="flex flex-wrap gap-2">
                 {schema.featureFilters.map(key => {
                   const f = featureFilterMeta[key];
@@ -779,14 +779,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             {/* Fee & Rating */}
             <div className="mb-4 grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="compare-max-fee" className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Max ASX Fee</label>
+                <label htmlFor="compare-max-fee" className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 mb-2 block">Max ASX Fee</label>
                 <select id="compare-max-fee" value={maxFee} onChange={e => setMaxFee(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
                   {maxFeeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
               {SHOW_RATINGS && (
               <div>
-                <label htmlFor="compare-min-rating" className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Min Rating</label>
+                <label htmlFor="compare-min-rating" className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 mb-2 block">Min Rating</label>
                 <select id="compare-min-rating" value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
                   {minRatingOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -905,7 +905,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {mobileColumns.map((column) => (
                   <div key={column.key} className="rounded-xl bg-slate-50 p-2">
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{column.label}</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{column.label}</p>
                     <p className="text-sm font-semibold text-slate-800">{column.value(broker, row)}</p>
                   </div>
                 ))}
@@ -946,7 +946,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 <p className="text-xs font-bold uppercase tracking-wide text-blue-700">Shortlist</p>
                 <h2 className="text-lg font-extrabold text-slate-900">Pinned providers ({selected.size}/4)</h2>
               </div>
-              <button onClick={() => setSelected(new Set())} className="text-xs font-semibold text-slate-400 hover:text-slate-700">Clear</button>
+              <button onClick={() => setSelected(new Set())} className="text-xs font-semibold text-slate-500 hover:text-slate-700">Clear</button>
             </div>
             {selected.size < 2 && <p className="mb-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">Pin at least 2 providers for a side-by-side shortlist.</p>}
             <div className="space-y-2">

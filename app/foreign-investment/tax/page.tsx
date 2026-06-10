@@ -193,7 +193,7 @@ export default async function ForeignTaxPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-3 text-xs text-slate-400 leading-relaxed">{WITHHOLDING_TAX_NOTE}</p>
+          <p className="mt-3 text-xs text-slate-500 leading-relaxed">{WITHHOLDING_TAX_NOTE}</p>
         </div>
       </section>
 
@@ -243,7 +243,7 @@ export default async function ForeignTaxPage() {
               </table>
             </div>
           </div>
-          <p className="mt-3 text-xs text-slate-400">{NON_RESIDENT_TAX_NOTE}</p>
+          <p className="mt-3 text-xs text-slate-500">{NON_RESIDENT_TAX_NOTE}</p>
         </div>
       </section>
 
@@ -328,7 +328,7 @@ export default async function ForeignTaxPage() {
       {/* ── Disclaimer ───────────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER}</p>
         </div>
       </section>
     </div>

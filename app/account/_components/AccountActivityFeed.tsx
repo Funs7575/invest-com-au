@@ -75,7 +75,7 @@ export default function AccountActivityFeed({ items }: { items: FeedItem[] }) {
                   <p className="text-xs text-slate-500 truncate">{it.body}</p>
                 )}
               </div>
-              <span className="text-xs text-slate-400 shrink-0 pt-1">
+              <span className="text-xs text-slate-500 shrink-0 pt-1">
                 {timeAgo(it.at)}
               </span>
             </Link>

@@ -115,7 +115,7 @@ export default function AuthorByline({
           </p>
           <p
             className={`text-sm font-medium ${
-              isDark ? "text-slate-400" : "text-slate-700"
+              isDark ? "text-slate-500" : "text-slate-700"
             }`}
           >
             {displayDate ? `Data verified: ${displayDate}` : "Invest.com.au"}
@@ -163,7 +163,7 @@ export default function AuthorByline({
       {reviewer && (
         <p
           className={`text-sm ${
-            isDark ? "text-slate-400" : "text-slate-500"
+            isDark ? "text-slate-500" : "text-slate-500"
           }`}
         >
           Reviewed by:{" "}
@@ -176,13 +176,13 @@ export default function AuthorByline({
             {reviewer.full_name}
           </Link>
           {reviewer.role && (
-            <span className={isDark ? "text-slate-500" : "text-slate-400"}>
+            <span className={isDark ? "text-slate-500" : "text-slate-500"}>
               {" "}
               &middot; {formatRole(reviewer.role)}
             </span>
           )}
           {reviewedAt && (
-            <span className={isDark ? "text-slate-500" : "text-slate-400"}>
+            <span className={isDark ? "text-slate-500" : "text-slate-500"}>
               {" "}
               &middot; {formatDate(reviewedAt, { style: "long" })}
             </span>
@@ -194,7 +194,7 @@ export default function AuthorByline({
       {recentChanges.length > 0 && (
         <div
           className={`text-xs space-y-0.5 ${
-            isDark ? "text-slate-500" : "text-slate-400"
+            isDark ? "text-slate-500" : "text-slate-500"
           }`}
         >
           {recentChanges.map((entry, i) => (
@@ -212,13 +212,13 @@ export default function AuthorByline({
       {showMethodologyLink && (
         <div
           className={`flex items-center gap-3 text-xs ${
-            isDark ? "text-slate-500" : "text-slate-400"
+            isDark ? "text-slate-500" : "text-slate-500"
           }`}
         >
           <Link
             href="/how-we-earn"
             className={`hover:underline ${
-              isDark ? "text-slate-400 hover:text-white" : "text-slate-500 hover:text-slate-700"
+              isDark ? "text-slate-500 hover:text-white" : "text-slate-500 hover:text-slate-700"
             }`}
           >
             How we make money
@@ -227,7 +227,7 @@ export default function AuthorByline({
           <Link
             href="/methodology"
             className={`hover:underline ${
-              isDark ? "text-slate-400 hover:text-white" : "text-slate-500 hover:text-slate-700"
+              isDark ? "text-slate-500 hover:text-white" : "text-slate-500 hover:text-slate-700"
             }`}
           >
             Methodology
@@ -236,7 +236,7 @@ export default function AuthorByline({
           <Link
             href="/editorial-policy"
             className={`hover:underline ${
-              isDark ? "text-slate-400 hover:text-white" : "text-slate-500 hover:text-slate-700"
+              isDark ? "text-slate-500 hover:text-white" : "text-slate-500 hover:text-slate-700"
             }`}
           >
             Editorial policy

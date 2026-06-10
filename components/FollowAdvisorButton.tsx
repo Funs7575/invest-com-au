@@ -66,7 +66,7 @@ export default function FollowAdvisorButton({
   return (
     <div className="flex items-center gap-2">
       {count > 0 && (
-        <span className="text-xs text-slate-400 tabular-nums">
+        <span className="text-xs text-slate-500 tabular-nums">
           {count.toLocaleString("en-AU")} follower{count !== 1 ? "s" : ""}
         </span>
       )}

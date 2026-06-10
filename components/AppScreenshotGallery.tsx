@@ -62,7 +62,7 @@ export default function AppScreenshotGallery({ screenshots, brokerName }: AppScr
           </button>
         ))}
       </div>
-      <p className="text-[0.65rem] text-slate-400 mt-2">
+      <p className="text-[0.65rem] text-slate-500 mt-2">
         Tap a screenshot to enlarge. Images provided by {brokerName}.
       </p>
 

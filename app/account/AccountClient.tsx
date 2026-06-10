@@ -705,7 +705,7 @@ export default function AccountClient() {
         <button
           onClick={handleSignOut}
           disabled={signOutLoading}
-          className="text-sm text-slate-400 hover:text-red-500 transition-colors min-h-11"
+          className="text-sm text-slate-500 hover:text-red-500 transition-colors min-h-11"
         >
           {signOutLoading ? "Signing out..." : "Sign Out"}
         </button>

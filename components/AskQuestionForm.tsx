@@ -147,12 +147,12 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="text-xs text-slate-400 hover:text-slate-600"
+              className="text-xs text-slate-500 hover:text-slate-600"
             >
               Cancel
             </button>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Questions are moderated before appearing. We aim to answer within 48 hours.
           </p>
         </form>
