@@ -62,6 +62,9 @@ export interface QuizAdvisorCandidate {
   avg_response_minutes?: number | null;
   response_time_hours?: number | null;
   initial_consultation_free?: boolean | null;
+  /** Advisor's published booking URL (same field the profile BookingWidget
+   *  uses) — drives the "Book a call" primary CTA on the matched screen. */
+  booking_link?: string | null;
   trust_score_overall?: number | null;
   country_eligibility?: CountryEligibility | Record<string, unknown> | null;
 }
