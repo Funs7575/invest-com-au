@@ -9,6 +9,7 @@ import {
   resolveActionPlan,
 } from "@/lib/getmatched/engine";
 import { topMatchesForRoute } from "@/lib/getmatched/advisor-top-match";
+import { resolveLanes } from "@/lib/getmatched/resolve-lanes";
 import { buildMatchExplainer } from "@/lib/getmatched/explainer";
 import { logEvent } from "@/lib/getmatched/events";
 import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
@@ -166,6 +167,7 @@ export async function POST(request: NextRequest) {
       const providers = applyOutcomesRanking(rawProviders, outcomesStats);
       return NextResponse.json({
         plan: buildEphemeralPlan(answers, resolved),
+        lanes: resolveLanes(answers),
         template: resolved.template,
         recommended_brief_template: resolved.recommendedBriefTemplate,
         accept_credits_cost: resolved.acceptCreditsCost,
@@ -221,6 +223,7 @@ export async function POST(request: NextRequest) {
         const providers2 = applyOutcomesRanking(rawProviders2, outcomesStats2);
         return NextResponse.json({
           plan: buildEphemeralPlan(answers, resolved),
+        lanes: resolveLanes(answers),
           template: resolved.template,
           recommended_brief_template: resolved.recommendedBriefTemplate,
           accept_credits_cost: resolved.acceptCreditsCost,
@@ -300,6 +303,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       plan: updated,
+      lanes: resolveLanes(plan.answers),
       template: resolved.template,
       recommended_brief_template: resolved.recommendedBriefTemplate,
       accept_credits_cost: resolved.acceptCreditsCost,
@@ -341,6 +345,7 @@ export async function POST(request: NextRequest) {
       });
       return NextResponse.json({
         plan: buildEphemeralPlan(answers, resolved),
+        lanes: resolveLanes(answers),
         template: resolved.template,
         recommended_brief_template: resolved.recommendedBriefTemplate,
         accept_credits_cost: resolved.acceptCreditsCost,
