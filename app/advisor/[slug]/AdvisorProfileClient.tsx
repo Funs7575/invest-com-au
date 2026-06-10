@@ -148,7 +148,9 @@ export default function AdvisorProfileClient({
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
   const [reviewState, setReviewState] = useState<"idle" | "success">("idle");
   const [bioExpanded, setBioExpanded] = useState(false);
-  const [allReviews, _setAllReviews] = useState(reviews);
+  const [allReviews, setAllReviews] = useState(reviews);
+  const [loadingMoreReviews, setLoadingMoreReviews] = useState(false);
+  const [loadMoreReviewsError, setLoadMoreReviewsError] = useState(false);
   const { toggle: toggleShortlist, has: inShortlist, count: shortlistCount, max: shortlistMax } = useAdvisorShortlist();
 
   useEffect(() => {
@@ -157,7 +159,7 @@ export default function AdvisorProfileClient({
       if (raw) {
         const data = JSON.parse(raw);
         if (data.matchedAdvisors?.some((a: { slug: string }) => a.slug === pro.slug)) {
-          // eslint-disable-next-line react-hooks/set-state-in-effect -- reading from sessionStorage (external system), not cascading from React state
+           
           setAlreadyMatched(true);
            
           if (data.quizData?.firstName) setName(data.quizData.firstName);
@@ -253,9 +255,28 @@ export default function AdvisorProfileClient({
   const initials = pro.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 
   // ADV-011: the reviews list is capped server-side. When more approved reviews
-  // exist than we embedded, tell the visitor and link to the full set.
-  const totalReviews = Math.max(reviewTotalCount ?? reviews.length, reviews.length);
-  const hasMoreReviews = totalReviews > reviews.length;
+  // exist than we embedded, offer a Load-more that pages through the public
+  // reviews API (same query shape as the initial server fetch).
+  const totalReviews = Math.max(reviewTotalCount ?? allReviews.length, allReviews.length);
+  const hasMoreReviews = totalReviews > allReviews.length;
+
+  const loadMoreReviews = async () => {
+    if (loadingMoreReviews) return;
+    setLoadingMoreReviews(true);
+    setLoadMoreReviewsError(false);
+    try {
+      const res = await fetch(
+        `/api/advisor-reviews-public?professional_id=${pro.id}&offset=${allReviews.length}&limit=20`,
+      );
+      if (!res.ok) throw new Error(`reviews ${res.status}`);
+      const data = (await res.json()) as { reviews: typeof reviews };
+      const seen = new Set(allReviews.map((r) => r.id));
+      setAllReviews([...allReviews, ...(data.reviews ?? []).filter((r) => !seen.has(r.id))]);
+    } catch {
+      setLoadMoreReviewsError(true);
+    }
+    setLoadingMoreReviews(false);
+  };
 
   // ADV-019: "Profile last updated" — uses updated_at, falling back to created_at.
   const lastUpdatedLabel = formatLastUpdated(pro.updated_at ?? pro.created_at);
@@ -1098,12 +1119,26 @@ export default function AdvisorProfileClient({
                       </div>
                     ))}
                   </div>
-                  {/* ADV-011: reviews are capped server-side; be transparent
-                      about it rather than silently hiding the rest. */}
+                  {/* ADV-011: reviews are capped server-side; page the rest in
+                      on demand instead of silently hiding them. */}
                   {hasMoreReviews && (
-                    <p className="text-xs text-slate-400 text-center mb-2" data-testid="reviews-cap-note">
-                      Showing the {reviews.length} most recent reviews of {totalReviews} total.
-                    </p>
+                    <div className="text-center mb-2" data-testid="reviews-cap-note">
+                      <p className="text-xs text-slate-500 mb-2">
+                        Showing {allReviews.length} of {totalReviews} reviews.
+                      </p>
+                      {loadMoreReviewsError && (
+                        <p role="alert" className="text-xs text-red-600 mb-2">
+                          Couldn&apos;t load more reviews — please try again.
+                        </p>
+                      )}
+                      <button
+                        onClick={loadMoreReviews}
+                        disabled={loadingMoreReviews}
+                        className="px-4 py-2.5 min-h-11 text-sm font-semibold text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loadingMoreReviews ? "Loading…" : `Load more reviews (${totalReviews - allReviews.length} remaining)`}
+                      </button>
+                    </div>
                   )}
                   </>
                 ) : !reviewFormOpen && reviewState !== "success" ? (
