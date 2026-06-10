@@ -54,6 +54,7 @@ function toMatchedAdvisor(a: ScoredQuizAdvisor): MatchedAdvisor {
     avg_response_minutes: a.avg_response_minutes ?? null,
     response_time_hours: a.response_time_hours ?? null,
     initial_consultation_free: a.initial_consultation_free ?? null,
+    booking_link: a.booking_link ?? null,
     matchScore: a.matchScore,
     confidence: a.confidence,
   };
@@ -103,6 +104,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
 
   // Matching state
   const [allMatches, setAllMatches] = useState<MatchedAdvisor[]>([]);
+  const [closestMatches, setClosestMatches] = useState<MatchedAdvisor[]>([]);
   const [matchIndex, setMatchIndex] = useState(0);
   const [loadingMatches, setLoadingMatches] = useState(false);
   const [rematching, setRematching] = useState(false);
@@ -263,8 +265,33 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
       });
       if (!res.ok) throw new Error(`advisor-match ${res.status}`);
       const data = (await res.json()) as { advisors: ScoredQuizAdvisor[] };
-      setAllMatches((data.advisors ?? []).map(toMatchedAdvisor));
+      const matched = (data.advisors ?? []).map(toMatchedAdvisor);
+      setAllMatches(matched);
       setMatchIndex(0);
+
+      // If zero matches for this specific type, fetch a fallback "closest match"
+      // pool with no type filter so users always see real professionals rather
+      // than an empty panel.
+      if (matched.length === 0) {
+        try {
+          const fallbackRes = await fetch("/api/advisor-match", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              advisorType: "not-sure",
+              goal: quizAnswers.goal,
+              amount: quizAnswers.amount,
+              isInternational,
+              investorCountry,
+              limit: 3,
+            }),
+          });
+          if (fallbackRes.ok) {
+            const fallbackData = (await fallbackRes.json()) as { advisors: ScoredQuizAdvisor[] };
+            setClosestMatches((fallbackData.advisors ?? []).map(toMatchedAdvisor));
+          }
+        } catch { /* silent — the empty state still shows CTAs */ }
+      }
     } catch {
       setAllMatches([]);
     }
@@ -326,37 +353,85 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               <p className="text-sm text-slate-500 font-medium">Filtering professionals…</p>
             </div>
           ) : allMatches.length === 0 ? (
-            // No matches in our directory for this type/state — give the user
-            // a clear next step instead of an empty card. /quotes/post is the
-            // universal fallback ("describe your situation, get quotes").
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 md:p-6 text-center">
-              <Icon name="search" size={32} className="text-amber-500 mx-auto mb-3" />
-              <h2 className="text-base md:text-lg font-extrabold text-slate-900 mb-1.5">No verified {advisorLabel}s in our directory yet</h2>
-              <p className="text-sm text-slate-600 mb-4 max-w-md mx-auto">
-                Our directory is still growing. The fastest way to get help right now is to post your situation — verified pros reply with quotes.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                <Link
-                  href={`/quotes/post?context=quiz&type=${advisorType}`}
-                  onClick={() => trackEvent("advisor_no_match_post_job", { advisor_type: advisorType }, "/quiz")}
-                  className="px-4 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+            // No exact-type matches — show closest matches (any verified advisor)
+            // when available so the user always sees real professionals. CTAs
+            // to post a job and browse the directory are always present.
+            <div className="space-y-4">
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 md:p-6 text-center">
+                <Icon name="search" size={32} className="text-amber-500 mx-auto mb-3" />
+                <h2 className="text-base md:text-lg font-extrabold text-slate-900 mb-1.5">
+                  No verified {advisorLabel}s in our directory yet
+                </h2>
+                <p className="text-sm text-slate-600 mb-4 max-w-md mx-auto">
+                  Our directory is still growing. You can post your situation and get quotes from verified professionals, or browse all advisors.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                  <Link
+                    href={`/quotes/post?context=quiz&type=${advisorType}`}
+                    onClick={() => trackEvent("advisor_no_match_post_job", { advisor_type: advisorType }, "/quiz")}
+                    className="px-4 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                  >
+                    Post your situation →
+                  </Link>
+                  <Link
+                    href={advisorHref}
+                    onClick={() => trackEvent("advisor_no_match_browse", { advisor_type: advisorType }, "/quiz")}
+                    className="px-4 py-2.5 border border-amber-300 text-amber-700 text-sm font-semibold rounded-lg hover:bg-amber-100 transition-colors"
+                  >
+                    Browse {advisorLabel}s
+                  </Link>
+                </div>
+                <button
+                  onClick={onRestart}
+                  className="block mx-auto mt-4 text-xs text-slate-500 hover:text-slate-600 transition-colors"
                 >
-                  Post your situation →
-                </Link>
-                <Link
-                  href={advisorHref}
-                  onClick={() => trackEvent("advisor_no_match_browse", { advisor_type: advisorType }, "/quiz")}
-                  className="px-4 py-2.5 border border-amber-300 text-amber-700 text-sm font-semibold rounded-lg hover:bg-amber-100 transition-colors"
-                >
-                  Browse {advisorLabel}s
-                </Link>
+                  Restart quiz →
+                </button>
               </div>
-              <button
-                onClick={onRestart}
-                className="block mx-auto mt-4 text-xs text-slate-500 hover:text-slate-600 transition-colors"
-              >
-                Restart quiz →
-              </button>
+
+              {closestMatches.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3 px-1">
+                    Closest matches — can help with your situation
+                  </p>
+                  <div className="space-y-3">
+                    {closestMatches.map((advisor) => (
+                      <Link
+                        key={advisor.id}
+                        href={`/advisor/${advisor.slug}`}
+                        onClick={() => trackEvent("advisor_closest_match_click", { advisor_slug: advisor.slug, advisor_type: advisorType }, "/quiz")}
+                        className="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-300 hover:shadow-sm transition-all group"
+                      >
+                        {advisor.photo_url ? (
+                          <Image
+                            src={advisor.photo_url}
+                            alt={advisor.name}
+                            width={44}
+                            height={44}
+                            className="w-11 h-11 rounded-full object-cover shrink-0"
+                          />
+                        ) : (
+                          <div className="w-11 h-11 rounded-full bg-indigo-100 flex items-center justify-center shrink-0 text-indigo-700 font-bold text-base">
+                            {advisor.name.charAt(0)}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-slate-900 group-hover:text-indigo-700 transition-colors truncate">{advisor.name}</p>
+                          {advisor.firm_name && <p className="text-xs text-slate-500 truncate">{advisor.firm_name}</p>}
+                          {advisor.location_display && <p className="text-xs text-slate-500 truncate">{advisor.location_display}</p>}
+                        </div>
+                        {advisor.rating > 0 && (
+                          <div className="text-right shrink-0">
+                            <p className="text-sm font-bold text-amber-500">★ {advisor.rating.toFixed(1)}</p>
+                            {advisor.review_count > 0 && <p className="text-xs text-slate-400">{advisor.review_count} reviews</p>}
+                          </div>
+                        )}
+                        <Icon name="chevron-right" size={16} className="text-slate-300 shrink-0" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <>
