@@ -88,12 +88,14 @@ export default async function TeamProfilePage({ params }: PageProps) {
       photo_url: string | null;
       tagline: string | null;
       hourly_rate_cents: number | null;
+      rating: number | null;
+      review_count: number | null;
     }
   > = {};
   if (proIds.length > 0) {
     const { data: pros } = await admin
       .from("professionals")
-      .select("id, name, slug, type, photo_url, tagline, hourly_rate_cents")
+      .select("id, name, slug, type, photo_url, tagline, hourly_rate_cents, rating, review_count")
       .in("id", proIds);
     professionals = Object.fromEntries(
       ((pros ?? []) as {
@@ -104,8 +106,37 @@ export default async function TeamProfilePage({ params }: PageProps) {
         photo_url: string | null;
         tagline: string | null;
         hourly_rate_cents: number | null;
+        rating: number | null;
+        review_count: number | null;
       }[]).map((p) => [p.id, p]),
     );
+  }
+
+  // Combined case studies — published work from any public squad member,
+  // attributed per member. Fail-soft: section hides on error/empty.
+  interface TeamCaseStudy {
+    id: number;
+    professional_id: number;
+    title: string;
+    situation: string;
+    approach: string;
+    outcome: string;
+    client_type: string;
+  }
+  let teamCaseStudies: TeamCaseStudy[] = [];
+  if (proIds.length > 0) {
+    try {
+      const { data: csRaw } = await admin
+        .from("advisor_case_studies")
+        .select("id, professional_id, title, situation, approach, outcome, client_type")
+        .in("professional_id", proIds)
+        .eq("status", "published")
+        .order("created_at", { ascending: false })
+        .limit(6);
+      teamCaseStudies = (csRaw ?? []) as TeamCaseStudy[];
+    } catch {
+      /* silent — section hides */
+    }
   }
 
   // Build the enriched member list for <SquadStack /> + <BundledPricePreview />.
@@ -123,6 +154,8 @@ export default async function TeamProfilePage({ params }: PageProps) {
         pro_type: pro.type,
         pro_photo_url: pro.photo_url,
         pro_tagline: pro.tagline ?? null,
+        pro_rating: pro.rating ?? null,
+        pro_review_count: pro.review_count ?? null,
       };
     })
     .filter(
@@ -446,7 +479,82 @@ export default async function TeamProfilePage({ params }: PageProps) {
             <TestimonialList testimonials={testimonials} />
           )}
 
+          {/* Our story — long-form prose set by the squad lead. Renders only
+              once the ecosystem migration lands and the team writes one. */}
+          {typeof team.team_story === "string" && team.team_story.trim().length > 0 && (
+            <section className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+              <p className="text-xs uppercase tracking-widest text-slate-500 mb-3">
+                Our story
+              </p>
+              <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-line max-w-3xl">
+                {team.team_story as string}
+              </div>
+            </section>
+          )}
+
           <SquadStack members={squadMembers} />
+
+          {/* Combined case studies — published work from squad members,
+              attributed per member. */}
+          {teamCaseStudies.length > 0 && (
+            <section className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
+              <p className="text-xs uppercase tracking-widest text-slate-500 mb-1">
+                Case studies from this squad
+              </p>
+              <p className="text-sm text-slate-600 mb-5">
+                Real engagements written up by squad members. Outcomes are
+                specific to each client&rsquo;s circumstances.
+              </p>
+              <div className="space-y-3">
+                {teamCaseStudies.map((cs) => {
+                  const author = professionals[cs.professional_id];
+                  return (
+                    <details
+                      key={cs.id}
+                      className="group border border-slate-100 rounded-xl open:border-amber-300"
+                    >
+                      <summary className="flex items-center justify-between gap-3 p-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-slate-900 truncate">{cs.title}</p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {author ? `By ${author.name}` : "Squad member"} ·{" "}
+                            {cs.client_type.replace(/_/g, " ")}
+                          </p>
+                        </div>
+                        <Icon
+                          name="chevron-down"
+                          size={16}
+                          className="text-slate-400 shrink-0 transition-transform group-open:rotate-180"
+                        />
+                      </summary>
+                      <div className="px-4 pb-4 space-y-3">
+                        <div>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Situation</p>
+                          <p className="text-sm text-slate-600 leading-relaxed">{cs.situation}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Approach</p>
+                          <p className="text-sm text-slate-600 leading-relaxed">{cs.approach}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Outcome</p>
+                          <p className="text-sm text-slate-600 leading-relaxed">{cs.outcome}</p>
+                        </div>
+                        {author && (
+                          <Link
+                            href={`/advisor/${author.slug}`}
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 hover:underline"
+                          >
+                            View {author.name}&rsquo;s profile →
+                          </Link>
+                        )}
+                      </div>
+                    </details>
+                  );
+                })}
+              </div>
+            </section>
+          )}
 
           {team.disclosure && (
             <div className="bg-slate-100 border border-slate-200 rounded-2xl p-4 text-xs text-slate-600 leading-relaxed">

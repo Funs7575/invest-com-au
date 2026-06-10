@@ -21,6 +21,8 @@ interface TeamRow {
   public: boolean;
   accepted_brief_templates: string[];
   disclosure: string | null;
+  team_story?: string | null;
+  specialty_tags?: string[];
 }
 
 interface MemberRow {
@@ -83,6 +85,15 @@ export default function TeamsManagerClient() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("member");
 
+  // Public-presentation editor (description / story / specialty tags).
+  const [presentation, setPresentation] = useState({
+    description: "",
+    team_story: "",
+    specialty_tags: [] as string[],
+  });
+  const [tagDraft, setTagDraft] = useState("");
+  const [presentationState, setPresentationState] = useState<"idle" | "saving" | "saved" | "story_pending">("idle");
+
   const loadTeams = useCallback(async () => {
     try {
       setLoading(true);
@@ -106,10 +117,51 @@ export default function TeamsManagerClient() {
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error ?? "Failed to load team");
       setDetail(json);
+      const team = json.team as TeamRow;
+      setPresentation({
+        description: team.description ?? "",
+        team_story: team.team_story ?? "",
+        specialty_tags: team.specialty_tags ?? [],
+      });
+      setPresentationState("idle");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load team");
     }
   }, []);
+
+  async function savePresentation() {
+    if (!selected) return;
+    setError(null);
+    setPresentationState("saving");
+    try {
+      const res = await fetch(`/api/expert-teams/${selected}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          description: presentation.description || null,
+          team_story: presentation.team_story || null,
+          specialty_tags: presentation.specialty_tags,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error ?? "Failed to save");
+      setPresentationState(json.team_story_pending ? "story_pending" : "saved");
+    } catch (err) {
+      setPresentationState("idle");
+      setError(err instanceof Error ? err.message : "Failed to save");
+    }
+  }
+
+  function addTag() {
+    const tag = tagDraft.trim().toLowerCase().replace(/\s+/g, "_").slice(0, 60);
+    if (!tag) return;
+    setPresentation((p) =>
+      p.specialty_tags.includes(tag) || p.specialty_tags.length >= 12
+        ? p
+        : { ...p, specialty_tags: [...p.specialty_tags, tag] },
+    );
+    setTagDraft("");
+  }
 
   useEffect(() => {
     void loadTeams();
@@ -401,6 +453,118 @@ export default function TeamsManagerClient() {
               </Link>
             )}
           </div>
+
+          {/* Public presentation — what visitors see on /teams/[slug] */}
+          <section className="border border-slate-200 rounded-xl p-4 mb-6">
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
+              Public presentation
+            </h3>
+            <p className="text-xs text-slate-500 mb-3">
+              Shown on your public team page. Factual descriptions only — no
+              performance promises or forward-looking claims.
+            </p>
+            <div className="space-y-3">
+              <div>
+                <label htmlFor="tm-edit-description" className="block text-xs font-semibold text-slate-700 mb-1">
+                  Short description
+                </label>
+                <textarea
+                  id="tm-edit-description"
+                  rows={2}
+                  maxLength={600}
+                  value={presentation.description}
+                  onChange={(e) => setPresentation({ ...presentation, description: e.target.value })}
+                  className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label htmlFor="tm-edit-story" className="block text-xs font-semibold text-slate-700 mb-1">
+                  Our story <span className="font-normal text-slate-400">(long-form, optional)</span>
+                </label>
+                <textarea
+                  id="tm-edit-story"
+                  rows={5}
+                  maxLength={5000}
+                  value={presentation.team_story}
+                  onChange={(e) => setPresentation({ ...presentation, team_story: e.target.value })}
+                  placeholder="How the team came together, how you work, who you help…"
+                  className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm"
+                />
+                <p className="text-[10px] text-slate-400 mt-0.5 text-right">
+                  {presentation.team_story.length}/5000
+                </p>
+              </div>
+              <div>
+                <label htmlFor="tm-edit-tag" className="block text-xs font-semibold text-slate-700 mb-1">
+                  Specialty tags <span className="font-normal text-slate-400">(max 12)</span>
+                </label>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {presentation.specialty_tags.map((t) => (
+                    <span
+                      key={t}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold bg-violet-50 text-violet-700 border border-violet-200 rounded-full px-2 py-0.5"
+                    >
+                      {t.replace(/_/g, " ")}
+                      <button
+                        type="button"
+                        aria-label={`Remove ${t.replace(/_/g, " ")} tag`}
+                        onClick={() =>
+                          setPresentation((p) => ({
+                            ...p,
+                            specialty_tags: p.specialty_tags.filter((x) => x !== t),
+                          }))
+                        }
+                        className="text-violet-400 hover:text-violet-700"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    id="tm-edit-tag"
+                    type="text"
+                    placeholder="e.g. SMSF lending"
+                    value={tagDraft}
+                    onChange={(e) => setTagDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addTag();
+                      }
+                    }}
+                    className="flex-1 border border-slate-300 rounded-md px-3 py-2 text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={addTag}
+                    className="text-xs font-bold border border-slate-300 hover:border-slate-400 text-slate-700 px-3 py-2 rounded-lg"
+                  >
+                    Add tag
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={savePresentation}
+                  disabled={presentationState === "saving"}
+                  className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-60 text-white text-xs font-bold px-3 py-2 rounded-lg"
+                >
+                  {presentationState === "saving" ? "Saving…" : "Save presentation"}
+                </button>
+                {presentationState === "saved" && (
+                  <span className="text-xs font-semibold text-emerald-700">Saved ✓</span>
+                )}
+                {presentationState === "story_pending" && (
+                  <span className="text-xs text-amber-700">
+                    Saved — story publishing is rolling out and will apply shortly; your other changes are live.
+                  </span>
+                )}
+              </div>
+            </div>
+          </section>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <section>
