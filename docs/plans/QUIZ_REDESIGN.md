@@ -125,9 +125,17 @@ Live bot runs need a **clean-network runner** (the sandbox TLS-MITM proxy drops 
 
 ---
 
-## 6. OPEN DECISION — the canonical surface (founder call)
+## 6. RESOLVED (2026-06-10) — `/get-matched` is the canonical surface
 
-The rebuild must consolidate four funnels toward **one canonical surface**, then 301 the rest. The org **started** migrating `/quiz → /get-matched` (the banner) but never finished; `/quiz` is still primary and holds the richest logic. This choice has SEO (301s), product, and "where the work lands" implications — it's a founder decision, flagged here rather than guessed. (All Phase 0–3 work below is **surface-agnostic** and proceeds regardless.)
+Decided on main via PR #1489: the `/quiz → /get-matched` cutover completed (37 files of links + a **permanent redirect** for `/quiz` in `next.config.ts`; "pre-launch — no transition banner"). `/get-matched` is the server-driven action-plan funnel (`lib/getmatched/*`); the root `/quiz` page now sits behind the redirect as the **reference implementation** for consolidation, while the vertical `/<vertical>/quiz` entries and `/find-advisor` remain live routes.
+
+**Consolidation port-list** (what `/quiz` has that `/get-matched` lacks — fold these in during Phase 5):
+- The multi-select "who will you need?" needs question → `pickPrimary` one-lead allocation + secondary "team" links (get-matched recommends via its own `lib/getmatched` ranker — verify single-lead parity when porting).
+- The readiness/stage gate with the "just learning" education exit (incl. the late gate on the physical-property path).
+- The lead-capture trust strip + the goal-curated advisor-type option sets (incl. the un-stranded types).
+- `/api/advisor-match` scored matching + `buildAdvisorMatchReasons` (corridor-aware) vs get-matched's `top_matches`/`match_explainer` — converge on one engine.
+
+The OTP-wall item (§5.6) now reads: relocate `/find-advisor`'s pre-match OTP **or** 301 `/find-advisor` into `/get-matched` — founder's pick.
 
 ---
 
