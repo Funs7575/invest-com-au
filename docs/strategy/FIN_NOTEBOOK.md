@@ -42,7 +42,6 @@ Full corrections in `docs/audits/TOP10_CODEBASE_BENCHMARK.md`.
 **Remaining for revenue to land:** RG 246 conflicted-remuneration legal
 sign-off (founder + lawyer, non-code) and pilot-broker BD. **Revisit:**
 2026-07-10 — has legal reviewed the tier/quality-multiplier framing?
-
 ### 2026-06-10 — Decision Engine vision locked: multi-lane outcome router on /get-matched
 
 Founder vision set the bar: not a quiz or directory — a decision engine that
