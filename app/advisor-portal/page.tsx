@@ -6,7 +6,6 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import AdvisorPortalLogin from "./AdvisorPortalLogin";
 import { anyFetchFailed } from "@/lib/advisor-portal/load-state";
-import { deriveProfileCompleteness } from "@/lib/advisor-portal/profile-completeness";
 import type {
   Advisor,
   Lead, Stats, ViewDay, Review, WeeklyEnquiry, ProfileCompleteness,
@@ -431,61 +430,6 @@ export default function AdvisorPortalPage() {
             </div>
           </div>
         )}
-
-        {/* ─── PORTAL-WIDE SETUP NUDGE ───
-            The dashboard carries the full onboarding checklist; every OTHER
-            tab gets this slim strip so an incomplete profile is never out of
-            sight. Completeness derives live from the advisor row (same lib as
-            the wizard + dashboard API), and the CTA lands on the dashboard
-            where the checklist + wizard live. Respects the same dismissal. */}
-        {advisor &&
-          view !== "dashboard" &&
-          !dismissedOnboarding &&
-          (() => {
-            const completeness = deriveProfileCompleteness(
-              advisor as unknown as Record<string, unknown>,
-            );
-            if (completeness.score >= 80) return null;
-            const next = completeness.steps.find((s) => !s.complete);
-            return (
-              <div className="bg-violet-50 border border-violet-200 rounded-xl px-4 py-2.5 mb-6 flex items-center gap-3">
-                <div
-                  className="hidden sm:block w-20 h-1.5 bg-violet-100 rounded-full overflow-hidden shrink-0"
-                  role="progressbar"
-                  aria-valuenow={completeness.score}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label={`Profile ${completeness.score}% complete`}
-                >
-                  <div
-                    className="h-full bg-violet-500 rounded-full"
-                    style={{ width: `${completeness.score}%` }}
-                  />
-                </div>
-                <p className="text-xs text-violet-900 flex-1 min-w-0 truncate">
-                  <span className="font-bold">{completeness.score}% complete</span>
-                  {next && (
-                    <span className="text-violet-700">
-                      {" "}— next: {next.title.toLowerCase()}
-                    </span>
-                  )}
-                </p>
-                <button
-                  onClick={() => setView("dashboard")}
-                  className="shrink-0 text-xs font-bold text-violet-700 hover:text-violet-900 underline underline-offset-2 min-h-11 px-1"
-                >
-                  Continue setup →
-                </button>
-                <button
-                  onClick={() => setDismissedOnboarding(true)}
-                  aria-label="Dismiss setup reminder"
-                  className="shrink-0 w-8 h-8 min-h-0 flex items-center justify-center rounded-lg text-violet-400 hover:text-violet-600 hover:bg-violet-100"
-                >
-                  ✕
-                </button>
-              </div>
-            );
-          })()}
 
         {/* ─── DASHBOARD ─── */}
         {view === "dashboard" && (

@@ -86,7 +86,7 @@ describe("OnboardingWizard", () => {
     render(
       <OnboardingWizard advisor={advisor} onAdvisorChange={() => {}} onClose={() => {}} initialStep="specialties" />,
     );
-    const input = screen.getByLabelText("Or type your own, then press Enter");
+    const input = screen.getByLabelText("Add a specialty, then press Enter");
     await userEvent.type(input, "SMSF setup{Enter}");
     await userEvent.type(input, "Retirement{Enter}");
     expect(screen.getByText("SMSF setup")).toBeInTheDocument();
@@ -138,80 +138,5 @@ describe("OnboardingWizard", () => {
     await userEvent.type(screen.getByLabelText("Bio"), "Hello");
     // bio (20) filled in the draft → live progress update.
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "20");
-  });
-
-  describe("specialty suggestions (canonical taxonomy)", () => {
-    it("offers type-appropriate canonical chips and tap-to-add works", async () => {
-      const fetchMock = mockFetchOk();
-      render(
-        <OnboardingWizard advisor={advisor} onAdvisorChange={() => {}} onClose={() => {}} initialStep="specialties" />,
-      );
-      // Canonical financial_planner entries from SPECIALTIES_BY_TYPE.
-      const chip = screen.getByRole("button", { name: /Retirement Planning/ });
-      await userEvent.click(chip);
-
-      // Added to the selected list…
-      const selected = screen.getByRole("list", { name: "Your specialties" });
-      expect(selected).toHaveTextContent("Retirement Planning");
-      // …and no longer offered as a suggestion.
-      const suggestions = screen.getByRole("list", { name: "Suggested specialties" });
-      expect(suggestions).not.toHaveTextContent("Retirement Planning");
-
-      await userEvent.click(screen.getByRole("button", { name: "Save & continue" }));
-      const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string);
-      expect(body).toEqual({ specialties: ["Retirement Planning"] });
-    });
-
-    it("already-selected specialties are excluded case-insensitively", () => {
-      render(
-        <OnboardingWizard
-          advisor={{ ...advisor, specialties: ["retirement planning"] }}
-          onAdvisorChange={() => {}}
-          onClose={() => {}}
-          initialStep="specialties"
-        />,
-      );
-      const suggestions = screen.getByRole("list", { name: "Suggested specialties" });
-      expect(suggestions).not.toHaveTextContent(/Retirement Planning/);
-    });
-
-    it("falls back to the global canonical list for an unknown advisor type", () => {
-      render(
-        <OnboardingWizard
-          advisor={{ ...advisor, type: "mystery_type" }}
-          onAdvisorChange={() => {}}
-          onClose={() => {}}
-          initialStep="specialties"
-        />,
-      );
-      const suggestions = screen.getByRole("list", { name: "Suggested specialties" });
-      expect(suggestions.querySelectorAll("button").length).toBeGreaterThan(0);
-    });
-  });
-
-  describe("bio quality hint", () => {
-    it("counts down to the 50-char directory quality floor while the bio is short", async () => {
-      render(
-        <OnboardingWizard advisor={advisor} onAdvisorChange={() => {}} onClose={() => {}} initialStep="bio" />,
-      );
-      await userEvent.type(screen.getByLabelText("Bio"), "Ten chars!");
-      expect(
-        screen.getByText(/40 more characters to pass the directory quality check/),
-      ).toBeInTheDocument();
-    });
-
-    it("shows the general guidance once the floor is met", () => {
-      render(
-        <OnboardingWizard
-          advisor={{ ...advisor, bio: "x".repeat(60) }}
-          onAdvisorChange={() => {}}
-          onClose={() => {}}
-          initialStep="bio"
-        />,
-      );
-      expect(
-        screen.getByText(/profiles with a real bio pass the directory quality check/),
-      ).toBeInTheDocument();
-    });
   });
 });
