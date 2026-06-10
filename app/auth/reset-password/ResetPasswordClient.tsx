@@ -101,7 +101,7 @@ export default function ResetPasswordClient() {
 
   if (success) {
     return (
-      <div className="py-16">
+      <div className="py-8 md:py-10">
         <div className="container-custom max-w-md">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center">
             <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -127,7 +127,7 @@ export default function ResetPasswordClient() {
 
   if (sessionError && !sessionReady) {
     return (
-      <div className="py-16">
+      <div className="py-8 md:py-10">
         <div className="container-custom max-w-md">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center">
             <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -153,7 +153,7 @@ export default function ResetPasswordClient() {
 
   if (!sessionReady) {
     return (
-      <div className="py-16">
+      <div className="py-8 md:py-10">
         <div className="container-custom max-w-md">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center animate-pulse">
             <div className="h-8 bg-slate-200 rounded w-48 mx-auto mb-2" />
@@ -167,7 +167,7 @@ export default function ResetPasswordClient() {
   }
 
   return (
-    <div className="py-16">
+    <div className="py-8 md:py-10">
       <div className="container-custom max-w-md">
         <div className="bg-white border border-slate-200 rounded-2xl p-8">
           <div className="text-center mb-6">
