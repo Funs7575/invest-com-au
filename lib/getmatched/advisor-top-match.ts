@@ -113,6 +113,7 @@ export async function computeTopAdvisors(
     );
     return {
       kind: "advisor" as const,
+      ref_id: a.id,
       slug: a.slug,
       name: a.name,
       logo_url: a.photo_url ?? null,

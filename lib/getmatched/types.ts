@@ -234,6 +234,9 @@ export interface TopMatch {
   /** 1 = best match (hero card), 2-N = runner-ups (slim comparison cards).
    *  Optional so single-match calls keep working. */
   tier?: number;
+  /** Numeric professionals.id for advisor matches — required by the
+   *  in-funnel Connect flow (submit-lead confirm_advisor_id). */
+  ref_id?: number;
 }
 
 export type EmbedContext =

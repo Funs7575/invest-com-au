@@ -16,6 +16,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { LaneResolution, RankedLane, LaneKind } from "@/lib/getmatched/resolve-lanes";
 import type { SavedItem, TopMatch } from "@/lib/getmatched/types";
+import ConnectAdvisorModal from "./ConnectAdvisorModal";
 
 interface Props {
   resolution: LaneResolution;
@@ -24,6 +25,8 @@ interface Props {
   shareToken: string | null;
   ephemeral: boolean;
   initialSaved?: SavedItem[];
+  /** Quiz-style need slug for lead attribution (e.g. "financial-planner"). */
+  advisorType?: string | null;
 }
 
 const LANE_TITLES: Record<LaneKind, string> = {
@@ -61,9 +64,14 @@ export default function LaneResults({
   shareToken,
   ephemeral,
   initialSaved = [],
+  advisorType = null,
 }: Props) {
   const [saved, setSaved] = useState<SavedItem[]>(initialSaved);
   const [saveError, setSaveError] = useState<string | null>(null);
+  // P6 in-funnel connect: ONE lead → ONE advisor. Once connected, every other
+  // Connect button is removed (browse/save stay available).
+  const [connecting, setConnecting] = useState<TopMatch | null>(null);
+  const [connectedSlug, setConnectedSlug] = useState<string | null>(null);
   const canSave = !ephemeral && planId != null && !!shareToken;
 
   const advisors = topMatches.filter((m) => m.kind === "advisor");
@@ -161,9 +169,21 @@ export default function LaneResults({
                       {isSaved ? "Saved ✓" : "Save"}
                     </button>
                   )}
+                  {connectedSlug === a.slug ? (
+                    <span className="shrink-0 px-3 py-2 min-h-11 inline-flex items-center bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold rounded-lg">
+                      Request sent ✓
+                    </span>
+                  ) : connectedSlug === null && a.ref_id != null ? (
+                    <button
+                      onClick={() => setConnecting(a)}
+                      className="shrink-0 px-3 py-2 min-h-11 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600"
+                    >
+                      Connect
+                    </button>
+                  ) : null}
                   <Link
                     href={a.cta_href}
-                    className="shrink-0 px-3 py-2 min-h-11 inline-flex items-center bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800"
+                    className="shrink-0 px-3 py-2 min-h-11 inline-flex items-center border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50"
                   >
                     View profile
                   </Link>
@@ -225,6 +245,23 @@ export default function LaneResults({
         </aside>
       )}
       {saveError && <p role="alert" className="text-xs text-red-600">{saveError}</p>}
+
+      {connectedSlug && (
+        <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+          Introduction sent — your advisor will reach out shortly. One advisor only; your other options stay saved here.
+        </p>
+      )}
+
+      {connecting && (
+        <ConnectAdvisorModal
+          advisor={connecting}
+          planId={planId}
+          shareToken={shareToken}
+          advisorType={advisorType}
+          onClose={() => setConnecting(null)}
+          onConnected={() => setConnectedSlug(connecting.slug)}
+        />
+      )}
     </div>
   );
 }
