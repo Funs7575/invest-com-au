@@ -166,6 +166,8 @@ describe("IA intent (2026-05-07 refactor)", () => {
         "water-rights",
         // 2026-06 — ASX-listed securities (instrument-class category)
         "listed-securities",
+        // 2026-06-10 — MM-V01b discovery vertical with live listings
+        "digital-infrastructure",
       ].sort(),
     );
   });
@@ -180,7 +182,7 @@ describe("IA intent (2026-05-07 refactor)", () => {
     );
   });
 
-  it("the 13 guide slugs (sector hubs + retained education) are tagged as guide", () => {
+  it("the 19 guide slugs (sector hubs + retained education) are tagged as guide", () => {
     const guideSlugs = getGuideCategories()
       .map((c) => c.slug)
       .sort();
@@ -199,6 +201,14 @@ describe("IA intent (2026-05-07 refactor)", () => {
         "reits",
         "smsf",
         "uranium",
+        // MM-V01b discovery verticals without listings supply yet —
+        // guide by default, flipped to opportunity once seeded.
+        "aquaculture",
+        "insurance-linked-securities",
+        "litigation-funding",
+        "livestock",
+        "public-social-infrastructure",
+        "venture-capital",
       ].sort(),
     );
   });
