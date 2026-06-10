@@ -41,6 +41,15 @@ describe("buildAdvisorMatchReasons", () => {
     expect(reasons).toContain("Specialises in SMSF Strategy");
   });
 
+  it("surfaces a matching specialty for the formerly-stranded types (conveyancer / commercial)", () => {
+    const conveyancer = { ...base, type: "conveyancer", specialties: ["Off-the-plan settlement", "Stamp duty"] };
+    expect(buildAdvisorMatchReasons(conveyancer, { advisorType: "conveyancer" }))
+      .toContain("Specialises in Off-the-plan settlement");
+    const commercial = { ...base, type: "commercial_property_agent", specialties: ["Industrial leasing", "Retail"] };
+    expect(buildAdvisorMatchReasons(commercial, { advisorType: "commercial-property-agent" }))
+      .toContain("Specialises in Industrial leasing");
+  });
+
   it("uses the corridor (available_in_countries) for international investors", () => {
     const advisor: AdvisorMatchAttrs = { ...base, type: "tax_agent", available_in_countries: ["uk", "singapore"] };
     const reasons = buildAdvisorMatchReasons(advisor, { isInternational: true, investorCountry: "uk" });

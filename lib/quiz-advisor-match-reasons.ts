@@ -81,11 +81,13 @@ const BUDGET_LABELS: Record<string, string> = {
 export const TYPE_KEYWORDS: Record<string, string[]> = {
   "mortgage-broker": ["mortgage", "home loan", "lending", "refinanc", "finance broker"],
   "buyers-agent": ["buyer", "acquisition", "property"],
+  "conveyancer": ["conveyanc", "settlement", "property law", "title transfer", "stamp duty", "off the plan", "off-the-plan", "pexa"],
   "financial-planner": ["financial plan", "wealth", "retirement", "investment strategy", "advice"],
   "smsf-accountant": ["smsf", "self-managed", "self managed", "super"],
   "tax-agent": ["tax", "cgt", "accountant", "bas", "deduction"],
   "insurance-broker": ["insurance", "life cover", "income protection", "tpd"],
   "estate-planner": ["estate", "will", "succession", "trust"],
+  "commercial-property-agent": ["commercial property", "commercial real estate", "office", "retail", "industrial", "leasing", "tenant", "warehouse"],
 };
 
 export const INTL_KEYWORDS = [
