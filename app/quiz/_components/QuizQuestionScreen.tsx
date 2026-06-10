@@ -275,7 +275,7 @@ export default function QuizQuestionScreen({
                   trapped in the flow. */}
               <Link
                 href="/"
-                className="text-slate-400 hover:text-slate-600 underline-offset-2 hover:underline"
+                className="text-slate-500 hover:text-slate-700 underline-offset-2 hover:underline"
               >
                 Exit quiz
               </Link>

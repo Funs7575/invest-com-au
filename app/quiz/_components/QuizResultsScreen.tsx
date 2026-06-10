@@ -154,7 +154,7 @@ export default function QuizResultsScreen({
             {headingText}
           </h1>
           <p className="text-[0.69rem] md:text-base text-slate-600">{subheadingText}</p>
-          <div className="flex items-center justify-center gap-2 md:gap-3 mt-2 md:mt-3 text-[0.62rem] md:text-xs text-slate-400">
+          <div className="flex items-center justify-center gap-2 md:gap-3 mt-2 md:mt-3 text-[0.62rem] md:text-xs text-slate-500">
             <span className="flex items-center gap-1">
               <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
               ASIC-regulated
@@ -312,7 +312,7 @@ export default function QuizResultsScreen({
                   );
                 })}
               </div>
-              <p className="text-xs text-slate-400">Scores are editorially set and weighted by your answers. Sponsored partners may receive a minor position boost if they already score in the top 5.</p>
+              <p className="text-xs text-slate-500">Scores are editorially set and weighted by your answers. Sponsored partners may receive a minor position boost if they already score in the top 5.</p>
             </div>
           )}
         </div>
@@ -320,7 +320,7 @@ export default function QuizResultsScreen({
         {/* Quick versus links — compare top picks head-to-head */}
         {topMatch?.broker && runnerUps.length > 0 && runnerUps[0]?.broker && (
           <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6 result-card-in result-card-in-delay-3">
-            <p className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Compare your top picks</p>
+            <p className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Compare your top picks</p>
             <div className="flex flex-wrap gap-1.5 md:gap-2">
               {runnerUps.slice(0, 3).map((r) => r.broker && topMatch.broker && (
                 <Link
@@ -559,7 +559,7 @@ function WealthStackStrip({ stackResults }: WealthStackStripProps) {
                   <Icon name={meta.icon} size={18} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[0.58rem] md:text-[0.62rem] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+                  <p className="text-[0.58rem] md:text-[0.62rem] font-bold uppercase tracking-wider text-slate-500 mb-0.5">
                     {meta.label}
                   </p>
                   <h3 className="text-sm md:text-base font-bold text-slate-900 leading-tight">
@@ -572,7 +572,7 @@ function WealthStackStrip({ stackResults }: WealthStackStripProps) {
                 {top.broker.rating && (
                   <div className="shrink-0 text-right">
                     <span className="text-xs font-bold text-amber-600">{top.broker.rating.toFixed(1)}</span>
-                    <span className="text-[0.62rem] text-slate-400">/5</span>
+                    <span className="text-[0.62rem] text-slate-500">/5</span>
                   </div>
                 )}
               </div>

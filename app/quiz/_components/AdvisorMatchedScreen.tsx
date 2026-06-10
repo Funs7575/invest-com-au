@@ -55,7 +55,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
         ))}
       </div>
       <span className="text-xs font-semibold text-slate-700">{rating.toFixed(1)}</span>
-      {count > 0 && <span className="text-xs text-slate-400">({count} reviews)</span>}
+      {count > 0 && <span className="text-xs text-slate-500">({count} reviews)</span>}
     </div>
   );
 }
@@ -106,7 +106,7 @@ export default function AdvisorMatchedScreen({
             Browse all advisors →
           </Link>
         </div>
-        <button onClick={onRestart} className="block mx-auto text-xs text-slate-400 hover:text-slate-600 transition-colors mt-2">
+        <button onClick={onRestart} className="block mx-auto text-xs text-slate-500 hover:text-slate-700 transition-colors mt-2">
           Start over →
         </button>
       </div>
@@ -370,7 +370,7 @@ export default function AdvisorMatchedScreen({
 
           {/* Browse link */}
           <div className="mt-3 pt-3 border-t border-slate-100 text-center">
-            <Link href="/advisors" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+            <Link href="/advisors" className="text-xs text-slate-500 hover:text-slate-700 transition-colors">
               Browse all verified advisors →
             </Link>
           </div>
@@ -390,7 +390,7 @@ export default function AdvisorMatchedScreen({
 
       {/* Footer restart */}
       <div className="text-center pt-2">
-        <button onClick={onRestart} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+        <button onClick={onRestart} className="text-xs text-slate-500 hover:text-slate-700 transition-colors">
           Start the quiz over →
         </button>
       </div>

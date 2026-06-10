@@ -486,7 +486,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                 <Icon name="check" size={10} className="text-emerald-600" />
                 Sample match
               </span>
-              <span className="text-[0.6rem] md:text-[0.65rem] text-slate-400">— typical advisor of this type</span>
+              <span className="text-[0.6rem] md:text-[0.65rem] text-slate-500">— typical advisor of this type</span>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
@@ -533,7 +533,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                 )}
               </div>
             </div>
-            <p className="text-[0.6rem] md:text-[0.65rem] text-slate-400 mt-2.5 italic">
+            <p className="text-[0.6rem] md:text-[0.65rem] text-slate-500 mt-2.5 italic">
               We&rsquo;ll match you with someone like {previewAdvisor.name.split(" ")[0]} based on your location and budget.
             </p>
           </div>
@@ -547,9 +547,24 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             </div>
             <h2 className="text-sm font-bold text-slate-800">Request a free consultation call</h2>
           </div>
-          <p className="text-xs text-slate-500 mb-4">
+          <p className="text-xs text-slate-500 mb-3">
             Browse our directory of licensed {advisorLabel}s or request a no-obligation initial call.
           </p>
+          {/* Trust reassurance before we ask for contact details. Truthful,
+              platform-level signals only (no fabricated counts): the match is
+              free to the investor, carries no obligation, and goes to a single
+              advisor — the pickPrimary one-lead design, not a panel/call-centre
+              resale. */}
+          <ul className="flex flex-wrap gap-x-3 gap-y-1.5 mb-4" aria-label="What to expect">
+            {["Free to use", "No obligation", "One advisor, never a call centre"].map((t) => (
+              <li key={t} className="flex items-center gap-1 text-[0.7rem] md:text-xs font-medium text-slate-600">
+                <svg className="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+                {t}
+              </li>
+            ))}
+          </ul>
           <div className="space-y-3">
             <div>
               <label htmlFor="ars-name" className="block text-xs font-semibold text-slate-700 mb-1">
@@ -614,7 +629,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           >
             Continue — choose my location →
           </button>
-          <p className="text-[0.6rem] text-slate-400 mt-2 text-center">
+          <p className="text-[0.6rem] text-slate-500 mt-2 text-center">
             By continuing, you consent to being contacted by a verified {advisorLabel}. No obligation. No spam.
           </p>
 
@@ -687,7 +702,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
 
         {/* Restart */}
         <div className="text-center mt-4">
-          <button onClick={onRestart} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+          <button onClick={onRestart} className="text-xs text-slate-500 hover:text-slate-700 transition-colors">
             Restart Quiz →
           </button>
         </div>
