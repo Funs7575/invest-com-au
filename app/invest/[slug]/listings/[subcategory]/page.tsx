@@ -269,32 +269,10 @@ export default async function InvestSubcategoryListingsPage({
             </details>
           </div>
 
-          {/* Shared sub-category nav (consistent with /listings page) */}
+          {/* Shared sub-category nav (consistent with /listings page).
+              The hand-rolled sibling-pill row that used to follow it
+              duplicated these exact pills back-to-back. */}
           <SubCategoryNav category={cat} activeSubcategory={subcategory} />
-
-          {/* Sub-category sibling navigation */}
-          <div className="flex flex-wrap gap-1.5 mb-4 md:mb-6">
-            <Link
-              href={`/invest/${category}/listings`}
-              className="px-3 py-1.5 text-xs font-semibold rounded-full bg-white border border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900 transition-colors"
-            >
-              All {cat.label}
-            </Link>
-            <span
-              className={`px-3 py-1.5 text-xs font-semibold rounded-full ${cat.color.bg} ${cat.color.text} ${cat.color.border} border`}
-            >
-              {sub.label}
-            </span>
-            {siblingSubcategories.map((sibling) => (
-              <Link
-                key={sibling.slug}
-                href={`/invest/${category}/listings/${sibling.slug}`}
-                className="px-3 py-1.5 text-xs font-semibold rounded-full bg-white border border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900 transition-colors"
-              >
-                {sibling.label}
-              </Link>
-            ))}
-          </div>
 
           {/* Listing count */}
           <h2 className="text-lg md:text-2xl font-bold mb-3 md:mb-4">

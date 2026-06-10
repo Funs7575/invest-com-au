@@ -503,7 +503,7 @@ export default function Header() {
             <ThemeToggle />
             <NotificationBell />
             <Link
-              href="/quiz"
+              href="/get-matched"
               className="bg-amber-500 hover:bg-amber-600 text-slate-900 px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
             >
               Get Matched
@@ -562,7 +562,7 @@ export default function Header() {
             {/* Action buttons */}
             <div className="pt-2 mt-2 border-t border-slate-100 space-y-2 px-3">
               <Link
-                href="/quiz"
+                href="/get-matched"
                 onClick={() => setMenuOpen(false)}
                 className="block w-full py-3 min-h-11 text-center text-sm font-extrabold text-slate-900 bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
               >

@@ -63,7 +63,7 @@ export default function HomeHeroCTA() {
 
   return (
     <Link
-      href="/quiz"
+      href="/get-matched"
       className="hero-cta-pokie"
       style={{
         fontSize: 16,

@@ -61,9 +61,9 @@ export interface RankedBroker {
   rankScore: number;
   why: string[];
   commercialDisclosure: "promoted" | "affiliate partner" | "no commercial relationship";
-  feesLastChecked: string;
-  offerExpiry: string;
-  sourceNote: string;
+  feesLastChecked: string | null;
+  offerExpiry: string | null;
+  sourceNote: string | null;
 }
 
 export interface FilterOptions {
@@ -101,7 +101,19 @@ const annualCostColumn = genericColumn(
 );
 const ratingColumn = genericColumn("rating", "Rating", "Editorial rating shown for comparison only.", (b) => text(b.rating), "rating");
 const commercialColumn = genericColumn("commercial", "Commercial", "Commercial relationship for this row.", (_b, r) => r?.commercialDisclosure ?? "no commercial relationship");
-const freshnessColumn = genericColumn("freshness", "Freshness", "Fee check date, offer expiry and source/admin note.", (_b, r) => `Fees checked: ${r?.feesLastChecked ?? "Not recorded"} · Offer expiry: ${r?.offerExpiry ?? "Not recorded"} · Source: ${r?.sourceNote ?? "Not recorded"}`);
+const freshnessDate = (iso?: string | null): string | null => {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+};
+const freshnessColumn = genericColumn("freshness", "Freshness", "When this row's fees were last checked, and when any current offer ends.", (_b, r) => {
+  const checked = freshnessDate(r?.feesLastChecked);
+  const expiry = freshnessDate(r?.offerExpiry);
+  const parts = [checked ? `Fees checked ${checked}` : "Fee check date not recorded"];
+  if (expiry) parts.push(`Offer ends ${expiry}`);
+  return parts.join(" · ");
+});
 
 export const CATEGORY_SCHEMAS: Record<CompareCategory, CategorySchema> = {
   all: {
@@ -268,9 +280,9 @@ export function commercialDisclosureFor(broker: Broker): RankedBroker["commercia
 
 export function dataFreshnessFor(broker: Broker) {
   return {
-    feesLastChecked: broker.fee_last_checked || broker.fee_verified_date || broker.updated_at || "Not recorded",
-    offerExpiry: broker.deal_expiry || "Not recorded",
-    sourceNote: broker.fee_source_url || broker.fee_source_tcs_url || broker.deal_source || "Admin/source note not public",
+    feesLastChecked: broker.fee_last_checked || broker.fee_verified_date || broker.updated_at || null,
+    offerExpiry: broker.deal_expiry || null,
+    sourceNote: broker.fee_source_url || broker.fee_source_tcs_url || broker.deal_source || null,
   };
 }
 

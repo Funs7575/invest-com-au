@@ -214,7 +214,7 @@ export default async function ScenarioPage({
         {/* Quiz nudge — placed between considerations and broker list */}
         <div className="mb-5 md:mb-8">
           <Link
-            href="/quiz"
+            href="/get-matched"
             className="text-xs md:text-sm text-slate-700 font-semibold hover:underline transition-colors min-h-11 inline-flex items-center"
           >
             Not sure which is right? Take our 60-second quiz &rarr;
@@ -357,7 +357,7 @@ export default async function ScenarioPage({
               Compare All Platforms
             </Link>
             <Link
-              href="/quiz"
+              href="/get-matched"
               className="w-full sm:w-auto px-5 md:px-6 py-3 border border-slate-300 text-brand text-sm font-bold rounded-lg hover:bg-white transition-colors min-h-11 inline-flex items-center justify-center"
             >
               Take the Quiz

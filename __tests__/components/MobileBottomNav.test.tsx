@@ -3,7 +3,7 @@
  *
  * Covers:
  *   1. The component renders its nav tabs after mount.
- *   2. Hidden on HIDDEN_PREFIXES routes (/admin, /auth, /quiz, /broker-portal).
+ *   2. Hidden on HIDDEN_PREFIXES routes (/admin, /auth, /quiz, /get-matched, /broker-portal).
  *   3. Active tab highlighted when pathname matches a tab prefix.
  *   4. Double-mount guard — verifies app/page.tsx no longer imports
  *      MobileBottomNav directly, so the nav is only mounted once via LayoutShell.
@@ -76,7 +76,7 @@ describe("MobileBottomNav — render", () => {
     expect(screen.getByRole("link", { name: /compare/i })).toHaveAttribute("href", "/compare");
     expect(screen.getByRole("link", { name: /opportunities/i })).toHaveAttribute("href", "/invest");
     expect(screen.getByRole("link", { name: /experts/i })).toHaveAttribute("href", "/advisors");
-    expect(screen.getByRole("link", { name: /get matched/i })).toHaveAttribute("href", "/quiz");
+    expect(screen.getByRole("link", { name: /get matched/i })).toHaveAttribute("href", "/get-matched");
   });
 });
 
@@ -87,6 +87,7 @@ describe("MobileBottomNav — hidden routes", () => {
     ["/auth"],
     ["/auth/signin"],
     ["/quiz"],
+    ["/get-matched"],
     ["/quiz/results"],
     ["/broker-portal"],
     ["/broker-portal/dashboard"],

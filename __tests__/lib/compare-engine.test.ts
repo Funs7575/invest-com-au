@@ -3,12 +3,14 @@ import type { Broker } from "@/lib/types";
 import {
   CATEGORY_SCHEMAS,
   calculateAnnualCost,
+  dataFreshnessFor,
   filterBrokers,
   getMobileCardFields,
   rankBrokers,
   sortRankedBrokers,
   updateShortlist,
 } from "@/lib/compare-engine";
+import type { RankedBroker } from "@/lib/compare-engine";
 
 function broker(overrides: Partial<Broker>): Broker {
   return {
@@ -101,5 +103,32 @@ describe("compare engine", () => {
       "Markets",
       "Est. annual cost",
     ]);
+  });
+});
+
+describe("freshness column", () => {
+  const freshness = CATEGORY_SCHEMAS.all.columns.find((c) => c.key === "freshness")!;
+  const rankedWith = (fields: Partial<RankedBroker>) => fields as RankedBroker;
+
+  it("renders a human-readable date, not the raw ISO timestamp", () => {
+    const text = freshness.value(alpha, rankedWith({ feesLastChecked: "2026-05-23T12:00:00+00:00", offerExpiry: null }));
+    expect(text).toMatch(/^Fees checked 2\d May 2026$/);
+    expect(text).not.toMatch(/T\d{2}:|Not recorded|Admin/);
+  });
+
+  it("appends the offer expiry only when one exists", () => {
+    const text = freshness.value(alpha, rankedWith({ feesLastChecked: "2026-05-23T12:00:00+00:00", offerExpiry: "2026-09-30T12:00:00+00:00" }));
+    expect(text).toMatch(/Offer ends \d+ Sept? 2026/);
+  });
+
+  it("degrades to a plain note when no check date is recorded", () => {
+    expect(freshness.value(alpha, rankedWith({ feesLastChecked: null, offerExpiry: null }))).toBe("Fee check date not recorded");
+  });
+
+  it("dataFreshnessFor returns nulls instead of admin-facing sentinel strings", () => {
+    const f = dataFreshnessFor(alpha);
+    expect(f.feesLastChecked).toBe("2026-01-01T00:00:00Z"); // updated_at fallback
+    expect(f.offerExpiry).toBeNull();
+    expect(f.sourceNote).toBeNull();
   });
 });

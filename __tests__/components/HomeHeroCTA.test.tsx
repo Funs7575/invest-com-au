@@ -127,14 +127,14 @@ describe("HomeHeroCTA", () => {
     });
   });
 
-  it("links to /quiz", () => {
+  it("links to /get-matched", () => {
     mockSelect.mockImplementation((cb: (result: { data: null }) => void) => {
       cb({ data: null });
       return Promise.resolve();
     });
 
     render(<HomeHeroCTA />);
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/quiz");
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/get-matched");
   });
 
   it("fires impression tracking on mount when a test is active", async () => {

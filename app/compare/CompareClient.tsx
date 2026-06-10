@@ -811,7 +811,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         {/* Quiz prompt — hidden on mobile to save space */}
         <div className="hidden md:flex items-center gap-2 mb-4 text-xs text-slate-500">
           <span>Not sure which to pick?</span>
-          <Link href="/quiz" className="text-blue-700 font-semibold hover:text-blue-800 transition-colors">
+          <Link href="/get-matched" className="text-blue-700 font-semibold hover:text-blue-800 transition-colors">
             Take the 60-sec quiz →
           </Link>
         </div>

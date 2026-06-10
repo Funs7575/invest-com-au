@@ -51,7 +51,7 @@ const RECOMMENDATION_BUILDERS: Record<
 
   advisors: (label) => ({
     title: `Cross-border tax accountants for ${shortLabel(label)} clients`,
-    body: `International tax specialists handle UK/AU dual reporting, FIRB property advice, QROPS pension transfers and treaty positions — the four areas where DIY most often goes wrong.`,
+    body: `International tax specialists handle dual-country tax reporting, FIRB property advice, cross-border pension transfers and treaty positions — the four areas where DIY most often goes wrong.`,
     href: "/advisors/international-tax-specialists",
     cta: "Specialist advisors",
   }),

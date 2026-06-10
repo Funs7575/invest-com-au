@@ -253,7 +253,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
             </span>
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <Link href="/quiz" className="iv2-cta" style={{ fontSize: 12.5 }}>
+            <Link href="/get-matched" className="iv2-cta" style={{ fontSize: 12.5 }}>
               Get matched in 60s <DesignIcon name="arrow-right" size={11} />
             </Link>
             <Link

@@ -212,7 +212,7 @@ export default async function FundsPage() {
                 </p>
               </Link>
               <Link
-                href="/quiz"
+                href="/get-matched"
                 className="group block rounded-xl border border-slate-200 bg-white p-5 hover:shadow-md hover:border-amber-300 transition-all"
               >
                 <h3 className="font-bold text-base text-slate-900 group-hover:text-amber-700 mb-1">

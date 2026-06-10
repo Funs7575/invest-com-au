@@ -164,7 +164,10 @@ export default function ChatWidget() {
         // longer opens it.
         <a
           href="/concierge"
-          className="fixed bottom-4 right-4 z-[9998] w-14 h-14 rounded-full bg-slate-900 text-white shadow-xl hover:bg-slate-800 flex items-center justify-center print:hidden"
+          // bottom-20 on mobile clears the fixed MobileBottomNav (56px tall,
+          // z-40) — at bottom-4 the bubble sat on top of the "Get Matched" tab
+          // and swallowed its taps.
+          className="fixed bottom-20 right-4 z-[9998] w-14 h-14 rounded-full bg-slate-900 text-white shadow-xl hover:bg-slate-800 flex items-center justify-center print:hidden md:bottom-4"
           aria-label="Open AI concierge"
         >
           <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -179,7 +182,7 @@ export default function ChatWidget() {
           role="dialog"
           aria-modal="false"
           aria-labelledby="chat-heading"
-          className="fixed bottom-4 right-4 z-[9998] w-[min(400px,calc(100vw-2rem))] h-[min(620px,calc(100vh-4rem))] bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col print:hidden"
+          className="fixed bottom-20 right-4 z-[9998] w-[min(400px,calc(100vw-2rem))] h-[min(620px,calc(100vh-6rem))] bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col print:hidden md:bottom-4 md:h-[min(620px,calc(100vh-4rem))]"
         >
           {/* Header */}
           <header className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
