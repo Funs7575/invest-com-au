@@ -5,6 +5,7 @@ import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
 import type { Advisor, Stats, Lead, CategoryPricing, DisputeModal, FirmMemberOption } from "./types";
+import { ReferLeadButton, IncomingReferralsBanner } from "./ReferralPanel";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-portal-leads");
@@ -215,6 +216,9 @@ export default function LeadsTab({
         </div>
       )}
       <p className="text-sm text-slate-500 mb-4">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
+
+      {/* Pending advisor→advisor referrals addressed to this advisor */}
+      <IncomingReferralsBanner />
 
       {/* Lead pricing & credit balance */}
       {(() => {
@@ -484,6 +488,14 @@ export default function LeadsTab({
                 )}
                 {lead.status !== "lost" && lead.status !== "converted" && (
                   <button onClick={() => onUpdateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-3 py-1.5 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
+                )}
+                {lead.status !== "lost" && lead.status !== "converted" && (
+                  <ReferLeadButton
+                    leadId={lead.id}
+                    clientName={lead.user_name}
+                    clientEmail={lead.user_email}
+                    clientPhone={lead.user_phone}
+                  />
                 )}
                 {lead.status === "converted" && (
                   lead.review_requested_at

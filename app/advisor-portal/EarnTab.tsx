@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Icon from "@/components/Icon";
 import type { Advisor } from "./types";
+import { ClientReferralsSection } from "./ReferralPanel";
 
 const CREDIT_PER_REFERRAL_CENTS = 5000; // $50
 
@@ -299,6 +300,10 @@ export default function EarnTab({ advisor }: Props) {
           cash and apply only to lead purchases on the platform.
         </div>
       </div>
+
+      {/* Client referrals (advisor→advisor) — distinct from the sign-up
+          referral programme above. */}
+      <ClientReferralsSection />
 
       {advisor?.name && (
         <p className="text-xs text-slate-400 text-center">

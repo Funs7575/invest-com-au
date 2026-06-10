@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { logger } from "@/lib/logger";
 import { captureServerEvent } from "@/lib/posthog/server";
+import { recordReferralConversionForLead } from "@/lib/advisor-lead-referrals";
 
 const log = logger("advisor-auth-data");
 
@@ -198,6 +199,16 @@ export async function PATCH(request: NextRequest) {
     if (status === "converted") {
       updates.converted_at = new Date().toISOString();
       updates.outcome = "won";
+      // If this lead arrived via an advisor→advisor referral, mark the
+      // referral converted (and credit the flat bonus when the flag is on).
+      // Fire-and-forget: a referral bookkeeping failure must not fail the
+      // advisor's status update.
+      recordReferralConversionForLead(leadId as number).catch((err) =>
+        log.warn("referral conversion hook failed", {
+          leadId,
+          err: err instanceof Error ? err.message : String(err),
+        }),
+      );
     }
     if (status === "lost" || status === "rejected") {
       updates.outcome = "lost";
