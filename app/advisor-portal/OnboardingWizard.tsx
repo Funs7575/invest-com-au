@@ -8,6 +8,10 @@ import {
   deriveProfileCompleteness,
   type WizardStepId,
 } from "@/lib/advisor-portal/profile-completeness";
+import {
+  ALL_ADVISOR_SPECIALTIES,
+  SPECIALTIES_BY_TYPE,
+} from "@/lib/advisor-specialties";
 import type { Advisor } from "./types";
 
 /**
@@ -41,6 +45,28 @@ const AVAILABILITY_OPTIONS: { value: "open" | "waitlist" | "closed"; label: stri
   { value: "waitlist", label: "Waitlist", dot: "bg-amber-400" },
   { value: "closed", label: "Not taking clients", dot: "bg-slate-400" },
 ];
+
+/** Directory quality gate wants a real bio — mirror its 50-char floor here. */
+const BIO_QUALITY_MIN = 50;
+
+/** Max canonical suggestions to show — enough to seed, not a wall of chips. */
+const SPECIALTY_SUGGESTION_CAP = 12;
+
+/**
+ * Canonical, matching-aligned specialty suggestions for this advisor's type.
+ * The quiz and ranker match on these exact strings, so seeding them (instead
+ * of free-text-only) keeps the taxonomy coherent and the advisor routable.
+ */
+function specialtySuggestionsFor(advisorType: string | undefined): string[] {
+  const byType =
+    advisorType && advisorType in SPECIALTIES_BY_TYPE
+      ? SPECIALTIES_BY_TYPE[advisorType as keyof typeof SPECIALTIES_BY_TYPE]
+      : null;
+  return (byType && byType.length > 0 ? byType : ALL_ADVISOR_SPECIALTIES).slice(
+    0,
+    SPECIALTY_SUGGESTION_CAP,
+  );
+}
 
 /** The PATCH body for each step — only allowlisted fields, only this step's. */
 function stepPatchBody(step: WizardStepId, draft: Advisor): Record<string, unknown> | null {
@@ -94,15 +120,22 @@ export default function OnboardingWizard({ advisor, onAdvisorChange, onClose, in
 
   const set = (patch: Partial<Advisor>) => setDraft((d) => ({ ...d, ...patch }));
 
-  const addSpecialty = () => {
-    const value = specialtyInput.trim().replace(/,$/, "");
+  const addSpecialty = (raw?: string) => {
+    const value = (raw ?? specialtyInput).trim().replace(/,$/, "");
     if (!value) return;
     const current = draft.specialties || [];
     if (!current.some((s) => s.toLowerCase() === value.toLowerCase())) {
       set({ specialties: [...current, value] });
     }
-    setSpecialtyInput("");
+    if (raw === undefined) setSpecialtyInput("");
   };
+
+  const specialtySuggestions = useMemo(() => {
+    const selected = new Set((draft.specialties || []).map((s) => s.toLowerCase()));
+    return specialtySuggestionsFor(draft.type).filter(
+      (s) => !selected.has(s.toLowerCase()),
+    );
+  }, [draft.type, draft.specialties]);
 
   const removeSpecialty = (value: string) =>
     set({ specialties: (draft.specialties || []).filter((s) => s !== value) });
@@ -247,7 +280,13 @@ export default function OnboardingWizard({ advisor, onAdvisorChange, onClose, in
                     onChange={(e) => set({ bio: e.target.value })}
                     className={inputClass}
                     placeholder="Tell investors about your experience and approach..."
+                    aria-describedby="ow-bio-hint"
                   />
+                  <p id="ow-bio-hint" className="text-[0.68rem] text-slate-500 mt-1">
+                    {(draft.bio || "").trim().length > 0 && (draft.bio || "").trim().length < BIO_QUALITY_MIN
+                      ? `${BIO_QUALITY_MIN - (draft.bio || "").trim().length} more characters to pass the directory quality check.`
+                      : "Aim for at least a few sentences — profiles with a real bio pass the directory quality check and convert more matches."}
+                  </p>
                 </div>
                 <div>
                   <label htmlFor="ow-website" className="block text-xs font-semibold text-slate-600 mb-1">
@@ -267,8 +306,29 @@ export default function OnboardingWizard({ advisor, onAdvisorChange, onClose, in
 
             {step.id === "specialties" && (
               <div>
+                {specialtySuggestions.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-xs font-semibold text-slate-600 mb-1.5">
+                      Tap to add — these are the specialties investors search and the quiz matches on
+                    </p>
+                    <ul className="flex flex-wrap gap-1.5" aria-label="Suggested specialties">
+                      {specialtySuggestions.map((s) => (
+                        <li key={s}>
+                          <button
+                            type="button"
+                            onClick={() => addSpecialty(s)}
+                            className="flex items-center gap-1 border border-slate-200 bg-white hover:border-violet-300 hover:bg-violet-50 text-slate-700 text-xs font-medium rounded-full px-2.5 py-1.5 min-h-8 transition-colors"
+                          >
+                            <span aria-hidden className="text-violet-500 font-bold">+</span>
+                            {s}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <label htmlFor="ow-specialty" className="block text-xs font-semibold text-slate-600 mb-1">
-                  Add a specialty, then press Enter
+                  Or type your own, then press Enter
                 </label>
                 <input
                   id="ow-specialty"
@@ -280,7 +340,7 @@ export default function OnboardingWizard({ advisor, onAdvisorChange, onClose, in
                       addSpecialty();
                     }
                   }}
-                  onBlur={addSpecialty}
+                  onBlur={() => addSpecialty()}
                   className={inputClass}
                   placeholder="e.g. SMSF setup, First-home buyers, Retirement planning"
                 />

@@ -116,6 +116,18 @@ Founder-authored PRs are out of scope.
 - `finn@invest.com.au` — admin login (uses ADMIN_EMAILS allow-list, MFA-protected per V-NEW-07).
 - `finnduns@gmail.com` — used for user-experience dogfooding; treat as a regular site visitor.
 
+## DB Migration Rules
+
+**HARD CONSTRAINT — no exceptions (history: migration ledger forked from prod in 2026-06, squashed 2026-06-09):**
+
+The prod ledger (`supabase_migrations.schema_migrations`) and the repo files under `supabase/migrations/` must stay in sync at all times. The baseline file `00000000000000_baseline.sql` is the single source of truth — it represents all schema as of the squash date.
+
+1. **Never write schema changes directly to prod via MCP** (`mcp__supabase__execute_sql` DDL, `apply_migration`, etc.) without a matching migration file in the same PR. Direct DB writes caused the original fork.
+2. **Every schema change ships a file in `supabase/migrations/`** in the same PR. Name it `YYYYMMDDHHMMSS_<description>.sql`.
+3. **Before any `supabase db push`**, run `supabase migration list` and confirm local files ↔ ledger match. Stop if there is any mismatch.
+4. **The autonomous loop may write migration files and open PRs, but MUST NOT run `supabase db push` autonomously.** All pushes are human-triggered after PR review.
+5. **If `supabase migration list` shows any file↔ledger mismatch**, treat it as Tier E: stop all DB work, flag the discrepancy, and wait for founder review before proceeding.
+
 ## Before shipping
 
 1. `npm run type-check` — strict + `noUncheckedIndexedAccess` catches most bugs locally.
