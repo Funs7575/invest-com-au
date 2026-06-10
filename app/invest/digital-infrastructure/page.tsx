@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 
 export const metadata: Metadata = {
   title: `Digital Infrastructure Investment in Australia (${CURRENT_YEAR})`,
@@ -146,75 +147,43 @@ export default async function DigitalInfrastructurePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <span className="text-slate-300">/</span>
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <span className="text-slate-300">/</span>
-            <span className="text-slate-900 font-medium">Digital Infrastructure</span>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
-              Updated {CURRENT_YEAR}
-            </span>
-            <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">
-              Highest-Growth Infrastructure Sub-Sector
-            </span>
-          </div>
-
-          <h1 className="text-slate-900 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
-            Digital Infrastructure Investment in Australia
-          </h1>
-          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
-            Data centres, fibre and subsea cables, AI-compute facilities and tower portfolios. AU is one of the fastest-growing data-centre markets globally — anchored by hyperscaler buildout, AI-training demand, and sovereign-cloud requirements.
-          </p>
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Link
-              href="/invest/digital-infrastructure/listings"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
-            >
-              Browse {listings?.length ?? 10}+ Live Opportunities &rarr;
-            </Link>
-            <Link
-              href="/invest/list"
-              className="inline-flex items-center gap-2 border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
-            >
-              List Your Project
-            </Link>
-          </div>
+      {/* Hero — house-standard compact light header (E3). The old stat band
+          rides as pills beside the title; the browse-all and list-your-project
+          entry points live in the light band below (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Digital Infrastructure"
+        headlineLead="Digital Infrastructure Investment in Australia"
+        subtitle="Data centres, fibre and subsea cables, AI-compute facilities and tower portfolios. AU is one of the fastest-growing data-centre markets globally — anchored by hyperscaler buildout, AI-training demand, and sovereign-cloud requirements."
+        stats={[
+          { v: "$24B", l: "AirTrunk sale to Blackstone (2024)" },
+          { v: "~5GW", l: "Goodman Group data-centre pipeline" },
+          { v: "300MW+", l: "NEXTDC operating capacity" },
+          { v: "8–18%", l: "Target IRR range (build-and-hold)" },
+        ]}
+        containerClassName="container-custom"
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/invest/digital-infrastructure/listings"
+            className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
+          >
+            Browse {listings?.length ?? 10}+ live opportunities →
+          </Link>
+          <Link
+            href="/invest/list"
+            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 md:text-xs"
+          >
+            List your project
+          </Link>
+          <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 md:text-xs">
+            Highest-Growth Infrastructure Sub-Sector
+          </span>
         </div>
-      </section>
-
-      {/* Key stats */}
-      <section className="bg-slate-50 border-b border-slate-100 py-6 md:py-8">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            <div>
-              <div className="text-2xl md:text-3xl font-bold text-slate-900">$24B</div>
-              <div className="text-xs text-slate-500 mt-1">AirTrunk sale to Blackstone (2024)</div>
-            </div>
-            <div>
-              <div className="text-2xl md:text-3xl font-bold text-slate-900">~5GW</div>
-              <div className="text-xs text-slate-500 mt-1">Goodman Group data-centre pipeline</div>
-            </div>
-            <div>
-              <div className="text-2xl md:text-3xl font-bold text-slate-900">300MW+</div>
-              <div className="text-xs text-slate-500 mt-1">NEXTDC operating capacity</div>
-            </div>
-            <div>
-              <div className="text-2xl md:text-3xl font-bold text-slate-900">8–18%</div>
-              <div className="text-xs text-slate-500 mt-1">Target IRR range (build-and-hold)</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      </DirectoryHero>
 
       {/* Sub-categories */}
-      <section className="py-10 md:py-14">
+      <section className="py-8 md:py-10">
         <div className="container-custom">
           <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Sub-categories</h2>
           <p className="text-sm md:text-base text-slate-600 mb-6 max-w-2xl">
@@ -243,7 +212,7 @@ export default async function DigitalInfrastructurePage() {
 
       {/* Live listings */}
       {listings && listings.length > 0 && (
-        <section className="bg-slate-50 border-y border-slate-100 py-10 md:py-14">
+        <section className="bg-slate-50 border-y border-slate-100 py-8 md:py-10">
           <div className="container-custom">
             <div className="flex items-end justify-between mb-6">
               <div>
@@ -290,7 +259,7 @@ export default async function DigitalInfrastructurePage() {
       )}
 
       {/* How to invest */}
-      <section className="py-10 md:py-14">
+      <section className="py-8 md:py-10">
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">How to invest</h2>
           <div className="space-y-6">
@@ -333,7 +302,7 @@ export default async function DigitalInfrastructurePage() {
 
       {/* Advisors */}
       {advisors && advisors.length > 0 && (
-        <section className="bg-slate-50 border-t border-slate-100 py-10 md:py-14">
+        <section className="bg-slate-50 border-t border-slate-100 py-8 md:py-10">
           <div className="container-custom">
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Specialist advisors</h2>
             <p className="text-sm md:text-base text-slate-600 mb-6 max-w-2xl">
@@ -360,7 +329,7 @@ export default async function DigitalInfrastructurePage() {
       )}
 
       {/* FAQ */}
-      <section className="py-10 md:py-14">
+      <section className="py-8 md:py-10">
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-6">FAQ</h2>
           <div className="space-y-4">

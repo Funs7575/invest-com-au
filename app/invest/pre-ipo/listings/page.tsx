@@ -8,6 +8,7 @@ import {
   countListingsByVertical,
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import Icon from "@/components/Icon";
 
 export const revalidate = 300;
@@ -46,6 +47,25 @@ export default async function PreIpoOpportunitiesPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
 
+      {/* House-standard compact light header (E7) — replaces the client's
+          tall page-title band so results land near the fold. */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Pre-IPO / Listings"
+        headlineLead="Pre-IPO"
+        headlineAccent="opportunities"
+        subtitle="Browse Australian late-stage private deals — convertible notes, preference share rounds, secondary share buys and broker-syndicated pre-IPO placements. Wholesale and sophisticated investors only."
+        stats={listings.length > 0 ? [{ v: String(listings.length), l: "Live listings" }] : undefined}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest"
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 md:text-xs"
+        >
+          ← Browse all investment sectors
+        </Link>
+      </DirectoryHero>
+
       <section className="bg-red-50 border-b-2 border-red-200 py-6">
         <div className="container-custom">
           <div className="flex items-start gap-3 max-w-4xl">
@@ -76,8 +96,6 @@ export default async function PreIpoOpportunitiesPage() {
           listings={listings}
           categories={categoryTabs}
           lockedCategory="pre-ipo"
-          pageTitle="Pre-IPO Investment Listings"
-          pageSubtitle="Browse Australian late-stage private deals — convertible notes, preference share rounds, secondary share buys and broker-syndicated pre-IPO placements. Wholesale and sophisticated investors only."
         />
       </Suspense>
     </>

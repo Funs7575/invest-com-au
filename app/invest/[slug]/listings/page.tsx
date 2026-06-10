@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
@@ -13,6 +14,7 @@ import {
 } from "@/lib/investment-listings-query";
 import type { InvestListingVertical } from "@/lib/types";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import SubCategoryNav from "@/components/SubCategoryNav";
 
 export const revalidate = 300;
@@ -99,7 +101,25 @@ export default async function GenericCategoryListingsPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      <div className="container-custom pt-6">
+      {/* House-standard compact light header (E7) — replaces the client's
+          tall page-title band so results land near the fold. */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel={`${cat.label} / Listings`}
+        headlineLead={cat.label}
+        headlineAccent="opportunities"
+        subtitle={cat.intro}
+        stats={listings.length > 0 ? [{ v: String(listings.length), l: "Live listings" }] : undefined}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest"
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 md:text-xs"
+        >
+          ← Browse all investment sectors
+        </Link>
+      </DirectoryHero>
+      <div className="container-custom pt-4">
         <SubCategoryNav category={cat} />
       </div>
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
@@ -111,8 +131,6 @@ export default async function GenericCategoryListingsPage({
           // the tabs render (categories with no subcategories keep the chips,
           // since DB-derived sub-types are then the only narrowing UI).
           hideSubCategoryChips={cat.subcategories.length > 0}
-          pageTitle={`${cat.label} Investment Listings`}
-          pageSubtitle={cat.intro}
         />
       </Suspense>
     </>

@@ -6,6 +6,7 @@ import { breadcrumbJsonLd, absoluteUrl, SITE_URL, SITE_NAME, CURRENT_YEAR } from
 import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import { logger } from "@/lib/logger";
 
 const log = logger("invest-vertical-slug");
@@ -799,83 +800,45 @@ export default async function InvestVerticalPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(verticalFaqLd) }}
       />
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
-            <Link href="/" className="hover:text-slate-900 transition-colors">
-              Home
-            </Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">
-              Invest
-            </Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <span className="text-slate-900 font-medium">{v.name}</span>
-          </nav>
-
-          {/* Badges */}
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
-              Updated {CURRENT_YEAR}
-            </span>
+      {/* Hero — house-standard compact light header (E3). The browse-listings
+          entry point and the domestic/international badge live in the light
+          band below, replacing the standalone CTA band (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel={v.name}
+        headlineLead={v.hero_title ?? v.name}
+        subtitle={v.hero_subtitle ?? undefined}
+        containerClassName="container-custom"
+      >
+        {LISTINGS_LINKS[slug] || showIntlBadge ? (
+          <div className="flex flex-wrap items-center gap-2">
+            {LISTINGS_LINKS[slug] && (
+              <Link
+                href={LISTINGS_LINKS[slug].href}
+                className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
+              >
+                {LISTINGS_LINKS[slug].label} →
+              </Link>
+            )}
             {showIntlBadge && (
-              <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full flex items-center gap-1">
-                <Icon name="globe" size={12} />
+              <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 md:text-xs">
+                <Icon name="globe" size={11} />
                 Domestic + International
               </span>
             )}
           </div>
-
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
-            {v.hero_title ?? v.name}
-          </h1>
-          {v.hero_subtitle && (
-            <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
-              {v.hero_subtitle}
-            </p>
-          )}
-        </div>
-      </section>
+        ) : null}
+      </DirectoryHero>
 
       {/* Main content */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <VerticalContent slug={slug} />
         </div>
       </section>
 
-      {/* Browse Listings CTA */}
-      {LISTINGS_LINKS[slug] && (
-        <section className="py-10 bg-slate-50 border-t border-slate-100">
-          <div className="container-custom">
-            <div className="max-w-3xl mx-auto bg-white border border-amber-200 rounded-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-                <Icon name="trending-up" size={24} className="text-amber-500" />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-bold text-slate-900 mb-1">
-                  Ready to Browse Active Listings?
-                </h2>
-                <p className="text-sm text-slate-500">
-                  Explore real {v.name.toLowerCase()} investment opportunities available in Australia — with enquiry details and agent contact information.
-                </p>
-              </div>
-              <Link
-                href={LISTINGS_LINKS[slug].href}
-                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors shrink-0"
-              >
-                {LISTINGS_LINKS[slug].label}
-                <Icon name="arrow-right" size={15} />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* International investors callout */}
-      <section className="py-10 bg-amber-50">
+      <section className="py-6 md:py-8 bg-amber-50">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto bg-amber-500 rounded-xl p-8 text-slate-900">
             <div className="flex items-start gap-4">
@@ -903,7 +866,7 @@ export default async function InvestVerticalPage({
       </section>
 
       {/* FAQ accordion */}
-      <section className="py-10 bg-white border-t border-slate-100">
+      <section className="py-6 md:py-8 bg-white border-t border-slate-100">
         <div className="container-custom max-w-3xl">
           <h2 className="text-xl font-bold text-slate-900 mb-6">
             Frequently asked questions — {v.name} investing in Australia
@@ -932,7 +895,7 @@ export default async function InvestVerticalPage({
       </section>
 
       {/* Find a Specialist Advisor */}
-      <section className="py-14 bg-slate-50">
+      <section className="py-8 md:py-10 bg-slate-50">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">

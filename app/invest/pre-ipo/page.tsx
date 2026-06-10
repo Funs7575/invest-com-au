@@ -8,6 +8,7 @@ import {
   CURRENT_YEAR,
 } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 
 export const revalidate = 3600;
 // Build-touch 2026-05-03 — force fresh prerender (cached version had stuck client-render).
@@ -137,71 +138,40 @@ export default function PreIpoPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPage) }}
       />
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          <nav
-            className="flex items-center gap-1.5 text-xs text-slate-500 mb-6"
-            aria-label="Breadcrumb"
+      {/* Hero — house-standard compact light header (E3). The in-hero stat
+          grid rides as pills beside the title; the compliance badges and the
+          browse-all entry point live in the light band below (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Pre-IPO"
+        headlineLead="Pre-IPO Investing in Australia"
+        subtitle="Late-stage private company investments before initial public offering — accessible only to sophisticated and wholesale investors under the Corporations Act section 708 exemptions. Material risks, illiquidity and IPO timing variance."
+        stats={[
+          { v: "$50K–$1M", l: "Typical ticket size" },
+          { v: "15–30%", l: "Discount-to-IPO heuristic" },
+          { v: "1–3 years", l: "Holding period" },
+          { v: "$2.5M / $250K", l: "Sophisticated threshold" },
+        ]}
+        containerClassName="container-custom"
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/invest/pre-ipo/listings"
+            className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
           >
-            <Link href="/" className="hover:text-slate-900 transition-colors">
-              Home
-            </Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">
-              Invest
-            </Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <span className="text-slate-900 font-medium">Pre-IPO</span>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-red-100 text-red-800">
-              Wholesale only
-            </span>
-            <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
-              High risk
-            </span>
-            <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
-              Independent research
-            </span>
-            <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
-              Updated {CURRENT_YEAR}
-            </span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
-            Pre-IPO Investing in Australia
-          </h1>
-          <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl mb-6">
-            Late-stage private company investments before initial public
-            offering — accessible only to sophisticated and wholesale investors
-            under the Corporations Act section 708 exemptions. Material risks,
-            illiquidity and IPO timing variance.
-          </p>
-
-          <dl className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl">
-            {[
-              { label: "Typical ticket size", value: "$50K–$1M" },
-              { label: "Discount-to-IPO heuristic", value: "15–30%" },
-              { label: "Holding period", value: "1–3 years" },
-              { label: "Sophisticated threshold", value: "$2.5M / $250K" },
-            ].map((s) => (
-              <div
-                key={s.label}
-                className="border border-slate-200 rounded-lg bg-slate-50 px-3 py-2"
-              >
-                <dt className="text-[10px] font-bold uppercase text-slate-500 tracking-wide">
-                  {s.label}
-                </dt>
-                <dd className="text-sm font-extrabold text-slate-900 mt-0.5">
-                  {s.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
+            Browse all pre-IPO opportunities →
+          </Link>
+          <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-red-100 text-red-800">
+            Wholesale only
+          </span>
+          <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
+            High risk
+          </span>
+          <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+            Independent research
+          </span>
         </div>
-      </section>
+      </DirectoryHero>
 
       {/* Wholesale-only declaration banner */}
       <section className="py-8 md:py-10 bg-red-50 border-y-2 border-red-200">
@@ -253,7 +223,7 @@ export default function PreIpoPage() {
       </section>
 
       {/* Sections */}
-      <section className="py-10 md:py-12 bg-white" id="sections">
+      <section className="py-6 md:py-8 bg-white" id="sections">
         <div className="container-custom">
           <div className="mb-6 max-w-3xl">
             <p className="text-xs font-bold uppercase tracking-wider text-red-600 mb-1">
@@ -311,7 +281,7 @@ export default function PreIpoPage() {
       </section>
 
       {/* Honest risk block */}
-      <section className="py-10 md:py-12 bg-amber-50 border-y border-amber-200">
+      <section className="py-6 md:py-8 bg-amber-50 border-y border-amber-200">
         <div className="container-custom max-w-4xl">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-amber-200 flex items-center justify-center shrink-0 mt-0.5">
@@ -359,7 +329,7 @@ export default function PreIpoPage() {
       </section>
 
       {/* FAQs */}
-      <section className="py-10 md:py-12 bg-white" id="faqs">
+      <section className="py-6 md:py-8 bg-white" id="faqs">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-red-600 mb-1">
             Section 2 &middot; FAQs
@@ -392,7 +362,7 @@ export default function PreIpoPage() {
       </section>
 
       {/* Advisor CTA */}
-      <section className="py-12 md:py-14 bg-slate-900 text-white" id="find-advisor">
+      <section className="py-8 md:py-10 bg-slate-900 text-white" id="find-advisor">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-red-400 mb-2">
             Section 3 &middot; Get specialist help

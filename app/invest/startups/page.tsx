@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import { faqJsonLd } from "@/lib/schema-markup";
 
 const STARTUP_FAQS = [
@@ -59,98 +60,44 @@ export default function StartupsPage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(startupFaqLd) }} />
       )}
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <span className="text-slate-900 font-medium">Startups</span>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
-              Updated {CURRENT_YEAR}
-            </span>
-            <span className="text-xs font-semibold bg-rose-600 text-white px-3 py-1 rounded-full">
-              ESIC Tax Incentives Available
-            </span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
-            Invest in Australian Startups & Technology
-          </h1>
-          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl mb-8">
-            Sydney and Melbourne rank in the global top 20 startup ecosystems. From Canva to Atlassian, Australia produces world-class technology companies. Invest early with generous tax incentives.
-          </p>
-
+      {/* Hero — house-standard compact light header (E3). The old stat band
+          rides as pills beside the title; the browse-all and personalised-feed
+          entry points live in the light band below, replacing the standalone
+          CTA band (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Startups"
+        headlineLead="Invest in Australian Startups & Technology"
+        subtitle="Sydney and Melbourne rank in the global top 20 startup ecosystems. From Canva to Atlassian, Australia produces world-class technology companies. Invest early with generous tax incentives."
+        stats={[
+          { v: "20%", l: "ESIC tax offset" },
+          { v: "$200K", l: "Max offset per year" },
+          { v: "10 yr", l: "CGT exemption on ESIC shares" },
+          { v: "Top 20", l: "Global startup ecosystem" },
+        ]}
+        containerClassName="container-custom"
+      >
+        <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/invest/startups/listings"
-            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-base px-7 py-3.5 rounded-xl transition-colors shadow-lg"
+            className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
           >
-            Browse Startup Opportunities
-            <Icon name="arrow-right" size={18} />
+            Browse all startup opportunities →
           </Link>
+          <Link
+            href="/invest/startups/for-you"
+            className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-[0.65rem] font-semibold text-violet-700 shadow-sm transition-colors hover:bg-violet-100 md:text-xs"
+          >
+            Rounds matched for you →
+          </Link>
+          <span className="inline-flex items-center rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-[0.65rem] font-semibold text-rose-700 md:text-xs">
+            ESIC Tax Incentives Available
+          </span>
         </div>
-      </section>
-
-      {/* Browse Listings CTA */}
-      <section className="bg-white pt-8">
-        <div className="container-custom">
-          <div className="grid sm:grid-cols-2 gap-4 mb-8">
-            <Link
-              href="/invest/startups/listings"
-              className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl hover:border-emerald-300 hover:shadow-md transition-all"
-            >
-              <div>
-                <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-1">Browse Listings</p>
-                <p className="text-lg font-extrabold text-slate-900">All startup opportunities &rarr;</p>
-                <p className="text-sm text-slate-600 mt-0.5">Active raises, ESIC-eligible, sub-categories &amp; more</p>
-              </div>
-              <svg className="w-8 h-8 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-            <Link
-              href="/invest/startups/for-you"
-              className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-violet-50 to-violet-100/40 border border-violet-200 rounded-2xl hover:border-violet-300 hover:shadow-md transition-all"
-            >
-              <div>
-                <p className="text-xs font-extrabold uppercase tracking-wider text-violet-700 mb-1">Personalised Feed</p>
-                <p className="text-lg font-extrabold text-slate-900">Rounds matched for you &rarr;</p>
-                <p className="text-sm text-slate-600 mt-0.5">Filtered by your thesis — sector, stage, ticket size</p>
-              </div>
-              <svg className="w-8 h-8 text-violet-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="py-10 bg-white border-b border-slate-100">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { value: "20%", label: "ESIC tax offset" },
-              { value: "$200K", label: "Max offset per year" },
-              { value: "10 yr", label: "CGT exemption on ESIC shares" },
-              { value: "Top 20", label: "Global startup ecosystem" },
-            ].map((s) => (
-              <div key={s.label} className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
-                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
-                <p className="text-xs text-slate-600 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      </DirectoryHero>
 
       {/* Content */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <SectionHeading
             eyebrow="Tax incentives"
@@ -237,7 +184,7 @@ export default function StartupsPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-14 bg-white border-t border-slate-100">
+      <section className="py-8 md:py-10 bg-white border-t border-slate-100">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 text-center">
             <h2 className="text-2xl font-extrabold text-slate-900 mb-3">Browse Startup Investment Opportunities</h2>
@@ -263,7 +210,7 @@ export default function StartupsPage() {
         </div>
       </section>
 
-      <section className="py-10 bg-white border-t border-slate-200">
+      <section className="py-6 md:py-8 bg-white border-t border-slate-200">
         <div className="container-custom max-w-3xl">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
           <div className="space-y-3">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { getAllInvestCategories } from "@/lib/invest-categories";
@@ -7,6 +8,7 @@ import {
   countListingsByVertical,
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 
 export const revalidate = 300;
 
@@ -46,6 +48,24 @@ export default async function LitigationFundingListingsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {/* House-standard compact light header (E7) — replaces the client's
+          tall page-title band so results land near the fold. */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Litigation Funding / Listings"
+        headlineLead="Litigation funding"
+        headlineAccent="opportunities"
+        subtitle="Browse Australian litigation funding investment opportunities — class action portfolios, commercial dispute funding, international arbitration and single-case structures for wholesale investors."
+        stats={listings.length > 0 ? [{ v: String(listings.length), l: "Live listings" }] : undefined}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest"
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 md:text-xs"
+        >
+          ← Browse all investment sectors
+        </Link>
+      </DirectoryHero>
       <div className="bg-amber-50 border border-amber-200 rounded-lg mx-4 mt-6 p-4 text-sm text-amber-900">
         <p className="font-semibold mb-1">⚠️ Wholesale Investor Access Required (s708 Corporations Act)</p>
         <p className="mb-2">
@@ -68,8 +88,6 @@ export default async function LitigationFundingListingsPage() {
           listings={listings}
           categories={categoryTabs}
           lockedCategory="litigation-funding"
-          pageTitle="Litigation Funding Investment Listings"
-          pageSubtitle="Browse Australian litigation funding investment opportunities — class action portfolios, commercial dispute funding, international arbitration and single-case structures for wholesale investors."
         />
       </Suspense>
     </>
