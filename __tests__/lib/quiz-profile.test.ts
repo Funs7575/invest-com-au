@@ -158,7 +158,7 @@ describe("getQuizProfile", () => {
     cookieStore.set(QUIZ_SESSION_COOKIE, "s1");
     lookupRow = {
       session_id: "s1",
-      answers: { raw: { investor_country: "united_kingdom" } },
+      answers: { structured:{ investor_country: "uk" } },
       inferred_vertical: "advisor_match",
       top_match_slug: "stake",
       completed_at: "2026-05-10T12:00:00Z",
@@ -179,14 +179,16 @@ describe("getQuizProfile", () => {
   });
 
   it("maps each known quiz country key back to the IntentCountryCode", async () => {
+    // Quiz answer keys (UNIFIED_QUESTIONS.investor_country): uk/usa/uae,
+    // NOT the long names the old hand-rolled map used.
     const cases: [string, string][] = [
-      ["united_kingdom", "uk"],
-      ["united_states", "us"],
+      ["uk", "uk"],
+      ["usa", "us"],
       ["china", "cn"],
       ["india", "in"],
       ["singapore", "sg"],
       ["hong_kong", "hk"],
-      ["united_arab_emirates", "ae"],
+      ["uae", "ae"],
       ["saudi_arabia", "sa"],
       ["new_zealand", "nz"],
     ];
@@ -194,7 +196,7 @@ describe("getQuizProfile", () => {
       cookieStore.set(QUIZ_SESSION_COOKIE, "s1");
       lookupRow = {
         session_id: "s1",
-        answers: { raw: { investor_country: key } },
+        answers: { structured:{ investor_country: key } },
         inferred_vertical: null,
         top_match_slug: null,
         completed_at: null,
@@ -219,7 +221,7 @@ describe("getQuizProfile", () => {
 
     lookupRow = {
       session_id: "s1",
-      answers: { raw: "not-an-object" },
+      answers: { structured:"not-an-object" },
       inferred_vertical: null,
       top_match_slug: null,
       completed_at: null,
@@ -229,7 +231,7 @@ describe("getQuizProfile", () => {
 
     lookupRow = {
       session_id: "s1",
-      answers: { raw: { investor_country: 42 } },
+      answers: { structured:{ investor_country: 42 } },
       inferred_vertical: null,
       top_match_slug: null,
       completed_at: null,
@@ -242,7 +244,7 @@ describe("getQuizProfile", () => {
     cookieStore.set(QUIZ_SESSION_COOKIE, "s1");
     lookupRow = {
       session_id: "s1",
-      answers: { raw: { investor_country: "atlantis" } },
+      answers: { structured:{ investor_country: "atlantis" } },
       inferred_vertical: null,
       top_match_slug: null,
       completed_at: null,
@@ -266,11 +268,11 @@ describe("getQuizProfile", () => {
     expect(profile?.vertical).toBe("trade");
   });
 
-  it("extracts budget + experience when present in answers.raw", async () => {
+  it("extracts budget + experience when present in answers.structured", async () => {
     cookieStore.set(QUIZ_SESSION_COOKIE, "s1");
     lookupRow = {
       session_id: "s1",
-      answers: { raw: { amount: "whale", experience: "pro" } },
+      answers: { structured:{ amount: "whale", experience: "pro" } },
       inferred_vertical: null,
       top_match_slug: null,
       completed_at: null,
@@ -285,7 +287,7 @@ describe("getQuizProfile", () => {
     cookieStore.set(QUIZ_SESSION_COOKIE, "s1");
     lookupRow = {
       session_id: "s1",
-      answers: { raw: { amount: "tiny", experience: "dabbler" } },
+      answers: { structured:{ amount: "tiny", experience: "dabbler" } },
       inferred_vertical: null,
       top_match_slug: null,
       completed_at: null,
@@ -296,7 +298,7 @@ describe("getQuizProfile", () => {
     expect(profile?.experience).toBeNull();
   });
 
-  it("budget + experience default to null when raw is missing", async () => {
+  it("budget + experience default to null when structured is missing", async () => {
     cookieStore.set(QUIZ_SESSION_COOKIE, "s1");
     lookupRow = {
       session_id: "s1",

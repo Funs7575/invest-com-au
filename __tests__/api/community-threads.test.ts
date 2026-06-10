@@ -22,6 +22,21 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }));
 
+const { mockGateForumContent, mockIsCommunityPostingDisabled } = vi.hoisted(() => ({
+  mockGateForumContent: vi.fn(),
+  mockIsCommunityPostingDisabled: vi.fn(),
+}));
+vi.mock("@/lib/community/moderation", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/community/moderation")>();
+  return {
+    ...actual,
+    gateForumContent: (...args: unknown[]) => mockGateForumContent(...args),
+    isCommunityPostingDisabled: () => mockIsCommunityPostingDisabled(),
+  };
+});
+
+vi.mock("@/lib/posthog/server", () => ({ captureServerEvent: vi.fn() }));
+
 import { GET, POST } from "@/app/api/community/threads/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -250,6 +265,8 @@ describe("POST /api/community/threads", () => {
     vi.clearAllMocks();
     mockAuth.getUser.mockResolvedValue({ data: { user: TEST_USER }, error: null });
     mockIsRateLimited.mockResolvedValue(false);
+    mockIsCommunityPostingDisabled.mockResolvedValue(false);
+    mockGateForumContent.mockResolvedValue({ action: "publish", riskScore: 0, reasons: ["clean"] });
     setupSuccessPath();
   });
 
@@ -343,5 +360,75 @@ describe("POST /api/community/threads", () => {
     expect(insertChain.insert).toHaveBeenCalledWith(
       expect.objectContaining({ author_name: "Anonymous" }),
     );
+  });
+
+  // ── Publish gate (Phase 0 moderation) ────────────────────────────────────────
+
+  it("returns 503 when the community_posting kill switch is on", async () => {
+    mockIsCommunityPostingDisabled.mockResolvedValue(true);
+    const res = await POST(makePostReq(VALID_POST_BODY));
+    expect(res.status).toBe(503);
+    const json = await res.json();
+    expect(json.error).toMatch(/paused/i);
+    // Nothing persisted — not even the category lookup runs.
+    expect(mockAdminFrom).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 and persists nothing when the gate rejects", async () => {
+    mockGateForumContent.mockResolvedValue({
+      action: "reject",
+      riskScore: 80,
+      reasons: ["scam_terminology"],
+    });
+    const res = await POST(makePostReq(VALID_POST_BODY));
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toMatch(/guidelines/i);
+    // Only the category lookup ran — no insert.
+    expect(mockAdminFrom).toHaveBeenCalledTimes(1);
+  });
+
+  it("publishes visible content with is_removed=false", async () => {
+    const res = await POST(makePostReq(VALID_POST_BODY));
+    expect(res.status).toBe(201);
+    const insertChain = mockAdminFrom.mock.results[1].value as { insert: ReturnType<typeof vi.fn> };
+    expect(insertChain.insert).toHaveBeenCalledWith(
+      expect.objectContaining({ is_removed: false }),
+    );
+  });
+
+  it("holds escalated content: hidden insert + forum_reports queue row + 202, no counter bumps", async () => {
+    mockGateForumContent.mockResolvedValue({
+      action: "hold",
+      riskScore: 40,
+      reasons: ["forward_looking_price_target"],
+    });
+    mockAdminFrom.mockReset();
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ data: CATEGORY, error: null })) // category
+      .mockImplementationOnce(() => makeChain({ data: CREATED_THREAD, error: null })) // insert
+      .mockImplementationOnce(() => makeChain({ error: null })); // forum_reports upsert
+
+    const res = await POST(makePostReq(VALID_POST_BODY));
+    expect(res.status).toBe(202);
+    const json = await res.json();
+    expect(json.pending_review).toBe(true);
+    expect(json.thread).toBeNull();
+
+    const insertChain = mockAdminFrom.mock.results[1].value as { insert: ReturnType<typeof vi.fn> };
+    expect(insertChain.insert).toHaveBeenCalledWith(
+      expect.objectContaining({ is_removed: true }),
+    );
+    const reportChain = mockAdminFrom.mock.results[2].value as { upsert: ReturnType<typeof vi.fn> };
+    expect(reportChain.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        target_type: "thread",
+        status: "open",
+        reason: expect.stringMatching(/^auto_moderation:/),
+      }),
+      expect.anything(),
+    );
+    // Category counter + profile bumps must be skipped for held content.
+    expect(mockAdminFrom).toHaveBeenCalledTimes(3);
   });
 });

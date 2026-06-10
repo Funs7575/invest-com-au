@@ -156,7 +156,7 @@ export default function AdvisorContactStep({
               {otpStage === "verifying" || submitting ? "Verifying…" : "Verify & Get Matched →"}
             </Button>
 
-            <p className="text-center text-xs text-slate-400">
+            <p className="text-center text-xs text-slate-500">
               Didn&apos;t get it?{" "}
               <button type="button" onClick={onOtpResend} className="text-amber-600 hover:text-amber-700 font-semibold">
                 Resend code

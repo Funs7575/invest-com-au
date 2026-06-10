@@ -3,36 +3,40 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
+interface SquadMember {
+  name: string;
+  photo_url: string | null;
+}
+
 interface SquadSpotlight {
   slug: string;
   name: string;
   team_category: string;
-  description: string;
   location_state: string | null;
   member_count: number;
+  members: SquadMember[];
   completion_rate_pct: number | null;
   outcomes_submitted: number;
-  testimonial: string | null;
-  testimonial_rating: number | null;
 }
 
 /**
- * Server component — Pro Squad of the Month spotlight.
+ * Server component — Pro Squad of the Month spotlight strip.
  *
  * Picks the verified Pro Squad with the highest
  * `completion_rate_pct * outcomes_submitted` over the most recent
  * provider_outcome_scores window. Falls back to the most-recently-
  * verified team when no outcome data has accumulated yet.
  *
- * Renders null when there are no verified teams at all (don't show an
- * empty spotlight slot).
+ * Renders as a single compact row docked under the experts grid —
+ * the full pitch (testimonial, KYC bullets, brief CTA) lives on
+ * /teams/[slug]. Renders null when there are no verified teams.
  */
 export default async function HomeSquadOfTheMonth() {
   try {
-    const admin = await createClient();
+    const supabase = await createClient();
 
     // 1. Fetch outcome scores for ranking. Newest window per team.
-    const { data: scoresRaw } = await admin
+    const { data: scoresRaw } = await supabase
       .from("provider_outcome_scores")
       .select(
         "team_id, completion_rate_pct, outcomes_submitted, window_end",
@@ -54,11 +58,9 @@ export default async function HomeSquadOfTheMonth() {
     }
 
     // 2. Verified, public teams.
-    const { data: teamsRaw } = await admin
+    const { data: teamsRaw } = await supabase
       .from("expert_teams")
-      .select(
-        "id, slug, name, team_category, description, location_state, verified_at",
-      )
+      .select("id, slug, name, team_category, location_state, verified_at")
       .eq("public", true)
       .eq("verification_status", "verified")
       .order("verified_at", { ascending: false })
@@ -68,7 +70,6 @@ export default async function HomeSquadOfTheMonth() {
       slug: string;
       name: string;
       team_category: string;
-      description: string;
       location_state: string | null;
       verified_at: string | null;
     }[];
@@ -97,155 +98,193 @@ export default async function HomeSquadOfTheMonth() {
     const winner = ranked[0];
     if (!winner) return null;
 
-    // 4. Active member count.
-    const { count: memberCount } = await admin
+    // 4. Public active members — avatars for the stack + total count.
+    const { data: memberRows, count: memberCount } = await supabase
       .from("expert_team_members")
-      .select("id", { count: "exact", head: true })
+      .select("professional_id", { count: "exact" })
       .eq("team_id", winner.team.id)
       .eq("status", "active")
-      .eq("can_appear_publicly", true);
+      .eq("can_appear_publicly", true)
+      .limit(3);
+    const memberIds = (memberRows ?? [])
+      .map((r) => (r as { professional_id: number }).professional_id)
+      .filter((id) => id != null);
 
-    // 5. One featured testimonial (highest rating, opt-in).
-    const { data: testimonialsRaw } = await admin
-      .from("brief_outcomes")
-      .select("testimonial, rating")
-      .eq("team_id", winner.team.id)
-      .eq("show_testimonial", true)
-      .not("testimonial", "is", null)
-      .order("rating", { ascending: false })
-      .order("submitted_at", { ascending: false })
-      .limit(1);
-    const testimonial = (testimonialsRaw ?? [])[0] as
-      | { testimonial: string; rating: number | null }
-      | undefined;
+    let members: SquadMember[] = [];
+    if (memberIds.length > 0) {
+      const { data: pros } = await supabase
+        .from("professionals")
+        .select("id, name, photo_url")
+        .in("id", memberIds);
+      members = ((pros ?? []) as { name: string; photo_url: string | null }[]).map(
+        (p) => ({ name: p.name, photo_url: p.photo_url }),
+      );
+    }
 
     const spotlight: SquadSpotlight = {
       slug: winner.team.slug,
       name: winner.team.name,
       team_category: winner.team.team_category,
-      description: winner.team.description,
       location_state: winner.team.location_state,
-      member_count: memberCount ?? 0,
+      member_count: memberCount ?? members.length,
+      members,
       completion_rate_pct: winner.outcome?.completion_rate_pct ?? null,
       outcomes_submitted: winner.outcome?.outcomes_submitted ?? 0,
-      testimonial: testimonial?.testimonial ?? null,
-      testimonial_rating: testimonial?.rating ?? null,
     };
 
-    return <SpotlightCard data={spotlight} />;
+    return <SpotlightStrip data={spotlight} />;
   } catch {
     // Fail-soft: a broken homepage section is worse than a missing one.
     return null;
   }
 }
 
-function SpotlightCard({ data }: { data: SquadSpotlight }) {
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .map((p) => p[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
+function SpotlightStrip({ data }: { data: SquadSpotlight }) {
+  const meta = [
+    data.team_category.replace(/_/g, " "),
+    data.location_state,
+    data.member_count > 0 ? `${data.member_count} verified members · KYC-checked` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
-    <section className="bg-gradient-to-br from-violet-900 via-violet-800 to-indigo-900 text-white">
-      <div className="max-w-6xl mx-auto px-4 py-12 sm:py-16">
-        <p className="text-amber-300 text-[11px] font-bold uppercase tracking-widest mb-3">
-          Pro Squad of the month
-        </p>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold mb-2">
-              {data.name}
-            </h2>
-            <p className="text-violet-200 text-xs uppercase tracking-wide mb-4">
-              {data.team_category.replace(/_/g, " ")}
-              {data.location_state ? ` · ${data.location_state}` : ""}
-              {data.member_count > 0
-                ? ` · ${data.member_count} verified members`
-                : ""}
-            </p>
-            <p className="text-violet-50 leading-relaxed mb-5 max-w-2xl">
-              {data.description}
-            </p>
-            {data.testimonial && (
-              <figure className="border-l-4 border-amber-400 pl-4 py-1 mb-5 max-w-xl">
-                {data.testimonial_rating && (
-                  <div className="text-amber-300 text-xs mb-1" aria-hidden>
-                    {"★".repeat(data.testimonial_rating)}
-                    {"☆".repeat(5 - data.testimonial_rating)}
-                  </div>
+    <section style={{ padding: "0 36px 12px" }}>
+      <div
+        className="home-squad-strip border border-violet-200"
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          display: "flex",
+          alignItems: "center",
+          gap: 14,
+          flexWrap: "wrap",
+          padding: "12px 16px",
+          borderRadius: 14,
+          borderLeft: "3px solid #7c3aed",
+          background: "linear-gradient(90deg, #f5f3ff 0%, white 45%)",
+        }}
+      >
+        {data.members.length > 0 && (
+          <div style={{ display: "flex", flexShrink: 0 }} aria-hidden>
+            {data.members.map((m, i) => (
+              <span
+                key={`${m.name}-${i}`}
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: 99,
+                  overflow: "hidden",
+                  border: "2px solid white",
+                  marginLeft: i === 0 ? 0 : -8,
+                  background: "var(--color-ink-700)",
+                  color: "white",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 700,
+                  fontSize: 11,
+                  position: "relative",
+                }}
+              >
+                {m.photo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- 34px avatar; next/image fill needs a sized parent and adds no value at this size
+                  <img
+                    src={m.photo_url}
+                    alt=""
+                    width={34}
+                    height={34}
+                    style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                  />
+                ) : (
+                  initials(m.name)
                 )}
-                <blockquote className="text-violet-50 italic text-sm leading-relaxed">
-                  &ldquo;{data.testimonial}&rdquo;
-                </blockquote>
-                <figcaption className="text-violet-300 text-[11px] mt-2">
-                  — Verified consumer review
-                </figcaption>
-              </figure>
-            )}
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href={`/teams/${data.slug}`}
-                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm px-5 py-3 rounded-xl"
-              >
-                View this squad →
-              </Link>
-              <Link
-                href={`/briefs/new?team=${data.slug}`}
-                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-5 py-3 rounded-xl"
-              >
-                Send them a brief
-              </Link>
-            </div>
+              </span>
+            ))}
           </div>
-          <div className="lg:border-l lg:border-white/10 lg:pl-8">
-            <ul className="space-y-3 text-sm">
-              {data.completion_rate_pct !== null &&
-                data.outcomes_submitted > 0 && (
-                  <li className="flex items-start gap-2">
-                    <Icon
-                      name="check-circle"
-                      size={16}
-                      className="text-emerald-300 mt-0.5 shrink-0"
-                    />
-                    <span>
-                      <span className="font-bold text-white">
-                        {data.completion_rate_pct}% completion
-                      </span>{" "}
-                      from {data.outcomes_submitted} reviewed engagements
-                    </span>
-                  </li>
-                )}
-              <li className="flex items-start gap-2">
-                <Icon
-                  name="shield-check"
-                  size={16}
-                  className="text-emerald-300 mt-0.5 shrink-0"
-                />
-                <span>Verified Pro Squad — every member KYC-checked</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Icon
-                  name="users"
-                  size={16}
-                  className="text-emerald-300 mt-0.5 shrink-0"
-                />
-                <span>
-                  Coordinated handoff between members so nothing falls between
-                  the cracks
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Icon
-                  name="lock"
-                  size={16}
-                  className="text-emerald-300 mt-0.5 shrink-0"
-                />
-                <span>
-                  Your contact details stay private until you accept a quote
-                </span>
-              </li>
-            </ul>
-            <p className="text-[11px] text-violet-300 mt-5">
-              Spotlight rotates monthly — winners ranked by completion rate ×
-              verified engagements over the past 30 days.
-            </p>
+        )}
+
+        <div style={{ flex: 1, minWidth: 220 }}>
+          <span
+            style={{
+              fontSize: 9.5,
+              fontWeight: 800,
+              textTransform: "uppercase",
+              letterSpacing: ".08em",
+              color: "#7c3aed",
+            }}
+          >
+            Pro Squad of the month
+          </span>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 14.5, fontWeight: 800, color: "var(--color-ink-900)" }}>
+              {data.name}
+            </span>
+            <span style={{ fontSize: 11.5, color: "var(--color-ink-500)", textTransform: "capitalize" }}>
+              {meta}
+            </span>
           </div>
         </div>
+
+        {data.completion_rate_pct !== null && data.outcomes_submitted > 0 && (
+          <span
+            className="bg-emerald-50 border border-emerald-100"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+              fontSize: 11.5,
+              fontWeight: 700,
+              color: "#047857",
+              padding: "5px 10px",
+              borderRadius: 99,
+              flexShrink: 0,
+            }}
+          >
+            <Icon name="check-circle" size={12} />
+            {data.completion_rate_pct}% completion · {data.outcomes_submitted} engagements
+          </span>
+        )}
+
+        <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
+          <Link
+            href={`/briefs/new?team=${data.slug}`}
+            className="iv2-cta-ghost"
+            style={{ fontSize: 11.5, padding: "7px 12px" }}
+          >
+            Send a brief
+          </Link>
+          <Link
+            href={`/teams/${data.slug}`}
+            className="iv2-cta"
+            style={{ fontSize: 11.5, padding: "7px 14px" }}
+          >
+            View squad →
+          </Link>
+        </div>
+
+        <p
+          style={{
+            flexBasis: "100%",
+            fontSize: 10,
+            color: "var(--color-ink-400)",
+            margin: 0,
+            lineHeight: 1.4,
+          }}
+        >
+          Spotlight rotates monthly — ranked by completion rate × verified engagements over the
+          past 30 days. Introductions only.
+        </p>
       </div>
     </section>
   );

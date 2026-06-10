@@ -68,8 +68,8 @@ export default async function HomeCrossBorder() {
 
 function HomeCrossBorderInner({ arrivals }: { arrivals: ReadonlyArray<(typeof ARRIVALS)[number]> }) {
   return (
-    <section style={{ padding: "56px 36px 60px", maxWidth: 1280, margin: "0 auto" }}>
-      <div style={{ marginBottom: 24, maxWidth: 720 }}>
+    <section style={{ padding: "48px 36px 52px", maxWidth: 1280, margin: "0 auto" }}>
+      <div style={{ marginBottom: 20, maxWidth: 720 }}>
         <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
           ● Cross-border · pension, tax, FIRB, DASP
         </span>
@@ -107,13 +107,12 @@ function HomeCrossBorderInner({ arrivals }: { arrivals: ReadonlyArray<(typeof AR
             href={p.href}
             className="iv2-card iv2-card-hover"
             style={{
-              padding: "18px 18px 16px",
+              padding: "16px 16px 14px",
               display: "flex",
               flexDirection: "column",
-              gap: 10,
+              gap: 8,
               textDecoration: "none",
               color: "inherit",
-              minHeight: 180,
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

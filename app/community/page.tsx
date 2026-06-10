@@ -114,6 +114,14 @@ export default async function CommunityPage() {
             <Icon name="plus" size={18} />
             New Thread
           </Link>
+          <p className="mt-4">
+            <Link
+              href="/community/guidelines"
+              className="text-xs text-slate-400 hover:text-slate-200 underline transition-colors"
+            >
+              Community guidelines
+            </Link>
+          </p>
         </div>
       </section>
 
