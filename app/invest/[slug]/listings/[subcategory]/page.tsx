@@ -286,6 +286,11 @@ export default async function InvestSubcategoryListingsPage({
           categories={categoryTabs}
           lockedCategory={category}
           hideSubCategoryChips
+          // Server query above already scoped by vertical + sub_category —
+          // categoryForListing would re-bucket fund-family sub-types (e.g.
+          // fund + infrastructure → "infrastructure") away from this page's
+          // lock and silently drop them.
+          skipCategoryFilter
         />
       </Suspense>
 

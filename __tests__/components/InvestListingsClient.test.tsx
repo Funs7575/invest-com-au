@@ -168,3 +168,39 @@ describe("InvestListingsClient — sub-category chips vs SubCategoryNav tabs", (
     expect(screen.getByText("Gold Project")).toBeInTheDocument();
   });
 });
+
+describe("InvestListingsClient — skipCategoryFilter (pre-scoped sub-type pages)", () => {
+  // A fund-vertical listing whose categoryForListing maps to "infrastructure",
+  // rendered under a lock that doesn't match — the exact shape of
+  // /invest/funds/listings/<sub> and the bespoke sub-type routes.
+  const reBucketedListing = makeListing({
+    id: 3,
+    slug: "infra-fund",
+    title: "Infra Fund",
+    vertical: "fund",
+    sub_category: "infrastructure",
+  });
+
+  it("without the prop, the category lock drops re-bucketed listings", () => {
+    render(
+      <InvestListingsClient
+        listings={[reBucketedListing]}
+        categories={[{ slug: "funds", label: "Funds" }]}
+        lockedCategory="funds"
+      />,
+    );
+    expect(screen.queryByText("Infra Fund")).not.toBeInTheDocument();
+  });
+
+  it("with the prop, server-scoped listings render despite the lock mismatch", () => {
+    render(
+      <InvestListingsClient
+        listings={[reBucketedListing]}
+        categories={[{ slug: "funds", label: "Funds" }]}
+        lockedCategory="funds"
+        skipCategoryFilter
+      />,
+    );
+    expect(screen.getByText("Infra Fund")).toBeInTheDocument();
+  });
+});
