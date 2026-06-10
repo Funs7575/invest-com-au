@@ -99,7 +99,7 @@ export default function QuizResultsScreen({
   // Edge case: no platforms matched (data fetch failed or empty DB)
   if (allResults.length === 0) {
     return (
-      <div className="pt-5 pb-8 md:py-12">
+      <div className="pt-4 pb-8 md:pt-6 md:pb-10">
         <div className="container-custom max-w-2xl mx-auto text-center">
           <Icon name="alert-triangle" size={48} className="text-amber-500 mx-auto mb-4" />
           <h1 className="text-xl md:text-2xl font-extrabold mb-2">No Results Found</h1>
@@ -126,7 +126,7 @@ export default function QuizResultsScreen({
   }
 
   return (
-    <div className="pt-5 pb-8 md:py-12">
+    <div className="pt-4 pb-8 md:pt-6 md:pb-10">
       <div className="container-custom max-w-2xl mx-auto">
         <div className="text-center mb-4 md:mb-8 result-card-in">
           {/* Confetti burst + emoji */}
