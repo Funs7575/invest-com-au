@@ -99,7 +99,7 @@ export default function AdvisorDirectory() {
                 <Icon name="arrow-right" size={16} className="text-slate-900" />
               </Link>
 
-              <p className="mt-3 text-[0.7rem] text-slate-400">Free · No obligation · Takes 60 seconds</p>
+              <p className="mt-3 text-[0.7rem] text-slate-500">Free · No obligation · Takes 60 seconds</p>
             </div>
           </div>
 

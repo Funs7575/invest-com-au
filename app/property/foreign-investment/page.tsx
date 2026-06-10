@@ -281,7 +281,7 @@ export default function ForeignInvestmentPage() {
                   <tr key={row.stateCode} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3">
                       <span className="font-bold text-slate-900">{row.stateCode}</span>
-                      <span className="text-xs text-slate-400 ml-2 hidden sm:inline">{row.state}</span>
+                      <span className="text-xs text-slate-500 ml-2 hidden sm:inline">{row.state}</span>
                     </td>
                     <td className="px-4 py-3 text-center">
                       {row.surchargePercent === 0 ? (
@@ -294,7 +294,7 @@ export default function ForeignInvestmentPage() {
                       {row.landTaxSurchargePercent ? (
                         <span className="text-sm font-bold text-slate-700">
                           {row.landTaxSurchargePercent}%
-                          <span className="text-xs font-normal text-slate-400">/yr</span>
+                          <span className="text-xs font-normal text-slate-500">/yr</span>
                         </span>
                       ) : (
                         <span className="text-xs text-slate-300">—</span>
@@ -306,7 +306,7 @@ export default function ForeignInvestmentPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-[0.65rem] text-slate-400 leading-relaxed mb-6">{FOREIGN_BUYER_STAMP_DUTY_WARNING}</p>
+          <p className="text-[0.65rem] text-slate-500 leading-relaxed mb-6">{FOREIGN_BUYER_STAMP_DUTY_WARNING}</p>
 
           {/* Interactive cost calculator — client component */}
           <CostCalculator surcharges={STATE_SURCHARGES} />
@@ -369,7 +369,7 @@ export default function ForeignInvestmentPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-[0.65rem] text-slate-400 mt-3 leading-relaxed">
+          <p className="text-[0.65rem] text-slate-500 mt-3 leading-relaxed">
             FIRB application fees are indexed annually. Fees shown reflect the 2026 schedule. Source: firb.gov.au.
           </p>
         </section>
@@ -400,7 +400,7 @@ export default function ForeignInvestmentPage() {
                   )}
                 </div>
                 <p className="text-xs text-slate-500 mb-2">{row.description}</p>
-                <p className="text-[0.7rem] text-slate-400 leading-relaxed border-t border-slate-100 pt-2">{row.notes}</p>
+                <p className="text-[0.7rem] text-slate-500 leading-relaxed border-t border-slate-100 pt-2">{row.notes}</p>
               </div>
             ))}
           </div>

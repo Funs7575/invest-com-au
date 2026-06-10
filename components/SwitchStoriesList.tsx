@@ -120,10 +120,10 @@ export default function SwitchStoriesList({ stories, brokerSlug, brokerName }: S
 
               {/* Attribution */}
               <div className="flex items-center justify-between">
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   — {story.display_name}
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   {new Date(story.created_at).toLocaleDateString("en-AU", {
                     day: "numeric",
                     month: "short",

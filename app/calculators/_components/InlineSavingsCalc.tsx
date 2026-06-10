@@ -5,7 +5,7 @@ import type { Broker } from "@/lib/types";
 
 const SavingsCalculatorClient = dynamic(
   () => import("@/app/savings-calculator/SavingsCalculatorClient"),
-  { loading: () => <div className="p-8 text-center text-slate-400 text-sm">Loading calculator...</div> }
+  { loading: () => <div className="p-8 text-center text-slate-500 text-sm">Loading calculator...</div> }
 );
 
 export default function InlineSavingsCalc({ brokers }: { brokers: Broker[] }) {

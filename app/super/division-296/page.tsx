@@ -357,7 +357,7 @@ export default function Division296Page() {
                 <span className="text-rose-700">$15,000</span>
               </div>
             </div>
-            <p className="mt-4 text-xs text-slate-400 leading-relaxed">
+            <p className="mt-4 text-xs text-slate-500 leading-relaxed">
               Illustrative only, using the proposed proportional method. The $15,000 is in addition to
               the 15% earnings tax the fund already pays in accumulation phase. Actual outcomes depend on
               the final legislated rules, your specific balances, and your contributions and withdrawals.
@@ -571,7 +571,7 @@ export default function Division296Page() {
       {/* ── Compliance footer ────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             Division 296 is proposed legislation and was not in force at the time of writing. Its design
             and start date may change. This page is general information only, current as at {UPDATED_LABEL.replace("Updated ", "")}.
             {" "}

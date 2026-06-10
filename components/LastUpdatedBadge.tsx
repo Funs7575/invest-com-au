@@ -65,7 +65,7 @@ export default function LastUpdatedBadge({
         {label}{" "}
         <time dateTime={iso}>{formatted}</time>
         {useReviewed && lastReviewedBy && (
-          <span className="text-slate-400"> · {lastReviewedBy}</span>
+          <span className="text-slate-500"> · {lastReviewedBy}</span>
         )}
       </span>
     </span>

@@ -217,7 +217,7 @@ export default function AdvisorPhotoUpload({ currentPhotoUrl, advisorSlug, onPho
         <p className="text-xs text-slate-500">
           {uploading ? "Uploading..." : "Click or drag to upload"}
         </p>
-        <p className="text-[0.55rem] text-slate-400 mt-0.5">JPG, PNG, or WebP. Max 5MB.</p>
+        <p className="text-[0.55rem] text-slate-500 mt-0.5">JPG, PNG, or WebP. Max 5MB.</p>
       </div>
 
       {error && (

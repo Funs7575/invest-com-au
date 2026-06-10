@@ -209,7 +209,7 @@ export default function BrokerNotificationPreferences({
 
       {/* Status line */}
       <div className="h-5 flex items-center">
-        {saving && <span className="text-xs text-slate-400">Saving...</span>}
+        {saving && <span className="text-xs text-slate-500">Saving...</span>}
         {saved && <span className="text-xs text-emerald-600 font-medium">Preferences saved</span>}
         {error && <span className="text-xs text-red-500">{error}</span>}
       </div>

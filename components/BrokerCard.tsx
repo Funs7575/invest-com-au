@@ -171,7 +171,7 @@ export default memo(function BrokerCard({
           <div className="flex items-center gap-1 mb-1.5">
             <span className="text-[0.6rem] px-1.5 py-0.5 bg-blue-50 rounded font-bold text-blue-700">🌏 Accepts non-residents</span>
             {broker.foreign_investor_notes && (
-              <span className="text-[0.55rem] text-slate-400 truncate">{broker.foreign_investor_notes}</span>
+              <span className="text-[0.55rem] text-slate-500 truncate">{broker.foreign_investor_notes}</span>
             )}
           </div>
         )}

@@ -132,7 +132,7 @@ export default function HubNewsletterCapture({
           </p>
         )}
 
-        <p className="text-center text-[11px] text-slate-400 mt-4">
+        <p className="text-center text-[11px] text-slate-500 mt-4">
           No spam. Unsubscribe any time. By subscribing you agree to our{" "}
           <a href="/privacy" className="underline hover:text-slate-600">
             Privacy Policy

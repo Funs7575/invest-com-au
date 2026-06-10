@@ -211,7 +211,7 @@ export default function CommodityHub({
                       </time>
                     </div>
                     {brief.source_url && (
-                      <p className="text-[11px] text-slate-400 mt-0.5 truncate">
+                      <p className="text-[11px] text-slate-500 mt-0.5 truncate">
                         Source: {new URL(brief.source_url).hostname}
                       </p>
                     )}

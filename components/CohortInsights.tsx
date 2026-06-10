@@ -107,7 +107,7 @@ export default function CohortInsights({ experience, range, interest }: Props) {
       </div>
 
       {isIllustrative && (
-        <p className="text-[0.69rem] text-slate-400 mt-3 italic">
+        <p className="text-[0.69rem] text-slate-500 mt-3 italic">
           Based on our editorial research, not live user data. Personalised
           cohort statistics will replace these once enough quiz responses from
           similar investor profiles are collected.

@@ -246,9 +246,9 @@ export default async function NetWorthPage() {
                       aria-hidden
                     />
                   </div>
-                  <p className="mt-1 text-[11px] text-slate-400" aria-label={`${pct.toFixed(0)}% of target`}>{pct.toFixed(0)}%{pct === 0 ? " — add funds to start tracking progress" : " complete"}</p>
+                  <p className="mt-1 text-[11px] text-slate-500" aria-label={`${pct.toFixed(0)}% of target`}>{pct.toFixed(0)}%{pct === 0 ? " — add funds to start tracking progress" : " complete"}</p>
                   {g.target_date && (
-                    <p className="mt-2 text-xs text-slate-400">
+                    <p className="mt-2 text-xs text-slate-500">
                       Target: {new Date(g.target_date).toLocaleDateString("en-AU")}
                     </p>
                   )}
@@ -264,7 +264,7 @@ export default async function NetWorthPage() {
         initialBalances={manualBalances as ManualBalance[]}
       />
 
-      <p className="mt-10 text-xs text-slate-400">
+      <p className="mt-10 text-xs text-slate-500">
         General information only — net worth here reflects what you&apos;ve told us about. Always
         cross-check with your actual statements + tax records before making financial decisions.
       </p>

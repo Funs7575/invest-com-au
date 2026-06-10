@@ -136,7 +136,7 @@ export default async function LifeEventsPage() {
                         <p className="text-xs text-indigo-600 font-semibold mt-0.5">{done}/{total} steps</p>
                       )}
                       {!hasProgress && total > 0 && (
-                        <p className="text-xs text-slate-400 mt-0.5">{total} step checklist</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{total} step checklist</p>
                       )}
                     </div>
                   </Link>

@@ -53,7 +53,7 @@ export default function TradeCostCalculator({ brokers, searchParams }: Props) {
         <div className="flex-1">
           <label htmlFor="trc-amount" className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">Amount (AUD)</label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">$</span>
             <input
               id="trc-amount"
               type="number" inputMode="decimal"

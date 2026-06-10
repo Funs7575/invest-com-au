@@ -35,7 +35,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
           </Link>
         </div>
         {error.digest && (
-          <p className="text-xs text-slate-400 mt-6">Error ID: {error.digest}</p>
+          <p className="text-xs text-slate-500 mt-6">Error ID: {error.digest}</p>
         )}
       </div>
     </div>

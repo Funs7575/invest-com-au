@@ -17,7 +17,7 @@ export default function ListingClaimLink({
   const href = `/listings/claim?target=${encodeURIComponent(slug)}`;
 
   return (
-    <p className="mt-2 text-[0.6rem] text-slate-400">
+    <p className="mt-2 text-[0.6rem] text-slate-500">
       Are you the {label}?{" "}
       <span
         role="link"

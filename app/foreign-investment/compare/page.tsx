@@ -190,7 +190,7 @@ export default function CompareIndexPage() {
                   className="group flex items-center gap-3 bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-300 rounded-xl px-4 py-3 transition-all"
                 >
                   <span className="text-lg">{cfgA.flag}</span>
-                  <span className="text-[0.65rem] font-bold text-slate-400">vs</span>
+                  <span className="text-[0.65rem] font-bold text-slate-500">vs</span>
                   <span className="text-lg">{cfgB.flag}</span>
                   <span className="text-xs font-semibold text-slate-700 group-hover:text-amber-700 transition-colors">
                     {cfgA.countryShort} vs {cfgB.countryShort}
@@ -223,7 +223,7 @@ export default function CompareIndexPage() {
       {/* ── Disclaimer ──────────────────────────────────────────────── */}
       <section className="py-6 bg-white border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             {FOREIGN_INVESTOR_GENERAL_DISCLAIMER}
           </p>
         </div>

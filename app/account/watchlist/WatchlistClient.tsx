@@ -120,7 +120,7 @@ export default function WatchlistClient({ initialItems }: Props) {
 
       {Object.entries(byType).map(([type, group]) => (
         <div key={type}>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
             {TYPE_LABELS[type] ?? type} ({group.length})
           </h2>
           <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white overflow-hidden">
@@ -136,7 +136,7 @@ export default function WatchlistClient({ initialItems }: Props) {
                   <span className="block text-sm font-medium text-slate-900 truncate">
                     {item.display_name ?? item.item_slug}
                   </span>
-                  <span className="block text-xs text-slate-400 truncate">
+                  <span className="block text-xs text-slate-500 truncate">
                     {item.item_slug}
                   </span>
                 </Link>
@@ -149,7 +149,7 @@ export default function WatchlistClient({ initialItems }: Props) {
                   onClick={() => removeItem(item.id)}
                   disabled={removingIds.has(item.id)}
                   aria-label={`Remove ${item.display_name ?? item.item_slug} from watchlist`}
-                  className="shrink-0 text-xs text-slate-400 hover:text-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="shrink-0 text-xs text-slate-500 hover:text-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   {removingIds.has(item.id) ? "Removing…" : "Remove"}
                 </button>

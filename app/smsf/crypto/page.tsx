@@ -496,27 +496,27 @@ export default async function SmsfCryptoPage() {
                 <h3 className="font-extrabold text-slate-900 text-sm">What the auditor verifies</h3>
                 <ul className="space-y-2 text-sm text-slate-700">
                   <li className="flex items-start gap-2">
-                    <span className="text-slate-400 font-bold">&#8226;</span>
+                    <span className="text-slate-500 font-bold">&#8226;</span>
                     <span>Ownership evidence — wallet addresses or exchange statements in the trustee&apos;s name</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-slate-400 font-bold">&#8226;</span>
+                    <span className="text-slate-500 font-bold">&#8226;</span>
                     <span>30 June market valuations in AUD for all crypto holdings</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-slate-400 font-bold">&#8226;</span>
+                    <span className="text-slate-500 font-bold">&#8226;</span>
                     <span>Complete transaction records for the financial year</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-slate-400 font-bold">&#8226;</span>
+                    <span className="text-slate-500 font-bold">&#8226;</span>
                     <span>Separation between SMSF and personal crypto accounts</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-slate-400 font-bold">&#8226;</span>
+                    <span className="text-slate-500 font-bold">&#8226;</span>
                     <span>Compliance with investment strategy (actual holdings consistent with documented allocation)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-slate-400 font-bold">&#8226;</span>
+                    <span className="text-slate-500 font-bold">&#8226;</span>
                     <span>No related-party acquisition of crypto assets</span>
                   </li>
                 </ul>

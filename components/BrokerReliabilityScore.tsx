@@ -137,7 +137,7 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
                 </div>
                 <div>
                   <div className="font-semibold text-slate-800 text-sm">{data.label}</div>
-                  <div className="text-slate-400 text-[10px]">
+                  <div className="text-slate-500 text-[10px]">
                     Based on {data.totalReports} community report{data.totalReports !== 1 ? "s" : ""}
                   </div>
                 </div>
@@ -152,7 +152,7 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
                   const v = data.components[key as keyof typeof data.components] ?? 0;
                   return (
                     <div key={key} className="bg-white rounded-lg px-2 py-1.5 border border-slate-100">
-                      <div className="text-[10px] text-slate-400 mb-0.5">{label}</div>
+                      <div className="text-[10px] text-slate-500 mb-0.5">{label}</div>
                       <div className="text-sm font-bold" style={{ color: scoreColor(v) }}>{v}</div>
                     </div>
                   );
@@ -217,7 +217,7 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
               >
                 {submitting ? "Submitting…" : "Submit report"}
               </button>
-              <p className="text-slate-400 text-[10px]">
+              <p className="text-slate-500 text-[10px]">
                 General information only. Reports are reviewed before appearing publicly.
               </p>
             </form>

@@ -135,7 +135,7 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
 
         {/* Skip link */}
         <div className="flex justify-end px-6 pt-2">
-          <button onClick={dismiss} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+          <button onClick={dismiss} className="text-xs text-slate-500 hover:text-slate-600 transition-colors">
             Skip Onboarding
           </button>
         </div>
@@ -317,7 +317,7 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
                         <Icon name="wallet" size={18} className="text-amber-600" />
                       </div>
                       <p className="text-xs font-bold text-slate-700">Top Up Wallet</p>
-                      <p className="text-[0.62rem] text-slate-400">Add funds anytime</p>
+                      <p className="text-[0.62rem] text-slate-500">Add funds anytime</p>
                     </div>
                     <Icon name="chevron-right" size={18} className="text-slate-300 shrink-0" />
                     <div className="flex-1">
@@ -325,7 +325,7 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
                         <Icon name="mouse-pointer-click" size={18} className="text-blue-600" />
                       </div>
                       <p className="text-xs font-bold text-slate-700">User Clicks</p>
-                      <p className="text-[0.62rem] text-slate-400">Pay per click only</p>
+                      <p className="text-[0.62rem] text-slate-500">Pay per click only</p>
                     </div>
                     <Icon name="chevron-right" size={18} className="text-slate-300 shrink-0" />
                     <div className="flex-1">
@@ -333,7 +333,7 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
                         <Icon name="target" size={18} className="text-emerald-600" />
                       </div>
                       <p className="text-xs font-bold text-slate-700">Conversions</p>
-                      <p className="text-[0.62rem] text-slate-400">Track sign-ups</p>
+                      <p className="text-[0.62rem] text-slate-500">Track sign-ups</p>
                     </div>
                   </div>
                 </div>
@@ -427,7 +427,7 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
         {/* Footer navigation */}
         {step > 0 && (
           <div className="px-6 pb-5 flex items-center justify-between">
-            <button onClick={prev} className="text-sm text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1">
+            <button onClick={prev} className="text-sm text-slate-500 hover:text-slate-600 transition-colors flex items-center gap-1">
               <Icon name="arrow-left" size={14} />
               Back
             </button>

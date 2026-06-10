@@ -286,7 +286,7 @@ export default async function NonResidentBankAccountPage() {
                     <p className="text-sm text-slate-600 leading-relaxed">{bank.notes}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="text-xs text-slate-400">{bank.accountType}</span>
+                    <span className="text-xs text-slate-500">{bank.accountType}</span>
                     {bank.acceptsNonResident && (
                       <div className="mt-2">
                         <a

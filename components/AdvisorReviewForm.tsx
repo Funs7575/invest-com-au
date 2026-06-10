@@ -196,7 +196,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
         {/* Reviewer name */}
         <div>
           <label htmlFor={reviewerNameId} className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
-            Your name <span className="text-slate-400 font-normal">(optional, defaults to &quot;Anonymous&quot;)</span>
+            Your name <span className="text-slate-500 font-normal">(optional, defaults to &quot;Anonymous&quot;)</span>
           </label>
           <input
             id={reviewerNameId}
@@ -211,7 +211,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
         {/* Title */}
         <div>
           <label htmlFor={reviewTitleId} className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
-            Title <span className="text-slate-400 font-normal">(optional)</span>
+            Title <span className="text-slate-500 font-normal">(optional)</span>
           </label>
           <input
             id={reviewTitleId}
@@ -248,7 +248,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             {bodyLength >= 50 && (
               <p className="text-[0.65rem] text-emerald-600">Minimum reached</p>
             )}
-            <p className="text-[0.65rem] text-slate-400 ml-auto">{bodyLength} / 50 min</p>
+            <p className="text-[0.65rem] text-slate-500 ml-auto">{bodyLength} / 50 min</p>
           </div>
         </div>
 
@@ -275,7 +275,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
           </button>
         </div>
 
-        <p className="text-[0.65rem] text-slate-400 leading-relaxed">
+        <p className="text-[0.65rem] text-slate-500 leading-relaxed">
           Reviews are moderated before publication. Your name will be displayed publicly; if left blank it will show as &quot;Anonymous&quot;.
         </p>
       </div>

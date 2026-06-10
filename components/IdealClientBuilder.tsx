@@ -187,7 +187,7 @@ export default function IdealClientBuilder() {
           value={criteria.description ?? ""}
           onChange={(e) => set("description", e.target.value || undefined)}
         />
-        <p className="text-xs text-slate-400 mt-0.5">{(criteria.description ?? "").length}/500</p>
+        <p className="text-xs text-slate-500 mt-0.5">{(criteria.description ?? "").length}/500</p>
       </div>
 
       <div className="flex items-center gap-3">
@@ -200,7 +200,7 @@ export default function IdealClientBuilder() {
         </button>
         {saved && <span className="text-xs font-semibold text-emerald-600">Saved!</span>}
         {updatedAt && !saving && !saved && (
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-slate-500">
             Last saved {new Date(updatedAt).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
           </span>
         )}

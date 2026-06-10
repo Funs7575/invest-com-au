@@ -56,7 +56,7 @@ export default function DisclosureBanner({
 
   if (variant === "footer") {
     return (
-      <p className="text-xs text-slate-400 leading-relaxed">
+      <p className="text-xs text-slate-500 leading-relaxed">
         <strong className="text-slate-300">Advertiser Disclosure:</strong>{" "}
         {ADVERTISER_DISCLOSURE}
       </p>

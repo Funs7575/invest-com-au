@@ -54,7 +54,7 @@ export default function BuyerAgentContactForm({
   return (
     <form onSubmit={handleSubmit} className="border border-slate-200 rounded-2xl p-5">
       <h3 className="text-base font-bold text-slate-900 mb-1">Get a Free Consultation</h3>
-      <p className="text-xs text-slate-400 mb-4">with {agentName}{agencyName ? ` at ${agencyName}` : ""}. No obligation.</p>
+      <p className="text-xs text-slate-500 mb-4">with {agentName}{agencyName ? ` at ${agencyName}` : ""}. No obligation.</p>
 
       {error && <p role="alert" className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
 
@@ -86,7 +86,7 @@ export default function BuyerAgentContactForm({
         <button type="submit" disabled={submitting || !form.consent} aria-busy={submitting} className="w-full py-3 bg-amber-500 text-slate-900 font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm">
           {submitting ? "Sending..." : "Request Free Consultation"}
         </button>
-        <p className="text-[0.56rem] text-slate-400 text-center">No obligation, no cost. You may receive follow-up communications and can opt out at any time.</p>
+        <p className="text-[0.56rem] text-slate-500 text-center">No obligation, no cost. You may receive follow-up communications and can opt out at any time.</p>
       </div>
     </form>
   );

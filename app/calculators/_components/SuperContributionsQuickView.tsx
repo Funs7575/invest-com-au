@@ -80,13 +80,13 @@ export default function SuperContributionsQuickView({ searchParams }: Props) {
               Warning: Your total concessional contributions exceed the ${CONCESSIONAL_CAP.toLocaleString()} cap for 2025.
             </div>
           )}
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             i — Concessional cap $30,000 (2025). Tax saved = additional × (marginal rate − 15% super tax). Marginal rates: 0% / 16% / 30% / 37% / 45% (ATO resident rates 2024-25, Stage 3).
           </p>
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Enter your annual income to calculate.</p>
+          <p className="text-slate-500 text-sm">Enter your annual income to calculate.</p>
         </div>
       )}
 

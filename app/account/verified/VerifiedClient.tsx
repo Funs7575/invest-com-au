@@ -64,7 +64,7 @@ function VerifiedCard({ row, onRemove }: CardProps) {
           >
             {row.product_ref}
           </Link>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             {cfg.label} · Verified {verifiedDate}
           </p>
         </div>
@@ -89,7 +89,7 @@ function VerifiedCard({ row, onRemove }: CardProps) {
           type="button"
           onClick={() => setPendingRemove(true)}
           disabled={removing}
-          className="shrink-0 text-xs text-slate-400 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="shrink-0 text-xs text-slate-500 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {removing ? "Removing…" : "Remove"}
         </button>

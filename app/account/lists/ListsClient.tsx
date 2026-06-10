@@ -94,7 +94,7 @@ function ListCard({
           {list.description && (
             <p className="text-sm text-slate-500 mt-0.5 line-clamp-2">{list.description}</p>
           )}
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             {list.item_count} {list.item_count === 1 ? "item" : "items"}
             {list.is_public && ` · ${list.follower_count} ${list.follower_count === 1 ? "follower" : "followers"}`}
           </p>
@@ -249,7 +249,7 @@ export default function ListsClient({ initialLists }: Props) {
       <AddForm onAdd={handleAdd} />
 
       {lists.length === 0 && (
-        <div className="text-center py-10 text-slate-400">
+        <div className="text-center py-10 text-slate-500">
           <p className="text-3xl mb-2" aria-hidden>📋</p>
           <p className="font-medium text-slate-600">No lists yet</p>
           <p className="text-sm mt-1 mb-4">Create your first list above, then browse the platform to add items.</p>

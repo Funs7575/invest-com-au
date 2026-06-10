@@ -220,7 +220,7 @@ export default function SavedComparisonsClient() {
                       <button
                         type="button"
                         onClick={() => { setEditingId(null); setRenameError(null); }}
-                        className="text-xs text-slate-400 hover:text-slate-600"
+                        className="text-xs text-slate-500 hover:text-slate-600"
                       >
                         Cancel
                       </button>
@@ -324,7 +324,7 @@ export default function SavedComparisonsClient() {
 
         {/* Footer count */}
         {comparisons.length > 0 && (
-          <p className="mt-4 text-xs text-slate-400 text-center">
+          <p className="mt-4 text-xs text-slate-500 text-center">
             {comparisons.length} of 25 saved comparisons used
           </p>
         )}

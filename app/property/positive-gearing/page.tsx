@@ -468,7 +468,7 @@ export default function PositiveGearingPage() {
                 >
                   <div>
                     <span className="text-slate-700">{item.label}</span>
-                    <p className="text-xs text-slate-400 mt-0.5">{item.note}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{item.note}</p>
                   </div>
                   <span className="text-slate-800 font-medium shrink-0 ml-4">
                     {formatCurrency(item.amount)}

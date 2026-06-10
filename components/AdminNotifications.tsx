@@ -248,7 +248,7 @@ export default function AdminNotifications() {
         <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-[100] overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-900">Notifications</h3>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500">
               {notifications.length === 0 ? "All clear" : `${notifications.length} item${notifications.length !== 1 ? "s" : ""}`}
             </span>
           </div>
@@ -256,13 +256,13 @@ export default function AdminNotifications() {
           <div className="max-h-[50vh] overflow-y-auto">
             {loading ? (
               <div className="px-4 py-8 text-center">
-                <span className="text-sm text-slate-400 animate-pulse">Loading...</span>
+                <span className="text-sm text-slate-500 animate-pulse">Loading...</span>
               </div>
             ) : notifications.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <div className="text-2xl mb-2">✅</div>
                 <p className="text-sm text-slate-500">No notifications</p>
-                <p className="text-xs text-slate-400 mt-1">Everything looks good!</p>
+                <p className="text-xs text-slate-500 mt-1">Everything looks good!</p>
               </div>
             ) : (
               <div className="divide-y divide-slate-100">

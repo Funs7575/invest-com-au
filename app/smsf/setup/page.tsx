@@ -128,7 +128,7 @@ export default async function SmsfSetupPage() {
                 { v: "$800–$3,500", l: "Setup cost range" },
               ].map((s) => (
                 <div key={s.l} className="bg-white/10 border border-white/10 rounded-lg px-3 py-2.5">
-                  <dt className="text-[10px] font-bold uppercase text-slate-400 tracking-wide">{s.l}</dt>
+                  <dt className="text-[10px] font-bold uppercase text-slate-500 tracking-wide">{s.l}</dt>
                   <dd className="text-lg md:text-xl font-extrabold text-white mt-0.5">{s.v}</dd>
                 </div>
               ))}

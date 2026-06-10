@@ -153,8 +153,8 @@ export default function ExitIntentCapture() {
                   {emailError}
                 </p>
               )}
-              <p className="text-[0.56rem] text-slate-400 mt-2 text-center">Free. No spam. Unsubscribe anytime.</p>
-              <button onClick={dismiss} className="w-full mt-3 text-xs text-slate-400 hover:text-slate-600 text-center">No thanks, I&apos;ll pay more in fees</button>
+              <p className="text-[0.56rem] text-slate-500 mt-2 text-center">Free. No spam. Unsubscribe anytime.</p>
+              <button onClick={dismiss} className="w-full mt-3 text-xs text-slate-500 hover:text-slate-600 text-center">No thanks, I&apos;ll pay more in fees</button>
             </div>
           </>
         )}

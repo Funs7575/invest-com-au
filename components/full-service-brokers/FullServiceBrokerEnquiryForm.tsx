@@ -140,7 +140,7 @@ export default function FullServiceBrokerEnquiryForm({
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor="fsb-phone" className="block text-xs font-semibold text-slate-700 mb-1">
-            Phone <span className="text-slate-400 font-normal">(optional)</span>
+            Phone <span className="text-slate-500 font-normal">(optional)</span>
           </label>
           <input
             id="fsb-phone"
@@ -154,7 +154,7 @@ export default function FullServiceBrokerEnquiryForm({
         </div>
         <div>
           <label htmlFor="fsb-portfolio" className="block text-xs font-semibold text-slate-700 mb-1">
-            Portfolio size <span className="text-slate-400 font-normal">(optional)</span>
+            Portfolio size <span className="text-slate-500 font-normal">(optional)</span>
           </label>
           <select
             id="fsb-portfolio"
@@ -176,7 +176,7 @@ export default function FullServiceBrokerEnquiryForm({
 
       <div>
         <label htmlFor="fsb-message" className="block text-xs font-semibold text-slate-700 mb-1">
-          Message <span className="text-slate-400 font-normal">(optional)</span>
+          Message <span className="text-slate-500 font-normal">(optional)</span>
         </label>
         <textarea
           id="fsb-message"

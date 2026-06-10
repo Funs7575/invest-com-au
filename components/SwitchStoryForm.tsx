@@ -278,7 +278,7 @@ export default function SwitchStoryForm({
             required
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
-          <p className="text-xs text-slate-400 mt-1">For verification only — never displayed.</p>
+          <p className="text-xs text-slate-500 mt-1">For verification only — never displayed.</p>
         </div>
       </div>
 
@@ -314,13 +314,13 @@ export default function SwitchStoryForm({
           required
           className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
         />
-        <p className="text-xs text-slate-400 mt-1 text-right">{body.length}/2000</p>
+        <p className="text-xs text-slate-500 mt-1 text-right">{body.length}/2000</p>
       </div>
 
       {/* Reason */}
       <div>
         <label htmlFor="story-reason" className="block text-sm font-medium text-slate-700 mb-1">
-          Main Reason for Switching <span className="text-slate-400 font-normal">(optional)</span>
+          Main Reason for Switching <span className="text-slate-500 font-normal">(optional)</span>
         </label>
         <input
           id="story-reason"
@@ -337,7 +337,7 @@ export default function SwitchStoryForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor="story-savings" className="block text-sm font-medium text-slate-700 mb-1">
-            Estimated Savings <span className="text-slate-400 font-normal">(optional)</span>
+            Estimated Savings <span className="text-slate-500 font-normal">(optional)</span>
           </label>
           <input
             id="story-savings"
@@ -351,7 +351,7 @@ export default function SwitchStoryForm({
         </div>
         <div>
           <label htmlFor="story-time" className="block text-sm font-medium text-slate-700 mb-1">
-            Time with Old Platform <span className="text-slate-400 font-normal">(optional)</span>
+            Time with Old Platform <span className="text-slate-500 font-normal">(optional)</span>
           </label>
           <input
             id="story-time"

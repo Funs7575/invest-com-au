@@ -199,7 +199,7 @@ function BenchmarkRow({ label, user, median, pct }: BenchmarkRowProps) {
               className={
                 diff > 0
                   ? "text-emerald-700 font-semibold ml-1"
-                  : "text-slate-400 ml-1"
+                  : "text-slate-500 ml-1"
               }
             >
               ({diff > 0 ? "+" : ""}
@@ -509,7 +509,7 @@ export default async function PersonalDashboardPage() {
               pct={benchmark.user_pct_watchlist}
             />
           </div>
-          <p className="text-[10px] text-slate-400 mt-2">
+          <p className="text-[10px] text-slate-500 mt-2">
             Aggregated across {benchmark.investor_total.toLocaleString()}{" "}
             investor profiles · refreshed on page load · no personal data
             leaves these comparisons.
@@ -674,7 +674,7 @@ export default async function PersonalDashboardPage() {
                     <div className="text-xs text-slate-500 truncate">{adv.firm_name}</div>
                   )}
                   {adv.location_display && (
-                    <div className="text-xs text-slate-400 truncate mt-0.5">{adv.location_display}</div>
+                    <div className="text-xs text-slate-500 truncate mt-0.5">{adv.location_display}</div>
                   )}
                   {adv.rating !== null && (
                     <div className="flex items-center gap-1 mt-1">
@@ -683,7 +683,7 @@ export default async function PersonalDashboardPage() {
                       </svg>
                       <span className="text-xs font-semibold text-slate-700">{adv.rating.toFixed(1)}</span>
                       {adv.review_count !== null && (
-                        <span className="text-xs text-slate-400">({adv.review_count})</span>
+                        <span className="text-xs text-slate-500">({adv.review_count})</span>
                       )}
                     </div>
                   )}

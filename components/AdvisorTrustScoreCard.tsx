@@ -71,7 +71,7 @@ function DimensionBar({ label, score, weight }: { label: string; score: number; 
             style={{ width: `${score}%`, transition: "width 0.5s ease" }}
           />
         </div>
-        <span className="text-[0.6rem] text-slate-400 w-10 text-right shrink-0">
+        <span className="text-[0.6rem] text-slate-500 w-10 text-right shrink-0">
           {Math.round(weight * 100)}% wt
         </span>
       </div>
@@ -141,7 +141,7 @@ export default function AdvisorTrustScoreCard() {
               : "Improve your profile to earn a tier badge"}
           </p>
           {data.cached_updated_at && (
-            <p className="text-[0.65rem] text-slate-400 mt-2">
+            <p className="text-[0.65rem] text-slate-500 mt-2">
               Last updated {fmtDate(data.cached_updated_at)}
             </p>
           )}

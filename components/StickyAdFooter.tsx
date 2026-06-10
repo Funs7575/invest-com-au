@@ -145,7 +145,7 @@ export default function StickyAdFooter({ brokers }: { brokers?: Broker[] }) {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">
-              <span className="text-[0.56rem] font-medium text-slate-400 uppercase tracking-wider mr-2">Sponsored</span>
+              <span className="text-[0.56rem] font-medium text-slate-500 uppercase tracking-wider mr-2">Sponsored</span>
               {broker!.name}
               {broker!.deal_text && (
                 <span className="font-normal text-amber-700 ml-1 sm:ml-2 text-[0.69rem]">

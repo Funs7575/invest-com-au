@@ -56,7 +56,7 @@ export default function ClubCreateForm() {
       </div>
       <div>
         <label className="block text-xs font-semibold text-slate-600 mb-1">
-          Description <span className="font-normal text-slate-400">(optional)</span>
+          Description <span className="font-normal text-slate-500">(optional)</span>
         </label>
         <textarea
           value={description}
@@ -79,7 +79,7 @@ export default function ClubCreateForm() {
           placeholder="e.g. Alex · stays anonymous to other members"
           className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
         />
-        <p className="text-[10px] text-slate-400 mt-1">
+        <p className="text-[10px] text-slate-500 mt-1">
           Other members see this name, not your account name.
         </p>
       </div>

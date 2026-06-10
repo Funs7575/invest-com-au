@@ -229,7 +229,7 @@ export default function OfficeHoursLiveStream({
               {submitError && (
                 <span className="text-xs text-red-600">{submitError}</span>
               )}
-              <span className="text-xs text-slate-400">{questionText.length}/500</span>
+              <span className="text-xs text-slate-500">{questionText.length}/500</span>
               {!userId ? (
                 <a
                   href="/auth/login?next=/questions"
@@ -258,7 +258,7 @@ export default function OfficeHoursLiveStream({
 
       {/* Questions list */}
       {sorted.length === 0 ? (
-        <div className="text-center py-10 text-slate-400">
+        <div className="text-center py-10 text-slate-500">
           <p className="text-3xl mb-2" aria-hidden>💬</p>
           <p className="text-sm">
             {canAsk ? "No questions yet — be the first to ask!" : "No questions for this session."}
@@ -278,7 +278,7 @@ export default function OfficeHoursLiveStream({
                   disabled={!userId || !isLive || upvoting.has(q.id)}
                   aria-label={q.userUpvoted ? "Remove upvote" : "Upvote this question"}
                   className={`shrink-0 flex flex-col items-center gap-0.5 pt-0.5 disabled:opacity-40 transition-colors ${
-                    q.userUpvoted ? "text-indigo-600" : "text-slate-400 hover:text-indigo-500"
+                    q.userUpvoted ? "text-indigo-600" : "text-slate-500 hover:text-indigo-500"
                   }`}
                 >
                   <svg className="w-4 h-4" fill={q.userUpvoted ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden>
@@ -292,7 +292,7 @@ export default function OfficeHoursLiveStream({
                     <span className="text-xs font-semibold text-slate-700">
                       {q.is_anonymous ? "Anonymous" : q.display_name}
                     </span>
-                    <span className="text-xs text-slate-400">{timeAgo(q.created_at)}</span>
+                    <span className="text-xs text-slate-500">{timeAgo(q.created_at)}</span>
                   </div>
                   <p className="text-sm text-slate-800">{q.question}</p>
 
@@ -301,7 +301,7 @@ export default function OfficeHoursLiveStream({
                       <p className="text-xs font-semibold text-emerald-700 mb-1">Advisor answered</p>
                       <p className="text-sm text-slate-800">{q.answer}</p>
                       {q.answered_at && (
-                        <p className="text-xs text-slate-400 mt-1">{timeAgo(q.answered_at)}</p>
+                        <p className="text-xs text-slate-500 mt-1">{timeAgo(q.answered_at)}</p>
                       )}
                     </div>
                   )}

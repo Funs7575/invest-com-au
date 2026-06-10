@@ -65,7 +65,7 @@ export default function FeeImpactTeaser({ brokers, searchParams }: Props) {
                     i === 0 ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200"
                   }`}
                 >
-                  <span className="text-xs font-bold text-slate-400 w-5">#{i + 1}</span>
+                  <span className="text-xs font-bold text-slate-500 w-5">#{i + 1}</span>
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
                     style={{ background: `${r.broker.color}20`, color: r.broker.color }}
@@ -82,7 +82,7 @@ export default function FeeImpactTeaser({ brokers, searchParams }: Props) {
                   </div>
                 </div>
               ))}
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 This preview only shows ASX brokerage. <Link href="/fee-impact" className="text-slate-700 hover:underline font-medium">Open the full calculator</Link> to include US trades, FX fees, and inactivity charges.
               </p>
             </div>

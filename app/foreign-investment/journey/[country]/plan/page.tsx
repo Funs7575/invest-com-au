@@ -252,7 +252,7 @@ export default async function ExpatPlanPage({
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Sticky sidebar (desktop) */}
           <aside className="hidden lg:block sticky top-24 w-52 shrink-0">
-            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-slate-400 mb-3">
+            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-slate-500 mb-3">
               Planner steps
             </p>
             <nav aria-label="Navigation" className="space-y-1">
@@ -307,7 +307,7 @@ export default async function ExpatPlanPage({
       {/* ── Other country planners ────────────────────────────────────── */}
       <section className="py-10 bg-slate-50 border-t border-slate-100">
         <div className="container-custom">
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">
             Other country planners
           </p>
           <div className="flex flex-wrap gap-2">
@@ -329,7 +329,7 @@ export default async function ExpatPlanPage({
       {/* ── Compliance footer ─────────────────────────────────────────── */}
       <section className="py-6 bg-white border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             {FOREIGN_INVESTOR_GENERAL_DISCLAIMER}
           </p>
         </div>
