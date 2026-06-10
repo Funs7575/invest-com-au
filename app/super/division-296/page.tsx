@@ -50,7 +50,7 @@ const KEY_NUMBERS = [
   {
     label: "Status",
     value: "Proposed",
-    note: "Announced in the 2023 Federal Budget. Proposed start was 1 July 2025, but Senate negotiations delayed it — check the current status.",
+    note: "Announced in the 2023 Federal Budget. Proposed start was 1 July 2025, but Senate negotiations delayed it — check the current status.", // dated-ok — historical reference to the announced proposal
     tone: "blue",
   },
 ] as const;
@@ -93,7 +93,7 @@ const SECTIONS = [
   {
     id: "legislative-status",
     heading: "Legislative status — proposed, not settled",
-    body: "Division 296 was announced in the 2023 Federal Budget as a measure to reduce the tax concessions on very large super balances. The Government proposed a start date of 1 July 2025.\n\nHowever, the measure faced significant negotiation in the Senate and did not pass on its original timetable. As a proposed (legislation-pending) measure, its final form — including the start date, the design of the earnings calculation, and the treatment of unrealised gains — may change before it becomes law, or may be amended as part of Senate negotiations.\n\nBecause the position has been moving, you should treat any specific start date with caution and check the current status with the ATO, Treasury, or a licensed adviser before acting. This page describes the mechanism as proposed; it is not a statement that the tax is in force, nor a prediction of its final shape. Where this guide refers to a 1 July 2025 start, that reflects the originally announced date, which may have shifted.",
+    body: "Division 296 was announced in the 2023 Federal Budget as a measure to reduce the tax concessions on very large super balances. The Government proposed a start date of 1 July 2025.\n\nHowever, the measure faced significant negotiation in the Senate and did not pass on its original timetable. As a proposed (legislation-pending) measure, its final form — including the start date, the design of the earnings calculation, and the treatment of unrealised gains — may change before it becomes law, or may be amended as part of Senate negotiations.\n\nBecause the position has been moving, you should treat any specific start date with caution and check the current status with the ATO, Treasury, or a licensed adviser before acting. This page describes the mechanism as proposed; it is not a statement that the tax is in force, nor a prediction of its final shape. Where this guide refers to a 1 July 2025 start, that reflects the originally announced date, which may have shifted.", // dated-ok — historical reference; copy already hedges current status
   },
   {
     id: "how-it-works",
@@ -156,7 +156,7 @@ const VS_293 = [
   },
   {
     label: "Status",
-    d296: "Proposed (legislation pending) — originally announced to start 1 July 2025",
+    d296: "Proposed (legislation pending) — originally announced to start 1 July 2025", // dated-ok — historical reference to the announced proposal
     d293: "In force — an established part of the super tax system",
   },
 ] as const;
