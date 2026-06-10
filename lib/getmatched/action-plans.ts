@@ -113,6 +113,7 @@ export interface UpdatePlanInput {
   email?: string | null;
   auth_user_id?: string | null;
   meta?: Record<string, unknown>;
+  saved_items?: import("./types").SavedItem[];
 }
 
 export async function updatePlan(input: UpdatePlanInput): Promise<ActionPlan> {
