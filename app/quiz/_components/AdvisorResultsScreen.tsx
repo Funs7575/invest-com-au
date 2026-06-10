@@ -54,6 +54,7 @@ function toMatchedAdvisor(a: ScoredQuizAdvisor): MatchedAdvisor {
     avg_response_minutes: a.avg_response_minutes ?? null,
     response_time_hours: a.response_time_hours ?? null,
     initial_consultation_free: a.initial_consultation_free ?? null,
+    booking_link: a.booking_link ?? null,
     matchScore: a.matchScore,
     confidence: a.confidence,
   };
