@@ -89,6 +89,60 @@ describe("buildAdvisorMatchReasons", () => {
     expect(reasons.some((r) => r.includes("FIRB"))).toBe(true);
   });
 
+  it("routes the India→AU and China→AU business journeys to an investor-visa specialty", () => {
+    // The brief's named non-UK/US corridors: a migrating HNW investor's journey
+    // is selected by the international goal, not the passport. Before the
+    // goal-driven corridors these surfaced only a generic intl/fallback reason.
+    const siv: AdvisorMatchAttrs = {
+      ...base,
+      type: "financial_planner",
+      specialties: ["Significant Investor Visa (SIV)", "High Net Worth Advisory"],
+    };
+    const indiaReasons = buildAdvisorMatchReasons(siv, {
+      isInternational: true,
+      investorCountry: "india",
+      investorGoalIntl: "business",
+      advisorType: "financial-planner",
+    });
+    expect(indiaReasons).toContain("Specialises in Significant Investor Visa (SIV)");
+
+    const chinaReasons = buildAdvisorMatchReasons(siv, {
+      isInternational: true,
+      investorCountry: "china",
+      investorGoalIntl: "business",
+    });
+    expect(chinaReasons).toContain("Specialises in Significant Investor Visa (SIV)");
+  });
+
+  it("routes a cross-border shares/savings goal to an international-tax specialty", () => {
+    const advisor: AdvisorMatchAttrs = {
+      ...base,
+      type: "tax_agent",
+      specialties: ["Individual Tax Returns", "International Tax"],
+    };
+    const sharesReasons = buildAdvisorMatchReasons(advisor, {
+      isInternational: true,
+      investorCountry: "singapore",
+      investorGoalIntl: "shares",
+      advisorType: "tax-agent",
+    });
+    expect(sharesReasons).toContain("Specialises in International Tax");
+  });
+
+  it("keeps a US person on the FATCA/PFIC corridor", () => {
+    const advisor: AdvisorMatchAttrs = {
+      ...base,
+      type: "tax_agent",
+      specialties: ["FATCA-Aware US Expat Planning"],
+    };
+    const reasons = buildAdvisorMatchReasons(advisor, {
+      isInternational: true,
+      investorCountry: "usa",
+      advisorType: "tax-agent",
+    });
+    expect(reasons).toContain("Specialises in FATCA-Aware US Expat Planning");
+  });
+
   it("adds a language reason when the advisor speaks the investor's language", () => {
     const advisor: AdvisorMatchAttrs = {
       ...base,
