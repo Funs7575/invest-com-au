@@ -227,7 +227,7 @@ export default function WholesaleCertClient({ existing }: Props) {
           <div>
             <label htmlFor="wc-evidence-doc" className="block text-xs font-semibold text-slate-600 mb-2">
               Evidence document
-              <span className="text-slate-400 font-normal ml-1">(PDF, JPG, or PNG · max 10 MB)</span>
+              <span className="text-slate-500 font-normal ml-1">(PDF, JPG, or PNG · max 10 MB)</span>
             </label>
             <div
               className="border-2 border-dashed border-slate-200 rounded-lg p-4 text-center cursor-pointer hover:border-violet-300 transition-colors"
@@ -236,7 +236,7 @@ export default function WholesaleCertClient({ existing }: Props) {
               {file ? (
                 <div className="text-sm text-slate-700">
                   <span className="font-medium">{file.name}</span>
-                  <span className="text-slate-400 ml-2">({(file.size / 1024).toFixed(0)} KB)</span>
+                  <span className="text-slate-500 ml-2">({(file.size / 1024).toFixed(0)} KB)</span>
                 </div>
               ) : (
                 <p className="text-sm text-slate-500">Click to upload your certificate</p>

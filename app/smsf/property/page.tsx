@@ -332,7 +332,7 @@ export default function SmsfPropertyPage() {
                     <span>Property can be improved at any time using SMSF funds</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-slate-400 shrink-0">&#10143;</span>
+                    <span className="text-slate-500 shrink-0">&#10143;</span>
                     <span className="text-slate-600">Fund must have sufficient liquidity after settlement</span>
                   </li>
                 </ul>
@@ -350,11 +350,11 @@ export default function SmsfPropertyPage() {
                     <span>Lender&apos;s recourse is limited to the property — other fund assets are protected</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-slate-400 shrink-0">&#10143;</span>
+                    <span className="text-slate-500 shrink-0">&#10143;</span>
                     <span className="text-slate-600">Requires a separate bare (holding) trust; legal costs $2,000&ndash;$5,000</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-slate-400 shrink-0">&#10143;</span>
+                    <span className="text-slate-500 shrink-0">&#10143;</span>
                     <span className="text-slate-600">Property cannot be improved (beyond repair/maintenance) until the loan is repaid</span>
                   </li>
                 </ul>
@@ -372,29 +372,29 @@ export default function SmsfPropertyPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
                 <ul className="space-y-2">
                   <li className="flex gap-2">
-                    <span className="text-slate-400 shrink-0">&#10143;</span>
+                    <span className="text-slate-500 shrink-0">&#10143;</span>
                     <span>Property must be in the name of the trustee(s) &quot;as trustee for [SMSF name]&quot; — not in the personal name of the members</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-slate-400 shrink-0">&#10143;</span>
+                    <span className="text-slate-500 shrink-0">&#10143;</span>
                     <span>Stamp duty applies in all states; SMSF is treated as a separate purchaser</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-slate-400 shrink-0">&#10143;</span>
+                    <span className="text-slate-500 shrink-0">&#10143;</span>
                     <span>Conveyancer / solicitor costs: $1,500&ndash;$3,000 for standard residential settlements</span>
                   </li>
                 </ul>
                 <ul className="space-y-2">
                   <li className="flex gap-2">
-                    <span className="text-slate-400 shrink-0">&#10143;</span>
+                    <span className="text-slate-500 shrink-0">&#10143;</span>
                     <span>All settlement funds must come from the SMSF bank account — not personal funds</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-slate-400 shrink-0">&#10143;</span>
+                    <span className="text-slate-500 shrink-0">&#10143;</span>
                     <span>SMSF deed and investment strategy must authorise direct property investment before purchase</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-slate-400 shrink-0">&#10143;</span>
+                    <span className="text-slate-500 shrink-0">&#10143;</span>
                     <span>Building and landlord insurance must be in the trustee&apos;s name on behalf of the SMSF</span>
                   </li>
                 </ul>

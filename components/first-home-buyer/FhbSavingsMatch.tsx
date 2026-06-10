@@ -40,7 +40,7 @@ export default function FhbSavingsMatch() {
       >
         Compare all high-interest savings accounts &rarr;
       </Link>
-      <p className="text-[11px] text-slate-400 leading-relaxed mt-4">
+      <p className="text-[11px] text-slate-500 leading-relaxed mt-4">
         <strong className="text-slate-500">General advice warning.</strong>{" "}
         {GENERAL_ADVICE_WARNING}
       </p>

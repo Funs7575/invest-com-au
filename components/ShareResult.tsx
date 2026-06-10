@@ -144,7 +144,7 @@ export default function ShareResult({
       )}
 
       {showDisclaimer && (
-        <p className="mt-3 text-[0.65rem] leading-relaxed text-slate-400">
+        <p className="mt-3 text-[0.65rem] leading-relaxed text-slate-500">
           {GENERAL_ADVICE_WARNING}
         </p>
       )}

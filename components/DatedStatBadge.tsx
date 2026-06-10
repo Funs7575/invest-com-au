@@ -115,7 +115,7 @@ export default function DatedStatBadge({
     level === "aging"
       ? "text-amber-700 underline decoration-amber-400 decoration-dotted underline-offset-2"
       : "",
-    level === "stale" ? "text-slate-400 line-through decoration-slate-300" : "",
+    level === "stale" ? "text-slate-500 line-through decoration-slate-300" : "",
     className ?? "",
   ]
     .filter(Boolean)

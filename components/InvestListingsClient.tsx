@@ -777,7 +777,7 @@ export default function InvestListingsClient({
             <p className="text-xs text-slate-500 mb-4">
               <span className="font-bold text-slate-700">{filtered.length}</span> listing{filtered.length !== 1 ? "s" : ""} found
               {activeChips.length > 0 && (
-                <span className="text-slate-400"> · from {listings.length} total</span>
+                <span className="text-slate-500"> · from {listings.length} total</span>
               )}
             </p>
 
@@ -814,7 +814,7 @@ export default function InvestListingsClient({
                     <div className="p-3 space-y-2">
                       <p className="text-xs text-slate-500 px-1 pb-1">
                         <span className="font-bold text-slate-700">{mapItems.length}</span> mapped
-                        {ungeocodedCount > 0 && <span className="text-slate-400"> · {ungeocodedCount} without location</span>}
+                        {ungeocodedCount > 0 && <span className="text-slate-500"> · {ungeocodedCount} without location</span>}
                       </p>
                       {mapItems.map((item) => {
                         const l = filtered.find((x) => x.id === item.id)!;
@@ -969,7 +969,7 @@ function TableView({ listings, showFirbBadge }: { listings: InvestmentListing[];
                 <td className="px-3 py-3 text-right">
                   {price ? (
                     <div>
-                      <div className="text-[0.55rem] text-slate-400 uppercase">{price.label}</div>
+                      <div className="text-[0.55rem] text-slate-500 uppercase">{price.label}</div>
                       <div className="text-xs font-bold text-slate-900">{price.value}</div>
                     </div>
                   ) : <span className="text-slate-300">—</span>}

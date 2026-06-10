@@ -141,7 +141,7 @@ export default function SubCategoryListingsView({
           subCategoryLabel={subCategory.label}
         />
       ) : (
-        <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+        <Suspense fallback={<div className="py-12 text-center text-slate-500">Loading listings...</div>}>
           {/* Same toolbar as the parent /listings page, scoped to this
               sub-type. skipCategoryFilter: the server query already scoped
               by vertical + sub_category — categoryForListing would re-bucket

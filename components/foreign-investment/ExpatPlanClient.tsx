@@ -184,7 +184,7 @@ function PlanItemCard({
           </div>
           <h3
             className={`font-extrabold text-sm leading-tight ${
-              done ? "line-through text-slate-400" : "text-slate-900"
+              done ? "line-through text-slate-500" : "text-slate-900"
             }`}
           >
             {item.heading}
@@ -293,7 +293,7 @@ function SaveStatusBadge({ status }: { status: SaveStatus }) {
   if (status === "idle") return null;
   const styles: Record<SaveStatus, string> = {
     idle: "",
-    saving: "text-slate-400",
+    saving: "text-slate-500",
     saved: "text-emerald-600",
     error: "text-red-500",
   };
@@ -449,7 +449,7 @@ export default function ExpatPlanClient({
           <button
             type="button"
             onClick={handleReset}
-            className="text-xs text-slate-400 hover:text-red-500 font-semibold transition-colors"
+            className="text-xs text-slate-500 hover:text-red-500 font-semibold transition-colors"
           >
             Reset progress
           </button>

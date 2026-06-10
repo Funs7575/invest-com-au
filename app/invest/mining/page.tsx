@@ -25,6 +25,7 @@ const MINING_FAQS = [
 const miningFaqLd = faqJsonLd(MINING_FAQS);
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 
 export const revalidate = 3600;
@@ -60,74 +61,45 @@ export default function MiningPage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(miningFaqLd) }} />
       )}
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
+      {/* Hero — house-standard compact light header (E3). The old stat band
+          rides as pills beside the title; the browse-all entry point lives in
+          the light band below, replacing the standalone CTA band (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Mining"
+        headlineLead="Invest in Australian Mining"
+        subtitle="Australia is the world's largest exporter of iron ore and lithium — and the centre of a critical minerals investment boom backed by bilateral government frameworks worth over $8.5 billion."
+        stats={[
+          { v: "$8.5B+", l: "Government-Backed Pipeline" },
+          { v: "#1", l: "Lithium & Iron Ore Exporter" },
+          { v: "130+", l: "Critical Mineral Projects" },
+          { v: "45%", l: "of Global Rare Earth Exploration" },
+        ]}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest/mining/listings"
+          className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
+        >
+          Browse all mining opportunities →
+        </Link>
+      </DirectoryHero>
+
+      {/* Critical Minerals Boom — light card (E5) */}
+      <section className="pt-4 bg-white">
         <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <span className="text-slate-900 font-medium">Mining</span>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
-              Updated {CURRENT_YEAR}
-            </span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
-            Invest in Australian Mining
-          </h1>
-          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl mb-8">
-            Australia is the world&apos;s largest exporter of iron ore and lithium — and the centre of a critical minerals investment boom backed by bilateral government frameworks worth over $8.5 billion.
-          </p>
-
-          <Link
-            href="/invest/mining/listings"
-            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-base px-7 py-3.5 rounded-xl transition-colors shadow-lg"
-          >
-            Browse Mining Opportunities
-            <Icon name="arrow-right" size={18} />
-          </Link>
-        </div>
-      </section>
-
-      {/* Browse Listings CTA */}
-      <section className="bg-white pt-8">
-        <div className="container-custom">
-          <Link
-            href="/invest/mining/listings"
-            className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl mb-8 hover:border-emerald-300 hover:shadow-md transition-all"
-          >
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-1">Browse Listings</p>
-              <p className="text-lg font-extrabold text-slate-900">View all mining opportunities &rarr;</p>
-              <p className="text-sm text-slate-600 mt-0.5">Active deals, FIRB-eligible, sub-categories &amp; more</p>
-            </div>
-            <svg className="w-8 h-8 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </div>
-      </section>
-
-      {/* Critical Minerals Boom Banner */}
-      <section className="py-6 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white">
-        <div className="container-custom">
-          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 rounded-xl border border-emerald-200 bg-emerald-50 p-4 md:px-5">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-extrabold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full">
+              <span className="text-xs font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">
                 {CURRENT_YEAR} Critical Minerals Boom
               </span>
             </div>
-            <p className="text-sm text-emerald-100 leading-relaxed flex-1">
+            <p className="text-sm text-slate-700 leading-relaxed flex-1">
               The US-Australia bilateral framework has mobilised $8.5B+ in critical minerals investment. The EU-Australia FTA eliminates 99% of tariffs on mineral exports. Australia&apos;s Critical Minerals Strategic Reserve launches H2 {CURRENT_YEAR}.
             </p>
             <Link
               href="/article/australias-critical-minerals-boom-how-to-invest"
-              className="inline-flex items-center gap-2 bg-white text-emerald-700 font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-emerald-50 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 bg-white border border-emerald-200 text-emerald-700 font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-emerald-100 transition-colors whitespace-nowrap"
             >
               Read the Deep Dive
               <Icon name="arrow-right" size={16} />
@@ -136,27 +108,8 @@ export default function MiningPage() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-10 bg-amber-50 border-b border-amber-100">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { value: "$8.5B+", label: "Government-Backed Pipeline" },
-              { value: "#1", label: "Lithium & Iron Ore Exporter" },
-              { value: "130+", label: "Critical Mineral Projects" },
-              { value: "45%", label: "of Global Rare Earth Exploration" },
-            ].map((s) => (
-              <div key={s.label} className="bg-white border border-amber-100 rounded-xl p-4 text-center">
-                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
-                <p className="text-xs text-slate-600 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Content */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <SectionHeading
             eyebrow="Commodities"
@@ -257,7 +210,7 @@ export default function MiningPage() {
       </section>
 
       {/* Browse CTA */}
-      <section className="py-14 bg-white border-t border-slate-100">
+      <section className="py-8 md:py-10 bg-white border-t border-slate-100">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 text-center">
             <h2 className="text-2xl font-extrabold text-slate-900 mb-3">Browse Mining Investment Opportunities</h2>
@@ -284,7 +237,7 @@ export default function MiningPage() {
       </section>
 
       {/* Advisor CTA — specialist multi-type */}
-      <section className="py-12 md:py-14 bg-slate-900 text-white" id="find-advisor">
+      <section className="py-8 md:py-10 bg-slate-900 text-white" id="find-advisor">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
             Get specialist help
@@ -383,7 +336,7 @@ export default function MiningPage() {
       />
 
       {/* Foreign investor note */}
-      <section className="py-10 md:py-12 bg-white border-t border-slate-100" id="foreign-investors">
+      <section className="py-6 md:py-8 bg-white border-t border-slate-100" id="foreign-investors">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">
             International investors
@@ -446,7 +399,7 @@ export default function MiningPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-10 bg-white border-t border-slate-200">
+      <section className="py-6 md:py-8 bg-white border-t border-slate-200">
         <div className="max-w-3xl mx-auto px-4 container-custom">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
           <div className="space-y-3">

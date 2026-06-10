@@ -163,7 +163,7 @@ export default function ReferralsClient() {
               {copied ? "Copied!" : "Copy"}
             </button>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Your code: <span className="font-mono font-semibold text-slate-600">{referralCode}</span>
           </p>
         </div>

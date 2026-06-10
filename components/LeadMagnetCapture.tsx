@@ -112,7 +112,7 @@ export default function LeadMagnetCapture({ magnet }: LeadMagnetCaptureProps) {
                   </p>
                 )}
 
-                <p className="text-[11px] text-slate-400 mt-2">
+                <p className="text-[11px] text-slate-500 mt-2">
                   No spam. Unsubscribe any time.
                 </p>
               </>

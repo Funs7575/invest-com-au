@@ -127,7 +127,7 @@ export default function NotificationDropdown({
 
       <ul className="max-h-96 overflow-y-auto divide-y divide-slate-100">
         {items.length === 0 ? (
-          <li className="px-4 py-8 text-center text-xs text-slate-400">
+          <li className="px-4 py-8 text-center text-xs text-slate-500">
             You&apos;re all caught up.
           </li>
         ) : (
@@ -155,7 +155,7 @@ export default function NotificationDropdown({
                     {n.body ? (
                       <p className="text-xs text-slate-600 line-clamp-2">{n.body}</p>
                     ) : null}
-                    <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-400">
+                    <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-500">
                       {timeAgo(n.created_at)}
                     </p>
                   </div>

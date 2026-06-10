@@ -220,7 +220,7 @@ export default async function ForeignSuperPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-3 text-xs text-slate-400">WHM = Working Holiday Maker (subclass 417 and 462). Their 65% rate applies across ALL components.</p>
+          <p className="mt-3 text-xs text-slate-500">WHM = Working Holiday Maker (subclass 417 and 462). Their 65% rate applies across ALL components.</p>
 
           {/* Calculator-style example */}
           <div className="mt-6 grid sm:grid-cols-2 gap-4">
@@ -332,7 +332,7 @@ export default async function ForeignSuperPage() {
       {/* ── Disclaimer ───────────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER}</p>
         </div>
       </section>
     </div>

@@ -363,7 +363,7 @@ export default function SearchOverlay({
             {/* Empty-query state: quick links */}
             {query.length < 2 && (
               <div className="px-5 py-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
                   Quick Links
                 </p>
                 <div className="grid grid-cols-2 gap-2">
@@ -387,7 +387,7 @@ export default function SearchOverlay({
                     </Link>
                   ))}
                 </div>
-                <p className="mt-4 text-xs text-slate-400">
+                <p className="mt-4 text-xs text-slate-500">
                   Tip: press{" "}
                   <kbd className="inline-flex items-center px-1.5 py-0.5 text-[0.6rem] font-semibold bg-slate-100 border border-slate-200 rounded">
                     ⌘K
@@ -419,7 +419,7 @@ export default function SearchOverlay({
                 <p className="text-sm text-slate-500">
                   No results for &ldquo;{query}&rdquo;
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Try a different term, or{" "}
                   <Link
                     href={`/search?q=${encodeURIComponent(query)}`}
@@ -439,7 +439,7 @@ export default function SearchOverlay({
                   if (!items?.length) return null;
                   return (
                     <div key={category} className="mb-2 last:mb-0">
-                      <p className="px-5 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                      <p className="px-5 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                         <Icon
                           name={CATEGORY_ICONS[category] ?? "file"}
                           size={10}
@@ -493,7 +493,7 @@ export default function SearchOverlay({
                                 {item.title}
                               </p>
                               {item.subtitle && (
-                                <p className="text-xs text-slate-400 truncate">
+                                <p className="text-xs text-slate-500 truncate">
                                   {item.subtitle}
                                 </p>
                               )}

@@ -66,7 +66,7 @@ function Section({
         <div className="flex items-baseline gap-2">
           <h2 className="text-base font-bold text-slate-900">{title}</h2>
           {count > 0 && (
-            <span className="text-xs font-semibold text-slate-400 tabular-nums">
+            <span className="text-xs font-semibold text-slate-500 tabular-nums">
               {count}
             </span>
           )}
@@ -280,7 +280,7 @@ export default async function MySavesPage() {
           >
             {vm.bookmarks.recent.map((b) => (
               <div key={b.id} className="flex items-center gap-3 px-5 py-3">
-                <span className="text-xs font-medium text-slate-400 w-16 shrink-0 capitalize">
+                <span className="text-xs font-medium text-slate-500 w-16 shrink-0 capitalize">
                   {b.bookmark_type}
                 </span>
                 <Link
@@ -299,7 +299,7 @@ export default async function MySavesPage() {
                 >
                   {b.label ?? b.ref}
                 </Link>
-                <span className="text-xs text-slate-400 shrink-0">
+                <span className="text-xs text-slate-500 shrink-0">
                   {fmtDate(b.created_at)}
                 </span>
               </div>
@@ -317,7 +317,7 @@ export default async function MySavesPage() {
           >
             {vm.watchlist.recent.map((w) => (
               <div key={w.id} className="flex items-center gap-3 px-5 py-3">
-                <span className="text-xs font-medium text-slate-400 w-16 shrink-0 capitalize">
+                <span className="text-xs font-medium text-slate-500 w-16 shrink-0 capitalize">
                   {w.item_type}
                 </span>
                 <Link
@@ -326,7 +326,7 @@ export default async function MySavesPage() {
                 >
                   {w.display_name ?? w.item_slug}
                 </Link>
-                <span className="text-xs text-slate-400 shrink-0">
+                <span className="text-xs text-slate-500 shrink-0">
                   {fmtDate(w.added_at)}
                 </span>
               </div>
@@ -352,11 +352,11 @@ export default async function MySavesPage() {
                 >
                   {c.name}
                 </Link>
-                <span className="text-xs text-slate-400 shrink-0">
+                <span className="text-xs text-slate-500 shrink-0">
                   {c.broker_slugs.length} broker
                   {c.broker_slugs.length !== 1 ? "s" : ""}
                 </span>
-                <span className="text-xs text-slate-400 shrink-0">
+                <span className="text-xs text-slate-500 shrink-0">
                   {fmtDate(c.created_at)}
                 </span>
               </div>
@@ -374,13 +374,13 @@ export default async function MySavesPage() {
           >
             {vm.savedSearches.recent.map((s) => (
               <div key={s.id} className="flex items-center gap-3 px-5 py-3">
-                <span className="text-xs font-medium text-slate-400 w-16 shrink-0">
+                <span className="text-xs font-medium text-slate-500 w-16 shrink-0">
                   {SEARCH_KIND_LABELS[s.kind] ?? s.kind}
                 </span>
                 <span className="flex-1 text-sm font-medium text-slate-900 truncate">
                   {s.label}
                 </span>
-                <span className="text-xs text-slate-400 shrink-0 capitalize">
+                <span className="text-xs text-slate-500 shrink-0 capitalize">
                   {s.email_frequency === "off" ? "Alerts off" : s.email_frequency}
                 </span>
               </div>

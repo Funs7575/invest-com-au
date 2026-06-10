@@ -444,7 +444,7 @@ export default async function LeavingAustraliaPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mb-8">Rates verified as at {UPDATED_LABEL} per ATO schedule. Subject to change by legislation.</p>
+          <p className="text-xs text-slate-500 mb-8">Rates verified as at {UPDATED_LABEL} per ATO schedule. Subject to change by legislation.</p>
 
           <h3 className="text-base font-extrabold text-slate-900 mb-2">Why 65% for Working Holiday Makers?</h3>
           <p className="text-sm text-slate-600 leading-relaxed mb-6">
@@ -498,7 +498,7 @@ export default async function LeavingAustraliaPage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Examples assume the entire $50,000 balance is in the taxed element (typical for employer SG
             contributions). Balances with a tax-free element (after-tax personal contributions) would have
             those contributions withheld at 0%. Figures are illustrative only.
@@ -656,7 +656,7 @@ export default async function LeavingAustraliaPage() {
                 super fund. Once in an APRA-regulated fund, you can claim DASP in the normal way after you
                 have departed and your visa has ceased.
               </p>
-              <p className="text-xs text-slate-400">Simpler than winding up the SMSF. Fund must accept rollover from an SMSF.</p>
+              <p className="text-xs text-slate-500">Simpler than winding up the SMSF. Fund must accept rollover from an SMSF.</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-2xl p-5">
               <p className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-3">Option 2: Wind up the SMSF</p>
@@ -666,7 +666,7 @@ export default async function LeavingAustraliaPage() {
                 SMSF specialist accountant or auditor. DASP can then be claimed once the wind-up is complete
                 and funds are transferred.
               </p>
-              <p className="text-xs text-slate-400">More involved but may be necessary if rolling over is not possible.</p>
+              <p className="text-xs text-slate-500">More involved but may be necessary if rolling over is not possible.</p>
             </div>
           </div>
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">

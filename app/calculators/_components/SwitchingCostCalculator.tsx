@@ -89,7 +89,7 @@ export default function SwitchingCostCalculator({ brokers, searchParams }: Props
                 <div className={`text-3xl md:text-5xl font-extrabold tracking-tight mt-1 ${
                   annualSavings > 0 ? "text-emerald-800" : annualSavings < 0 ? "text-red-600" : "text-slate-700"
                 }`}>
-                  <AnimatedNumber value={Math.abs(annualSavings)} /><span className="text-xl md:text-2xl font-bold text-slate-400">/yr</span>
+                  <AnimatedNumber value={Math.abs(annualSavings)} /><span className="text-xl md:text-2xl font-bold text-slate-500">/yr</span>
                 </div>
                 {breakEvenMonths != null && (
                   <p className="text-sm text-slate-600 mt-2">

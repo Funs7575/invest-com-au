@@ -96,7 +96,7 @@ export default function CostCalculator({ surcharges }: { surcharges: StateStampD
         </div>
       </div>
 
-      <p className="text-[0.62rem] text-slate-400 mt-3 leading-relaxed">
+      <p className="text-[0.62rem] text-slate-500 mt-3 leading-relaxed">
         Estimate only. Stamp duty shown is approximate — actual rate varies by state, first home buyer status, and
         concessions. Does not include legal fees, lender charges, or annual land tax surcharges.{" "}
         {FOREIGN_BUYER_STAMP_DUTY_WARNING}

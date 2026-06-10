@@ -84,15 +84,15 @@ export default function WealthStackPage() {
 
       <div className="border-t border-slate-200 bg-white">
         <div className="container-custom max-w-2xl py-8 md:py-10">
-          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
-          <div className="space-y-3">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-2.5">
             {WEALTH_STACK_FAQS.map((faq) => (
               <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
-                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 font-semibold text-sm text-slate-900 list-none">
                   {faq.q}
                   <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
-                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                <p className="px-4 pb-4 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
             ))}
           </div>

@@ -127,7 +127,7 @@ export default async function PropertyListingPage({ params }: { params: Promise<
 
       <div className="container-custom py-6 md:py-8">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>/</span>
           <Link href="/property" className="hover:text-slate-600">Property</Link>
@@ -224,17 +224,17 @@ export default async function PropertyListingPage({ params }: { params: Promise<
               </div>
 
               <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">{listing.title}</h1>
-              <p className="text-sm text-slate-400">{listing.address_display}</p>
+              <p className="text-sm text-slate-500">{listing.address_display}</p>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
                 <div className="bg-slate-50 rounded-xl p-3 text-center">
                   <p className="text-lg font-extrabold text-slate-900">{formatPrice(listing.price_from_cents)}</p>
-                  <p className="text-[0.65rem] text-slate-400">From (indicative)</p>
+                  <p className="text-[0.65rem] text-slate-500">From (indicative)</p>
                 </div>
                 {listing.price_to_cents && (
                   <div className="bg-slate-50 rounded-xl p-3 text-center">
                     <p className="text-lg font-extrabold text-slate-900">{formatPrice(listing.price_to_cents)}</p>
-                    <p className="text-[0.65rem] text-slate-400">To (indicative)</p>
+                    <p className="text-[0.65rem] text-slate-500">To (indicative)</p>
                   </div>
                 )}
                 {listing.rental_yield_estimate && (
@@ -248,14 +248,14 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                     <p className="text-lg font-extrabold text-slate-900">
                       {listing.bedrooms_min}{listing.bedrooms_max && listing.bedrooms_max !== listing.bedrooms_min ? `–${listing.bedrooms_max}` : ""}
                     </p>
-                    <p className="text-[0.65rem] text-slate-400">Bedrooms</p>
+                    <p className="text-[0.65rem] text-slate-500">Bedrooms</p>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Indicative price note */}
-            <p className="text-[0.62rem] text-slate-400 leading-relaxed -mt-2">
+            <p className="text-[0.62rem] text-slate-500 leading-relaxed -mt-2">
               {PROPERTY_INDICATIVE_PRICES}
             </p>
             {(listing.firb_approved || listing.foreign_buyer_eligible) && (
@@ -324,37 +324,37 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {suburbData.median_price_house && (
                     <div>
-                      <p className="text-xs text-slate-400">Median House</p>
+                      <p className="text-xs text-slate-500">Median House</p>
                       <p className="font-bold text-slate-900">{formatPrice(suburbData.median_price_house)}</p>
                     </div>
                   )}
                   {suburbData.median_price_unit && (
                     <div>
-                      <p className="text-xs text-slate-400">Median Unit</p>
+                      <p className="text-xs text-slate-500">Median Unit</p>
                       <p className="font-bold text-slate-900">{formatPrice(suburbData.median_price_unit)}</p>
                     </div>
                   )}
                   {suburbData.rental_yield_house && (
                     <div>
-                      <p className="text-xs text-slate-400">Rental Yield (House)</p>
+                      <p className="text-xs text-slate-500">Rental Yield (House)</p>
                       <p className="font-bold text-emerald-600">{suburbData.rental_yield_house}%</p>
                     </div>
                   )}
                   {suburbData.vacancy_rate != null && (
                     <div>
-                      <p className="text-xs text-slate-400">Vacancy Rate</p>
+                      <p className="text-xs text-slate-500">Vacancy Rate</p>
                       <p className="font-bold text-slate-900">{suburbData.vacancy_rate}%</p>
                     </div>
                   )}
                   {suburbData.capital_growth_10yr && (
                     <div>
-                      <p className="text-xs text-slate-400">10yr Capital Growth</p>
+                      <p className="text-xs text-slate-500">10yr Capital Growth</p>
                       <p className="font-bold text-amber-600">{suburbData.capital_growth_10yr}%</p>
                     </div>
                   )}
                   {suburbData.population && (
                     <div>
-                      <p className="text-xs text-slate-400">Population</p>
+                      <p className="text-xs text-slate-500">Population</p>
                       <p className="font-bold text-slate-900">{suburbData.population.toLocaleString()}</p>
                     </div>
                   )}
@@ -362,7 +362,7 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                 <Link href="/property/suburbs" className="inline-flex items-center gap-1 mt-3 text-xs font-semibold text-amber-600 hover:text-amber-700">
                   Research more suburbs &rarr;
                 </Link>
-                <p className="text-[0.62rem] text-slate-400 mt-2 leading-relaxed">{PROPERTY_TAX_NOTE}</p>
+                <p className="text-[0.62rem] text-slate-500 mt-2 leading-relaxed">{PROPERTY_TAX_NOTE}</p>
               </div>
             )}
 
@@ -394,7 +394,7 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                     <p className="text-xs text-slate-500 mt-1 line-clamp-3">{developer.description}</p>
                   )}
                   {developer.projects_completed && (
-                    <p className="text-xs text-slate-400 mt-2">{developer.projects_completed}+ projects completed</p>
+                    <p className="text-xs text-slate-500 mt-2">{developer.projects_completed}+ projects completed</p>
                   )}
                   {developer.website && (
                     <a href={developer.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-amber-600 hover:text-amber-700">
@@ -412,7 +412,7 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                     {relatedListings!.map((r) => (
                       <Link key={r.id} href={`/property/listings/${r.slug}`} className="block group">
                         <p className="text-sm font-semibold text-slate-900 group-hover:text-amber-600">{r.title}</p>
-                        <p className="text-xs text-slate-400">{r.suburb} &middot; From {formatPrice(r.price_from_cents)}</p>
+                        <p className="text-xs text-slate-500">{r.suburb} &middot; From {formatPrice(r.price_from_cents)}</p>
                       </Link>
                     ))}
                   </div>

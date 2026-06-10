@@ -35,7 +35,7 @@ const SHARE_TRADING_COLUMNS: ColumnDef[] = [
     header: "CHESS",
     align: "center",
     accessor: (b) => (
-      <span className={`text-xs font-semibold ${b.chess_sponsored ? "text-emerald-600" : "text-slate-400"}`}>
+      <span className={`text-xs font-semibold ${b.chess_sponsored ? "text-emerald-600" : "text-slate-500"}`}>
         {b.chess_sponsored ? "\u2713 Yes" : "\u2717 No"}
       </span>
     ),
@@ -50,7 +50,7 @@ const CRYPTO_COLUMNS: ColumnDef[] = [
     header: "Staking",
     align: "center",
     accessor: (b) => (
-      <span className={`text-xs font-semibold ${b.chess_sponsored ? "text-emerald-600" : "text-slate-400"}`}>
+      <span className={`text-xs font-semibold ${b.chess_sponsored ? "text-emerald-600" : "text-slate-500"}`}>
         {b.chess_sponsored ? "\u2713 Yes" : "\u2717 No"}
       </span>
     ),
@@ -244,19 +244,19 @@ export default function HomepageComparisonTable({
               <th scope="col" className="sticky left-0 z-10 bg-white pl-5 pr-2 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-600 w-10">#</th>
               <th scope="col" className="sticky left-10 z-10 bg-white px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-600 w-[28%]">Platform</th>
               {activeColumns.map((col, ci) => (
-                <th key={ci} scope="col" className={`px-3 py-2 font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap ${col.align === "center" ? "text-center" : "text-left"}`}>
+                <th key={ci} scope="col" className={`px-3 py-2 font-semibold text-[0.69rem] uppercase tracking-wider text-slate-500 whitespace-nowrap ${col.align === "center" ? "text-center" : "text-left"}`}>
                   <JargonTooltip term={col.header} />
                 </th>
               ))}
               {SHOW_RATINGS && (
-              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400">
+              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-500">
                 <span className="flex items-center gap-1 justify-center">
                   Rating
                   <Link href="/methodology" className="text-amber-700 hover:text-amber-800 transition-colors font-normal normal-case tracking-normal text-[0.6rem]" title="How we rate platforms">(how we rate)</Link>
                 </span>
               </th>
               )}
-              <th scope="col" className="px-3 py-2 pr-5 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[155px]"></th>
+              <th scope="col" className="px-3 py-2 pr-5 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-500 w-[155px]"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -283,7 +283,7 @@ export default function HomepageComparisonTable({
                     : ""
                 }`}
               >
-                <td className="sticky left-0 z-10 bg-inherit pl-5 pr-2 py-2.5 text-xs text-slate-400 font-medium">
+                <td className="sticky left-0 z-10 bg-inherit pl-5 pr-2 py-2.5 text-xs text-slate-500 font-medium">
                   {SHOW_EDITORIAL_BADGES && isTopRated ? (
                     <span className="text-amber-500 text-sm" title="Top Rated">🏆</span>
                   ) : (
@@ -369,7 +369,7 @@ export default function HomepageComparisonTable({
           return (
           <div key={broker.id} className="py-3 first:pt-1">
             <div className="flex items-center gap-2.5">
-              <span className="w-5 text-center text-xs font-bold text-slate-400 shrink-0">{i + 1}</span>
+              <span className="w-5 text-center text-xs font-bold text-slate-500 shrink-0">{i + 1}</span>
               <BrokerLogo broker={broker} size="sm" />
               <div className="flex-1 min-w-0">
                 <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 block truncate">{broker.name}</a>
@@ -405,12 +405,12 @@ export default function HomepageComparisonTable({
         {(() => {
           const lastChecked = getMostRecentFeeCheck(displayBrokers);
           return lastChecked ? (
-            <p className="text-[0.62rem] text-slate-400">
+            <p className="text-[0.62rem] text-slate-500">
               Fees last verified {new Date(lastChecked).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
             </p>
           ) : null;
         })()}
-        <p className="text-[0.62rem] text-slate-400">
+        <p className="text-[0.62rem] text-slate-500">
           Before applying, check the product&apos;s{" "}
           <a href="https://asic.gov.au/regulatory-resources/financial-services/financial-product-advice/target-market-determinations/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">Target Market Determination (TMD)</a>{" "}
           to confirm it suits your needs and objectives.

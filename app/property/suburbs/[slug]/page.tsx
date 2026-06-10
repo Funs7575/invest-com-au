@@ -36,7 +36,7 @@ function formatPrice(cents: number | null): string {
 }
 
 function growthColor(val: number | null): string {
-  if (val == null) return "text-slate-400";
+  if (val == null) return "text-slate-500";
   if (val > 0) return "text-emerald-600";
   if (val < 0) return "text-red-600";
   return "text-slate-500";
@@ -189,7 +189,7 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
       <section className="bg-white border-b border-slate-100">
         <div className="container-custom py-6 md:py-8">
           {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-600">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-600">Property</Link>
@@ -211,11 +211,11 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-5">
             <div className="bg-slate-50 rounded-xl p-3 text-center">
               <p className="text-lg font-extrabold text-slate-900">{formatPrice(suburb.median_price_house)}</p>
-              <p className="text-[0.65rem] text-slate-400">Median House</p>
+              <p className="text-[0.65rem] text-slate-500">Median House</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-3 text-center">
               <p className="text-lg font-extrabold text-slate-900">{formatPrice(suburb.median_price_unit)}</p>
-              <p className="text-[0.65rem] text-slate-400">Median Unit</p>
+              <p className="text-[0.65rem] text-slate-500">Median Unit</p>
             </div>
             <div className="bg-emerald-50 rounded-xl p-3 text-center">
               <p className="text-lg font-extrabold text-emerald-700">
@@ -227,13 +227,13 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
               <p className="text-lg font-extrabold text-slate-900">
                 {suburb.vacancy_rate != null ? `${suburb.vacancy_rate}%` : "\u2014"}
               </p>
-              <p className="text-[0.65rem] text-slate-400">Vacancy Rate</p>
+              <p className="text-[0.65rem] text-slate-500">Vacancy Rate</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-3 text-center">
               <p className="text-lg font-extrabold text-slate-900">
                 {suburb.population ? suburb.population.toLocaleString() : "\u2014"}
               </p>
-              <p className="text-[0.65rem] text-slate-400">Population</p>
+              <p className="text-[0.65rem] text-slate-500">Population</p>
             </div>
           </div>
         </div>
@@ -257,7 +257,7 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
                 <p className={`text-xl font-extrabold ${growthColor(item.value)}`}>
                   {item.value != null ? `${item.value > 0 ? "+" : ""}${item.value}%` : "\u2014"}
                 </p>
-                <p className="text-xs text-slate-400 mt-1">{item.label}</p>
+                <p className="text-xs text-slate-500 mt-1">{item.label}</p>
               </div>
             ))}
           </div>
@@ -271,23 +271,23 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             <div className="bg-slate-50 rounded-xl p-3">
-              <p className="text-xs text-slate-400">Population</p>
+              <p className="text-xs text-slate-500">Population</p>
               <p className="font-bold text-slate-900">{suburb.population ? suburb.population.toLocaleString() : "\u2014"}</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-3">
-              <p className="text-xs text-slate-400">Pop. Growth</p>
+              <p className="text-xs text-slate-500">Pop. Growth</p>
               <p className="font-bold text-slate-900">{suburb.population_growth != null ? `${suburb.population_growth}%` : "\u2014"}</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-3">
-              <p className="text-xs text-slate-400">Median Age</p>
+              <p className="text-xs text-slate-500">Median Age</p>
               <p className="font-bold text-slate-900">{suburb.median_age ?? "\u2014"}</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-3">
-              <p className="text-xs text-slate-400">Median Income</p>
+              <p className="text-xs text-slate-500">Median Income</p>
               <p className="font-bold text-slate-900">{suburb.median_income ? `$${suburb.median_income.toLocaleString()}` : "\u2014"}</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-3">
-              <p className="text-xs text-slate-400">Distance to CBD</p>
+              <p className="text-xs text-slate-500">Distance to CBD</p>
               <p className="font-bold text-slate-900">{suburb.distance_to_cbd_km != null ? `${suburb.distance_to_cbd_km}km` : "\u2014"}</p>
             </div>
           </div>
@@ -386,7 +386,7 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
               </tbody>
             </table>
           </div>
-          <p className="text-[0.62rem] text-slate-400 mt-2">State averages are approximate benchmarks and may not reflect the most recent data.</p>
+          <p className="text-[0.62rem] text-slate-500 mt-2">State averages are approximate benchmarks and may not reflect the most recent data.</p>
         </section>
 
         {/* ── Nearby Properties ── */}

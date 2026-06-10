@@ -240,7 +240,7 @@ async function PersonalisedStripInner() {
                 </Link>
               </div>
               {primaryAction.showAdviceWarning && (
-                <p className="mt-2 text-[0.65rem] text-slate-400 leading-relaxed">
+                <p className="mt-2 text-[0.65rem] text-slate-500 leading-relaxed">
                   {GENERAL_ADVICE_WARNING}
                 </p>
               )}

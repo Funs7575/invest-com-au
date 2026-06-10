@@ -224,7 +224,7 @@ export default function VerticalBrokerTable({ brokers, slug, color }: Props) {
               <tr>
                 <td
                   colSpan={3 + columns.length}
-                  className="px-4 py-8 text-center text-sm text-slate-400"
+                  className="px-4 py-8 text-center text-sm text-slate-500"
                 >
                   No platforms match &ldquo;{query}&rdquo;
                 </td>
@@ -235,7 +235,7 @@ export default function VerticalBrokerTable({ brokers, slug, color }: Props) {
                   key={broker.id}
                   className={`hover:bg-slate-50 ${i === 0 && !query ? `${color.bg}/40` : ""}`}
                 >
-                  <td className="px-4 py-3 text-sm font-semibold text-slate-400">{i + 1}</td>
+                  <td className="px-4 py-3 text-sm font-semibold text-slate-500">{i + 1}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <BrokerLogo broker={broker} size="sm" />
@@ -285,7 +285,7 @@ export default function VerticalBrokerTable({ brokers, slug, color }: Props) {
       {/* Mobile cards */}
       <div className="md:hidden space-y-2 mb-6">
         {filtered.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-6">
+          <p className="text-sm text-slate-500 text-center py-6">
             No platforms match &ldquo;{query}&rdquo;
           </p>
         ) : (

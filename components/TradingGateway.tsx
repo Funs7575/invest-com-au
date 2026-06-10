@@ -144,7 +144,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                       <div className="flex-1">
                         <div className="text-white font-bold">{broker.name}</div>
                         {broker.deal && (
-                          <div className="text-xs text-slate-400 font-semibold uppercase tracking-wide">
+                          <div className="text-xs text-slate-500 font-semibold uppercase tracking-wide">
                             Deal Active
                           </div>
                         )}
@@ -169,13 +169,13 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
                       <span className="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></span>
                       Available now
                     </div>
 
                     <div className="mt-4">
-                      <span className="text-xs text-slate-400 hover:underline">
+                      <span className="text-xs text-slate-500 hover:underline">
                         View Details →
                       </span>
                     </div>
@@ -183,7 +183,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                 ))}
               </div>
             ) : (
-              <div className="text-center text-slate-400 py-8">
+              <div className="text-center text-slate-500 py-8">
                 No brokers match your criteria. Try adjusting your filters.
               </div>
             )}

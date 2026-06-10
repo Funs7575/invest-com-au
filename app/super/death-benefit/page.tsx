@@ -489,7 +489,7 @@ export default function SuperDeathBenefitPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-xs text-slate-400 leading-relaxed">Illustrative only, using a taxed element and a 2% Medicare levy. The $68,000 tax bill is entirely a function of who receives the benefit — the son nets $432,000 while the spouse receives the full $500,000 tax-free. An untaxed element would be taxed at 30% + Medicare. Always seek advice before acting.</p>
+          <p className="mt-4 text-xs text-slate-500 leading-relaxed">Illustrative only, using a taxed element and a 2% Medicare levy. The $68,000 tax bill is entirely a function of who receives the benefit — the son nets $432,000 while the spouse receives the full $500,000 tax-free. An untaxed element would be taxed at 30% + Medicare. Always seek advice before acting.</p>
         </div>
       </section>
 

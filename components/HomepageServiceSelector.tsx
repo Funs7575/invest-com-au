@@ -298,7 +298,7 @@ export default function HomepageServiceSelector({ compact = false }: { compact?:
         >
           Take the Full Matching Quiz &rarr;
         </Link>
-        <p className="text-xs text-slate-400 mt-2">Free &middot; no obligation &middot; 4 questions &middot; 60 seconds</p>
+        <p className="text-xs text-slate-500 mt-2">Free &middot; no obligation &middot; 4 questions &middot; 60 seconds</p>
       </div>
     </div>
   );

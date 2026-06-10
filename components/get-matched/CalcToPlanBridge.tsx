@@ -95,7 +95,7 @@ export default function CalcToPlanBridge({
           <Icon name="arrow-right" size={14} />
         </Link>
       </div>
-      <p className="text-[10px] text-slate-400 mt-4">
+      <p className="text-[10px] text-slate-500 mt-4">
         Takes ~60 seconds · No account needed · General information only.
       </p>
     </section>

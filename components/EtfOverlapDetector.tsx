@@ -151,7 +151,7 @@ export default function EtfOverlapDetector() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-xs text-slate-400 text-left">
+                    <tr className="text-xs text-slate-500 text-left">
                       <th className="pb-2 font-medium">Security</th>
                       <th className="pb-2 font-medium text-right">{result.etfA.slug.toUpperCase()}</th>
                       <th className="pb-2 font-medium text-right">{result.etfB.slug.toUpperCase()}</th>
@@ -181,7 +181,7 @@ export default function EtfOverlapDetector() {
           )}
 
           <div className="px-4 py-3">
-            <p className="text-[11px] text-slate-400">{result.disclaimer}</p>
+            <p className="text-[11px] text-slate-500">{result.disclaimer}</p>
           </div>
         </div>
       )}

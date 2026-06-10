@@ -96,13 +96,13 @@ export default function DebtQuickView({ searchParams }: Props) {
               Your monthly payment is too low to cover interest at the current rate — debt would grow indefinitely.
             </div>
           )}
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             i — Compares total interest on your current loan vs. a new loan at the lower rate over the same payoff period.
           </p>
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Enter your current debt and payment to compare.</p>
+          <p className="text-slate-500 text-sm">Enter your current debt and payment to compare.</p>
         </div>
       )}
 

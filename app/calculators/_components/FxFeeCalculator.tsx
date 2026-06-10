@@ -68,7 +68,7 @@ export default function FxFeeCalculator({ brokers, searchParams }: Props) {
             background: `linear-gradient(to right, #10b981 ${((amount - 1000) / 49000) * 100}%, #e2e8f0 ${((amount - 1000) / 49000) * 100}%)`,
           }}
         />
-        <div className="flex justify-between text-xs text-slate-400 mt-1">
+        <div className="flex justify-between text-xs text-slate-500 mt-1">
           <span>$1,000</span>
           <span>$25,000</span>
           <span>$50,000</span>

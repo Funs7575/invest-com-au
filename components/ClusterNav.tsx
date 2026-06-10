@@ -37,7 +37,7 @@ export default function ClusterNav({
       {/* Pillar back-link */}
       {pillarLinks.length > 0 && (
         <div className="px-4 md:px-6 py-3 md:py-4 border-b border-slate-200 bg-white">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
             Part of
           </p>
           {pillarLinks.map((link) => (
@@ -54,7 +54,7 @@ export default function ClusterNav({
               <span className="text-sm font-semibold text-slate-900 group-hover:text-amber-600 transition-colors">
                 {link.clusterName}
               </span>
-              <span className="text-xs text-slate-400 hidden md:inline">
+              <span className="text-xs text-slate-500 hidden md:inline">
                 — read {link.anchorText}
               </span>
             </Link>
@@ -65,7 +65,7 @@ export default function ClusterNav({
       {/* Sibling cluster pages */}
       {Object.keys(siblingsByCluster).length > 0 && (
         <div className="px-4 md:px-6 py-3 md:py-4">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 md:mb-3">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2 md:mb-3">
             Related in This Topic
           </p>
           {Object.entries(siblingsByCluster).map(
@@ -96,7 +96,7 @@ export default function ClusterNav({
       {/* Cross-cluster links */}
       {crossLinks.length > 0 && (
         <div className="px-4 md:px-6 py-3 md:py-4 border-t border-slate-200">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
             You Might Also Like
           </p>
           <div className="flex flex-wrap gap-1.5 md:gap-2">

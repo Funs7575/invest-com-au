@@ -99,7 +99,7 @@ export default function AfterTaxReturnPanel({ listing }: { listing: DecisionTool
       {/* Headline */}
       <div className="mt-4 grid grid-cols-2 gap-3">
         <div className="rounded-lg bg-slate-50 border border-slate-200 p-3 text-center">
-          <p className="text-[0.6rem] uppercase tracking-wide text-slate-400 font-semibold">Gross return</p>
+          <p className="text-[0.6rem] uppercase tracking-wide text-slate-500 font-semibold">Gross return</p>
           <p className="text-2xl font-extrabold text-slate-900">{result.grossReturnPct}%</p>
         </div>
         <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-center">
@@ -171,7 +171,7 @@ export default function AfterTaxReturnPanel({ listing }: { listing: DecisionTool
 
       {/* Across-structures mini table */}
       <div className="mt-4 border-t border-slate-100 pt-3">
-        <p className="text-[0.6rem] uppercase tracking-wide text-slate-400 font-semibold mb-2">After-tax return by structure</p>
+        <p className="text-[0.6rem] uppercase tracking-wide text-slate-500 font-semibold mb-2">After-tax return by structure</p>
         <div className="space-y-1">
           {acrossStructures.map(({ meta, r }) => {
             const isBest = meta.key === bestStructure.meta.key;
@@ -196,7 +196,7 @@ export default function AfterTaxReturnPanel({ listing }: { listing: DecisionTool
         </div>
       </div>
 
-      <p className="mt-3 text-[0.6rem] text-slate-400 leading-snug">
+      <p className="mt-3 text-[0.6rem] text-slate-500 leading-snug">
         {INVESTMENT_STRUCTURES[structure].note} Estimate only — single-year annualised tax drag, not a multi-year IRR with deferred CGT.
         Not personal advice. Confirm with a registered tax agent.
       </p>

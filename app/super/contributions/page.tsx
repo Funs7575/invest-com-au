@@ -475,7 +475,7 @@ export default function SuperContributionsPage() {
                 <span className="text-green-700">$1,950</span>
               </div>
             </div>
-            <p className="mt-3 text-xs text-slate-400">
+            <p className="mt-3 text-xs text-slate-500">
               Illustrative only. Assumes 32.5% marginal rate + 2% Medicare levy. Employer SG of
               $11,500 (11.5% × $100,000) counts separately toward the concessional cap.
             </p>
@@ -640,7 +640,7 @@ export default function SuperContributionsPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-slate-400 mt-3">
+              <p className="text-xs text-slate-500 mt-3">
                 TSB thresholds are indexed to the general transfer balance cap. The $1.9M figure
                 applies for 2024-25.
               </p>

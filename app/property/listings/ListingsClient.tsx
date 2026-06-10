@@ -264,7 +264,7 @@ export default function ListingsClient() {
 
           {/* Row 1: City */}
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-0.5">
-            <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1">City</span>
+            <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 shrink-0 mr-1">City</span>
             {CITIES.map((c) => (
               <PillBtn key={c} active={city === c} onClick={() => setCity(c)}>{c}</PillBtn>
             ))}
@@ -274,7 +274,7 @@ export default function ListingsClient() {
           <div className="flex flex-wrap items-center gap-2">
             {/* Type pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1">Type</span>
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 shrink-0 mr-1">Type</span>
               {TYPES.map((t) => (
                 <PillBtn key={t.value} active={type === t.value} onClick={() => setType(t.value)}>{t.label}</PillBtn>
               ))}
@@ -284,7 +284,7 @@ export default function ListingsClient() {
 
             {/* Beds pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1">Beds</span>
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 shrink-0 mr-1">Beds</span>
               {BEDS.map((b) => (
                 <PillBtn key={b.value} active={bedsMin === b.value} onClick={() => setBedsMin(b.value)}>{b.label}</PillBtn>
               ))}
@@ -295,7 +295,7 @@ export default function ListingsClient() {
           <div className="flex flex-wrap items-center gap-2">
             {/* Price pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-1 min-w-0">
-              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1">Price</span>
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 shrink-0 mr-1">Price</span>
               {PRICE_RANGES.map((p) => (
                 <PillBtn key={p.value} active={priceRange === p.value} onClick={() => setPriceRange(p.value)}>{p.label}</PillBtn>
               ))}
@@ -303,7 +303,7 @@ export default function ListingsClient() {
 
             {/* Sort */}
             <div className="flex items-center gap-1.5 shrink-0">
-              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400">Sort</span>
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500">Sort</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -336,7 +336,7 @@ export default function ListingsClient() {
             </label>
 
             {!loading && (
-              <span className="ml-auto text-xs text-slate-400 shrink-0">
+              <span className="ml-auto text-xs text-slate-500 shrink-0">
                 {total} listing{total !== 1 ? "s" : ""}
               </span>
             )}
@@ -345,7 +345,7 @@ export default function ListingsClient() {
           {/* Row 5: Active filter chips (only when filters are applied) */}
           {activeFilters.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5 pt-0.5 border-t border-slate-100">
-              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mr-0.5">Active</span>
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 mr-0.5">Active</span>
               {activeFilters.map((f) => (
                 <button
                   key={f.key}
@@ -360,7 +360,7 @@ export default function ListingsClient() {
               ))}
               <button
                 onClick={clearAll}
-                className="ml-1 text-[0.65rem] font-bold text-slate-400 hover:text-slate-700 underline underline-offset-2 transition-colors"
+                className="ml-1 text-[0.65rem] font-bold text-slate-500 hover:text-slate-700 underline underline-offset-2 transition-colors"
               >
                 Clear all
               </button>
@@ -396,7 +396,7 @@ export default function ListingsClient() {
                 <Icon name="building" size={32} className="text-slate-300" />
               </div>
               <p className="text-slate-600 font-semibold mb-1">No listings match your filters</p>
-              <p className="text-sm text-slate-400 mb-4">Try adjusting your city, price range, or other filters</p>
+              <p className="text-sm text-slate-500 mb-4">Try adjusting your city, price range, or other filters</p>
               <button
                 onClick={clearAll}
                 className="px-4 py-2 text-sm font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors"
@@ -531,10 +531,10 @@ export default function ListingsClient() {
                       </div>
 
                       <div className="p-4 flex flex-col flex-1">
-                        <p className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mb-1">{listing.city} · {listing.suburb}</p>
+                        <p className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 mb-1">{listing.city} · {listing.suburb}</p>
                         <h3 className="font-bold text-slate-900 group-hover:text-slate-700 transition-colors mb-1.5 line-clamp-2 text-sm leading-snug">{listing.title}</h3>
                         {(listing.developer_name || listing.property_developers?.name) && (
-                          <p className="text-xs text-slate-400 mb-2">{listing.developer_name || listing.property_developers?.name}</p>
+                          <p className="text-xs text-slate-500 mb-2">{listing.developer_name || listing.property_developers?.name}</p>
                         )}
                         <div className="mt-auto pt-3 border-t border-slate-100">
                           <div className="flex items-end justify-between gap-2">
@@ -543,14 +543,14 @@ export default function ListingsClient() {
                                 From {formatPrice(listing.price_from_cents)}
                               </div>
                               {listing.bedrooms_min && (
-                                <div className="text-[0.65rem] text-slate-400 mt-0.5">
+                                <div className="text-[0.65rem] text-slate-500 mt-0.5">
                                   {listing.bedrooms_min}{listing.bedrooms_max && listing.bedrooms_max !== listing.bedrooms_min ? `–${listing.bedrooms_max}` : ""} bed
                                 </div>
                               )}
                             </div>
                             <div className="flex flex-col items-end gap-1">
                               {listing.completion_date && (
-                                <span className="text-[0.6rem] text-slate-400">{listing.completion_date}</span>
+                                <span className="text-[0.6rem] text-slate-500">{listing.completion_date}</span>
                               )}
                               <span className="text-xs font-bold text-amber-600 group-hover:text-amber-700 group-hover:translate-x-0.5 transition-all flex items-center gap-0.5">
                                 Enquire <span>&rarr;</span>
@@ -614,7 +614,7 @@ export default function ListingsClient() {
               </div>
               <div>
                 <p className="text-sm font-bold text-white">Get a verified buyer&apos;s agent on your side</p>
-                <p className="text-xs text-slate-400">Off-market access · Negotiation · Due diligence · Free consultation</p>
+                <p className="text-xs text-slate-500">Off-market access · Negotiation · Due diligence · Free consultation</p>
               </div>
             </div>
             <Link href="/property/buyer-agents" className="shrink-0 px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 text-sm font-bold rounded-xl transition-colors shadow-lg shadow-amber-500/20 whitespace-nowrap">

@@ -14,6 +14,51 @@
 
 ## Active strategic decisions log
 
+### 2026-06-10 — "Complete everything unblocked" wave: 12 parallel workstreams launched; CI unblocked; coordination lesson
+
+Founder directive: finish every unblocked TOP-10 / backlog opportunity to
+production quality, skipping quiz/Decision-Engine surfaces (owned by a
+parallel session) and anything gated on deals/legal/credentials.
+
+**Shipped to main this session:** #1504 (multi-tenant CPL partner accounts
+on `api_customers` + single-lead allocation fix — the old partner endpoint
+fanned 1 enquiry to up to 5 advisors — + partner analytics dashboard +
+admin key minting; weekly premium research digest cron; advisors
+country-mode deep-link wiring) and #1515 (CI unblock: the #1504 migration
+collided with gm04 on version `20260610090000` — renamed; plus 4 RLS
+integration tests still read pre-squash migration paths and ENOENT-failed
+the build job on EVERY PR since the baseline squash — repointed at
+`supabase/migrations/archive/`).
+
+**Grounding corrections (don't re-scope from stale idea lists):**
+rate alerts are ~built BUT nothing ever emails subscribers (the cron only
+writes `rate_change_log`); cross-border persona selector + DASP + WHT
+calculators already exist; premium research pipeline only lacks an admin
+editorial UI; advisor monetization only lacks cap-hit upsell + churn
+win-back; /rates/today exists but /fees/today + public events calendar +
+a unified "today" surface don't.
+
+**In flight (parallel worktree agents, one PR each):** rate-alert mailer +
+manage-prefs; data-news (/fees/today, calendar, /today); pro-research
+admin CRUD; advisor cap-upsell + win-back cron; community Phase 1
+remainder (article↔thread cross-links, newsletter community block, /feed
+nav, QotD flag-gated OFF pending §11 D2/D3); calculators-as-a-service
+(/api/v1/calculators/* on partner keys); embed partner gating + metering;
+GEO server-side crawler capture (proxy.ts waitUntil, Tier C); licence-mode
+star gating (DISC-20260610); firm careers demand probe; cutover-guardian
+scripts + funnel-bot workflow.
+
+**Coordination lesson (logged so it stops happening):** while this wave
+was being scoped, the parallel session landed #1502 (WCAG wave 1) and
+#1503 (FIRB explainer + non-resident mortgage guide) — duplicating two
+agent briefs mid-flight. Rule: grep ORIGIN/MAIN immediately before
+launching any build agent AND again before integrating its output;
+discard duplicated output rather than merging it.
+
+**Revisit:** 2026-06-17 — are all wave PRs merged? Did the rate-alert
+mailer + premium admin UI actually unlock their revenue lines (first
+digest sent; first report published)?
+
 ### 2026-06-10 — Hybrid auction (#5 ship-now): quality multiplier SHIPPED; engineering now complete, blocker is legal only
 
 The 2026-04-30 decision approved the hybrid auction as "editorial filter +

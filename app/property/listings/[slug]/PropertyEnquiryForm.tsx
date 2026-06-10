@@ -112,7 +112,7 @@ export default function PropertyEnquiryForm({
   return (
     <form onSubmit={handleSubmit} className="border border-slate-200 rounded-2xl p-5">
       <h3 className="text-base font-bold text-slate-900 mb-1">Enquire About {listingTitle}</h3>
-      <p className="text-xs text-slate-400 mb-4">Free, no obligation. {developerName} responds within 24–48 hours.</p>
+      <p className="text-xs text-slate-500 mb-4">Free, no obligation. {developerName} responds within 24–48 hours.</p>
 
       {error && <p role="alert" className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
 
@@ -227,7 +227,7 @@ export default function PropertyEnquiryForm({
           {submitting ? "Sending..." : "Send Enquiry — Free"}
         </button>
 
-        <p className="text-[0.56rem] text-slate-400 text-center leading-relaxed">
+        <p className="text-[0.56rem] text-slate-500 text-center leading-relaxed">
           No spam, no obligation. You may receive follow-up communications and can opt out at any time.
         </p>
       </div>

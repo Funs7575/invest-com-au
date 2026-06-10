@@ -265,7 +265,7 @@ function CreateAlertForm({
       </div>
 
       <div className="mt-3 flex items-center justify-between gap-3">
-        <p className="text-[0.65rem] text-slate-400">
+        <p className="text-[0.65rem] text-slate-500">
           Factual rate/fee data alerts only — not financial advice.
         </p>
         <button
@@ -410,7 +410,7 @@ export default function AlertsClient({ alerts: initial, userEmail }: Props) {
                       </p>
                       <p className="mt-0.5 text-xs text-slate-500">{freqLabel}</p>
                       {(alert.broker_slug || alert.lender_slug) && (
-                        <p className="mt-0.5 text-xs text-slate-400">
+                        <p className="mt-0.5 text-xs text-slate-500">
                           {alert.broker_slug && `Broker: ${alert.broker_slug}`}
                           {alert.lender_slug && `Lender: ${alert.lender_slug}`}
                         </p>
@@ -428,13 +428,13 @@ export default function AlertsClient({ alerts: initial, userEmail }: Props) {
                           </span>
                         )}
                         {alert.notification_count > 0 && (
-                          <span className="text-[0.65rem] text-slate-400">
+                          <span className="text-[0.65rem] text-slate-500">
                             {alert.notification_count} alert
                             {alert.notification_count !== 1 ? "s" : ""} sent
                           </span>
                         )}
                         {alert.last_notified_at && (
-                          <span className="text-[0.65rem] text-slate-400">
+                          <span className="text-[0.65rem] text-slate-500">
                             Last:{" "}
                             {new Date(alert.last_notified_at).toLocaleDateString(
                               "en-AU",

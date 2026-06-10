@@ -8,6 +8,7 @@ import {
   CURRENT_YEAR,
 } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 
 export const revalidate = 3600;
 // Build-touch 2026-05-03 — force fresh prerender (cached version had stuck client-render).
@@ -137,69 +138,37 @@ export default function RoyaltiesPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPage) }}
       />
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          <nav
-            className="flex items-center gap-1.5 text-xs text-slate-500 mb-6"
-            aria-label="Breadcrumb"
+      {/* Hero — house-standard compact light header (E3). The in-hero stat
+          grid rides as pills beside the title; the badges and the browse-all
+          entry point live in the light band below (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Royalties"
+        headlineLead="Invest in Royalty Streams in Australia"
+        subtitle="Royalty income — paid as a percentage of revenue or net profits from an underlying asset — sits between bonds and equity in the capital stack. Australian retail investors can access mining royalties via ASX names like Deterra (DRR), or direct music, IP and petroleum royalty deals via the wholesale market."
+        stats={[
+          { v: "~5%", l: "DRR trailing yield" },
+          { v: "$250K+", l: "Direct deal minimum" },
+          { v: "30% / DTA", l: "Royalty WHT (non-resident)" },
+          { v: "DRR · ELT", l: "ASX royalty pure-plays" },
+        ]}
+        containerClassName="container-custom"
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/invest/royalties/listings"
+            className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
           >
-            <Link href="/" className="hover:text-slate-900 transition-colors">
-              Home
-            </Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">
-              Invest
-            </Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <span className="text-slate-900 font-medium">Royalties</span>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800">
-              Income asset
-            </span>
-            <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
-              Independent research
-            </span>
-            <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
-              Updated {CURRENT_YEAR}
-            </span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
-            Invest in Royalty Streams in Australia
-          </h1>
-          <p className="text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl mb-6">
-            Royalty income — paid as a percentage of revenue or net profits from
-            an underlying asset — sits between bonds and equity in the capital
-            stack. Australian retail investors can access mining royalties via
-            ASX names like Deterra (DRR), or direct music, IP and petroleum
-            royalty deals via the wholesale market.
-          </p>
-
-          <dl className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl">
-            {[
-              { label: "DRR trailing yield", value: "~5%" },
-              { label: "Direct deal minimum", value: "$250K+" },
-              { label: "Royalty WHT (non-resident)", value: "30% / DTA" },
-              { label: "ASX royalty pure-plays", value: "DRR · ELT" },
-            ].map((s) => (
-              <div
-                key={s.label}
-                className="border border-slate-200 rounded-lg bg-slate-50 px-3 py-2"
-              >
-                <dt className="text-[10px] font-bold uppercase text-slate-500 tracking-wide">
-                  {s.label}
-                </dt>
-                <dd className="text-sm font-extrabold text-slate-900 mt-0.5">
-                  {s.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
+            Browse all royalty &amp; IP opportunities →
+          </Link>
+          <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800">
+            Income asset
+          </span>
+          <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+            Independent research
+          </span>
         </div>
-      </section>
+      </DirectoryHero>
 
       {/* Context banner */}
       <section className="py-6 md:py-8 bg-rose-50 border-y border-rose-200">
@@ -233,7 +202,7 @@ export default function RoyaltiesPage() {
       </section>
 
       {/* Ways to invest */}
-      <section className="py-10 md:py-12 bg-white" id="ways-to-invest">
+      <section className="py-6 md:py-8 bg-white" id="ways-to-invest">
         <div className="container-custom">
           <div className="mb-6 max-w-3xl">
             <p className="text-xs font-bold uppercase tracking-wider text-rose-600 mb-1">
@@ -298,7 +267,7 @@ export default function RoyaltiesPage() {
       </section>
 
       {/* Market overview */}
-      <section className="py-10 md:py-12 bg-slate-50 border-y border-slate-100">
+      <section className="py-6 md:py-8 bg-slate-50 border-y border-slate-100">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-rose-600 mb-1">
             Section 2 &middot; Market overview
@@ -345,7 +314,7 @@ export default function RoyaltiesPage() {
       </section>
 
       {/* FAQs */}
-      <section className="py-10 md:py-12 bg-white" id="faqs">
+      <section className="py-6 md:py-8 bg-white" id="faqs">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-rose-600 mb-1">
             Section 3 &middot; FAQs
@@ -378,7 +347,7 @@ export default function RoyaltiesPage() {
       </section>
 
       {/* Advisor CTA */}
-      <section className="py-12 md:py-14 bg-slate-900 text-white" id="find-advisor">
+      <section className="py-8 md:py-10 bg-slate-900 text-white" id="find-advisor">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-rose-400 mb-2">
             Section 4 &middot; Get specialist help

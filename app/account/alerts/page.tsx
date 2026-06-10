@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { Button } from "@/components/ui/Button";
 import AlertsClient from "./AlertsClient";
 import PushOptIn from "./PushOptIn";
 import MorningBriefToggle from "./MorningBriefToggle";
@@ -65,12 +66,9 @@ export default async function AccountAlertsPage() {
                 : `${alerts.length} alert${alerts.length === 1 ? "" : "s"} set up`}
             </p>
           </div>
-          <Link
-            href="/rate-alerts"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-700 transition-colors"
-          >
+          <Button href="/rate-alerts" size="sm">
             + New alert
-          </Link>
+          </Button>
         </div>
 
         {/* Email + push notification preferences */}

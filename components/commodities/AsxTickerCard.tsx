@@ -110,7 +110,7 @@ export default function AsxTickerCard({ stock }: Props) {
         )}
       </dl>
 
-      <p className="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-400">
+      <p className="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500">
         Past performance is not a reliable indicator of future performance.
         Consider your personal circumstances.
       </p>

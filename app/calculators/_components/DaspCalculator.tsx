@@ -86,18 +86,18 @@ export default function DaspCalculator({ searchParams }: Props) {
               {/* Hero number */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 md:mb-6 pb-4 md:pb-5 border-b border-slate-100">
                 <div>
-                  <span className="text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-400">You Receive (After Tax)</span>
+                  <span className="text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500">You Receive (After Tax)</span>
                   <div className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mt-0.5">
                     <AnimatedNumber value={r.netPayment} prefix="$" decimals={0} />
                   </div>
                 </div>
                 <div className="mt-2 sm:mt-0 flex gap-4 md:gap-6">
                   <div className="text-left sm:text-right">
-                    <span className="block text-[0.69rem] md:text-xs font-bold uppercase text-slate-400">DASP Tax</span>
+                    <span className="block text-[0.69rem] md:text-xs font-bold uppercase text-slate-500">DASP Tax</span>
                     <span className="text-lg md:text-xl font-bold text-red-500">${Math.round(r.totalTax).toLocaleString()}</span>
                   </div>
                   <div className="text-left sm:text-right">
-                    <span className="block text-[0.69rem] md:text-xs font-bold uppercase text-slate-400">Effective Rate</span>
+                    <span className="block text-[0.69rem] md:text-xs font-bold uppercase text-slate-500">Effective Rate</span>
                     <span className="text-lg md:text-xl font-bold text-slate-700">{(r.effectiveRate * 100).toFixed(0)}%</span>
                   </div>
                 </div>

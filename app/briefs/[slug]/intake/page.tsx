@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { getQuestionsForBrief } from "@/lib/pro-intake";
 import type { BriefRow } from "@/lib/briefs/types";
+import Icon from "@/components/Icon";
 
 import IntakeAnswerForm from "./IntakeAnswerForm";
 
@@ -47,51 +48,70 @@ export default async function BriefIntakePage({
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="max-w-3xl mx-auto px-4 py-8 sm:py-12">
-        <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
+      <div className="max-w-3xl mx-auto px-4 pt-4 pb-10 md:pt-5">
+        {/* Compact light header (B13) */}
+        <nav aria-label="Breadcrumb" className="mb-1.5 text-[11px] md:text-xs text-slate-500">
           <Link href={`/briefs/${slug}`} className="hover:text-slate-700">
             Brief status
           </Link>
-          <span>/</span>
-          <span className="text-slate-700">Additional info</span>
-        </div>
+          <span className="mx-1.5" aria-hidden>/</span>
+          <span className="text-slate-600">Additional info</span>
+        </nav>
 
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
+        <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-[1.9rem]">
           A few extra details
         </h1>
-        <p className="text-sm text-slate-600 mb-6">{brief.job_title}</p>
+        <p className="mt-1 max-w-2xl text-[12.5px] leading-snug text-slate-500 md:text-[13.5px]">
+          {brief.job_title}
+        </p>
 
-        {!acceptedYet && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
-            <p className="font-semibold">Waiting on a provider</p>
-            <p className="mt-1">
-              We&apos;ll surface these questions once a verified provider accepts your
-              brief. Check back from your{" "}
-              <Link href={`/briefs/${slug}`} className="underline">
-                brief status page
-              </Link>
-              .
-            </p>
-          </div>
-        )}
+        <div className="mt-4">
+          {!acceptedYet && (
+            <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+              <Icon name="clock" size={16} className="mt-0.5 shrink-0 text-amber-600" />
+              <div>
+                <p className="font-semibold">Waiting on a provider</p>
+                <p className="mt-1">
+                  We&apos;ll surface these questions once a verified provider accepts your
+                  brief. Check back from your{" "}
+                  <Link href={`/briefs/${slug}`} className="underline">
+                    brief status page
+                  </Link>
+                  .
+                </p>
+              </div>
+            </div>
+          )}
 
-        {acceptedYet && questions.length === 0 && (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-900">
-            <p className="font-semibold">You&apos;re all set.</p>
-            <p className="mt-1">
-              Your provider didn&apos;t request any extra info. They&apos;ll be in
-              touch directly.{" "}
-              <Link href={`/briefs/${slug}`} className="underline">
-                Back to brief status
-              </Link>
-              .
-            </p>
-          </div>
-        )}
+          {acceptedYet && questions.length === 0 && (
+            <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+              <Icon name="check-circle" size={16} className="mt-0.5 shrink-0 text-emerald-600" />
+              <div>
+                <p className="font-semibold">You&apos;re all set.</p>
+                <p className="mt-1">
+                  Your provider didn&apos;t request any extra info. They&apos;ll be in
+                  touch directly.{" "}
+                  <Link href={`/briefs/${slug}`} className="underline">
+                    Back to brief status
+                  </Link>
+                  .
+                </p>
+              </div>
+            </div>
+          )}
 
-        {acceptedYet && questions.length > 0 && (
-          <IntakeAnswerForm slug={brief.slug} questions={questions} />
-        )}
+          {acceptedYet && questions.length > 0 && (
+            <>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600">
+                <Icon name="clipboard-list" size={12} className="shrink-0" />
+                {questions.length} {questions.length === 1 ? "question" : "questions"} from your provider
+              </span>
+              <div className="mt-3">
+                <IntakeAnswerForm slug={brief.slug} questions={questions} />
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

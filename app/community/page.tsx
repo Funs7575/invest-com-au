@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import { faqJsonLd } from "@/lib/schema-markup";
 import NewsletterSignup from "@/components/NewsletterSignup";
 
@@ -96,78 +97,47 @@ export default async function CommunityPage() {
         />
       )}
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-16">
-        <div className="container-custom max-w-4xl text-center">
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-4">
-            Community Forum
-          </h1>
-          <p className="text-slate-300 text-lg max-w-2xl mx-auto mb-8">
+      {/* Compact light hero (F10) — breadcrumb, stats and CTAs in one header */}
+      <DirectoryHero
+        tone="light"
+        containerClassName="container-custom max-w-4xl"
+        breadcrumbLabel="Community"
+        headlineLead="Community Forum"
+        subtitle={
+          <>
             A place for Australian investors to compare notes on strategies,
             brokers, and opportunities. Start a thread or jump into the
             discussion.
-          </p>
+          </>
+        }
+        stats={
+          totalThreads > 0
+            ? [
+                { v: totalThreads.toLocaleString(), l: "threads" },
+                { v: totalPosts.toLocaleString(), l: "posts" },
+              ]
+            : undefined
+        }
+      >
+        <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/community/new"
-            className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
           >
-            <Icon name="plus" size={18} />
+            <Icon name="plus" size={16} />
             New Thread
           </Link>
-          <p className="mt-4">
-            <Link
-              href="/community/guidelines"
-              className="text-xs text-slate-400 hover:text-slate-200 underline transition-colors"
-            >
-              Community guidelines
-            </Link>
-          </p>
+          <Link
+            href="/community/guidelines"
+            className="text-xs text-slate-500 hover:text-slate-700 underline transition-colors"
+          >
+            Community guidelines
+          </Link>
         </div>
-      </section>
-
-      {/* Breadcrumbs */}
-      <div className="container-custom max-w-4xl mt-6">
-        <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
-          <ol className="flex items-center gap-1">
-            <li>
-              <Link href="/" className="hover:text-slate-700">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Icon name="chevron-right" size={14} className="text-slate-400" />
-            </li>
-            <li className="text-slate-900 font-medium">Community</li>
-          </ol>
-        </nav>
-      </div>
-
-      {/* Stats Bar */}
-      <div className="container-custom max-w-4xl mb-8">
-        <div className="flex flex-wrap gap-6 bg-white border border-slate-200 rounded-xl px-6 py-4">
-          <div className="flex items-center gap-2">
-            <Icon name="message-circle" size={18} className="text-slate-400" />
-            <span className="text-sm text-slate-600">
-              <span className="font-semibold text-slate-900">
-                {totalThreads.toLocaleString()}
-              </span>{" "}
-              threads
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Icon name="users" size={18} className="text-slate-400" />
-            <span className="text-sm text-slate-600">
-              <span className="font-semibold text-slate-900">
-                {totalPosts.toLocaleString()}
-              </span>{" "}
-              posts
-            </span>
-          </div>
-        </div>
-      </div>
+      </DirectoryHero>
 
       {/* Featured — confessions */}
-      <div className="container-custom max-w-4xl mb-6">
+      <div className="container-custom max-w-4xl mt-5 mb-6">
         <Link
           href="/community/confessions"
           className="flex items-center justify-between gap-4 bg-slate-800 hover:bg-slate-700 text-white rounded-xl px-5 py-4 transition-colors group"

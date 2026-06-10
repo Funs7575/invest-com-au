@@ -119,7 +119,7 @@ export default function DebateSideVote({ threadId, initialBull = 0, initialBear 
 
       <div className="flex items-center justify-between text-xs text-slate-500 mb-5">
         <span className="font-medium text-emerald-700">{bullPct}% Bull</span>
-        <span className="text-slate-400">{total} {total === 1 ? "vote" : "votes"}</span>
+        <span className="text-slate-500">{total} {total === 1 ? "vote" : "votes"}</span>
         <span className="font-medium text-red-500">{bearPct}% Bear</span>
       </div>
 

@@ -107,18 +107,18 @@ export default function CompoundInterestCalculator({ searchParams }: Props) {
               {/* Hero */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-4 border-b border-slate-100 gap-3">
                 <div>
-                  <span className="text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-400">Final Amount</span>
+                  <span className="text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500">Final Amount</span>
                   <div className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mt-0.5">
                     <AnimatedNumber value={result.finalAmount} />
                   </div>
                 </div>
                 <div className="flex gap-4 md:gap-6">
                   <div>
-                    <span className="block text-[0.69rem] font-bold uppercase text-slate-400">Contributed</span>
+                    <span className="block text-[0.69rem] font-bold uppercase text-slate-500">Contributed</span>
                     <span className="text-lg font-bold text-slate-700">{fmt(result.totalContributed)}</span>
                   </div>
                   <div>
-                    <span className="block text-[0.69rem] font-bold uppercase text-slate-400">Interest</span>
+                    <span className="block text-[0.69rem] font-bold uppercase text-slate-500">Interest</span>
                     <span className="text-lg font-bold text-emerald-600">{fmt(result.totalInterest)}</span>
                   </div>
                 </div>
@@ -126,7 +126,7 @@ export default function CompoundInterestCalculator({ searchParams }: Props) {
 
               {/* Growth chart */}
               <div className="space-y-1.5">
-                <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400 mb-2">Growth Over Time</p>
+                <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500 mb-2">Growth Over Time</p>
                 {result.snapshots.filter((_, i) => i % Math.max(1, Math.floor(result.snapshots.length / 8)) === 0 || i === result.snapshots.length - 1).map((s) => (
                   <div key={s.year}>
                     <div className="flex justify-between text-xs mb-0.5">
@@ -144,14 +144,14 @@ export default function CompoundInterestCalculator({ searchParams }: Props) {
               </div>
 
               {result.effectiveRate > 0 && (
-                <p className="text-xs text-slate-400 mt-4">
+                <p className="text-xs text-slate-500 mt-4">
                   Effective annual rate: <strong className="text-slate-600">{result.effectiveRate.toFixed(2)}%</strong>
                 </p>
               )}
             </div>
           ) : (
             <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 md:p-12 text-center h-full flex flex-col items-center justify-center">
-              <p className="text-slate-400 text-sm">Enter an investment amount to see your growth projection.</p>
+              <p className="text-slate-500 text-sm">Enter an investment amount to see your growth projection.</p>
             </div>
           )}
         </div>

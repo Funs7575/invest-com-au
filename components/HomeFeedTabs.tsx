@@ -79,11 +79,11 @@ function FeedEventCard({ event }: { event: FeedEvent }) {
           )}
           <div className="flex items-center gap-2 mt-1">
             {event.actor_name && (
-              <span className="text-[11px] text-slate-400 font-medium">
+              <span className="text-[11px] text-slate-500 font-medium">
                 {event.actor_name}
               </span>
             )}
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-slate-500">
               {timeAgo(event.published_at)}
             </span>
           </div>
@@ -209,7 +209,7 @@ export default function HomeFeedTabs({ initialEvents, initialCursor }: Props) {
         role="tabpanel"
       >
         {events.length === 0 && !loading ? (
-          <div className="px-4 py-8 text-center text-sm text-slate-400">
+          <div className="px-4 py-8 text-center text-sm text-slate-500">
             {currentTab?.loaded
               ? "Nothing here yet — check back soon."
               : "Loading…"}
@@ -226,12 +226,12 @@ export default function HomeFeedTabs({ initialEvents, initialCursor }: Props) {
           </>
         )}
         {loading && (
-          <div className="px-4 py-3 text-xs text-slate-400 text-center border-t border-slate-100">
+          <div className="px-4 py-3 text-xs text-slate-500 text-center border-t border-slate-100">
             Loading…
           </div>
         )}
         {!hasMore && events.length > 0 && (
-          <div className="px-4 py-3 text-xs text-slate-400 text-center border-t border-slate-100">
+          <div className="px-4 py-3 text-xs text-slate-500 text-center border-t border-slate-100">
             You&apos;re all caught up.
           </div>
         )}

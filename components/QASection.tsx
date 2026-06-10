@@ -94,7 +94,7 @@ function VoteButtons({
             ? "text-blue-700"
             : initialCount < 0
               ? "text-red-500"
-              : "text-slate-400"
+              : "text-slate-500"
         }`}
       >
         {initialCount}

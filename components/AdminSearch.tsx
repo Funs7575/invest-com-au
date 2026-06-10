@@ -272,14 +272,14 @@ export default function AdminSearch() {
           {query.length === 0 && (
             <div className="px-4 py-6 text-center">
               <p className="text-sm text-slate-500">Start typing to search...</p>
-              <p className="text-xs text-slate-400 mt-1">Search pages, brokers, articles, and more</p>
+              <p className="text-xs text-slate-500 mt-1">Search pages, brokers, articles, and more</p>
             </div>
           )}
 
           {query.length > 0 && allResults.length === 0 && !searching && (
             <div className="px-4 py-6 text-center">
               <p className="text-sm text-slate-500">No results found</p>
-              <p className="text-xs text-slate-400 mt-1">Try a different search term</p>
+              <p className="text-xs text-slate-500 mt-1">Try a different search term</p>
             </div>
           )}
 
@@ -302,7 +302,7 @@ export default function AdminSearch() {
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-slate-900 truncate">{result.title}</div>
                     {result.subtitle && (
-                      <div className="text-xs text-slate-400 truncate">{result.subtitle}</div>
+                      <div className="text-xs text-slate-500 truncate">{result.subtitle}</div>
                     )}
                   </div>
                   <span className="text-[0.6rem] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 uppercase font-medium shrink-0">
@@ -333,7 +333,7 @@ export default function AdminSearch() {
                     <span className="text-base shrink-0">{result.icon}</span>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-slate-900 truncate">{result.title}</div>
-                      <div className="text-xs text-slate-400 truncate">{result.href}</div>
+                      <div className="text-xs text-slate-500 truncate">{result.href}</div>
                     </div>
                   </button>
                 );
@@ -343,7 +343,7 @@ export default function AdminSearch() {
 
           {searching && (
             <div className="px-4 py-3 text-center">
-              <span className="text-xs text-slate-400 animate-pulse">Searching...</span>
+              <span className="text-xs text-slate-500 animate-pulse">Searching...</span>
             </div>
           )}
         </div>

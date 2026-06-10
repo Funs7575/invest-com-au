@@ -72,7 +72,7 @@ export default function BuyerAgentsClient() {
     <div className="bg-white min-h-screen">
       <section className="bg-white border-b border-slate-100">
         <div className="container-custom py-6 md:py-8">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-600">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-600">Property</Link>
@@ -158,7 +158,7 @@ export default function BuyerAgentsClient() {
                         <p className="font-bold text-slate-900 truncate">{agent.name}</p>
                         {agent.verified && <Icon name="shield-check" size={14} className="text-emerald-500 shrink-0" />}
                       </div>
-                      <p className="text-xs text-slate-400 truncate">{agent.agency_name}</p>
+                      <p className="text-xs text-slate-500 truncate">{agent.agency_name}</p>
                     </div>
                   </div>
 
@@ -171,7 +171,7 @@ export default function BuyerAgentsClient() {
                         </svg>
                       ))}
                     </div>
-                    <span className="text-xs text-slate-400">{agent.rating}/5 ({agent.review_count} reviews)</span>
+                    <span className="text-xs text-slate-500">{agent.rating}/5 ({agent.review_count} reviews)</span>
                   </div>
 
                   {agent.bio && <p className="text-xs text-slate-500 line-clamp-2 mb-3">{agent.bio}</p>}
@@ -187,7 +187,7 @@ export default function BuyerAgentsClient() {
                   </div>
 
                   {agent.fee_structure && (
-                    <p className="text-xs text-slate-400 mb-3">Fee: {agent.fee_structure}</p>
+                    <p className="text-xs text-slate-500 mb-3">Fee: {agent.fee_structure}</p>
                   )}
 
                   <Link

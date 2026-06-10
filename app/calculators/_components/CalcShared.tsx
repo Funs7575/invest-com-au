@@ -133,7 +133,7 @@ export function InputField({ label, value, onChange, placeholder, prefix, suffix
     <div>
       <label htmlFor={id} className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">{label}</label>
       <div className="relative">
-        {prefix && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">{prefix}</div>}
+        {prefix && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">{prefix}</div>}
         <input
           id={id}
           type="number" inputMode="decimal"
@@ -142,7 +142,7 @@ export function InputField({ label, value, onChange, placeholder, prefix, suffix
           placeholder={placeholder}
           className={`w-full bg-white border border-slate-200 rounded-lg py-2 min-h-11 text-sm shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium ${prefix ? "pl-7" : "pl-3 md:pl-4"} ${suffix ? "pr-10" : "pr-3 md:pr-4"}`}
         />
-        {suffix && <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">{suffix}</div>}
+        {suffix && <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">{suffix}</div>}
       </div>
     </div>
   );

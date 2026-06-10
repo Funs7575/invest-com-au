@@ -4,6 +4,7 @@ import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo
 import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import NewsletterCta from "./NewsletterCta";
 import { LEARNING_PATHS, sumEstimatedMinutes } from "@/lib/learning-paths";
 import { Suspense } from "react";
@@ -108,6 +109,10 @@ export default async function LearnHubPage() {
   const articles = await fetchBeginnerArticles();
   const showArticles = articles.length > 0 ? articles : FALLBACK_ARTICLES.map((a) => ({ ...a, category: "beginners" as string | null }));
 
+  // Honest hero stats derived from the path registry.
+  const totalSteps = LEARNING_PATHS.reduce((s, p) => s + p.steps.length, 0);
+  const totalContentMins = LEARNING_PATHS.reduce((s, p) => s + sumEstimatedMinutes(p), 0);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Learn", url: absoluteUrl("/learn") },
@@ -138,24 +143,26 @@ export default async function LearnHubPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(hubItemListLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(learnHubFaqLd) }} />
       <div className="bg-white min-h-screen">
-        <section className="bg-slate-900 text-white py-10 md:py-14">
-          <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-white">Home</Link>
-              <span className="text-slate-600">/</span>
-              <span className="text-white font-medium">Learn</span>
-            </nav>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-3 max-w-3xl">
-              Learning Paths for Australian Investors
-            </h1>
-            <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-3xl">
+        <DirectoryHero
+          tone="light"
+          breadcrumbLabel="Learn"
+          headlineLead="Learning Paths"
+          headlineAccent="for Australian Investors"
+          subtitle={
+            <>
               Structured paths through our guides, calculators, and Q&amp;A — from first investment to tax-smart retirement. Tick off steps as you go; progress saves automatically.
-            </p>
-          </div>
-        </section>
+            </>
+          }
+          stats={[
+            { v: `${LEARNING_PATHS.length}`, l: "learning paths" },
+            { v: `${totalSteps}`, l: "guided steps" },
+            { v: totalContentMins < 60 ? `${totalContentMins} min` : `~${Math.round(totalContentMins / 60)} hrs`, l: "of content" },
+            { v: "Free", l: "no sign-in needed" },
+          ]}
+        />
 
         {/* ── Learning Paths grid ── */}
-        <section className="py-12 bg-white" aria-labelledby="paths-heading">
+        <section className="pt-6 pb-12 bg-white" aria-labelledby="paths-heading">
           <div className="container-custom max-w-6xl">
             <h2 id="paths-heading" className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
               Choose a learning path

@@ -91,7 +91,7 @@ export default function FeeSimulatorQuickView({ brokers, searchParams }: Props) 
           </div>
 
           <div className="space-y-2.5">
-            <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400 mb-1">
+            <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500 mb-1">
               Top 5 brokers by annual cost
             </p>
             {ranked.map((r, i) => {
@@ -125,7 +125,7 @@ export default function FeeSimulatorQuickView({ brokers, searchParams }: Props) 
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Enter your trading profile to see the top 5 cheapest brokers.</p>
+          <p className="text-slate-500 text-sm">Enter your trading profile to see the top 5 cheapest brokers.</p>
         </div>
       )}
 

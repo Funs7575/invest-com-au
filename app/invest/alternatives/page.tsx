@@ -118,10 +118,10 @@ export default function AlternativesHubPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(financialServiceJsonLd) }} />
 
-      <div className="py-5 md:py-12">
+      <div className="pt-3 pb-6 md:pt-4 md:pb-10">
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-2 md:mb-3">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/invest" className="hover:text-slate-900">Invest</Link>
@@ -130,15 +130,15 @@ export default function AlternativesHubPage() {
           </nav>
 
           {/* Hero — uses vertical config heading/subtext */}
-          <div className="bg-gradient-to-br from-rose-50 to-white border border-rose-200/50 rounded-2xl p-4 md:p-6 mb-3 md:mb-4">
-            <h1 className="text-xl md:text-4xl font-extrabold mb-2 md:mb-3 text-slate-900">
+          <div className="bg-gradient-to-br from-rose-50 to-white border border-rose-200/50 rounded-2xl p-4 md:p-5 mb-3 md:mb-4">
+            <h1 className="text-2xl md:text-[1.9rem] font-extrabold leading-tight tracking-tight mb-2 text-slate-900">
               {vertical?.heroHeadline ?? "Compare Alternative Investment Platforms in Australia"}
             </h1>
-            <p className="text-xs md:text-base text-slate-600 mb-2">
+            <p className="text-[13px] md:text-base text-slate-600 mb-2">
               {vertical?.heroSubtext ??
                 `Diversify beyond shares and property with wine, art, classic cars, watches, rare coins, and whisky. Compare platforms, browse listings, and learn how Australians are accessing alternative asset classes in ${CURRENT_YEAR}.`}
             </p>
-            <p className="text-[0.56rem] md:text-xs text-slate-500">
+            <p className="text-[10px] md:text-xs text-slate-500">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>

@@ -152,7 +152,7 @@ export default function BrokerComparisonTable({
                   {b.fx_rate != null ? (
                     <FxBadge rate={b.fx_rate} />
                   ) : (
-                    <span className="text-xs text-slate-400">N/A</span>
+                    <span className="text-xs text-slate-500">N/A</span>
                   )}
                 </td>
                 <td className="px-5 py-4 text-center text-sm font-medium text-slate-700">

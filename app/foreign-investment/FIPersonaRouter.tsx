@@ -125,7 +125,7 @@ export default function FIPersonaRouter() {
             </p>
             <div
               className={`mt-2 text-xs font-bold transition-colors ${
-                selected === j.id ? "text-amber-600" : "text-slate-400"
+                selected === j.id ? "text-amber-600" : "text-slate-500"
               }`}
             >
               {selected === j.id ? "Selected ✓" : "Select →"}

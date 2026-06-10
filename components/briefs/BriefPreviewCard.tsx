@@ -93,7 +93,7 @@ export default function BriefPreviewCard({
         </p>
 
         {providerPreferenceLabel && (
-          <p className="text-[0.7rem] text-slate-400">
+          <p className="text-[0.7rem] text-slate-500">
             Routed to: <span className="font-semibold text-slate-500">{providerPreferenceLabel}</span>
           </p>
         )}

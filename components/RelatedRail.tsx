@@ -58,7 +58,7 @@ function RailCard({ item }: { item: RelatedItem }) {
         {item.title}
       </span>
       {item.meta && (
-        <span className="mt-2 text-[0.69rem] text-slate-400">{item.meta}</span>
+        <span className="mt-2 text-[0.69rem] text-slate-500">{item.meta}</span>
       )}
     </Link>
   );

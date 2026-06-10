@@ -225,7 +225,7 @@ export default async function SendMoneyAustraliaPage() {
                       {p.rating && (
                         <div className="text-right">
                           <p className="font-extrabold text-2xl text-amber-600"><span aria-hidden="true">{renderStars(p.rating)}</span> <span aria-label={`${p.rating.toFixed(1)} out of 5 stars`}>{p.rating.toFixed(1)}</span></p>
-                          <p className="text-xs text-slate-400">rating</p>
+                          <p className="text-xs text-slate-500">rating</p>
                         </div>
                       )}
                     </div>
@@ -297,7 +297,7 @@ export default async function SendMoneyAustraliaPage() {
             }) : (
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
                 <p className="text-slate-500 mb-4">Loading provider data...</p>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-slate-500">
                   <Link href="/compare/fx" className="text-amber-600 underline">View FX provider comparison</Link>
                 </p>
               </div>
@@ -317,7 +317,7 @@ export default async function SendMoneyAustraliaPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-extrabold text-2xl text-amber-600">★★½☆☆ 2.8</p>
-                    <p className="text-xs text-slate-400">rating</p>
+                    <p className="text-xs text-slate-500">rating</p>
                   </div>
                 </div>
 

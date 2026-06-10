@@ -62,13 +62,13 @@ export default function MortgageQuickView({ searchParams }: Props) {
             <ResultBox label="Total Interest" value={fmt(result.totalInterest)} negative />
             <ResultBox label="Total to Pay" value={fmt(result.totalPay)} />
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             i — Based on a standard amortising loan: M = P × r(1+r)ⁿ / ((1+r)ⁿ − 1), where r is monthly rate and n is months.
           </p>
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Enter a loan amount and term to see your repayment.</p>
+          <p className="text-slate-500 text-sm">Enter a loan amount and term to see your repayment.</p>
         </div>
       )}
 

@@ -78,7 +78,7 @@ export default function DASPCalculator() {
           <div>
             <label htmlFor="dasp-balance" className="block text-xs font-bold text-slate-700 mb-1.5">Super balance (AUD)</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
               <input
                 id="dasp-balance"
                 type="text"
@@ -93,7 +93,7 @@ export default function DASPCalculator() {
           <div>
             <label htmlFor="dasp-tax-free-pct" className="block text-xs font-bold text-slate-700 mb-1">
               Tax-free component (%)
-              <span className="font-normal text-slate-400 ms-1">— after-tax contributions only</span>
+              <span className="font-normal text-slate-500 ms-1">— after-tax contributions only</span>
             </label>
             <div className="relative">
               <input
@@ -106,9 +106,9 @@ export default function DASPCalculator() {
                 placeholder="0"
                 className="w-full pe-8 ps-3 py-2 text-sm border border-slate-300 rounded-xl bg-white text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">%</span>
             </div>
-            <p className="text-[0.6rem] text-slate-400 mt-1">Most super is 0% tax-free. Only non-concessional (after-tax) contributions are tax-free.</p>
+            <p className="text-[0.6rem] text-slate-500 mt-1">Most super is 0% tax-free. Only non-concessional (after-tax) contributions are tax-free.</p>
           </div>
         </div>
       </div>
@@ -180,11 +180,11 @@ export default function DASPCalculator() {
         </div>
       ) : (
         <div className="rounded-2xl bg-slate-50 border border-slate-200 px-5 py-6 text-center">
-          <p className="text-sm text-slate-400">Enter your super balance above to see your estimated DASP payout</p>
+          <p className="text-sm text-slate-500">Enter your super balance above to see your estimated DASP payout</p>
         </div>
       )}
 
-      <p className="mt-3 text-[0.65rem] text-slate-400 leading-relaxed">
+      <p className="mt-3 text-[0.65rem] text-slate-500 leading-relaxed">
         Estimates only. Most super balances are 100% taxed element (concessional contributions and earnings). Tax-free component only arises from non-concessional (after-tax) contributions. Consult your super fund and a registered tax agent for exact figures.
       </p>
     </div>

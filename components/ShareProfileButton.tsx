@@ -102,7 +102,7 @@ export default function ShareProfileButton({ initialTokens = [] }: Props) {
 
       {activeTokens.length > 0 && (
         <div className="mt-5">
-          <p className="text-xs uppercase tracking-wide text-slate-400 font-medium mb-2">
+          <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-2">
             Active links ({activeTokens.length})
           </p>
           <ul className="space-y-2">
@@ -119,7 +119,7 @@ export default function ShareProfileButton({ initialTokens = [] }: Props) {
                   className={
                     t.consumed_at
                       ? "text-emerald-700 font-medium"
-                      : "text-slate-400"
+                      : "text-slate-500"
                   }
                 >
                   {t.consumed_at ? "Viewed" : "Not yet viewed"}
@@ -130,7 +130,7 @@ export default function ShareProfileButton({ initialTokens = [] }: Props) {
         </div>
       )}
 
-      <p className="mt-4 text-xs text-slate-400">
+      <p className="mt-4 text-xs text-slate-500">
         Links contain only what you&apos;ve set in your investor profile — no financial account data.
         General information only; not personal advice.
       </p>

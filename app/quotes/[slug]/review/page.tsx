@@ -52,9 +52,9 @@ export default async function ReviewPage({ params, searchParams }: PageProps) {
   if (!advisor) notFound();
 
   return (
-    <section className="bg-slate-50 min-h-[70vh] py-14">
+    <section className="bg-slate-50 min-h-[70vh] py-8 md:py-10">
       <div className="max-w-xl mx-auto px-4">
-        <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm">
           <p className="text-xs uppercase tracking-wider text-amber-600 font-bold mb-1">Share your experience</p>
           <h1 className="text-2xl font-extrabold text-slate-900 mb-2">
             How was {advisor.name as string}?

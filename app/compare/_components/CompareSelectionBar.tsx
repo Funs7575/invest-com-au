@@ -220,10 +220,10 @@ export default function CompareSelectionBar({
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[0.62rem]">
-                      <div><span className="text-slate-400">ASX Fee</span><div className="font-bold text-slate-800">{br.asx_fee || "N/A"}</div></div>
-                      <div><span className="text-slate-400">US Fee</span><div className="font-bold text-slate-800">{br.us_fee || "N/A"}</div></div>
-                      <div><span className="text-slate-400">FX Rate</span><div className="font-bold text-slate-800">{br.fx_rate != null ? `${br.fx_rate}%` : "N/A"}</div></div>
-                      <div><span className="text-slate-400">CHESS</span><div className="font-bold text-slate-800">{br.chess_sponsored ? "Yes" : "No"}</div></div>
+                      <div><span className="text-slate-500">ASX Fee</span><div className="font-bold text-slate-800">{br.asx_fee || "N/A"}</div></div>
+                      <div><span className="text-slate-500">US Fee</span><div className="font-bold text-slate-800">{br.us_fee || "N/A"}</div></div>
+                      <div><span className="text-slate-500">FX Rate</span><div className="font-bold text-slate-800">{br.fx_rate != null ? `${br.fx_rate}%` : "N/A"}</div></div>
+                      <div><span className="text-slate-500">CHESS</span><div className="font-bold text-slate-800">{br.chess_sponsored ? "Yes" : "No"}</div></div>
                     </div>
                     <Link href={`/broker/${br.slug}`} className="block mt-2 text-center text-[0.62rem] font-semibold text-violet-600 hover:text-violet-800">
                       Full Review →

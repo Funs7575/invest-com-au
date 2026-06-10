@@ -355,7 +355,7 @@ export default function SmsfBorrowingPage() {
                   <li>Liberty Financial</li>
                   <li>Pepper Money (select products)</li>
                 </ul>
-                <p className="text-xs text-slate-400 mt-3">
+                <p className="text-xs text-slate-500 mt-3">
                   Lender availability changes. Verify current product availability with an SMSF
                   mortgage broker.
                 </p>
@@ -901,7 +901,7 @@ export default function SmsfBorrowingPage() {
               advice from a licensed professional before acting. No credit assistance is provided
               or implied.
             </p>
-            <p className="text-xs text-slate-400 mt-2">{UPDATED_LABEL}</p>
+            <p className="text-xs text-slate-500 mt-2">{UPDATED_LABEL}</p>
           </div>
         </section>
 

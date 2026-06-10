@@ -247,7 +247,7 @@ export default function AlternativesPlatformsClient({ platforms }: Props) {
                     key={p.slug}
                     className={`hover:bg-slate-50 ${i === 0 ? "bg-rose-50/40" : ""}`}
                   >
-                    <td className="px-4 py-3 text-sm font-semibold text-slate-400">{i + 1}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-slate-500">{i + 1}</td>
                     <td className="px-4 py-3">
                       <a
                         href={`#${p.slug}`}
@@ -302,13 +302,13 @@ export default function AlternativesPlatformsClient({ platforms }: Props) {
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-y-1 text-xs text-slate-600">
-                  <span className="text-slate-400">Asset Class</span>
+                  <span className="text-slate-500">Asset Class</span>
                   <span>{p.assetClass}</span>
-                  <span className="text-slate-400">Minimum</span>
+                  <span className="text-slate-500">Minimum</span>
                   <span>{p.minInvestment}</span>
-                  <span className="text-slate-400">Fees</span>
+                  <span className="text-slate-500">Fees</span>
                   <span>{p.fees}</span>
-                  <span className="text-slate-400">AU Access</span>
+                  <span className="text-slate-500">AU Access</span>
                   <span className={p.australianDirect ? "text-emerald-600 font-semibold" : "text-amber-600"}>
                     {p.australiaAccess}
                   </span>
@@ -369,7 +369,7 @@ export default function AlternativesPlatformsClient({ platforms }: Props) {
                         { label: "AU Access", value: p.australiaAccess },
                       ].map(({ label, value }) => (
                         <div key={label} className="bg-slate-50 rounded-lg p-3 text-center">
-                          <div className="text-[0.65rem] uppercase tracking-wide text-slate-400 mb-0.5">
+                          <div className="text-[0.65rem] uppercase tracking-wide text-slate-500 mb-0.5">
                             {label}
                           </div>
                           <div className="text-sm font-bold text-slate-800">{value}</div>
