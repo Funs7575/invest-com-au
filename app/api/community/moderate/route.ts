@@ -5,22 +5,52 @@ import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { isAllowed } from "@/lib/rate-limit-db";
+import { recountCategory, recountThread } from "@/lib/community/recount";
 
 const log = logger("community:moderate");
 
-const VALID_ACTIONS = ["pin", "unpin", "lock", "unlock", "remove", "report"] as const;
+const VALID_ACTIONS = [
+  "pin",
+  "unpin",
+  "lock",
+  "unlock",
+  "remove",
+  "approve",
+  "dismiss_report",
+  "report",
+] as const;
 // Moderator-only actions (everything except "report", which any signed-in user may do).
 type ModAction = Exclude<(typeof VALID_ACTIONS)[number], "report">;
 
 const ModerateBody = z.object({
-  action: z.enum(["pin", "unpin", "lock", "unlock", "remove", "report"]),
+  action: z.enum(["pin", "unpin", "lock", "unlock", "remove", "approve", "dismiss_report", "report"]),
   thread_id: z.number().int().positive().optional(),
   post_id: z.number().int().positive().optional(),
-  // "report" payload (any authenticated, non-author user):
+  // "report" / "dismiss_report" payload:
   target_type: z.enum(["thread", "post"]).optional(),
   target_id: z.number().int().positive().optional(),
   reason: z.string().max(500).optional(),
 });
+
+/** Resolve every open report on a target (covers user reports AND the
+ *  auto_moderation hold row). Status records how the queue item ended. */
+async function closeOpenReports(
+  admin: ReturnType<typeof createAdminClient>,
+  targetType: "thread" | "post",
+  targetId: number,
+  status: "reviewed" | "dismissed" | "action_taken",
+  resolvedBy: string,
+): Promise<void> {
+  const { error } = await admin
+    .from("forum_reports")
+    .update({ status, resolved_by: resolvedBy, resolved_at: new Date().toISOString() })
+    .eq("target_type", targetType)
+    .eq("target_id", targetId)
+    .eq("status", "open");
+  if (error) {
+    log.warn("Failed to close reports", { targetType, targetId, error: error.message });
+  }
+}
 
 async function isModerator(userId: string, userEmail: string | undefined): Promise<boolean> {
   if (userEmail && ADMIN_EMAILS.includes(userEmail.toLowerCase())) return true;
@@ -159,20 +189,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ thread: updated });
     }
 
-    // Remove action: can target either thread or post
-    if (action === "remove") {
+    // Remove / approve: flip visibility on a thread or post, resolve any
+    // open queue rows, then recount counters from live rows (counters must
+    // only ever reflect visible content).
+    if (action === "remove" || action === "approve") {
+      const makeVisible = action === "approve";
+
       if (thread_id) {
         const { data: updated, error: updateError } = await admin
           .from("forum_threads")
-          .update({ is_removed: true, updated_at: now })
+          .update({ is_removed: !makeVisible, updated_at: now })
           .eq("id", thread_id)
-          .select("id, title, is_removed, updated_at")
+          .select("id, title, category_id, is_removed, updated_at")
           .single();
 
         if (updateError || !updated) {
-          log.error("Failed to remove thread", { thread_id, error: updateError?.message });
-          return NextResponse.json({ error: "Thread not found or removal failed" }, { status: 404 });
+          log.error("Failed to moderate thread visibility", { action, thread_id, error: updateError?.message });
+          return NextResponse.json({ error: "Thread not found or update failed" }, { status: 404 });
         }
+
+        await closeOpenReports(admin, "thread", thread_id, makeVisible ? "reviewed" : "action_taken", user.id);
+        await recountCategory(updated.category_id);
 
         return NextResponse.json({ thread: updated });
       }
@@ -180,20 +217,43 @@ export async function POST(req: NextRequest) {
       if (post_id) {
         const { data: updated, error: updateError } = await admin
           .from("forum_posts")
-          .update({ is_removed: true, updated_at: now })
+          .update({ is_removed: !makeVisible, updated_at: now })
           .eq("id", post_id)
-          .select("id, is_removed, updated_at")
+          .select("id, thread_id, is_removed, updated_at")
           .single();
 
         if (updateError || !updated) {
-          log.error("Failed to remove post", { post_id, error: updateError?.message });
-          return NextResponse.json({ error: "Post not found or removal failed" }, { status: 404 });
+          log.error("Failed to moderate post visibility", { action, post_id, error: updateError?.message });
+          return NextResponse.json({ error: "Post not found or update failed" }, { status: 404 });
+        }
+
+        await closeOpenReports(admin, "post", post_id, makeVisible ? "reviewed" : "action_taken", user.id);
+        await recountThread(updated.thread_id);
+        const { data: parentThread } = await admin
+          .from("forum_threads")
+          .select("category_id")
+          .eq("id", updated.thread_id)
+          .single();
+        if (parentThread) {
+          await recountCategory(parentThread.category_id);
         }
 
         return NextResponse.json({ post: updated });
       }
 
-      return NextResponse.json({ error: "thread_id or post_id is required for remove action" }, { status: 400 });
+      return NextResponse.json({ error: `thread_id or post_id is required for ${action} action` }, { status: 400 });
+    }
+
+    // Dismiss report(s) on a target without touching the content.
+    if (action === "dismiss_report") {
+      if (!target_type || !target_id) {
+        return NextResponse.json(
+          { error: "target_type and target_id are required to dismiss reports" },
+          { status: 400 },
+        );
+      }
+      await closeOpenReports(admin, target_type, target_id, "dismissed", user.id);
+      return NextResponse.json({ ok: true });
     }
 
     return NextResponse.json({ error: "Unhandled action" }, { status: 400 });

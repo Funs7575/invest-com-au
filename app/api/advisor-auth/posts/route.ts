@@ -5,8 +5,71 @@ import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { classifyText } from "@/lib/text-moderation";
+import { notifyUser } from "@/lib/notifications";
 
 const log = logger("advisor-auth:posts");
+
+/** Advisor-facing message for a gated post. Advisors are professionals —
+ *  tell them which rule tripped so they can rephrase, unlike the generic
+ *  consumer-forum message. */
+function gateMessage(reasons: string[]): string {
+  const joined = reasons.join(",");
+  if (/forward_looking|guaranteed|multiplier|hype/.test(joined)) {
+    return "Posts with forward-looking price targets or return promises can't be published under our general-advice posture (ASIC RG 170). Rephrase to past performance or general information and try again.";
+  }
+  if (/legal|defamation|accusation/.test(joined)) {
+    return "Posts containing allegations about identifiable parties need review before publishing. Rephrase or contact the team.";
+  }
+  return "This post can't be published because it appears to breach our content guidelines. Edit it and try again.";
+}
+
+/** Followers are notified when an advisor publishes. Capped so one post by
+ *  a large account can't fan out into an unbounded insert loop. */
+const FOLLOWER_NOTIFY_CAP = 500;
+
+async function notifyFollowers(
+  admin: ReturnType<typeof createAdminClient>,
+  professionalId: number,
+  postId: number,
+  postType: string,
+  bodyText: string,
+): Promise<void> {
+  try {
+    const { data: followers } = await admin
+      .from("advisor_follows")
+      .select("follower_user_id")
+      .eq("following_professional_id", professionalId)
+      .limit(FOLLOWER_NOTIFY_CAP);
+    if (!followers || followers.length === 0) return;
+
+    const { data: pro } = await admin
+      .from("professionals")
+      .select("name")
+      .eq("id", professionalId)
+      .single();
+    const advisorName = pro?.name ?? "An adviser you follow";
+    const excerpt = bodyText.length > 140 ? `${bodyText.slice(0, 137)}...` : bodyText;
+
+    for (const follower of followers) {
+      await notifyUser({
+        userId: follower.follower_user_id,
+        type: "announcement",
+        title: `${advisorName} posted a new ${postType}`,
+        body: excerpt,
+        linkUrl: "/feed",
+        emailDeliveryKey: `advisor_post_${postId}`,
+      });
+    }
+  } catch (err) {
+    // Notification fan-out must never fail the post itself.
+    log.warn("Follower notification fan-out failed", {
+      professionalId,
+      postId,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
 
 const PostSchema = z.object({
   body: z.string().min(1).max(2000),
@@ -55,6 +118,25 @@ export const POST = withValidatedBody(PostSchema, async (request, body) => {
   const professionalId = await requireAdvisorSession(request);
   if (!professionalId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
+  // Publish gate — advisor posts render on the public /feed and on profile
+  // pages with the platform's authority behind them, so they run the same
+  // classifyText pipeline as every other UGC surface. Anything short of
+  // auto_publish bounces with the specific reason so the advisor can
+  // rephrase (no hidden-hold queue for professional accounts).
+  const verdict = classifyText({
+    text: body.body,
+    title: body.link_title ?? null,
+    surface: "advisor_post",
+  });
+  if (verdict.verdict !== "auto_publish") {
+    log.warn("Advisor post blocked by publish gate", {
+      professionalId,
+      verdict: verdict.verdict,
+      reasons: verdict.reasons,
+    });
+    return NextResponse.json({ error: gateMessage(verdict.reasons) }, { status: 400 });
+  }
+
   const admin = createAdminClient();
   const { data: post, error } = await admin
     .from("advisor_posts")
@@ -74,6 +156,8 @@ export const POST = withValidatedBody(PostSchema, async (request, body) => {
     log.error("Failed to create advisor post", { error: error?.message, professionalId });
     return NextResponse.json({ error: "Failed to create post" }, { status: 500 });
   }
+
+  await notifyFollowers(admin, professionalId, post.id, body.post_type, body.body);
 
   return NextResponse.json({ post }, { status: 201 });
 });

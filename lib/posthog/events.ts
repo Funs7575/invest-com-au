@@ -11,6 +11,8 @@ export type EventName =
   | 'advisor_response'
   | 'lead_outcome'
   | 'ai_referral'
+  | 'community_thread_submitted'
+  | 'community_post_submitted'
 
 /** Which matching funnel a funnel_* event came from. */
 export type FunnelName = 'get_matched' | 'quiz' | 'find_advisor'
@@ -111,6 +113,22 @@ export interface EventProps {
     vendor: string
     kind: 'assistant' | 'answer_engine'
     landing_path: string
+  }
+  /** Forum thread submission, captured server-side with the publish-gate outcome. */
+  community_thread_submitted: {
+    category_slug: string
+    thread_type: string
+    gate_action: 'publish' | 'hold' | 'reject'
+    risk_score: number
+    gate_reasons: string
+  }
+  /** Forum reply submission, captured server-side with the publish-gate outcome. */
+  community_post_submitted: {
+    thread_id: number
+    gate_action: 'publish' | 'hold' | 'reject'
+    risk_score: number
+    gate_reasons: string
+    is_nested_reply: boolean
   }
 }
 

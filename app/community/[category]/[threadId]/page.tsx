@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { SHOW_MATCH_LANGUAGE } from "@/lib/compliance-config";
 import { resolveAdvisorBadges } from "@/lib/forum-author-badges";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -124,12 +125,31 @@ export async function generateMetadata({
 
   const { data: thread } = await supabase
     .from("forum_threads")
-    .select("title, author_name")
+    .select("title, author_name, is_pinned, vote_score")
     .eq("id", threadId)
     .eq("is_removed", false)
     .single();
 
   if (!thread) return { title: "Thread Not Found" };
+
+  // UGC indexing quality bar: hub + category pages always index, but an
+  // individual thread earns its index entry — moderator-pinned, community-
+  // validated (votes), or carrying a verified-adviser reply. Everything
+  // else stays crawlable-but-noindex so thin/unreviewed UGC never dilutes
+  // the domain (critical through the Oct–Dec 2026 migration window).
+  let indexable = thread.is_pinned === true || (thread.vote_score ?? 0) >= 5;
+  if (!indexable) {
+    const { data: replyAuthors } = await supabase
+      .from("forum_posts")
+      .select("author_id")
+      .eq("thread_id", threadId)
+      .eq("is_removed", false);
+    const authorIds = Array.from(new Set((replyAuthors ?? []).map((p) => p.author_id)));
+    if (authorIds.length > 0) {
+      const advisorBadges = await resolveAdvisorBadges(authorIds);
+      indexable = advisorBadges.size > 0;
+    }
+  }
 
   const title = `${thread.title} - Community Forum`;
   const description = `Discussion started by ${thread.author_name} in the Invest.com.au community forum.`;
@@ -139,6 +159,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+    robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
     alternates: { canonical: absoluteUrl(canonicalPath) },
     openGraph: {
       title,
@@ -270,6 +291,9 @@ export default async function ThreadPage({
   const isViewerModerator =
     viewerId != null && profileMap[viewerId]?.is_moderator === true;
 
+  // First verified-adviser reply gets elevated above the fold.
+  const expertPost = posts.find((p) => p.author_profile?.verified_advisor) ?? null;
+
   // Increment view count (fire-and-forget)
   supabase
     .from("forum_threads")
@@ -397,6 +421,67 @@ export default async function ThreadPage({
           </div>
         </div>
       </div>
+
+      {/* Expert answer — the first verified-adviser reply is elevated above
+          the fold; threads without one get the adviser hand-off CTA. */}
+      {expertPost ? (
+        <div className="container-custom max-w-4xl mb-6">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
+            <div className="flex items-center gap-2 flex-wrap mb-3">
+              <span className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-emerald-800">
+                <Icon name="check-circle" size={14} />
+                Verified adviser reply
+              </span>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap mb-3">
+              <span className="text-sm font-semibold text-slate-900">
+                {expertPost.author_name}
+              </span>
+              {expertPost.author_profile?.verified_advisor && (
+                <VerifiedAdvisorBadge
+                  advisorSlug={expertPost.author_profile.verified_advisor.slug}
+                  advisorType={expertPost.author_profile.verified_advisor.type}
+                />
+              )}
+              <span className="text-xs text-slate-400">
+                {timeAgo(expertPost.created_at)}
+              </span>
+            </div>
+            <div className="prose prose-sm max-w-none text-slate-700">
+              {expertPost.body.split("\n").map((paragraph, i) => (
+                <p key={i}>{paragraph}</p>
+              ))}
+            </div>
+            <p className="text-xs text-slate-500 mt-3">
+              General information only — not personal financial advice.
+            </p>
+          </div>
+        </div>
+      ) : (
+        !thread.is_locked && (
+          <div className="container-custom max-w-4xl mb-6">
+            <div className="bg-white border border-slate-200 rounded-xl p-5 flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <p className="text-sm font-bold text-slate-900">
+                  No verified adviser has answered yet
+                </p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Want a professional&apos;s take on questions like this? It&apos;s free
+                  to connect.
+                </p>
+              </div>
+              <Link
+                href={SHOW_MATCH_LANGUAGE ? "/get-matched" : "/advisors"}
+                className="shrink-0 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+              >
+                {SHOW_MATCH_LANGUAGE
+                  ? "Get matched with an adviser"
+                  : "Browse verified advisers"}
+              </Link>
+            </div>
+          </div>
+        )
+      )}
 
       {/* Interactive Client Component */}
       <Suspense
