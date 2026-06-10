@@ -38,17 +38,18 @@ interface HubHeroProps {
   className?: string;
 }
 
-/** Default theme — slate-900 panel; matches the existing /smsf and /grants heroes. */
+/** Default theme — compact light header (the shared DirectoryHero idiom:
+ *  content near the fold, no full-bleed dark band). */
 const DEFAULT_SECTION_CLASS =
-  "bg-slate-900 text-white py-10 md:py-14";
+  "bg-white border-b border-slate-100 py-4 md:py-5";
 
 /** Primary CTA button class — amber pill, matches the existing hubs. */
 const PRIMARY_CTA_CLASS =
   "inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-sm md:text-base px-6 py-3 rounded-lg transition-colors";
 
-/** Secondary CTA button class — translucent ghost button. */
+/** Secondary CTA button class — outlined ghost button on the light header. */
 const SECONDARY_CTA_CLASS =
-  "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-sm md:text-base px-5 py-3 rounded-lg transition-colors";
+  "inline-flex items-center gap-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-sm md:text-base px-5 py-3 rounded-lg transition-colors";
 
 export default function HubHero({
   hero,
@@ -78,10 +79,10 @@ export default function HubHero({
       <div className="container-custom">
         <BreadcrumbNav crumbs={breadcrumbs} />
 
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-3 max-w-3xl">
+        <h1 className="text-2xl md:text-[1.9rem] font-extrabold leading-tight tracking-tight text-slate-900 mb-1.5 max-w-3xl">
           {hero.headline}
         </h1>
-        <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-3xl mb-6">
+        <p className="text-[12.5px] md:text-[13.5px] text-slate-500 leading-snug max-w-2xl mb-4">
           {hero.subhead}
         </p>
 
@@ -94,12 +95,12 @@ export default function HubHero({
             {visibleStats.map((stat) => (
               <div
                 key={stat.label}
-                className="bg-white/10 border border-white/10 rounded-lg px-3 py-2.5"
+                className="bg-white border border-slate-200 rounded-lg px-3 py-2"
               >
-                <dt className="text-[10px] font-bold uppercase text-slate-400 tracking-wide">
+                <dt className="text-[10px] font-bold uppercase text-slate-500 tracking-wide">
                   {stat.label}
                 </dt>
-                <dd className="text-xl md:text-2xl font-extrabold text-white mt-0.5">
+                <dd className="iv2-bignum text-lg md:text-xl text-slate-900 mt-0.5">
                   <DatedStatBadge
                     value={stat.value}
                     stalesAt={stat.stalesAt}
@@ -107,14 +108,14 @@ export default function HubHero({
                   />
                 </dd>
                 {stat.subtitle && (
-                  <dd className="text-[10px] text-slate-400 mt-0.5">{stat.subtitle}</dd>
+                  <dd className="text-[10px] text-slate-500 mt-0.5">{stat.subtitle}</dd>
                 )}
                 {stat.source && (
-                  <dd className="text-[10px] text-slate-400 mt-0.5">
+                  <dd className="text-[10px] text-slate-500 mt-0.5">
                     Source:{" "}
                     <a
                       href={stat.source}
-                      className="underline hover:text-slate-200"
+                      className="underline hover:text-slate-700"
                       rel="nofollow noopener"
                       target="_blank"
                     >
@@ -127,7 +128,7 @@ export default function HubHero({
           </dl>
         )}
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-4 flex flex-wrap gap-3">
           <Link
             href={hero.primaryCta.href}
             className={PRIMARY_CTA_CLASS}
@@ -157,18 +158,18 @@ function BreadcrumbNav({ crumbs }: { crumbs: BreadcrumbCrumb[] }) {
   if (crumbs.length === 0) return null;
   return (
     <nav
-      className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
+      className="flex items-center gap-1.5 text-xs text-slate-500 mb-2"
       aria-label="Breadcrumb"
     >
       {crumbs.map((crumb, idx) => {
         const isLast = idx === crumbs.length - 1;
         return (
           <span key={`${crumb.name}-${idx}`} className="flex items-center gap-1.5">
-            {idx > 0 && <span className="text-slate-600">/</span>}
+            {idx > 0 && <span className="text-slate-300">/</span>}
             {isLast || !crumb.href ? (
-              <span className="text-white font-medium">{crumb.name}</span>
+              <span className="text-slate-700 font-medium">{crumb.name}</span>
             ) : (
-              <Link href={crumb.href} className="hover:text-white">
+              <Link href={crumb.href} className="hover:text-slate-900">
                 {crumb.name}
               </Link>
             )}
