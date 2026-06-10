@@ -163,7 +163,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
           className="w-full pl-8 pr-8 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30"
         />
         {selected && (
-          <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} aria-label="Clear location" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+          <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} aria-label="Clear location" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600">
             <Icon name="x" size={14} />
           </button>
         )}
@@ -1648,7 +1648,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <div className="relative">
             <p className="text-[0.65rem] font-bold uppercase tracking-widest text-amber-400 mb-2">For Professionals</p>
             <h3 className="text-base md:text-xl font-extrabold text-white mb-1.5 md:mb-2">Are you a financial professional?</h3>
-            <p className="text-xs md:text-sm text-slate-400 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
+            <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
               <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/25">
                 Get Listed Free

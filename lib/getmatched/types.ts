@@ -166,6 +166,17 @@ export interface ActionPlanAnswers {
   [questionSlug: string]: string | string[] | number | boolean | null;
 }
 
+/** A shortlisted option in the "My Options" workspace (Decision Engine P5).
+ *  Identity is (kind, ref) — advisor/platform slug or listing id-as-string.
+ *  Saving is NOT contacting: single-lead allocation only happens at an
+ *  explicit confirm. */
+export interface SavedItem {
+  kind: "advisor" | "listing" | "platform";
+  ref: string;
+  label?: string;
+  saved_at: string;
+}
+
 export interface ActionPlan {
   id: number;
   session_id: string;
@@ -186,6 +197,7 @@ export interface ActionPlan {
   risk_severity: string | null;
   linked_brief_id: number | null;
   share_token: string;
+  saved_items?: SavedItem[];
   status: PlanStatus;
   meta: Record<string, unknown>;
   created_at: string;

@@ -245,7 +245,7 @@ export default function ProfileClient() {
   }
 
   return (
-    <div className="py-5 md:py-12">
+    <div className="py-4 md:py-6">
       <div className="container-custom max-w-2xl">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">

@@ -278,7 +278,7 @@ export default function BriefChatPanel({
           disabled={sending}
         />
         <div className="flex items-center justify-between">
-          <span className="text-[10px] text-slate-400">
+          <span className="text-[10px] text-slate-500">
             {draft.length}/{BRIEF_MESSAGE_MAX_BODY_LENGTH}
           </span>
           <button

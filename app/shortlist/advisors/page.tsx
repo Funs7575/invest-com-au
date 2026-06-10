@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 export default function AdvisorShortlistPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 pt-5 pb-8 md:pt-10 md:pb-12">
+    <div className="max-w-4xl mx-auto px-4 pt-3 pb-6 md:pt-4 md:pb-8">
       <div className="mb-4 md:mb-6">
-        <h1 className="text-xl md:text-3xl font-extrabold text-slate-900">My Saved Advisors</h1>
+        <h1 className="text-lg md:text-xl font-extrabold text-slate-900">My Saved Advisors</h1>
         <p className="text-xs md:text-sm text-slate-500 mt-0.5">
           Tap the bookmark on any advisor to save them here. Compare up to 4 side by side.
         </p>

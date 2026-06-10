@@ -99,7 +99,7 @@ export default function DirectoryHero({
             />
           )}
           <nav
-            className={`relative mb-1.5 text-[11px] md:text-xs ${isLight ? "text-slate-400" : "text-white/55"}`}
+            className={`relative mb-1.5 text-[11px] md:text-xs ${isLight ? "text-slate-500" : "text-white/55"}`}
             aria-label="Breadcrumb"
           >
             <Link href="/" className={isLight ? "hover:text-slate-700" : "hover:text-white"}>Home</Link>
@@ -174,7 +174,7 @@ export default function DirectoryHero({
                     <div
                       className={
                         isLight
-                          ? "mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400 md:text-[11px]"
+                          ? "mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500 md:text-[11px]"
                           : "mt-0.5 text-[10px] font-semibold text-white/55 md:text-[11px]"
                       }
                     >

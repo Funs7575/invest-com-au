@@ -3,6 +3,7 @@ import Image from "next/image";
 import type { Broker, Article } from "@/lib/types";
 import type { VerticalConfig } from "@/lib/verticals";
 import { getRelatedVerticals } from "@/lib/verticals";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -147,7 +148,7 @@ export default function VerticalPillarPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
 
-      <div className="py-5 md:py-12">
+      <div className="pb-6 md:pb-10">
         <OnThisPage
           items={[
             ...(topPick ? [{ id: "top-pick", label: "Top Pick" }] : []),
@@ -168,56 +169,29 @@ export default function VerticalPillarPage({
           ]}
         />
 
-        <div className="container-custom max-w-4xl">
-          {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
-            <Link href="/" className="hover:text-slate-900">
-              Home
-            </Link>
-            <span className="mx-2">/</span>
-            <span className="text-slate-700">{config.h1}</span>
-          </nav>
-
-          {/* ─── Hero ─── */}
-          <div
-            className={`bg-gradient-to-br ${config.color.gradient} border ${config.color.border} rounded-2xl p-4 md:p-8 mb-3 md:mb-4`}
-          >
-            <h1 className="text-xl md:text-4xl font-extrabold mb-2 md:mb-3 text-slate-900">
-              {config.heroHeadline}
-            </h1>
-            <p className="text-xs md:text-base text-slate-600 mb-4 max-w-2xl">
-              {config.heroSubtext}
+        {/* ─── Hero — the shared compact light DirectoryHero (one header
+              pattern across /invest, /advisors, /compare and the pillars;
+              replaces the per-vertical gradient box). Disclosure lines render
+              in the hero's light band below. ─── */}
+        <DirectoryHero
+          tone="light"
+          breadcrumbLabel={config.h1}
+          headlineLead={config.heroHeadline}
+          subtitle={config.heroSubtext}
+          stats={config.stats.slice(0, 4).map((s) => ({ v: s.value, l: s.label }))}
+          containerClassName="container-custom max-w-4xl"
+        >
+          <p className="text-[0.62rem] md:text-xs text-slate-500">
+            {ADVERTISER_DISCLOSURE_SHORT}
+          </p>
+          {hasSponsored && (
+            <p className="text-[0.62rem] md:text-xs text-blue-500 mt-1">
+              {SPONSORED_DISCLOSURE_SHORT}
             </p>
+          )}
+        </DirectoryHero>
 
-            {/* Key stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-              {config.stats.map((stat, i) => (
-                <div
-                  key={i}
-                  className="bg-white/70 border border-white rounded-xl px-3 py-2 text-center"
-                >
-                  <div
-                    className={`text-base md:text-xl font-extrabold ${config.color.text}`}
-                  >
-                    {stat.value}
-                  </div>
-                  <div className="text-[0.6rem] md:text-xs text-slate-500 font-medium">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-[0.62rem] md:text-xs text-slate-500 mt-3">
-              {ADVERTISER_DISCLOSURE_SHORT}
-            </p>
-            {hasSponsored && (
-              <p className="text-[0.62rem] md:text-xs text-blue-500 mt-1">
-                {SPONSORED_DISCLOSURE_SHORT}
-              </p>
-            )}
-          </div>
-
+        <div className="container-custom max-w-4xl pt-3 md:pt-4">
           {/* General Advice Warning */}
           <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 text-[0.69rem] text-slate-500 leading-relaxed">
             <strong className="text-slate-600">

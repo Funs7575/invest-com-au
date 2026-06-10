@@ -648,7 +648,7 @@ function ArticleCard({ article, priority = false }: { article: Article; priority
         priority={priority}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       />
-      <div className="p-2.5 md:p-6 flex flex-col flex-1">
+      <div className="p-3 md:p-4 flex flex-col flex-1">
         {/* Badges Row */}
         <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-3">
           {article.category && (

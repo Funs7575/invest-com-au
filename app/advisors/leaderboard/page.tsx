@@ -194,7 +194,7 @@ export default async function LeaderboardPage() {
             {/* Podium — top 3 */}
             {podium.length > 0 && (
               <div className="mb-10">
-                <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-5 text-center">Top Performers</h2>
+                <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-5 text-center">Top Performers</h2>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-stretch">
                   {podium.map((entry) => {
                     const typeLabel = PROFESSIONAL_TYPE_LABELS[entry.professional.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || entry.professional.type;
@@ -211,29 +211,29 @@ export default async function LeaderboardPage() {
                         <div className="mt-3">
                           <div className="font-bold text-slate-900 group-hover:text-teal-700 transition-colors leading-snug">{entry.professional.name}</div>
                           {entry.professional.firm_name && (
-                            <div className="text-xs text-slate-400 mt-0.5">{entry.professional.firm_name}</div>
+                            <div className="text-xs text-slate-500 mt-0.5">{entry.professional.firm_name}</div>
                           )}
                           <div className="mt-1.5 inline-flex items-center gap-1 bg-teal-50 text-teal-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
                             {typeLabel}
                           </div>
                           {entry.professional.location_display && (
-                            <div className="text-xs text-slate-400 mt-1">{entry.professional.location_display}</div>
+                            <div className="text-xs text-slate-500 mt-1">{entry.professional.location_display}</div>
                           )}
                         </div>
                         <div className="mt-4 pt-4 border-t border-slate-100 w-full flex justify-around text-center">
                           <div>
                             <div className="text-lg font-extrabold text-slate-900">{entry.score}</div>
-                            <div className="text-[0.62rem] text-slate-400">Score</div>
+                            <div className="text-[0.62rem] text-slate-500">Score</div>
                           </div>
                           {entry.avg_rating != null && (
                             <div>
                               <div className="text-lg font-extrabold text-amber-500">{Number(entry.avg_rating).toFixed(1)}</div>
-                              <div className="text-[0.62rem] text-slate-400">Rating</div>
+                              <div className="text-[0.62rem] text-slate-500">Rating</div>
                             </div>
                           )}
                           <div>
                             <div className="text-lg font-extrabold text-slate-900">{entry.badge_count}</div>
-                            <div className="text-[0.62rem] text-slate-400">Badges</div>
+                            <div className="text-[0.62rem] text-slate-500">Badges</div>
                           </div>
                         </div>
                       </Link>
@@ -269,7 +269,7 @@ export default async function LeaderboardPage() {
                                 <span className="text-[0.6rem] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">Verified</span>
                               )}
                             </div>
-                            <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
+                            <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
                               <span>{typeLabel}</span>
                               {entry.professional.location_display && (
                                 <>
@@ -282,17 +282,17 @@ export default async function LeaderboardPage() {
                           <div className="shrink-0 flex items-center gap-5 text-right text-xs">
                             <div className="hidden sm:block">
                               <div className="font-bold text-slate-700">{entry.badge_count}</div>
-                              <div className="text-[0.6rem] text-slate-400">Badges</div>
+                              <div className="text-[0.6rem] text-slate-500">Badges</div>
                             </div>
                             {entry.avg_rating != null && (
                               <div className="hidden sm:block">
                                 <div className="font-bold text-amber-500">{Number(entry.avg_rating).toFixed(1)}</div>
-                                <div className="text-[0.6rem] text-slate-400">Rating</div>
+                                <div className="text-[0.6rem] text-slate-500">Rating</div>
                               </div>
                             )}
                             <div>
                               <div className="font-extrabold text-teal-600">{entry.score}</div>
-                              <div className="text-[0.6rem] text-slate-400">Score</div>
+                              <div className="text-[0.6rem] text-slate-500">Score</div>
                             </div>
                           </div>
                         </Link>

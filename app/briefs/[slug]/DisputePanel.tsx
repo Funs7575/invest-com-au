@@ -143,7 +143,7 @@ export default function DisputePanel({
               disabled={busy}
             />
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-slate-400">
+              <span className="text-[10px] text-slate-500">
                 {reason.length}/{DISPUTE_REASON_MAX}
               </span>
               <div className="flex gap-2">
@@ -220,7 +220,7 @@ export default function DisputePanel({
                 : m.sender_kind === "consumer"
                   ? "Consumer"
                   : "Provider"}
-              <span className="text-slate-400 ml-2 font-normal">
+              <span className="text-slate-500 ml-2 font-normal">
                 {new Date(m.created_at).toLocaleString()}
               </span>
             </p>
@@ -241,7 +241,7 @@ export default function DisputePanel({
             disabled={busy}
           />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-slate-400">
+            <span className="text-[10px] text-slate-500">
               {draft.length}/{DISPUTE_REASON_MAX}
             </span>
             <button

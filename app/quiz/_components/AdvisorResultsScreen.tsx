@@ -353,7 +353,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               </div>
               <button
                 onClick={onRestart}
-                className="block mx-auto mt-4 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                className="block mx-auto mt-4 text-xs text-slate-500 hover:text-slate-600 transition-colors"
               >
                 Restart quiz →
               </button>

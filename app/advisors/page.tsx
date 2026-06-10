@@ -144,7 +144,7 @@ export default function AdvisorsPage() {
         <NextActions surface="advisors" />
       </Suspense>
       <HomeToolsStrip />
-      <section className="py-10 bg-white border-t border-slate-200">
+      <section className="py-6 md:py-8 bg-white border-t border-slate-200">
         <div className="container-custom max-w-3xl">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
           <div className="space-y-3">

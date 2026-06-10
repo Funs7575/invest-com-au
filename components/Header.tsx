@@ -422,7 +422,7 @@ function DesktopDropdown({
                 className="block px-5 py-2.5 hover:bg-slate-50 transition-colors group"
               >
                 <div className="text-sm font-bold text-slate-900">{item.label}</div>
-                <div className="text-xs text-slate-400">{item.desc}</div>
+                <div className="text-xs text-slate-500">{item.desc}</div>
               </Link>
             ))}
           </div>
@@ -542,7 +542,7 @@ export default function Header() {
             {/* Grouped sections */}
             {mobileNavSections.map((section) => (
               <div key={section.title} className="pt-1.5 mt-1 border-t border-slate-100 first:border-t-0 first:mt-0 first:pt-0">
-                <p className="px-3 pt-1 pb-0.5 text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-400">{section.title}</p>
+                <p className="px-3 pt-1 pb-0.5 text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-500">{section.title}</p>
                 {section.items.map((item) => {
                   const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                   return (
@@ -589,7 +589,7 @@ export default function Header() {
 
             {/* Popular Links */}
             <div className="pt-1.5 mt-1 border-t border-slate-100">
-              <p className="px-3 pt-1 pb-1 text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-400">Popular</p>
+              <p className="px-3 pt-1 pb-1 text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-500">Popular</p>
               <div className="flex flex-wrap gap-1.5 px-3 pb-1">
                 {popularLinks.map((link) => (
                   <Link

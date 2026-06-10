@@ -97,9 +97,9 @@ export default function Footer() {
               <h3 className="text-white font-extrabold text-sm md:text-base mb-2 md:mb-3">
                 Invest<span className="text-amber-400">.com.au</span>
               </h3>
-              <p className="text-xs md:text-sm leading-relaxed text-slate-400">
+              <p className="text-xs md:text-sm leading-relaxed text-slate-500">
                 <span className="hidden md:inline">Australia&apos;s independent investing hub. Compare platforms, find verified advisors — shares, crypto, super, property &amp; more. Always free.</span>
-                <span className="md:hidden text-slate-400">Compare platforms &amp; find verified advisors. Always free.</span>
+                <span className="md:hidden text-slate-500">Compare platforms &amp; find verified advisors. Always free.</span>
               </p>
               <a
                 href={ASIC_REGISTER_URL}
@@ -233,7 +233,7 @@ export default function Footer() {
 
           <div className="border-t border-slate-700/40 mt-4 md:mt-8 pt-3 md:pt-6 text-xs md:text-sm text-center space-y-0.5 md:space-y-1">
             <p>&copy; {new Date().getFullYear()} {COMPANY_LEGAL_NAME}. All rights reserved.</p>
-            <p className="text-[0.62rem] md:text-xs text-slate-400">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
+            <p className="text-[0.62rem] md:text-xs text-slate-500">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
           </div>
         </div>
       </footer>
