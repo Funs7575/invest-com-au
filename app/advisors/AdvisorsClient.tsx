@@ -770,6 +770,16 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             id="advisor-search"
           />
           <GetMatchedEmbed context="advisor_directory" inline />
+          <Link
+            href="/briefs/new"
+            onClick={() =>
+              trackEvent("get_quotes_cta_clicked", { source: "advisors_toolbar" })
+            }
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 md:px-4 py-2 text-sm font-semibold text-slate-700 whitespace-nowrap transition-colors hover:border-slate-400 hover:text-slate-900"
+          >
+            <Icon name="file-text" size={14} />
+            Get quotes
+          </Link>
           <button
             type="button"
             onClick={() => setFiltersOpen(true)}

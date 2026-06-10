@@ -6,6 +6,7 @@ import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
 import ListingEnquiryForm from "@/components/ListingEnquiryForm";
 import ListingDecisionTools from "@/components/invest/ListingDecisionTools";
 import ListingSchemaScripts from "@/components/ListingSchemaScripts";
+import { humanizeTitle, formatMetricValue } from "@/lib/listing-format";
 
 /**
  * Shared single-listing detail view.
@@ -118,8 +119,8 @@ export default function ListingDetailView({
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {Object.entries(km).map(([key, value]) => (
                       <div key={key} className="bg-slate-50 rounded-lg p-3">
-                        <p className="text-xs text-slate-500 capitalize mb-1">{key.replace(/_/g, " ")}</p>
-                        <p className="text-sm font-bold text-slate-900 capitalize">{String(value)}</p>
+                        <p className="text-xs text-slate-500 mb-1">{humanizeTitle(key)}</p>
+                        <p className="text-sm font-bold text-slate-900">{formatMetricValue(key, value)}</p>
                       </div>
                     ))}
                   </div>
