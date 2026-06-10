@@ -62,12 +62,14 @@ export function getAdvisorMatchReasons(
       super: ["SMSF", "Superannuation", "Retirement"],
       crypto: ["Crypto", "Cryptocurrency"],
     };
-    const relevantGoal = answers.goal ? goalLabels[answers.goal] : [];
-    const matching = advisor.specialties.filter((s) =>
-      relevantGoal.some((g) => s.toLowerCase().includes(g.toLowerCase()))
-    );
-    if (matching.length > 0) {
-      reasons.push(`Specialises in ${matching.slice(0, 2).join(" and ")}`);
+    const relevantGoal = answers.goal ? (goalLabels[answers.goal] ?? []) : [];
+    if (relevantGoal.length > 0) {
+      const matching = advisor.specialties.filter((s) =>
+        relevantGoal.some((g) => s.toLowerCase().includes(g.toLowerCase()))
+      );
+      if (matching.length > 0) {
+        reasons.push(`Specialises in ${matching.slice(0, 2).join(" and ")}`);
+      }
     }
   }
 
