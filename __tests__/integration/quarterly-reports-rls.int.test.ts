@@ -27,7 +27,7 @@ import path from "node:path";
 
 const MIGRATION_PATH = path.resolve(
   __dirname,
-  "../../supabase/migrations/20260501_c05b_quarterly_reports_rls.sql",
+  "../../supabase/migrations/archive/20260501_c05b_quarterly_reports_rls.sql",
 );
 const SQL = readFileSync(MIGRATION_PATH, "utf8");
 
