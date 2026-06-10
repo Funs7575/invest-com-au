@@ -176,7 +176,9 @@ export function resolveBestOutcome(a: UnifiedAnswersInput): BestOutcome {
         visa: a.visa_status,
       }),
       secondaryActions: [
-        { label: "Browse accountants", href: "/advisors/accountants" },
+        // /advisors/accountants is not a real category slug (SLUG_TO_TYPE) —
+        // for the international-business outcome the specialist page is the fit.
+        { label: "Browse international tax specialists", href: "/advisors/international-tax-specialists" },
         { label: "Browse all advisors", href: "/find-advisor" },
       ],
       tone: "violet",
