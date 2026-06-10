@@ -377,6 +377,34 @@ export default async function BriefTrackerPage({
                       response within a couple of business days.
                     </div>
                   )}
+
+                {/* Accepted-but-no-booking nudge (B6) — once a provider accepts,
+                    the generic guidance above disappears; keep the rail pointing
+                    at the single next action instead of going quiet. */}
+                {emailMatches &&
+                  brief.accepted_at &&
+                  !existingBooking &&
+                  brief.status !== "closed" &&
+                  brief.status !== "withdrawn" && (
+                    <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-900">
+                      <span className="font-semibold">Next step:</span>{" "}
+                      {accepted.professional?.slug ? (
+                        <>
+                          {intakeOutstanding > 0
+                            ? "answer your provider's prep questions, then book your intro call."
+                            : "book your intro call — pick a time that suits you."}{" "}
+                          <a
+                            href="#book"
+                            className="font-semibold underline underline-offset-2 hover:text-amber-700"
+                          >
+                            Go to booking →
+                          </a>
+                        </>
+                      ) : (
+                        <>message your provider in the chat below to arrange your first call.</>
+                      )}
+                    </div>
+                  )}
               </div>
 
               {/* Withdraw — the verified owner can close an open request (AJ-3).
@@ -509,16 +537,19 @@ export default async function BriefTrackerPage({
                 </div>
               )}
 
-              {/* Book consultation — only shown once the brief is accepted */}
+              {/* Book consultation — only shown once the brief is accepted.
+                  id="book" is the rail nudge's anchor target. */}
               {accepted.professional?.slug && (
-                <BookConsultationPanel
-                  briefSlug={brief.slug}
-                  proSlug={accepted.professional.slug}
-                  proName={accepted.professional.name}
-                  contactEmail={emailMatches ? email : null}
-                  existingBooking={existingBooking}
-                  existingSlot={existingSlot}
-                />
+                <div id="book" className="scroll-mt-24">
+                  <BookConsultationPanel
+                    briefSlug={brief.slug}
+                    proSlug={accepted.professional.slug}
+                    proName={accepted.professional.name}
+                    contactEmail={emailMatches ? email : null}
+                    existingBooking={existingBooking}
+                    existingSlot={existingSlot}
+                  />
+                </div>
               )}
 
               {/* Chat — visible to the brief owner and the accepted advisor only.

@@ -42,10 +42,10 @@ export default function CountdownPill({ endsAt, status }: Props) {
 
   return (
     <span
-      className={`px-3 py-1 rounded-full font-semibold ${
+      className={`inline-flex items-center px-2.5 py-1 rounded-full font-semibold ${
         isClosed
-          ? "bg-slate-600/40 text-slate-300"
-          : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+          ? "bg-slate-100 text-slate-500 border border-slate-200"
+          : "bg-emerald-50 text-emerald-700 border border-emerald-200"
       }`}
     >
       <Icon name="clock" size={12} className="inline mr-1" />
