@@ -1,7 +1,7 @@
 /**
  * Stream O, iter 6 — RLS verification for the five forum/community tables.
  *
- * Verifies the migration `supabase/migrations/20260429_o_iter6_rls_forum.sql`:
+ * Verifies the migration `supabase/migrations/archive/20260429_o_iter6_rls_forum.sql`:
  *
  *   1. Presence: ENABLE RLS + FORCE RLS for every table; service_role full
  *      access policy on every table; the role-scoped read/write policies
@@ -37,7 +37,7 @@ import path from "node:path";
 
 const MIGRATION_PATH = path.join(
   process.cwd(),
-  "supabase/migrations/20260429_o_iter6_rls_forum.sql",
+  "supabase/migrations/archive/20260429_o_iter6_rls_forum.sql",
 );
 
 const FORUM_TABLES = [

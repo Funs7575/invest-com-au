@@ -30,7 +30,7 @@ import path from "node:path";
 
 const MIGRATION_PATH = path.resolve(
   __dirname,
-  "../../supabase/migrations/20260429_o_iter7_rls_editorial_obs_secrets.sql",
+  "../../supabase/migrations/archive/20260429_o_iter7_rls_editorial_obs_secrets.sql",
 );
 const SQL = readFileSync(MIGRATION_PATH, "utf8");
 
