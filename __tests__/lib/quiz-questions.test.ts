@@ -72,4 +72,18 @@ describe("quiz question ↔ answer-schema contract", () => {
       }
     }
   });
+
+  it("offers a valid 'not sure' path on every subjective judgment question", () => {
+    // The brief: "'not sure' is a valid path throughout." goal/mode/advisor_type
+    // already had one (other/unsure/not-sure); these four are the subjective
+    // judgment calls where an undecided user is most likely to abandon. The key
+    // must also survive its schema (asserted by the contract loop above), so the
+    // answer persists as a neutral no-signal rather than silently nulling.
+    for (const id of ["experience", "complexity", "amount", "priority"] as const) {
+      const keys = UNIFIED_QUESTIONS[id].options.map((o) => o.key);
+      expect(keys, `${id} offers a not_sure option`).toContain("not_sure");
+      // It must be last so it doesn't anchor the real choices.
+      expect(keys[keys.length - 1], `${id} not_sure is last`).toBe("not_sure");
+    }
+  });
 });
