@@ -8,6 +8,8 @@
  *   - switch stories (switch_stories)
  *   - advisor articles (advisor_articles)
  *   - broker Q&A answers (broker_answers)
+ *   - community forum threads + replies (forum_threads / forum_posts)
+ *   - advisor feed quick posts (advisor_posts)
  *
  * Same pure-classifier pattern as the dispute resolver, listing
  * scam classifier, and advisor verification classifier. Takes text
@@ -41,7 +43,10 @@ export interface ModerationContext {
     | "advisor_review"
     | "switch_story"
     | "advisor_article"
-    | "qa_answer";
+    | "qa_answer"
+    | "forum_thread"
+    | "forum_post"
+    | "advisor_post";
   /** Author identifier — used only for duplicate detection (cross-surface) */
   authorId?: string | null;
   /** Whether the author is a verified identity (auth'd user with history) */
@@ -301,9 +306,16 @@ export function classifyText(ctx: ModerationContext): ModerationResult {
   // spam AND never clearly publishable. Always escalate so a human
   // decides — one-sentence reviews frequently carry important context
   // but rarely contain enough for automated judgement.
+  // Forum replies are conversational — "Thanks, that helped" is legitimate
+  // content, not low-quality spam — so the floor is near-zero. Thread bodies
+  // get a small floor: the route already enforces >=10 chars, this only
+  // catches sub-minimum noise that slipped past surface validation.
   const minLength =
     ctx.surface === "advisor_article" ? 300 :
     ctx.surface === "qa_answer" ? 30 :
+    ctx.surface === "forum_post" ? 2 :
+    ctx.surface === "forum_thread" ? 20 :
+    ctx.surface === "advisor_post" ? 10 :
     50;
   if (trimmed.length < minLength) {
     return {
