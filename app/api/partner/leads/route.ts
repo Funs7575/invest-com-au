@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
-import { timingSafeEqual } from "crypto";
 import { logger } from "@/lib/logger";
 import { crossBorderLeadMultiplier } from "@/lib/advisor-billing-multipliers";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
+import { resolvePartner } from "@/lib/partner-auth";
 
 const log = logger("partner-leads");
 
@@ -23,9 +23,18 @@ interface PartnerLead {
 /**
  * POST /api/partner/leads
  *
- * Bulk lead delivery endpoint for B2B partner integrations.
- * Partners send leads from their sites; we match to advisors, create records,
- * bill from prepaid credit, and send notification emails.
+ * Bulk lead delivery endpoint for B2B CPL partner integrations.
+ *
+ * Auth: multi-tenant partner API keys (api_customers, see lib/partner-auth)
+ * with the legacy env PARTNER_API_KEY still accepted for pre-account
+ * integrations.
+ *
+ * Allocation: ONE lead → ONE advisor. Candidates of the requested type are
+ * ranked verified-then-rating and the first not blocked by the 24h
+ * email-dedup gets the lead; billing and the notification email follow the
+ * same path as before. (This endpoint previously fanned each lead out to up
+ * to five advisors — five postbacks and five bills for one enquiry — which
+ * violates the platform-wide single-lead allocation rule.)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -36,22 +45,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
-    // eslint-disable-next-line invest/no-unvalidated-req-json -- partner bulk endpoint; api_key is timing-safe checked and the leads array shape is validated inline below before any DB write
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- partner bulk endpoint; api_key resolves via lib/partner-auth and the leads array shape is validated inline below before any DB write
     const body = await request.json();
     const { api_key, leads } = body;
 
-    // ── Auth: validate partner API key (timing-safe) ──
-    const expected = process.env.PARTNER_API_KEY;
-    if (!api_key || !expected || typeof api_key !== "string") {
-      return NextResponse.json({ error: "Invalid API key." }, { status: 401 });
-    }
-    try {
-      const a = Buffer.from(api_key);
-      const b = Buffer.from(expected);
-      if (a.length !== b.length || !timingSafeEqual(a, b)) {
-        return NextResponse.json({ error: "Invalid API key." }, { status: 401 });
-      }
-    } catch {
+    const partner = await resolvePartner(typeof api_key === "string" ? api_key : null);
+    if (!partner) {
       return NextResponse.json({ error: "Invalid API key." }, { status: 401 });
     }
 
@@ -70,11 +69,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const siteUrl = getSiteUrl();
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
     let leadsCreated = 0;
+    let leadsDuplicate = 0;
     let leadsFailed = 0;
     const errors: Array<{ index: number; error: string }> = [];
 
@@ -96,12 +96,14 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        // ── Find matching advisors by type ──
+        // ── Candidate advisors, best first (verified > rating) ──
         const { data: matchingAdvisors, error: matchError } = await supabase
           .from("professionals")
           .select("id, name, email, firm_name, type, specialties, lead_price_cents, credit_balance_cents, free_leads_used, lifetime_lead_spend_cents, total_leads")
           .eq("type", lead.advisor_type)
           .eq("status", "active")
+          .order("verified", { ascending: false })
+          .order("rating", { ascending: false })
           .limit(5);
 
         if (matchError || !matchingAdvisors || matchingAdvisors.length === 0) {
@@ -110,11 +112,15 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        // ── Create lead records for each matching advisor ──
+        const normalizedEmail = lead.email.trim().toLowerCase();
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+        // ── Single-lead allocation: first candidate that passes dedup wins ──
+        let allocated = false;
+        let duplicate = false;
+
         for (const advisor of matchingAdvisors) {
-          // Duplicate protection: skip if same email sent to same advisor in last 24h
-          const normalizedEmail = lead.email.trim().toLowerCase();
-          const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+          // Duplicate protection: same email to same advisor within 24h.
           const { data: existingLead } = await supabase
             .from("professional_leads")
             .select("id")
@@ -124,9 +130,14 @@ export async function POST(request: NextRequest) {
             .limit(1)
             .maybeSingle();
 
-          if (existingLead) continue;
+          if (existingLead) {
+            // The best-ranked advisor already has this enquiry — re-sending
+            // the same person to a *different* advisor would be the fan-out
+            // we're avoiding. Treat as duplicate and stop.
+            duplicate = true;
+            break;
+          }
 
-          // Create the lead record
           const { data: newLead, error: insertError } = await supabase
             .from("professional_leads")
             .insert({
@@ -138,6 +149,8 @@ export async function POST(request: NextRequest) {
               source_page: "partner_api",
               status: "new",
               utm_source: "partner",
+              utm_campaign: partner.id ? partner.name : null,
+              partner_id: partner.id,
               quality_signals: lead.qualification_data || null,
             })
             .select("id")
@@ -145,11 +158,10 @@ export async function POST(request: NextRequest) {
 
           if (insertError || !newLead) {
             log.error(`Failed to create partner lead for advisor ${advisor.id}:`, insertError);
-            continue;
+            continue; // try the next candidate
           }
 
-          // ── Billing: deduct from partner's prepaid credit or track for invoicing ──
-          // Get category pricing
+          // ── Billing: free-lead allowance, then prepaid credit, else invoice-pending ──
           let priceCents = advisor.lead_price_cents || 4900;
           if (!advisor.lead_price_cents) {
             const { data: catPricing } = await supabase
@@ -175,7 +187,6 @@ export async function POST(request: NextRequest) {
           const balance = advisor.credit_balance_cents || 0;
           const hasSufficientCredit = balance >= priceCents;
 
-          // Update lead billing info
           await supabase.from("professional_leads").update({
             billed: !isFree && hasSufficientCredit,
             bill_amount_cents: isFree ? 0 : priceCents,
@@ -219,7 +230,7 @@ export async function POST(request: NextRequest) {
             }).eq("id", advisor.id);
           }
 
-          // ── Send notification email to advisor ──
+          // ── Send notification email to the allocated advisor ──
           if (advisor.email && RESEND_API_KEY) {
             try {
               await fetch("https://api.resend.com/emails", {
@@ -259,9 +270,20 @@ export async function POST(request: NextRequest) {
               log.error("Failed to send partner lead notification:", emailError);
             }
           }
+
+          allocated = true;
+          break; // single-lead allocation: stop at the first successful advisor
         }
 
-        leadsCreated++;
+        if (allocated) {
+          leadsCreated++;
+        } else if (duplicate) {
+          leadsDuplicate++;
+          errors.push({ index: i, error: "Duplicate: this email reached the matched advisor in the last 24h." });
+        } else {
+          leadsFailed++;
+          errors.push({ index: i, error: "Could not allocate the lead to an advisor." });
+        }
       } catch (leadProcessError) {
         log.error("Error processing partner lead", { index: i, err: leadProcessError instanceof Error ? leadProcessError.message : String(leadProcessError) });
         errors.push({ index: i, error: "Unexpected processing error." });
@@ -272,6 +294,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       leads_created: leadsCreated,
+      leads_duplicate: leadsDuplicate,
       leads_failed: leadsFailed,
       errors: errors.length > 0 ? errors : undefined,
     });

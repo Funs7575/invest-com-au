@@ -32,6 +32,12 @@ vi.mock("@/lib/hooks/useUser", () => ({
   useUser: () => ({ user: null, loading: false }),
 }));
 
+// Server action — can't run in jsdom; the deep-link persist effect calls it.
+const { mockSetIntentCountry } = vi.hoisted(() => ({ mockSetIntentCountry: vi.fn() }));
+vi.mock("@/lib/intent-context-actions", () => ({
+  setIntentCountryAction: (...args: unknown[]) => mockSetIntentCountry(...args),
+}));
+
 function pro(overrides: Partial<Professional> = {}): Professional {
   return {
     id: 1,
@@ -122,6 +128,66 @@ describe("AdvisorsClient — filter panel wiring", () => {
     paramsRef.current = new URLSearchParams("type=financial_planner");
     render(<AdvisorsClient professionals={professionals} />);
     expect(screen.getByRole("button", { name: "Filters (1)" })).toBeInTheDocument();
+  });
+});
+
+describe("AdvisorsClient — deep-link params on route-scoped pages", () => {
+  beforeEach(() => {
+    mockReplace.mockClear();
+    mockSetIntentCountry.mockClear();
+    paramsRef.current = new URLSearchParams();
+    document.cookie = "iv_intent_country=; max-age=0; path=/";
+  });
+
+  it("honours ?specialty= even when the route fixes the type (country-hub CTAs)", async () => {
+    paramsRef.current = new URLSearchParams("specialty=SMSF Setup");
+    render(<AdvisorsClient professionals={professionals} initialType="smsf_accountant" />);
+    // Specialty filter applies: Tom Lee (SMSF Setup) stays, Jane Smith filtered out.
+    await waitFor(() => {
+      expect(screen.getByText("Tom Lee")).toBeInTheDocument();
+      expect(screen.queryByText("Jane Smith")).not.toBeInTheDocument();
+    });
+  });
+
+  it("filters out advisors whose country_eligibility blocks the ?country= visitor", async () => {
+    paramsRef.current = new URLSearchParams("country=uk");
+    const list = [
+      pro({ id: 3, slug: "uk-ok", name: "UK Friendly", country_eligibility: { allowed_countries: ["GB"] } } as Partial<Professional>),
+      pro({ id: 4, slug: "us-only", name: "US Only Firm", country_eligibility: { allowed_countries: ["US"] } } as Partial<Professional>),
+    ];
+    render(<AdvisorsClient professionals={list} initialType="financial_planner" />);
+    await waitFor(() => {
+      expect(screen.getByText("UK Friendly")).toBeInTheDocument();
+      expect(screen.queryByText("US Only Firm")).not.toBeInTheDocument();
+    });
+  });
+
+  it("persists a valid ?country= deep-link for the rest of the journey", async () => {
+    paramsRef.current = new URLSearchParams("country=uk");
+    render(<AdvisorsClient professionals={professionals} />);
+    await waitFor(() => expect(mockSetIntentCountry).toHaveBeenCalledWith("uk"));
+  });
+
+  it("ignores an unknown ?country= value", async () => {
+    paramsRef.current = new URLSearchParams("country=zz");
+    render(<AdvisorsClient professionals={professionals} />);
+    // Both advisors visible, nothing persisted.
+    expect(screen.getByText("Jane Smith")).toBeInTheDocument();
+    expect(screen.getByText("Tom Lee")).toBeInTheDocument();
+    expect(mockSetIntentCountry).not.toHaveBeenCalled();
+  });
+
+  it("falls back to the remembered cookie country on route-scoped pages", async () => {
+    document.cookie = "iv_intent_country=us; path=/";
+    const list = [
+      pro({ id: 5, slug: "us-ok", name: "US Friendly", country_eligibility: { allowed_countries: ["US"] } } as Partial<Professional>),
+      pro({ id: 6, slug: "uk-only", name: "UK Only Firm", country_eligibility: { allowed_countries: ["GB"] } } as Partial<Professional>),
+    ];
+    render(<AdvisorsClient professionals={list} initialType="financial_planner" />);
+    await waitFor(() => {
+      expect(screen.getByText("US Friendly")).toBeInTheDocument();
+      expect(screen.queryByText("UK Only Firm")).not.toBeInTheDocument();
+    });
   });
 });
 

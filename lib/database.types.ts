@@ -15128,6 +15128,7 @@ export type Database = {
           outcome: string | null
           outcome_at: string | null
           outcome_notes: string | null
+          partner_id: string | null
           pipeline_stage: string
           post_drip_last_at: string | null
           post_drip_step: number | null
@@ -15169,6 +15170,7 @@ export type Database = {
           outcome?: string | null
           outcome_at?: string | null
           outcome_notes?: string | null
+          partner_id?: string | null
           pipeline_stage?: string
           post_drip_last_at?: string | null
           post_drip_step?: number | null
@@ -15210,6 +15212,7 @@ export type Database = {
           outcome?: string | null
           outcome_at?: string | null
           outcome_notes?: string | null
+          partner_id?: string | null
           pipeline_stage?: string
           post_drip_last_at?: string | null
           post_drip_step?: number | null
@@ -15235,6 +15238,13 @@ export type Database = {
           utm_source?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "professional_leads_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "api_customers"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "professional_leads_professional_id_fkey"
             columns: ["professional_id"]
