@@ -595,6 +595,70 @@ export function weeklyDigestEmail(data: {
   );
 }
 
+// ─── Pro Research Digest (premium subscribers) ──────────────────────────────
+
+/**
+ * Weekly digest of new Pro research reports, sent only to active Pro
+ * subscribers. Summaries + links only — the full report body stays gated
+ * behind the server-side paywall on /pro/research/[slug].
+ */
+export function premiumDigestEmail(data: {
+  reports: {
+    title: string;
+    slug: string;
+    kicker?: string;
+    summary?: string;
+    readingTimeMinutes?: number;
+  }[];
+  dateStr: string;
+}): string {
+  const reportsHtml = data.reports
+    .map(
+      (r) => `
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid ${BORDER};border-radius:10px;margin-bottom:14px;">
+        <tr>
+          <td style="padding:16px 18px;">
+            ${r.kicker ? `<p style="margin:0 0 4px;font-size:11px;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">${escapeHtml(r.kicker)}</p>` : ""}
+            <a href="${BASE_URL}/pro/research/${encodeURIComponent(r.slug)}" style="color:${BRAND_DARK};text-decoration:none;font-weight:700;font-size:16px;line-height:1.4;">${escapeHtml(r.title)}</a>
+            ${r.summary ? `<p style="margin:6px 0 0;font-size:13px;color:#475569;line-height:1.6;">${escapeHtml(r.summary)}</p>` : ""}
+            <p style="margin:10px 0 0;">
+              <a href="${BASE_URL}/pro/research/${encodeURIComponent(r.slug)}" style="color:${BRAND_BLUE};font-weight:600;font-size:13px;text-decoration:underline;">Read the full report →</a>
+              ${r.readingTimeMinutes ? `<span style="color:${TEXT_LIGHT};font-size:12px;margin-left:8px;">${r.readingTimeMinutes} min read</span>` : ""}
+            </p>
+          </td>
+        </tr>
+      </table>`
+    )
+    .join("");
+
+  const content = `
+    <p style="margin:0 0 4px;font-size:12px;color:${TEXT_LIGHT};text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Pro Research Digest</p>
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">New research for Pro members</h1>
+    <p style="margin:0 0 24px;font-size:14px;color:#475569;line-height:1.6;">
+      Week of ${escapeHtml(data.dateStr)} &mdash; ${data.reports.length === 1 ? "a new report" : `${data.reports.length} new reports`} from the Invest.com.au research desk, included with your Pro membership.
+    </p>
+    ${reportsHtml}
+    <div style="text-align:center;margin-top:20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${BASE_URL}/pro/research" style="display:inline-block;padding:12px 32px;color:#ffffff;font-weight:700;font-size:14px;text-decoration:none;border-radius:8px;">
+              Browse all Pro research
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <p style="margin:20px 0 0;font-size:12px;color:${TEXT_LIGHT};line-height:1.6;text-align:center;">
+      General information only — not personal financial advice. You're receiving this because Pro research is part of your membership; turn it off any time in <a href="${BASE_URL}/account" style="color:${TEXT_MUTED};text-decoration:underline;">your account settings</a>.
+    </p>`;
+
+  return baseTemplate(
+    content,
+    `${data.reports.length} new Pro research ${data.reports.length === 1 ? "report" : "reports"} this week`
+  );
+}
+
 // ─── Campaign Performance Email ─────────────────────────────────────────────
 
 export function campaignPerformanceEmail(data: {
