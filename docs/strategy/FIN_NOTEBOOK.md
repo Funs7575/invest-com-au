@@ -742,6 +742,59 @@ Evaluated in conversation. Reframe: not "recruiter search" but "firm-to-advisor 
 
 The narrower, cheaper variant: a "Careers" tab on `/firm/[slug]` profiles. ~half day. Reveals demand without a marketplace build. **Provisional P2 sub-task — bundle into a future firm-profile-improvements stream.**
 
+### 2026-06-10 — News & community: lean in? (exploration, founder decision pending)
+
+Founder asked whether to lean further into news + community (e.g. a News tab in
+the top bar). Explored in conversation with Claude, grounded in the codebase.
+Verdicts provisional until founder confirms.
+
+**Grounding discoveries — most of it is already built, just unlit:**
+- `/community` (Reddit-style forum: seeded threads, confessions/debate formats,
+  RLS'd, index=true) and `/feed` (advisor insights feed) are LIVE but linked
+  from **nowhere in the header**.
+- Editorial (~740 pages: /articles, /learn, /how-to, /glossary) appears in the
+  nav only as a sidebar block inside the Tools mega-menu — no top-level entry.
+- Newsletter infra complete (segments, double opt-in, weekly + personalized
+  digest crons); archive noindexed while empty. No `/news` route exists.
+
+**Verdicts (provisional):**
+1. **Traditional newsroom / News tab now: NO.** (a) Commodity treadmill vs
+   AFR/Livewire/Stockhead, no data moat; (b) news monetises via display ads —
+   explicitly NEVER (#21); (c) zero-click/AI Overviews eat news summaries first,
+   counter to the GEO pivot (2026-05-21); (d) **pre-AFSL, market commentary
+   ("analysts see upside") drifts from the s766B factual carve-out toward
+   general advice** — widens the compliance surface exactly when it must stay
+   narrow; (e) homepage was cut 24→13 sections today for bloat — adding a
+   top-bar tab the same day cuts against that call.
+2. **Data-news ("what changed today"): YES — this is our version of news.**
+   Rate-change board / `/rates/today`, RBA-day + EOFY market-events calendar,
+   fee-change log, IPO alerts. Proprietary (we already track fees/rates),
+   factual (clean under the carve-out), GEO-citable, monetises through existing
+   levers (affiliate + newsletter sponsor). = DAILY_ENGAGEMENT_IDEAS Tier 1
+   #2/#6 + Tier 3 #18; the new `HomeMarketToday` band is the beachhead.
+3. **Community: YES strategically — the real moat (UGC = content AI can't get
+   elsewhere + retention) — but SEQUENCE it.** Pre-launch it's an empty
+   restaurant, and thin UGC pages indexed during the Oct–Dec migration window
+   add SEO risk at the worst possible moment. Seed supply-side first (advisor
+   question-of-the-day, office-hours transcripts → Q&A pages), noindex threads
+   below a quality threshold, promote to nav only post-cutover.
+4. **Nav: no News tab.** The real gap is ONE consolidated top-level content
+   entry ("Learn" / "Insights & Community") post-cutover, folding
+   articles/guides/glossary/Q&A/community — not two new tabs.
+
+**Sequencing:** now→Sep: data-news surfaces + Morning-Brief newsletter habit;
+community stays soft-launched/expert-seeded. Oct–Dec: freeze new surfaces
+(migration window). Q1 2027 (post-AFSL): commentary loosens (general advice
+covered), open community posting wider, add the consolidated nav entry.
+
+**Compliance tripwires if pursued:** market commentary pre-AFSL (above); UGC
+moderation duty (existing classifyText pipeline + house rules; specific-security
+"should I buy X" threads are the hot zone — ASIC INFO 269 finfluencer context);
+never let community pool money or drift toward execution (avoid-list).
+
+**Revisit:** 2026-07-10 — founder verdict on sequencing; if agreed, brief the
+data-news stream (rate-change log + `/rates/today`) as the first build.
+
 ---
 
 ## Open commitments / revisit-by dates
