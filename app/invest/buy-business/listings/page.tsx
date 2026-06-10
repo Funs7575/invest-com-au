@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { getAllInvestCategories, getInvestCategoryBySlug } from "@/lib/invest-categories";
@@ -7,6 +8,7 @@ import {
   countListingsByVertical,
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import SubCategoryNav from "@/components/SubCategoryNav";
 
 export const revalidate = 300;
@@ -47,8 +49,26 @@ export default async function BusinessListingsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {/* House-standard compact light header (E7) — replaces the client's
+          tall page-title band so results land near the fold. */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Buy a Business / Listings"
+        headlineLead="Businesses"
+        headlineAccent="for sale"
+        subtitle="Browse Australian businesses for sale — cafes, agencies, franchises, professional practices and e-commerce."
+        stats={listings.length > 0 ? [{ v: String(listings.length), l: "Live listings" }] : undefined}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest"
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 md:text-xs"
+        >
+          ← Browse all investment sectors
+        </Link>
+      </DirectoryHero>
       {category && (
-        <div className="container-custom pt-6">
+        <div className="container-custom pt-4">
           <SubCategoryNav category={category} />
         </div>
       )}
@@ -57,8 +77,6 @@ export default async function BusinessListingsPage() {
           listings={listings}
           categories={categoryTabs}
           lockedCategory="buy-business"
-          pageTitle="Buy a Business Investment Listings"
-          pageSubtitle="Browse Australian businesses for sale — cafes, agencies, franchises, professional practices and e-commerce."
         />
       </Suspense>
     </>

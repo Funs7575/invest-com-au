@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import { SHOW_ADVISOR_RATINGS, SHOW_ADVISOR_VERIFIED_BADGE, ADVISOR_DIRECTORY_HEADING, ADVISOR_DIRECTORY_SUBTEXT } from "@/lib/compliance-config";
 
 export const metadata: Metadata = {
@@ -77,89 +78,32 @@ export default async function PrivateCreditPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <span className="text-slate-300">/</span>
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <span className="text-slate-300">/</span>
-            <span className="text-slate-900 font-medium">Private Credit &amp; P2P Lending</span>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
-              Updated {CURRENT_YEAR}
-            </span>
-            <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">
-              Hottest Alternative Asset Class
-            </span>
-          </div>
-
-          <h1 className="text-slate-900 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
-            Private Credit &amp; P2P Lending in Australia
-          </h1>
-          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
-            Private credit is Australia&apos;s fastest-growing alternative asset class. Institutional capital is pouring in, and retail investors — especially SMSF trustees — are following for yields well above term deposits.
-          </p>
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Link
-              href="/advisors"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
-            >
-              Browse Directories &rarr;
-            </Link>
-            <Link
-              href="/compare"
-              className="inline-flex items-center gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 font-semibold text-sm px-5 py-2.5 rounded-lg border transition-colors"
-            >
-              Filter Platforms
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Browse Listings CTA */}
-      <section className="bg-white pt-8">
-        <div className="container-custom">
-          <Link
-            href="/invest/private-credit/listings"
-            className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl mb-8 hover:border-emerald-300 hover:shadow-md transition-all"
-          >
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-1">Browse Listings</p>
-              <p className="text-lg font-extrabold text-slate-900">View all private credit opportunities &rarr;</p>
-              <p className="text-sm text-slate-600 mt-0.5">Senior secured, mezzanine, P2P, sub-categories &amp; more</p>
-            </div>
-            <svg className="w-8 h-8 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </div>
-      </section>
-
-      {/* Key stats */}
-      <section className="py-10 bg-white border-b border-slate-100">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { value: "$200B+", label: "Australian private credit market size" },
-              { value: "6–10%", label: "Typical annual yields" },
-              { value: "600K+", label: "Australian SMSFs seeking yield" },
-              { value: "3–5yr", label: "Common fund lock-up periods" },
-            ].map((s) => (
-              <div key={s.label} className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
-                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
-                <p className="text-xs text-slate-600 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Hero — house-standard compact light header (E3). The old stat band
+          rides as pills beside the title; the browse-all entry point lives in
+          the light band below, replacing the standalone CTA band (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Private Credit & P2P Lending"
+        headlineLead="Private Credit & P2P Lending in Australia"
+        subtitle="Private credit is Australia's fastest-growing alternative asset class. Institutional capital is pouring in, and retail investors — especially SMSF trustees — are following for yields well above term deposits."
+        stats={[
+          { v: "$200B+", l: "Australian private credit market size" },
+          { v: "6–10%", l: "Typical annual yields" },
+          { v: "600K+", l: "Australian SMSFs seeking yield" },
+          { v: "3–5yr", l: "Common fund lock-up periods" },
+        ]}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest/private-credit/listings"
+          className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
+        >
+          Browse all private credit opportunities →
+        </Link>
+      </DirectoryHero>
 
       {/* Section 1: What Is Private Credit */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 1</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-4">What Is Private Credit?</h2>
@@ -185,7 +129,7 @@ export default async function PrivateCreditPage() {
       </section>
 
       {/* Section 2: Key Fund Managers */}
-      <section className="py-14 bg-slate-50">
+      <section className="py-8 md:py-10 bg-slate-50">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 2</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Leading Private Credit Fund Managers</h2>
@@ -214,14 +158,14 @@ export default async function PrivateCreditPage() {
       </section>
 
       {/* Lead Magnet */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <ContextualLeadMagnet segment="fee-audit" />
         </div>
       </section>
 
       {/* Section 3: P2P Lending */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 3</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-4">P2P Lending Platforms</h2>
@@ -267,7 +211,7 @@ export default async function PrivateCreditPage() {
       </section>
 
       {/* Section 4: ASX-Listed Exposure */}
-      <section className="py-14 bg-slate-50">
+      <section className="py-8 md:py-10 bg-slate-50">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 4</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">ASX-Listed Private Credit Exposure</h2>
@@ -307,7 +251,7 @@ export default async function PrivateCreditPage() {
       </section>
 
       {/* Section 5: SMSF & Private Credit */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 5</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Private Credit for SMSF Trustees</h2>
@@ -334,7 +278,7 @@ export default async function PrivateCreditPage() {
       </section>
 
       {/* Section 6: Risk & Return */}
-      <section className="py-14 bg-slate-50">
+      <section className="py-8 md:py-10 bg-slate-50">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 6</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Risk &amp; Return Profile</h2>
@@ -394,7 +338,7 @@ export default async function PrivateCreditPage() {
 
       {/* Find an Advisor */}
       {advisors && advisors.length > 0 && (
-        <section className="py-14 bg-white">
+        <section className="py-8 md:py-10 bg-white">
           <div className="container-custom max-w-4xl">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Expert Advisors</p>
             <h2 className="text-2xl font-extrabold text-slate-900 mb-2">{ADVISOR_DIRECTORY_HEADING}</h2>
@@ -437,7 +381,7 @@ export default async function PrivateCreditPage() {
         </section>
       )}
       {/* Related guides */}
-      <section className="py-14 bg-slate-50">
+      <section className="py-8 md:py-10 bg-slate-50">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
@@ -459,7 +403,7 @@ export default async function PrivateCreditPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
@@ -478,7 +422,7 @@ export default async function PrivateCreditPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">

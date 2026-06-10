@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import { faqJsonLd } from "@/lib/schema-markup";
 
 const PE_FAQS = [
@@ -69,56 +70,37 @@ export default function PrivateEquityPage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(peFaqLd) }} />
       )}
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <span className="text-slate-900 font-medium">/</span>
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <span className="text-slate-900 font-medium">/</span>
-            <span className="text-slate-900 font-medium">Private Equity &amp; Hedge Funds</span>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
-              Updated {CURRENT_YEAR}
-            </span>
-            <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">
-              Wholesale &amp; Retail Access
-            </span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
-            Private Equity &amp; Hedge Fund Investment in Australia
-          </h1>
-          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
-            Australia has a mature private equity sector managing over $40 billion and 170+ hedge funds overseeing ~$120 billion in assets. Here is how both domestic and international investors can access these markets.
-          </p>
+      {/* Hero — house-standard compact light header (E3). The old stat band
+          rides as pills beside the title; the browse-all entry point lives in
+          the light band below (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Private Equity & Hedge Funds"
+        headlineLead="Private Equity & Hedge Fund Investment in Australia"
+        subtitle="Australia has a mature private equity sector managing over $40 billion and 170+ hedge funds overseeing ~$120 billion in assets. Here is how both domestic and international investors can access these markets."
+        stats={[
+          { v: "$40B+", l: "Australian PE assets under management" },
+          { v: "170+", l: "Hedge funds operating in Australia" },
+          { v: "~$120B", l: "Hedge fund AUM" },
+          { v: "15–20%", l: "Historical PE p.a. returns" },
+        ]}
+        containerClassName="container-custom"
+      >
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/invest/private-equity/listings"
+            className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
+          >
+            Browse all private equity &amp; hedge fund listings →
+          </Link>
+          <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 md:text-xs">
+            Wholesale &amp; Retail Access
+          </span>
         </div>
-      </section>
-
-      {/* Key stats */}
-      <section className="py-10 bg-white border-b border-slate-100">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { value: "$40B+", label: "Australian PE assets under management" },
-              { value: "170+", label: "Hedge funds operating in Australia" },
-              { value: "~$120B", label: "Hedge fund AUM" },
-              { value: "15–20%", label: "Historical PE p.a. returns" },
-            ].map((s) => (
-              <div key={s.label} className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
-                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
-                <p className="text-xs text-slate-600 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      </DirectoryHero>
 
       {/* Section 1: Introduction & Landscape */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <div className="mb-2">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 1</p>
@@ -173,7 +155,7 @@ export default function PrivateEquityPage() {
       </section>
 
       {/* Section 2: How to Access PE in Australia */}
-      <section className="py-14 bg-slate-50">
+      <section className="py-8 md:py-10 bg-slate-50">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 2</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">How to Access Private Equity in Australia</h2>
@@ -249,7 +231,7 @@ export default function PrivateEquityPage() {
       </section>
 
       {/* Section 3: SIV Complying Funds */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 3</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-4">SIV Complying PE &amp; VC Funds</h2>
@@ -287,7 +269,7 @@ export default function PrivateEquityPage() {
       </section>
 
       {/* Section 4: Risk & Return */}
-      <section className="py-14 bg-slate-50">
+      <section className="py-8 md:py-10 bg-slate-50">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 4</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Risk &amp; Return Profile</h2>
@@ -345,7 +327,7 @@ export default function PrivateEquityPage() {
       </section>
 
       {/* Section 5: Tax Treatment */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 5</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Tax Treatment — Domestic &amp; Foreign Investors</h2>
@@ -385,7 +367,7 @@ export default function PrivateEquityPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-10 bg-white border-t border-slate-200">
+      <section className="py-6 md:py-8 bg-white border-t border-slate-200">
         <div className="max-w-3xl mx-auto px-4 container-custom">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
           <div className="space-y-3">
@@ -405,7 +387,7 @@ export default function PrivateEquityPage() {
       </section>
 
       {/* Find a Wealth Manager CTA */}
-      <section className="py-14 bg-slate-50">
+      <section className="py-8 md:py-10 bg-slate-50">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">

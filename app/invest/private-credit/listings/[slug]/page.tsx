@@ -140,10 +140,11 @@ export default async function PrivateCreditListingDetailPage({
       />
       <ListingSchemaScripts listing={l} vertical={CATEGORY_SLUG} />
 
-      {/* Hero */}
-      <section className="bg-white border-b border-slate-100 py-12">
+      {/* Compact header (E1) — breadcrumb + badges + title + location only,
+          so the gallery and metrics sit near the fold. */}
+      <section className="bg-white border-b border-slate-100 py-3 md:py-4">
         <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-4">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -153,7 +154,7 @@ export default async function PrivateCreditListingDetailPage({
             <span className="text-slate-900 font-medium truncate max-w-40">{l.title}</span>
           </nav>
 
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-2 mb-2">
             {l.listing_type === "featured" && (
               <span className="bg-amber-500 text-slate-900 text-xs font-bold px-2.5 py-0.5 rounded-full">Featured</span>
             )}
@@ -181,14 +182,14 @@ export default async function PrivateCreditListingDetailPage({
       </section>
 
       {/* Main content */}
-      <section className="py-10 bg-slate-50">
+      <section className="py-6 md:py-8 bg-slate-50">
         <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {/* Left: details */}
             <div className="lg:col-span-2 space-y-6">
               <ListingImageGallery images={l.images} alt={l.title} vertical={l.vertical} listingId={l.id} subCategory={l.sub_category} />
               {/* Price card */}
-              <div className="bg-white border border-slate-200 rounded-xl p-6">
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Minimum Investment</p>

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import { faqJsonLd } from "@/lib/schema-markup";
 
 const FRANCHISE_FAQS = [
@@ -59,80 +60,32 @@ export default function FranchisePage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(franchiseFaqLd) }} />
       )}
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <span className="text-slate-900 font-medium">Franchise</span>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
-              Updated {CURRENT_YEAR}
-            </span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
-            Franchise Investment Opportunities in Australia
-          </h1>
-          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl mb-8">
-            Buy into a proven business system with established brand recognition, training, and ongoing support. Australia has over 1,300 active franchise systems with 90,000+ outlets.
-          </p>
-
-          <Link
-            href="/invest/franchise/listings"
-            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-base px-7 py-3.5 rounded-xl transition-colors shadow-lg"
-          >
-            Browse Franchise Opportunities
-            <Icon name="arrow-right" size={18} />
-          </Link>
-        </div>
-      </section>
-
-      {/* Browse Listings CTA */}
-      <section className="bg-white pt-8">
-        <div className="container-custom">
-          <Link
-            href="/invest/franchise/listings"
-            className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl mb-8 hover:border-emerald-300 hover:shadow-md transition-all"
-          >
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-1">Browse Listings</p>
-              <p className="text-lg font-extrabold text-slate-900">View all franchise opportunities &rarr;</p>
-              <p className="text-sm text-slate-600 mt-0.5">Active territories, investment levels, sub-categories &amp; more</p>
-            </div>
-            <svg className="w-8 h-8 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="py-10 bg-white border-b border-slate-100">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { value: "1,300+", label: "franchise systems" },
-              { value: "90,000+", label: "franchise outlets" },
-              { value: "$182B", label: "annual industry revenue" },
-              { value: "Lower", label: "failure rate vs independent" },
-            ].map((s) => (
-              <div key={s.label} className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
-                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
-                <p className="text-xs text-slate-600 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Hero — house-standard compact light header (E3). The old stat band
+          rides as pills beside the title; the browse-all entry point lives in
+          the light band below, replacing the standalone CTA band (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Franchise"
+        headlineLead="Franchise Investment Opportunities in Australia"
+        subtitle="Buy into a proven business system with established brand recognition, training, and ongoing support. Australia has over 1,300 active franchise systems with 90,000+ outlets."
+        stats={[
+          { v: "1,300+", l: "franchise systems" },
+          { v: "90,000+", l: "franchise outlets" },
+          { v: "$182B", l: "annual industry revenue" },
+          { v: "Lower", l: "failure rate vs independent" },
+        ]}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest/franchise/listings"
+          className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
+        >
+          Browse all franchise opportunities →
+        </Link>
+      </DirectoryHero>
 
       {/* Content */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <SectionHeading
             eyebrow="Franchise categories"
@@ -218,7 +171,7 @@ export default function FranchisePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-14 bg-white border-t border-slate-100">
+      <section className="py-8 md:py-10 bg-white border-t border-slate-100">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 text-center">
             <h2 className="text-2xl font-extrabold text-slate-900 mb-3">Browse Franchise Opportunities</h2>
@@ -244,7 +197,7 @@ export default function FranchisePage() {
         </div>
       </section>
 
-      <section className="py-10 bg-white border-t border-slate-200">
+      <section className="py-6 md:py-8 bg-white border-t border-slate-200">
         <div className="container-custom max-w-3xl">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
           <div className="space-y-3">

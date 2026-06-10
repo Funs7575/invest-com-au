@@ -6,6 +6,7 @@ import { getAllInvestCategories, getInvestCategoryBySlug } from "@/lib/invest-ca
 import { fetchListingsByKind, countListingsByKind } from "@/lib/investment-listings-query";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import Icon from "@/components/Icon";
 
 export const revalidate = 300;
@@ -49,9 +50,27 @@ export default async function ListedSecuritiesPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
 
+      {/* House-standard compact light header (E7) — replaces the client's
+          tall page-title band so results land near the fold. */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Listed Securities / Listings"
+        headlineLead={cat?.h1 ?? "ASX-Listed Securities"}
+        subtitle={cat?.intro}
+        stats={listings.length > 0 ? [{ v: String(listings.length), l: "Live listings" }] : undefined}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest"
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 md:text-xs"
+        >
+          ← Browse all investment sectors
+        </Link>
+      </DirectoryHero>
+
       {/* Factual / general-information notice — these are public securities,
           not an offer or recommendation (lean lane per REGULATORY-AVOID-LIST). */}
-      <div className="container-custom pt-6">
+      <div className="container-custom pt-4">
         <div className="flex gap-2.5 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs leading-relaxed text-blue-800">
           <Icon name="shield-check" size={15} className="mt-0.5 shrink-0 text-blue-600" />
           <p>
@@ -68,8 +87,6 @@ export default async function ListedSecuritiesPage() {
           listings={listings}
           categories={categoryTabs}
           lockedCategory="listed-securities"
-          pageTitle={cat?.h1 ?? "ASX-Listed Securities"}
-          pageSubtitle={cat?.intro}
         />
       </Suspense>
     </>

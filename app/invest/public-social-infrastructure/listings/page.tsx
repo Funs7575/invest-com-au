@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { getAllInvestCategories } from "@/lib/invest-categories";
@@ -7,6 +8,7 @@ import {
   countListingsByVertical,
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 
 export const revalidate = 300;
 
@@ -43,13 +45,29 @@ export default async function PublicSocialInfrastructureListingsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {/* House-standard compact light header (E7) — replaces the client's
+          tall page-title band so results land near the fold. */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Public & Social Infrastructure / Listings"
+        headlineLead="Public & social infrastructure"
+        headlineAccent="opportunities"
+        subtitle="Browse Australian public and social infrastructure investment opportunities — toll roads, water utilities, hospitals, schools, social housing and PPP availability-payment assets."
+        stats={listings.length > 0 ? [{ v: String(listings.length), l: "Live listings" }] : undefined}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest"
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 md:text-xs"
+        >
+          ← Browse all investment sectors
+        </Link>
+      </DirectoryHero>
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
         <InvestListingsClient
           listings={listings}
           categories={categoryTabs}
           lockedCategory="public-social-infrastructure"
-          pageTitle="Public & Social Infrastructure Investment Listings"
-          pageSubtitle="Browse Australian public and social infrastructure investment opportunities — toll roads, water utilities, hospitals, schools, social housing and PPP availability-payment assets."
         />
       </Suspense>
     </>
