@@ -244,6 +244,27 @@ export interface TopMatch {
   specialties_preview?: string[];
 }
 
+/**
+ * A specific scored listing for the listings lane (Decision Engine —
+ * "recommend specific listings"). Display-safe subset of
+ * `investment_listings` only; `reasons` are factual criteria matches from
+ * `lib/listings/match-listings.ts` — never endorsements or advice.
+ */
+export interface ListingMatch {
+  id: number;
+  slug: string;
+  title: string;
+  /** Raw DB vertical (e.g. "commercial_property") — prettify for display. */
+  vertical: string;
+  location_state: string | null;
+  /** Listing's own display price, or a formatted asking price, or null. */
+  price_display: string | null;
+  image_url: string | null;
+  reasons: string[];
+  /** Canonical detail page via lib/listing-url (sector-scoped). */
+  href: string;
+}
+
 export type EmbedContext =
   | "homepage"
   | "smsf_guide"

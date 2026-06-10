@@ -31,6 +31,11 @@ vi.mock("@/lib/getmatched/top-match", () => ({
   computeTopMatches: (...args: unknown[]) => mockComputeTopMatches(...args),
 }));
 
+const mockListingMatchesForLanes = vi.fn();
+vi.mock("@/lib/getmatched/listing-top-match", () => ({
+  listingMatchesForLanes: (...args: unknown[]) => mockListingMatchesForLanes(...args),
+}));
+
 vi.mock("@/lib/getmatched/explainer", () => ({
   buildMatchExplainer: vi.fn(() => ({ bullets: [] })),
 }));
@@ -95,6 +100,7 @@ describe("POST /api/get-matched/resolve", () => {
     mockResolveActionPlan.mockResolvedValue(MOCK_RESOLVED);
     mockRecommendedProviders.mockResolvedValue([]);
     mockComputeTopMatches.mockResolvedValue([]);
+    mockListingMatchesForLanes.mockResolvedValue([]);
     mockGetPlanById.mockResolvedValue({
       id: 5,
       session_id: "sess1",
@@ -146,5 +152,22 @@ describe("POST /api/get-matched/resolve", () => {
     const json = await res.json();
     expect(json.plan).toBeDefined();
     expect(json.template).toBeDefined();
+  });
+
+  it("includes lane-gated listing_matches on ephemeral and DB-backed responses", async () => {
+    const match = { id: 11, slug: "syd-office-asset", title: "Sydney Office Asset" };
+    mockListingMatchesForLanes.mockResolvedValue([match]);
+
+    const eph = await (await POST(makeReq({ plan_id: 0, answers: { intent: "browse" } }))).json();
+    expect(eph.listing_matches).toEqual([match]);
+    // Gating is the helper's job: it receives the answers, the SAME lanes
+    // object the response carries, and the card limit.
+    const [answers, lanes, limit] = mockListingMatchesForLanes.mock.calls[0]!;
+    expect(answers).toEqual({ intent: "browse" });
+    expect(lanes).toEqual(eph.lanes);
+    expect(limit).toBe(3);
+
+    const db = await (await POST(makeReq({ plan_id: 5, answers: {} }))).json();
+    expect(db.listing_matches).toEqual([match]);
   });
 });
