@@ -32,7 +32,7 @@ export default async function HomeGetMatched() {
   ] as const;
 
   return (
-    <section style={{ padding: "44px 36px", maxWidth: 1280, margin: "0 auto" }}>
+    <section style={{ padding: "28px 36px", maxWidth: 1280, margin: "0 auto" }}>
       <div className="home-getmatched-resume" style={{ marginBottom: 16 }}>
         <ResumeBanner />
       </div>
@@ -41,7 +41,7 @@ export default async function HomeGetMatched() {
         className="bg-white border border-slate-200 home-getmatched-card"
         style={{
           borderRadius: 18,
-          padding: "32px 32px 28px",
+          padding: "24px 24px 20px",
           display: "grid",
           gridTemplateColumns: "1.4fr 1fr",
           gap: 36,

@@ -7,6 +7,11 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
 import type { BriefTemplate } from "@/lib/briefs/types";
+import { formatDate } from "@/lib/utils";
+import DirectoryHero from "@/components/directory/DirectoryHero";
+import EmptyState from "@/components/directory/EmptyState";
+import { Badge } from "@/components/ui/Badge";
+import Icon from "@/components/Icon";
 
 export const dynamic = "force-dynamic";
 
@@ -29,37 +34,40 @@ type BriefSummary = {
 
 type BriefWithCount = BriefSummary & { bid_count: number };
 
-/** Maps the compound (status, tracker_status) to a user-facing label and colour token. */
+type BadgeVariant = "default" | "success" | "warning" | "info";
+
+/** Maps the compound (status, tracker_status) to a user-facing label and Badge variant. */
 function resolveStatusBadge(row: BriefSummary): {
   label: string;
-  bg: string;
-  text: string;
+  variant: BadgeVariant;
 } {
   if (row.status === "closed" || row.status === "expired" || row.status === "withdrawn") {
-    return { label: "Closed", bg: "#f1f5f9", text: "#64748b" };
+    return { label: "Closed", variant: "default" };
   }
   if (row.tracker_status === "won") {
-    return { label: "Engagement confirmed", bg: "#d1fae5", text: "#065f46" };
+    return { label: "Engagement confirmed", variant: "success" };
   }
   if (row.tracker_status === "lost" || row.tracker_status === "withdrawn") {
-    return { label: "Closed", bg: "#f1f5f9", text: "#64748b" };
+    return { label: "Closed", variant: "default" };
   }
   if (row.tracker_status === "proposal_sent") {
-    return { label: "Proposal sent", bg: "#ccfbf1", text: "#0f766e" };
+    return { label: "Proposal sent", variant: "info" };
   }
   if (row.tracker_status === "call_booked") {
-    return { label: "Call booked", bg: "#ccfbf1", text: "#0f766e" };
+    return { label: "Call booked", variant: "info" };
   }
   if (row.tracker_status === "contacted") {
-    return { label: "In progress", bg: "#ccfbf1", text: "#0f766e" };
+    return { label: "In progress", variant: "info" };
   }
   // "new" or unknown — brief is live and waiting
-  return { label: "Pending", bg: "#fef3c7", text: "#92400e" };
+  return { label: "Pending", variant: "warning" };
 }
 
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+function isActive(row: BriefSummary): boolean {
+  if (row.status === "closed" || row.status === "expired" || row.status === "withdrawn") {
+    return false;
+  }
+  return !["won", "lost", "withdrawn"].includes(row.tracker_status);
 }
 
 export default async function MyBriefsPage() {
@@ -122,121 +130,55 @@ export default async function MyBriefsPage() {
     bid_count: bidCounts[b.id] ?? 0,
   }));
 
-  return (
-    <div className="min-h-screen bg-slate-50" style={{ minHeight: "100vh" }}>
-      <div
-        style={{
-          maxWidth: 768,
-          margin: "0 auto",
-          padding: "2rem 1rem 4rem",
-        }}
-      >
-        {/* Breadcrumb */}
-        <div
-          className="text-slate-500"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.4rem",
-            fontSize: "0.75rem",
-            marginBottom: "1.25rem",
-          }}
-        >
-          <Link href="/account" className="text-slate-500" style={{ textDecoration: "none" }}>
-            Account
-          </Link>
-          <span>/</span>
-          <span className="text-slate-900">My Briefs</span>
-        </div>
+  const activeCount = briefs.filter(isActive).length;
+  const responseCount = briefsWithCounts.reduce((sum, b) => sum + b.bid_count, 0);
 
-        {/* Header row */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "0.75rem",
-            marginBottom: "1.75rem",
-          }}
-        >
-          <div>
-            <h1
-              className="text-slate-900"
-              style={{
-                fontSize: "1.75rem",
-                fontWeight: 800,
-                margin: 0,
-              }}
-            >
-              My Briefs
-            </h1>
-            <p className="text-slate-500" style={{ fontSize: "0.875rem", marginTop: "0.25rem" }}>
-              Your advisor quote requests and their current status.
-            </p>
-          </div>
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="My briefs"
+        headlineLead="Your briefs"
+        subtitle="Your quote requests and where each one is up to. Pros respond — you compare and choose."
+        stats={
+          briefs.length > 0
+            ? [
+                { v: String(briefs.length), l: "briefs" },
+                { v: String(activeCount), l: "active" },
+                { v: String(responseCount), l: "responses" },
+              ]
+            : undefined
+        }
+      />
+
+      <div className="container-custom max-w-6xl pb-12 pt-3 md:pt-4">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <p className="text-xs text-slate-500">
+            {briefsWithCounts.length > 0
+              ? `Showing your ${briefsWithCounts.length} most recent brief${briefsWithCounts.length === 1 ? "" : "s"}.`
+              : ""}
+          </p>
           <Link
             href="/briefs/new"
-            className="text-white"
-            style={{
-              display: "inline-block",
-              padding: "0.55rem 1.1rem",
-              borderRadius: "0.6rem",
-              background: "var(--color-teal-600, #0d9488)",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-            }}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition-all duration-150 hover:bg-amber-600 hover:shadow-md"
           >
-            Submit a new brief →
+            <Icon name="plus" size={14} />
+            Post a new brief
           </Link>
         </div>
 
-        {/* Empty state */}
-        {briefsWithCounts.length === 0 && (
-          <div
-            className="bg-white border border-slate-200"
-            style={{
-              borderRadius: "1rem",
-              padding: "3rem 2rem",
-              textAlign: "center",
-            }}
-          >
-            <p
-              className="text-slate-900"
-              style={{
-                fontSize: "1rem",
-                fontWeight: 700,
-                marginBottom: "0.5rem",
-              }}
-            >
-              No briefs yet
-            </p>
-            <p className="text-slate-500" style={{ fontSize: "0.875rem", maxWidth: 360, margin: "0 auto 1.5rem" }}>
-              Tell us what you&apos;re looking for and get matched with verified advisors.
-            </p>
-            <Link
-              href="/briefs/new"
-              className="text-white"
-              style={{
-                display: "inline-block",
-                padding: "0.6rem 1.25rem",
-                borderRadius: "0.6rem",
-                background: "var(--color-teal-600, #0d9488)",
-                fontSize: "0.875rem",
-                fontWeight: 600,
-                textDecoration: "none",
-              }}
-            >
-              Submit your first brief →
-            </Link>
-          </div>
-        )}
-
-        {/* Brief cards */}
-        {briefsWithCounts.length > 0 && (
-          <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.875rem" }}>
+        {briefsWithCounts.length === 0 ? (
+          <EmptyState
+            icon="inbox"
+            title="No briefs yet"
+            body="Tell us what you're looking for and verified pros respond — you compare and choose."
+            ctas={[
+              { label: "Post your first brief", href: "/briefs/new" },
+              { label: "Browse verified pros", href: "/advisors", variant: "secondary" },
+            ]}
+          />
+        ) : (
+          <ul className="flex flex-col gap-2.5">
             {briefsWithCounts.map((brief) => {
               const badge = resolveStatusBadge(brief);
               const templateLabel =
@@ -248,120 +190,56 @@ export default async function MyBriefsPage() {
                 <li key={brief.id}>
                   <Link
                     href={`/briefs/${brief.slug}`}
-                    style={{ textDecoration: "none", display: "block" }}
+                    className="group block rounded-xl border border-slate-200 bg-white p-4 transition-all duration-150 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
                   >
-                    <div
-                      className="bg-white border border-slate-200"
-                      style={{
-                        borderRadius: "1rem",
-                        padding: "1.25rem 1.5rem",
-                        transition: "box-shadow 0.15s",
-                      }}
-                    >
-                      {/* Top row: title + status badge */}
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          justifyContent: "space-between",
-                          gap: "0.75rem",
-                          marginBottom: "0.5rem",
-                        }}
-                      >
-                        <h2
-                          className="text-slate-900"
-                          style={{
-                            fontSize: "1rem",
-                            fontWeight: 700,
-                            margin: 0,
-                            flex: 1,
-                          }}
-                        >
-                          {brief.job_title}
-                        </h2>
-                        <span
-                          style={{
-                            display: "inline-block",
-                            padding: "0.2rem 0.65rem",
-                            borderRadius: "9999px",
-                            fontSize: "0.7rem",
-                            fontWeight: 700,
-                            background: badge.bg,
-                            color: badge.text,
-                            whiteSpace: "nowrap",
-                            flexShrink: 0,
-                          }}
-                        >
-                          {badge.label}
-                        </span>
-                      </div>
+                    <div className="mb-1.5 flex items-start justify-between gap-3">
+                      <h2 className="min-w-0 flex-1 text-sm font-bold text-slate-900">
+                        {brief.job_title}
+                      </h2>
+                      <Badge variant={badge.variant} size="sm" className="shrink-0">
+                        {badge.label}
+                      </Badge>
+                    </div>
 
-                      {/* Meta row */}
-                      <div
-                        className="text-slate-500"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.75rem",
-                          fontSize: "0.75rem",
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        {templateLabel && <span>{templateLabel}</span>}
-                        {templateLabel && <span>·</span>}
-                        <span>Submitted {formatDate(brief.created_at)}</span>
-                        {brief.location && (
-                          <>
-                            <span>·</span>
-                            <span>{brief.location}</span>
-                          </>
-                        )}
-                        {brief.bid_count > 0 && (
-                          <>
-                            <span>·</span>
-                            <span
-                              style={{
-                                color: "var(--color-teal-600, #0d9488)",
-                                fontWeight: 600,
-                              }}
-                            >
-                              {brief.bid_count} advisor{brief.bid_count === 1 ? "" : "s"} responded
-                            </span>
-                          </>
-                        )}
-                      </div>
-
-                      {/* CTA hint */}
-                      <div
-                        style={{
-                          marginTop: "0.875rem",
-                          fontSize: "0.75rem",
-                          color: "var(--color-teal-600, #0d9488)",
-                          fontWeight: 600,
-                        }}
-                      >
-                        View details →
-                      </div>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
+                      {templateLabel && (
+                        <>
+                          <span>{templateLabel}</span>
+                          <span aria-hidden>·</span>
+                        </>
+                      )}
+                      <span>Submitted {formatDate(brief.created_at)}</span>
+                      {brief.location && (
+                        <>
+                          <span aria-hidden>·</span>
+                          <span className="inline-flex items-center gap-1">
+                            <Icon name="map-pin" size={11} className="text-slate-400" />
+                            {brief.location}
+                          </span>
+                        </>
+                      )}
+                      {brief.bid_count > 0 && (
+                        <>
+                          <span aria-hidden>·</span>
+                          <span className="font-semibold text-emerald-700">
+                            {brief.bid_count} pro{brief.bid_count === 1 ? "" : "s"} responded
+                          </span>
+                        </>
+                      )}
+                      <span className="ml-auto inline-flex items-center gap-1 font-semibold text-amber-700">
+                        View
+                        <Icon
+                          name="arrow-right"
+                          size={12}
+                          className="transition-transform group-hover:translate-x-0.5"
+                        />
+                      </span>
                     </div>
                   </Link>
                 </li>
               );
             })}
           </ul>
-        )}
-
-        {/* Footer note */}
-        {briefsWithCounts.length > 0 && (
-          <p
-            className="text-slate-400"
-            style={{
-              marginTop: "1.5rem",
-              fontSize: "0.75rem",
-              textAlign: "center",
-            }}
-          >
-            Showing your {briefsWithCounts.length} most recent brief{briefsWithCounts.length === 1 ? "" : "s"}.
-          </p>
         )}
       </div>
     </div>
