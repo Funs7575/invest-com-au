@@ -43,6 +43,29 @@ Full corrections in `docs/audits/TOP10_CODEBASE_BENCHMARK.md`.
 sign-off (founder + lawyer, non-code) and pilot-broker BD. **Revisit:**
 2026-07-10 — has legal reviewed the tier/quality-multiplier framing?
 
+### 2026-06-10 — Decision Engine vision locked: multi-lane outcome router on /get-matched
+
+Founder vision set the bar: not a quiz or directory — a decision engine that
+resolves the right destination(s) per user: matched advisors when a
+professional is the answer, SPECIFIC scored listings when browsing is, both
+lanes side-by-side when both apply; shortlists, comparison, a "My Options"
+workspace, resumable journeys, full why-this transparency. Full product plan
++ architecture: docs/plans/UNIFIED_MATCHING_ENGINE.md (v2) — lanes
+(advisor/listings/platforms/brief/education), weighting by intent + urgency +
+certainty + real supply, composite results, edge-case table, compliance
+redlines (listing matches are factual criteria only; CSF verticals excluded
+pending s708 gate), 9 phases each flag-gated + tested.
+
+P1 shipped same day (PR #1497): lib/getmatched/advisor-allocation.ts — the
+translator that drives get-matched's answers through the ONE advisor engine
+(deriveNeeds → pickPrimary single-lead + scoring context), 17 intent-matrix
+tests. Next: P2 (advisor lane live in resolve behind
+advisor_match_v2_get_matched), then listings scorer (P4) and the workspace
+(P5, needs device QA).
+
+**Revisit:** after P2 ships, before P5 — founder eyes on the result-surface
+redesign on the Netlify mirror.
+
 ### 2026-06-10 — OTP wall relocated on /find-advisor (decision: keep the funnel, don't 301)
 
 Founder delegated the §5.6/§6 either-or. Evidence decided it: /get-matched
@@ -853,6 +876,103 @@ Captured during conversation with Claude. Re-evaluate against the 6-month pre-la
 Evaluated in conversation. Reframe: not "recruiter search" but "firm-to-advisor lead-gen", reusing `marketplace_placements` + `advisor_credit_ledger` + `advisor_firm_invitations`. Two-sided cold start is the constraint (advisors didn't opt in to be recruited; needs explicit "open to roles" toggle). Sized at $500k–$2M ARR ceiling. **Provisional P3 — sit until QQ ships and at least one inbound from a firm asking to hire. Don't build founder-pushed.**
 
 The narrower, cheaper variant: a "Careers" tab on `/firm/[slug]` profiles. ~half day. Reveals demand without a marketplace build. **Provisional P2 sub-task — bundle into a future firm-profile-improvements stream.**
+
+### 2026-06-10 — News & community: lean in? (exploration, founder decision pending)
+
+Founder asked whether to lean further into news + community (e.g. a News tab in
+the top bar). Explored in conversation with Claude, grounded in the codebase.
+Verdicts provisional until founder confirms.
+
+**Grounding discoveries — most of it is already built, just unlit:**
+- `/community` (Reddit-style forum: seeded threads, confessions/debate formats,
+  RLS'd, index=true) and `/feed` (advisor insights feed) are LIVE but linked
+  from **nowhere in the header**.
+- Editorial (~740 pages: /articles, /learn, /how-to, /glossary) appears in the
+  nav only as a sidebar block inside the Tools mega-menu — no top-level entry.
+- Newsletter infra complete (segments, double opt-in, weekly + personalized
+  digest crons); archive noindexed while empty. No `/news` route exists.
+
+**Verdicts (provisional):**
+1. **Traditional newsroom / News tab now: NO.** (a) Commodity treadmill vs
+   AFR/Livewire/Stockhead, no data moat; (b) news monetises via display ads —
+   explicitly NEVER (#21); (c) zero-click/AI Overviews eat news summaries first,
+   counter to the GEO pivot (2026-05-21); (d) **pre-AFSL, market commentary
+   ("analysts see upside") drifts from the s766B factual carve-out toward
+   general advice** — widens the compliance surface exactly when it must stay
+   narrow; (e) homepage was cut 24→13 sections today for bloat — adding a
+   top-bar tab the same day cuts against that call.
+2. **Data-news ("what changed today"): YES — this is our version of news.**
+   Rate-change board / `/rates/today`, RBA-day + EOFY market-events calendar,
+   fee-change log, IPO alerts. Proprietary (we already track fees/rates),
+   factual (clean under the carve-out), GEO-citable, monetises through existing
+   levers (affiliate + newsletter sponsor). = DAILY_ENGAGEMENT_IDEAS Tier 1
+   #2/#6 + Tier 3 #18; the new `HomeMarketToday` band is the beachhead.
+3. **Community: YES strategically — the real moat (UGC = content AI can't get
+   elsewhere + retention) — but SEQUENCE it.** Pre-launch it's an empty
+   restaurant, and thin UGC pages indexed during the Oct–Dec migration window
+   add SEO risk at the worst possible moment. Seed supply-side first (advisor
+   question-of-the-day, office-hours transcripts → Q&A pages), noindex threads
+   below a quality threshold, promote to nav only post-cutover.
+4. **Nav: no News tab.** The real gap is ONE consolidated top-level content
+   entry ("Learn" / "Insights & Community") post-cutover, folding
+   articles/guides/glossary/Q&A/community — not two new tabs.
+
+**Sequencing:** now→Sep: data-news surfaces + Morning-Brief newsletter habit;
+community stays soft-launched/expert-seeded. Oct–Dec: freeze new surfaces
+(migration window). Q1 2027 (post-AFSL): commentary loosens (general advice
+covered), open community posting wider, add the consolidated nav entry.
+
+**Compliance tripwires if pursued:** market commentary pre-AFSL (above); UGC
+moderation duty (existing classifyText pipeline + house rules; specific-security
+"should I buy X" threads are the hot zone — ASIC INFO 269 finfluencer context);
+never let community pool money or drift toward execution (avoid-list).
+
+**Revisit:** 2026-07-10 — founder verdict on sequencing; if agreed, brief the
+data-news stream (rate-change log + `/rates/today`) as the first build.
+
+**Update (same day):** founder asked for the full community plan → written to
+`docs/plans/COMMUNITY_MASTER_PLAN.md` (positioning, 5 phases, UX spec, cold-start
+playbook, metrics/kill criteria, 6 founder decisions). **Two P0 findings from the
+code audit:** (1) community thread/post POSTs run **zero text moderation** —
+everything auto-publishes onto indexed pages (article comments and Q&A are
+moderated; the forum is not); (2) the seed migration **inflates reply/vote
+counters** beyond actual seeded rows (same ACL s18 family as the fabricated
+counter killed in #1489). Plan's Phase 0 fixes both schema-free (migration
+ledger still frozen). These two are worth fixing even if community is never
+promoted.
+
+**Update 2 (same day) — founder said "do it all"; Phase 0 BUILT on PR #1493:**
+publish gate (classifyText, new forum surfaces) on thread/reply POSTs with
+held-for-review path into forum_reports; `/admin/community` queue
+(approve/remove/dismiss + live-row recounts); kill switch + hold_all raid dial;
+expert-answer elevation + licence-mode-aware adviser CTA on threads (the
+user-asks→expert-answers wire into the lead funnel); per-thread noindex until
+pinned/voted/expert-answered (migration protection); reply notifications;
+composer held-state + advice-phrasing nudge; /community/guidelines; footer
+link; PostHog gate events; DML-only counter-reconciliation script (run
+post-merge: `npx tsx --env-file=.env.local scripts/community-reconcile-counters.ts`
+— also seeds the Ask-an-Advisor category). 101 tests green, tsc/eslint clean.
+**Next up (Phase 1):** advisor quick-post UI + follow button (tables exist,
+no UI), QotD ritual + 24h Research-Team SLA (needs founder call on §11 D2/D3),
+confessions composer bug (`?thread_type=` ignored — Confess CTA makes a
+normal thread).
+
+**Update 3 (same day) — "continue": Phase 1 grounding + increment 2 shipped.**
+Grepping before building (again the lesson): quick-post composer
+(`advisor-portal/FeedTab.tsx` → `/api/advisor-auth/posts`), Follow button
+(`components/FollowAdvisorButton.tsx` on advisor profiles, follower_count
+live) and `/feed` All/Following tabs **already existed** — the master plan's
+1.2/1.3 were stale-scoped from the June audit; corrected in place. What was
+genuinely missing, now shipped on #1493: (1) **advisor posts had NO publish
+gate** (same hole as the forum, worse optics — authoritative voices) →
+`classifyText` with new `advisor_post` surface; non-clean verdicts bounce
+with the specific rule (RG 170 forward-looking message) rather than a hidden
+hold; (2) **follower notifications** — follows previously had zero pull;
+publishing now fans out capped (500) deduped announcements to followers;
+(3) confessions composer fixed (`?thread_type=` honoured, anonymity toggle,
+confession banner). Remaining genuinely-unbuilt Phase 1: QotD + 24h SLA
+(founder §11 D2/D3), article→thread cross-links, newsletter community-digest
+block, Founding-Experts BD motion.
 
 ---
 

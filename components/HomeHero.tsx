@@ -29,7 +29,7 @@ export default function HomeHero({
       style={{
         background: "var(--color-ink-900)",
         color: "white",
-        padding: "72px 36px 64px",
+        padding: "36px 36px 32px",
         position: "relative",
         overflow: "hidden",
       }}

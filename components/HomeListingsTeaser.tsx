@@ -80,7 +80,7 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
     <section
       className="bg-slate-50 border-t border-slate-200"
       style={{
-        padding: "48px 36px 52px",
+        padding: "32px 36px 36px",
       }}
     >
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>

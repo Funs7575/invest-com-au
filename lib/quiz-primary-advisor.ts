@@ -11,6 +11,7 @@
  * (rendered as directory links — never a second lead postback).
  *
  * Ladder (first match wins), grounded in the existing routing logic:
+ *   0. user explicitly named a type → that type (user agency beats inference)
  *   1. under-contract            → conveyancer (settlement clock is ticking)
  *   2. complex + many needs      → financial planner (coordinates the team)
  *   3. overseas + property       → buyer's agent (FIRB) — the purchase is the act
@@ -46,6 +47,14 @@ export interface PrimaryContext {
   goal?: string;
   amount?: string; // small | medium | large | whale
   investorGoalIntl?: string;
+  /**
+   * The advisor type the user EXPLICITLY named (quiz single-select /
+   * get-matched help_sub) — as opposed to types inferred from their goals.
+   * Rule 0: user agency outranks the inference ladder. Without this, a user
+   * who asked for a financial planner got the planner's tax-agent complement
+   * as their lead (rule 6 claimed it first) — found by the P2 lane tests.
+   */
+  namedType?: AdvisorNeed;
 }
 
 export interface PrimaryAllocation {
@@ -68,6 +77,11 @@ function choosePrimary(
   const first = real[0];
   if (!first) return "post-job"; // nothing concrete → describe-and-quote
 
+  // 0. The user explicitly named who they want — respect it over every
+  //    inference rule. The rest of the need-set still renders as the team.
+  if (ctx.namedType && ctx.namedType !== "not-sure" && has(real, ctx.namedType)) {
+    return ctx.namedType;
+  }
   // 1. Settlement is time-critical.
   if (ctx.stage === "under-contract" && (has(real, "conveyancer") || wantsProperty)) {
     return has(real, "conveyancer") ? "conveyancer" : first;

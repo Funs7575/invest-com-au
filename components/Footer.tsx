@@ -203,6 +203,7 @@ export default function Footer() {
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm mb-4 md:mb-5">
                 <li><Link href="/learn" className="hover:text-white transition-colors inline-block py-0.5">Learn to Invest</Link></li>
                 <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Articles &amp; Guides</Link></li>
+                <li><Link href="/community" className="hover:text-white transition-colors inline-block py-0.5">Community Forum</Link></li>
                 <li><Link href="/grants" className="hover:text-white transition-colors inline-block py-0.5">Grants Hub</Link></li>
                 <li><Link href="/tax" className="hover:text-white transition-colors inline-block py-0.5">Tax Strategy Hub</Link></li>
                 <li><Link href="/global-investing/tax" className="hover:text-white transition-colors inline-block py-0.5">Global Investing Tax</Link></li>
