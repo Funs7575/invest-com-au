@@ -29,6 +29,18 @@ const ADVISOR: TopMatch = {
   vertical: null,
 };
 
+const ADVISOR2: TopMatch = {
+  ...ADVISOR,
+  slug: "tom-tax",
+  name: "Tom Tax",
+  ref_id: 43,
+  one_line_why: "8+ years' experience",
+  location_display: "Brisbane",
+  fee_description: "From $250/hr",
+  specialties_preview: ["Crypto Tax", "CGT"],
+  cta_href: "/advisor/tom-tax",
+};
+
 function renderLanes(over: Partial<Parameters<typeof LaneResults>[0]> = {}) {
   return render(
     <LaneResults
@@ -86,6 +98,19 @@ describe("LaneResults (Decision Engine P5 surface)", () => {
     expect(body).toMatchObject({ share_token: "tok_abc12345", action: "add", item: { kind: "advisor", ref: "jane-tax" } });
     // Saving is never contacting — the rail says so.
     expect(screen.getByText(/Saving never contacts anyone/)).toBeInTheDocument();
+  });
+
+  it("P7: compares matches side by side without contacting anyone", () => {
+    renderLanes({ topMatches: [ADVISOR, ADVISOR2] });
+    fireEvent.click(screen.getByRole("button", { name: /Compare your 2 matches/ }));
+    const table = screen.getByTestId("advisor-compare-table");
+    expect(table).toBeInTheDocument();
+    expect(screen.getByText("Brisbane")).toBeInTheDocument();
+    expect(screen.getByText("From $250/hr")).toBeInTheDocument();
+    expect(screen.getByText("Crypto Tax · CGT")).toBeInTheDocument();
+    expect(screen.getByText(/Comparing never contacts anyone/)).toBeInTheDocument();
+    // No lead side-effects from comparing.
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it("hides saving entirely in ephemeral mode (no plan to save to)", () => {
