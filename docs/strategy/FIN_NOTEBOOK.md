@@ -72,6 +72,8 @@ Strategic items surfaced (decisions pending, founder-owned):
   since 2026-04-26 — same lesson as 2026-05-02: trackers and branches lag the
   code; verify against main before scoping or deleting.
 
+### 2026-06-10 — "Complete everything unblocked" wave: 12 parallel workstreams launched; CI unblocked; coordination lesson
+
 Founder directive: finish every unblocked TOP-10 / backlog opportunity to
 production quality, skipping quiz/Decision-Engine surfaces (owned by a
 parallel session) and anything gated on deals/legal/credentials.
