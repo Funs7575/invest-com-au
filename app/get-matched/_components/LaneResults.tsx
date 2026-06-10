@@ -15,18 +15,25 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { LaneResolution, RankedLane, LaneKind } from "@/lib/getmatched/resolve-lanes";
-import type { SavedItem, TopMatch } from "@/lib/getmatched/types";
+import type { ListingMatch, SavedItem, TopMatch } from "@/lib/getmatched/types";
 import ConnectAdvisorModal from "./ConnectAdvisorModal";
 
 interface Props {
   resolution: LaneResolution;
   topMatches: TopMatch[];
+  /** Specific scored listings for the listings lane (factual matches). */
+  listingMatches?: ListingMatch[];
   planId: number | null;
   shareToken: string | null;
   ephemeral: boolean;
   initialSaved?: SavedItem[];
   /** Quiz-style need slug for lead attribution (e.g. "financial-planner"). */
   advisorType?: string | null;
+}
+
+/** "commercial_property" / "venture-capital" → "commercial property". */
+function prettyVertical(v: string): string {
+  return v.replace(/[-_]/g, " ");
 }
 
 const LANE_TITLES: Record<LaneKind, string> = {
@@ -60,6 +67,7 @@ function itemKey(i: { kind: string; ref: string }) {
 export default function LaneResults({
   resolution,
   topMatches,
+  listingMatches = [],
   planId,
   shareToken,
   ephemeral,
@@ -253,6 +261,62 @@ export default function LaneResults({
               </div>
             )}
           </div>
+        )}
+
+        {/* Listings lane renders the specific scored matches — factual
+            criteria matches only, never a recommendation to invest. */}
+        {lane.kind === "listings" && listingMatches.length > 0 && (
+          <>
+            <ul className="mt-3 space-y-2">
+              {listingMatches.slice(0, hero ? 3 : 1).map((l) => {
+                const ref = String(l.id);
+                const isSaved = saved.some((s) => s.kind === "listing" && s.ref === ref);
+                return (
+                  <li key={l.slug} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3">
+                    {l.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element -- small thumb, remote domains vary
+                      <img src={l.image_url} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-lg bg-slate-100 shrink-0" aria-hidden="true" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-slate-900 truncate">{l.title}</p>
+                      <p className="text-xs text-slate-600 truncate capitalize">
+                        {prettyVertical(l.vertical)}
+                        {l.location_state ? ` · ${l.location_state}` : ""}
+                        {l.price_display ? ` · ${l.price_display}` : ""}
+                      </p>
+                      {l.reasons[0] && (
+                        <p className="text-xs text-emerald-700 truncate">{l.reasons[0]}</p>
+                      )}
+                    </div>
+                    {canSave && (
+                      <button
+                        onClick={() => toggleSave({ kind: "listing", ref, label: l.title })}
+                        aria-pressed={isSaved}
+                        className={`shrink-0 px-2.5 py-2 min-h-11 text-xs font-semibold rounded-lg border transition-colors ${
+                          isSaved
+                            ? "border-amber-400 bg-amber-50 text-amber-800"
+                            : "border-slate-200 text-slate-600 hover:border-amber-300"
+                        }`}
+                      >
+                        {isSaved ? "Saved ✓" : "Save"}
+                      </button>
+                    )}
+                    <Link
+                      href={l.href}
+                      className="shrink-0 px-3 py-2 min-h-11 inline-flex items-center border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50"
+                    >
+                      View listing
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="text-[0.62rem] text-slate-500 mt-1.5">
+              Matched on your stated criteria only — not a recommendation to invest.
+            </p>
+          </>
         )}
 
         <div className="mt-3">

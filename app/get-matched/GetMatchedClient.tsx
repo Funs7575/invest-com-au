@@ -8,6 +8,7 @@ import Icon from "@/components/Icon";
 import type {
   ActionPlan,
   ActionPlanAnswers,
+  ListingMatch,
   QuestionDef,
   ResultTemplate,
   TopMatch,
@@ -60,6 +61,7 @@ interface AnswerResponse {
 interface ResolveResponse {
   plan: ActionPlan;
   lanes?: LaneResolution;
+  listing_matches?: ListingMatch[];
   template: ResultTemplate;
   recommended_brief_template: string | null;
   accept_credits_cost: number | null;
@@ -733,10 +735,12 @@ function ActionPlanScreen({
           <LaneResults
             resolution={result.lanes}
             topMatches={result.top_matches ?? []}
+            listingMatches={result.listing_matches ?? []}
             planId={result.plan?.id ?? null}
             shareToken={shareToken}
             ephemeral={ephemeral}
             initialSaved={result.plan?.saved_items ?? []}
+            advisorType={result.advisor_type ?? null}
           />
         )}
         {result.top_matches && result.top_matches.length > 0 && (

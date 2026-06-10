@@ -9,6 +9,7 @@ import {
   resolveActionPlan,
 } from "@/lib/getmatched/engine";
 import { topMatchesForRoute } from "@/lib/getmatched/advisor-top-match";
+import { listingMatchesForLanes } from "@/lib/getmatched/listing-top-match";
 import { resolveLanes } from "@/lib/getmatched/resolve-lanes";
 import { buildMatchExplainer } from "@/lib/getmatched/explainer";
 import { logEvent } from "@/lib/getmatched/events";
@@ -151,23 +152,28 @@ export async function POST(request: NextRequest) {
         budgetBand: resolved.budgetBand,
         locationState: resolved.locationState,
       };
-      const [rawProviders, topMatch, outcomesStats] = await Promise.all([
-        recommendedProviders({
-          intent: resolved.intent,
-          route: resolved.route,
-          briefTemplate: resolved.recommendedBriefTemplate,
-          budgetBand: resolved.budgetBand,
-          locationState: resolved.locationState,
-        }),
-        // Lane-aware top matches: brokers for `compare`, real ranked
-        // advisors for advisor-shaped routes (flag-gated), [] otherwise.
-        topMatchesForRoute(answers, resolved, 3),
-        fetchAdvisorOutcomeStats(createAdminClient(), ctx),
-      ]);
+      const lanes = resolveLanes(answers);
+      const [rawProviders, topMatch, outcomesStats, listingMatches] =
+        await Promise.all([
+          recommendedProviders({
+            intent: resolved.intent,
+            route: resolved.route,
+            briefTemplate: resolved.recommendedBriefTemplate,
+            budgetBand: resolved.budgetBand,
+            locationState: resolved.locationState,
+          }),
+          // Lane-aware top matches: brokers for `compare`, real ranked
+          // advisors for advisor-shaped routes (flag-gated), [] otherwise.
+          topMatchesForRoute(answers, resolved, 3),
+          fetchAdvisorOutcomeStats(createAdminClient(), ctx),
+          // Specific scored listings — only when the lanes surface them.
+          listingMatchesForLanes(answers, lanes, 3),
+        ]);
       const providers = applyOutcomesRanking(rawProviders, outcomesStats);
       return NextResponse.json({
         plan: buildEphemeralPlan(answers, resolved),
-        lanes: resolveLanes(answers),
+        lanes,
+        listing_matches: listingMatches,
         template: resolved.template,
         recommended_brief_template: resolved.recommendedBriefTemplate,
         accept_credits_cost: resolved.acceptCreditsCost,
@@ -209,21 +215,25 @@ export async function POST(request: NextRequest) {
           budgetBand: resolved.budgetBand,
           locationState: resolved.locationState,
         };
-        const [rawProviders2, topMatch2, outcomesStats2] = await Promise.all([
-          recommendedProviders({
-            intent: resolved.intent,
-            route: resolved.route,
-            briefTemplate: resolved.recommendedBriefTemplate,
-            budgetBand: resolved.budgetBand,
-            locationState: resolved.locationState,
-          }),
-          topMatchesForRoute(answers, resolved, 3),
-          fetchAdvisorOutcomeStats(createAdminClient(), ctx2),
-        ]);
+        const lanes2 = resolveLanes(answers);
+        const [rawProviders2, topMatch2, outcomesStats2, listingMatches2] =
+          await Promise.all([
+            recommendedProviders({
+              intent: resolved.intent,
+              route: resolved.route,
+              briefTemplate: resolved.recommendedBriefTemplate,
+              budgetBand: resolved.budgetBand,
+              locationState: resolved.locationState,
+            }),
+            topMatchesForRoute(answers, resolved, 3),
+            fetchAdvisorOutcomeStats(createAdminClient(), ctx2),
+            listingMatchesForLanes(answers, lanes2, 3),
+          ]);
         const providers2 = applyOutcomesRanking(rawProviders2, outcomesStats2);
         return NextResponse.json({
           plan: buildEphemeralPlan(answers, resolved),
-        lanes: resolveLanes(answers),
+          lanes: lanes2,
+          listing_matches: listingMatches2,
           template: resolved.template,
           recommended_brief_template: resolved.recommendedBriefTemplate,
           accept_credits_cost: resolved.acceptCreditsCost,
@@ -268,17 +278,20 @@ export async function POST(request: NextRequest) {
       budgetBand: resolved.budgetBand,
       locationState: resolved.locationState,
     };
-    const [rawProviders3, topMatch, outcomesStats3] = await Promise.all([
-      recommendedProviders({
-        intent: resolved.intent,
-        route: resolved.route,
-        briefTemplate: resolved.recommendedBriefTemplate,
-        budgetBand: resolved.budgetBand,
-        locationState: resolved.locationState,
-      }),
-      topMatchesForRoute(plan.answers, resolved, 3),
-      fetchAdvisorOutcomeStats(createAdminClient(), ctx3),
-    ]);
+    const lanes3 = resolveLanes(plan.answers);
+    const [rawProviders3, topMatch, outcomesStats3, listingMatches3] =
+      await Promise.all([
+        recommendedProviders({
+          intent: resolved.intent,
+          route: resolved.route,
+          briefTemplate: resolved.recommendedBriefTemplate,
+          budgetBand: resolved.budgetBand,
+          locationState: resolved.locationState,
+        }),
+        topMatchesForRoute(plan.answers, resolved, 3),
+        fetchAdvisorOutcomeStats(createAdminClient(), ctx3),
+        listingMatchesForLanes(plan.answers, lanes3, 3),
+      ]);
     const providers = applyOutcomesRanking(rawProviders3, outcomesStats3);
 
     void logEvent({
@@ -303,7 +316,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       plan: updated,
-      lanes: resolveLanes(plan.answers),
+      lanes: lanes3,
+      listing_matches: listingMatches3,
       template: resolved.template,
       recommended_brief_template: resolved.recommendedBriefTemplate,
       accept_credits_cost: resolved.acceptCreditsCost,
