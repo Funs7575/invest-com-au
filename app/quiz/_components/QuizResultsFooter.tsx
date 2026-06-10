@@ -115,7 +115,7 @@ export default function QuizResultsFooter({
 
       {/* Share & Restart */}
       <div className="mt-4 md:mt-6">
-        <p className="text-[0.62rem] md:text-xs text-slate-400 text-center mb-2 font-medium">Share your result</p>
+        <p className="text-[0.62rem] md:text-xs text-slate-500 text-center mb-2 font-medium">Share your result</p>
         <div className="flex items-center justify-center gap-2 md:gap-3">
           {/* Twitter/X */}
           <a

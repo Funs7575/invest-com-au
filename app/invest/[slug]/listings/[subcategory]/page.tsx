@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
 import type { InvestmentListing as CardListing } from "@/components/ListingCard";
@@ -9,6 +10,7 @@ import {
   getSubcategoryBySlug,
   getAllSubcategorySlugs,
   getCategoryDbFilter,
+  getAllInvestCategories,
 } from "@/lib/invest-categories";
 import {
   absoluteUrl,
@@ -19,12 +21,11 @@ import {
   ADVERTISER_DISCLOSURE_SHORT,
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
-import InvestListingCard from "@/components/InvestListingCard";
 import ListingsEmptyState from "@/components/ListingsEmptyState";
 import ListingDetailView from "@/components/invest/ListingDetailView";
+import InvestListingsClient from "@/components/InvestListingsClient";
 import { fetchRelatedListings } from "@/lib/investment-listings-query";
 import { listingUrl, rawVerticalVariants, categoryForListing } from "@/lib/listing-url";
-import ScrollReveal from "@/components/ScrollReveal";
 import SubCategoryNav from "@/components/SubCategoryNav";
 
 export const revalidate = 3600;
@@ -161,6 +162,7 @@ export default async function InvestSubcategoryListingsPage({
     .order("created_at", { ascending: false });
 
   const listings = (listingsRaw as InvestmentListing[]) || [];
+  const categoryTabs = getAllInvestCategories().map((c) => ({ slug: c.slug, label: c.label }));
 
   // Sibling subcategories (excluding current)
   const siblingSubcategories = cat.subcategories.filter(
@@ -222,8 +224,11 @@ export default async function InvestSubcategoryListingsPage({
         />
       )}
 
-      <div className="py-5 md:py-12">
-        <div className="container-custom max-w-4xl">
+      {/* ── Hero band — breadcrumb, per-commodity hero, compliance, sub-type tabs.
+          Full container width so the tab row lines up with the toolbar the
+          listings client renders below. ── */}
+      <div className="pt-5 md:pt-10">
+        <div className="container-custom">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
@@ -246,81 +251,51 @@ export default async function InvestSubcategoryListingsPage({
             <h1 className="text-xl md:text-4xl font-extrabold mb-2 md:mb-3 text-slate-900">
               {sub.h1}
             </h1>
-            <p className="text-xs md:text-base text-slate-600 mb-2">{sub.intro}</p>
+            <p className="text-xs md:text-base text-slate-600 mb-2 max-w-3xl">{sub.intro}</p>
             <p className="text-[0.56rem] md:text-xs text-slate-500">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
 
-          {/* General Advice Warning — collapsed on mobile, visible on desktop */}
-          <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 text-[0.69rem] text-slate-500 leading-relaxed">
-            <strong className="text-slate-600">General Advice Warning:</strong>{" "}
-            {GENERAL_ADVICE_WARNING}
-          </div>
-          <div className="md:hidden mb-3">
-            <details className="bg-slate-50 border border-slate-200 rounded-lg">
-              <summary className="px-3 py-2 text-[0.62rem] text-slate-500 font-medium cursor-pointer flex items-center gap-1">
-                <svg className="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                General advice only — not a personal recommendation.
-              </summary>
-              <p className="px-3 pb-2.5 text-[0.62rem] text-slate-500 leading-relaxed">
-                {GENERAL_ADVICE_WARNING}
-              </p>
-            </details>
-          </div>
+          {/* General Advice Warning — one-line summary always visible, full
+              text expands on demand (all viewports). The global footer keeps
+              the full warning on every page regardless. */}
+          <details className="bg-slate-50 border border-slate-200 rounded-lg mb-3">
+            <summary className="px-3 py-2 text-[0.62rem] md:text-xs text-slate-500 font-medium cursor-pointer flex items-center gap-1.5">
+              <svg className="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              General advice only — not a personal recommendation.
+            </summary>
+            <p className="px-3 pb-2.5 text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
+              {GENERAL_ADVICE_WARNING}
+            </p>
+          </details>
 
-          {/* Shared sub-category nav (consistent with /listings page) */}
+          {/* Sub-type tabs — the ONE sub-category selector on this page. The
+              listings client below hides its in-results chips, which would
+              otherwise duplicate these tabs with near-identical pills. */}
           <SubCategoryNav category={cat} activeSubcategory={subcategory} />
+        </div>
+      </div>
 
-          {/* Sub-category sibling navigation */}
-          <div className="flex flex-wrap gap-1.5 mb-4 md:mb-6">
-            <Link
-              href={`/invest/${category}/listings`}
-              className="px-3 py-1.5 text-xs font-semibold rounded-full bg-white border border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900 transition-colors"
-            >
-              All {cat.label}
-            </Link>
-            <span
-              className={`px-3 py-1.5 text-xs font-semibold rounded-full ${cat.color.bg} ${cat.color.text} ${cat.color.border} border`}
-            >
-              {sub.label}
-            </span>
-            {siblingSubcategories.map((sibling) => (
-              <Link
-                key={sibling.slug}
-                href={`/invest/${category}/listings/${sibling.slug}`}
-                className="px-3 py-1.5 text-xs font-semibold rounded-full bg-white border border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900 transition-colors"
-              >
-                {sibling.label}
-              </Link>
-            ))}
-          </div>
+      {/* ── Interactive listings — same search / sort / filter toolbar as the
+          parent /listings page, scoped to listings pre-filtered server-side
+          to this sub-type. No pageTitle: the hero above owns the h1. ── */}
+      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory={category}
+          hideSubCategoryChips
+          // Server query above already scoped by vertical + sub_category —
+          // categoryForListing would re-bucket fund-family sub-types (e.g.
+          // fund + infrastructure → "infrastructure") away from this page's
+          // lock and silently drop them.
+          skipCategoryFilter
+        />
+      </Suspense>
 
-          {/* Listing count */}
-          <h2 className="text-lg md:text-2xl font-bold mb-3 md:mb-4">
-            {listings.length} {listings.length === 1 ? "Listing" : "Listings"} Available
-          </h2>
-
-          {/* Listing grid */}
-          {listings.length > 0 ? (
-            <ScrollReveal animation="scroll-fade-in">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
-                {listings.map((listing) => (
-                  <InvestListingCard key={listing.id} listing={listing} />
-                ))}
-              </div>
-            </ScrollReveal>
-          ) : (
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center mb-6 md:mb-8">
-              <p className="text-sm text-slate-600">
-                No {sub.label.toLowerCase()} listings currently available. Check back soon or{" "}
-                <Link href={`/invest/${category}/listings`} className="text-slate-900 font-semibold underline hover:text-slate-700">
-                  browse all {cat.label.toLowerCase()} listings
-                </Link>.
-              </p>
-            </div>
-          )}
-
+      <div className="pb-8 md:pb-12">
+        <div className="container-custom max-w-4xl">
           {/* FAQ section */}
           {sub.faqs.length > 0 && (
             <div className="mb-8 md:mb-10">

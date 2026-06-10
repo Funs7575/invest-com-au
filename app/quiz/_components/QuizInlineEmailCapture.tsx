@@ -76,7 +76,7 @@ export default function QuizInlineEmailCapture({ onSubmit, status }: Props) {
         <button
           onClick={() => setDismissed(true)}
           aria-label="Dismiss email capture"
-          className="text-slate-400 hover:text-slate-600 shrink-0 transition-colors"
+          className="text-slate-500 hover:text-slate-700 shrink-0 transition-colors"
         >
           <Icon name="x" size={16} />
         </button>

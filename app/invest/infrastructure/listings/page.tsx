@@ -66,6 +66,9 @@ export default async function InfrastructureListingsPage() {
           listings={listings}
           categories={categoryTabs}
           lockedCategory="infrastructure"
+          // Mirrors the SubCategoryNav render condition above — when the tab
+          // bar shows, the in-results chips would duplicate it.
+          hideSubCategoryChips={Boolean(category && category.subcategories.length > 0)}
           pageTitle="Infrastructure Investment Listings"
           pageSubtitle="Browse Australian infrastructure investment opportunities — toll roads, airports, utilities and public-private partnerships."
         />

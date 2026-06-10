@@ -22,6 +22,26 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }));
 
+const { mockGateForumContent, mockIsCommunityPostingDisabled, mockNotifyUser } = vi.hoisted(
+  () => ({
+    mockGateForumContent: vi.fn(),
+    mockIsCommunityPostingDisabled: vi.fn(),
+    mockNotifyUser: vi.fn(),
+  }),
+);
+vi.mock("@/lib/community/moderation", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/community/moderation")>();
+  return {
+    ...actual,
+    gateForumContent: (...args: unknown[]) => mockGateForumContent(...args),
+    isCommunityPostingDisabled: () => mockIsCommunityPostingDisabled(),
+  };
+});
+vi.mock("@/lib/posthog/server", () => ({ captureServerEvent: vi.fn() }));
+vi.mock("@/lib/notifications", () => ({
+  notifyUser: (...args: unknown[]) => mockNotifyUser(...args),
+}));
+
 import { POST } from "@/app/api/community/posts/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -106,6 +126,9 @@ describe("POST /api/community/posts", () => {
     vi.clearAllMocks();
     mockAuth.getUser.mockResolvedValue({ data: { user: TEST_USER }, error: null });
     mockIsRateLimited.mockResolvedValue(false);
+    mockIsCommunityPostingDisabled.mockResolvedValue(false);
+    mockGateForumContent.mockResolvedValue({ action: "publish", riskScore: 0, reasons: ["clean"] });
+    mockNotifyUser.mockResolvedValue(true);
     setupSuccessPath();
   });
 
@@ -235,5 +258,111 @@ describe("POST /api/community/posts", () => {
     setupSuccessPath(true);
     const res = await POST(makePost({ ...VALID_BODY, parent_id: 2 }));
     expect(res.status).toBe(201);
+  });
+
+  // ── Publish gate (Phase 0 moderation) ────────────────────────────────────────
+
+  it("returns 503 when the community_posting kill switch is on", async () => {
+    mockIsCommunityPostingDisabled.mockResolvedValue(true);
+    const res = await POST(makePost(VALID_BODY));
+    expect(res.status).toBe(503);
+    expect(mockAdminFrom).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 and persists nothing when the gate rejects", async () => {
+    mockGateForumContent.mockResolvedValue({
+      action: "reject",
+      riskScore: 90,
+      reasons: ["link_spam_5plus"],
+    });
+    const res = await POST(makePost(VALID_BODY));
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toMatch(/guidelines/i);
+    // Only the thread lookup ran — no insert.
+    expect(mockAdminFrom).toHaveBeenCalledTimes(1);
+  });
+
+  it("holds escalated replies: hidden insert + queue row + 202, no counter bumps", async () => {
+    mockGateForumContent.mockResolvedValue({
+      action: "hold",
+      riskScore: 35,
+      reasons: ["guaranteed_returns_language"],
+    });
+    mockAdminFrom.mockReset();
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ data: OPEN_THREAD, error: null })) // thread
+      .mockImplementationOnce(() => makeChain({ data: CREATED_POST, error: null })) // insert
+      .mockImplementationOnce(() => makeChain({ error: null })); // forum_reports upsert
+
+    const res = await POST(makePost(VALID_BODY));
+    expect(res.status).toBe(202);
+    const json = await res.json();
+    expect(json.pending_review).toBe(true);
+    expect(json.post).toBeNull();
+
+    const insertChain = mockAdminFrom.mock.results[1].value as { insert: ReturnType<typeof vi.fn> };
+    expect(insertChain.insert).toHaveBeenCalledWith(
+      expect.objectContaining({ is_removed: true }),
+    );
+    const reportChain = mockAdminFrom.mock.results[2].value as { upsert: ReturnType<typeof vi.fn> };
+    expect(reportChain.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        target_type: "post",
+        status: "open",
+        reason: expect.stringMatching(/^auto_moderation:/),
+      }),
+      expect.anything(),
+    );
+    expect(mockNotifyUser).not.toHaveBeenCalled();
+    expect(mockAdminFrom).toHaveBeenCalledTimes(3);
+  });
+
+  // ── Reply notifications ──────────────────────────────────────────────────────
+
+  it("notifies the thread author on a published reply from another user", async () => {
+    const ownedThread = {
+      ...OPEN_THREAD,
+      author_id: "thread-owner",
+      title: "Best ETF platform?",
+    };
+    mockAdminFrom.mockReset();
+    let callIndex = 0;
+    mockAdminFrom.mockImplementation(() => {
+      callIndex++;
+      if (callIndex === 1) return makeChain({ data: ownedThread, error: null }); // thread
+      if (callIndex === 2) return makeChain({ data: CREATED_POST, error: null }); // insert
+      if (callIndex === 3) return makeChain({ data: { slug: "etfs-index-funds" }, error: null }); // category slug
+      if (callIndex === 4) return makeChain({ data: { reply_count: 0 }, error: null });
+      return makeChain({ data: { post_count: 0 }, error: null });
+    });
+
+    const res = await POST(makePost(VALID_BODY));
+    expect(res.status).toBe(201);
+    expect(mockNotifyUser).toHaveBeenCalledTimes(1);
+    expect(mockNotifyUser).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: "thread-owner",
+        type: "reply",
+        linkUrl: expect.stringContaining("/community/etfs-index-funds/1"),
+      }),
+    );
+  });
+
+  it("does not notify when replying to your own thread", async () => {
+    const selfThread = { ...OPEN_THREAD, author_id: TEST_USER.id, title: "My thread" };
+    mockAdminFrom.mockReset();
+    let callIndex = 0;
+    mockAdminFrom.mockImplementation(() => {
+      callIndex++;
+      if (callIndex === 1) return makeChain({ data: selfThread, error: null });
+      if (callIndex === 2) return makeChain({ data: CREATED_POST, error: null });
+      if (callIndex === 3) return makeChain({ data: { reply_count: 0 }, error: null });
+      return makeChain({ data: { post_count: 0 }, error: null });
+    });
+
+    const res = await POST(makePost(VALID_BODY));
+    expect(res.status).toBe(201);
+    expect(mockNotifyUser).not.toHaveBeenCalled();
   });
 });

@@ -76,7 +76,7 @@ export default function RangeSlider({
         aria-valuetext={formatValue(value)}
         className="w-full accent-amber-500"
       />
-      <div className="flex justify-between text-[0.65rem] text-slate-400">
+      <div className="flex justify-between text-[0.65rem] text-slate-500">
         <span>{formatValue(min)}</span>
         <span>{formatValue(max)}</span>
       </div>

@@ -7,6 +7,7 @@ import {
 } from "@/lib/life-events";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
+import { SHOW_GENERIC_VERIFIED } from "@/lib/compliance-config";
 
 export const revalidate = 86400;
 
@@ -238,7 +239,7 @@ export default function LifeEventPage() {
         <div className="border-t border-slate-100 py-8 bg-slate-50">
           <div className="max-w-4xl mx-auto px-4 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
             {[
-              "ASIC-verified professionals",
+              SHOW_GENERIC_VERIFIED ? "ASIC-verified professionals" : "Credentials shown on every profile",
               "100% free to use",
               "Your details shared with one advisor only",
               "No spam — ever",

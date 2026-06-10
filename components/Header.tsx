@@ -11,6 +11,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import WorkspaceSwitcher from "@/components/WorkspaceSwitcher";
 import { MegaMenu } from "@/components/MegaMenu";
 import type { MegaMenuSidebar } from "@/components/MegaMenu";
+import { SHOW_MATCH_LANGUAGE } from "@/lib/compliance-config";
 
 const propertyDropdown = [
   { label: "Investment Property", href: "/property", desc: "New developments, suburb data & more" },
@@ -503,10 +504,10 @@ export default function Header() {
             <ThemeToggle />
             <NotificationBell />
             <Link
-              href="/quiz"
+              href="/get-matched"
               className="bg-amber-500 hover:bg-amber-600 text-slate-900 px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
             >
-              Get Matched
+              {SHOW_MATCH_LANGUAGE ? "Get Matched" : "Take the quiz"}
               <Icon name="arrow-right" size={16} />
             </Link>
           </div>
@@ -562,11 +563,11 @@ export default function Header() {
             {/* Action buttons */}
             <div className="pt-2 mt-2 border-t border-slate-100 space-y-2 px-3">
               <Link
-                href="/quiz"
+                href="/get-matched"
                 onClick={() => setMenuOpen(false)}
                 className="block w-full py-3 min-h-11 text-center text-sm font-extrabold text-slate-900 bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
               >
-                Get Matched
+                {SHOW_MATCH_LANGUAGE ? "Get Matched" : "Take the quiz"}
               </Link>
               <div className="flex gap-2">
                 <Link

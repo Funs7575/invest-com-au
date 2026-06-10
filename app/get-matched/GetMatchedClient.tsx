@@ -19,6 +19,13 @@ import AnalyzingScreen from "./_components/AnalyzingScreen";
 import TopMatchCarousel from "./_components/TopMatchCarousel";
 import MatchExplainerCard from "./_components/MatchExplainerCard";
 import { clearPartialPlan, setPartialPlan } from "@/lib/getmatched/recall";
+import { trackEvent as phTrack } from "@/lib/posthog/events";
+
+/** Serialise an answer for analytics: option keys / slugs only, bounded. */
+function answerLabel(value: string | string[] | number | boolean | null): string {
+  const s = Array.isArray(value) ? value.join(",") : String(value ?? "");
+  return s.slice(0, 60);
+}
 
 type NextStep =
   | {
@@ -136,6 +143,12 @@ export default function GetMatchedClient(props: Props) {
     }
   }, [analyzingTimerDone, pendingResolveResult]);
 
+  // Funnel-analytics anchors: when the session started (for time-taken on
+  // resolve) and whether we've already emitted funnel_started this mount
+  // (start() is also re-entered by React strict-mode/dep changes).
+  const startedAtRef = useRef<number | null>(null);
+  const startTrackedRef = useRef(false);
+
   // Anonymous session id, persisted across refreshes so Back keeps progress.
   const sessionIdRef = useRef<string>("");
   if (!sessionIdRef.current && typeof window !== "undefined") {
@@ -181,6 +194,17 @@ export default function GetMatchedClient(props: Props) {
       setAnswers(startPrefill);
       setStep(data.next);
       if (data.ephemeral) setEphemeral(true);
+      if (!startTrackedRef.current) {
+        startTrackedRef.current = true;
+        startedAtRef.current = Date.now();
+        phTrack("funnel_started", {
+          funnel: "get_matched",
+          source_page: window.location.pathname,
+          mode: props.initialMode,
+          prefilled: Object.keys(startPrefill).length > 0,
+          resumed: props.initialPlanId !== null,
+        });
+      }
       if (data.next.done) {
         await resolve(data.plan_id, startPrefill);
       }
@@ -191,7 +215,7 @@ export default function GetMatchedClient(props: Props) {
     } finally {
       setLoading(false);
     }
-  }, [props.initialMode, startPrefill]);
+  }, [props.initialMode, props.initialPlanId, startPrefill]);
 
   useEffect(() => {
     void start();
@@ -231,6 +255,13 @@ export default function GetMatchedClient(props: Props) {
       }
       if (data.ephemeral) setEphemeral(true);
       setStep(data.next);
+      phTrack("funnel_step_answered", {
+        funnel: "get_matched",
+        step_slug: slug,
+        step_index: step.currentStep,
+        total_steps: step.totalSteps,
+        answer: answerLabel(value),
+      });
       // Persist partial plan so the homepage banner can surface
       // "continue where you left off" if the user drops off mid-quiz.
       if (!data.next.done) {
@@ -247,7 +278,9 @@ export default function GetMatchedClient(props: Props) {
         // moment.
         setAnalyzing(true);
         setAnalyzingTimerDone(false);
-        void resolve(data.plan_id, nextAnswers);
+        // `history` here is the pre-push state — the just-given answer makes
+        // it +1 (setHistory above hasn't flushed yet).
+        void resolve(data.plan_id, nextAnswers, history.length + 1);
       }
     } catch (err) {
       setError({
@@ -263,6 +296,11 @@ export default function GetMatchedClient(props: Props) {
     const last = history[history.length - 1]!;
     const { [last.slug]: _a, [last.mapsTo]: _b, ...rest } = answers;
     void _a; void _b;
+    phTrack("funnel_step_back", {
+      funnel: "get_matched",
+      step_slug: last.slug,
+      step_index: step && !step.done ? step.currentStep : history.length,
+    });
     setAnswers(rest);
     setHistory((h) => h.slice(0, -1));
     // Rebuilding the step requires re-running nextQuestion on the
@@ -296,7 +334,7 @@ export default function GetMatchedClient(props: Props) {
     }
   }
 
-  async function resolve(id: number, finalAnswers: ActionPlanAnswers) {
+  async function resolve(id: number, finalAnswers: ActionPlanAnswers, stepCount = 0) {
     setError(null);
     try {
       const res = await fetch("/api/get-matched/resolve", {
@@ -319,6 +357,16 @@ export default function GetMatchedClient(props: Props) {
         return;
       }
       if (data.ephemeral) setEphemeral(true);
+      phTrack("funnel_resolved", {
+        funnel: "get_matched",
+        outcome: String(data.template?.route ?? "unknown"),
+        advisor_type: data.advisor_type ?? null,
+        match_count: data.top_matches?.length ?? 0,
+        step_count: stepCount,
+        time_taken_seconds: startedAtRef.current
+          ? Math.round((Date.now() - startedAtRef.current) / 1000)
+          : 0,
+      });
       setPendingResolveResult(data);
     } catch (err) {
       setError({

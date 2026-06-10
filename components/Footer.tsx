@@ -167,7 +167,7 @@ export default function Footer() {
               <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Find Experts &amp; Property</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/quotes/post" className="hover:text-white transition-colors inline-block py-0.5">Post a Request</Link></li>
-                <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Get Matched</Link></li>
+                <li><Link href="/get-matched" className="hover:text-white transition-colors inline-block py-0.5">Get Matched</Link></li>
                 <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find My Advisor — Free</Link></li>
                 <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Advisor Directory</Link></li>
                 <li><Link href="/advisors?provider_type=firm" className="hover:text-white transition-colors inline-block py-0.5">Advisor Firms</Link></li>
@@ -203,6 +203,7 @@ export default function Footer() {
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm mb-4 md:mb-5">
                 <li><Link href="/learn" className="hover:text-white transition-colors inline-block py-0.5">Learn to Invest</Link></li>
                 <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Articles &amp; Guides</Link></li>
+                <li><Link href="/community" className="hover:text-white transition-colors inline-block py-0.5">Community Forum</Link></li>
                 <li><Link href="/grants" className="hover:text-white transition-colors inline-block py-0.5">Grants Hub</Link></li>
                 <li><Link href="/tax" className="hover:text-white transition-colors inline-block py-0.5">Tax Strategy Hub</Link></li>
                 <li><Link href="/global-investing/tax" className="hover:text-white transition-colors inline-block py-0.5">Global Investing Tax</Link></li>
@@ -214,7 +215,7 @@ export default function Footer() {
                 <li><Link href="/insurance" className="hover:text-white transition-colors inline-block py-0.5">Insurance Hub</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">Calculators</Link></li>
                 <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-0.5">Glossary</Link></li>
-                <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Get Matched</Link></li>
+                <li><Link href="/get-matched" className="hover:text-white transition-colors inline-block py-0.5">Get Matched</Link></li>
               </ul>
               <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Company</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">

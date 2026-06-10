@@ -64,6 +64,7 @@ export default function PersonalizedRecommendations() {
       // Check if results are less than 30 days old
       const age = Date.now() - new Date(parsed.completedAt).getTime();
       if (age > 30 * 24 * 60 * 60 * 1000) return;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount-only hydrate from localStorage
       setData(parsed);
     } catch {
       // Corrupt data — ignore
@@ -139,7 +140,7 @@ export default function PersonalizedRecommendations() {
 
       <div className="flex items-center justify-center gap-4 mt-3">
         <Link
-          href="/quiz"
+          href="/get-matched"
           className="text-xs text-slate-500 hover:text-slate-700 transition-colors"
           onClick={() => trackEvent("personalized_recs_retake_quiz")}
         >

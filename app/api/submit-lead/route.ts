@@ -156,12 +156,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, lead_id: null, matched: null });
   }
 
-  if (!user_email || !isValidEmail(user_email as string)) {
+  // Email is required for anything side-effecting. A dry_run creates no lead
+  // and sends nothing, so it may run WITHOUT contact details — this is what
+  // lets /find-advisor show the match preview BEFORE the contact+OTP step
+  // (§5.6: the wall used to tax users before they'd seen any value, while
+  // guarding nothing). When an email IS provided on a dry run it must still
+  // be well-formed, and the non-dry-run path is unchanged.
+  if (!dry_run && (!user_email || !isValidEmail(user_email as string))) {
+    return NextResponse.json({ error: "Valid email required" }, { status: 400 });
+  }
+  if (dry_run && user_email && !isValidEmail(user_email as string)) {
     return NextResponse.json({ error: "Valid email required" }, { status: 400 });
   }
 
   // Reject disposable/throwaway email domains — advisors pay per lead
-  if (isDisposableEmail(user_email as string)) {
+  if (user_email && isDisposableEmail(user_email as string)) {
     return NextResponse.json({ error: "Please use a real email address." }, { status: 400 });
   }
 
@@ -174,7 +183,8 @@ export async function POST(request: NextRequest) {
 
   const utm = extractUtm(body);
   const supabase = createAdminClient();
-  const normalizedEmail = (user_email as string).toLowerCase().trim();
+  // Empty on a contact-less dry run; every email-keyed read below is guarded.
+  const normalizedEmail = typeof user_email === "string" ? user_email.toLowerCase().trim() : "";
 
   // ─── Platform leads (unchanged) ───
   if (lead_type === "platform") {
@@ -410,32 +420,36 @@ export async function POST(request: NextRequest) {
   // Build exclusion list: client-provided + any advisors this email was matched with in last 7 days
   const excludeIds = new Set<number>(Array.isArray(exclude_advisor_ids) ? exclude_advisor_ids : []);
 
-  // Look up recent matches for this email to prevent cross-system duplicates
+  // Look up recent matches for this email to prevent cross-system duplicates.
+  // Skipped on contact-less dry runs (no email yet) — the email-keyed dedup
+  // re-runs on the confirm call, which always carries the verified email.
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const { data: recentLeads } = await supabase
-    .from("leads")
-    .select("professional_id")
-    .eq("user_email", normalizedEmail)
-    .eq("lead_type", "advisor")
-    .gte("created_at", sevenDaysAgo)
-    .not("professional_id", "is", null);
+  if (normalizedEmail) {
+    const { data: recentLeads } = await supabase
+      .from("leads")
+      .select("professional_id")
+      .eq("user_email", normalizedEmail)
+      .eq("lead_type", "advisor")
+      .gte("created_at", sevenDaysAgo)
+      .not("professional_id", "is", null);
 
-  if (recentLeads) {
-    for (const rl of recentLeads) {
-      if (rl.professional_id) excludeIds.add(rl.professional_id as number);
+    if (recentLeads) {
+      for (const rl of recentLeads) {
+        if (rl.professional_id) excludeIds.add(rl.professional_id as number);
+      }
     }
-  }
 
-  // Also check professional_leads (direct enquiry system) for cross-system dedup
-  const { data: recentEnquiries } = await supabase
-    .from("professional_leads")
-    .select("professional_id")
-    .eq("user_email", normalizedEmail)
-    .gte("created_at", sevenDaysAgo);
+    // Also check professional_leads (direct enquiry system) for cross-system dedup
+    const { data: recentEnquiries } = await supabase
+      .from("professional_leads")
+      .select("professional_id")
+      .eq("user_email", normalizedEmail)
+      .gte("created_at", sevenDaysAgo);
 
-  if (recentEnquiries) {
-    for (const re of recentEnquiries) {
-      if (re.professional_id) excludeIds.add(re.professional_id as number);
+    if (recentEnquiries) {
+      for (const re of recentEnquiries) {
+        if (re.professional_id) excludeIds.add(re.professional_id as number);
+      }
     }
   }
 

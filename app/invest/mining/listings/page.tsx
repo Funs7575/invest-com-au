@@ -55,6 +55,9 @@ export default async function MiningOpportunitiesPage() {
           listings={listings}
           categories={categoryTabs}
           lockedCategory="mining"
+          // Mirrors the SubCategoryNav render condition above — when the tab
+          // bar shows, the in-results chips would duplicate it.
+          hideSubCategoryChips={Boolean(category && category.subcategories.length > 0)}
           pageTitle="Mining Investment Listings"
           pageSubtitle="Browse Australian mining investment opportunities — filter by commodity (lithium, gold, copper, iron ore, rare earths), project stage and state."
         />

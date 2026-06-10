@@ -12,10 +12,16 @@ import { z } from "zod";
 const safeEnum = <T extends string>(values: [T, ...T[]]) =>
   z.enum(values).optional().catch(undefined);
 
+// NOTE: the live quiz (app/quiz/page.tsx) emits `australia` for the
+// resident option — NOT `au`. The old enum silently dropped every
+// domestic location to `undefined` (nulling `quiz_leads.location`).
+// Keep the legacy `au`/`au_expat` values too so older clients still
+// degrade gracefully.
 export const QuizLocationSchema = safeEnum([
-  "au",
+  "australia",
   "international",
   "expat",
+  "au",
   "au_expat",
 ]);
 
@@ -33,6 +39,15 @@ export const QuizGoalSchema = safeEnum([
   "pre-ipo",
   "help",
   "other",
+]);
+
+// Readiness/stage. "learning" is the education-first exit; "under-contract"
+// is the urgent tier (and feeds pickPrimary's settlement-clock rule).
+export const QuizStageSchema = safeEnum([
+  "under-contract",
+  "ready",
+  "exploring",
+  "learning",
 ]);
 
 export const QuizModeSchema = safeEnum(["diy", "help", "unsure"]);
@@ -66,11 +81,22 @@ export const QuizPrioritySchema = safeEnum([
 export const QuizAdvisorTypeSchema = safeEnum([
   "mortgage-broker",
   "buyers-agent",
+  "conveyancer",
   "financial-planner",
   "smsf-accountant",
   "tax-agent",
+  "insurance-broker",
+  "estate-planner",
+  "commercial-property-agent",
+  "aged-care-advisor",
+  "debt-counsellor",
   "not-sure",
 ]);
+
+// Multi-select advisor need-set (the "who will you need?" question), stored as
+// a comma-separated list of advisor-type keys. Kept as a bounded string here;
+// deriveNeeds parses it and drops unknown tokens, so no enum is enforced.
+export const QuizNeedsSchema = z.string().max(200).optional().catch(undefined);
 
 export const QuizPropertySubSchema = safeEnum([
   "physical",
@@ -85,20 +111,28 @@ export const QuizInvestorGoalIntlSchema = safeEnum([
   "business",
 ]);
 
+// Free-text-ish fields stored as bounded strings. The bound must fit every
+// option key the quiz can emit (e.g. `saudi_arabia` = 12 chars) — too tight a
+// max silently nulls the field via `.catch(undefined)`. Pinned by the contract
+// test in __tests__/lib/quiz-questions.test.ts.
+export const QuizInvestorCountrySchema = z.string().max(20).optional().catch(undefined);
+export const QuizVisaStatusSchema = z.string().max(50).optional().catch(undefined);
+
 export const UnifiedAnswersSchema = z
   .object({
     location: QuizLocationSchema,
     goal: QuizGoalSchema,
+    stage: QuizStageSchema,
     mode: QuizModeSchema,
     experience: QuizExperienceSchema,
     complexity: QuizComplexitySchema,
     amount: QuizAmountSchema,
     priority: QuizPrioritySchema,
     advisor_type: QuizAdvisorTypeSchema,
+    needs: QuizNeedsSchema,
     property_sub: QuizPropertySubSchema,
-    // Free-text fields: country code + visa status kept as bounded strings
-    investor_country: z.string().max(10).optional().catch(undefined),
-    visa_status: z.string().max(50).optional().catch(undefined),
+    investor_country: QuizInvestorCountrySchema,
+    visa_status: QuizVisaStatusSchema,
     investor_goal_intl: QuizInvestorGoalIntlSchema,
   })
   .optional();

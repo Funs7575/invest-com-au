@@ -107,6 +107,10 @@ export default async function GenericCategoryListingsPage({
           listings={listings}
           categories={categoryTabs}
           lockedCategory={slug}
+          // Chips duplicate the SubCategoryNav tabs above — hide them whenever
+          // the tabs render (categories with no subcategories keep the chips,
+          // since DB-derived sub-types are then the only narrowing UI).
+          hideSubCategoryChips={cat.subcategories.length > 0}
           pageTitle={`${cat.label} Investment Listings`}
           pageSubtitle={cat.intro}
         />

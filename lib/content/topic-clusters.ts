@@ -215,7 +215,7 @@ export const TOPIC_CLUSTERS: TopicCluster[] = [
     label: "Advisors Hub",
     clusters: [
       "/advisors/financial-planners",
-      "/advisors/accountants",
+      "/advisors/smsf-accountants",
       "/advisors/mortgage-brokers",
     ],
     supporting: [

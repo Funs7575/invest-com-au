@@ -288,7 +288,7 @@ export default async function BestForHubPage() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/quiz"
+                href="/get-matched"
                 className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-5 py-2.5 rounded-xl text-sm transition-colors"
               >
                 Take the platform quiz

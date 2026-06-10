@@ -142,6 +142,38 @@ describe("POST /api/submit-lead", () => {
     expect(res.status).toBe(400);
   });
 
+  // §5.6: the match preview runs BEFORE contact capture, so a dry run is
+  // allowed without an email (it creates no lead and sends nothing). The
+  // side-effecting paths above stay email-gated.
+  it("allows a contact-less dry_run (preview before the contact step)", async () => {
+    const req = buildRequest({
+      lead_type: "advisor",
+      dry_run: true,
+      user_intent: { need: "planning" },
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(json.lead_id).toBeNull();
+    // Nothing written on a dry run; the email-keyed dedup reads are skipped
+    // entirely when there's no email yet.
+    const leadCalls = supabaseCalls.leads || [];
+    expect(leadCalls.some((c) => c.method === "insert")).toBe(false);
+    expect(leadCalls.some((c) => c.method === "eq" && c.args[0] === "user_email")).toBe(false);
+  });
+
+  it("still rejects a malformed email on dry_run when one is provided", async () => {
+    const req = buildRequest({
+      lead_type: "advisor",
+      dry_run: true,
+      user_email: "not-an-email",
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toBe("Valid email required");
+  });
+
   it("rejects disposable email domains", async () => {
     const req = buildRequest({
       lead_type: "advisor",

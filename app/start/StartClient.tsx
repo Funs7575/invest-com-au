@@ -6,6 +6,7 @@ import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { storeQualificationData } from "@/lib/qualification-store";
+import { SHOW_GENERIC_VERIFIED } from "@/lib/compliance-config";
 
 /* ─── Types ─── */
 type Step = 0 | 1 | 2 | 3 | 4;
@@ -196,7 +197,9 @@ function computeRoute(answers: Answers): RouteResult {
         amount === "xlarge" || amount === "large"
           ? "With your investment size, the right advice can make a significant difference to your outcomes."
           : "A good advisor will help you avoid costly mistakes early on.",
-        "All advisors on Invest.com.au are ASIC-registered and independently verified.",
+        SHOW_GENERIC_VERIFIED
+          ? "All advisors on Invest.com.au are ASIC-registered and independently verified."
+          : "Every advisor profile shows the credentials and registration details we hold for them.",
       ],
       actions: [
         { label: `Find ${advisorLabel}s`, href: `/find-advisor`, primary: true, icon: "users" },

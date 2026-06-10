@@ -4,6 +4,15 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
+import {
+  autoModerationReason,
+  FORUM_DISABLED_MESSAGE,
+  FORUM_HOLD_MESSAGE,
+  FORUM_REJECT_MESSAGE,
+  gateForumContent,
+  isCommunityPostingDisabled,
+} from "@/lib/community/moderation";
+import { captureServerEvent } from "@/lib/posthog/server";
 
 // All fields optional so Zod v4 doesn't emit an invalid_type error for missing
 // required fields (v4 removed the required_error constructor param). Required
@@ -115,6 +124,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
+    // Kill switch (automation_kill_switches: community_posting) — lets ops
+    // pause all forum writes during an attack without a deploy.
+    if (await isCommunityPostingDisabled()) {
+      return NextResponse.json({ error: FORUM_DISABLED_MESSAGE }, { status: 503 });
+    }
+
     // Rate limit — 5 new threads per hour per user. Thread creation is
     // costlier than post replies (each spawns a moderation surface and a
     // category bump), so the cap is tighter than for posts.
@@ -163,6 +178,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 });
     }
 
+    // Publish gate — same classifyText pipeline every other UGC surface
+    // runs. reject → nothing persisted; hold → inserted hidden + queued
+    // for moderator review; publish → the normal path below.
+    const gate = await gateForumContent({
+      kind: "thread",
+      title: title.trim(),
+      body: threadBody.trim(),
+    });
+    captureServerEvent(user.id, "community_thread_submitted", {
+      category_slug,
+      thread_type: thread_type ?? "discussion",
+      gate_action: gate.action,
+      risk_score: gate.riskScore,
+      gate_reasons: gate.reasons.join(","),
+    });
+
+    if (gate.action === "reject") {
+      log.warn("Thread rejected by publish gate", { userId: user.id, reasons: gate.reasons });
+      return NextResponse.json({ error: FORUM_REJECT_MESSAGE }, { status: 400 });
+    }
+
     // Get or derive display name; confessions always show as "Anonymous Investor"
     const realDisplayName =
       user.user_metadata?.display_name ||
@@ -173,7 +209,8 @@ export async function POST(req: NextRequest) {
 
     const slug = generateSlug(title.trim());
 
-    // Insert thread
+    // Insert thread — held submissions land hidden (is_removed=true) until
+    // a moderator approves them from /admin/community.
     const { data: thread, error: insertError } = await admin
       .from("forum_threads")
       .insert({
@@ -185,6 +222,7 @@ export async function POST(req: NextRequest) {
         body: threadBody.trim(),
         thread_type: thread_type ?? "discussion",
         is_anonymous: is_anonymous ?? false,
+        is_removed: gate.action === "hold",
       })
       .select("id, slug, title, created_at")
       .single();
@@ -192,6 +230,32 @@ export async function POST(req: NextRequest) {
     if (insertError) {
       log.error("Failed to create thread", { error: insertError.message });
       return NextResponse.json({ error: "Failed to create thread" }, { status: 500 });
+    }
+
+    if (gate.action === "hold") {
+      // Queue for review. Reporter is the author (NOT NULL FK) — the
+      // auto_moderation: reason prefix is what marks it as a system hold.
+      const { error: reportError } = await admin.from("forum_reports").upsert(
+        {
+          target_type: "thread",
+          target_id: thread.id,
+          reporter_user_id: user.id,
+          reason: autoModerationReason(gate.reasons),
+          status: "open",
+        },
+        { onConflict: "target_type,target_id,reporter_user_id" },
+      );
+      if (reportError) {
+        log.error("Failed to queue held thread for review", {
+          threadId: thread.id,
+          error: reportError.message,
+        });
+      }
+      // Counters are skipped on hold; the approve action recounts from rows.
+      return NextResponse.json(
+        { thread: null, pending_review: true, message: FORUM_HOLD_MESSAGE },
+        { status: 202 },
+      );
     }
 
     // Update category thread_count and last_thread_id

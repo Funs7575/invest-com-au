@@ -73,7 +73,7 @@ export default function CompareBar({
               Compare {count} &rarr;
             </Link>
           ) : (
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500">
               {max - count} more to compare
             </span>
           )}

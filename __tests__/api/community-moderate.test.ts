@@ -31,6 +31,15 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
 
+const { mockRecountThread, mockRecountCategory } = vi.hoisted(() => ({
+  mockRecountThread: vi.fn((..._args: unknown[]) => Promise.resolve()),
+  mockRecountCategory: vi.fn((..._args: unknown[]) => Promise.resolve()),
+}));
+vi.mock("@/lib/community/recount", () => ({
+  recountThread: (...args: unknown[]) => mockRecountThread(...args),
+  recountCategory: (...args: unknown[]) => mockRecountCategory(...args),
+}));
+
 import { POST } from "@/app/api/community/moderate/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -210,6 +219,104 @@ describe("POST /api/community/moderate", () => {
       mockAdminFrom.mockImplementation(makeReportAdminFrom({ target: null }));
       const res = await POST(makeRequest({ action: "report", target_type: "post", target_id: 999 }));
       expect(res.status).toBe(404);
+    });
+  });
+
+  // ── Approve / dismiss_report (Phase 0 moderation queue) ──
+  describe("approve and dismiss_report actions", () => {
+    // Dispatches admin .from() by table: content tables get an update
+    // builder, forum_reports gets a thenable update→eq chain we can assert.
+    function makeVisibilityAdminFrom(contentData: Record<string, unknown>) {
+      const reportsUpdate = vi.fn();
+      const reportsChain = {
+        update: reportsUpdate.mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        then: (cb: (v: unknown) => void) => {
+          cb({ error: null });
+          return Promise.resolve({ error: null });
+        },
+      };
+      const dispatch = (table: string) => {
+        if (table === "forum_reports") return reportsChain;
+        return makeUpdateBuilder(contentData);
+      };
+      return { dispatch, reportsUpdate };
+    }
+
+    it("approve thread: un-removes, closes reports as reviewed, recounts category (200)", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
+      const { dispatch, reportsUpdate } = makeVisibilityAdminFrom({
+        id: 1,
+        title: "Held thread",
+        category_id: "cat-1",
+        is_removed: false,
+        updated_at: "now",
+      });
+      mockAdminFrom.mockImplementation(dispatch);
+
+      const res = await POST(makeRequest({ action: "approve", thread_id: 1 }));
+      expect(res.status).toBe(200);
+      expect(reportsUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "reviewed", resolved_by: ADMIN_USER.id }),
+      );
+      expect(mockRecountCategory).toHaveBeenCalledWith("cat-1");
+    });
+
+    it("approve post: un-removes, recounts thread + parent category (200)", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
+      const { dispatch } = makeVisibilityAdminFrom({
+        id: 7,
+        thread_id: 3,
+        category_id: "cat-2",
+        is_removed: false,
+        updated_at: "now",
+      });
+      mockAdminFrom.mockImplementation(dispatch);
+
+      const res = await POST(makeRequest({ action: "approve", post_id: 7 }));
+      expect(res.status).toBe(200);
+      expect(mockRecountThread).toHaveBeenCalledWith(3);
+    });
+
+    it("remove thread closes open reports as action_taken", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
+      const { dispatch, reportsUpdate } = makeVisibilityAdminFrom({
+        id: 1,
+        title: "Bad thread",
+        category_id: "cat-1",
+        is_removed: true,
+        updated_at: "now",
+      });
+      mockAdminFrom.mockImplementation(dispatch);
+
+      const res = await POST(makeRequest({ action: "remove", thread_id: 1 }));
+      expect(res.status).toBe(200);
+      expect(reportsUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "action_taken" }),
+      );
+    });
+
+    it("dismiss_report closes reports without touching content (200)", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
+      const { dispatch, reportsUpdate } = makeVisibilityAdminFrom({ id: 1 });
+      mockAdminFrom.mockImplementation(dispatch);
+
+      const res = await POST(
+        makeRequest({ action: "dismiss_report", target_type: "thread", target_id: 1 }),
+      );
+      expect(res.status).toBe(200);
+      expect(reportsUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "dismissed" }),
+      );
+      // Content tables untouched.
+      expect(mockAdminFrom).not.toHaveBeenCalledWith("forum_threads");
+    });
+
+    it("approve requires moderator (403 for regular users)", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: REGULAR_USER }, error: null });
+      mockAdminFrom.mockReturnValue(makeModeratorBuilder(false));
+      const res = await POST(makeRequest({ action: "approve", thread_id: 1 }));
+      expect(res.status).toBe(403);
     });
   });
 });

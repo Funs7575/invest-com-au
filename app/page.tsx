@@ -8,9 +8,7 @@ import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsT
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
 import HomeSquadOfTheMonth from "@/components/HomeSquadOfTheMonth";
 import HomeUpcomingEvents from "@/components/HomeUpcomingEvents";
-import HomeCPDCourses from "@/components/HomeCPDCourses";
 import HomePostAJob from "@/components/HomePostAJob";
-import HomeCompareDeepDive, { type CompareBroker } from "@/components/HomeCompareDeepDive";
 import HomeCrossBorder from "@/components/HomeCrossBorder";
 import HomeFridayBriefing from "@/components/HomeFridayBriefing";
 import CountryListingsPreview from "@/components/country-mode/CountryListingsPreview";
@@ -18,14 +16,11 @@ import CountryExpertsPreview from "@/components/country-mode/CountryExpertsPrevi
 import CountryComparePreview from "@/components/country-mode/CountryComparePreview";
 import CountryPopularLinks from "@/components/country-mode/CountryPopularLinks";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
-import HomeActivitySection from "@/components/HomeActivitySection";
 import HomepagePersonalisedStrip from "@/components/HomepagePersonalisedStrip";
-import HomeRateOfTheDay from "@/components/HomeRateOfTheDay";
-import RateChangesToday from "@/components/RateChangesToday";
-import InvestScoreGauge from "@/components/InvestScoreGauge";
+import HomeMarketToday from "@/components/HomeMarketToday";
 import HomeFeedSection from "@/components/HomeFeedSection";
+import { curateHomepageListings } from "@/lib/home-listing-curation";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
-import Link from "next/link";
 import { Suspense } from "react";
 
 export const metadata = {
@@ -87,15 +82,18 @@ export default async function HomePage() {
       .from("investment_listings")
       .select("id", { count: "exact", head: true })
       .eq("status", "active"),
+    // No tier ordering here — `listing_type` is text, so DESC puts
+    // "standard" above "premium"/"featured" and starves the curation
+    // window of imaged paid listings. Fetch the active set newest-first
+    // and let curateHomepageListings do the actual ranking.
     supabase
       .from("investment_listings")
       .select(
-        "id, title, slug, vertical, location_state, location_city, price_display, images, listing_type, key_metrics, status",
+        "id, title, slug, vertical, sub_category, listing_kind, location_state, location_city, price_display, asking_price_cents, images, listing_type, key_metrics, status",
       )
       .eq("status", "active")
-      .order("listing_type", { ascending: false })
       .order("created_at", { ascending: false })
-      .limit(80),
+      .limit(250),
   ]);
 
   // Match prior query ordering (promoted_placement DESC, rating DESC, limit 80).
@@ -112,28 +110,13 @@ export default async function HomePage() {
   const totalListingCount = listingCount ?? 0;
   const totalProfessionalCount = professionalCount ?? 0;
 
-  const compareBrokers: ReadonlyArray<CompareBroker> = brokers.map((b) => ({
-    id: b.id,
-    slug: b.slug,
-    name: b.name,
-    platform_type: b.platform_type ?? null,
-    logo_url: b.logo_url ?? null,
-    color: b.color ?? null,
-    rating: b.rating ?? null,
-    asx_fee: b.asx_fee ?? null,
-    asx_fee_value: b.asx_fee_value ?? null,
-    sponsorship_tier: b.sponsorship_tier ?? null,
-    promoted_placement: b.promoted_placement ?? false,
-    editors_pick: b.editors_pick ?? false,
-  }));
-
   const advisorList: ReadonlyArray<HomeAdvisor> = (professionals ?? []) as HomeAdvisor[];
 
   // Live route-card preview slices — feed real data into the four cards on
   // the homepage so each one shows what's inside instead of just an icon.
-  const topBrokersForCards = compareBrokers
+  const topBrokersForCards = brokers
     .slice(0, 6)
-    .map((b) => ({ name: b.name, asx_fee: b.asx_fee }));
+    .map((b) => ({ name: b.name, asx_fee: b.asx_fee ?? null }));
 
   const topAdvisorsForCards = advisorList
     .filter((a) => a.photo_url)
@@ -141,46 +124,21 @@ export default async function HomePage() {
     .map((a) => ({ name: a.name, photo_url: a.photo_url ?? null }));
 
   // Hero reel — needs broker color for the panel-1 dot.
-  const topBrokersForHero = compareBrokers
+  const topBrokersForHero = brokers
     .slice(0, 3)
-    .map((b) => ({ name: b.name, asx_fee: b.asx_fee, color: b.color }));
+    .map((b) => ({ name: b.name, asx_fee: b.asx_fee ?? null, color: b.color ?? null }));
 
   const topAdvisorsForHero = advisorList
     .filter((a) => a.photo_url)
     .slice(0, 4)
     .map((a) => ({ name: a.name, photo_url: a.photo_url ?? null }));
 
-  // Curate listings for the homepage teaser:
-  //   1. Prefer listings with at least one image (better hero unit)
-  //   2. Weight by paid tier: premium > featured > standard
-  //   3. Round-robin across verticals so the grid isn't dominated by one category
+  // Curate listings for the homepage teaser — image-first, paid-tier
+  // weighted, vertical round-robin, equity raises excluded, paid
+  // placements capped in the visible window. Pure + unit-tested in
+  // lib/home-listing-curation.ts.
   const rawListings = (listings ?? []) as HomeListing[];
-  const tierWeight: Record<string, number> = { premium: 3, featured: 2, standard: 1 };
-  const scored = rawListings
-    .map((l) => ({
-      l,
-      hasImg: !!(l.images && l.images.length > 0 && l.images[0]),
-      tier: tierWeight[l.listing_type ?? "standard"] ?? 0,
-    }))
-    .sort((a, b) => {
-      if (a.hasImg !== b.hasImg) return a.hasImg ? -1 : 1;
-      return b.tier - a.tier;
-    });
-
-  const perVerticalCap = 2;
-  const verticalCounts = new Map<string, number>();
-  const curated: HomeListing[] = [];
-  const overflow: HomeListing[] = [];
-  for (const { l } of scored) {
-    const used = verticalCounts.get(l.vertical) ?? 0;
-    if (used < perVerticalCap) {
-      curated.push(l);
-      verticalCounts.set(l.vertical, used + 1);
-    } else {
-      overflow.push(l);
-    }
-  }
-  const listingList: ReadonlyArray<HomeListing> = [...curated, ...overflow].slice(0, 60);
+  const listingList: ReadonlyArray<HomeListing> = curateHomepageListings(rawListings).slice(0, 60);
 
   const topListingsForCards = listingList
     .filter((l) => l.images && l.images.length > 0 && l.images[0])
@@ -200,7 +158,7 @@ export default async function HomePage() {
             "@context": "https://schema.org",
             ...ORGANIZATION_JSONLD,
             description:
-              "Compare brokers, crypto, super and savings. Browse Australian investments for sale — businesses, farmland, mining, property. Find a verified expert, or get matched in 60 seconds. Independent. ASIC-registered. General information only.",
+              "Compare brokers, crypto, super and savings. Browse Australian investments for sale — businesses, farmland, mining, property. Find a verified expert, or get matched in 60 seconds. Independent since 1996. General information only.",
           }),
         }}
       />
@@ -251,10 +209,9 @@ export default async function HomePage() {
       {/* Personalised strip — visible to signed-in and returning visitors;
           renders null for anonymous / first-time visitors. Wrapped in its
           own Suspense so the async auth read never blocks the ISR-cached
-          static content below. See components/HomepagePersonalisedStrip.tsx. */}
+          static content below. The single welcome-back surface — saved
+          items, quiz resume and recommendations all live here. */}
       <HomepagePersonalisedStrip />
-
-      <HomeActivitySection />
 
       <HomeHero
         topBrokers={topBrokersForHero}
@@ -268,9 +225,9 @@ export default async function HomePage() {
       {/* Temporarily hidden for the next few months. Keep the component intact
           so the homepage AI concierge entry can be restored without rebuilding it. */}
 
-      <HomeRateOfTheDay />
-      <InvestScoreGauge />
-      <RateChangesToday />
+      {/* One "Today's market" band — Invest Score gauge, standout rate and
+          latest rate changes in a single card (was three stacked strips). */}
+      <HomeMarketToday />
 
       {/* Social feed — personalised for logged-in users; streams in
           dynamically so the ISR shell remains cacheable. */}
@@ -291,18 +248,6 @@ export default async function HomePage() {
 
       <CountryPopularLinks />
 
-      {/* Quick-access chips for buried tools */}
-      <section className="container-custom my-8">
-        <div className="flex flex-wrap gap-2">
-          <Link href="/score" className="inline-flex items-center gap-2 px-4 py-2 min-h-11 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
-            📊 Financial Health Score
-          </Link>
-          <Link href="/just" className="inline-flex items-center gap-2 px-4 py-2 min-h-11 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
-            📋 Life Event Checklists
-          </Link>
-        </div>
-      </section>
-
       {/* Country Mode preview wrappers — read iv_intent_country cookie in
       their own subtree so the rest of the homepage stays ISR-cacheable.
       Each renders nothing when no country selected, when the country has
@@ -310,10 +255,6 @@ export default async function HomePage() {
       below the supply threshold. The global teasers below carry the
       experience in those cases. See docs/architecture/country-mode.md. */}
       <CountryComparePreview />
-
-      <ScrollFadeIn>
-        <HomeCompareDeepDive brokers={compareBrokers} />
-      </ScrollFadeIn>
 
       <CountryListingsPreview />
 
@@ -331,38 +272,29 @@ export default async function HomePage() {
 
       <CountryExpertsPreview />
 
+      {/* Experts band — advisor grid, then the compact squad spotlight,
+          upcoming-events strip and post-a-request strip dock underneath
+          as one visual unit. */}
       <ScrollFadeIn>
         <HomeAdvisorsTeaser advisors={advisorList} totalCount={totalProfessionalCount} />
       </ScrollFadeIn>
 
-      <ScrollFadeIn>
-        <HomeUpcomingEvents />
-      </ScrollFadeIn>
+      <HomeSquadOfTheMonth />
 
-      <ScrollFadeIn>
-        <HomeCPDCourses />
-      </ScrollFadeIn>
+      <HomeUpcomingEvents />
 
-      {/* Pro Squad of the Month — rotating verified-team spotlight ranked
-          by outcome flywheel data. Server-rendered, fail-soft to null. */}
-      <ScrollFadeIn>
-        <HomeSquadOfTheMonth />
-      </ScrollFadeIn>
-
-      <ScrollFadeIn>
-        <HomePostAJob />
-      </ScrollFadeIn>
+      <HomePostAJob />
 
       <ScrollFadeIn>
         <HomeCrossBorder />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <HomeFridayBriefing />
+        <CountryToolsStripWrapper />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <CountryToolsStripWrapper />
+        <HomeFridayBriefing />
       </ScrollFadeIn>
     </div>
   );
