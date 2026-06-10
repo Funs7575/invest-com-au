@@ -522,7 +522,7 @@ export default function BriefForm({
           placeholder="e.g. I'm a 38-year-old in NSW with a $200k super balance and I'm thinking about setting up an SMSF to buy an investment property in QLD. Budget around $2,000 for advice. Need help in the next 3 months."
           className="w-full resize-y rounded-xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
-        <p className="mt-1 text-xs text-slate-400">{freeformText.length} / 3000</p>
+        <p className="mt-1 text-xs text-slate-500">{freeformText.length} / 3000</p>
         {info && (
           <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
             {info}
@@ -538,7 +538,7 @@ export default function BriefForm({
             {aiCopilotEnabled ? "Draft my brief" : "Continue"}
           </Button>
         </div>
-        <p className="mt-4 text-xs leading-relaxed text-slate-400">
+        <p className="mt-4 text-xs leading-relaxed text-slate-500">
           AI assists with structuring only — verified pros deliver the service
           under their own licence. We never give personal advice.
         </p>
@@ -674,12 +674,12 @@ export default function BriefForm({
                   className="w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm transition-all duration-150 hover:border-slate-300 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
                 />
                 <div className="mt-1 flex items-center justify-between">
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500">
                     {form.job_description.trim().length < 30
                       ? `${30 - form.job_description.trim().length} more characters for a complete brief`
                       : "Looking good"}
                   </span>
-                  <span className="text-xs text-slate-400">{form.job_description.length} / 3000</span>
+                  <span className="text-xs text-slate-500">{form.job_description.length} / 3000</span>
                 </div>
               </div>
 

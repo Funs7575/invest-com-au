@@ -17,18 +17,18 @@ import Icon from "@/components/Icon";
 /* ─── Cell renderers ──────────────────────────────────────────────────────── */
 
 function renderCell(cell: MatrixCell | undefined): React.ReactNode {
-  if (!cell) return <span className="text-slate-400 text-xs">—</span>;
+  if (!cell) return <span className="text-slate-500 text-xs">—</span>;
 
   switch (cell.kind) {
     case "text":
       if (cell.missing) {
-        return <span className="text-slate-400 text-xs">—</span>;
+        return <span className="text-slate-500 text-xs">—</span>;
       }
       return <span className="text-slate-700 text-sm">{cell.value}</span>;
 
     case "badge_list":
       if (cell.missing || cell.items.length === 0) {
-        return <span className="text-slate-400 text-xs">—</span>;
+        return <span className="text-slate-500 text-xs">—</span>;
       }
       return (
         <div className="flex flex-wrap gap-1">
@@ -45,7 +45,7 @@ function renderCell(cell: MatrixCell | undefined): React.ReactNode {
 
     case "boolean":
       if (cell.missing) {
-        return <span className="text-slate-400 text-xs">—</span>;
+        return <span className="text-slate-500 text-xs">—</span>;
       }
       if (cell.value === true) {
         return (
@@ -189,7 +189,7 @@ export default function AdvisorCompareClient() {
         </div>
         <button
           onClick={clear}
-          className="text-xs text-slate-400 hover:text-red-500 font-semibold transition-colors"
+          className="text-xs text-slate-500 hover:text-red-500 font-semibold transition-colors"
         >
           Clear all
         </button>
@@ -287,7 +287,7 @@ export default function AdvisorCompareClient() {
                   {/* Sticky label column */}
                   <td className="px-4 py-3 bg-slate-50/50 sticky left-0 z-10 align-top">
                     <p className="text-sm font-medium text-slate-700">{row.label}</p>
-                    <p className="text-[0.65rem] text-slate-400 mt-0.5 leading-snug max-w-[8rem]">
+                    <p className="text-[0.65rem] text-slate-500 mt-0.5 leading-snug max-w-[8rem]">
                       {row.description}
                     </p>
                   </td>
