@@ -92,6 +92,46 @@ quiz-outcome dead link to phantom /advisors/accountants repointed.
 (deploy status red on every PR); unknown `[type]`/`[subcategory]` slugs
 soft-404 (HTTP 200 + React #419) instead of clean 404s.
 
+### 2026-06-09 — Find-advisor quiz: rebuilt the advisor-match brain (scored matching) + master plan
+
+Ran a 5-agent deep audit of the quiz funnel (data/matching, intent architecture,
+competitive/CRO, a11y/QA, technical+bots). Convergent finding: **the matching
+intelligence is ~80% already built and ~0% wired into the live funnel** — a
+weighted match engine (`computeAdvisorProfileMatch`/`rankAdvisors`), an 8-outcome
+resolver (`resolveBestOutcome`), a 39-type taxonomy, and proper single-lead
+allocation (`/api/submit-lead`) all exist, but the live `/quiz` advisor path
+bypassed them (sorted by `rating DESC`, dropped ~9 of 11 collected signals, picked
+advisors client-side with no dedup/eligibility). Also found **four parallel
+funnels** (`/quiz`, `/get-matched`, 14 hub quizzes, `/find-advisor`) mid-migration,
+and silent **P0 data-integrity bugs** (e.g. `location` nulled on every domestic lead;
+a test enshrined the wrong enum).
+
+**Decision: rebuild the orchestration + data contract; keep & wire in the brains.**
+Full design + phased plan in `docs/plans/QUIZ_REDESIGN.md`. Canonical-surface choice
+(consolidate the 4 funnels → 1) deferred to the consolidation phase; founder chose
+"foundations first".
+
+**Shipped this session (PR #1477, branch `claude/epic-newton-g5ml7l`, ~17 commits, all green):**
+- Server-side **scored advisor matching** (`lib/quiz-advisor-scoring.ts` +
+  `POST /api/advisor-match`): weighted fit (specialty/budget/location/corridor/quality)
+  + country-eligibility gate + qualitative confidence band + whitelisted in/out (no PII leak).
+- Verified, dynamic **"Why we matched you"** (`lib/quiz-advisor-match-reasons.ts`):
+  specialty/corridor/FIRB/language/local/rating/free-consult/response-time/budget,
+  + a closest-match honesty fallback.
+- **P0 data integrity** (location enum, `answers.structured` personalisation, vertical
+  + money-band drift), robustness (silent-drop tracking, refresh-during-analyzing,
+  score-fetch timeout, 7-day localStorage TTL), and a keyboard/screen-reader a11y pass.
+
+**Remaining (documented in `docs/plans/QUIZ_REDESIGN.md`, building next):** Phase 1
+(one typed answer model), Phase 3 (question-graph rebuild — multi-select "needs" +
+readiness question + `pickPrimary` team model + stranded advisor types), Phase 4
+(`/find-advisor` OTP-wall consolidation), then Tasks 2–5. Founder direction: continue
+building all phases in-session to the highest quality (Phase 3 started — `pickPrimary`).
+
+**Revisit:** when Phase 3 starts — pick up from `docs/plans/QUIZ_REDESIGN.md`.
+
+### 2026-06-08 — Listings: anonymous-submission hole closed (carve-out of #1459, no DB)
+
 A bot sprawl + review of `/invest/list` (2026-06-07) surfaced that we ran **two
 parallel post-a-listing products** plus a real regulatory hole: `/invest/list →
 investment_listings` accepted **anonymous, unverified-email** submissions across

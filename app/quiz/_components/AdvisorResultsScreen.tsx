@@ -10,6 +10,10 @@ import { createClient } from "@/lib/supabase/client";
 import QuizComparisonTable from "./QuizComparisonTable";
 import AdvisorLocationStep from "./AdvisorLocationStep";
 import AdvisorMatchedScreen, { type MatchedAdvisor } from "./AdvisorMatchedScreen";
+import type { ScoredQuizAdvisor } from "@/lib/quiz-advisor-scoring";
+import { allocateAdvisors } from "@/lib/quiz-flow";
+import type { AdvisorNeed } from "@/lib/quiz-primary-advisor";
+import { QUIZ_ADVISOR_TYPES, dbTypeForNeed, labelForNeed, hrefForNeed } from "@/lib/quiz-advisor-types";
 
 // Map the quiz "amount" answer to the AdvisorLocationStep BUDGETS option
 // values so we don't re-ask information the quiz already collected.
@@ -20,64 +24,40 @@ const QUIZ_AMOUNT_TO_BUDGET: Record<string, string> = {
   whale: "500k_2m",
 };
 
-/* ─── Constants ─── */
-const COMBO_MAP: Record<string, { type: string; label: string; reason: string; icon: string }[]> = {
-  "mortgage-broker": [
-    { type: "insurance-broker", label: "Insurance Broker", reason: "Protect your new home and income", icon: "shield" },
-    { type: "tax-agent", label: "Tax Agent", reason: "Maximise mortgage interest deductions", icon: "file-text" },
-  ],
-  "financial-planner": [
-    { type: "tax-agent", label: "Tax Agent", reason: "Optimise your tax position alongside your plan", icon: "file-text" },
-    { type: "insurance-broker", label: "Insurance Broker", reason: "Ensure adequate protection as your wealth grows", icon: "shield" },
-  ],
-  "buyers-agent": [
-    { type: "mortgage-broker", label: "Mortgage Broker", reason: "Secure the best loan for your purchase", icon: "home" },
-    { type: "insurance-broker", label: "Insurance Broker", reason: "Protect your investment property", icon: "shield" },
-  ],
-  "tax-agent": [
-    { type: "financial-planner", label: "Financial Planner", reason: "Align your tax strategy with long-term goals", icon: "briefcase" },
-  ],
-  "insurance-broker": [
-    { type: "financial-planner", label: "Financial Planner", reason: "Review your overall financial protection", icon: "briefcase" },
-  ],
-  "smsf-accountant": [
-    { type: "financial-planner", label: "Financial Planner", reason: "Investment strategy for your SMSF", icon: "briefcase" },
-    { type: "insurance-broker", label: "Insurance Broker", reason: "Life and TPD cover through your SMSF", icon: "shield" },
-  ],
-};
+// Advisor-type metadata (label / directory href / DB type / team copy) lives in
+// the shared registry lib/quiz-advisor-types.ts — single source of truth across
+// this screen and /api/advisor-match.
 
-const ADVISOR_LABELS: Record<string, string> = {
-  "mortgage-broker": "Mortgage Broker",
-  "buyers-agent": "Buyer's Agent",
-  "financial-planner": "Financial Planner",
-  "smsf-accountant": "SMSF Accountant",
-  "tax-agent": "Tax Agent",
-  "insurance-broker": "Insurance Broker",
-  "estate-planner": "Estate Planner",
-  "not-sure": "Financial Advisor",
-};
-
-const ADVISOR_HREFS: Record<string, string> = {
-  "mortgage-broker": "/advisors/mortgage-brokers",
-  "buyers-agent": "/advisors/buyers-agents",
-  "financial-planner": "/advisors/financial-planners",
-  "smsf-accountant": "/advisors/smsf-accountants",
-  "tax-agent": "/advisors/tax-agents",
-  "insurance-broker": "/advisors/insurance-brokers",
-  "not-sure": "/find-advisor",
-};
-
-// Map quiz advisor_type slug → DB `type` field (underscore format)
-const TYPE_DB_MAP: Record<string, string> = {
-  "mortgage-broker": "mortgage_broker",
-  "buyers-agent": "buyers_agent",
-  "financial-planner": "financial_planner",
-  "smsf-accountant": "smsf_accountant",
-  "tax-agent": "tax_agent",
-  "insurance-broker": "insurance_broker",
-  "estate-planner": "estate_planner",
-  "not-sure": "",
-};
+// Map a scored API match → the MatchedAdvisor shape the cards render, carrying
+// the match score + confidence band through for display.
+function toMatchedAdvisor(a: ScoredQuizAdvisor): MatchedAdvisor {
+  return {
+    id: a.id,
+    slug: a.slug,
+    name: a.name,
+    firm_name: a.firm_name ?? null,
+    type: a.type,
+    photo_url: a.photo_url ?? null,
+    rating: a.rating ?? 0,
+    review_count: a.review_count ?? 0,
+    location_display: a.location_display ?? null,
+    location_state: a.location_state ?? null,
+    specialties: a.specialties ?? [],
+    fee_description: a.fee_description ?? null,
+    verified: a.verified ?? false,
+    accepts_international_clients: a.accepts_international_clients ?? null,
+    international_tax_specialist: a.international_tax_specialist ?? null,
+    firb_specialist: a.firb_specialist ?? null,
+    languages: a.languages ?? null,
+    available_in_countries: a.available_in_countries ?? null,
+    years_experience: a.years_experience ?? null,
+    avg_response_minutes: a.avg_response_minutes ?? null,
+    response_time_hours: a.response_time_hours ?? null,
+    initial_consultation_free: a.initial_consultation_free ?? null,
+    matchScore: a.matchScore,
+    confidence: a.confidence,
+  };
+}
 
 type FlowStep = "contact" | "location" | "matching";
 
@@ -136,9 +116,20 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
   // the right type, no location filter (location is collected next step).
   const [previewAdvisor, setPreviewAdvisor] = useState<MatchedAdvisor | null>(null);
 
-  const advisorLabel = ADVISOR_LABELS[advisorType] || "Financial Advisor";
-  const advisorHref = ADVISOR_HREFS[advisorType] || "/find-advisor";
-  const combos = COMBO_MAP[advisorType] || [];
+  const advisorLabel = labelForNeed(advisorType);
+  const advisorHref = hrefForNeed(advisorType);
+
+  // The single lead (`advisorType`) is pickPrimary's allocated primary (see
+  // resolveLeadAdvisorType in page.tsx). The "team" is the rest of the need-set,
+  // rendered as directory links — never a second lead postback. Fold the
+  // elected primary back in on the rare post-job fallback (advisorType then
+  // comes from inferAdvisorType, not the allocation) so nothing is hidden.
+  const { primary, secondaries } = allocateAdvisors(quizAnswers);
+  const team: AdvisorNeed[] = [
+    ...(primary !== "post-job" && primary !== advisorType ? [primary] : []),
+    ...secondaries,
+  ].filter((n, i, arr) => n !== advisorType && n !== "not-sure" && arr.indexOf(n) === i);
+
   const topPlatforms = platformResults.filter((r) => r.broker).slice(0, 3);
   const canSubmitContact = name.trim().length >= 2 && phone.trim().length >= 8 && email.includes("@");
 
@@ -148,7 +139,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
   // matched with so the contact form feels less blind.
   useEffect(() => {
     let cancelled = false;
-    const dbType = TYPE_DB_MAP[advisorType];
+    const dbType = dbTypeForNeed(advisorType);
     if (!dbType) return; // "not-sure" or unknown — skip preview
     (async () => {
       try {
@@ -215,7 +206,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
 
     try {
       // Submit lead with full data
-      await fetch("/api/advisor-lead", {
+      const leadRes = await fetch("/api/advisor-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -236,84 +227,43 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           source_page: "/quiz",
         }),
       });
-      trackEvent("advisor_lead_submit", { advisor_type: advisorType, state: stateValue }, "/quiz");
+      if (leadRes.ok) {
+        trackEvent("advisor_lead_submit", { advisor_type: advisorType, state: stateValue }, "/quiz");
+      } else {
+        // Don't block the match preview, but make the dropped enquiry visible
+        // — a 429/500 here was previously swallowed silently. The confirm step
+        // re-submits and surfaces errors to the user.
+        trackEvent("advisor_lead_error", { advisor_type: advisorType, status: leadRes.status }, "/quiz");
+      }
     } catch {
-      // Non-blocking — still proceed to matching
+      // Network failure — non-blocking, but record it (was silent).
+      trackEvent("advisor_lead_error", { advisor_type: advisorType, status: 0 }, "/quiz");
     }
 
-    // Fetch matched advisors from Supabase
+    // Fetch scored, eligibility-filtered matches from the server. The ranking
+    // and the advisor column set stay off the client (see /api/advisor-match);
+    // this also applies the country-eligibility gate the old client query
+    // skipped, and ranks by fit instead of raw rating.
     try {
-      const supabase = createClient();
-      const dbType = TYPE_DB_MAP[advisorType];
-
-      const mapAdvisor = (p: Record<string, unknown>): MatchedAdvisor => ({
-        id: p.id as number,
-        slug: p.slug as string,
-        name: p.name as string,
-        firm_name: (p.firm_name as string) ?? null,
-        type: p.type as string,
-        photo_url: (p.photo_url as string) ?? null,
-        rating: (p.rating as number) ?? 0,
-        review_count: (p.review_count as number) ?? 0,
-        location_display: (p.location_display as string) ?? null,
-        specialties: (p.specialties as string[]) ?? [],
-        fee_description: (p.fee_description as string) ?? null,
-        verified: (p.verified as boolean) ?? false,
+      const res = await fetch("/api/advisor-match", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          advisorType,
+          goal: quizAnswers.goal,
+          amount: quizAnswers.amount,
+          budget: budgetValue || undefined,
+          state: stateValue || undefined,
+          isInternational,
+          investorCountry,
+          visaStatus,
+          investorGoalIntl,
+          limit: 5,
+        }),
       });
-
-      let matched: MatchedAdvisor[] = [];
-
-      if (isInternational) {
-        // For international investors: first try advisors with international flags
-        let intlQuery = supabase
-          .from("professionals")
-          .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, accepts_international_clients, international_tax_specialist, firb_specialist, languages")
-          .eq("status", "active")
-          .eq("verified", true)
-          .eq("accepts_international_clients", true);
-        if (dbType) intlQuery = intlQuery.eq("type", dbType);
-        const { data: intlData } = await intlQuery.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(5);
-        matched = (intlData || []).map(mapAdvisor);
-
-        // Fallback: search by international specialty keywords
-        if (matched.length < 3) {
-          const { data: specData } = await supabase
-            .from("professionals")
-            .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
-            .eq("status", "active")
-            .eq("verified", true)
-            .contains("specialties", ["International Clients"])
-            .order("rating", { ascending: false })
-            .limit(5);
-          const specMapped = (specData || []).map(mapAdvisor);
-          const existingIds = new Set(matched.map(m => m.id));
-          matched.push(...specMapped.filter(m => !existingIds.has(m.id)));
-        }
-      } else {
-        let query = supabase
-          .from("professionals")
-          .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
-          .eq("status", "active")
-          .eq("verified", true);
-        if (dbType) query = query.eq("type", dbType);
-        if (stateValue) query = query.eq("location_state", stateValue);
-        const { data } = await query.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(5);
-        matched = (data || []).map(mapAdvisor);
-
-        // Fallback: try without state filter if empty
-        if (matched.length === 0 && stateValue) {
-          let fallbackQuery = supabase
-            .from("professionals")
-            .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
-            .eq("status", "active")
-            .eq("verified", true);
-          if (dbType) fallbackQuery = fallbackQuery.eq("type", dbType);
-          const { data: fallbackData } = await fallbackQuery.order("rating", { ascending: false }).limit(5);
-          matched.push(...(fallbackData || []).map(mapAdvisor));
-        }
-      }
-
-      setAllMatches(matched);
+      if (!res.ok) throw new Error(`advisor-match ${res.status}`);
+      const data = (await res.json()) as { advisors: ScoredQuizAdvisor[] };
+      setAllMatches((data.advisors ?? []).map(toMatchedAdvisor));
       setMatchIndex(0);
     } catch {
       setAllMatches([]);
@@ -423,6 +373,17 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                 submitError={submitError}
                 onConfirm={handleConfirm}
                 confirming={confirming}
+                matchContext={{
+                  advisorType,
+                  goal: quizAnswers.goal,
+                  amount: quizAnswers.amount,
+                  budget: budgetValue || undefined,
+                  userState: stateValue || undefined,
+                  isInternational,
+                  investorCountry,
+                  visaStatus,
+                  investorGoalIntl,
+                }}
               />
 
               {/* Platform cross-sell below matched screen */}
@@ -525,7 +486,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                 <Icon name="check" size={10} className="text-emerald-600" />
                 Sample match
               </span>
-              <span className="text-[0.6rem] md:text-[0.65rem] text-slate-400">— typical advisor of this type</span>
+              <span className="text-[0.6rem] md:text-[0.65rem] text-slate-500">— typical advisor of this type</span>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
@@ -572,7 +533,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                 )}
               </div>
             </div>
-            <p className="text-[0.6rem] md:text-[0.65rem] text-slate-400 mt-2.5 italic">
+            <p className="text-[0.6rem] md:text-[0.65rem] text-slate-500 mt-2.5 italic">
               We&rsquo;ll match you with someone like {previewAdvisor.name.split(" ")[0]} based on your location and budget.
             </p>
           </div>
@@ -586,19 +547,38 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             </div>
             <h2 className="text-sm font-bold text-slate-800">Request a free consultation call</h2>
           </div>
-          <p className="text-xs text-slate-500 mb-4">
+          <p className="text-xs text-slate-500 mb-3">
             Browse our directory of licensed {advisorLabel}s or request a no-obligation initial call.
           </p>
+          {/* Trust reassurance before we ask for contact details. Truthful,
+              platform-level signals only (no fabricated counts): the match is
+              free to the investor, carries no obligation, and goes to a single
+              advisor — the pickPrimary one-lead design, not a panel/call-centre
+              resale. */}
+          <ul className="flex flex-wrap gap-x-3 gap-y-1.5 mb-4" aria-label="What to expect">
+            {["Free to use", "No obligation", "One advisor, never a call centre"].map((t) => (
+              <li key={t} className="flex items-center gap-1 text-[0.7rem] md:text-xs font-medium text-slate-600">
+                <svg className="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+                {t}
+              </li>
+            ))}
+          </ul>
           <div className="space-y-3">
             <div>
               <label htmlFor="ars-name" className="block text-xs font-semibold text-slate-700 mb-1">
-                Full name <span className="text-red-400">*</span>
+                Full name <span className="text-red-400" aria-hidden="true">*</span>
               </label>
               <input
                 id="ars-name"
                 type="text"
                 placeholder="Alex Smith"
                 autoComplete="name"
+                required
+                aria-required="true"
+                aria-invalid={!!contactError}
+                aria-describedby={contactError ? "ars-contact-error" : undefined}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
@@ -606,13 +586,17 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             </div>
             <div>
               <label htmlFor="ars-phone" className="block text-xs font-semibold text-slate-700 mb-1">
-                Phone number <span className="text-red-400">*</span>
+                Phone number <span className="text-red-400" aria-hidden="true">*</span>
               </label>
               <input
                 id="ars-phone"
                 type="tel"
                 placeholder="04xx xxx xxx"
                 autoComplete="tel"
+                required
+                aria-required="true"
+                aria-invalid={!!contactError}
+                aria-describedby={contactError ? "ars-contact-error" : undefined}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
@@ -620,20 +604,24 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             </div>
             <div>
               <label htmlFor="ars-email" className="block text-xs font-semibold text-slate-700 mb-1">
-                Email address <span className="text-red-400">*</span>
+                Email address <span className="text-red-400" aria-hidden="true">*</span>
               </label>
               <input
                 id="ars-email"
                 type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 placeholder="you@email.com"
                 autoComplete="email"
+                required
+                aria-required="true"
+                aria-invalid={!!contactError}
+                aria-describedby={contactError ? "ars-contact-error" : undefined}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
               />
             </div>
           </div>
-          {contactError && <p role="alert" className="text-xs text-red-500 mt-2">{contactError}</p>}
+          {contactError && <p id="ars-contact-error" role="alert" className="text-xs text-red-500 mt-2">{contactError}</p>}
           <button
             onClick={handleContactNext}
             disabled={!canSubmitContact}
@@ -641,7 +629,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           >
             Continue — choose my location →
           </button>
-          <p className="text-[0.6rem] text-slate-400 mt-2 text-center">
+          <p className="text-[0.6rem] text-slate-500 mt-2 text-center">
             By continuing, you consent to being contacted by a verified {advisorLabel}. No obligation. No spam.
           </p>
 
@@ -658,7 +646,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
         </div>
 
         {/* Recommended Team */}
-        {combos.length > 0 && (
+        {team.length > 0 && (
           <div className="bg-gradient-to-br from-amber-50 to-slate-50 border border-amber-200/60 rounded-xl p-4 md:p-5 mb-5">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
@@ -670,24 +658,27 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               These professionals complement your primary advisor:
             </p>
             <div className="space-y-2">
-              {combos.map((combo) => (
-                <div key={combo.type} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg p-3">
-                  <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                    <Icon name={combo.icon} size={18} className="text-slate-500" />
+              {team.map((need) => {
+                const meta = QUIZ_ADVISOR_TYPES[need];
+                return (
+                  <div key={need} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg p-3">
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+                      <Icon name={meta.teamIcon} size={18} className="text-slate-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-bold text-slate-900">{meta.label}</span>
+                      <p className="text-xs text-slate-500 mt-0.5">{meta.teamReason}</p>
+                    </div>
+                    <Link
+                      href={meta.href}
+                      onClick={() => trackEvent("advisor_combo_click", { primary: advisorType, allocated_primary: primary, combo_type: need }, "/quiz")}
+                      className="shrink-0 self-center px-3 py-1.5 text-[0.65rem] md:text-xs font-bold text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors whitespace-nowrap"
+                    >
+                      Find one
+                    </Link>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-bold text-slate-900">{combo.label}</span>
-                    <p className="text-xs text-slate-500 mt-0.5">{combo.reason}</p>
-                  </div>
-                  <Link
-                    href={`/find-advisor?need=${combo.type}`}
-                    onClick={() => trackEvent("advisor_combo_click", { primary: advisorType, combo_type: combo.type }, "/quiz")}
-                    className="shrink-0 self-center px-3 py-1.5 text-[0.65rem] md:text-xs font-bold text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors whitespace-nowrap"
-                  >
-                    Find one
-                  </Link>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -711,7 +702,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
 
         {/* Restart */}
         <div className="text-center mt-4">
-          <button onClick={onRestart} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+          <button onClick={onRestart} className="text-xs text-slate-500 hover:text-slate-700 transition-colors">
             Restart Quiz →
           </button>
         </div>

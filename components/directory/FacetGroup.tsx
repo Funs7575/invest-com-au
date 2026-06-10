@@ -95,7 +95,7 @@ export default function FacetGroup<T extends string = string>({
               <span className="flex-1 truncate">{o.label}</span>
               {typeof count === "number" && (
                 <span
-                  className={`text-[0.65rem] tabular-nums ${isDisabled ? "text-slate-300" : "text-slate-400"}`}
+                  className={`text-[0.65rem] tabular-nums ${isDisabled ? "text-slate-300" : "text-slate-500"}`}
                 >
                   {count}
                 </span>

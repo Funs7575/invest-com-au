@@ -31,9 +31,10 @@
 
 import { cookies } from "next/headers";
 import { cache } from "react";
+// eslint-disable-next-line no-restricted-imports -- anonymous quiz-profile read of user_quiz_history (deny-all-anon, no anon policy) keyed by session_id; documented exception in CLAUDE.md § "Two Supabase clients"
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
-import type { IntentCountryCode } from "./intent-context";
+import { intentCountryFromQuizKey, type IntentCountryCode } from "./intent-context";
 
 export const QUIZ_SESSION_COOKIE = "iv_quiz_session";
 export const QUIZ_SESSION_TTL_SECONDS = 60 * 60 * 24 * 90; // 90 days, matches iv_intent_country
@@ -148,34 +149,35 @@ export const getQuizProfile = cache(async (): Promise<QuizProfile | null> => {
 
 /**
  * Pull the visitor's intent country out of the stored quiz answers.
- * The quiz stores it under `answers.raw.investor_country` as a
- * snake_case key (united_kingdom, hong_kong, …) — we map back to the
- * 2-letter `IntentCountryCode`. Returns null when the answer is
- * missing or unrecognised so callers can fall back to `iv_intent_country`.
+ * The quiz stores it under `answers.structured.investor_country` as the
+ * quiz answer key (uk, usa, hong_kong, …) — resolved back to the 2-letter
+ * `IntentCountryCode` via lib/intent-context (the single source of truth).
+ * Returns null when missing/unknown so callers can fall back to
+ * `iv_intent_country`.
  */
 function extractIntentCountry(answers: unknown): IntentCountryCode | null {
   if (!answers || typeof answers !== "object") return null;
   const a = answers as Record<string, unknown>;
-  const raw = a.raw as Record<string, unknown> | undefined;
-  if (!raw || typeof raw !== "object") return null;
-  const key = raw.investor_country;
+  const structured = a.structured as Record<string, unknown> | undefined;
+  if (!structured || typeof structured !== "object") return null;
+  const key = structured.investor_country;
   if (typeof key !== "string") return null;
-  return QUIZ_KEY_TO_INTENT[key] ?? null;
+  return intentCountryFromQuizKey(key);
 }
 
 /**
  * Extract the budget answer. The quiz stores the option key under
- * `answers.raw.amount` (small / medium / large / whale per
- * `INVESTMENT_MAP` in `/api/quiz-lead/route.ts`). Return null when the
- * answer is missing or unrecognised so the ranker degrades gracefully.
+ * `answers.structured.amount` (small / medium / large / whale). Return null
+ * when the answer is missing or unrecognised so the ranker degrades
+ * gracefully.
  */
 function extractBudget(answers: unknown): QuizBudget {
   if (!answers || typeof answers !== "object") return null;
-  const raw = (answers as Record<string, unknown>).raw as
+  const structured = (answers as Record<string, unknown>).structured as
     | Record<string, unknown>
     | undefined;
-  if (!raw || typeof raw !== "object") return null;
-  const v = raw.amount;
+  if (!structured || typeof structured !== "object") return null;
+  const v = structured.amount;
   if (v === "small" || v === "medium" || v === "large" || v === "whale") {
     return v;
   }
@@ -184,28 +186,13 @@ function extractBudget(answers: unknown): QuizBudget {
 
 function extractExperience(answers: unknown): QuizExperience {
   if (!answers || typeof answers !== "object") return null;
-  const raw = (answers as Record<string, unknown>).raw as
+  const structured = (answers as Record<string, unknown>).structured as
     | Record<string, unknown>
     | undefined;
-  if (!raw || typeof raw !== "object") return null;
-  const v = raw.experience;
+  if (!structured || typeof structured !== "object") return null;
+  const v = structured.experience;
   if (v === "beginner" || v === "intermediate" || v === "pro") {
     return v;
   }
   return null;
 }
-
-const QUIZ_KEY_TO_INTENT: Record<string, IntentCountryCode> = {
-  united_kingdom: "uk",
-  united_states: "us",
-  china: "cn",
-  india: "in",
-  japan: "jp",
-  singapore: "sg",
-  hong_kong: "hk",
-  south_korea: "kr",
-  malaysia: "my",
-  new_zealand: "nz",
-  united_arab_emirates: "ae",
-  saudi_arabia: "sa",
-};

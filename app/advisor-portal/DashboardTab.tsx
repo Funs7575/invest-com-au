@@ -11,6 +11,8 @@ import PinnedBillingWidget from "./billing/PinnedBillingWidget";
 import AnnualBillingPrompt from "./billing/AnnualBillingPrompt";
 import AvailabilityWidget from "./AvailabilityWidget";
 import AdvisorTrustScoreCard from "@/components/AdvisorTrustScoreCard";
+import OnboardingWizard from "./OnboardingWizard";
+import { deriveProfileCompleteness, type WizardStepId } from "@/lib/advisor-portal/profile-completeness";
 
 type LeaderboardRank = {
   rank: number;
@@ -96,6 +98,8 @@ type Props = {
   billingSummary?: BillingSummary | null;
   dataLoadedAt?: Date | null;
   onRefresh?: () => void;
+  /** Lets the onboarding wizard sync saved profile edits back into portal state. */
+  onAdvisorChange?: (a: Advisor) => void;
 };
 
 function useRelativeTime(date: Date | null | undefined): string {
@@ -117,8 +121,11 @@ export default function DashboardTab({
   advisor, stats, leads, profileCompleteness, reviews,
   viewsByDay, weeklyEnquiries, dismissedOnboarding, isPending,
   onNavigate, onDismissOnboarding, billingSummary, dataLoadedAt, onRefresh,
+  onAdvisorChange,
 }: Props) {
   const refreshLabel = useRelativeTime(dataLoadedAt);
+  // Guided onboarding wizard — null = closed, otherwise the step to open at.
+  const [wizardStep, setWizardStep] = useState<WizardStepId | null | "closed">("closed");
   const [expandedLeadId, setExpandedLeadId] = useState<number | null>(null);
   const [respondedLeads, setRespondedLeads] = useState<Set<number>>(new Set());
   const [leadNotes, setLeadNotes] = useState<Record<number, string>>({});
@@ -250,46 +257,75 @@ export default function DashboardTab({
           )
           : null}
 
-      {/* Onboarding Checklist */}
-      {(!profileCompleteness || profileCompleteness.score < 80) && !dismissedOnboarding && (
+      {/* Onboarding Checklist — driven by the shared completeness lib (same
+          fields/steps as the dashboard API + the guided wizard, so the three
+          can never disagree). Click a step → the wizard opens at that step. */}
+      {(!profileCompleteness || profileCompleteness.score < 80) && !dismissedOnboarding && (() => {
+        const local = deriveProfileCompleteness(advisor as unknown as Record<string, unknown> | null);
+        const steps = profileCompleteness?.steps ?? local.steps;
+        const score = profileCompleteness?.score ?? local.score;
+        const nextStep = steps.find((s) => !s.complete) ?? null;
+        return (
         <div className="bg-gradient-to-br from-violet-50 to-white border border-violet-200 rounded-xl p-5 mb-6">
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 className="text-sm font-bold text-violet-900">Get your profile ready</h3>
-              <p className="text-xs text-violet-600 mt-0.5">Complete these steps to start receiving leads</p>
+              <p className="text-xs text-violet-600 mt-0.5">
+                {nextStep
+                  ? <>{score}% complete — next: <strong>{nextStep.title.toLowerCase()}</strong></>
+                  : "Complete these steps to start receiving leads"}
+              </p>
             </div>
-            <button onClick={onDismissOnboarding} aria-label="Dismiss setup checklist" className="text-violet-400 hover:text-violet-600 text-xs">✕</button>
+            <button onClick={onDismissOnboarding} aria-label="Dismiss setup checklist" className="text-violet-400 hover:text-violet-600 text-xs min-h-11 min-w-11 -mt-2 -mr-2 flex items-center justify-center">✕</button>
           </div>
           <div className="space-y-2 mb-4">
-            {[
-              { label: "Add a profile photo", done: !!advisor?.photo_url, action: () => onNavigate("profile") },
-              { label: "Write a bio", done: !!advisor?.bio && advisor.bio.length > 30, action: () => onNavigate("profile") },
-              { label: "Add your specialties", done: (advisor?.specialties?.length || 0) > 0, action: () => onNavigate("profile") },
-              { label: "Set your fee structure", done: !!advisor?.fee_structure, action: () => onNavigate("profile") },
-              { label: "Add a booking link", done: !!advisor?.booking_link, action: () => onNavigate("profile") },
-            ].map((step, i) => (
-              <div key={i} className={`flex items-center gap-3 p-2.5 rounded-lg ${step.done ? "opacity-50" : "cursor-pointer hover:bg-violet-50"}`} onClick={step.done ? undefined : step.action}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${step.done ? "bg-emerald-500" : "bg-white border-2 border-violet-300"}`}>
-                  {step.done && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+            {steps.map((step) => (
+              <button
+                key={step.id}
+                onClick={step.complete ? undefined : () => setWizardStep(step.id)}
+                disabled={step.complete}
+                className={`w-full text-left flex items-center gap-3 p-2.5 min-h-11 rounded-lg ${step.complete ? "opacity-50" : "cursor-pointer hover:bg-violet-50"}`}
+              >
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${step.complete ? "bg-emerald-500" : "bg-white border-2 border-violet-300"}`} aria-hidden="true">
+                  {step.complete && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                 </div>
-                <span className={`text-xs font-medium ${step.done ? "line-through text-slate-400" : "text-slate-700"}`}>{step.label}</span>
-                {!step.done && <svg className="w-3.5 h-3.5 text-violet-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
-              </div>
+                <span className={`text-xs font-medium ${step.complete ? "line-through text-slate-500" : "text-slate-700"}`}>
+                  {step.title}
+                  {!step.complete && step.missing.length > 0 && (
+                    <span className="block text-[0.62rem] text-slate-500 font-normal mt-0.5">{step.missing.join(" · ")}</span>
+                  )}
+                </span>
+                {!step.complete && <svg className="w-3.5 h-3.5 text-violet-400 ml-auto shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+              </button>
             ))}
           </div>
-          {(() => {
-            const steps = [!!advisor?.photo_url, !!advisor?.bio && advisor.bio.length > 30, (advisor?.specialties?.length || 0) > 0, !!advisor?.fee_structure, !!advisor?.booking_link];
-            const score = profileCompleteness?.score ?? (steps.filter(Boolean).length * 20);
-            return (
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-2 bg-violet-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-violet-500 rounded-full transition-all duration-500" style={{ width: `${score}%` }} />
-                </div>
-                <span className="text-xs font-bold text-violet-700">{score}%</span>
-              </div>
-            );
-          })()}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-2 bg-violet-100 rounded-full overflow-hidden">
+              <div className="h-full bg-violet-500 rounded-full transition-all duration-500" style={{ width: `${score}%` }} />
+            </div>
+            <span className="text-xs font-bold text-violet-700">{score}%</span>
+            <button
+              onClick={() => setWizardStep(nextStep?.id ?? null)}
+              className="px-3 py-2 min-h-11 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 whitespace-nowrap"
+            >
+              Continue setup →
+            </button>
+          </div>
         </div>
+        );
+      })()}
+
+      {/* Guided onboarding wizard */}
+      {wizardStep !== "closed" && advisor && (
+        <OnboardingWizard
+          advisor={advisor}
+          initialStep={wizardStep}
+          onAdvisorChange={(a) => onAdvisorChange?.(a)}
+          onClose={() => {
+            setWizardStep("closed");
+            onRefresh?.(); // re-pull dashboard so completeness/score reflect saves
+          }}
+        />
       )}
 
       {/* Profile Completeness (compact) */}

@@ -448,6 +448,7 @@ export default function AdvisorPortalPage() {
             billingSummary={billingSummary}
             dataLoadedAt={dataLoadedAt}
             onRefresh={loadData}
+            onAdvisorChange={setAdvisor}
           />
         )}
 

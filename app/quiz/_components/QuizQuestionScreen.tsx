@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 /* ─── Emoji map for the goal question (first question only) ─── */
@@ -26,6 +27,91 @@ interface ContextBanner {
   body: string;
 }
 
+type Option = { label: string; key: string; sub?: string; emoji?: string };
+
+/**
+ * Multi-select option list (the "who will you need?" needs question). Toggles
+ * options on/off and submits the whole set via an explicit Continue button —
+ * the user can pick several professionals (multi-intent). "I'm not sure" is
+ * mutually exclusive with concrete needs. Keyed by the question in the parent
+ * so it re-initialises from `initial` when the question (re)mounts.
+ */
+function MultiSelectOptions({
+  options,
+  initial,
+  animating,
+  onSubmit,
+}: {
+  options: Option[];
+  initial: string[];
+  animating: boolean;
+  onSubmit: (keys: string[]) => void;
+}) {
+  const [selected, setSelected] = useState<string[]>(initial);
+
+  const toggle = (key: string) => {
+    setSelected((prev) => {
+      if (key === "not-sure") return prev.includes("not-sure") ? [] : ["not-sure"];
+      const without = prev.filter((k) => k !== "not-sure");
+      return without.includes(key) ? without.filter((k) => k !== key) : [...without, key];
+    });
+  };
+
+  return (
+    <>
+      <p className="text-xs md:text-sm text-slate-500 -mt-3 mb-4">Select all that apply.</p>
+      <div className="space-y-2.5 md:space-y-3" role="group" aria-label="Select all that apply">
+        {options.map((opt) => {
+          const checked = selected.includes(opt.key);
+          return (
+            <button
+              key={opt.key}
+              type="button"
+              role="checkbox"
+              aria-checked={checked}
+              onClick={() => toggle(opt.key)}
+              className={`w-full text-left border rounded-xl px-4 py-3.5 md:px-5 md:py-4 min-h-13 transition-all font-medium text-sm md:text-base ${
+                checked
+                  ? "border-amber-500 bg-amber-50/80 shadow-sm"
+                  : "border-slate-200 hover:border-amber-400 hover:bg-amber-50/40 bg-white"
+              }`}
+            >
+              <span className="flex items-center gap-3">
+                <span
+                  className={`shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                    checked ? "border-amber-500 bg-amber-500" : "border-slate-300 bg-white"
+                  }`}
+                  aria-hidden="true"
+                >
+                  {checked && (
+                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block font-semibold text-slate-900">{opt.label}</span>
+                  {opt.sub && (
+                    <span className="block text-xs text-slate-500 font-normal mt-0.5 leading-relaxed">{opt.sub}</span>
+                  )}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      <button
+        type="button"
+        onClick={() => onSubmit(selected)}
+        disabled={selected.length === 0 || animating}
+        className="mt-5 w-full bg-amber-500 text-slate-900 font-bold rounded-xl px-5 py-4 min-h-13 transition-colors hover:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        Continue{selected.length > 0 ? ` (${selected.length})` : ""}
+      </button>
+    </>
+  );
+}
+
 interface Props {
   step: number;
   questions: QuizQuestion[];
@@ -38,6 +124,9 @@ interface Props {
   contextBanner?: ContextBanner | null;
   questionIndex?: number;
   totalQuestions?: number;
+  multiSelect?: boolean;
+  selectedKeys?: string[];
+  onMultiAnswer?: (keys: string[]) => void;
   onAnswer: (key: string) => void;
   onBack: () => void;
   onJumpTo?: (targetIndex: number) => void;
@@ -58,6 +147,9 @@ export default function QuizQuestionScreen({
   contextBanner,
   questionIndex,
   totalQuestions,
+  multiSelect,
+  selectedKeys,
+  onMultiAnswer,
   onAnswer,
   onBack,
   onJumpTo,
@@ -183,7 +275,7 @@ export default function QuizQuestionScreen({
                   trapped in the flow. */}
               <Link
                 href="/"
-                className="text-slate-400 hover:text-slate-600 underline-offset-2 hover:underline"
+                className="text-slate-500 hover:text-slate-700 underline-offset-2 hover:underline"
               >
                 Exit quiz
               </Link>
@@ -204,7 +296,10 @@ export default function QuizQuestionScreen({
           </div>
         </div>
 
-        <div key={displayIndex} className="quiz-question-enter" aria-live="polite">
+        {/* No aria-live here — it would re-announce the back button + every
+            option on each step. Per-step announcement is handled by moving
+            focus to the question heading (see page.tsx handlers). */}
+        <div key={displayIndex} className="quiz-question-enter">
           {/* Back button — single instance above the question */}
           {displayIndex > 0 && (
             <button
@@ -227,7 +322,22 @@ export default function QuizQuestionScreen({
             {current.question_text}
           </h1>
 
-          <div className="space-y-2.5 md:space-y-3" role="radiogroup" aria-label={current.question_text}>
+          {/* Multi-select needs question (the user can pick several
+              professionals). Keyed by the question so it re-initialises on
+              (re)mount — e.g. when navigating back to it. */}
+          {multiSelect && onMultiAnswer ? (
+            <MultiSelectOptions
+              key={current.question_text}
+              options={current.options}
+              initial={selectedKeys ?? []}
+              animating={animating}
+              onSubmit={onMultiAnswer}
+            />
+          ) : (
+          /* role="group" (not radiogroup): the options auto-advance on click,
+              so they're buttons, not a persistent radio selection — "button"
+              is the truthful semantic and needs no arrow-key model. */
+          <div className="space-y-2.5 md:space-y-3" role="group" aria-label={current.question_text}>
             {current.options.map((opt) => {
               const emoji = opt.emoji ?? (isGoalQuestion ? GOAL_EMOJI[opt.key] : undefined);
               const isSelected = selectedKey === opt.key;
@@ -236,8 +346,6 @@ export default function QuizQuestionScreen({
                   key={opt.key}
                   onClick={() => onAnswer(opt.key)}
                   disabled={animating}
-                  role="radio"
-                  aria-checked={isSelected}
                   aria-label={opt.label}
                   className={`w-full text-left border rounded-xl px-4 py-3.5 md:px-5 md:py-4 min-h-13 transition-all font-medium text-sm md:text-base ${
                     isSelected
@@ -308,6 +416,7 @@ export default function QuizQuestionScreen({
               );
             })}
           </div>
+          )}
         </div>
       </div>
     </div>

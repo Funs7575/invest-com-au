@@ -42,11 +42,14 @@ const EXPERIENCE_MAP: Record<string, string> = {
   pro: 'Advanced',
 };
 
+// Mirrors the `amount` option labels in app/quiz/page.tsx so the band we
+// store/email matches what the user actually saw. These had drifted — the
+// user picked "$100k–$500k" but the lead recorded "$50k–$100k".
 const INVESTMENT_MAP: Record<string, string> = {
-  small: 'Under $5,000',
-  medium: '$5,000–$50,000',
-  large: '$50,000–$100,000',
-  whale: '$100,000+',
+  small: 'Under $10,000',
+  medium: '$10,000–$100,000',
+  large: '$100,000–$500,000',
+  whale: '$500,000+',
 };
 
 const INTEREST_MAP: Record<string, string> = {
@@ -368,8 +371,15 @@ export async function POST(request: NextRequest) {
       await recordQuizSubmission({
         userId: user?.id ?? null,
         sessionId: safeSessionId,
-        answers: { raw: safeAnswers, email: sanitizedEmail },
-        inferredVertical: tradingInterest,
+        // Persist the STRUCTURED answers (an object) under `structured` — the
+        // cross-page profile reader (lib/quiz-profile.ts) keys into
+        // structured.investor_country/.amount/.experience. It was previously
+        // only given the flat string[] under `raw`, so every profile read
+        // returned null. Keep `raw` (the flat array) for legacy consumers.
+        answers: { raw: safeAnswers, structured: unifiedAnswers ?? {}, email: sanitizedEmail },
+        // Use the same inferred vertical as the quiz_leads row (was
+        // `tradingInterest`, which disagreed for the same submission).
+        inferredVertical,
         topMatchSlug: safeTopMatch,
         completed: true,
       });

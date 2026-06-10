@@ -87,7 +87,7 @@ export default function SubCategoryChips({
                 {chip.label}
                 {typeof chip.count === "number" && chip.value !== "" && (
                   <span
-                    className={`text-[0.6rem] tabular-nums ${isActive ? "text-amber-100" : "text-slate-400"}`}
+                    className={`text-[0.6rem] tabular-nums ${isActive ? "text-amber-100" : "text-slate-500"}`}
                   >
                     {chip.count}
                   </span>
