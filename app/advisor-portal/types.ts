@@ -118,7 +118,13 @@ export type Stats = {
 export type ViewDay = { view_date: string; view_count: number };
 export type Review = { id: number; reviewer_name: string; rating: number; title?: string; body?: string; created_at: string; communication_rating?: number; expertise_rating?: number; value_for_money_rating?: number };
 export type WeeklyEnquiry = { weekLabel: string; count: number };
-export type ProfileCompleteness = { score: number; missingFields: string[] };
+export type ProfileCompleteness = {
+  score: number;
+  missingFields: string[];
+  /** Wizard step rollup + next best action (additive — older cached responses may omit them). */
+  steps?: import("@/lib/advisor-portal/profile-completeness").StepStatus[];
+  nextStep?: import("@/lib/advisor-portal/profile-completeness").WizardStepId | null;
+};
 
 export type CategoryPricing = { price_cents: number; free_trial_leads: number; featured_monthly_cents: number };
 
