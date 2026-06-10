@@ -4,6 +4,7 @@ import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
+import { Button } from "@/components/ui/Button";
 import QuoteBidsClient from "./QuoteBidsClient";
 import CountdownPill from "./CountdownPill";
 import QuoteQAClient from "./QuoteQAClient";
@@ -177,44 +178,49 @@ export default async function QuoteDetailPage({ params, searchParams }: {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingLd) }} />
 
-      {/* Hero */}
-      <section className="bg-gradient-to-b from-slate-900 to-slate-800 text-white">
-        <div className="max-w-5xl mx-auto px-4 py-10 sm:py-14">
-          <div className="flex flex-wrap items-center gap-2 text-xs mb-4">
-            <Link href="/quotes" className="text-slate-400 hover:text-white">All quotes</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-500" />
-            <span className="text-slate-300">{job.location || "Australia"}</span>
-          </div>
+      {/* Compact light header — house directory idiom (B14) */}
+      <section className="bg-white border-b border-slate-100">
+        <div className="max-w-5xl mx-auto px-4 pt-4 pb-5 md:pt-5">
+          <nav
+            aria-label="Breadcrumb"
+            className="mb-1.5 flex flex-wrap items-center gap-1.5 text-[11px] md:text-xs text-slate-400"
+          >
+            <Link href="/quotes" className="hover:text-slate-700">All quotes</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <span className="text-slate-600">{job.location || "Australia"}</span>
+          </nav>
 
-          <h1 className="text-2xl sm:text-4xl font-extrabold mb-4 max-w-3xl">{job.job_title}</h1>
+          <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-[1.9rem] max-w-3xl">
+            {job.job_title}
+          </h1>
 
-          <div className="flex flex-wrap items-center gap-3 text-sm">
-            <span className="bg-white/10 border border-white/20 px-3 py-1 rounded-full font-medium">
-              <Icon name="map-pin" size={12} className="inline mr-1" />
+          <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 font-medium text-slate-700">
+              <Icon name="map-pin" size={12} className="text-slate-400" />
               {job.location || "AU"}
             </span>
-            <span className="bg-white/10 border border-white/20 px-3 py-1 rounded-full font-medium">
-              <Icon name="wallet" size={12} className="inline mr-1" />
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 font-medium text-slate-700">
+              <Icon name="wallet" size={12} className="text-slate-400" />
               {BUDGET_LABELS[job.budget_band] || "Budget TBD"}
             </span>
             <CountdownPill endsAt={job.ends_at} status={job.status} />
-            <span className="text-slate-400 text-xs">
+            <span className="text-xs text-slate-500">
               {bids.length} {bids.length === 1 ? "quote" : "quotes"}
             </span>
           </div>
         </div>
       </section>
 
-      <section className="bg-slate-50 py-10 sm:py-14">
-        <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <section className="bg-slate-50 py-6 md:py-8">
+        <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
           {/* Job description */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white border border-slate-200 rounded-2xl p-6">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4">
               <h2 className="text-base font-bold text-slate-900 mb-3">Request details</h2>
               <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{job.job_description}</p>
 
               {job.advisor_types && job.advisor_types.length > 0 && (
-                <div className="mt-5 pt-5 border-t border-slate-100">
+                <div className="mt-4 pt-4 border-t border-slate-100">
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Advisor types requested</p>
                   <div className="flex flex-wrap gap-1.5">
                     {job.advisor_types.map((t) => (
@@ -276,12 +282,12 @@ export default async function QuoteDetailPage({ params, searchParams }: {
 
           {/* Sidebar */}
           <aside className="space-y-4">
-            <div className="bg-white border border-slate-200 rounded-2xl p-5">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4">
               <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
                 <Icon name="info" size={14} className="text-slate-500" />
                 How this works
               </h3>
-              <ol className="space-y-3 text-xs text-slate-600 leading-relaxed">
+              <ol className="space-y-2.5 text-xs text-slate-600 leading-relaxed">
                 <li className="flex gap-2">
                   <span className="bg-amber-500 text-slate-900 w-5 h-5 rounded-full font-bold text-[10px] flex items-center justify-center shrink-0">1</span>
                   <span>Verified advisors review your request and submit fixed-fee or hourly quotes.</span>
@@ -297,7 +303,7 @@ export default async function QuoteDetailPage({ params, searchParams }: {
               </ol>
             </div>
 
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
               <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
                 <Icon name="shield-check" size={14} className="text-amber-700" />
                 Trust &amp; safety
@@ -307,13 +313,13 @@ export default async function QuoteDetailPage({ params, searchParams }: {
               </p>
             </div>
 
-            <Link
+            <Button
               href="/quotes/post"
-              className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-3 rounded-xl text-sm w-full"
+              className="w-full"
+              icon={<Icon name="arrow-right" size={14} />}
             >
               Post your own quote
-              <Icon name="arrow-right" size={14} />
-            </Link>
+            </Button>
           </aside>
         </div>
       </section>

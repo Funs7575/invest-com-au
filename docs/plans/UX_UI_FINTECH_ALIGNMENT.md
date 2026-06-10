@@ -147,6 +147,47 @@ Effort: S (<30 min) · M (30 min–2 h) · L (>2 h).
 
 ---
 
+## Status ledger (updated 2026-06-10)
+
+Where each item landed. Items not listed are still open.
+
+| PR | Items |
+|---|---|
+| #1500 (merged) | B1, B2, B7, C1, F1, A1 |
+| #1502 (merged) | C2, C3, C4, C5 |
+| #1510 (merged) | C7, C8, C9, C10, C11, D2, D4, D5, D10, B12, F2, F3, F5, F7 |
+| #1511 (merged) | E8, E9 |
+| #1513 (merged) | D6, D7 |
+| #1514 (open) | WCAG contrast wave 2 (Task-5 sweep, not an item number) |
+| #1516 (open) | E1, E3, E7 |
+| #1517 (open) | F4, F6, F10, B10, B11, B13, B9 (restyle branch — redirect still a founder call) |
+| w3-sweep-1 | B6, B14, D9, F13 + this ledger |
+
+**Resolved without code (verified against main):**
+
+- **C6** — `AdvisorsClient` renders the filter-reactive `DirectoryHero tone="light"`;
+  `initialType`/`initialState` seed the filters, so `/advisors/[type]`,
+  `/advisors/[type]/[state]` and the three standalone specialty pages all get
+  the contextual hero + live counts. No per-page work needed.
+- **B3/B4/B5** — superseded by the B1/B2 tracker rewrite (compact stepper,
+  Icon banners, p-4 cards).
+- **B8** — superseded by the B7 rewrite (zero inline styles/hex left).
+- **A2/A3/A4** — homepage iv2 bands/cards already at target density
+  (`28px/32px` wrappers, 11px pills) — tightened alongside A1.
+- **A5** — decision: `HomeHero` stays custom. The homepage is a deliberate
+  bespoke iv2 idiom (inline-style tokens, `font-display`, `.iv2-*` classes);
+  DirectoryHero is the standard for directory/funnel surfaces, not the
+  marketing front door. Do not fold one into the other.
+
+**Deferred (quiz pause, 2026-06-10):** A6, A7, A8, A9 — `/quiz` and
+`/find-advisor` are the find-advisor quiz funnel; paused by the founder.
+Pick these up when the quiz workstream resumes (see PR #1512).
+
+**Still open:** D1, D3, D8 (account forms → primitives) · C12, C13 (portal
+audit, advisor-apply) · E2, E4, E5, E6 (verify against #1516 after merge),
+E10, E11, E12 (listing submission), E13, E14, E15 · F8, F9 (footer IA),
+F11 (assess) · F13 (in w3-sweep-1).
+
 ## Execution plan
 
 **Wave 1 (P0 — ship first):**
