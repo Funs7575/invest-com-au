@@ -94,6 +94,7 @@ Listing "recommendations" are **factual criteria matches** ("matches your stated
 - **P3 ✅** Ladder rule 0 (user-named type wins) + missing-signal questions — shipped CODE-SIDE in FALLBACK_QUESTIONS (prod runs on fallbacks + ephemeral plans; the get_matched_questions DB seed rides the #1479 ledger repair). Original scope: missing-signal questions (AU state; country+visa for overseas/expat; advisor-type confirm) — one migration, sharpens P2 (engine already degrades gracefully).
 - **P4 ✅ (scorer)** `lib/listings/match-listings.ts` — pure, 8 tests; CSF equity_raise hard-excluded; FIRB gate for non-residents; factual-criteria reasons only. Resolve/UI wiring lands with P5's result surface.
 - **P5** `resolveLanes` composite resolver + `saved_items` migration + workspace rail + result-surface redesign v1. **Device QA gate.**
+- **P6 ✅ (pending merge #1512)** In-funnel lead capture: ConnectAdvisorModal (contact → OTP verify → submit-lead confirm fast-path), TopMatch.ref_id, Connect-primary on advisor cards with single-lead UI lockout, /plans/[id]/connected stamp for P9's outcome join.
 - **P6** Lead capture in-funnel (preview→connect→verify at confirm → `professional_leads`) — port of the proven find-advisor flow.
 - **P7** Comparison tools (advisor table, cross-lane board) + lane-aware drips/alerts.
 - **P8** `/find-advisor` 301 → one funnel. **P9** outcome-learning per lane + ranking-weight review cadence.
