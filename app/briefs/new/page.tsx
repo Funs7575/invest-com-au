@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 // eslint-disable-next-line no-restricted-imports -- cross-table workspace lookup: resolves the caller's active account kind label so the brief form can prefill business/listing-owner context. Reads only the user's own profile under service-role because business_accounts / listing_owner_accounts have no anon SELECT path.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getActiveKind, type WorkspaceKind } from "@/lib/account-kinds";
-import Icon from "@/components/Icon";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import BriefForm from "./BriefForm";
 
 interface WorkspaceContext {
@@ -134,47 +134,6 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const TRUST_BLOCKS = [
-  {
-    icon: "users",
-    title: "Pros come to you",
-    desc: "Post once — verified pros respond. No cold-calling a dozen firms yourself.",
-  },
-  {
-    icon: "lock",
-    title: "Your details stay private",
-    desc: "Pros see a masked brief. Your contact details unlock only when you choose.",
-  },
-  {
-    icon: "shield-check",
-    title: "Verified pros only",
-    desc: "Every professional, firm and team is verified before they can respond.",
-  },
-  {
-    icon: "thumbs-up",
-    title: "You choose",
-    desc: "Compare responses side by side and pick the pro that fits. No obligation.",
-  },
-];
-
-const HOW_IT_WORKS = [
-  {
-    n: 1,
-    title: "Tell us what you need",
-    desc: "Pick what you're after or describe it in your own words. A few smart questions, that's it.",
-  },
-  {
-    n: 2,
-    title: "Verified pros respond",
-    desc: "Matching individuals, firms and expert teams see your masked brief and respond if it's a fit.",
-  },
-  {
-    n: 3,
-    title: "Compare & choose",
-    desc: "Line up the responses, message your favourites, and choose. The service sits with the pro under their licence.",
-  },
-];
-
 export default async function NewBriefPage({
   searchParams,
 }: {
@@ -203,7 +162,9 @@ export default async function NewBriefPage({
     { name: "New" },
   ]);
 
-  const showSupply = proSupply != null && proSupply >= 12;
+  const supplyStat = proSupply != null && proSupply >= 12
+    ? { v: `${proSupply}`, l: "verified pros" }
+    : { v: "Verified", l: "pros only" };
 
   return (
     <>
@@ -212,76 +173,33 @@ export default async function NewBriefPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
 
-      <section className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-white">
-        <div className="mx-auto max-w-5xl px-4 py-14 sm:py-20">
-          <div className="text-center">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-amber-400">
-              Briefs · Australia
-            </p>
-            <h1 className="mb-4 text-3xl font-extrabold sm:text-5xl">
-              Post a brief.
-              <br className="hidden sm:block" /> Get responses. Choose your pro.
-            </h1>
-            <p className="mx-auto max-w-2xl leading-relaxed text-slate-300">
-              Tell verified Australian professionals, firms and expert teams what you
-              need. They respond to you — you compare and pick the right fit. Your
-              contact details stay private until you choose to share them.
-            </p>
-            {showSupply && (
-              <p className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-semibold text-emerald-300">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" aria-hidden />
-                {proSupply} verified pros ready to respond
-              </p>
-            )}
-          </div>
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Briefs"
+        headlineLead="Post a brief, get responses."
+        headlineAccent="Choose your pro."
+        subtitle={
+          <>
+            Tell verified Australian pros, firms and expert teams what you need. They
+            respond to you — compare and choose. Your details stay private until you do.
+          </>
+        }
+        stats={[
+          supplyStat,
+          { v: "Private", l: "until you choose" },
+          { v: "Multiple", l: "responses" },
+          { v: "Free", l: "to post" },
+        ]}
+      />
 
-          <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-6">
-            {TRUST_BLOCKS.map((t) => (
-              <div key={t.title} className="rounded-xl border border-white/10 bg-white/5 p-4">
-                <Icon name={t.icon} size={20} className="mb-2 text-amber-400" />
-                <p className="mb-1 text-sm font-bold text-white">{t.title}</p>
-                <p className="text-xs leading-snug text-slate-400">{t.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-slate-50 py-12 sm:py-16">
-        <div className="mx-auto max-w-5xl px-4">
-          <BriefForm
-            aiCopilotEnabled={aiCopilotEnabled}
-            workspace={workspace}
-            proSubscriber={proSubscriber}
-            proSupply={proSupply}
-          />
-        </div>
-      </section>
-
-      <section className="bg-white py-12 sm:py-16">
-        <div className="mx-auto max-w-4xl px-4">
-          <h2 className="mb-2 text-center text-2xl font-extrabold text-slate-900 sm:text-3xl">
-            How it works
-          </h2>
-          <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-slate-500">
-            A simpler way to bring verified pros into your decision. Invest.com.au never
-            gives personal advice — the professional, firm or team you engage delivers the
-            service under their own licence.
-          </p>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-            {HOW_IT_WORKS.map((s) => (
-              <div key={s.n} className="text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-amber-500 text-lg font-extrabold text-slate-900">
-                  {s.n}
-                </div>
-                <p className="mb-1 font-bold text-slate-900">{s.title}</p>
-                <p className="text-sm leading-relaxed text-slate-600">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <div className="container-custom max-w-6xl pb-12 pt-4 md:pt-5">
+        <BriefForm
+          aiCopilotEnabled={aiCopilotEnabled}
+          workspace={workspace}
+          proSubscriber={proSubscriber}
+          proSupply={proSupply}
+        />
+      </div>
     </>
   );
 }

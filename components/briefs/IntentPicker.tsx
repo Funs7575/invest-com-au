@@ -47,7 +47,7 @@ function IntentCard({
       onClick={() => onSelect(intent)}
       aria-pressed={selected}
       className={cn(
-        "group relative flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400",
+        "group relative flex w-full items-start gap-2.5 rounded-xl border p-3 text-left transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400",
         selected
           ? "border-amber-500 ring-2 ring-amber-300 bg-amber-50"
           : "border-slate-200 hover:border-slate-300 bg-white",
@@ -55,14 +55,14 @@ function IntentCard({
     >
       <span
         className={cn(
-          "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors",
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors",
           selected
             ? "bg-amber-500 text-slate-900"
             : "bg-slate-100 text-slate-500 group-hover:bg-amber-100 group-hover:text-amber-700",
         )}
         aria-hidden="true"
       >
-        <Icon name={intent.icon} size={20} />
+        <Icon name={intent.icon} size={18} />
       </span>
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1.5">
@@ -102,19 +102,19 @@ export default function IntentPicker({
   const results = useMemo(() => (searching ? searchIntents(query) : []), [query, searching]);
 
   return (
-    <div className={cn("space-y-5", className)}>
+    <div className={cn("space-y-4", className)}>
       {/* Freeform hero — the first-class "describe it in your words" path */}
       <button
         type="button"
         onClick={onFreeform}
-        className="group flex w-full items-center gap-4 rounded-2xl border border-slate-900 bg-slate-900 p-4 text-left text-white transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 sm:p-5"
+        className="group flex w-full items-center gap-3 rounded-xl border border-slate-900 bg-slate-900 p-3 text-left text-white transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 sm:p-3.5"
       >
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-slate-900">
-          <Icon name={aiEnabled ? "zap" : "edit-3"} size={22} />
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500 text-slate-900">
+          <Icon name={aiEnabled ? "zap" : "edit-3"} size={18} />
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-2">
-            <span className="text-sm font-bold sm:text-base">
+            <span className="text-sm font-bold">
               Describe it in your own words
             </span>
             {aiEnabled && (
@@ -123,10 +123,10 @@ export default function IntentPicker({
               </span>
             )}
           </span>
-          <span className="mt-0.5 block text-xs leading-snug text-slate-300">
+          <span className="mt-0.5 line-clamp-1 block text-xs leading-snug text-slate-300">
             {aiEnabled
-              ? "Tell us your situation in plain English — our co-pilot drafts a structured brief you can review."
-              : "Tell us your situation in plain English and we'll set up the right brief for you."}
+              ? "Plain English — our co-pilot drafts a structured brief you can review."
+              : "Plain English — we'll set up the right brief for you."}
           </span>
         </span>
         <Icon
@@ -176,7 +176,7 @@ export default function IntentPicker({
       {/* Results */}
       {searching ? (
         results.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {results.map((intent) => (
               <IntentCard
                 key={intent.id}
@@ -205,17 +205,17 @@ export default function IntentPicker({
           </div>
         )
       ) : group === "all" ? (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {INTENT_GROUPS.map((g) => {
             const intents = intentsForGroup(g.id);
             if (intents.length === 0) return null;
             return (
               <section key={g.id} aria-label={g.label}>
-                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
-                  <Icon name={g.icon} size={13} className="text-slate-400" />
+                <h3 className="mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  <Icon name={g.icon} size={12} className="text-slate-400" />
                   {g.label}
                 </h3>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                   {intents.map((intent) => (
                     <IntentCard
                       key={intent.id}
@@ -230,7 +230,7 @@ export default function IntentPicker({
           })}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           {intentsForGroup(group).map((intent) => (
             <IntentCard
               key={intent.id}
