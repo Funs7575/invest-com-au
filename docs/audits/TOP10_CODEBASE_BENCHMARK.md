@@ -5,6 +5,30 @@
 **Scope:** What code exists? What's missing? What needs 100% completion?  
 **Deliverable:** Road to 100% code readiness for each opportunity
 
+> ## ⚠️ CORRECTIONS (2026-06-10, same day — read first)
+>
+> The first draft of this document was written from strategy docs without
+> verifying the codebase. Founder spot-checks caught material errors. Verified
+> corrections (by reading code + the live staging mirror):
+>
+> 1. **#9 Alt-assets is NOT 0% greenfield.** `/invest/alternatives` is live on
+>    the staging mirror with a platforms comparison (Vinovest, Cult Wines, …),
+>    listings, and guides (`app/invest/alternatives/{platforms,listings,guides}`),
+>    plus ~50 other `/invest/*` sub-verticals. Real completion: **~80%**;
+>    remaining work is partner data feeds + affiliate deals, not pages.
+> 2. **#3 "Self-serve partner onboarding portal — missing" was FALSE.** It
+>    exists: `app/broker-portal/register/` → `POST /api/marketplace/register`
+>    (Zod-validated, rate-limited, pending-status + admin approval queue at
+>    `app/admin/marketplace/brokers`), and the broker portal has 20+ pages
+>    including analytics **with CSV export**.
+> 3. **#3 verified true gaps (now shipped 2026-06-10 on this branch):** the
+>    quality multiplier (approved 2026-04-30, never built), server-side reserve
+>    enforcement, and a broker-account standing gate in the allocation engine.
+>    See `lib/marketplace/quality-score.ts` + commit `f48adf3`.
+> 4. **Remaining #3 work is non-code:** RG 246 legal sign-off (founder action).
+> 5. Treat every other "current %" figure below as **unverified estimate** until
+>    audited the same way — read the code before scoping from this doc.
+
 ---
 
 ## #1 — LEAD GENERATION (CPL — Cost Per Lead) CONVERSION
