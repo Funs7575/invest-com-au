@@ -46,6 +46,7 @@
 ## Also fixed in this session
 
 - `bots/journey/ai-journey.cjs`: `JOURNEY_VIEWPORT` was parsed but never applied — "mobile" journeys silently ran the desktop viewport. Context now uses the configured viewport/UA/touch flags (this session's mobile runs were re-done after the fix).
+- **Dead links into phantom advisor categories** (from the CI bot-smoke's 2 critical findings, verified 3/3): `/advisors/financial-advisors` and `/advisors/accountants` aren't in `SLUG_TO_TYPE`, and render "Advisor Category Not Found" as a **soft-404 (HTTP 200) with a streamed React #419**. Production links repointed: the international-business quiz outcome's "Browse accountants" (`lib/quiz-outcome.ts` — a dead end at the highest-intent moment) → `/advisors/international-tax-specialists`; the Advisors Hub topic cluster → `/advisors/smsf-accountants`; the smoke flow itself probed the phantom slugs and now uses canonical ones. **Follow-up:** `notFound()` thrown in the streamed dynamic `[type]` page returns 200 + #419 rather than a clean 404 — same framework pathology as the 06-07 listings finding; worth a unified fix across dynamic routes.
 
 ## Founder decisions queued (asked in-session)
 
