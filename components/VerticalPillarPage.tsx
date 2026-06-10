@@ -730,7 +730,7 @@ export default function VerticalPillarPage({
       <PillarExitIntent slug={config.slug} />
 
       <FloatingRightCTA
-        href="/quiz"
+        href="/get-matched"
         label="Get matched"
         storageKey={`pillar:${config.slug}`}
         variant="coral"

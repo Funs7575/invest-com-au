@@ -1,77 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 /**
- * Shows "X investors compared platforms today" with a realistic
- * animated counter. Uses analytics_events count as the base,
- * with a minimum floor to avoid showing "0" on quiet days.
+ * Social-proof counter — intentionally renders nothing.
+ *
+ * The previous implementation fabricated the "X investors compared
+ * platforms today" figure from a time-of-day sine curve with a daily
+ * variance — fake social proof on revenue pages (ACL s18 misleading-
+ * conduct exposure, and a trust-killer the moment a visitor notices
+ * the number is synthetic).
+ *
+ * Call sites are kept so this can be re-enabled by changing only this
+ * file once a real source exists (e.g. a daily aggregate of compare
+ * sessions from analytics_events). When wiring that up: show the real
+ * count, and hide the element below a minimum threshold instead of
+ * inventing a floor.
  */
-export default function SocialProofCounter({ variant = "inline" }: { variant?: "inline" | "badge" }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    // Fetch today's event count
-    fetch("/api/track-event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event_type: "page_view_count_check", page: "social_proof", metadata: {} }),
-    }).catch(() => {});
-
-    // Generate a realistic count based on time of day
-    // This creates a natural-looking pattern: low at night, peak midday AEST
-    const now = new Date();
-    const hour = now.getHours();
-    const minutesSinceMidnight = hour * 60 + now.getMinutes();
-    // Bell curve peaking at 1pm AEST (adjusted for server timezone)
-    const baseLine = Math.max(12, Math.floor(Math.sin((minutesSinceMidnight / 1440) * Math.PI) * 80 + 15));
-    // Add some daily variance
-    const dayOfMonth = now.getDate();
-    const variance = ((dayOfMonth * 7) % 23) - 11; // deterministic per day, range -11 to +11
-    setCount(Math.max(8, baseLine + variance));
-  }, []);
-
-  if (variant === "badge") {
-    return (
-      <div
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[0.62rem] font-medium transition-opacity duration-300 ${
-          count === 0
-            ? "opacity-0 bg-transparent border border-transparent"
-            : "opacity-100 bg-emerald-50 border border-emerald-200 text-emerald-700"
-        }`}
-        // Reserve space with min-height to prevent CLS when count loads
-        style={{ minHeight: "1.5rem" }}
-      >
-        {count > 0 && (
-          <>
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-            </span>
-            {count} investors comparing today
-          </>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <p
-      className={`text-[0.62rem] flex items-center gap-1.5 transition-opacity duration-300 ${
-        count === 0 ? "opacity-0 text-transparent" : "opacity-100 text-slate-600"
-      }`}
-      // Reserve space with min-height to prevent CLS
-      style={{ minHeight: "1.125rem" }}
-    >
-      {count > 0 && (
-        <>
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-          </span>
-          {count} investors compared platforms today
-        </>
-      )}
-    </p>
-  );
+export default function SocialProofCounter(_props: {
+  variant?: "inline" | "badge";
+}) {
+  return null;
 }

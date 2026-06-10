@@ -32,7 +32,7 @@ export default function ScenarioNotFound() {
             <Link href="/scenarios" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Browse all
             </Link>
-            <Link href="/quiz" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/get-matched" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Platform quiz
             </Link>
             <Link href="/compare" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">

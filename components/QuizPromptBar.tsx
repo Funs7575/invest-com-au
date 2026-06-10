@@ -12,9 +12,11 @@ export default function QuizPromptBar() {
   const pathname = usePathname();
   const { count: shortlistCount } = useShortlist();
 
-  // Pages where the mobile bottom bar should hide (page-specific CTAs exist)
+  // Pages where the mobile bottom bar should hide (page-specific CTAs exist).
+  // /get-matched is the live quiz route; /quiz is its 308 redirect alias.
   const isHiddenMobile =
     pathname === "/quiz" ||
+    pathname === "/get-matched" ||
     pathname === "/compare" ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/advisor/") ||
@@ -24,6 +26,7 @@ export default function QuizPromptBar() {
   // Pages where the desktop scroll-triggered bar should hide
   const isHiddenDesktop =
     pathname === "/quiz" ||
+    pathname === "/get-matched" ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/advisor/");
 
@@ -41,6 +44,7 @@ export default function QuizPromptBar() {
     if (isHiddenDesktop) return;
     if (typeof window !== "undefined") {
       if (localStorage.getItem("quizPromptDismissed") === "true") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount-only restore of the dismissed flag
         setDesktopDismissed(true);
         return;
       }

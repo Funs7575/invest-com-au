@@ -39,7 +39,7 @@ export default function CTAStack({
           Compare Platforms
         </Link>
         <span className="text-slate-600">·</span>
-        <Link href="/quiz" className="text-slate-400 hover:text-white transition-colors">
+        <Link href="/get-matched" className="text-slate-400 hover:text-white transition-colors">
           Platform Quiz
         </Link>
         <span className="text-slate-600">·</span>

@@ -1,4 +1,5 @@
 import type { Broker, PlatformType as BrokerPlatformType } from "@/lib/types";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 
 export type CompareCategory =
   | "all"
@@ -61,9 +62,11 @@ export interface RankedBroker {
   rankScore: number;
   why: string[];
   commercialDisclosure: "promoted" | "affiliate partner" | "no commercial relationship";
-  feesLastChecked: string;
-  offerExpiry: string;
-  sourceNote: string;
+  /** False when no fee field is recorded — the cost estimate is meaningless, not $0. */
+  hasCostInputs: boolean;
+  feesLastChecked: string | null;
+  offerExpiry: string | null;
+  sourceNote: string | null;
 }
 
 export interface FilterOptions {
@@ -96,12 +99,25 @@ const annualCostColumn = genericColumn(
   "estimatedAnnualCost",
   "Est. annual cost",
   "Indicative annual cost based on the calculator inputs on this page. It is general information only and may not include every fee.",
-  (_broker, ranked) => (ranked ? money(ranked.estimatedAnnualCost) : "Enter inputs"),
+  (_broker, ranked) =>
+    ranked ? (ranked.hasCostInputs ? money(ranked.estimatedAnnualCost) : "Fee data incomplete") : "Enter inputs",
   "estimated_annual_cost",
 );
 const ratingColumn = genericColumn("rating", "Rating", "Editorial rating shown for comparison only.", (b) => text(b.rating), "rating");
 const commercialColumn = genericColumn("commercial", "Commercial", "Commercial relationship for this row.", (_b, r) => r?.commercialDisclosure ?? "no commercial relationship");
-const freshnessColumn = genericColumn("freshness", "Freshness", "Fee check date, offer expiry and source/admin note.", (_b, r) => `Fees checked: ${r?.feesLastChecked ?? "Not recorded"} · Offer expiry: ${r?.offerExpiry ?? "Not recorded"} · Source: ${r?.sourceNote ?? "Not recorded"}`);
+const freshnessDate = (iso?: string | null): string | null => {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+};
+const freshnessColumn = genericColumn("freshness", "Freshness", "When this row's fees were last checked, and when any current offer ends.", (_b, r) => {
+  const checked = freshnessDate(r?.feesLastChecked);
+  const expiry = freshnessDate(r?.offerExpiry);
+  const parts = [checked ? `Fees checked ${checked}` : "Fee check date not recorded"];
+  if (expiry) parts.push(`Offer ends ${expiry}`);
+  return parts.join(" · ");
+});
 
 export const CATEGORY_SCHEMAS: Record<CompareCategory, CategorySchema> = {
   all: {
@@ -268,9 +284,9 @@ export function commercialDisclosureFor(broker: Broker): RankedBroker["commercia
 
 export function dataFreshnessFor(broker: Broker) {
   return {
-    feesLastChecked: broker.fee_last_checked || broker.fee_verified_date || broker.updated_at || "Not recorded",
-    offerExpiry: broker.deal_expiry || "Not recorded",
-    sourceNote: broker.fee_source_url || broker.fee_source_tcs_url || broker.deal_source || "Admin/source note not public",
+    feesLastChecked: broker.fee_last_checked || broker.fee_verified_date || broker.updated_at || null,
+    offerExpiry: broker.deal_expiry || null,
+    sourceNote: broker.fee_source_url || broker.fee_source_tcs_url || broker.deal_source || null,
   };
 }
 
@@ -304,9 +320,23 @@ export function filterBrokers(brokers: Broker[], options: FilterOptions): Broker
   return list;
 }
 
+/**
+ * True when at least one fee field is recorded for the broker. When every
+ * fee input is null the calculator can only produce $0 — for a %-fee super
+ * fund or a subscription research tool that reads as "free", which is wrong
+ * (2026-06-10 audit: "$0 est. annual cost" on AustralianSuper's row).
+ */
+export function hasAnnualCostInputs(broker: Broker): boolean {
+  return broker.asx_fee_value != null || broker.us_fee_value != null || broker.fx_rate != null;
+}
+
 export function explainBroker(broker: Broker, scenario: ScenarioMode | "none" | undefined, annualCost: number): string[] {
   const why: string[] = [];
-  why.push(`Estimated annual cost is ${money(annualCost)} using the current calculator inputs.`);
+  if (hasAnnualCostInputs(broker)) {
+    why.push(`Estimated annual cost is ${money(annualCost)} using the current calculator inputs.`);
+  } else {
+    why.push("Fee inputs are not yet recorded for this product, so no cost estimate is shown.");
+  }
   if (broker.rating != null) why.push(`Editorial rating recorded as ${broker.rating}/5.`);
   if (broker.chess_sponsored) why.push("CHESS-sponsored holdings are recorded as available.");
   if (broker.smsf_support) why.push("SMSF account support is recorded.");
@@ -318,8 +348,11 @@ export function explainBroker(broker: Broker, scenario: ScenarioMode | "none" | 
 
 export function rankBroker(broker: Broker, scenario: ScenarioMode | "none" | undefined, inputs: CostInputs = DEFAULT_COST_INPUTS): RankedBroker {
   const estimatedAnnualCost = calculateAnnualCost(broker, inputs);
+  const hasCostInputs = hasAnnualCostInputs(broker);
   const ratingScore = (broker.rating ?? 0) * 20;
-  const costScore = Math.max(0, 100 - estimatedAnnualCost / 10);
+  // Missing fee data must not be rewarded with a perfect cost score — score
+  // it neutral (50) instead of the 100 a genuine $0 product earns.
+  const costScore = hasCostInputs ? Math.max(0, 100 - estimatedAnnualCost / 10) : 50;
   let rankScore = ratingScore * 0.45 + costScore * 0.35;
   if (broker.chess_sponsored) rankScore += 5;
   if (broker.smsf_support && scenario === "smsf-investor") rankScore += 18;
@@ -336,6 +369,7 @@ export function rankBroker(broker: Broker, scenario: ScenarioMode | "none" | und
     rankScore: Math.round(rankScore * 10) / 10,
     why: explainBroker(broker, scenario, estimatedAnnualCost),
     commercialDisclosure: commercialDisclosureFor(broker),
+    hasCostInputs,
     ...fresh,
   };
 }
@@ -346,11 +380,31 @@ export function rankBrokers(brokers: Broker[], scenario: ScenarioMode | "none" |
 
 export function sortRankedBrokers(rows: RankedBroker[], sortCol: SortCol, sortDir: 1 | -1): RankedBroker[] {
   return [...rows].sort((a, b) => {
+    // Rows with no recorded fee data sink to the bottom of a cost sort in
+    // either direction — their $0 is an artifact, not a price.
+    if (sortCol === "estimated_annual_cost" && a.hasCostInputs !== b.hasCostInputs) {
+      return a.hasCostInputs ? -1 : 1;
+    }
     const av = sortCol === "estimated_annual_cost" ? a.estimatedAnnualCost : sortCol === "rank_score" ? a.rankScore : a.broker[sortCol as keyof Broker] ?? (sortCol === "name" ? "" : 999);
     const bv = sortCol === "estimated_annual_cost" ? b.estimatedAnnualCost : sortCol === "rank_score" ? b.rankScore : b.broker[sortCol as keyof Broker] ?? (sortCol === "name" ? "" : 999);
     if (typeof av === "string" && typeof bv === "string") return av.localeCompare(bv) * sortDir;
     return ((av as number) - (bv as number)) * sortDir;
   });
+}
+
+/**
+ * Licence-mode gate for table schemas (V-NEW: 2026-06-10 audit). In
+ * factual_only mode (no AFSL) editorial star ratings must not render —
+ * lib/compliance-config.ts is the single source of truth for the mode.
+ * Returns the schema unchanged in general_advice mode.
+ */
+export function applyComplianceGates(schema: CategorySchema): CategorySchema {
+  if (SHOW_RATINGS) return schema;
+  return {
+    ...schema,
+    columns: schema.columns.filter((column) => column.key !== "rating"),
+    sortOptions: schema.sortOptions.filter((option) => option.col !== "rating"),
+  };
 }
 
 export function updateShortlist(current: string[], slug: string, max = 4): string[] {

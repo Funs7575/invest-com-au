@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { SHOW_GENERIC_VERIFIED } from "@/lib/compliance-config";
 
 export default function AdvisorDirectory() {
   const [activeTab, setActiveTab] = useState<"property" | "wealth">("property");
@@ -21,8 +22,8 @@ export default function AdvisorDirectory() {
             </span>
           </h2>
           <p className="text-xs md:text-sm text-slate-600 mt-0.5 md:mt-1 max-w-lg">
-            <span className="hidden md:inline">Every advisor verified against ASIC registers. Free consultation, no obligation to proceed.</span>
-            <span className="md:hidden">ASIC-verified professionals · Free consultation</span>
+            <span className="hidden md:inline">{SHOW_GENERIC_VERIFIED ? "Every advisor verified against ASIC registers. Free consultation, no obligation to proceed." : "Credentials and registration details shown on every profile. Free consultation, no obligation to proceed."}</span>
+            <span className="md:hidden">{SHOW_GENERIC_VERIFIED ? "ASIC-verified professionals · Free consultation" : "Credentials on every profile · Free consultation"}</span>
           </p>
         </div>
 

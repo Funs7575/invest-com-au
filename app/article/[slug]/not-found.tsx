@@ -37,7 +37,7 @@ export default function ArticleNotFound() {
               <Icon name="scale" size={16} className="text-slate-400 group-hover:text-amber-500 shrink-0" />
               <span className="text-xs font-medium text-slate-600">Compare broker fees</span>
             </Link>
-            <Link href="/quiz" className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group">
+            <Link href="/get-matched" className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group">
               <Icon name="target" size={16} className="text-slate-400 group-hover:text-amber-500 shrink-0" />
               <span className="text-xs font-medium text-slate-600">Find your match with the quiz</span>
             </Link>

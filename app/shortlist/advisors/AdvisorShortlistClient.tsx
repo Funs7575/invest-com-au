@@ -46,6 +46,7 @@ export default function AdvisorShortlistClient() {
 
   useEffect(() => {
     if (slugs.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional empty-shortlist fast path on mount
       setAdvisors([]);
       setLoading(false);
       return;
@@ -224,7 +225,7 @@ export default function AdvisorShortlistClient() {
           <p className="text-xs text-slate-500 mt-0.5">Answer 3 questions and we&apos;ll match you to the right advisor.</p>
         </div>
         <Link
-          href="/quiz"
+          href="/get-matched"
           className="inline-flex items-center gap-1.5 bg-violet-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-violet-700 transition-colors whitespace-nowrap"
         >
           <Icon name="zap" size={14} />

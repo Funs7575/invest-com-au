@@ -86,7 +86,7 @@ export default function HomeHero({
                 boxShadow: "0 0 0 4px rgba(242,88,34,.18)",
               }}
             />
-            Independent &middot; ASIC-registered &middot; No commission incentive &middot; Est. 1996
+            Independent &middot; Est. 1996 &middot; Commissions never change our rankings
           </span>
 
           <h1

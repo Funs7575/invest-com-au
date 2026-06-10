@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SHOW_MATCH_LANGUAGE } from "@/lib/compliance-config";
 
 // Sticky mobile bottom navigation — four tabs that mirror the homepage
 // route cards: Compare / Opportunities / Experts / Get Matched. The
-// fourth tab points at /quiz (the guided matching flow).
+// fourth tab points at /get-matched (the guided matching flow; the old
+// /quiz path is a 308 redirect to it).
 const TABS: ReadonlyArray<{ label: string; href: string; icon: React.ReactNode; matchPrefix: string }> = [
   {
     label: "Compare",
@@ -44,9 +46,9 @@ const TABS: ReadonlyArray<{ label: string; href: string; icon: React.ReactNode; 
     ),
   },
   {
-    label: "Get Matched",
-    href: "/quiz",
-    matchPrefix: "/quiz",
+    label: SHOW_MATCH_LANGUAGE ? "Get Matched" : "Quiz",
+    href: "/get-matched",
+    matchPrefix: "/get-matched",
     icon: (
       <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
         <circle cx="12" cy="12" r="10" />
@@ -56,7 +58,9 @@ const TABS: ReadonlyArray<{ label: string; href: string; icon: React.ReactNode; 
   },
 ];
 
-const HIDDEN_PREFIXES = ["/admin", "/auth", "/broker-portal", "/quiz"];
+// /get-matched is the live quiz flow (focused, no nav); /quiz only exists
+// as a 308 redirect to it but stays listed to avoid a flash on the hop.
+const HIDDEN_PREFIXES = ["/admin", "/auth", "/broker-portal", "/quiz", "/get-matched"];
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
