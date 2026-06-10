@@ -1,6 +1,6 @@
 /**
  * Country Mode compare preview — "platforms for <country> investors"
- * strip mounted ABOVE the global HomeCompareDeepDive.
+ * strip mounted between the route cards and the marketplace teaser.
  *
  * Server component. Filters the brokers feed by platform_type and
  * (when set) accepts_non_residents. Returns null below the platforms

@@ -26,149 +26,6 @@ function formatEventDate(iso: string): string {
   return `${day} · ${time} AEST`;
 }
 
-function formatEventType(raw: string | null): string {
-  if (!raw) return "Event";
-  return raw
-    .split("_")
-    .map((w) => (w.length > 0 ? w[0]!.toUpperCase() + w.slice(1) : w))
-    .join(" ");
-}
-
-function EventCard({ event }: { event: AdvisorEvent }) {
-  const isFree = !event.price_cents || event.price_cents === 0;
-  const priceDisplay = isFree
-    ? "Free"
-    : `$${Math.round(event.price_cents! / 100).toLocaleString("en-AU")}`;
-  const professional = event.professional ?? null;
-  const initials = professional
-    ? professional.name
-        .split(/\s+/)
-        .map((p) => p[0])
-        .filter(Boolean)
-        .slice(0, 2)
-        .join("")
-        .toUpperCase()
-    : "?";
-
-  return (
-    <div
-      className="iv2-card"
-      style={{ display: "flex", flexDirection: "column", gap: 0, padding: 0, overflow: "hidden" }}
-    >
-      <div style={{ padding: "14px 14px 10px" }}>
-        {event.event_type && (
-          <span
-            style={{
-              display: "inline-block",
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              color: "var(--color-teal-700)",
-              background: "var(--color-teal-50)",
-              border: "1px solid var(--color-teal-200)",
-              borderRadius: 99,
-              padding: "2px 8px",
-              marginBottom: 8,
-            }}
-          >
-            {formatEventType(event.event_type)}
-          </span>
-        )}
-        <h3
-          style={{
-            fontSize: 14,
-            fontWeight: 700,
-            color: "var(--color-ink-900)",
-            lineHeight: 1.3,
-            margin: 0,
-          }}
-        >
-          {event.title}
-        </h3>
-
-        {professional && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10 }}>
-            <div
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 99,
-                overflow: "hidden",
-                flexShrink: 0,
-                background: "var(--color-ink-700)",
-                color: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 700,
-                fontSize: 10,
-                position: "relative",
-              }}
-            >
-              {professional.photo_url ? (
-                <Image
-                  src={professional.photo_url}
-                  alt={professional.name}
-                  fill
-                  sizes="28px"
-                  style={{ objectFit: "cover" }}
-                />
-              ) : (
-                initials
-              )}
-            </div>
-            <span style={{ fontSize: 12, color: "var(--color-ink-600)", fontWeight: 600 }}>
-              {professional.name}
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div
-        className="bg-teal-50 border-t border-slate-200"
-        style={{
-          padding: "10px 14px",
-          marginTop: "auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: 4,
-        }}
-      >
-        <div style={{ fontSize: 11.5, color: "var(--color-teal-800)", fontWeight: 600 }}>
-          {formatEventDate(event.starts_at)}
-        </div>
-        {event.location && (
-          <div style={{ fontSize: 11, color: "var(--color-ink-500)" }}>{event.location}</div>
-        )}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6 }}>
-          <span
-            style={{
-              fontSize: 13,
-              fontWeight: 700,
-              color: isFree ? "var(--color-emerald-700)" : "var(--color-ink-900)",
-            }}
-          >
-            {priceDisplay}
-          </span>
-          <Link
-            href="/events"
-            className="iv2-cta"
-            style={{ fontSize: 11.5, padding: "5px 12px", background: "var(--color-teal-600)" }}
-          >
-            RSVP
-          </Link>
-        </div>
-        {event.rsvp_count && event.rsvp_count > 0 ? (
-          <div style={{ fontSize: 10.5, color: "var(--color-ink-400)" }}>
-            {event.rsvp_count.toLocaleString("en-AU")} registered
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
 async function fetchUpcomingEvents(): Promise<AdvisorEvent[]> {
   try {
     const supabase = await createClient();
@@ -180,92 +37,117 @@ async function fetchUpcomingEvents(): Promise<AdvisorEvent[]> {
       .eq("status", "published")
       .gte("starts_at", new Date().toISOString())
       .order("starts_at", { ascending: true })
-      .limit(4);
+      .limit(3);
     return (data as unknown as AdvisorEvent[]) ?? [];
   } catch {
     return [];
   }
 }
 
+/**
+ * Compact "upcoming events" strip inside the homepage experts band.
+ * Three text rows, not a card grid — the full programme lives at /events.
+ */
 export default async function HomeUpcomingEvents() {
   const events = await fetchUpcomingEvents();
   if (events.length === 0) return null;
 
   return (
-      <section
-        className="bg-teal-50 border-t border-b border-teal-100"
-        style={{
-          padding: "52px 36px",
-        }}
+    <section style={{ padding: "0 36px 12px" }}>
+      <div
+        className="border border-slate-200 bg-white"
+        style={{ maxWidth: 1280, margin: "0 auto", borderRadius: 14, overflow: "hidden" }}
       >
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "space-between",
-              marginBottom: 20,
-              gap: 16,
-              flexWrap: "wrap",
-            }}
+        <div
+          className="border-b border-slate-100"
+          style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "10px 16px" }}
+        >
+          <span className="iv2-mini" style={{ color: "var(--color-teal-700)" }}>
+            ● Upcoming events by experts
+          </span>
+          <Link
+            href="/events"
+            style={{ fontSize: 12, fontWeight: 600, color: "var(--color-teal-700)", textDecoration: "none" }}
           >
-            <div>
-              <span className="iv2-mini" style={{ color: "var(--color-teal-700)" }}>
-                ● Upcoming Events
-              </span>
-              <h2
-                className="font-display"
-                style={{
-                  fontSize: 28,
-                  letterSpacing: "-.026em",
-                  fontWeight: 800,
-                  margin: "4px 0 0",
-                  lineHeight: 1.1,
-                  textWrap: "balance",
-                  color: "var(--color-ink-900)",
-                }}
-              >
-                Learn from experts. Live.
-              </h2>
-              <p
-                style={{
-                  fontSize: 13,
-                  color: "var(--color-ink-500)",
-                  margin: "6px 0 0",
-                  maxWidth: 520,
-                  lineHeight: 1.5,
-                }}
-              >
-                Webinars, workshops and seminars with Australia&apos;s leading financial advisors.
-              </p>
-            </div>
-            <Link href="/events" className="iv2-cta-ghost" style={{ fontSize: 12.5 }}>
-              View all events →
-            </Link>
-          </div>
-
-          <div className="home-events-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
-            {events.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+            View all →
+          </Link>
         </div>
 
-        <style>{`
-          @media (max-width: 1024px) {
-            .home-events-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          }
-          @media (max-width: 640px) {
-            .home-events-grid {
-              grid-template-columns: 1fr !important;
-              display: flex !important;
-              flex-wrap: nowrap !important;
-              overflow-x: auto !important;
-              gap: 10px !important;
-            }
-            .home-events-grid > * { min-width: 260px; }
-          }
-        `}</style>
-      </section>
-    );
+        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+          {events.map((event, i) => {
+            const isFree = !event.price_cents || event.price_cents === 0;
+            const priceDisplay = isFree
+              ? "Free"
+              : `$${Math.round(event.price_cents! / 100).toLocaleString("en-AU")}`;
+            const pro = event.professional;
+            return (
+              <li key={event.id} className={i > 0 ? "border-t border-slate-100" : undefined}>
+                <Link
+                  href="/events"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "10px 16px",
+                    textDecoration: "none",
+                    color: "inherit",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span
+                    className="bg-teal-50 border border-teal-100"
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: "var(--color-teal-800)",
+                      padding: "3px 9px",
+                      borderRadius: 99,
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {formatEventDate(event.starts_at)}
+                  </span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-ink-900)", flex: 1, minWidth: 200 }}>
+                    {event.title}
+                  </span>
+                  {pro && (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--color-ink-500)", flexShrink: 0 }}>
+                      {pro.photo_url && (
+                        <span style={{ width: 20, height: 20, borderRadius: 99, overflow: "hidden", position: "relative", flexShrink: 0 }}>
+                          <Image src={pro.photo_url} alt="" fill sizes="20px" style={{ objectFit: "cover" }} />
+                        </span>
+                      )}
+                      {pro.name}
+                    </span>
+                  )}
+                  {event.location && (
+                    <span style={{ fontSize: 11.5, color: "var(--color-ink-400)", flexShrink: 0 }}>{event.location}</span>
+                  )}
+                  <span
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: isFree ? "var(--color-emerald-700)" : "var(--color-ink-900)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {priceDisplay}
+                  </span>
+                  {event.rsvp_count && event.rsvp_count > 0 ? (
+                    <span style={{ fontSize: 11, color: "var(--color-ink-400)", flexShrink: 0 }}>
+                      {event.rsvp_count.toLocaleString("en-AU")} registered
+                    </span>
+                  ) : null}
+                  <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--color-teal-700)", flexShrink: 0 }}>
+                    RSVP →
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  );
 }

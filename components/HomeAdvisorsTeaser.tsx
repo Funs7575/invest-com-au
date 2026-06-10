@@ -56,7 +56,7 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
   const visible = (filter === "All" ? advisors : advisors.filter((a) => a.type === filter)).slice(0, 4);
 
   return (
-    <section style={{ padding: "52px 36px", maxWidth: 1280, margin: "0 auto" }}>
+    <section style={{ padding: "52px 36px 20px", maxWidth: 1280, margin: "0 auto" }}>
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 18, gap: 16, flexWrap: "wrap" }}>
         <div>
           <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
@@ -240,7 +240,7 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
         })}
       </div>
 
-      <p style={{ fontSize: 11.5, color: "var(--color-ink-400)", marginTop: 14, lineHeight: 1.5 }}>
+      <p style={{ fontSize: 11.5, color: "var(--color-ink-400)", margin: "14px 0 12px", lineHeight: 1.5 }}>
         Introductions only. Always check licensing, authorisation, fees and suitability before proceeding.
       </p>
 
