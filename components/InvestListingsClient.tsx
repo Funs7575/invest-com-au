@@ -18,6 +18,7 @@ import {
   freshnessSignal,
 } from "@/lib/listing-kind";
 import InvestListingCard from "@/components/InvestListingCard";
+import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import ListingCompareBar from "@/components/invest/ListingCompareBar";
 import SaveSearchButton from "@/components/invest/SaveSearchButton";
 import Icon from "@/components/Icon";
@@ -57,6 +58,22 @@ export interface InvestListingsClientProps {
   /** Set of slugs that already have an approved claim. Cards NOT in this
    *  set render a small "Are you the owner?" link. (Wave 3) */
   claimedSlugs?: Set<string>;
+  /** Show the compact "Build an action plan" Get Matched CTA inline on the
+   *  search row. Set only on the cross-sector marketplace (/invest) — sector
+   *  /listings pages keep their leaner toolbar. */
+  showActionPlanCta?: boolean;
+  /** Hide the in-results "Filter results by type" chips. Set on pages that
+   *  render a SubCategoryNav tab bar above this component — two sub-type
+   *  selectors side by side read as a duplicate (the chips filter in place,
+   *  the tabs navigate to /invest/<cat>/listings/<sub>; users can't tell). */
+  hideSubCategoryChips?: boolean;
+  /** Set when the page's server query already scopes listings exactly
+   *  (e.g. vertical + sub_category on /invest/<cat>/listings/<sub>). The
+   *  category lock then only drives chrome (hides the sector pill) and must
+   *  NOT re-filter: categoryForListing maps fund-family sub-types and
+   *  listed_security kinds to a different slug than the page's, which would
+   *  silently drop server-scoped listings. */
+  skipCategoryFilter?: boolean;
 }
 
 // ─── Australian states ───────────────────────────────────────────────
@@ -120,6 +137,9 @@ export default function InvestListingsClient({
   matchScores,
   advisorOptInCounts,
   claimedSlugs,
+  showActionPlanCta,
+  hideSubCategoryChips,
+  skipCategoryFilter,
 }: InvestListingsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -273,7 +293,7 @@ export default function InvestListingsClient({
       result = result.filter((l) => activeKinds.has(deriveListingKind(l)));
     }
 
-    if (activeCategory !== "all") {
+    if (activeCategory !== "all" && !skipCategoryFilter) {
       result = result.filter((l) => categoryForListing(l) === activeCategory);
     }
 
@@ -455,7 +475,7 @@ export default function InvestListingsClient({
     activeTicket, activeQuery, activeFirbOnly, activeSivOnly, activeWholesaleOnly,
     activeInvestorType, activeFreshness, activeFeaturedOnly, activeMinYield,
     activeMaxYield, activeStages, activeAsxSector, activeAsxMcap, activeDivYieldMin,
-    activeEsicOnly, activeSort,
+    activeEsicOnly, activeSort, skipCategoryFilter,
   ]);
 
   // ── Live per-facet counts for the compliance facet (Session 5.5) ──
@@ -605,8 +625,8 @@ export default function InvestListingsClient({
       {/* ── Single sticky toolbar (replaces the old two-bar stack) ── */}
       <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200">
         <div className="container-custom py-3 space-y-2.5">
-          {/* Row 1: search · filters · sort · view-mode toggle */}
-          <div className="flex gap-2 items-center">
+          {/* Row 1: search · action-plan CTA · sort · view-mode toggle */}
+          <div className="flex flex-wrap gap-2 items-center">
             <SearchInput
               id="listings-search"
               value={searchInput}
@@ -616,6 +636,10 @@ export default function InvestListingsClient({
               ariaLabel="Search listings"
               suggestions={searchSuggestions}
             />
+
+            {/* Compact Get Matched entry point — replaces the old standalone
+                card that pushed listings below the fold. */}
+            {showActionPlanCta && <GetMatchedEmbed context="opportunity" inline />}
 
             <SortDropdown
               options={SORT_OPTIONS}
@@ -721,6 +745,7 @@ export default function InvestListingsClient({
           {/* Results */}
           <div className="min-w-0">
             {(() => {
+              if (hideSubCategoryChips) return null;
               const canonicalChips = activeCategory !== "all" ? getSubCategoryChips(activeCategory) : [];
               const liveSubs = new Set(subCategories);
               // Merge canonical chips (with defined labels) + any DB subs not in canonical list
@@ -743,7 +768,7 @@ export default function InvestListingsClient({
                     options={chipOptions}
                     value={activeSubcategory}
                     onChange={(v) => setParams({ sub: v })}
-                    label="Narrow by sub-type"
+                    label="Filter results by type"
                   />
                 </div>
               ) : null;

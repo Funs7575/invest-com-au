@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 // advisor_session cookie (no Supabase JWT), so its booking read uses the
 // service-role client, scoped in-query to the validated advisorId.
 import { createAdminClient } from "@/lib/supabase/admin";
+import { deriveProfileCompleteness } from "@/lib/advisor-portal/profile-completeness";
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
   const sessionToken = request.cookies.get("advisor_session")?.value;
@@ -203,33 +204,8 @@ export async function GET(request: NextRequest) {
     weeklyEnquiries.push({ weekLabel: label, count });
   }
 
-  // --- Profile completeness ---
-  const profileFields = [
-    { key: "photo_url", label: "Profile photo", weight: 20 },
-    { key: "bio", label: "Bio / About", weight: 20 },
-    { key: "specialties", label: "Specialties", weight: 15 },
-    { key: "fee_structure", label: "Fee structure", weight: 10 },
-    { key: "fee_description", label: "Fee description", weight: 10 },
-    { key: "website", label: "Website URL", weight: 5 },
-    { key: "phone", label: "Phone number", weight: 10 },
-    { key: "booking_link", label: "Booking link", weight: 10 },
-  ];
-
-  let completenessScore = 0;
-  const missingFields: string[] = [];
-  for (const field of profileFields) {
-    const val = advisor?.[field.key as keyof typeof advisor];
-    const hasValue =
-      val !== null &&
-      val !== undefined &&
-      val !== "" &&
-      !(Array.isArray(val) && val.length === 0);
-    if (hasValue) {
-      completenessScore += field.weight;
-    } else {
-      missingFields.push(field.label);
-    }
-  }
+  // --- Profile completeness (derived; shared with the onboarding wizard) ---
+  const completeness = deriveProfileCompleteness(advisor as Record<string, unknown> | null);
 
   return NextResponse.json({
     advisor,
@@ -265,8 +241,11 @@ export async function GET(request: NextRequest) {
     reviews: approvedReviews,
     weeklyEnquiries,
     profileCompleteness: {
-      score: completenessScore,
-      missingFields,
+      score: completeness.score,
+      missingFields: completeness.missingFields,
+      // Wizard model: per-step rollup + the next best action.
+      steps: completeness.steps,
+      nextStep: completeness.nextStep,
     },
   });
 }

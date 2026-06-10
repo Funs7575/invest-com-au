@@ -154,10 +154,8 @@ describe("GrantsHub migration — <HubPage> with grantsHubConfig", () => {
     expect(screen.getByTestId("rd-calculator")).toBeInTheDocument();
   });
 
-  it("does not render FAQPage JSON-LD (grants config has empty faqs)", () => {
+  it("renders FAQPage JSON-LD (grants config now has faqs)", () => {
     render(<HubPage config={grantsHubConfig} />);
-    expect(
-      screen.queryByTestId("hub-page-faq-ld")
-    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("hub-page-faq-ld")).toBeInTheDocument();
   });
 });

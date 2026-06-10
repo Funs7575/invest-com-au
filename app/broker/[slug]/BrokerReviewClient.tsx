@@ -1196,7 +1196,7 @@ export default function BrokerReviewClient({
             <Link href="/portfolio-calculator" className="text-xs md:text-sm text-violet-700 font-semibold hover:text-violet-800 transition-colors border border-violet-200 rounded-lg px-3 py-2 md:px-4 hover:bg-violet-50">
               Fee Calculator →
             </Link>
-            <Link href="/quiz" className="text-xs md:text-sm text-amber-700 font-semibold hover:text-amber-800 transition-colors border border-amber-200 rounded-lg px-3 py-2 md:px-4 hover:bg-amber-50">
+            <Link href="/get-matched" className="text-xs md:text-sm text-amber-700 font-semibold hover:text-amber-800 transition-colors border border-amber-200 rounded-lg px-3 py-2 md:px-4 hover:bg-amber-50">
               Quiz →
             </Link>
             <Link href="/compare" className="text-xs md:text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-3 py-2 md:px-4 hover:bg-slate-50">

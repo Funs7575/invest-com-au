@@ -66,6 +66,9 @@ export default async function PrivateCreditListingsPage() {
           listings={listings}
           categories={categoryTabs}
           lockedCategory="private-credit"
+          // Mirrors the SubCategoryNav render condition above — when the tab
+          // bar shows, the in-results chips would duplicate it.
+          hideSubCategoryChips={Boolean(category && category.subcategories.length > 0)}
           pageTitle="Private Credit Investment Listings"
           pageSubtitle="Browse Australian private credit investment opportunities — senior secured loans, mezzanine debt and structured credit."
         />

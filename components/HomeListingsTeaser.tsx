@@ -1,35 +1,71 @@
 import Link from "next/link";
 import Image from "next/image";
 import { DesignIcon } from "@/components/design/DesignIcon";
+import Icon from "@/components/Icon";
 import { SponsorChip } from "@/components/design/Atoms";
+import { listingUrl } from "@/lib/listing-url";
+import { deriveListingKind, formatListingPrice, listingKindMeta } from "@/lib/listing-kind";
+import { humanizeTitle, listingDisplayMetrics } from "@/lib/listing-format";
+import { isPaidTier } from "@/lib/home-listing-curation";
+import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 export interface HomeListing {
   id: number;
   title: string;
   slug: string;
   vertical: string;
+  sub_category: string | null;
+  listing_kind: string | null;
   location_state: string | null;
   location_city: string | null;
   price_display: string | null;
+  asking_price_cents: number | null;
   images: string[] | null;
   listing_type: string | null;
   key_metrics: Record<string, string | number | undefined> | null;
   status: string | null;
 }
 
-const VERTICAL_LABELS: Record<string, { label: string; color: string }> = {
-  funds:                { label: "Funds",      color: "#60a5fa" },
-  "buy-business":       { label: "Business",   color: "#f87171" },
-  "commercial-property":{ label: "Commercial", color: "#a78bfa" },
-  farmland:             { label: "Farmland",   color: "#84cc16" },
-  "renewable-energy":   { label: "Renewables", color: "#34d399" },
-  mining:               { label: "Mining",     color: "#fbbf24" },
-  franchise:            { label: "Franchise",  color: "#db2777" },
-  startups:             { label: "Startups",   color: "#f59e0b" },
-  hydrogen:             { label: "Hydrogen",   color: "#06b6d4" },
-  uranium:              { label: "Uranium",    color: "#8b5cf6" },
-  "oil-gas":            { label: "Oil & Gas",  color: "#64748b" },
+/** Short chip labels + accent colours for the teaser. Anything not listed
+ *  falls back to `humanizeTitle` (acronym-aware) — never the raw slug. */
+const VERTICAL_CHIPS: Record<string, { label: string; color: string }> = {
+  funds:                { label: "Funds",          color: "#60a5fa" },
+  "buy-business":       { label: "Business",       color: "#f87171" },
+  "commercial-property":{ label: "Commercial",     color: "#a78bfa" },
+  commercial_property:  { label: "Commercial",     color: "#a78bfa" }, // drifted rows — see lib/listing-url VERTICAL_ALIASES
+  farmland:             { label: "Farmland",       color: "#84cc16" },
+  "renewable-energy":   { label: "Renewables",     color: "#34d399" },
+  mining:               { label: "Mining",         color: "#fbbf24" },
+  franchise:            { label: "Franchise",      color: "#db2777" },
+  startups:             { label: "Startups",       color: "#f59e0b" },
+  hydrogen:             { label: "Hydrogen",       color: "#06b6d4" },
+  uranium:              { label: "Uranium",        color: "#8b5cf6" },
+  "oil-gas":            { label: "Oil & Gas",      color: "#64748b" },
+  bullion:              { label: "Bullion",        color: "#eab308" },
+  "water-rights":       { label: "Water rights",   color: "#0ea5e9" },
+  "carbon-environmental-markets": { label: "Carbon & enviro", color: "#10b981" },
+  "sda-housing":        { label: "SDA housing",    color: "#f472b6" },
+  "digital-infrastructure": { label: "Digital infra", color: "#6366f1" },
 };
+
+function verticalChip(vertical: string): { label: string; color: string } {
+  return VERTICAL_CHIPS[vertical] ?? { label: humanizeTitle(vertical), color: "#94a3b8" };
+}
+
+/** Up to three stat pairs that actually exist for this listing: the
+ *  kind-aware price line first, then key_metrics entries. No em-dash
+ *  placeholders — a stat either has a value or isn't rendered. */
+function cardStats(l: HomeListing): Array<{ label: string; value: string }> {
+  const price = formatListingPrice(l);
+  const metrics = listingDisplayMetrics(l.key_metrics, price ? 2 : 3);
+  const stats = [
+    ...(price ? [{ label: price.label, value: price.value }] : []),
+    ...metrics.map((m) => ({ label: m.label, value: m.value })),
+  ];
+  if (stats.length > 0) return stats.slice(0, 3);
+  // Sparse row — fall back to the kind label so the strip is never empty.
+  return [{ label: "Type", value: listingKindMeta(deriveListingKind(l)).label }];
+}
 
 interface HomeListingsTeaserProps {
   listings: ReadonlyArray<HomeListing>;
@@ -38,6 +74,7 @@ interface HomeListingsTeaserProps {
 
 export default function HomeListingsTeaser({ listings, totalCount }: HomeListingsTeaserProps) {
   const visible = listings.slice(0, 6);
+  const hasPaidPlacement = visible.some((l) => isPaidTier(l.listing_type));
 
   return (
     <section
@@ -82,16 +119,14 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
             </div>
           )}
           {visible.map((l) => {
-            const cat = VERTICAL_LABELS[l.vertical] ?? { label: l.vertical, color: "#94a3b8" };
+            const cat = verticalChip(l.vertical);
             const img = l.images && l.images.length > 0 ? l.images[0] : null;
-            const featured = l.listing_type === "featured" || l.listing_type === "premium";
-            const km = l.key_metrics ?? {};
-            const yieldVal = (km["yield"] as string | undefined) ?? (km["return"] as string | undefined) ?? "—";
-            const termVal = (km["term"] as string | undefined) ?? (km["duration"] as string | undefined) ?? "—";
+            const kindIcon = listingKindMeta(deriveListingKind(l)).icon;
+            const stats = cardStats(l);
             return (
               <Link
                 key={l.id}
-                href={`/invest/${l.vertical}/${l.slug}`}
+                href={listingUrl(l)}
                 className="iv2-card iv2-card-hover"
                 style={{ overflow: "hidden", display: "flex", flexDirection: "column", textDecoration: "none", color: "inherit" }}
               >
@@ -105,14 +140,29 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
                       style={{ objectFit: "cover", opacity: 0.92 }}
                     />
                   ) : (
-                    <div
-                      aria-hidden
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        background: `linear-gradient(135deg, ${cat.color}33, ${cat.color}11)`,
-                      }}
-                    />
+                    <>
+                      <div
+                        aria-hidden
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          background: `linear-gradient(135deg, ${cat.color}66 0%, ${cat.color}1f 55%, #0b1422 100%)`,
+                        }}
+                      />
+                      <div
+                        aria-hidden
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "rgba(255,255,255,.3)",
+                        }}
+                      >
+                        <Icon name={kindIcon} size={42} />
+                      </div>
+                    </>
                   )}
                   <div
                     aria-hidden
@@ -137,7 +187,7 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
                     >
                       {cat.label}
                     </span>
-                    {featured && <SponsorChip kind="featured" />}
+                    {isPaidTier(l.listing_type) && <SponsorChip kind="featured" />}
                   </div>
                   <div style={{ position: "absolute", bottom: 8, left: 10, right: 10, color: "white" }}>
                     <div style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.18 }}>{l.title}</div>
@@ -147,14 +197,8 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
                     </div>
                   </div>
                 </div>
-                <div style={{ padding: "9px 12px", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
-                  {(
-                    [
-                      ["Min", l.price_display ?? "—"],
-                      ["Yield", String(yieldVal)],
-                      ["Term", String(termVal)],
-                    ] as const
-                  ).map(([label, val]) => (
+                <div style={{ padding: "9px 12px", display: "grid", gridTemplateColumns: `repeat(${stats.length},1fr)`, gap: 8 }}>
+                  {stats.map(({ label, value }) => (
                     <div key={label}>
                       <div
                         style={{
@@ -168,7 +212,7 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
                         {label}
                       </div>
                       <div className="font-mono tnum" style={{ fontSize: 12, fontWeight: 700, color: "var(--color-ink-900)", marginTop: 1 }}>
-                        {val}
+                        {value}
                       </div>
                     </div>
                   ))}
@@ -177,6 +221,12 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
             );
           })}
         </div>
+
+        {hasPaidPlacement && (
+          <p style={{ fontSize: 11, color: "var(--color-ink-400)", margin: "12px 0 0", lineHeight: 1.5 }}>
+            {ADVERTISER_DISCLOSURE_SHORT}
+          </p>
+        )}
       </div>
 
       <style>{`

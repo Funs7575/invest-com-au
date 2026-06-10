@@ -220,3 +220,33 @@ describe("classifyText — forward-looking escalation", () => {
     expect(r.verdict).toBe("escalate");
   });
 });
+
+describe("classifyText — forum surfaces", () => {
+  it("auto-publishes short conversational forum replies (no 50-char floor)", () => {
+    const r = classifyText({ text: "Thanks, great answer!", surface: "forum_post" });
+    expect(r.verdict).toBe("auto_publish");
+  });
+
+  it("auto-publishes a short-but-real forum thread body (20-char floor)", () => {
+    const r = classifyText({
+      text: "Which broker is cheapest for monthly ETF buys?",
+      title: "Cheapest broker for ETF investing",
+      surface: "forum_thread",
+    });
+    expect(r.verdict).toBe("auto_publish");
+  });
+
+  it("escalates sub-floor forum thread bodies", () => {
+    const r = classifyText({ text: "buy now", title: "Hot tip", surface: "forum_thread" });
+    expect(r.verdict).toBe("escalate");
+  });
+
+  it("still escalates forward-looking hype on forum posts", () => {
+    const r = classifyText({
+      text: "Mate trust me, this is the next bitcoin and it will hit $50 by December.",
+      surface: "forum_post",
+    });
+    expect(r.verdict).toBe("escalate");
+    expect(r.reasons.some((x) => x.includes("forward_looking") || x.includes("hype"))).toBe(true);
+  });
+});

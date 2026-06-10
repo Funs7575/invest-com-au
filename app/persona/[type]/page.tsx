@@ -143,7 +143,7 @@ export default async function PersonaTypePage({
             {result.description}
           </p>
           <Link
-            href="/quiz"
+            href="/get-matched"
             style={{
               display: "inline-block",
               padding: "10px 24px",
@@ -185,7 +185,7 @@ export default async function PersonaTypePage({
             </p>
           </div>
           <Link
-            href="/quiz"
+            href="/get-matched"
             style={{
               padding: "9px 20px",
               background: "var(--color-ink-900)",

@@ -5,6 +5,15 @@ if (typeof Element !== "undefined") {
   Element.prototype.scrollIntoView = vi.fn();
 }
 
+// jsdom doesn't implement ResizeObserver (used by SubCategoryChips scroll shadows)
+if (typeof globalThis.ResizeObserver === "undefined") {
+  globalThis.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as unknown as typeof ResizeObserver;
+}
+
 // Mock environment variables needed by API routes
 process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";

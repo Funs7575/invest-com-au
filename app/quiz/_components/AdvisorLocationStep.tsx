@@ -151,7 +151,7 @@ export default function AdvisorLocationStep({
             value={budgetValue}
             onChange={(e) => onBudgetChange(e.target.value)}
           />
-          <p className="text-xs text-slate-400 mt-1.5">
+          <p className="text-xs text-slate-500 mt-1.5">
             Optional — helps filter professionals experienced at your level
           </p>
         </div>
@@ -159,14 +159,14 @@ export default function AdvisorLocationStep({
         {/* Divider */}
         <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-slate-100" />
-          <span className="text-xs text-slate-400 font-medium">Your location</span>
+          <span className="text-xs text-slate-500 font-medium">Your location</span>
           <div className="flex-1 h-px bg-slate-100" />
         </div>
 
         {/* Postcode */}
         <div>
           <label htmlFor="quiz-postcode" className="block text-sm font-semibold text-slate-700 mb-1.5">
-            Postcode <span className="text-slate-400 font-normal">(recommended)</span>
+            Postcode <span className="text-slate-500 font-normal">(recommended)</span>
           </label>
           <div className="relative">
             <input

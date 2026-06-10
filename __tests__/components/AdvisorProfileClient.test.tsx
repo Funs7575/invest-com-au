@@ -118,6 +118,17 @@ describe("AdvisorProfileClient booking CTA (ADV-002)", () => {
 });
 
 describe("AdvisorProfileClient reviews cap note (ADV-011)", () => {
+  let fetchSpy: MockInstance<typeof fetch>;
+
+  beforeEach(() => {
+    fetchSpy = vi.spyOn(globalThis, "fetch");
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+    vi.clearAllMocks();
+  });
+
   const review = (id: number) => ({
     id,
     reviewer_name: `Reviewer ${id}`,
@@ -128,7 +139,7 @@ describe("AdvisorProfileClient reviews cap note (ADV-011)", () => {
     status: "approved",
   }) as unknown as import("@/lib/types").ProfessionalReview;
 
-  it("notes the cap when more approved reviews exist than were embedded", () => {
+  it("notes the cap and pages more reviews in via the public reviews API", async () => {
     render(
       <AdvisorProfileClient
         professional={pro({ rating: 5, review_count: 47 })}
@@ -138,7 +149,36 @@ describe("AdvisorProfileClient reviews cap note (ADV-011)", () => {
       />,
     );
     const note = screen.getByTestId("reviews-cap-note");
-    expect(note).toHaveTextContent(/Showing the 2 most recent reviews of 47 total/i);
+    expect(note).toHaveTextContent(/Showing 2 of 47 reviews/i);
+
+    // Load more → fetches the next page (offset = current length) and appends.
+    fetchSpy.mockResolvedValue(
+      new Response(JSON.stringify({ reviews: [review(3), review(4)] }), { status: 200 }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Load more reviews/i }));
+    await waitFor(() => {
+      expect(screen.getByText("Reviewer 3")).toBeInTheDocument();
+    });
+    const calledUrl = String(fetchSpy.mock.calls.at(-1)?.[0] ?? "");
+    expect(calledUrl).toContain("/api/advisor-reviews-public");
+    expect(calledUrl).toContain("offset=2");
+    expect(screen.getByTestId("reviews-cap-note")).toHaveTextContent(/Showing 4 of 47 reviews/i);
+  });
+
+  it("shows an inline error when loading more reviews fails", async () => {
+    render(
+      <AdvisorProfileClient
+        professional={pro({ rating: 5, review_count: 47 })}
+        similar={[]}
+        reviews={[review(1), review(2)]}
+        reviewTotalCount={47}
+      />,
+    );
+    fetchSpy.mockResolvedValue(new Response(null, { status: 500 }));
+    fireEvent.click(screen.getByRole("button", { name: /Load more reviews/i }));
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toHaveTextContent(/Couldn't load more reviews/i);
+    });
   });
 
   it("does not show the cap note when all reviews are shown", () => {

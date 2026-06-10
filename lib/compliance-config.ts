@@ -98,8 +98,8 @@ export const PRIMARY_CTA_TEXT = SHOW_MATCH_LANGUAGE
   ? "Start My Free Match"
   : "Compare Platforms";
 
-/** Primary CTA href */
-export const PRIMARY_CTA_HREF = SHOW_QUIZ_MATCH ? "/quiz" : "/compare";
+/** Primary CTA href (/quiz is a 308 redirect — link the live route directly) */
+export const PRIMARY_CTA_HREF = SHOW_QUIZ_MATCH ? "/get-matched" : "/compare";
 
 /** Secondary CTA text */
 export const SECONDARY_CTA_TEXT = SHOW_MATCH_LANGUAGE

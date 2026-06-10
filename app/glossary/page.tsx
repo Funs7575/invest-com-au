@@ -272,7 +272,7 @@ export default async function GlossaryPage() {
                 Compare Platforms &rarr;
               </Link>
               <Link
-                href="/quiz"
+                href="/get-matched"
                 className="text-xs px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 transition-colors"
               >
                 Find Your Platform &rarr;

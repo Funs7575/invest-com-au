@@ -3,6 +3,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "./setup";
 import type { ABTestConfig } from "@/lib/ab-test";
 
+// Assertions describe general_advice-mode copy ("Get matched in 60
+// seconds") — pin the flag so the factual_only CI env doesn't swap in the
+// gated "Take the 60-second quiz" variant.
+vi.mock("@/lib/compliance-config", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/compliance-config")>()),
+  SHOW_MATCH_LANGUAGE: true,
+}));
+
 // Must be declared before vi.mock factory (hoisting)
 const { mockSelect } = vi.hoisted(() => ({ mockSelect: vi.fn() }));
 
@@ -127,14 +135,14 @@ describe("HomeHeroCTA", () => {
     });
   });
 
-  it("links to /quiz", () => {
+  it("links to /get-matched", () => {
     mockSelect.mockImplementation((cb: (result: { data: null }) => void) => {
       cb({ data: null });
       return Promise.resolve();
     });
 
     render(<HomeHeroCTA />);
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/quiz");
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/get-matched");
   });
 
   it("fires impression tracking on mount when a test is active", async () => {

@@ -368,7 +368,7 @@ export default function AccountClient() {
                   <p className="text-xs text-slate-500 mt-0.5">Answer 5 questions and we&apos;ll match you with the right broker for your style and goals.</p>
                 </div>
                 <Link
-                  href="/quiz"
+                  href="/get-matched"
                   className="shrink-0 px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-colors"
                 >
                   Start quiz
@@ -683,7 +683,7 @@ export default function AccountClient() {
             <Link href="/account/alerts" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
               <span>📉</span> Rate &amp; Fee Alerts
             </Link>
-            <Link href="/quiz" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+            <Link href="/get-matched" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
               <span>🎯</span> Platform Quiz
             </Link>
             <Link href="/account/notifications" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">

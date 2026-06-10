@@ -75,12 +75,18 @@ export default function QuizAnalyzingScreen({ track = "diy" }: Props) {
             </div>
           </div>
 
-          <h2 className="text-lg md:text-2xl font-extrabold mb-2 reveal-text-in text-slate-900">
-            {track === "advisor" ? "Filtering directories…" : "Filtering platforms…"}
-          </h2>
+          {/* role="status" so screen readers announce that work is happening
+              (the spinner alone is silent). The cycling message is a visual
+              flourish, hidden from SR so it doesn't re-announce every 2s. */}
+          <div role="status" aria-live="polite">
+            <h2 className="text-lg md:text-2xl font-extrabold mb-2 reveal-text-in text-slate-900">
+              {track === "advisor" ? "Filtering directories…" : "Filtering platforms…"}
+            </h2>
+            <span className="sr-only">Finding your matches — this only takes a moment.</span>
+          </div>
 
-          {/* Cycling contextual message */}
-          <div className="h-7 flex items-center justify-center overflow-hidden">
+          {/* Cycling contextual message — visual only */}
+          <div className="h-7 flex items-center justify-center overflow-hidden" aria-hidden="true">
             <p
               key={msgIndex}
               className="text-slate-500 text-xs md:text-sm text-center tagline-cycle px-4"

@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { buildAdvisorMatchReasons, type AdvisorMatchContext } from "@/lib/quiz-advisor-match-reasons";
+import { confidenceLabel, type MatchConfidence } from "@/lib/quiz-advisor-scoring";
 
 export interface MatchedAdvisor {
   id: number;
@@ -18,6 +20,18 @@ export interface MatchedAdvisor {
   specialties: string[];
   fee_description: string | null;
   verified: boolean;
+  location_state?: string | null;
+  accepts_international_clients?: boolean | null;
+  international_tax_specialist?: boolean | null;
+  firb_specialist?: boolean | null;
+  languages?: string[] | null;
+  available_in_countries?: string[] | null;
+  years_experience?: number | null;
+  avg_response_minutes?: number | null;
+  response_time_hours?: number | null;
+  initial_consultation_free?: boolean | null;
+  matchScore?: number;
+  confidence?: MatchConfidence;
 }
 
 function typeLabel(type: string): string {
@@ -41,7 +55,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
         ))}
       </div>
       <span className="text-xs font-semibold text-slate-700">{rating.toFixed(1)}</span>
-      {count > 0 && <span className="text-xs text-slate-400">({count} reviews)</span>}
+      {count > 0 && <span className="text-xs text-slate-500">({count} reviews)</span>}
     </div>
   );
 }
@@ -59,12 +73,13 @@ interface Props {
   submitError: string | null;
   onConfirm: (advisor: MatchedAdvisor) => void;
   confirming: boolean;
+  matchContext?: AdvisorMatchContext;
 }
 
 export default function AdvisorMatchedScreen({
   userEmail: _userEmail, userFirstName, currentMatch, allMatches,
   matchIndex, onRematch, rematching, noMoreMatches, onRestart,
-  submitError, onConfirm, confirming,
+  submitError, onConfirm, confirming, matchContext,
 }: Props) {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -91,12 +106,14 @@ export default function AdvisorMatchedScreen({
             Browse all advisors →
           </Link>
         </div>
-        <button onClick={onRestart} className="block mx-auto text-xs text-slate-400 hover:text-slate-600 transition-colors mt-2">
+        <button onClick={onRestart} className="block mx-auto text-xs text-slate-500 hover:text-slate-700 transition-colors mt-2">
           Start over →
         </button>
       </div>
     );
   }
+
+  const matchReasons = buildAdvisorMatchReasons(currentMatch, matchContext ?? {});
 
   return (
     <div ref={cardRef} className="space-y-5 advisor-step-enter">
@@ -118,6 +135,37 @@ export default function AdvisorMatchedScreen({
         <p className="text-sm text-slate-500 max-w-sm mx-auto">
           {userFirstName ? `${userFirstName}, review` : "Review"} this advisor and confirm if you&apos;d like to connect — it&apos;s 100% free.
         </p>
+
+        {/* Match-confidence band — a qualitative cue from the server fit score
+            (specialty · budget · location/corridor · quality), not a fake % */}
+        {currentMatch.confidence && (
+          <div
+            className={`mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
+              currentMatch.confidence === "strong"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : currentMatch.confidence === "good"
+                  ? "bg-amber-50 text-amber-700 border-amber-200"
+                  : "bg-slate-100 text-slate-600 border-slate-200"
+            }`}
+          >
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            {confidenceLabel(currentMatch.confidence)}
+          </div>
+        )}
+
+        {/* Closest-match honesty — when the best fit is only "possible", set
+            expectations and offer the describe-and-quote path. */}
+        {currentMatch.confidence === "fair" && (
+          <div className="mt-3 mx-auto max-w-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-600">
+            This is the closest match to your criteria. Want more options?{" "}
+            <Link href="/quotes/post?context=quiz" className="font-semibold text-amber-700 hover:text-amber-800">
+              Describe your situation
+            </Link>{" "}
+            and verified pros reply with quotes.
+          </div>
+        )}
 
         {/* Match counter */}
         {allMatches.length > 1 && (
@@ -195,6 +243,28 @@ export default function AdvisorMatchedScreen({
                   {s}
                 </span>
               ))}
+            </div>
+          )}
+
+          {/* Why we matched you — ties the user's quiz answers to this advisor's real attributes */}
+          {matchReasons.length > 0 && (
+            <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-3.5 mb-5">
+              <p className="text-[0.6rem] font-bold text-emerald-700 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                <svg className="w-3 h-3 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                Why we matched you with {currentMatch.name.split(" ")[0]}
+              </p>
+              <ul className="space-y-1.5">
+                {matchReasons.map((reason, i) => (
+                  <li key={i} className="text-xs text-slate-700 flex items-start gap-2 leading-relaxed">
+                    <svg className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {reason}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
@@ -300,7 +370,7 @@ export default function AdvisorMatchedScreen({
 
           {/* Browse link */}
           <div className="mt-3 pt-3 border-t border-slate-100 text-center">
-            <Link href="/advisors" className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+            <Link href="/advisors" className="text-xs text-slate-500 hover:text-slate-700 transition-colors">
               Browse all verified advisors →
             </Link>
           </div>
@@ -320,7 +390,7 @@ export default function AdvisorMatchedScreen({
 
       {/* Footer restart */}
       <div className="text-center pt-2">
-        <button onClick={onRestart} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+        <button onClick={onRestart} className="text-xs text-slate-500 hover:text-slate-700 transition-colors">
           Start the quiz over →
         </button>
       </div>

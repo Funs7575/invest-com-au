@@ -11,6 +11,7 @@ import type { PlacementWinner } from "@/lib/sponsorship";
 import ABTestCTA from "@/components/ABTestCTA";
 import type { ABTestConfig } from "@/lib/ab-test";
 import type { CategorySchema, RankedBroker, SortCol } from "@/lib/compare-engine";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 
 interface Props {
   rows: RankedBroker[];
@@ -123,7 +124,9 @@ export default function CompareDesktopTable({
                   </details>
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <div className="mb-2 whitespace-nowrap"><span className="text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span><span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}</span></div>
+                  {SHOW_RATINGS && (
+                    <div className="mb-2 whitespace-nowrap"><span className="text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span><span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}</span></div>
+                  )}
                   <ABTestCTA
                     broker={broker}
                     activeTests={activeABTests}

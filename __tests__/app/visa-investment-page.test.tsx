@@ -60,9 +60,9 @@ describe("VisaInvestmentHubPage", () => {
     expect(names).toContain("Visa Investment");
   });
 
-  it("does NOT render FAQPage JSON-LD because visaInvestmentHubConfig has no faqs", () => {
+  it("renders FAQPage JSON-LD because visaInvestmentHubConfig now has faqs", () => {
     render(<VisaInvestmentHubPage />);
-    expect(screen.queryByTestId("hub-page-faq-ld")).not.toBeInTheDocument();
+    expect(screen.getByTestId("hub-page-faq-ld")).toBeInTheDocument();
   });
 
   it("renders the compliance block", () => {

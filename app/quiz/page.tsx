@@ -8,6 +8,18 @@ import { storeQualificationData } from "@/lib/qualification-store";
 import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey, buildStackResults, type StackQuizInputs, type VerticalScoredResult, type ScoredResult } from "@/lib/quiz-scoring";
 import { intentCountryFromSlug, quizKeyForIntentCode } from "@/lib/intent-context";
+import {
+  type QuestionId,
+  type UnifiedAnswers,
+  isInternational,
+  resolveTrack,
+  getNextId,
+  getTotalSteps,
+  inferAdvisorType,
+  resolveLeadAdvisorType,
+  toScoringAnswers,
+} from "@/lib/quiz-flow";
+import { UNIFIED_QUESTIONS } from "@/lib/quiz-questions";
 
 import QuizQuestionScreen from "./_components/QuizQuestionScreen";
 import QuizAnalyzingScreen from "./_components/QuizAnalyzingScreen";
@@ -15,291 +27,10 @@ import QuizResultsScreen from "./_components/QuizResultsScreen";
 import AdvisorResultsScreen from "./_components/AdvisorResultsScreen";
 
 /* ─── Types ─── */
-type QuestionId = "location" | "goal" | "mode" | "experience" | "complexity" | "amount" | "priority" | "advisor_type" | "property_sub" | "investor_country" | "visa_status" | "investor_goal_intl" | "stack_risk" | "stack_super" | "stack_savings";
-type QuizTrack = "diy" | "advisor" | "international";
 // "email-gate" phase removed — capture is now inline in the results screen
 // so users see the value before being asked. Was a 20-40% drop-off tax.
 type Phase = "questions" | "analyzing" | "advisor-analyzing" | "diy-results" | "advisor-results";
 
-interface UnifiedAnswers {
-  location?: string;
-  goal?: string;
-  mode?: string;
-  experience?: string;
-  complexity?: string;
-  amount?: string;
-  priority?: string;
-  advisor_type?: string;
-  property_sub?: string;
-  investor_country?: string;
-  visa_status?: string;
-  investor_goal_intl?: string;
-  // Wealth-stack questions (optional, appended to DIY track)
-  stack_risk?: string;
-  stack_super?: string;
-  stack_savings?: string;
-}
-
-/* ─── Unified question definitions ─── */
-const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: string; label: string; sub?: string; emoji?: string }[] }> = {
-  location: {
-    text: "Where are you based?",
-    options: [
-      { key: "australia",     label: "I live in Australia",              sub: "Australian resident or citizen",              emoji: "🇦🇺" },
-      { key: "international", label: "I'm outside Australia",            sub: "I'm based overseas and investing in Australia", emoji: "🌏" },
-      { key: "expat",         label: "Australian expat living abroad",   sub: "I'm an Aussie living overseas",               emoji: "✈️" },
-    ],
-  },
-  investor_country: {
-    text: "Which country are you based in?",
-    options: [
-      { key: "singapore",     label: "Singapore",     emoji: "🇸🇬" },
-      { key: "hong_kong",     label: "Hong Kong",     emoji: "🇭🇰" },
-      { key: "china",         label: "China",         emoji: "🇨🇳" },
-      { key: "india",         label: "India",         emoji: "🇮🇳" },
-      { key: "uae",           label: "UAE / Middle East", emoji: "🇦🇪" },
-      { key: "uk",            label: "United Kingdom", emoji: "🇬🇧" },
-      { key: "usa",           label: "United States", emoji: "🇺🇸" },
-      { key: "malaysia",      label: "Malaysia",      emoji: "🇲🇾" },
-      { key: "new_zealand",   label: "New Zealand",   emoji: "🇳🇿" },
-      { key: "japan",         label: "Japan",         emoji: "🇯🇵" },
-      { key: "south_korea",   label: "South Korea",   emoji: "🇰🇷" },
-      { key: "saudi_arabia",  label: "Saudi Arabia",  emoji: "🇸🇦" },
-      { key: "other",         label: "Other country", emoji: "🌍" },
-    ],
-  },
-  visa_status: {
-    text: "What is your relationship with Australia?",
-    options: [
-      { key: "non_resident",    label: "Non-resident / no Australian ties", sub: "Never lived in Australia, no visa",                emoji: "🌐" },
-      { key: "temp_visa",       label: "Temporary visa holder",             sub: "457, 482, student, working holiday visa",         emoji: "📋" },
-      { key: "new_pr",          label: "New permanent resident",            sub: "Recently got PR, not yet a citizen",              emoji: "🏡" },
-      { key: "au_expat",        label: "Australian expat",                  sub: "Australian citizen or PR living abroad",          emoji: "✈️" },
-    ],
-  },
-  investor_goal_intl: {
-    text: "What are you looking to do in Australia?",
-    options: [
-      { key: "property",  label: "Buy property",            sub: "Residential or investment property",          emoji: "🏠" },
-      { key: "shares",    label: "Invest in ASX shares",    sub: "Stocks, ETFs, or managed funds",              emoji: "📈" },
-      { key: "savings",   label: "Park money in AUD",       sub: "High-interest savings or term deposits",      emoji: "💰" },
-      { key: "business",  label: "Set up a business",       sub: "Company registration, structuring",           emoji: "🏢" },
-    ],
-  },
-  goal: {
-    text: "What are you trying to do?",
-    options: [
-      { key: "grow",       label: "Start investing / Long-term growth",      sub: "ETFs, shares, or building wealth over time",            emoji: "📈" },
-      { key: "income",     label: "Earn income / dividends",                 sub: "Regular income from investments",                       emoji: "💰" },
-      { key: "crypto",     label: "Buy crypto",                              sub: "Bitcoin, Ethereum, altcoins",                           emoji: "₿" },
-      { key: "trade",      label: "Active trading",                          sub: "Frequent trades, CFDs, or short-term strategies",       emoji: "⚡" },
-      { key: "automate",   label: "Hands-off / automated investing",         sub: "Set and forget, robo-advisors",                         emoji: "🤖" },
-      { key: "super",      label: "Retirement / Super / SMSF",               sub: "Optimise my superannuation",                            emoji: "🏦" },
-      { key: "property",   label: "Property investing",                      sub: "Physical property, REITs, or through super",            emoji: "🏠" },
-      { key: "home",       label: "Buy a home or get a loan",                sub: "First home, refinance, or investment loan",             emoji: "🔑" },
-      { key: "alt-assets", label: "Alternative / collectible assets",        sub: "Whisky, wine, art, watches, classic cars, coins",       emoji: "🥃" },
-      { key: "royalties",  label: "Royalties / income-producing assets",     sub: "Music, mining, IP royalties + vending / ATM income",    emoji: "📜" },
-      { key: "pre-ipo",    label: "Pre-IPO / wholesale-investor deals",      sub: "Late-stage private equity, IPO calendar, s708 deals",   emoji: "🚀" },
-      { key: "help",       label: "Get expert help",                         sub: "I'd like professional guidance",                        emoji: "🤝" },
-      { key: "other",      label: "Something else / I'll describe it",       sub: "We'll route you to the right pro via post-a-job",       emoji: "❓" },
-    ],
-  },
-  mode: {
-    text: "Do you want to do this yourself or get expert help?",
-    options: [
-      { key: "diy", label: "Do it myself", sub: "I'll choose my own platform and investments" },
-      { key: "help", label: "Get expert help", sub: "I'd like professional guidance" },
-      { key: "unsure", label: "I'm not sure yet", sub: "Show me both at the end — I'll pick after seeing the options" },
-    ],
-  },
-  experience: {
-    text: "How experienced are you with investing?",
-    options: [
-      { key: "beginner", label: "Complete beginner", sub: "Just getting started" },
-      { key: "intermediate", label: "Some experience", sub: "I've invested before but want to improve" },
-      { key: "pro", label: "Advanced / professional", sub: "I know what I'm doing" },
-    ],
-  },
-  complexity: {
-    text: "How complex is your situation?",
-    options: [
-      { key: "simple", label: "Simple", sub: "Just getting started, straightforward situation" },
-      { key: "moderate", label: "Moderate", sub: "Some assets, want to make good decisions" },
-      { key: "complex", label: "Complex", sub: "Tax, SMSF, property, business, or multiple goals" },
-    ],
-  },
-  amount: {
-    text: "How much are you looking to invest?",
-    options: [
-      { key: "small", label: "Under $10,000", sub: "Starting small" },
-      { key: "medium", label: "$10,000 – $100,000", sub: "Building a portfolio" },
-      { key: "large", label: "$100,000 – $500,000", sub: "Significant savings" },
-      { key: "whale", label: "$500,000+", sub: "Major wealth decisions" },
-    ],
-  },
-  priority: {
-    text: "What matters most to you?",
-    options: [
-      { key: "fees", label: "Lowest fees", sub: "Minimise brokerage and ongoing costs" },
-      { key: "safety", label: "Safety (CHESS sponsored)", sub: "Shares held directly in your name" },
-      { key: "tools", label: "Best tools & research", sub: "Advanced charting, analysis, screeners" },
-      { key: "simple", label: "Simplicity / set & forget", sub: "Easy, automated, and stress-free" },
-    ],
-  },
-  advisor_type: {
-    text: "What type of expert are you looking for?",
-    options: [
-      { key: "mortgage-broker",   label: "Mortgage broker",           sub: "Home loans, refinancing, investment loans",     emoji: "🏠" },
-      { key: "buyers-agent",      label: "Buyer's agent",             sub: "Find and negotiate property purchases",         emoji: "🔍" },
-      { key: "financial-planner", label: "Financial planner",         sub: "Investment strategy, tax, retirement planning", emoji: "📊" },
-      { key: "smsf-accountant",   label: "SMSF accountant",           sub: "Set up and manage a self-managed super fund",   emoji: "🏦" },
-      { key: "tax-agent",         label: "Tax agent",                 sub: "Tax returns, crypto CGT, deductions",           emoji: "📋" },
-      { key: "not-sure",          label: "I'm not sure what I need",  sub: "Help me figure out the right expert",           emoji: "🤔" },
-    ],
-  },
-  property_sub: {
-    text: "How do you want to invest in property?",
-    options: [
-      { key: "physical", label: "Buy physical property", sub: "Direct ownership — house, apartment, or investment property" },
-      { key: "property-reit", label: "Invest in REITs / fractional property", sub: "Property funds, BrickX, or listed property trusts" },
-      { key: "property-super", label: "Use super for property (SMSF)", sub: "Self-managed super fund property strategy" },
-    ],
-  },
-  // ─── Wealth-stack supplementary questions (DIY track only) ───────────
-  // Three quick optional questions appended after `priority` for DIY users.
-  // They feed the vertical scoring engine (super, savings, robo) without
-  // extending the main quiz flow for advisor/international users.
-  stack_risk: {
-    text: "How would you describe your risk tolerance?",
-    options: [
-      { key: "conservative", label: "Conservative",   sub: "I prefer stability — lower returns are fine to avoid big swings", emoji: "🛡️" },
-      { key: "balanced",     label: "Balanced",       sub: "Comfortable with some ups and downs over the medium term",        emoji: "⚖️" },
-      { key: "growth",       label: "Growth",         sub: "Happy to ride volatility for higher long-term returns",           emoji: "🚀" },
-    ],
-  },
-  stack_super: {
-    text: "Do you want a super fund recommendation in your results?",
-    options: [
-      { key: "super_yes",    label: "Yes — show me a top fund",       sub: "We'll match a super fund to your risk profile and balance",   emoji: "🏦" },
-      { key: "super_no",     label: "Not right now",                  sub: "Skip super — focus on investing platforms",                  emoji: "➡️" },
-    ],
-  },
-  stack_savings: {
-    text: "Want a high-interest savings account in your stack?",
-    options: [
-      { key: "savings_yes",  label: "Yes — park my cash somewhere smart", sub: "Match a high-rate savings account to your time horizon",    emoji: "💰" },
-      { key: "savings_no",   label: "Not needed",                         sub: "Skip savings — I'm happy with my current setup",            emoji: "➡️" },
-    ],
-  },
-};
-
-/* ─── Navigation logic ─── */
-function isInternational(a: UnifiedAnswers): boolean {
-  return a.location === "international" || a.location === "expat";
-}
-
-function resolveTrack(a: UnifiedAnswers): QuizTrack {
-  if (isInternational(a)) return "international";
-  if (a.goal === "help" || a.goal === "home") return "advisor";
-  if (a.mode === "help") return "advisor";
-  if (a.property_sub === "physical") return "advisor";
-  return "diy";
-}
-
-function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null {
-  const track = resolveTrack(a);
-
-  // International track
-  if (track === "international") {
-    switch (id) {
-      case "location":      return "investor_country";
-      case "investor_country": return "visa_status";
-      case "visa_status":   return "investor_goal_intl";
-      case "investor_goal_intl": return "amount";
-      case "amount":        return "advisor_type";
-      case "advisor_type":  return null;
-      // These shouldn't be hit but handle defensively
-      case "goal": case "mode": case "experience": case "complexity":
-      case "priority": case "property_sub": return null;
-    }
-  }
-
-  // Domestic track
-  switch (id) {
-    case "location":
-      return "goal";
-    case "goal":
-      return (a.goal === "help" || a.goal === "home") ? "complexity" : "mode";
-    case "mode":
-      return track === "advisor" ? "complexity" : "experience";
-    case "experience":
-    case "complexity":
-      return "amount";
-    case "amount":
-      return track === "advisor" ? "advisor_type" : "priority";
-    case "priority":
-      if (a.goal === "property") return "property_sub";
-      // DIY track: optional wealth-stack questions for relevant goals
-      if (shouldShowStackQuestions(a)) return "stack_risk";
-      return null;
-    case "advisor_type":
-      return a.goal === "property" ? "property_sub" : null;
-    case "property_sub":
-      // After property sub, offer stack questions for REITs/super paths
-      if (a.property_sub !== "physical" && shouldShowStackQuestions(a)) return "stack_risk";
-      return null;
-    case "stack_risk":
-      return "stack_super";
-    case "stack_super":
-      return "stack_savings";
-    case "stack_savings":
-      return null;
-    // International-only questions that shouldn't appear on domestic track
-    case "investor_country":
-    case "visa_status":
-    case "investor_goal_intl":
-      return null;
-  }
-}
-
-/**
- * Decide whether to show the supplementary wealth-stack questions.
- * Only shown on the DIY track for goals where a multi-product stack
- * adds genuine value (not crypto-only, not active trading).
- */
-function shouldShowStackQuestions(a: UnifiedAnswers): boolean {
-  if (a.mode === "help") return false; // advisor path
-  const stackGoals = ["grow", "income", "automate", "property", "super", "property-reit", "property-super"];
-  return a.goal ? stackGoals.includes(a.goal) : false;
-}
-
-function getTotalSteps(a: UnifiedAnswers): number {
-  if (isInternational(a)) return 6; // location + country + visa + goal + amount + advisor_type
-  const skipMode = a.goal === "help" || a.goal === "home";
-  const hasPropertySub = a.goal === "property";
-  const hasStackQuestions = shouldShowStackQuestions(a) && a.mode !== "help";
-  const stackExtra = hasStackQuestions ? 3 : 0; // stack_risk + stack_super + stack_savings
-  return 1 + (skipMode ? 4 : 5) + (hasPropertySub ? 1 : 0) + stackExtra; // +1 for location
-}
-
-function inferAdvisorType(a: UnifiedAnswers): string {
-  if (a.advisor_type && a.advisor_type !== "not-sure") return a.advisor_type;
-  // International track
-  if (isInternational(a)) {
-    if (a.investor_goal_intl === "property") return "buyers-agent";
-    if (a.investor_goal_intl === "shares") return "tax-agent";
-    if (a.investor_goal_intl === "savings" || a.investor_goal_intl === "business") return "financial-planner";
-    return "tax-agent";
-  }
-  // Domestic track
-  if (a.property_sub === "physical") return "buyers-agent";
-  if (a.goal === "home") return "mortgage-broker";
-  if (a.goal === "property") return "buyers-agent";
-  if (a.goal === "super") return "smsf-accountant";
-  if (a.goal === "crypto") return "tax-agent";
-  if (a.amount === "large" || a.amount === "whale") return "financial-planner";
-  return a.advisor_type || "financial-planner";
-}
 
 // Reorders options to put the inferred/recommended type first with a "Recommended" label
 function sortByInferred(
@@ -341,28 +72,33 @@ function getDynamicAdvisorTypeQuestion(a: UnifiedAnswers): { text: string; optio
     return { text: baseText, options: sortByInferred(filtered, inferred) };
   }
 
-  // Home goal: mortgage broker is the only logical answer
+  // Domestic: curate the need options to those relevant to the goal so the
+  // multi-select isn't a wall of every advisor type, then put the inferred
+  // pick first ("Suggested").
+  const relevantKeys = domesticNeedKeys(a);
+  const filtered = allOptions.filter(o => relevantKeys.includes(o.key));
+  return { text: baseText, options: sortByInferred(filtered, inferred) };
+}
+
+// The relevant advisor needs to offer for a domestic goal (multi-select).
+function domesticNeedKeys(a: UnifiedAnswers): string[] {
   if (a.goal === "home") {
-    const opts = allOptions.filter(o => o.key === "mortgage-broker" || o.key === "not-sure");
-    return { text: baseText, options: opts };
+    return ["mortgage-broker", "conveyancer", "insurance-broker", "not-sure"];
   }
-
-  // All other domestic cases: reorder to put inferred type first
-  return { text: baseText, options: sortByInferred(allOptions, inferred) };
+  if (a.goal === "property" || a.property_sub === "physical") {
+    return ["buyers-agent", "mortgage-broker", "conveyancer", "insurance-broker", "tax-agent", "commercial-property-agent", "not-sure"];
+  }
+  if (a.goal === "super") {
+    return ["smsf-accountant", "financial-planner", "insurance-broker", "tax-agent", "aged-care-advisor", "not-sure"];
+  }
+  if (a.goal === "crypto") {
+    return ["tax-agent", "financial-planner", "not-sure"];
+  }
+  // Default (incl. goal=help): the general advisory set. Debt counselling sits
+  // here — "get expert help" is the entry someone in financial difficulty picks.
+  return ["financial-planner", "tax-agent", "insurance-broker", "estate-planner", "smsf-accountant", "debt-counsellor", "not-sure"];
 }
 
-// Convert unified answers to a flat string array for the platform scoring engine
-// Format: [goal, experience, amount, priority, property_sub?]
-// — index 0 = goal (interest), index 1 = experience, index 2 = amount (multiplier), index 3 = priority
-function toScoringAnswers(a: UnifiedAnswers): string[] {
-  return [
-    a.goal,
-    a.experience,
-    a.amount,
-    a.priority,
-    a.property_sub,
-  ].filter(Boolean) as string[];
-}
 
 /* ─── Fallback scoring weights ─── */
 const fallbackScores: Record<string, Record<WeightKey, number>> = {
@@ -481,12 +217,19 @@ function buildLocalStack(
 }
 
 const QUIZ_STORAGE_KEY = "invest-quiz-v2-progress";
+const QUIZ_PROGRESS_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function loadSavedProgress(): { currentId: QuestionId; answers: UnifiedAnswers; history: QuestionId[] } | null {
   try {
     const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
+    // Expire stale in-progress quizzes so abandoned answers don't linger on a
+    // shared device (and a months-old "Welcome back" never shows).
+    if (typeof parsed?.savedAt === "number" && Date.now() - parsed.savedAt > QUIZ_PROGRESS_TTL_MS) {
+      clearProgress();
+      return null;
+    }
     if (parsed && parsed.currentId && parsed.answers && Array.isArray(parsed.history)) {
       return parsed;
     }
@@ -496,8 +239,15 @@ function loadSavedProgress(): { currentId: QuestionId; answers: UnifiedAnswers; 
 
 function saveProgress(currentId: QuestionId, answers: UnifiedAnswers, history: QuestionId[]) {
   try {
-    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify({ currentId, answers, history }));
+    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify({ currentId, answers, history, savedAt: Date.now() }));
   } catch { /* quota exceeded */ }
+}
+
+// Clearing a question's answer (on back / jump-back). The advisor_type slot's
+// answer lives in the multi-select `needs` satellite, so drop that too.
+function clearAnswerKey(answers: UnifiedAnswers, key: QuestionId) {
+  delete answers[key as keyof UnifiedAnswers];
+  if (key === "advisor_type") delete answers.needs;
 }
 
 function clearProgress() {
@@ -652,6 +402,9 @@ export default function QuizPage() {
           stack,
           campaignWinners: quizCampaignWinners.map((w) => ({ broker_slug: w.broker_slug })),
         }),
+        // Bound the wait so a hung request falls into the local-score
+        // fallback below instead of stranding the user on "analyzing".
+        signal: AbortSignal.timeout(8000),
       });
       if (!res.ok) throw new Error(`quiz score ${res.status}`);
       const data = (await res.json()) as {
@@ -705,6 +458,44 @@ export default function QuizPage() {
 
   /* ─── Handlers ─── */
 
+  // Commit the answers and move to the next question — or, when the flow ends,
+  // kick off server-side scoring while the analyzing animation masks the
+  // round-trip. Advance only when BOTH the scoring response AND the minimum
+  // animation time complete (no empty flash, animation never cut short). Email
+  // capture is inline in the results screen (warm capture post-value). Shared by
+  // single-select (handleAnswer) and the multi-select needs question.
+  const commitAndAdvance = (fromId: QuestionId, newAnswers: UnifiedAnswers) => {
+    setAnswers(newAnswers);
+    setSelectedKey(null);
+    setAnimating(false);
+
+    const track = resolveTrack(newAnswers);
+    const nextId = getNextId(fromId, newAnswers);
+    const newHistory = [...history, fromId];
+
+    if (nextId === null) {
+      const advisor = track === "advisor";
+      setHistory(newHistory);
+      setPhase(advisor ? "advisor-analyzing" : "analyzing");
+      const minDelay = new Promise<void>((resolve) =>
+        setTimeout(resolve, advisor ? 2200 : 1800),
+      );
+      Promise.all([minDelay, runScoring(newAnswers)]).then(() => {
+        if (!mountedRef.current) return;
+        // Only clear saved progress once results are committed — a refresh
+        // during the analyzing window now resumes at the last question
+        // instead of wiping everything back to Q1.
+        clearProgress();
+        setPhase(advisor ? "advisor-results" : "diy-results");
+      });
+    } else {
+      setHistory(newHistory);
+      setCurrentId(nextId);
+      saveProgress(nextId, newAnswers, newHistory);
+      requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
+    }
+  };
+
   const handleAnswer = (key: string) => {
     if (animating) return;
     if (history.length === 0) {
@@ -724,40 +515,20 @@ export default function QuizPage() {
 
     setTimeout(() => {
       if (!mountedRef.current) return;
-      setAnswers(newAnswers);
-      setSelectedKey(null);
-      setAnimating(false);
-
-      const track = resolveTrack(newAnswers);
-      const nextId = getNextId(currentId, newAnswers);
-
-      const newHistory = [...history, currentId];
-
-      if (nextId === null) {
-        // Last question answered. Kick off server-side scoring now and let the
-        // analyzing animation mask the round-trip. Advance only when BOTH the
-        // scoring response AND the minimum animation time have completed — so
-        // the results are guaranteed ready (no empty flash) and the animation
-        // never feels cut short. Email capture is inline in the results screen
-        // (warm capture post-value, not cold capture pre-value).
-        clearProgress();
-        const advisor = track === "advisor";
-        setHistory(newHistory);
-        setPhase(advisor ? "advisor-analyzing" : "analyzing");
-        const minDelay = new Promise<void>((resolve) =>
-          setTimeout(resolve, advisor ? 2200 : 1800),
-        );
-        Promise.all([minDelay, runScoring(newAnswers)]).then(() => {
-          if (!mountedRef.current) return;
-          setPhase(advisor ? "advisor-results" : "diy-results");
-        });
-      } else {
-        setHistory(newHistory);
-        setCurrentId(nextId);
-        saveProgress(nextId, newAnswers, newHistory);
-        requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
-      }
+      commitAndAdvance(currentId, newAnswers);
     }, 350);
+  };
+
+  // Multi-select "who will you need?" submit. Stores the CSV need-set + the
+  // allocated single primary as advisor_type (a clean enum value for the lead
+  // column + back-compat), then advances from the advisor_type slot.
+  const handleNeedsAnswer = (keys: string[]) => {
+    if (animating || keys.length === 0) return;
+    const csv = keys.join(",");
+    const newAnswers: UnifiedAnswers = { ...answers, needs: csv };
+    newAnswers.advisor_type = resolveLeadAdvisorType(newAnswers);
+    trackEvent('quiz_step', { question: 'advisor_type', answer: csv }, '/quiz');
+    commitAndAdvance("advisor_type", newAnswers);
   };
 
   const handleBack = () => {
@@ -768,9 +539,12 @@ export default function QuizPage() {
       setCurrentId(prev);
       // Remove the answer for the question we're going back from
       const newAnswers = { ...answers };
-      delete newAnswers[currentId as keyof UnifiedAnswers];
+      clearAnswerKey(newAnswers, currentId);
       setAnswers(newAnswers);
       saveProgress(prev, newAnswers, newHistory);
+      // Move focus + SR cursor to the new question heading (was only done on
+      // forward nav — back left keyboard/SR users stranded on <body>).
+      requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
     }
   };
 
@@ -924,7 +698,7 @@ export default function QuizPage() {
   if (phase === "advisor-results") {
     return (
       <AdvisorResultsScreen
-        advisorType={inferAdvisorType(answers)}
+        advisorType={resolveLeadAdvisorType(answers)}
         quizAnswers={answers as Record<string, string>}
         platformResults={results}
         onRestart={handleRestart}
@@ -942,6 +716,16 @@ export default function QuizPage() {
     : UNIFIED_QUESTIONS[currentId];
   const questionIndex = history.length; // 0-based
   const totalSteps = getTotalSteps(answers);
+
+  // The advisor_type slot is multi-select on the domestic track (the "who will
+  // you need?" needs question); international keeps its filtered single-select.
+  const isNeedsQuestion = currentId === "advisor_type" && !isInternational(answers);
+  const needsInitial = answers.needs
+    ? answers.needs.split(",")
+    : (() => {
+        const suggested = inferAdvisorType(answers);
+        return suggested && suggested !== "not-sure" ? [suggested] : [];
+      })();
 
   // Context banner — shown above the question to set expectation about
   // the path the user just selected (currently only used for the international
@@ -993,6 +777,9 @@ export default function QuizPage() {
       contextBanner={contextBanner}
       questionIndex={questionIndex}
       totalQuestions={totalSteps}
+      multiSelect={isNeedsQuestion}
+      selectedKeys={needsInitial}
+      onMultiAnswer={handleNeedsAnswer}
       onAnswer={handleAnswer}
       onBack={handleBack}
       onJumpTo={(targetIndex) => {
@@ -1005,15 +792,16 @@ export default function QuizPage() {
         // Clear all answers from history[targetIndex] onwards (the question they're going back to + everything after)
         for (let i = targetIndex; i < history.length; i++) {
           const k = history[i];
-          if (k) delete newAnswers[k as keyof UnifiedAnswers];
+          if (k) clearAnswerKey(newAnswers, k);
         }
         // Also drop the current question's answer if any
-        delete newAnswers[currentId as keyof UnifiedAnswers];
+        clearAnswerKey(newAnswers, currentId);
         setHistory(newHistory);
         setCurrentId(targetId);
         setAnswers(newAnswers);
         saveProgress(targetId, newAnswers, newHistory);
         trackEvent("quiz_jump_back", { from: currentId, to: targetId, target_index: targetIndex }, "/quiz");
+        requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
       }}
       onResume={() => {
         const saved = loadSavedProgress();
@@ -1023,6 +811,7 @@ export default function QuizPage() {
           setHistory(saved.history);
         }
         setResumePrompt(false);
+        requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
       }}
       onStartOver={() => { clearProgress(); setResumePrompt(false); handleRestart(); }}
       questionHeadingRef={questionHeadingRef}

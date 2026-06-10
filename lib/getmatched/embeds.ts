@@ -29,6 +29,7 @@ const CONFIGS: Record<EmbedContext, Omit<EmbedConfig, "context">> = {
     intent_prefill: "opportunity_assessment",
     start_step: 3,
     prefill_answers: { intent: "opportunity_assessment" },
+    inline_cta: { lead: "Need help on a deal?", label: "Build an action plan" },
   },
   advisor_directory: {
     headline: "Not sure whether you need an individual, firm or team?",
@@ -37,6 +38,7 @@ const CONFIGS: Record<EmbedContext, Omit<EmbedConfig, "context">> = {
     intent_prefill: "financial_advice",
     start_step: 4,
     prefill_answers: { intent: "financial_advice" },
+    inline_cta: { lead: "Not sure who you need?", label: "Get matched" },
   },
   platform_compare: {
     headline: "Not sure which platform fits your investing style?",
