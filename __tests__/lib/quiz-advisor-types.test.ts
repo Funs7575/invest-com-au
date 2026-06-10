@@ -35,6 +35,9 @@ describe("quiz advisor-type registry", () => {
     expect(dbTypeForNeed("not-sure")).toBe("");
     expect(dbTypeForNeed("totally-unknown")).toBe("");
     expect(labelForNeed("totally-unknown")).toBe("Financial Advisor");
-    expect(hrefForNeed("not-sure")).toBe("/find-advisor");
+    // P8: the canonical funnel is /get-matched — not-sure and unknown both
+    // land there rather than the folded /find-advisor flow.
+    expect(hrefForNeed("not-sure")).toBe("/get-matched");
+    expect(hrefForNeed("totally-unknown")).toBe("/get-matched");
   });
 });

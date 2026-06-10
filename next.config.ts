@@ -347,6 +347,20 @@ const nextConfig: NextConfig = {
         destination: "/get-matched",
         permanent: true,
       },
+      // P8 (Decision Engine): /find-advisor folds into the one funnel now that
+      // get-matched captures advisor leads at parity. Cross-border deep-links
+      // (?specialty= / ?country= from country pages — the 1.75× premium line)
+      // keep the dedicated flow until get-matched consumes those params.
+      // `missing` entries AND together: redirect fires only when BOTH absent.
+      {
+        source: "/find-advisor",
+        destination: "/get-matched",
+        permanent: true,
+        missing: [
+          { type: "query", key: "specialty" },
+          { type: "query", key: "country" },
+        ],
+      },
       {
         source: "/course",
         destination: "/courses/investing-101",
