@@ -157,6 +157,27 @@ export async function sendAdminNotification(subject: string, body: string): Prom
   return send(ADMIN_EMAIL, subject, emailWrapper("Admin Notification", `<p style="font-size:14px;color:#64748b">${body}</p>`));
 }
 
+export async function sendCoAuthorInvitation(
+  email: string,
+  inviteeName: string,
+  inviterName: string,
+  articleTitle: string,
+): Promise<boolean> {
+  const firstName = inviteeName.trim().split(" ")[0] ?? inviteeName;
+  return send(
+    email,
+    `${inviterName} invited you to co-author an article on Invest.com.au`,
+    emailWrapper(
+      "Co-author invitation",
+      `<p style="font-size:14px;color:#64748b">Hi ${firstName},</p>
+       <p style="font-size:14px;color:#64748b"><strong>${inviterName}</strong> has invited you to be credited as co-author of <strong>&ldquo;${articleTitle}&rdquo;</strong> on Invest.com.au.</p>
+       <p style="font-size:14px;color:#64748b">Accepting adds your byline and a link to your profile on the published article.</p>
+       <p style="margin:20px 0;text-align:center"><a href="https://invest.com.au/advisor-portal?view=articles" style="display:inline-block;background:#0f172a;color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600">Review the invitation</a></p>
+       <p style="font-size:12px;color:#94a3b8">If you don't recognise the inviter, you can ignore this email or decline in your portal.</p>`,
+    ),
+  );
+}
+
 export async function sendReviewRequest(
   userEmail: string,
   userName: string,

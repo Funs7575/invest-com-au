@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import AdvisorPortalLogin from "./AdvisorPortalLogin";
+import { CoAuthorInvitesBanner, InviteCoAuthorButton } from "./CoAuthorPanel";
 import { anyFetchFailed } from "@/lib/advisor-portal/load-state";
 import { deriveProfileCompleteness } from "@/lib/advisor-portal/profile-completeness";
 import type {
@@ -1021,6 +1022,9 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
         ))}
       </div>
 
+      {/* Pending co-author invitations addressed to this advisor */}
+      <CoAuthorInvitesBanner />
+
       {articles.length > 0 ? (
         <div className="space-y-2">
           {articles.map(a => (
@@ -1059,6 +1063,7 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
                     <span>{a.click_count} profile clicks</span>
                   </div>
                 )}
+                {a.status !== "rejected" && <InviteCoAuthorButton articleId={a.id} />}
               </div>
               <div className="flex gap-1.5 shrink-0">
                 {(a.status === "draft" || a.status === "revision_requested") && (
