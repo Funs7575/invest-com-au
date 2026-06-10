@@ -85,7 +85,13 @@ GitHub for ~90 days; this file is the permanent record).
 5. Dropped-test rewrites if wanted: admin/ai-chat (route diverged), auth-callback identifyUser assertions (pending PostHog decision).
 6. `bots/`: fold adversarial-nav.cjs + reverify.cjs (magical-thompson) into the journey suite (#1522 just upgraded it).
 
-## DELETED — manifest (recover with `git branch <name> <sha>`)
+## DELETE manifest (recover with `git branch <name> <sha>`)
+
+> **Execution status:** the cloud session's git proxy returns HTTP 403 on ref
+> deletions (deliberate guardrail), so these have **not been deleted yet**.
+> Run `bash scripts/branch-cleanup-2026-06-10.sh` from a normally-credentialed
+> checkout — dry run by default, `--execute` to delete. The script parses this
+> table, refuses protected branches, and reports per-branch results.
 
 | Branch | Tip SHA | Evidence |
 |---|---|---|
