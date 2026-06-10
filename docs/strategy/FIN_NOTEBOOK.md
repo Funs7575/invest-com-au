@@ -14,6 +14,38 @@
 
 ## Active strategic decisions log
 
+### 2026-06-10 — Decision Engine COMPLETE: P1–P9 all merged; /find-advisor folded; engine now learns from outcomes
+
+The 9-phase program from the same-day "vision locked" entry below is fully
+on main (final PR #1524, squash da0c9db). One engine end-to-end: translator
+→ single-lead allocation → shared advisor scoring (P1–P2); user-named type
+always wins + missing-signal questions (P3); listings scorer with CSF
+exclusion + FIRB gate (P4); multi-lane composite results + My Options
+workspace + saved_items (P5); in-funnel lead capture with OTP at confirm +
+single-lead UI lockout (P6); side-by-side advisor comparison (P7a); P8 —
+this CLOSES the "Revisit: 301 /find-advisor only after get-matched gains
+lead capture" item below: /find-advisor now 308s to /get-matched, with
+?specialty= / ?country= deep-links carved out so the 1.75× cross-border
+corridor keeps its wizard until get-matched consumes those params; P9 —
+advisor ordering now blends engine fit with real engagement history via the
+shared Wilson ranker (fail-soft; fed by the /plans/[id]/connected stamp).
+
+Live state: advisor_match_v2_get_matched at 100%, prod schema applied
+(ledger 3⇄3, first persisted plan verified). **Sole live-path blocker is
+founder-side: restore a deploy target (Netlify credits or Vercel unblock)
+— everything queues at HEAD until then.**
+
+Open engineering backlog (post-program, none block launch): listings lane
+renders lane-level links, not the P4 scorer's specific listing cards —
+that resolve/UI wiring is the last gap vs the vision statement; get-matched
+consuming ?specialty=/?country= (then the wizard folds entirely and the
+~40 hardcoded /find-advisor literals can be repointed); P5 saved-criteria
+alerts.
+
+**Revisit:** 2026-06-17 — deploy restored? Founder device/visual pass on
+the new result surface. **Revisit:** 2026-09-10 — P9 ranking-weight review
+once professional_leads/connected has ~3 months of real outcome rows.
+
 ### 2026-06-10 — "Complete everything unblocked" wave: 12 parallel workstreams launched; CI unblocked; coordination lesson
 
 Founder directive: finish every unblocked TOP-10 / backlog opportunity to
