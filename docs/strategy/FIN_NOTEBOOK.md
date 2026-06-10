@@ -14,8 +14,6 @@
 
 ## Active strategic decisions log
 
-<<<<<<< HEAD
-=======
 ### 2026-06-10 — Hybrid auction (#5 ship-now): quality multiplier SHIPPED; engineering now complete, blocker is legal only
 
 The 2026-04-30 decision approved the hybrid auction as "editorial filter +
@@ -44,8 +42,6 @@ Full corrections in `docs/audits/TOP10_CODEBASE_BENCHMARK.md`.
 **Remaining for revenue to land:** RG 246 conflicted-remuneration legal
 sign-off (founder + lawyer, non-code) and pilot-broker BD. **Revisit:**
 2026-07-10 — has legal reviewed the tier/quality-multiplier framing?
-
->>>>>>> origin/main
 ### 2026-06-10 — Decision Engine vision locked: multi-lane outcome router on /get-matched
 
 Founder vision set the bar: not a quiz or directory — a decision engine that
