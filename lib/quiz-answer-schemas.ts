@@ -85,6 +85,7 @@ export const QuizAdvisorTypeSchema = safeEnum([
   "financial-planner",
   "smsf-accountant",
   "tax-agent",
+  "insurance-broker",
   "estate-planner",
   "commercial-property-agent",
   "not-sure",
@@ -108,6 +109,13 @@ export const QuizInvestorGoalIntlSchema = safeEnum([
   "business",
 ]);
 
+// Free-text-ish fields stored as bounded strings. The bound must fit every
+// option key the quiz can emit (e.g. `saudi_arabia` = 12 chars) — too tight a
+// max silently nulls the field via `.catch(undefined)`. Pinned by the contract
+// test in __tests__/lib/quiz-questions.test.ts.
+export const QuizInvestorCountrySchema = z.string().max(20).optional().catch(undefined);
+export const QuizVisaStatusSchema = z.string().max(50).optional().catch(undefined);
+
 export const UnifiedAnswersSchema = z
   .object({
     location: QuizLocationSchema,
@@ -121,9 +129,8 @@ export const UnifiedAnswersSchema = z
     advisor_type: QuizAdvisorTypeSchema,
     needs: QuizNeedsSchema,
     property_sub: QuizPropertySubSchema,
-    // Free-text fields: country code + visa status kept as bounded strings
-    investor_country: z.string().max(10).optional().catch(undefined),
-    visa_status: z.string().max(50).optional().catch(undefined),
+    investor_country: QuizInvestorCountrySchema,
+    visa_status: QuizVisaStatusSchema,
     investor_goal_intl: QuizInvestorGoalIntlSchema,
   })
   .optional();

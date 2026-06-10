@@ -145,10 +145,9 @@ describe("UnifiedAnswersSchema", () => {
     expect(result?.visa_status).toBe("temporary-resident");
   });
 
-  it("truncates investor_country to max 10 chars", () => {
-    const result = UnifiedAnswersSchema.parse({
-      investor_country: "TOOLONGCODE",
-    });
-    expect(result?.investor_country).toBeUndefined();
+  it("accepts the real country keys (incl. the 12-char saudi_arabia) but nulls genuinely over-long values", () => {
+    // The bound is 20 (was 10, which silently nulled new_zealand/saudi_arabia).
+    expect(UnifiedAnswersSchema.parse({ investor_country: "saudi_arabia" })?.investor_country).toBe("saudi_arabia");
+    expect(UnifiedAnswersSchema.parse({ investor_country: "x".repeat(21) })?.investor_country).toBeUndefined();
   });
 });
