@@ -67,6 +67,13 @@ export interface InvestListingsClientProps {
    *  selectors side by side read as a duplicate (the chips filter in place,
    *  the tabs navigate to /invest/<cat>/listings/<sub>; users can't tell). */
   hideSubCategoryChips?: boolean;
+  /** Set when the page's server query already scopes listings exactly
+   *  (e.g. vertical + sub_category on /invest/<cat>/listings/<sub>). The
+   *  category lock then only drives chrome (hides the sector pill) and must
+   *  NOT re-filter: categoryForListing maps fund-family sub-types and
+   *  listed_security kinds to a different slug than the page's, which would
+   *  silently drop server-scoped listings. */
+  skipCategoryFilter?: boolean;
 }
 
 // ─── Australian states ───────────────────────────────────────────────
@@ -132,6 +139,7 @@ export default function InvestListingsClient({
   claimedSlugs,
   showActionPlanCta,
   hideSubCategoryChips,
+  skipCategoryFilter,
 }: InvestListingsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -285,7 +293,7 @@ export default function InvestListingsClient({
       result = result.filter((l) => activeKinds.has(deriveListingKind(l)));
     }
 
-    if (activeCategory !== "all") {
+    if (activeCategory !== "all" && !skipCategoryFilter) {
       result = result.filter((l) => categoryForListing(l) === activeCategory);
     }
 
@@ -467,7 +475,7 @@ export default function InvestListingsClient({
     activeTicket, activeQuery, activeFirbOnly, activeSivOnly, activeWholesaleOnly,
     activeInvestorType, activeFreshness, activeFeaturedOnly, activeMinYield,
     activeMaxYield, activeStages, activeAsxSector, activeAsxMcap, activeDivYieldMin,
-    activeEsicOnly, activeSort,
+    activeEsicOnly, activeSort, skipCategoryFilter,
   ]);
 
   // ── Live per-facet counts for the compliance facet (Session 5.5) ──
