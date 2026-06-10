@@ -18,6 +18,8 @@ import ProgressDots from "./_components/ProgressDots";
 import AnalyzingScreen from "./_components/AnalyzingScreen";
 import TopMatchCarousel from "./_components/TopMatchCarousel";
 import MatchExplainerCard from "./_components/MatchExplainerCard";
+import LaneResults from "./_components/LaneResults";
+import type { LaneResolution } from "@/lib/getmatched/resolve-lanes";
 import { clearPartialPlan, setPartialPlan } from "@/lib/getmatched/recall";
 import { trackEvent as phTrack } from "@/lib/posthog/events";
 
@@ -57,6 +59,7 @@ interface AnswerResponse {
 
 interface ResolveResponse {
   plan: ActionPlan;
+  lanes?: LaneResolution;
   template: ResultTemplate;
   recommended_brief_template: string | null;
   accept_credits_cost: number | null;
@@ -724,6 +727,18 @@ function ActionPlanScreen({
         )}
 
         {/* Top-3 match carousel — only present for `compare` route */}
+        {/* Decision Engine P5: composite lane surface (hero + secondaries +
+            My Options). Data-driven — renders only when resolve returns lanes. */}
+        {result.lanes && (
+          <LaneResults
+            resolution={result.lanes}
+            topMatches={result.top_matches ?? []}
+            planId={result.plan?.id ?? null}
+            shareToken={shareToken}
+            ephemeral={ephemeral}
+            initialSaved={result.plan?.saved_items ?? []}
+          />
+        )}
         {result.top_matches && result.top_matches.length > 0 && (
           <TopMatchCarousel matches={result.top_matches} />
         )}
