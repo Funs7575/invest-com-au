@@ -28,7 +28,16 @@ export default function NewThreadClient() {
   const [body, setBody] = useState("");
   const [showPreview, setShowPreview] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [heldForReview, setHeldForReview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Friendly pre-submit nudge (non-blocking): personal-advice phrasing is the
+  // top reason threads get removed — steer toward general framing before the
+  // server-side gate has to.
+  const adviceNudge =
+    /\bshould\s+i\s+(buy|sell|invest)\b|\bwhat\s+should\s+i\s+(buy|invest)\b|\btell\s+me\s+what\s+to\s+(buy|invest)\b/i.test(
+      `${title} ${body}`,
+    );
 
   // Auth redirect
   useEffect(() => {
@@ -103,6 +112,15 @@ export default function NewThreadClient() {
       }
 
       const data = await res.json();
+      if (data.pending_review) {
+        // Held by the publish gate — show the review notice instead of
+        // redirecting to a thread the author can't see yet.
+        setHeldForReview(
+          data.message ||
+            "Your thread is awaiting a quick moderator review before it goes live.",
+        );
+        return;
+      }
       router.push(`/community/${categorySlug}/${data.thread.id}`);
     } catch {
       setErrors({ submit: "Something went wrong. Please try again." });
@@ -126,6 +144,26 @@ export default function NewThreadClient() {
   }
 
   if (!user) return null;
+
+  if (heldForReview) {
+    return (
+      <div className="container-custom max-w-4xl py-12">
+        <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
+          <Icon name="check-circle" size={40} className="text-emerald-600 mx-auto mb-4" />
+          <h1 className="text-xl font-extrabold text-slate-900 mb-2">
+            Thread submitted for review
+          </h1>
+          <p className="text-sm text-slate-600 max-w-md mx-auto mb-6">{heldForReview}</p>
+          <Link
+            href="/community"
+            className="inline-block bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors text-sm"
+          >
+            Back to Community
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-custom max-w-4xl py-8">
@@ -315,8 +353,18 @@ export default function NewThreadClient() {
           </div>
         </div>
 
+        {/* Pre-submit compliance nudge — non-blocking */}
+        {adviceNudge && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-xl px-4 py-3 mb-5">
+            <strong>Keep it general:</strong> asking &quot;should I buy X?&quot; reads as a
+            request for personal financial advice, which no one here can give.
+            Try &quot;how do people evaluate X?&quot; instead — those threads stay up and
+            get better answers.
+          </div>
+        )}
+
         {/* Submit */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <button
             onClick={handleSubmit}
             disabled={submitting}
@@ -329,6 +377,12 @@ export default function NewThreadClient() {
             className="text-sm text-slate-500 hover:text-slate-700 transition-colors"
           >
             Cancel
+          </Link>
+          <Link
+            href="/community/guidelines"
+            className="text-sm text-slate-400 hover:text-slate-600 transition-colors ml-auto"
+          >
+            Community guidelines
           </Link>
         </div>
       </div>
