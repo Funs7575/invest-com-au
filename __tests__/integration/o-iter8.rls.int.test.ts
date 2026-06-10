@@ -26,7 +26,7 @@ import path from "node:path";
 
 const MIGRATION_PATH = path.resolve(
   __dirname,
-  "../../supabase/migrations/20260501_o_iter8_rls_observability.sql",
+  "../../supabase/migrations/archive/20260501_o_iter8_rls_observability.sql",
 );
 const SQL = readFileSync(MIGRATION_PATH, "utf8");
 
