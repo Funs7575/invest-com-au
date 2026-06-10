@@ -181,7 +181,7 @@ const FAQS = [
   },
   {
     q: "When does Division 296 start?",
-    a: "Division 296 was announced in the 2023 Federal Budget with a proposed start date of 1 July 2025. However, it faced Senate negotiation and delays and did not pass on that original timetable. As a proposed measure, the start date may have shifted and the design may change before it becomes law. Always check the current status with the ATO, Treasury, or a licensed financial adviser before making decisions based on it.",
+    a: "Division 296 was announced in the 2023 Federal Budget with a proposed start date of 1 July 2025. However, it faced Senate negotiation and delays and did not pass on that original timetable. As a proposed measure, the start date may have shifted and the design may change before it becomes law. Always check the current status with the ATO, Treasury, or a licensed financial adviser before making decisions based on it.", // dated-ok — historical reference to the announced proposal; copy already directs readers to check current status
   },
 ] as const;
 
