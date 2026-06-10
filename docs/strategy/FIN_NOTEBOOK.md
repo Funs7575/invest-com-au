@@ -795,6 +795,17 @@ never let community pool money or drift toward execution (avoid-list).
 **Revisit:** 2026-07-10 — founder verdict on sequencing; if agreed, brief the
 data-news stream (rate-change log + `/rates/today`) as the first build.
 
+**Update (same day):** founder asked for the full community plan → written to
+`docs/plans/COMMUNITY_MASTER_PLAN.md` (positioning, 5 phases, UX spec, cold-start
+playbook, metrics/kill criteria, 6 founder decisions). **Two P0 findings from the
+code audit:** (1) community thread/post POSTs run **zero text moderation** —
+everything auto-publishes onto indexed pages (article comments and Q&A are
+moderated; the forum is not); (2) the seed migration **inflates reply/vote
+counters** beyond actual seeded rows (same ACL s18 family as the fabricated
+counter killed in #1489). Plan's Phase 0 fixes both schema-free (migration
+ledger still frozen). These two are worth fixing even if community is never
+promoted.
+
 ---
 
 ## Open commitments / revisit-by dates
