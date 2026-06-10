@@ -72,6 +72,9 @@ export default function LaneResults({
   // Connect button is removed (browse/save stay available).
   const [connecting, setConnecting] = useState<TopMatch | null>(null);
   const [connectedSlug, setConnectedSlug] = useState<string | null>(null);
+  // P7: side-by-side comparison of the ranked matches. Compare ≠ contact —
+  // single-lead still only happens at the explicit Connect confirm.
+  const [comparing, setComparing] = useState(false);
   const canSave = !ephemeral && planId != null && !!shareToken;
 
   const advisors = topMatches.filter((m) => m.kind === "advisor");
@@ -191,6 +194,65 @@ export default function LaneResults({
               );
             })}
           </ul>
+        )}
+
+        {lane.kind === "advisor" && hero && advisors.length >= 2 && (
+          <div className="mt-3">
+            <button
+              onClick={() => setComparing((c) => !c)}
+              aria-expanded={comparing}
+              className="px-3 py-2 min-h-11 text-xs font-semibold text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50"
+            >
+              {comparing ? "Hide comparison" : `Compare your ${advisors.length} matches side by side`}
+            </button>
+            {comparing && (
+              <div className="mt-3 overflow-x-auto" data-testid="advisor-compare-table">
+                <table className="w-full text-left border-separate border-spacing-0 min-w-[560px]">
+                  <thead>
+                    <tr>
+                      <th scope="col" className="sr-only">Attribute</th>
+                      {advisors.map((a) => (
+                        <th key={a.slug} scope="col" className="px-3 pb-2 align-bottom min-w-[170px]">
+                          <span className="block text-sm font-bold text-slate-900">{a.name}</span>
+                          {a.rating != null && (
+                            <span className="block text-xs text-slate-600">★ {a.rating.toFixed(1)}{a.rating_count ? ` (${a.rating_count})` : ""}</span>
+                          )}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="align-top">
+                    {([
+                      ["Why matched", (a: TopMatch) => a.one_line_why],
+                      ["Location", (a: TopMatch) => a.location_display ?? "Remote / Australia-wide"],
+                      ["Fees", (a: TopMatch) => a.fee_description ?? "Ask in the intro call"],
+                      ["Specialties", (a: TopMatch) => (a.specialties_preview?.length ? a.specialties_preview.join(" · ") : "—")],
+                    ] as const).map(([label, get]) => (
+                      <tr key={label}>
+                        <th scope="row" className="pr-2 py-2 text-[0.65rem] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">{label}</th>
+                        {advisors.map((a) => (
+                          <td key={a.slug} className="px-3 py-2 text-xs text-slate-700 border-t border-slate-100">{get(a)}</td>
+                        ))}
+                      </tr>
+                    ))}
+                    <tr>
+                      <th scope="row" className="sr-only">Actions</th>
+                      {advisors.map((a) => (
+                        <td key={a.slug} className="px-3 py-2 border-t border-slate-100">
+                          <Link href={a.cta_href} className="inline-flex px-3 py-2 min-h-11 items-center border border-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-50">
+                            View profile
+                          </Link>
+                        </td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+                <p className="text-[0.62rem] text-slate-500 mt-1">
+                  Comparing never contacts anyone — you choose one advisor when you’re ready.
+                </p>
+              </div>
+            )}
+          </div>
         )}
 
         <div className="mt-3">

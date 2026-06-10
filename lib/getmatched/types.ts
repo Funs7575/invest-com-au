@@ -237,6 +237,11 @@ export interface TopMatch {
   /** Numeric professionals.id for advisor matches — required by the
    *  in-funnel Connect flow (submit-lead confirm_advisor_id). */
   ref_id?: number;
+  /** Comparison fields (advisor kind, P7) — display-safe, already public on
+   *  the profile page. */
+  location_display?: string | null;
+  fee_description?: string | null;
+  specialties_preview?: string[];
 }
 
 export type EmbedContext =

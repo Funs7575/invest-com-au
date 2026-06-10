@@ -20,6 +20,7 @@ const ADVISOR_ROW = {
   type: "tax_agent", photo_url: "p.jpg", rating: 4.8, review_count: 21,
   location_display: "Sydney", location_state: "NSW",
   specialties: ["Crypto Tax"], verified: true,
+  fee_description: "From $300/hr",
   initial_consultation_free: true,
 };
 
@@ -75,6 +76,12 @@ describe("topMatchesForRoute (Decision Engine P2)", () => {
     });
     // The "why" is attribute-driven (her own matching specialty), not generic.
     expect(out[0]!.one_line_why).toBe("Specialises in Crypto Tax");
+    // P7 comparison fields ride along, display-safe only.
+    expect(out[0]).toMatchObject({
+      location_display: "Sydney",
+      fee_description: "From $300/hr",
+      specialties_preview: ["Crypto Tax"],
+    });
   });
 
   it("fail-soft: flag read or DB error never breaks resolve", async () => {
