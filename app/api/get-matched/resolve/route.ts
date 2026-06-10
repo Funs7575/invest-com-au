@@ -8,7 +8,7 @@ import {
   recommendedProviders,
   resolveActionPlan,
 } from "@/lib/getmatched/engine";
-import { computeTopMatches } from "@/lib/getmatched/top-match";
+import { topMatchesForRoute } from "@/lib/getmatched/advisor-top-match";
 import { buildMatchExplainer } from "@/lib/getmatched/explainer";
 import { logEvent } from "@/lib/getmatched/events";
 import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
@@ -158,11 +158,9 @@ export async function POST(request: NextRequest) {
           budgetBand: resolved.budgetBand,
           locationState: resolved.locationState,
         }),
-        // Only compute the top-match hero card for the `compare` route —
-        // the only one where a scored top broker makes sense.
-        resolved.route === "compare"
-          ? computeTopMatches(answers, resolved.vertical, 3)
-          : Promise.resolve([]),
+        // Lane-aware top matches: brokers for `compare`, real ranked
+        // advisors for advisor-shaped routes (flag-gated), [] otherwise.
+        topMatchesForRoute(answers, resolved, 3),
         fetchAdvisorOutcomeStats(createAdminClient(), ctx),
       ]);
       const providers = applyOutcomesRanking(rawProviders, outcomesStats);
@@ -217,9 +215,7 @@ export async function POST(request: NextRequest) {
             budgetBand: resolved.budgetBand,
             locationState: resolved.locationState,
           }),
-          resolved.route === "compare"
-            ? computeTopMatches(answers, resolved.vertical, 3)
-            : Promise.resolve([]),
+          topMatchesForRoute(answers, resolved, 3),
           fetchAdvisorOutcomeStats(createAdminClient(), ctx2),
         ]);
         const providers2 = applyOutcomesRanking(rawProviders2, outcomesStats2);
@@ -277,9 +273,7 @@ export async function POST(request: NextRequest) {
         budgetBand: resolved.budgetBand,
         locationState: resolved.locationState,
       }),
-      resolved.route === "compare"
-        ? computeTopMatches(plan.answers, resolved.vertical, 3)
-        : Promise.resolve([]),
+      topMatchesForRoute(plan.answers, resolved, 3),
       fetchAdvisorOutcomeStats(createAdminClient(), ctx3),
     ]);
     const providers = applyOutcomesRanking(rawProviders3, outcomesStats3);
