@@ -385,7 +385,7 @@ export default async function FundDetailPage({
                   </li>
                   <li>
                     <Link
-                      href="/quiz"
+                      href="/get-matched"
                       className="text-amber-700 font-semibold hover:underline inline-flex items-center gap-1"
                     >
                       Get matched

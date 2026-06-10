@@ -1,5 +1,16 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "./setup";
+// The assertions below describe general_advice-mode rendering (labels like
+// "Get Matched" / "Editor's Pick"). Pin the licence flags so the tests are
+// stable regardless of the NEXT_PUBLIC_LICENCE_MODE the runner happens to
+// have (CI runs factual_only, where the gated variants render instead).
+vi.mock("@/lib/compliance-config", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/compliance-config")>()),
+  SHOW_MATCH_LANGUAGE: true,
+  SHOW_EDITORIAL_BADGES: true,
+  SHOW_RATINGS: true,
+}));
+
 import SponsorBadge from "@/components/SponsorBadge";
 import type { Broker } from "@/lib/types";
 

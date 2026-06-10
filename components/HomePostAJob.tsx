@@ -1,154 +1,44 @@
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
 
+/**
+ * Slim "post a request" strip closing the homepage experts band.
+ * One row, two CTAs — the full how-it-works pitch lives at /quotes/post.
+ */
 export default function HomePostAJob() {
   return (
-    <section
-      className="bg-slate-50 border-t border-b border-slate-200"
-      style={{
-        padding: "52px 36px",
-      }}
-    >
-      <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-        <div
-          className="home-postjob-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1.2fr 1fr",
-            gap: 40,
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-              ● Post a request · free
-            </span>
-            <h2
-              className="font-display"
-              style={{
-                fontSize: 30,
-                letterSpacing: "-.028em",
-                fontWeight: 800,
-                margin: "4px 0 0",
-                lineHeight: 1.05,
-                textWrap: "balance",
-              }}
-            >
-              Post a request.
-            </h2>
-            <p
-              style={{
-                fontSize: 15,
-                lineHeight: 1.55,
-                color: "var(--color-ink-600)",
-                margin: "14px 0 0",
-                maxWidth: 560,
-              }}
-            >
-              Describe what you need and have specialists come to you with proposals &mdash; like
-              Airtasker for investing decisions. Most requests hear back within a day.
-            </p>
-            <p
-              style={{
-                fontSize: 13,
-                color: "var(--color-ink-500)",
-                fontStyle: "italic",
-                margin: "10px 0 0",
-              }}
-            >
-              Best if you want specialists to come back with options.
-            </p>
-
-            <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap", alignItems: "center" }}>
-              <Link
-                href="/quotes/post"
-                className="iv2-cta"
-                style={{ fontSize: 14, padding: "12px 22px" }}
-              >
-                Post a request <DesignIcon name="arrow-right" size={13} strokeWidth={2.4} />
-              </Link>
-              <Link
-                href="/quotes/recent-wins"
-                className="iv2-cta-ghost"
-                style={{ fontSize: 13 }}
-              >
-                See recent requests
-              </Link>
-            </div>
-          </div>
-
-          <ol
-            style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-            }}
-          >
-            {(
-              [
-                ["1", "Describe your need", "A short brief. No email until you're ready to send."],
-                ["2", "Specialists respond", "Relevant pros come to you with quotes or proposals."],
-                ["3", "You pick", "Compare responses on your terms. Introductions only."],
-              ] as const
-            ).map(([n, title, sub]) => (
-              <li
-                key={n}
-                className="bg-white border border-slate-200"
-                style={{
-                  display: "flex",
-                  gap: 14,
-                  alignItems: "flex-start",
-                  padding: "14px 16px",
-                  borderRadius: 12,
-                  boxShadow: "0 1px 2px rgba(11,20,34,.04)",
-                }}
-              >
-                <span
-                  className="font-mono"
-                  style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: 99,
-                    background: "var(--color-coral-100)",
-                    color: "var(--color-coral-700)",
-                    fontWeight: 800,
-                    fontSize: 12,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                  }}
-                  aria-hidden
-                >
-                  {n}
-                </span>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--color-ink-900)" }}>
-                    {title}
-                  </div>
-                  <div
-                    style={{ fontSize: 12, color: "var(--color-ink-500)", marginTop: 2, lineHeight: 1.45 }}
-                  >
-                    {sub}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ol>
+    <section style={{ padding: "0 36px 48px" }}>
+      <div
+        className="home-postjob-strip border border-slate-200 bg-slate-50"
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          flexWrap: "wrap",
+          padding: "14px 18px",
+          borderRadius: 14,
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 260 }}>
+          <span style={{ fontSize: 13.5, fontWeight: 800, color: "var(--color-ink-900)" }}>
+            Prefer pros to come to you? Post a request — free.
+          </span>
+          <p style={{ fontSize: 12, color: "var(--color-ink-500)", margin: "2px 0 0", lineHeight: 1.45 }}>
+            Describe what you need; relevant specialists respond with proposals, usually within a
+            day. No email until you&apos;re ready to send. Introductions only.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
+          <Link href="/quotes/recent-wins" className="iv2-cta-ghost" style={{ fontSize: 12 }}>
+            See recent requests
+          </Link>
+          <Link href="/quotes/post" className="iv2-cta" style={{ fontSize: 12.5, padding: "9px 16px" }}>
+            Post a request <DesignIcon name="arrow-right" size={12} strokeWidth={2.4} />
+          </Link>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 900px) {
-          .home-postjob-grid {
-            grid-template-columns: 1fr !important;
-            gap: 24px !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }

@@ -124,3 +124,48 @@ describe("AdvisorsClient — filter panel wiring", () => {
     expect(screen.getByRole("button", { name: "Filters (1)" })).toBeInTheDocument();
   });
 });
+
+describe("AdvisorsClient — compact header redesign", () => {
+  beforeEach(() => {
+    mockReplace.mockClear();
+    paramsRef.current = new URLSearchParams();
+  });
+
+  it("renders the light compact header (filter-reactive title, no dark eyebrow pill)", () => {
+    render(<AdvisorsClient professionals={professionals} />);
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toMatch(
+      /Find a Financial Advisor/i,
+    );
+    // The light tone intentionally omits the dark "Verified advisors" eyebrow pill.
+    expect(screen.queryByText("Verified advisors")).not.toBeInTheDocument();
+  });
+
+  it("drops the standalone 'Get matched in 60 seconds' card (folded into the toolbar)", () => {
+    render(<AdvisorsClient professionals={professionals} />);
+    expect(screen.queryByText(/Get matched in 60 seconds/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Not sure which advisor you need/i)).not.toBeInTheDocument();
+  });
+
+  it("restores the standalone AI filter bar + concierge link, with no density toggle (matches /invest)", () => {
+    render(<AdvisorsClient professionals={professionals} />);
+    // Standalone AI filter bar (its own input), like /invest — not merged into the search.
+    expect(screen.getByPlaceholderText(/SMSF advisor Sydney/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /Ask the AI concierge/i }),
+    ).toBeInTheDocument();
+    // Phase-2 density toggle was reverted — no Comfy/Compact control.
+    expect(screen.queryByRole("button", { name: /^comfy$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^compact$/i })).not.toBeInTheDocument();
+  });
+
+  it("exposes a compact 'Get quotes' option in the toolbar linking to the brief flow", () => {
+    render(<AdvisorsClient professionals={professionals} />);
+    // Compact top-bar option (not the big bottom band) → /briefs/new.
+    const cta = screen.getByRole("link", { name: /^Get quotes$/i });
+    expect(cta).toHaveAttribute("href", "/briefs/new");
+    // The big bottom-band heading is gone.
+    expect(
+      screen.queryByRole("heading", { name: /Get quotes from verified pros/i }),
+    ).not.toBeInTheDocument();
+  });
+});

@@ -239,4 +239,11 @@ export interface EmbedConfig {
   start_step?: number;
   /** Optional pre-filled answers that feed into `ActionPlanAnswers`. */
   prefill_answers?: ActionPlanAnswers;
+  /**
+   * Short copy for the compact `inline` CTA variant (a single toolbar
+   * button). `lead` is an optional context-setting phrase shown on wider
+   * screens ("Need help on a deal?"); `label` is the always-visible button
+   * text ("Build an action plan"). Falls back to a generic label when unset.
+   */
+  inline_cta?: { lead: string; label: string };
 }

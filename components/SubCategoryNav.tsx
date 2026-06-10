@@ -9,7 +9,8 @@ interface SubCategoryNavProps {
 
 /**
  * Horizontal sub-category navigation strip for /invest/{category}/listings pages.
- * Lets users drill into specific sub-categories like wine/art/cars on alternatives.
+ * Renders as underline tabs (distinct from the amber filter chips inside the listing grid)
+ * to make clear these are page-level navigation links, not in-page filters.
  *
  * Renders nothing if the category has no sub-categories defined.
  */
@@ -23,41 +24,54 @@ export default function SubCategoryNav({ category, activeSubcategory }: SubCateg
   return (
     <nav
       aria-label={`${category.label} sub-categories`}
-      className="bg-white border border-slate-200 rounded-2xl p-4 mb-6"
+      className="mb-6"
     >
-      <p className="text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-500 mb-3">
-        Browse by {category.subcategories[0]?.label ? "type" : "category"}
+      <p className="text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-400 mb-2 px-0.5">
+        Browse by type
       </p>
-      <div className="flex flex-wrap gap-2">
-        {/* "All" pill — links back to category listings without a sub filter */}
-        <Link
-          href={baseHref}
-          className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${
-            !activeSubcategory
-              ? "bg-slate-900 text-white"
-              : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
-          }`}
-          {...(!activeSubcategory ? { "aria-current": "page" as const } : {})}
-        >
-          All {category.label}
-        </Link>
-        {category.subcategories.map((sub) => {
-          const isActive = activeSubcategory === sub.slug;
-          return (
-            <Link
-              key={sub.slug}
-              href={`${baseHref}/${sub.slug}`}
-              className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${
-                isActive
-                  ? "bg-slate-900 text-white"
-                  : "bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200"
-              }`}
-              {...(isActive ? { "aria-current": "page" as const } : {})}
-            >
-              {sub.label}
-            </Link>
-          );
-        })}
+      {/* Scrollable tab row with fade masks */}
+      <div className="relative">
+        <div className="flex gap-0 overflow-x-auto scrollbar-hide border-b border-slate-200">
+          {/* "All" tab */}
+          <Link
+            href={baseHref}
+            className={`shrink-0 px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 -mb-px transition-colors ${
+              !activeSubcategory
+                ? "border-amber-500 text-amber-700"
+                : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
+            }`}
+            {...(!activeSubcategory ? { "aria-current": "page" as const } : {})}
+          >
+            All {category.label}
+          </Link>
+
+          {category.subcategories.map((sub) => {
+            const isActive = activeSubcategory === sub.slug;
+            return (
+              <Link
+                key={sub.slug}
+                href={`${baseHref}/${sub.slug}`}
+                className={`group shrink-0 inline-flex items-center gap-1 px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 -mb-px transition-colors ${
+                  isActive
+                    ? "border-amber-500 text-amber-700"
+                    : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
+                }`}
+                {...(isActive ? { "aria-current": "page" as const } : {})}
+              >
+                {sub.label}
+                {/* arrow hints this is a page link, not a filter */}
+                <svg
+                  className="w-2.5 h-2.5 opacity-40 group-hover:opacity-70 transition-opacity"
+                  fill="none"
+                  viewBox="0 0 10 10"
+                  aria-hidden="true"
+                >
+                  <path d="M2 8L8 2M8 2H4M8 2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

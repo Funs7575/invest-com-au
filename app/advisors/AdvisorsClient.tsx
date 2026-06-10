@@ -677,48 +677,56 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return [...ordered, ...extra];
   }, [professionals]);
 
+  // Natural-language → filters for the standalone AI bar (below). /advisors
+  // derives results from local state, so the parsed params are applied to the
+  // local filter setters directly (the URL-mirror effect then reflects them) —
+  // writing the URL instead wouldn't take effect here.
+  const applySmartFilters = useCallback((updates: Record<string, string>) => {
+    if (
+      updates.provider_type === "individual" ||
+      updates.provider_type === "firm" ||
+      updates.provider_type === "team"
+    ) {
+      setProviderType(updates.provider_type);
+    }
+    if (updates.type) {
+      const types = updates.type
+        .split(",")
+        .filter((v) => TYPE_FILTERS.some((f) => f.key === v)) as ProfessionalType[];
+      if (types.length > 0) setTypeFilters(new Set(types));
+    }
+    if (updates.state && (AU_STATES as readonly string[]).includes(updates.state)) {
+      setStateFilter(updates.state);
+    }
+    if (updates.specialty) setSpecialtyFilters(updates.specialty.split(",").filter(Boolean));
+    if (updates.language) setLanguageFilter(updates.language);
+    if (updates.fee) setFeeFilter(updates.fee);
+    if (updates.min_rating) {
+      const r = Number(updates.min_rating);
+      if (!Number.isNaN(r)) setMinRating(r);
+    }
+    if (updates.verified === "true") setVerifiedOnly(true);
+    if (updates.sort) setSortBy(updates.sort as SortKey);
+  }, []);
+
   return (
     <>
-      {/* Shared full-bleed dark stat-led hero (SC-4) — matches /invest + /compare.
-          Headline + breadcrumb stay filter-reactive; banners render in the
-          canonical slot directly below the hero. */}
+      {/* Compact light directory header (matches the /invest treatment):
+          title + breadcrumb stay filter-reactive, the stats ride as small
+          inline pills, banners render in the canonical slot below. The old
+          standalone "Get matched in 60s" card is folded into the toolbar. */}
       <DirectoryHero
+        tone="light"
         containerClassName="container-custom"
         breadcrumbLabel={activeTypeLabel || "Find an Advisor"}
-        pill={{ label: "Verified advisors", live: true }}
-        headlineLead={
-          activeTypeLabel
-            ? `${providerTypeCounts.all} ${dynamicTitle.replace(/^Find\s+/, "").toLowerCase()}`
-            : `${providerTypeCounts.all} licensed advisors.`
-        }
-        headlineAccent="Three free intros."
+        headlineLead={dynamicTitle}
         subtitle={dynamicDescription}
         stats={advisorHeroStats}
       >
         {banners}
       </DirectoryHero>
-      <div className="py-5 md:py-12">
+      <div className="py-4 md:py-6">
         <div className="container-custom">
-        {/* Advisor matching + concierge — light band below the hero */}
-        <div className="mb-4 md:mb-6">
-          <p className="text-sm font-medium text-slate-600 mb-2 text-center">Not sure which advisor you need? Get matched in 60 seconds.</p>
-          <GetMatchedEmbed context="advisor_directory" />
-          <p className="text-[0.65rem] md:text-xs text-slate-500 mt-3 text-center">
-            Prefer to chat?{" "}
-            <Link
-              href="/concierge?finder=advisor-finder"
-              onClick={() =>
-                trackEvent("concierge_seed_clicked", {
-                  finder: "advisor-finder",
-                  source: "advisors_hero",
-                })
-              }
-              className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
-            >
-              Ask the AI concierge →
-            </Link>
-          </p>
-        </div>
 
         {/* Compare/shortlist bar — canonical primitive (slate/amber). Replaces
             the bespoke violet bar that broke the design system. */}
@@ -751,22 +759,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           />
         )}
 
-        {/* AI filter bar — natural language → URL params */}
-        <div className="mb-3">
-          <SmartFilterBar
-            setParams={(updates) => {
-              const p = new URLSearchParams(searchParams.toString());
-              for (const [k, v] of Object.entries(updates)) {
-                if (v) p.set(k, v); else p.delete(k);
-              }
-              router.replace(`/advisors?${p.toString()}`, { scroll: false });
-            }}
-            surface="advisors"
-          />
-        </div>
-
-        {/* Toolbar: search · all-filters · sort (mirrors /invest) */}
-        <div className="flex gap-2 mb-3 items-center">
+        {/* Toolbar: search · Get Matched · all-filters · sort (mirrors /invest) */}
+        <div className="flex flex-wrap gap-2 mb-3 items-center">
           <SearchInput
             className="flex-1"
             value={search}
@@ -775,6 +769,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             ariaLabel="Search advisors"
             id="advisor-search"
           />
+          <GetMatchedEmbed context="advisor_directory" inline />
+          <Link
+            href="/briefs/new"
+            onClick={() =>
+              trackEvent("get_quotes_cta_clicked", { source: "advisors_toolbar" })
+            }
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 md:px-4 py-2 text-sm font-semibold text-slate-700 whitespace-nowrap transition-colors hover:border-slate-400 hover:text-slate-900"
+          >
+            <Icon name="file-text" size={14} />
+            Get quotes
+          </Link>
           <button
             type="button"
             onClick={() => setFiltersOpen(true)}
@@ -789,6 +794,28 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             onChange={(v) => setSortBy(v as SortKey)}
           />
         </div>
+
+        {/* AI filter bar — natural language → filters (standalone, mirrors /invest) */}
+        <div className="mb-3">
+          <SmartFilterBar setParams={applySmartFilters} surface="advisors" />
+        </div>
+
+        {/* Concierge fallback — compact secondary path. */}
+        <p className="mb-3 text-xs text-slate-500">
+          Prefer to chat?{" "}
+          <Link
+            href="/concierge?finder=advisor-finder"
+            onClick={() =>
+              trackEvent("concierge_seed_clicked", {
+                finder: "advisor-finder",
+                source: "advisors_hero",
+              })
+            }
+            className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
+          >
+            Ask the AI concierge →
+          </Link>
+        </p>
 
         {/* Primary facet pills — mirrors /invest + /compare (shared FilterPill). */}
         <p className="text-sm font-semibold text-slate-700 mb-2">Narrow by type, location, and fees — or search by name.</p>

@@ -255,7 +255,7 @@ export default function CommodityHub({
               Find a specialist advisor →
             </Link>
             <Link
-              href={`/quiz?vertical=resources`}
+              href={`/get-matched?vertical=resources`}
               className="text-sm md:text-base font-semibold text-primary hover:underline"
             >
               Take the 30-second quiz

@@ -16,7 +16,7 @@ export default function AdvisorNotFound() {
           <Link href="/advisors" className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors text-center">
             Browse All Advisors
           </Link>
-          <Link href="/quiz" className="w-full sm:w-auto px-5 py-2.5 border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors text-center">
+          <Link href="/get-matched" className="w-full sm:w-auto px-5 py-2.5 border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors text-center">
             Platform Quiz
           </Link>
         </div>

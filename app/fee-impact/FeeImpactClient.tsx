@@ -480,7 +480,7 @@ export default function FeeImpactClient({ brokers }: Props) {
               Switching Cost Simulator →
             </Link>
             <Link
-              href="/quiz"
+              href="/get-matched"
               className="text-xs px-3 py-1.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
             >
               Take the Platform Quiz →

@@ -118,8 +118,10 @@ async function gotoWithRetry(page, url) {
   const browser = await chromium.launch({ args: ["--no-sandbox"] });
   const ctx = await browser.newContext({
     ignoreHTTPSErrors: true,
-    viewport: { width: 1366, height: 900 },
-    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    viewport: { width: VP.width, height: VP.height },
+    userAgent: VP.ua,
+    isMobile: VP.isMobile,
+    hasTouch: VP.isMobile,
   });
   await ctx.addInitScript(() => {
     try {

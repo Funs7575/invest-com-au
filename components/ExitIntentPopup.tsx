@@ -191,7 +191,7 @@ export default function ExitIntentPopup() {
                     : 'We\'ll send you the fee comparison shortly.'}
                 </p>
                 <Link
-                  href="/quiz"
+                  href="/get-matched"
                   className="inline-block px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
                 >
                   Take the Platform Quiz →
@@ -261,7 +261,7 @@ export default function ExitIntentPopup() {
           {/* Alternative CTAs */}
           <div className="flex items-center justify-center gap-4 mt-3">
             <Link
-              href="/quiz"
+              href="/get-matched"
               className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
             >
               Platform quiz →

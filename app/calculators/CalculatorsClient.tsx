@@ -158,6 +158,7 @@ export default function CalculatorsClient({ brokers }: Props) {
   useEffect(() => {
     if (initialCalc && !hasScrolled.current) {
       hasScrolled.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional one-shot init from the URL param
       setActiveCalc(initialCalc);
       const el = document.getElementById("calc-container");
       if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
@@ -369,7 +370,7 @@ export default function CalculatorsClient({ brokers }: Props) {
             <Link href="/article/how-to-invest-australia" className="text-[0.69rem] md:text-xs px-2 md:px-2.5 py-1 md:py-1.5 border border-slate-200 rounded-md md:rounded-lg hover:bg-white transition-colors">
               How to Invest →
             </Link>
-            <Link href="/quiz" className="text-[0.69rem] md:text-xs px-2 md:px-2.5 py-1 md:py-1.5 border border-slate-200 text-slate-700 rounded-md md:rounded-lg hover:bg-white transition-colors">
+            <Link href="/get-matched" className="text-[0.69rem] md:text-xs px-2 md:px-2.5 py-1 md:py-1.5 border border-slate-200 text-slate-700 rounded-md md:rounded-lg hover:bg-white transition-colors">
               Platform Quiz →
             </Link>
           </div>

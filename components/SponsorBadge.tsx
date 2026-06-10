@@ -1,5 +1,6 @@
 import { memo } from "react";
 import type { Broker } from "@/lib/types";
+import { SHOW_EDITORIAL_BADGES } from "@/lib/compliance-config";
 
 const TIER_CONFIG = {
   featured_partner: {
@@ -10,7 +11,9 @@ const TIER_CONFIG = {
     disclosureClass: "text-blue-500",
   },
   editors_pick: {
-    label: "Editor\u2019s Pick",
+    // In factual_only licence mode the paid tier may not borrow editorial
+    // language \u2014 it renders as a plain promoted placement instead.
+    label: SHOW_EDITORIAL_BADGES ? "Editor\u2019s Pick" : "Promoted placement",
     disclosure: "Promoted",
     bgClass: "bg-slate-50 border-slate-200",
     textClass: "text-slate-700",

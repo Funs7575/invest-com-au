@@ -86,9 +86,9 @@ describe("StartupGrantsHubPage", () => {
     expect(names).toContain("Grants");
   });
 
-  it("does NOT render FAQPage JSON-LD because grantsHubConfig has no faqs", async () => {
+  it("renders FAQPage JSON-LD because grantsHubConfig now has faqs", async () => {
     render(await StartupGrantsHubPage());
-    expect(screen.queryByTestId("hub-page-faq-ld")).not.toBeInTheDocument();
+    expect(screen.getByTestId("hub-page-faq-ld")).toBeInTheDocument();
   });
 
   it("renders compliance block", async () => {

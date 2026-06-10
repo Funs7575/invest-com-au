@@ -14,6 +14,84 @@
 
 ## Active strategic decisions log
 
+### 2026-06-10 — Homepage cleanup: 24 sections → 13; paid-placement policy for the marketplace teaser
+
+Founder call ("way too long and bloated") + expert review. Decisions:
+
+1. **Cut/merge, don't redesign.** Removed `HomeCompareDeepDive` (278-line
+   client re-implementation of /compare), `HomeCPDCourses` (B2B content on
+   a consumer surface), `HomeActivitySection` (third "welcome back" surface
+   — `HomepagePersonalisedStrip` is the one canonical returning-user strip)
+   and the inline tool chips. Merged the three market strips
+   (rate-of-the-day + Invest Score gauge + rate changes) into one
+   `HomeMarketToday` band. Squad-of-the-month shrunk from a full-bleed
+   violet band to a one-row spotlight strip docked under the experts grid
+   (ranking logic unchanged); events shrunk to a 3-row strip; post-a-request
+   shrunk to a one-row CTA strip. Net: 24 sections → 13 modules.
+2. **Marketplace teaser paid-placement policy:** hybrid. Diversity
+   round-robin (max 2/vertical) + image-first ranking stays; paid
+   (`listing_type` featured/premium) capped at **3 of the 6 visible
+   cards**, always labelled (SponsorChip + `ADVERTISER_DISCLOSURE_SHORT`).
+   Placement stays a **flat-fee tier upgrade — no bidding** (RG 246
+   conflicted-remuneration + adverse-selection risk). Logic is pure +
+   unit-tested in `lib/home-listing-curation.ts`.
+3. **Equity raises excluded from the homepage teaser** while
+   /invest/startups has no s708 wholesale gate (CSF escalator,
+   REGULATORY-AVOID-LIST §A). Re-include only behind the wholesale gate.
+4. **Bug found during the work:** homepage teaser cards hand-rolled
+   `/invest/<vertical>/<slug>` — a 404 for every vertical (canonical shape
+   is `/invest/<category>/listings/<slug>` via `lib/listing-url`). Fixed +
+   pinned by test. Also: `lib/listing-url` + `formatListingPrice` widened
+   to accept drifted string verticals; teaser chips now humanise unknown
+   verticals (`carbon-environmental-markets` was rendering raw).
+5. **Data drift noted, not migrated:** `vertical='fund'` (60 collectibles),
+   `commercial_property` underscore variant (4 rows). Handled in code via
+   existing VERTICAL_ALIASES; root-cause normalisation migration stays a
+   separate queue item (URL/SEO impact needs its own review).
+
+Revisit: when listing supply grows past ~300 or a homepage-placement SKU is
+actually sold, revisit the 3-of-6 cap and whether the teaser needs an admin
+curation override.
+
+### 2026-06-10 — Licence-mode gates wired into money surfaces; hero claims reworded; compare default changed (PR #1489)
+
+Skeptical-first-time-investor funnel audit (full report:
+`bots/reports/ai-journey-2026-06-10.md`) found the licence-mode framework
+(`lib/compliance-config.ts`) wasn't consumed by the surfaces it exists to
+gate — a factual_only (no-AFSL) build still rendered star ratings,
+"Editor's Choice", /best rankings and match language. Three founder
+decisions taken in-session:
+
+1. **Wire the gates through** (chosen over "hold for legal" / "mirror is
+   exempt"): compare table rating column/stars/sort, editorial badges,
+   match-language CTAs and "ASIC-verified" claims now consume the flags.
+   **Operational consequence: any deploy without
+   `NEXT_PUBLIC_LICENCE_MODE=general_advice` now genuinely strips those
+   features.** Set the env on the Netlify mirror if current visuals should
+   stay. Remaining un-gated star renders (BrokerCard, DealCard, advisor
+   cards, quiz results, RecentlyViewed…) queued as DISC-20260610 follow-up.
+2. **Hero trust strip**: "ASIC-registered · No commission incentive"
+   replaced with "Independent · Est. 1996 · Commissions never change our
+   rankings" (old wording falsifiable via /how-we-earn + RG 234
+   implied-endorsement risk). Same claim aligned in homepage JSON-LD.
+3. **/compare default**: cold organic landings open on share-trading
+   (mixed "All" view led with three same-rated affiliate rows); missing
+   fee data now renders "Fee data incomplete" instead of a fabricated $0,
+   sinks in cost sorts, and earns a neutral (not perfect) cost score.
+
+Also shipped on #1489: fabricated social-proof counter disabled (sine-curve
+"X investors compared today" — ACL s18 exposure), compare freshness claims
+made data-driven ("rechecked weekly" only when true; raw ISO timestamps and
+"Admin/source note not public" removed from the freshness column), mobile
+chat FAB un-overlapped from the Get Matched tab, /quiz→/get-matched rename
+completed (37 files), QROPS/UK copy genericized in country-mode banner,
+quiz-outcome dead link to phantom /advisors/accountants repointed.
+
+**Ops follow-ups**: fee-recheck pipeline stale since 2026-05-23 (the
+"weekly" claim was false for 17 days); Vercel account still blocked
+(deploy status red on every PR); unknown `[type]`/`[subcategory]` slugs
+soft-404 (HTTP 200 + React #419) instead of clean 404s.
+
 ### 2026-06-09 — Find-advisor quiz: rebuilt the advisor-match brain (scored matching) + master plan
 
 Ran a 5-agent deep audit of the quiz funnel (data/matching, intent architecture,

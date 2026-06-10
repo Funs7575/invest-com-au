@@ -26,9 +26,16 @@ const ITEMS = [
 ];
 
 describe("RelatedContentGrid", () => {
-  it("renders nothing when items is empty", () => {
-    const { container } = render(<RelatedContentGrid items={[]} />);
-    expect(container).toBeEmptyDOMElement();
+  it("renders the curated fallback when items is empty (ADV-116: never returns null)", () => {
+    render(<RelatedContentGrid items={[]} />);
+    // Empty items → curated static articles, so users always have a next step.
+    expect(screen.getByText("You might also like")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /How to start investing in Australia/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /Discover more investing guides/ }),
+    ).toBeInTheDocument();
   });
 
   it("uses the default 'Related Content' heading", () => {

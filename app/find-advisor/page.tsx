@@ -17,6 +17,7 @@ import { browseAdvisorsHref } from "@/lib/find-advisor/browse-link";
 import { formatCountdown, secondsRemaining } from "@/lib/format-countdown";
 import EligibilityQuizSkipBanner from "@/components/EligibilityQuizSkipBanner";
 import CountryRuleAlerts from "@/components/CountryRuleAlerts";
+import { SHOW_GENERIC_VERIFIED } from "@/lib/compliance-config";
 
 // ADV-015: OTP codes are valid for 10 minutes server-side; mirror that for the
 // expiry countdown. Resend is gated for a short cooldown to discourage spamming
@@ -1118,7 +1119,7 @@ function Step1({ onSelect }: { onSelect: (intent: Intent) => void }) {
       </div>
 
       <div className="mt-8 pt-6 border-t border-slate-100 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-slate-500">
-        {["ASIC-verified professionals", "100% free to use", "No spam \u2014 ever"].map((t) => (
+        {[SHOW_GENERIC_VERIFIED ? "ASIC-verified professionals" : "Credentials shown on every profile", "100% free to use", "No spam \u2014 ever"].map((t) => (
           <span key={t} className="flex items-center gap-1.5">
             <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />

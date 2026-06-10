@@ -60,6 +60,10 @@ const EXEMPT = new Map(
       "app/api/account/holdings/ai-analysis/route.ts",
       "delegates LLM orchestration to lib/holdings/ai-analysis.ts which itself imports + calls filterFactualOutput before returning result.rawText; route only forwards the already-filtered text",
     ],
+    [
+      "app/api/smart-filter/route.ts",
+      "structured-extraction route — LLM output is JSON-parsed then whitelisted to a fixed set of URL filter-param keys (INVEST_PARAMS/ADVISOR_PARAMS, string/number only); no model prose is ever returned to the user, only known filter keys",
+    ],
   ]),
 );
 

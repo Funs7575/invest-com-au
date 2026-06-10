@@ -18,6 +18,7 @@ import {
   freshnessSignal,
 } from "@/lib/listing-kind";
 import InvestListingCard from "@/components/InvestListingCard";
+import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import ListingCompareBar from "@/components/invest/ListingCompareBar";
 import SaveSearchButton from "@/components/invest/SaveSearchButton";
 import Icon from "@/components/Icon";
@@ -57,6 +58,10 @@ export interface InvestListingsClientProps {
   /** Set of slugs that already have an approved claim. Cards NOT in this
    *  set render a small "Are you the owner?" link. (Wave 3) */
   claimedSlugs?: Set<string>;
+  /** Show the compact "Build an action plan" Get Matched CTA inline on the
+   *  search row. Set only on the cross-sector marketplace (/invest) — sector
+   *  /listings pages keep their leaner toolbar. */
+  showActionPlanCta?: boolean;
 }
 
 // ─── Australian states ───────────────────────────────────────────────
@@ -120,6 +125,7 @@ export default function InvestListingsClient({
   matchScores,
   advisorOptInCounts,
   claimedSlugs,
+  showActionPlanCta,
 }: InvestListingsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -605,8 +611,8 @@ export default function InvestListingsClient({
       {/* ── Single sticky toolbar (replaces the old two-bar stack) ── */}
       <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200">
         <div className="container-custom py-3 space-y-2.5">
-          {/* Row 1: search · filters · sort · view-mode toggle */}
-          <div className="flex gap-2 items-center">
+          {/* Row 1: search · action-plan CTA · sort · view-mode toggle */}
+          <div className="flex flex-wrap gap-2 items-center">
             <SearchInput
               id="listings-search"
               value={searchInput}
@@ -616,6 +622,10 @@ export default function InvestListingsClient({
               ariaLabel="Search listings"
               suggestions={searchSuggestions}
             />
+
+            {/* Compact Get Matched entry point — replaces the old standalone
+                card that pushed listings below the fold. */}
+            {showActionPlanCta && <GetMatchedEmbed context="opportunity" inline />}
 
             <SortDropdown
               options={SORT_OPTIONS}
@@ -743,7 +753,7 @@ export default function InvestListingsClient({
                     options={chipOptions}
                     value={activeSubcategory}
                     onChange={(v) => setParams({ sub: v })}
-                    label="Narrow by sub-type"
+                    label="Filter results by type"
                   />
                 </div>
               ) : null;
