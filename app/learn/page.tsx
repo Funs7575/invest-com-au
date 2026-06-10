@@ -163,7 +163,7 @@ export default async function LearnHubPage() {
             <p className="text-sm text-slate-600 mb-8">
               Pick the path closest to where you are now. Progress is saved per path so you can pause and come back.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {LEARNING_PATHS.map((path) => {
                 const accent = PATH_ACCENTS[path.colorClass] ?? PATH_ACCENTS["teal"]!;
                 const totalMins = sumEstimatedMinutes(path);
@@ -172,7 +172,7 @@ export default async function LearnHubPage() {
                   <Link
                     key={path.slug}
                     href={`/learn/${path.slug}`}
-                    className={`group flex flex-col rounded-2xl border bg-white p-5 transition-all duration-150 hover:shadow-md hover:${accent.border} ${accent.border}`}
+                    className={`group flex flex-col rounded-xl border bg-white p-4 transition-all duration-150 hover:shadow-md hover:${accent.border} ${accent.border}`}
                   >
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <h3 className={`font-extrabold text-slate-900 leading-snug group-hover:${accent.text} transition-colors text-base`}>

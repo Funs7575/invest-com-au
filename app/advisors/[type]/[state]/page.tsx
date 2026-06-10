@@ -238,12 +238,12 @@ export default async function AdvisorTypeLocationPage({ params }: { params: Prom
         pageDescription={pageDesc}
       />
       <div className="container-custom max-w-3xl pb-10">
-        <section className="mt-10">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <section className="mt-6">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-3">Frequently asked questions</h2>
           <div className="space-y-3">
             {pageFaqs.map((faq) => (
               <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
-                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 font-semibold text-slate-900 list-none">
                   {faq.q}
                   <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
