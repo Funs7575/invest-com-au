@@ -16,6 +16,7 @@ import PresencePinger from "@/components/PresencePinger";
 import SquadInboxClaimRow from "./SquadInboxClaimRow";
 import SquadInboxFirstTimeTour from "./SquadInboxFirstTimeTour";
 import SquadInboxRowActions from "./SquadInboxRowActions";
+import TeamBriefComments from "@/components/teams/TeamBriefComments";
 
 // Private surface — keep out of the index. JSON-LD coverage gate
 // auto-exempts pages with `robots: { index: false }`.
@@ -346,6 +347,11 @@ export default async function SquadInboxPage({ params, searchParams }: PageProps
                     briefId={b.id}
                     otherTeams={otherTeams}
                     snoozed={false}
+                  />
+                  <TeamBriefComments
+                    teamId={team.id as number}
+                    briefId={b.id}
+                    callerName={(caller.name as string) ?? "You"}
                   />
                 </li>
               );
