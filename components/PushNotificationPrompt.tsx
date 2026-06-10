@@ -164,7 +164,7 @@ export default function PushNotificationPrompt() {
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <p className="font-bold text-sm text-slate-900">What do you want to hear about?</p>
-              <button onClick={dismiss} className="text-slate-400 hover:text-slate-600 p-2" aria-label="Close">
+              <button onClick={dismiss} className="text-slate-500 hover:text-slate-600 p-2" aria-label="Close">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>

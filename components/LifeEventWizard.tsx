@@ -124,7 +124,7 @@ export default function LifeEventWizard({
                     />
                   </span>
                   <div className="flex-1 min-w-0">
-                    <span className={`text-sm font-semibold ${done ? "text-slate-400 line-through" : "text-slate-900 group-hover:text-indigo-700"}`}>
+                    <span className={`text-sm font-semibold ${done ? "text-slate-500 line-through" : "text-slate-900 group-hover:text-indigo-700"}`}>
                       {step.title}
                     </span>
                     {step.description && (
@@ -157,13 +157,13 @@ export default function LifeEventWizard({
         {completedCount > 0 && (
           <button
             onClick={reset}
-            className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-600 transition-colors"
           >
             Reset progress
           </button>
         )}
         {saving && (
-          <span className="text-xs text-slate-400">Saving…</span>
+          <span className="text-xs text-slate-500">Saving…</span>
         )}
         {onComplete && allDone && (
           <button

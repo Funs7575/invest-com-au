@@ -251,7 +251,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
                 {status === "error" && (
                   <p className="text-xs text-red-500 text-center">Something went wrong. Please try again.</p>
                 )}
-                <p className="text-[0.65rem] text-slate-400 text-center">Free. No spam. Unsubscribe anytime.</p>
+                <p className="text-[0.65rem] text-slate-500 text-center">Free. No spam. Unsubscribe anytime.</p>
               </form>
             )
           ) : (
@@ -266,7 +266,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
 
           <button
             onClick={handleDismiss}
-            className="w-full mt-3 py-2 min-h-11 text-xs text-slate-400 hover:text-slate-600 text-center transition-colors"
+            className="w-full mt-3 py-2 min-h-11 text-xs text-slate-500 hover:text-slate-600 text-center transition-colors"
           >
             No thanks
           </button>

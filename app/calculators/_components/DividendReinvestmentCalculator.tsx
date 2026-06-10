@@ -121,18 +121,18 @@ export default function DividendReinvestmentCalculator({ searchParams }: Props) 
               {/* Hero */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-4 border-b border-slate-100 gap-3">
                 <div>
-                  <span className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400">Final Portfolio Value</span>
+                  <span className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500">Final Portfolio Value</span>
                   <div className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mt-0.5">
                     <AnimatedNumber value={result.finalValue} />
                   </div>
                 </div>
                 <div className="flex gap-4">
                   <div>
-                    <span className="block text-[0.69rem] font-bold uppercase text-slate-400">Shares</span>
+                    <span className="block text-[0.69rem] font-bold uppercase text-slate-500">Shares</span>
                     <span className="text-lg font-bold text-slate-700">{fmtShares(result.finalShares)}</span>
                   </div>
                   <div>
-                    <span className="block text-[0.69rem] font-bold uppercase text-slate-400">Dividends</span>
+                    <span className="block text-[0.69rem] font-bold uppercase text-slate-500">Dividends</span>
                     <span className="text-lg font-bold text-emerald-600">{fmt(result.totalDividendsReceived)}</span>
                   </div>
                 </div>
@@ -140,7 +140,7 @@ export default function DividendReinvestmentCalculator({ searchParams }: Props) 
 
               {/* Growth chart */}
               <div className="space-y-1.5">
-                <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400 mb-2">Portfolio Growth</p>
+                <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500 mb-2">Portfolio Growth</p>
                 {result.snapshots.filter((_, i) => i % Math.max(1, Math.floor(result.snapshots.length / 8)) === 0 || i === result.snapshots.length - 1).map((s) => (
                   <div key={s.year}>
                     <div className="flex justify-between text-xs mb-0.5">
@@ -170,7 +170,7 @@ export default function DividendReinvestmentCalculator({ searchParams }: Props) 
             </div>
           ) : (
             <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 md:p-12 text-center h-full flex flex-col items-center justify-center">
-              <p className="text-slate-400 text-sm">Enter your share details to see dividend reinvestment projections.</p>
+              <p className="text-slate-500 text-sm">Enter your share details to see dividend reinvestment projections.</p>
             </div>
           )}
         </div>

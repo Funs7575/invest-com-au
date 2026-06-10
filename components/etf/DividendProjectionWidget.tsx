@@ -73,8 +73,8 @@ export default function DividendProjectionWidget({ distributionYield, frankingPe
           aria-label="Investment amount"
         />
         <div className="flex justify-between mt-1">
-          <span className="text-[10px] text-slate-400">$1k</span>
-          <span className="text-[10px] text-slate-400">$500k</span>
+          <span className="text-[10px] text-slate-500">$1k</span>
+          <span className="text-[10px] text-slate-500">$500k</span>
         </div>
       </div>
 
@@ -117,7 +117,7 @@ export default function DividendProjectionWidget({ distributionYield, frankingPe
         )}
       </div>
 
-      <p className="text-[10px] text-slate-400 mt-4 leading-relaxed">
+      <p className="text-[10px] text-slate-500 mt-4 leading-relaxed">
         Estimate based on {ticker}&apos;s stated distribution yield of {distributionYield}% p.a.
         {frankingPercent > 0 && ` Grossed-up calculation uses a 30% corporate tax rate. Actual franking credits depend on your individual tax position.`}
         {" "}Distributions are not guaranteed and past distributions are not a reliable indicator of future distributions.

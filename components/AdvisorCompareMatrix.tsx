@@ -127,7 +127,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
                 {a.rating ? (
                   <>
                     <span className="font-bold text-slate-900">{a.rating.toFixed(1)}</span>
-                    <span className="text-slate-400 text-[0.65rem]"> /5</span>
+                    <span className="text-slate-500 text-[0.65rem]"> /5</span>
                     {a.review_count != null && (
                       <div className="text-[0.6rem] text-slate-500">
                         {a.review_count} review{a.review_count === 1 ? "" : "s"}

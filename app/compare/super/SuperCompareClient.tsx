@@ -305,7 +305,7 @@ export default function SuperCompareClient() {
                 >
                   <td className="px-4 py-3">
                     <span className="font-semibold text-slate-900">{fund.name}</span>
-                    <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">
+                    <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
                       {fund.description}
                     </p>
                   </td>
@@ -377,11 +377,11 @@ export default function SuperCompareClient() {
               <p className="text-xs text-slate-500 mb-3">{fund.description}</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-slate-50 rounded-md p-2">
-                  <span className="text-slate-400 block">Options</span>
+                  <span className="text-slate-500 block">Options</span>
                   <span className="font-semibold text-slate-700">{fund.investment_options}</span>
                 </div>
                 <div className="bg-slate-50 rounded-md p-2">
-                  <span className="text-slate-400 block">Insurance</span>
+                  <span className="text-slate-500 block">Insurance</span>
                   <span className="font-semibold text-slate-700">
                     {fund.insurance_included ? "Included" : "Not included"}
                   </span>

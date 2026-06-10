@@ -346,7 +346,7 @@ export default function PageWalkthrough({
         <div className="flex items-center justify-between px-5 pb-4">
           <button
             onClick={finish}
-            className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-600 transition-colors"
           >
             Skip tour
           </button>

@@ -212,7 +212,7 @@ export default function SaveComparisonButton({
             {/* Notes input (optional) */}
             <label className="block mb-4">
               <span className="text-xs font-semibold text-slate-700 mb-1 block">
-                Notes <span className="text-slate-400 font-normal">(optional)</span>
+                Notes <span className="text-slate-500 font-normal">(optional)</span>
               </span>
               <textarea
                 value={notes}

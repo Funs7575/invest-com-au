@@ -117,7 +117,7 @@ function ActionCard({ action }: { action: NextAction }) {
           <span aria-hidden>&rarr;</span>
         </span>
         {action.showAdviceWarning && (
-          <p className="mt-2 text-[0.65rem] text-slate-400 leading-relaxed border-t border-slate-100 pt-2">
+          <p className="mt-2 text-[0.65rem] text-slate-500 leading-relaxed border-t border-slate-100 pt-2">
             {PDS_CONSIDERATION}
           </p>
         )}

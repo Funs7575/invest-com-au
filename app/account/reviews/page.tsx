@@ -148,7 +148,7 @@ export default async function AccountReviewsPage() {
                       >
                         {badge.label}
                       </span>
-                      {date && <span className="text-xs text-slate-400">{date}</span>}
+                      {date && <span className="text-xs text-slate-500">{date}</span>}
                     </div>
                   </div>
                   <h3 className="text-sm font-bold text-slate-900 mb-1">{review.title}</h3>

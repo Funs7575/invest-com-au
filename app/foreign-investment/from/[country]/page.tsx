@@ -263,7 +263,7 @@ export default async function CountryForeignInvestmentPage({
                     </div>
                     <div className="min-w-0">
                       <p className="font-bold text-sm text-slate-900 truncate">{b.name}</p>
-                      <p className="text-[0.65rem] text-slate-400">
+                      <p className="text-[0.65rem] text-slate-500">
                         {PLATFORM_TYPE_LABELS[b.platform_type] ?? b.platform_type}
                       </p>
                     </div>
@@ -377,7 +377,7 @@ export default async function CountryForeignInvestmentPage({
       {/* ── Related Country Pages ─────────────────────────────────────── */}
       <section className="py-10 bg-slate-50">
         <div className="container-custom">
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Guides by country</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Guides by country</p>
           <div className="flex flex-wrap gap-2">
             {DTA_COUNTRIES.filter((c) => c.countryCode !== dtaCountry.countryCode).slice(0, 12).map((c) => (
               <Link
@@ -461,7 +461,7 @@ export default async function CountryForeignInvestmentPage({
 
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER} {DTA_DISCLAIMER}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER} {DTA_DISCLAIMER}</p>
         </div>
       </section>
     </div>

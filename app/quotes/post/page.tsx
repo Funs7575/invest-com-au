@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import JobPostForm from "./JobPostForm";
@@ -33,27 +34,29 @@ export default function PostJobPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
 
-      {/* Hero */}
-      <section className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-white">
-        <div className="max-w-5xl mx-auto px-4 py-16 sm:py-20">
-          <div className="text-center">
-            <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-3">
-              Free advisor quotes — Australia-wide
-            </p>
-            <h1 className="text-3xl sm:text-5xl font-extrabold mb-4">
-              Post a request — verified advisors will quote you
-            </h1>
-            <p className="text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              Post what you need help with — mortgage, financial planning, SMSF, tax, property, insurance — and Australian advisors will compete for your business. You pick. Free to post.
-            </p>
-          </div>
+      {/* Compact light header (B9 restyle) */}
+      <section className="bg-white border-b border-slate-200">
+        <div className="max-w-5xl mx-auto px-4 pt-4 pb-5 md:pt-5">
+          <nav aria-label="Breadcrumb" className="mb-1.5 text-[11px] md:text-xs text-slate-500">
+            <Link href="/" className="hover:text-slate-700">Home</Link>
+            <span className="mx-1.5" aria-hidden>/</span>
+            <Link href="/quotes" className="hover:text-slate-700">Quotes</Link>
+            <span className="mx-1.5" aria-hidden>/</span>
+            <span className="text-slate-600">Post a Request</span>
+          </nav>
+          <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-[1.9rem]">
+            Post a request — <span className="text-coral-600">verified advisors will quote you</span>
+          </h1>
+          <p className="mt-1 max-w-2xl text-[12.5px] leading-snug text-slate-500 md:text-[13.5px]">
+            Post what you need help with — mortgage, financial planning, SMSF, tax, property, insurance — and Australian advisors will compete for your business. You pick. Free to post.
+          </p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 max-w-4xl mx-auto mt-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 mt-4">
             {TRUST.map((t) => (
-              <div key={t.title} className="bg-white/5 rounded-xl p-4 border border-white/10">
-                <Icon name={t.icon} size={20} className="text-amber-400 mb-2" />
-                <p className="text-sm font-bold text-white mb-1">{t.title}</p>
-                <p className="text-xs text-slate-400 leading-snug">{t.desc}</p>
+              <div key={t.title} className="rounded-lg border border-slate-200 bg-white p-3">
+                <Icon name={t.icon} size={16} className="text-amber-600 mb-1.5" />
+                <p className="text-xs font-bold text-slate-900">{t.title}</p>
+                <p className="mt-0.5 text-[11px] text-slate-500 leading-snug">{t.desc}</p>
               </div>
             ))}
           </div>
@@ -61,14 +64,14 @@ export default function PostJobPage() {
       </section>
 
       {/* Form */}
-      <section className="bg-slate-50 py-12 sm:py-16">
+      <section className="bg-slate-50 py-8">
         <div className="max-w-3xl mx-auto px-4">
           <JobPostForm />
         </div>
       </section>
 
       {/* How it works */}
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white py-8">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2 text-center">How it works</h2>
           <p className="text-sm text-slate-500 mb-10 text-center">Like Airtasker, but for financial advice.</p>

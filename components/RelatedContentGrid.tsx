@@ -94,7 +94,7 @@ export default function RelatedContentGrid({
               {item.title}
             </h4>
             {item.meta && (
-              <span className="text-[0.69rem] md:text-xs text-slate-400">
+              <span className="text-[0.69rem] md:text-xs text-slate-500">
                 {item.meta}
               </span>
             )}

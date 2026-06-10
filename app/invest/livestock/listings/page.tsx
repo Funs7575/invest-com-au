@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { getAllInvestCategories } from "@/lib/invest-categories";
@@ -7,6 +8,7 @@ import {
   countListingsByVertical,
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import ListingComplianceNotice from "@/components/invest/ListingComplianceNotice";
 import WholesaleAttestationGate from "@/components/invest/WholesaleAttestationGate";
 
@@ -49,6 +51,24 @@ export default async function LivestockListingsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {/* House-standard compact light header (E7) — replaces the client's
+          tall page-title band so results land near the fold. */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Livestock & Equine / Listings"
+        headlineLead="Livestock & equine"
+        headlineAccent="opportunities"
+        subtitle="Browse Australian livestock and equine investment opportunities — thoroughbred racehorse syndications via Magic Millions and Inglis, cattle herd programs, sheep and wool breeding, stud rights and genetic investment programs."
+        stats={listings.length > 0 ? [{ v: String(listings.length), l: "Live listings" }] : undefined}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest"
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-[0.65rem] font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 md:text-xs"
+        >
+          ← Browse all investment sectors
+        </Link>
+      </DirectoryHero>
       <ListingComplianceNotice
         productLabel="livestock and equine investment opportunities (including racehorse and breeding syndications)"
         classification="Livestock and equine syndications listed here are commonly regulated managed investment schemes."
@@ -64,8 +84,6 @@ export default async function LivestockListingsPage() {
               listings={listings}
               categories={categoryTabs}
               lockedCategory="livestock"
-              pageTitle="Livestock & Equine Investment Listings"
-              pageSubtitle="Browse Australian livestock and equine investment opportunities — thoroughbred racehorse syndications via Magic Millions and Inglis, cattle herd programs, sheep and wool breeding, stud rights and genetic investment programs."
             />
           </Suspense>
         </WholesaleAttestationGate>

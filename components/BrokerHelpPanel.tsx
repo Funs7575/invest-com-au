@@ -379,7 +379,7 @@ export default function BrokerHelpPanel() {
             {/* Footer */}
             <div className="border-t border-slate-100 px-4 py-2.5 bg-slate-50">
               <div className="flex items-center justify-between">
-                <p className="text-[0.6rem] text-slate-400">
+                <p className="text-[0.6rem] text-slate-500">
                   Press <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[0.55rem] font-mono">Esc</kbd> to close
                 </p>
                 {walkthroughKey && (

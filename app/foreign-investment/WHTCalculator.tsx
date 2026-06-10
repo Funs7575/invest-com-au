@@ -75,7 +75,7 @@ export default function WHTCalculator({ countries, defaultRates }: Props) {
         <div>
           <label htmlFor="wht-gross-amount" className="block text-xs font-bold text-slate-700 mb-1.5">Gross amount (AUD)</label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
             <input
               id="wht-gross-amount"
               type="text"
@@ -159,7 +159,7 @@ export default function WHTCalculator({ countries, defaultRates }: Props) {
         </div>
       ) : (
         <div className="rounded-2xl bg-slate-50 border border-slate-200 px-5 py-6 text-center">
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-500">
             {gross === 0 && grossAmount !== ""
               ? "Enter a valid amount above"
               : "Enter an amount and select your country to see your withholding tax estimate"}
@@ -167,7 +167,7 @@ export default function WHTCalculator({ countries, defaultRates }: Props) {
         </div>
       )}
 
-      <p className="mt-3 text-[0.65rem] text-slate-400 leading-relaxed">
+      <p className="mt-3 text-[0.65rem] text-slate-500 leading-relaxed">
         Estimates only — for illustration purposes. Actual rates depend on your specific treaty, income type, and the payer&apos;s
         classification of the payment. Fully franked dividend refunds do not apply to non-residents. Consult a registered tax agent.
       </p>

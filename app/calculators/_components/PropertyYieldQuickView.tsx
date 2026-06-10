@@ -66,13 +66,13 @@ export default function PropertyYieldQuickView({ searchParams }: Props) {
               negative={result.netIncome < 0}
             />
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             i — Gross yield = (rent / price) × 100. Net yield = ((rent − costs) / price) × 100. Costs cover council, insurance, management and repairs.
           </p>
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Enter a purchase price to see the yield.</p>
+          <p className="text-slate-500 text-sm">Enter a purchase price to see the yield.</p>
         </div>
       )}
 

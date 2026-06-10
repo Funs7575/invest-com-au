@@ -148,7 +148,7 @@ export default async function JourneyIndexPage() {
             ))}
           </div>
 
-          <p className="mt-8 text-xs text-slate-400">
+          <p className="mt-8 text-xs text-slate-500">
             Your country not listed?{" "}
             <Link
               href="/foreign-investment"
@@ -222,7 +222,7 @@ export default async function JourneyIndexPage() {
                 key={item.n}
                 className="bg-white rounded-xl border border-slate-200 p-4"
               >
-                <span className="text-[0.65rem] font-extrabold text-slate-400 uppercase tracking-widest">
+                <span className="text-[0.65rem] font-extrabold text-slate-500 uppercase tracking-widest">
                   Step {item.n}
                 </span>
                 <p className="font-extrabold text-sm text-slate-900 mt-1 mb-1.5">

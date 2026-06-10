@@ -173,7 +173,7 @@ export default function MarketplaceFilterBar({
                   <Icon name={s.icon} size={14} className="text-amber-600 shrink-0" />
                   <span className="min-w-0">
                     <span className="block text-[13px] font-bold text-slate-900">{s.label}</span>
-                    <span className="block text-[11px] text-slate-400">{s.sub}</span>
+                    <span className="block text-[11px] text-slate-500">{s.sub}</span>
                   </span>
                 </button>
               ))}
@@ -192,7 +192,7 @@ export default function MarketplaceFilterBar({
                 Clear quick start
               </button>
             )}
-            <p className="mt-2.5 pt-2 border-t border-slate-100 text-[10px] text-slate-400 leading-snug">
+            <p className="mt-2.5 pt-2 border-t border-slate-100 text-[10px] text-slate-500 leading-snug">
               Applies filters only — general information, not personal advice.
             </p>
           </Popover>
@@ -269,7 +269,7 @@ export default function MarketplaceFilterBar({
                       }`}
                     >
                       <span className="truncate">{c.label}</span>
-                      <span className="font-mono text-[10px] text-slate-400">{count}</span>
+                      <span className="font-mono text-[10px] text-slate-500">{count}</span>
                     </button>
                   );
                 })}
@@ -308,7 +308,7 @@ export default function MarketplaceFilterBar({
                     }`}
                   >
                     {s}
-                    <span className="block text-[9px] font-mono text-slate-400">{count}</span>
+                    <span className="block text-[9px] font-mono text-slate-500">{count}</span>
                   </button>
                 );
               })}
@@ -345,7 +345,7 @@ export default function MarketplaceFilterBar({
                   >
                     <Icon name={meta.icon} size={11} />
                     {meta.label}
-                    <span className="font-mono text-[10px] text-slate-400">{count}</span>
+                    <span className="font-mono text-[10px] text-slate-500">{count}</span>
                   </button>
                 );
               })}

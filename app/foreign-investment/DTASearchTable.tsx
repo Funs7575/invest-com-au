@@ -66,7 +66,7 @@ export default function DTASearchTable({ countries, defaultRates, dtaDisclaimer 
           <tbody>
             {noMatch ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-400">
+                <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-500">
                   No matching country found. Australia has DTAs with 40+ countries — if yours isn&apos;t listed, standard rates apply (dividends 30%, royalties 30%).
                 </td>
               </tr>
@@ -82,7 +82,7 @@ export default function DTASearchTable({ countries, defaultRates, dtaDisclaimer 
                       <div>
                         <span className="font-medium text-slate-900">{c.country}</span>
                         {c.dtaEffectiveYear && (
-                          <span className="text-slate-400 font-normal ml-1.5">({c.dtaEffectiveYear})</span>
+                          <span className="text-slate-500 font-normal ml-1.5">({c.dtaEffectiveYear})</span>
                         )}
                         {c.notes && (
                           <p className="text-[0.65rem] text-slate-500 mt-0.5 leading-relaxed">{c.notes}</p>
@@ -131,7 +131,7 @@ export default function DTASearchTable({ countries, defaultRates, dtaDisclaimer 
           )}
         </table>
       </div>
-      <p className="mt-3 text-xs text-slate-400 leading-relaxed">{dtaDisclaimer}</p>
+      <p className="mt-3 text-xs text-slate-500 leading-relaxed">{dtaDisclaimer}</p>
     </div>
   );
 }

@@ -138,7 +138,7 @@ export default function RateVerificationBadge({ brokerId, brokerName, productKin
                   <div key={i} className="flex items-center gap-2 text-slate-500">
                     <span className="text-emerald-600 font-semibold">{(r.rateBps / 100).toFixed(2)}%</span>
                     {r.termMonths ? <span>{r.termMonths}mo term</span> : null}
-                    <span className="text-slate-400">· {new Date(r.verifiedAt).toLocaleDateString("en-AU", { month: "short", day: "numeric" })}</span>
+                    <span className="text-slate-500">· {new Date(r.verifiedAt).toLocaleDateString("en-AU", { month: "short", day: "numeric" })}</span>
                   </div>
                 ))}
               </div>
@@ -163,7 +163,7 @@ export default function RateVerificationBadge({ brokerId, brokerName, productKin
                   className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   aria-label="Your verified rate (%)"
                 />
-                <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-medium">%</span>
+                <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs font-medium">%</span>
               </div>
               <button
                 type="submit"
@@ -181,7 +181,7 @@ export default function RateVerificationBadge({ brokerId, brokerName, productKin
               className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500"
             />
             {errorMsg && <p className="text-red-600 text-xs">{errorMsg}</p>}
-            <p className="text-slate-400 text-[10px]">
+            <p className="text-slate-500 text-[10px]">
               General information only. Your submission is reviewed before appearing publicly.
             </p>
           </form>

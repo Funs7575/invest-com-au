@@ -84,7 +84,7 @@ export default function SuburbsClient() {
     <div className="bg-white min-h-screen">
       <section className="bg-white border-b border-slate-100">
         <div className="container-custom py-6 md:py-8">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-600">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-600">Property</Link>
@@ -171,7 +171,7 @@ export default function SuburbsClient() {
                             ) : (
                               <span className="font-semibold text-slate-900">{s.suburb}</span>
                             )}
-                            <span className="text-xs text-slate-400 ml-1">{s.state}</span>
+                            <span className="text-xs text-slate-500 ml-1">{s.state}</span>
                           </td>
                           <td className="text-right px-4 py-3 text-slate-700 hidden md:table-cell">{formatPrice(s.median_price_house)}</td>
                           <td className="text-right px-4 py-3 text-emerald-600 font-semibold">{s.rental_yield_house ? `${s.rental_yield_house}%` : "—"}</td>
@@ -192,12 +192,12 @@ export default function SuburbsClient() {
                 <div className="border border-slate-200 rounded-2xl p-5 lg:sticky lg:top-24">
                   <div className="flex items-center justify-between mb-3">
                     <h2 className="text-lg font-bold text-slate-900">{selected.suburb}, {selected.state}</h2>
-                    <button onClick={() => setSelected(null)} aria-label="Close suburb detail" className="text-slate-400 hover:text-slate-600">
+                    <button onClick={() => setSelected(null)} aria-label="Close suburb detail" className="text-slate-500 hover:text-slate-600">
                       <Icon name="x-circle" size={18} />
                     </button>
                   </div>
 
-                  {selected.postcode && <p className="text-xs text-slate-400 mb-4">Postcode: {selected.postcode}</p>}
+                  {selected.postcode && <p className="text-xs text-slate-500 mb-4">Postcode: {selected.postcode}</p>}
 
                   <div className="space-y-3">
                     {selected.median_price_house && <div className="flex justify-between"><span className="text-xs text-slate-500">Median House Price</span><span className="text-sm font-bold text-slate-900">{formatPrice(selected.median_price_house)}</span></div>}
@@ -207,7 +207,7 @@ export default function SuburbsClient() {
                     {selected.vacancy_rate != null && <div className="flex justify-between"><span className="text-xs text-slate-500">Vacancy Rate</span><span className="text-sm font-bold text-slate-900">{selected.vacancy_rate}%</span></div>}
 
                     <div className="border-t border-slate-100 pt-3">
-                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Capital Growth</p>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Capital Growth</p>
                       {selected.capital_growth_1yr && <div className="flex justify-between"><span className="text-xs text-slate-500">1 Year</span><span className="text-sm font-bold text-amber-600">{selected.capital_growth_1yr}%</span></div>}
                       {selected.capital_growth_3yr && <div className="flex justify-between"><span className="text-xs text-slate-500">3 Year</span><span className="text-sm font-bold text-amber-600">{selected.capital_growth_3yr}%</span></div>}
                       {selected.capital_growth_5yr && <div className="flex justify-between"><span className="text-xs text-slate-500">5 Year</span><span className="text-sm font-bold text-amber-600">{selected.capital_growth_5yr}%</span></div>}
@@ -215,7 +215,7 @@ export default function SuburbsClient() {
                     </div>
 
                     <div className="border-t border-slate-100 pt-3">
-                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Demographics</p>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Demographics</p>
                       {selected.population && <div className="flex justify-between"><span className="text-xs text-slate-500">Population</span><span className="text-sm font-bold text-slate-900">{selected.population.toLocaleString()}</span></div>}
                       {selected.population_growth && <div className="flex justify-between"><span className="text-xs text-slate-500">Pop. Growth</span><span className="text-sm font-bold text-slate-900">{selected.population_growth}%</span></div>}
                       {selected.median_age && <div className="flex justify-between"><span className="text-xs text-slate-500">Median Age</span><span className="text-sm font-bold text-slate-900">{selected.median_age}</span></div>}

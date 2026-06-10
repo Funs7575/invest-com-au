@@ -56,7 +56,7 @@ export default function RouteErrorBoundary({
           </Link>
         </div>
         {error.digest && (
-          <p className="mt-6 text-[0.65rem] text-slate-400 font-mono">
+          <p className="mt-6 text-[0.65rem] text-slate-500 font-mono">
             Reference: {error.digest}
           </p>
         )}

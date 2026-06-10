@@ -267,14 +267,14 @@ export default async function ForeignSharesPage() {
                       </div>
                       <span className="font-bold text-sm text-slate-900">{b.name}</span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-2">Eligibility not confirmed. Contact broker directly.</p>
+                    <p className="text-xs text-slate-500 mt-2">Eligibility not confirmed. Contact broker directly.</p>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          <p className="mt-4 text-xs text-slate-400 leading-relaxed">{BROKER_NON_RESIDENT_NOTE}</p>
+          <p className="mt-4 text-xs text-slate-500 leading-relaxed">{BROKER_NON_RESIDENT_NOTE}</p>
           <div className="mt-4">
             <Link href="/compare" className="text-sm font-bold text-amber-600 hover:text-amber-700">
               Compare all share trading platforms &rarr;
@@ -345,7 +345,7 @@ export default async function ForeignSharesPage() {
 
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER} {WITHHOLDING_TAX_NOTE}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER} {WITHHOLDING_TAX_NOTE}</p>
         </div>
       </section>
     </div>

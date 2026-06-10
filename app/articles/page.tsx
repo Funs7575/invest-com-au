@@ -354,12 +354,12 @@ export default async function ArticlesPage({
           <span className="text-slate-700">Guides &amp; Articles</span>
         </nav>
 
-        {/* Page Header */}
-        <div className="bg-gradient-to-r from-slate-50 to-white border border-slate-200 rounded-2xl p-4 md:p-8 mb-3 md:mb-8">
-          <h1 className="text-lg md:text-4xl font-extrabold mb-0.5 md:mb-3 text-slate-900">
+        {/* Page Header — compact light (F6) */}
+        <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-4 mb-3 md:mb-4">
+          <h1 className="text-xl md:text-2xl font-extrabold tracking-tight mb-0.5 md:mb-1 text-slate-900">
             Guides &amp; Articles
           </h1>
-          <p className="text-[0.69rem] md:text-lg text-slate-500 max-w-2xl">
+          <p className="text-[12.5px] md:text-[13.5px] leading-snug text-slate-500 max-w-2xl">
             Expert guides on shares, crypto, super, property, ETFs, tax &amp; more — written for Australian investors.
           </p>
         </div>

@@ -94,7 +94,7 @@ export default async function CountrySchemesSection({
           </div>
         ))}
 
-        <p className="text-xs text-slate-400 mt-6">
+        <p className="text-xs text-slate-500 mt-6">
           General information only — not personal financial, tax, migration, or
           legal advice. Verify the current rules with the cited regulator before
           acting. Every claim links to its primary source and carries a

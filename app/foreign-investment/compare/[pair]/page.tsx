@@ -190,7 +190,7 @@ export default async function ComparePairPage({
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
             <span className="mr-2">{cfgA.flag}</span>
             {cfgA.countryName}{" "}
-            <span className="text-slate-400 font-semibold text-2xl">vs</span>{" "}
+            <span className="text-slate-500 font-semibold text-2xl">vs</span>{" "}
             <span className="mr-2">{cfgB.flag}</span>
             {cfgB.countryName}
             <span className="block text-amber-600 mt-1">
@@ -311,7 +311,7 @@ export default async function ComparePairPage({
                         {row.dimension}
                       </p>
                       {row.note && (
-                        <p className="text-[0.65rem] text-slate-400 leading-snug mt-1">
+                        <p className="text-[0.65rem] text-slate-500 leading-snug mt-1">
                           {row.note}
                         </p>
                       )}
@@ -344,7 +344,7 @@ export default async function ComparePairPage({
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-slate-50 rounded-lg p-3">
-                    <p className="text-[0.65rem] font-bold text-slate-400 mb-1">
+                    <p className="text-[0.65rem] font-bold text-slate-500 mb-1">
                       {cfgA.flag} {cfgA.countryShort}
                     </p>
                     <p className="text-xs text-slate-700 leading-relaxed">
@@ -352,7 +352,7 @@ export default async function ComparePairPage({
                     </p>
                   </div>
                   <div className="bg-amber-50 rounded-lg p-3">
-                    <p className="text-[0.65rem] font-bold text-slate-400 mb-1">
+                    <p className="text-[0.65rem] font-bold text-slate-500 mb-1">
                       {cfgB.flag} {cfgB.countryShort}
                     </p>
                     <p className="text-xs text-slate-700 leading-relaxed">
@@ -361,7 +361,7 @@ export default async function ComparePairPage({
                   </div>
                 </div>
                 {row.note && (
-                  <p className="text-[0.65rem] text-slate-400 leading-snug mt-2">
+                  <p className="text-[0.65rem] text-slate-500 leading-snug mt-2">
                     {row.note}
                   </p>
                 )}
@@ -474,7 +474,7 @@ export default async function ComparePairPage({
                     className="inline-flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-300 hover:bg-amber-50 text-xs font-semibold text-slate-700 hover:text-amber-700 rounded-lg transition-colors"
                   >
                     <span>{cfg.flag}</span>
-                    <span className="text-slate-400">vs</span>
+                    <span className="text-slate-500">vs</span>
                     <span>{otherCfg.flag}</span>
                     {cfg.countryShort} vs {otherCfg.countryShort}
                   </Link>
@@ -550,16 +550,16 @@ export default async function ComparePairPage({
       {/* ── Disclaimers ──────────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom space-y-2">
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             {FOREIGN_INVESTOR_GENERAL_DISCLAIMER}
           </p>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             {DTA_DISCLAIMER}
           </p>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             {FIRB_DISCLAIMER}
           </p>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             {WITHHOLDING_TAX_NOTE}
           </p>
         </div>

@@ -99,13 +99,13 @@ export default function TaxOptimizerQuickView({ searchParams }: Props) {
             </div>
           )}
 
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             i — Individuals receive a 50% CGT discount on assets held for at least 12 months (365 days). Estimate only; exclusions apply.
           </p>
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Enter a capital gain to estimate your CGT.</p>
+          <p className="text-slate-500 text-sm">Enter a capital gain to estimate your CGT.</p>
         </div>
       )}
 

@@ -261,7 +261,7 @@ function AddProductForm({ onAdded }: { onAdded: () => void }) {
         </button>
       </div>
 
-      <p className="text-[11px] text-slate-400">
+      <p className="text-[11px] text-slate-500">
         General information only — estimates based on your inputs. Not personal financial advice.
       </p>
     </form>
@@ -302,7 +302,7 @@ function ProductCard({
     <div className="border border-slate-200 rounded-xl p-4 bg-white space-y-3">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-[11px] uppercase tracking-widest text-slate-400 font-medium">
+          <p className="text-[11px] uppercase tracking-widest text-slate-500 font-medium">
             {KIND_LABELS[product.product_kind]}
           </p>
           <p className="text-base font-semibold text-slate-900 mt-0.5">{product.broker_name}</p>
@@ -318,7 +318,7 @@ function ProductCard({
               Save {comp.annualSavingLabel}/yr
             </p>
             {comp.bestBrokerName && (
-              <p className="text-xs text-slate-400">vs {comp.bestBrokerName}</p>
+              <p className="text-xs text-slate-500">vs {comp.bestBrokerName}</p>
             )}
           </div>
         )}
@@ -342,7 +342,7 @@ function ProductCard({
             </>
           )}
           .{" "}
-          <span className="text-slate-400 text-xs">General information only — not advice.</span>
+          <span className="text-slate-500 text-xs">General information only — not advice.</span>
         </div>
       )}
 
@@ -408,7 +408,7 @@ export default function SwitchingTracker() {
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold text-slate-900">My Products</h2>
         {!loading && products.length > 0 && (
-          <span className="text-xs text-slate-400">{products.length} tracked</span>
+          <span className="text-xs text-slate-500">{products.length} tracked</span>
         )}
       </div>
 

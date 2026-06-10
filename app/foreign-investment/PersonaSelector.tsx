@@ -34,7 +34,7 @@ export default function PersonaSelector({ personas }: Props) {
               {p.label}
             </h3>
             <p className="text-xs text-slate-500 leading-snug">{p.description}</p>
-            <div className={`mt-2 text-xs font-bold transition-colors ${selected === p.id ? "text-amber-600" : "text-slate-400"}`}>
+            <div className={`mt-2 text-xs font-bold transition-colors ${selected === p.id ? "text-amber-600" : "text-slate-500"}`}>
               {selected === p.id ? "Selected ✓" : "Select →"}
             </div>
           </button>

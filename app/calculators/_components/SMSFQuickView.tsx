@@ -70,13 +70,13 @@ export default function SMSFQuickView({ searchParams }: Props) {
                 : `Probably not — you'd need a balance of around ${fmt(result.breakeven)} before SMSF costs break even.`}
             </div>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             i — Breakeven = SMSF annual cost / industry fund % fee. Below this, a percentage-based fund is usually cheaper.
           </p>
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Enter your super balance to compare.</p>
+          <p className="text-slate-500 text-sm">Enter your super balance to compare.</p>
         </div>
       )}
 

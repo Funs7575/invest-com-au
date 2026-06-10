@@ -99,20 +99,20 @@ export default function FireCalculator({ searchParams }: Props) {
               {/* FIRE number hero */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-4 border-b border-slate-100 gap-3">
                 <div>
-                  <span className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400">Your FIRE Number</span>
+                  <span className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500">Your FIRE Number</span>
                   <div className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mt-0.5">
                     <AnimatedNumber value={result.fireNumber} />
                   </div>
                 </div>
                 <div className="flex gap-4">
                   <div>
-                    <span className="block text-[0.69rem] font-bold uppercase text-slate-400">Years Away</span>
+                    <span className="block text-[0.69rem] font-bold uppercase text-slate-500">Years Away</span>
                     <span className={`text-2xl font-extrabold ${result.achieved ? "text-emerald-600" : "text-slate-700"}`}>
                       {result.years >= 80 ? "80+" : result.years}
                     </span>
                   </div>
                   <div>
-                    <span className="block text-[0.69rem] font-bold uppercase text-slate-400">FIRE Age</span>
+                    <span className="block text-[0.69rem] font-bold uppercase text-slate-500">FIRE Age</span>
                     <span className={`text-2xl font-extrabold ${result.achieved ? "text-emerald-600" : "text-slate-700"}`}>
                       {result.fireAge >= 110 ? "110+" : Math.round(result.fireAge)}
                     </span>
@@ -129,8 +129,8 @@ export default function FireCalculator({ searchParams }: Props) {
               {/* Savings chart */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400">Portfolio Growth</p>
-                  <p className="text-[0.69rem] text-slate-400">FIRE target: {fmt(result.fireNumber)}</p>
+                  <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500">Portfolio Growth</p>
+                  <p className="text-[0.69rem] text-slate-500">FIRE target: {fmt(result.fireNumber)}</p>
                 </div>
                 {result.snapshots.filter((_, i) => i % Math.max(1, Math.floor(result.snapshots.length / 8)) === 0 || i === result.snapshots.length - 1).map((s) => (
                   <div key={s.year}>
@@ -161,7 +161,7 @@ export default function FireCalculator({ searchParams }: Props) {
             </div>
           ) : (
             <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 md:p-12 text-center h-full flex flex-col items-center justify-center">
-              <p className="text-slate-400 text-sm">Enter your annual expenses to calculate your FIRE number.</p>
+              <p className="text-slate-500 text-sm">Enter your annual expenses to calculate your FIRE number.</p>
             </div>
           )}
         </div>

@@ -128,7 +128,7 @@ export default function PersonalizedRecommendations() {
               </div>
               <p className="text-sm font-semibold text-slate-800 truncate">{result.name}</p>
               {result.rating && (
-                <p className="text-[0.62rem] text-slate-400">{result.rating}/5 rating</p>
+                <p className="text-[0.62rem] text-slate-500">{result.rating}/5 rating</p>
               )}
             </div>
             <svg className="w-4 h-4 text-slate-300 group-hover:text-slate-500 shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">

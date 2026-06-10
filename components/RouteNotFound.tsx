@@ -53,7 +53,7 @@ export default function RouteNotFound({
         </div>
         {popular && popular.length > 0 ? (
           <div className="border-t border-slate-100 pt-5">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Popular links</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Popular links</p>
             <div className="flex flex-wrap justify-center gap-2">
               {popular.map((link) => (
                 <Link

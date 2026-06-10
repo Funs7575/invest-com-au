@@ -66,7 +66,7 @@ export default function CrossBorderPartnerPanel({
             >
               {p.ctaLabel} &rarr;
             </a>
-            {p.note ? <p className="mt-2 text-[11px] text-slate-400 leading-snug">{p.note}</p> : null}
+            {p.note ? <p className="mt-2 text-[11px] text-slate-500 leading-snug">{p.note}</p> : null}
           </div>
         ))}
       </div>

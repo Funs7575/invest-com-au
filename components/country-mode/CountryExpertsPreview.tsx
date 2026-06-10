@@ -121,7 +121,7 @@ export default async function CountryExpertsPreview() {
                     </p>
                     <p className="text-xs text-slate-500 truncate">{e.type}</p>
                     {e.firm_name && (
-                      <p className="text-xs text-slate-400 truncate mt-0.5">{e.firm_name}</p>
+                      <p className="text-xs text-slate-500 truncate mt-0.5">{e.firm_name}</p>
                     )}
                   </div>
                 </div>

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import { faqJsonLd } from "@/lib/schema-markup";
 
 const BUY_BUSINESS_FAQS = [
@@ -60,83 +61,32 @@ export default function BuyBusinessPage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buyBusinessFaqLd) }} />
       )}
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <span className="text-slate-900 font-medium">Buy a Business</span>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
-              Updated {CURRENT_YEAR}
-            </span>
-            <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">
-              Australian Guide
-            </span>
-          </div>
-
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
-            Buy a Business in Australia
-          </h1>
-          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl mb-8">
-            From small cafes to established manufacturing businesses. Everything you need to know about acquiring a business in Australia — including visa pathways for international buyers.
-          </p>
-
-          <Link
-            href="/invest/buy-business/listings"
-            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-base px-7 py-3.5 rounded-xl transition-colors shadow-lg"
-          >
-            Browse Businesses for Sale
-            <Icon name="arrow-right" size={18} />
-          </Link>
-        </div>
-      </section>
-
-      {/* Browse Listings CTA */}
-      <section className="bg-white pt-8">
-        <div className="container-custom">
-          <Link
-            href="/invest/buy-business/listings"
-            className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl mb-8 hover:border-emerald-300 hover:shadow-md transition-all"
-          >
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-1">Browse Listings</p>
-              <p className="text-lg font-extrabold text-slate-900">View all businesses for sale &rarr;</p>
-              <p className="text-sm text-slate-600 mt-0.5">Active deals, FIRB-eligible, sub-categories &amp; more</p>
-            </div>
-            <svg className="w-8 h-8 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </div>
-      </section>
-
-      {/* Quick stats */}
-      <section className="py-10 bg-amber-50 border-b border-amber-100">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { value: "50,000+", label: "Businesses sold annually" },
-              { value: "$800K", label: "188A minimum business value" },
-              { value: "$5M", label: "SIV complying investment" },
-              { value: "$268M", label: "FIRB general threshold" },
-            ].map((s) => (
-              <div key={s.label} className="bg-white border border-amber-100 rounded-xl p-4 text-center">
-                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
-                <p className="text-xs text-slate-600 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Hero — house-standard compact light header (E3). The old stat band
+          rides as pills beside the title; the browse-all entry point lives in
+          the light band below, replacing the standalone CTA band (E4). */}
+      <DirectoryHero
+        tone="light"
+        breadcrumbLabel="Buy a Business"
+        headlineLead="Buy a Business in Australia"
+        subtitle="From small cafes to established manufacturing businesses. Everything you need to know about acquiring a business in Australia — including visa pathways for international buyers."
+        stats={[
+          { v: "50,000+", l: "Businesses sold annually" },
+          { v: "$800K", l: "188A minimum business value" },
+          { v: "$5M", l: "SIV complying investment" },
+          { v: "$268M", l: "FIRB general threshold" },
+        ]}
+        containerClassName="container-custom"
+      >
+        <Link
+          href="/invest/buy-business/listings"
+          className="inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
+        >
+          Browse all businesses for sale →
+        </Link>
+      </DirectoryHero>
 
       {/* Business types */}
-      <section className="py-14 bg-white">
+      <section className="py-8 md:py-10 bg-white">
         <div className="container-custom max-w-4xl">
           <SectionHeading
             eyebrow="Types of businesses"
@@ -327,7 +277,7 @@ export default function BuyBusinessPage() {
       </section>
 
       {/* Browse CTA */}
-      <section className="py-14 bg-white border-t border-slate-100">
+      <section className="py-8 md:py-10 bg-white border-t border-slate-100">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 text-center">
             <h2 className="text-2xl font-extrabold text-slate-900 mb-3">Ready to Find Your Business?</h2>
@@ -354,7 +304,7 @@ export default function BuyBusinessPage() {
         </div>
       </section>
 
-      <section className="py-10 bg-white border-t border-slate-200">
+      <section className="py-6 md:py-8 bg-white border-t border-slate-200">
         <div className="container-custom max-w-3xl">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
           <div className="space-y-3">

@@ -309,13 +309,13 @@ export default async function PropertyHubPage() {
                           )}
                         </div>
                         <div className="p-3">
-                          <p className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mb-0.5">{listing.city} · {listing.suburb}</p>
+                          <p className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 mb-0.5">{listing.city} · {listing.suburb}</p>
                           <h3 className="text-xs font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-1.5">{listing.title}</h3>
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-extrabold text-slate-900">From {formatPrice(listing.price_from_cents ?? 0)}</span>
                           </div>
                           {listing.completion_date && (
-                            <p className="text-[0.6rem] text-slate-400 mt-1">Completion: {listing.completion_date}</p>
+                            <p className="text-[0.6rem] text-slate-500 mt-1">Completion: {listing.completion_date}</p>
                           )}
                         </div>
                       </Link>
@@ -342,7 +342,7 @@ export default async function PropertyHubPage() {
           <div className="container-custom">
             <div className="flex items-end justify-between gap-2 mb-6">
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Browse by Type</p>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Browse by Type</p>
                 <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">What are you looking for?</h2>
               </div>
             </div>
@@ -586,7 +586,7 @@ export default async function PropertyHubPage() {
                     <Icon name="users" size={20} className="text-amber-400" />
                   </div>
                   <h3 className="text-lg md:text-xl font-bold text-white mb-2">Find a Buyer&apos;s Agent</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed mb-4">
+                  <p className="text-sm text-slate-500 leading-relaxed mb-4">
                     A verified buyer&apos;s agent negotiates on your behalf, giving you access to off-market deals and saving you thousands.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-5">
@@ -619,7 +619,7 @@ export default async function PropertyHubPage() {
                     ].map((stat) => (
                       <div key={stat.label} className="bg-slate-50 rounded-lg p-2.5 text-center">
                         <div className="text-sm font-extrabold text-slate-900">{stat.value}</div>
-                        <div className="text-[0.6rem] text-slate-400">{stat.label}</div>
+                        <div className="text-[0.6rem] text-slate-500">{stat.label}</div>
                       </div>
                     ))}
                   </div>

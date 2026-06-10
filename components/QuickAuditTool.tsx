@@ -118,7 +118,7 @@ export default function QuickAuditTool({ brokers }: QuickAuditToolProps) {
           </div>
           <div>
             <h3 className="text-sm font-bold text-white">How Much Am I Paying?</h3>
-            <p className="text-xs text-slate-400">Quick fee audit in 10 seconds</p>
+            <p className="text-xs text-slate-500">Quick fee audit in 10 seconds</p>
           </div>
         </div>
       </div>
@@ -310,7 +310,7 @@ export default function QuickAuditTool({ brokers }: QuickAuditToolProps) {
                           : "bg-slate-50"
                       }`}
                     >
-                      <span className="w-4 text-center font-bold text-slate-400">{i + 1}</span>
+                      <span className="w-4 text-center font-bold text-slate-500">{i + 1}</span>
                       <BrokerLogo broker={r.broker} size="xs" />
                       <span className="flex-1 font-semibold text-slate-700 truncate">
                         {r.broker.name}
@@ -332,7 +332,7 @@ export default function QuickAuditTool({ brokers }: QuickAuditToolProps) {
                   );
                 })}
               </div>
-              <p className="text-[0.6rem] text-slate-400 mt-2 text-center">
+              <p className="text-[0.6rem] text-slate-500 mt-2 text-center">
                 Based on 80% ASX / 20% US allocation. Includes brokerage, FX, and inactivity fees.
               </p>
             </div>

@@ -163,7 +163,7 @@ export default function StampDutyForeignBuyersPage() {
                   <tr key={s.stateCode} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3">
                       <span className="font-medium text-slate-800">{s.state}</span>
-                      <span className="ms-2 text-xs text-slate-400">{s.stateCode}</span>
+                      <span className="ms-2 text-xs text-slate-500">{s.stateCode}</span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`font-bold text-lg ${s.surchargePercent > 0 ? "text-red-700" : "text-emerald-700"}`}>
@@ -174,7 +174,7 @@ export default function StampDutyForeignBuyersPage() {
                       {s.landTaxSurchargePercent ? (
                         <span className="font-semibold text-orange-700">{s.landTaxSurchargePercent}% p.a.</span>
                       ) : (
-                        <span className="text-slate-400">None</span>
+                        <span className="text-slate-500">None</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs text-slate-500 hidden lg:table-cell">{s.notes}</td>
@@ -306,7 +306,7 @@ export default function StampDutyForeignBuyersPage() {
                   <h3 className="font-bold text-slate-800">{s.state}</h3>
                   <div className="text-right">
                     <span className={`text-sm font-extrabold ${s.surcharge === "0% (None)" ? "text-emerald-700" : "text-red-700"}`}>{s.surcharge}</span>
-                    <p className="text-xs text-slate-400">stamp duty</p>
+                    <p className="text-xs text-slate-500">stamp duty</p>
                   </div>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed mb-2">{s.detail}</p>

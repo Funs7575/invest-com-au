@@ -103,7 +103,7 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
             Avg Trade Size (AUD)
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">$</span>
             <input
               id="tc-avg-trade"
               type="number" inputMode="decimal"
@@ -232,7 +232,7 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
                       </td>
                       <td className="py-3 px-2 text-right text-sm font-mono font-bold">
                         <AnimatedNumber value={r.total} />
-                        <span className="text-[0.69rem] font-normal text-slate-400 ml-0.5">/yr</span>
+                        <span className="text-[0.69rem] font-normal text-slate-500 ml-0.5">/yr</span>
                       </td>
                       <td className="py-3 pl-4 w-40">
                         <div className="h-4 bg-slate-100 rounded-full overflow-hidden">

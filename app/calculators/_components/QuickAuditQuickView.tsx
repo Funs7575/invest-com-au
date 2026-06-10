@@ -126,7 +126,7 @@ export default function QuickAuditQuickView({ brokers, searchParams }: Props) {
         </>
       ) : (
         <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm">Select your broker and enter your trading profile.</p>
+          <p className="text-slate-500 text-sm">Select your broker and enter your trading profile.</p>
         </div>
       )}
 

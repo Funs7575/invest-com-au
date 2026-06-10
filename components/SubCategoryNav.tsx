@@ -26,7 +26,7 @@ export default function SubCategoryNav({ category, activeSubcategory }: SubCateg
       aria-label={`${category.label} sub-categories`}
       className="mb-6"
     >
-      <p className="text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-400 mb-2 px-0.5">
+      <p className="text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500 mb-2 px-0.5">
         Browse by type
       </p>
       {/* Scrollable tab row with fade masks */}

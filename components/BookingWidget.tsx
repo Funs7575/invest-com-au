@@ -351,7 +351,7 @@ export default function BookingWidget({
                   : isPaid && priceLabel ? `Pay ${priceLabel} & Confirm →` : "Confirm Booking"}
               </button>
             </div>
-            <p className="text-[0.56rem] text-slate-400 mt-2 text-center">
+            <p className="text-[0.56rem] text-slate-500 mt-2 text-center">
               By booking, you agree to share your details with {advisorName}. <a href="/privacy" className="underline">Privacy Policy</a>
             </p>
           </>

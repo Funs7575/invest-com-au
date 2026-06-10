@@ -50,7 +50,7 @@ const KEY_NUMBERS = [
   {
     label: "Status",
     value: "Proposed",
-    note: "Announced in the 2023 Federal Budget. Proposed start was 1 July 2025, but Senate negotiations delayed it — check the current status.",
+    note: "Announced in the 2023 Federal Budget. Proposed start was 1 July 2025, but Senate negotiations delayed it — check the current status.", // dated-ok — historical reference to the announced proposal
     tone: "blue",
   },
 ] as const;
@@ -93,7 +93,7 @@ const SECTIONS = [
   {
     id: "legislative-status",
     heading: "Legislative status — proposed, not settled",
-    body: "Division 296 was announced in the 2023 Federal Budget as a measure to reduce the tax concessions on very large super balances. The Government proposed a start date of 1 July 2025.\n\nHowever, the measure faced significant negotiation in the Senate and did not pass on its original timetable. As a proposed (legislation-pending) measure, its final form — including the start date, the design of the earnings calculation, and the treatment of unrealised gains — may change before it becomes law, or may be amended as part of Senate negotiations.\n\nBecause the position has been moving, you should treat any specific start date with caution and check the current status with the ATO, Treasury, or a licensed adviser before acting. This page describes the mechanism as proposed; it is not a statement that the tax is in force, nor a prediction of its final shape. Where this guide refers to a 1 July 2025 start, that reflects the originally announced date, which may have shifted.",
+    body: "Division 296 was announced in the 2023 Federal Budget as a measure to reduce the tax concessions on very large super balances. The Government proposed a start date of 1 July 2025.\n\nHowever, the measure faced significant negotiation in the Senate and did not pass on its original timetable. As a proposed (legislation-pending) measure, its final form — including the start date, the design of the earnings calculation, and the treatment of unrealised gains — may change before it becomes law, or may be amended as part of Senate negotiations.\n\nBecause the position has been moving, you should treat any specific start date with caution and check the current status with the ATO, Treasury, or a licensed adviser before acting. This page describes the mechanism as proposed; it is not a statement that the tax is in force, nor a prediction of its final shape. Where this guide refers to a 1 July 2025 start, that reflects the originally announced date, which may have shifted.", // dated-ok — historical reference; copy already hedges current status
   },
   {
     id: "how-it-works",
@@ -156,7 +156,7 @@ const VS_293 = [
   },
   {
     label: "Status",
-    d296: "Proposed (legislation pending) — originally announced to start 1 July 2025",
+    d296: "Proposed (legislation pending) — originally announced to start 1 July 2025", // dated-ok — historical reference to the announced proposal
     d293: "In force — an established part of the super tax system",
   },
 ] as const;
@@ -181,7 +181,7 @@ const FAQS = [
   },
   {
     q: "When does Division 296 start?",
-    a: "Division 296 was announced in the 2023 Federal Budget with a proposed start date of 1 July 2025. However, it faced Senate negotiation and delays and did not pass on that original timetable. As a proposed measure, the start date may have shifted and the design may change before it becomes law. Always check the current status with the ATO, Treasury, or a licensed financial adviser before making decisions based on it.",
+    a: "Division 296 was announced in the 2023 Federal Budget with a proposed start date of 1 July 2025. However, it faced Senate negotiation and delays and did not pass on that original timetable. As a proposed measure, the start date may have shifted and the design may change before it becomes law. Always check the current status with the ATO, Treasury, or a licensed financial adviser before making decisions based on it.", // dated-ok — historical reference to the announced proposal; copy already directs readers to check current status
   },
 ] as const;
 
@@ -357,7 +357,7 @@ export default function Division296Page() {
                 <span className="text-rose-700">$15,000</span>
               </div>
             </div>
-            <p className="mt-4 text-xs text-slate-400 leading-relaxed">
+            <p className="mt-4 text-xs text-slate-500 leading-relaxed">
               Illustrative only, using the proposed proportional method. The $15,000 is in addition to
               the 15% earnings tax the fund already pays in accumulation phase. Actual outcomes depend on
               the final legislated rules, your specific balances, and your contributions and withdrawals.
@@ -571,7 +571,7 @@ export default function Division296Page() {
       {/* ── Compliance footer ────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             Division 296 is proposed legislation and was not in force at the time of writing. Its design
             and start date may change. This page is general information only, current as at {UPDATED_LABEL.replace("Updated ", "")}.
             {" "}

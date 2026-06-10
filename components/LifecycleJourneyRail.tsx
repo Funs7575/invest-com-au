@@ -133,7 +133,7 @@ export default function LifecycleJourneyRail({ hubSlug }: LifecycleJourneyRailPr
 
         {/* All stages mini-nav */}
         <div className="mt-4 flex flex-wrap gap-2 items-center">
-          <span className="text-xs text-slate-400 mr-1">Full journey:</span>
+          <span className="text-xs text-slate-500 mr-1">Full journey:</span>
           {journey.stages.map((stage, i) => {
             const isCurrent = i === currentIndex;
             return isCurrent ? (
@@ -158,7 +158,7 @@ export default function LifecycleJourneyRail({ hubSlug }: LifecycleJourneyRailPr
 
         {/* Other journeys this hub belongs to */}
         {contexts.length > 1 && (
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-3 text-xs text-slate-500">
             Also part of:{" "}
             {contexts
               .slice(1)
