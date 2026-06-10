@@ -14,6 +14,29 @@
 
 ## Active strategic decisions log
 
+### 2026-06-10 — Merged #1477 (matching brain + portal wizard); canonical-surface integration finding
+
+Squash-merged PR #1477 to main (f167d58, founder-instructed): server-side
+scored advisor matching + corridor-specialty routing (UK pension / FATCA /
+DASP / FIRB — pre-fix the exact-corridor specialist scored as having no
+relevant specialty), the option↔schema contract net (caught 2 silent
+lead-nulling bugs), all stranded advisor types, the advisor-portal
+profile-completeness lib + guided onboarding wizard, profile reviews
+Load-more, and the WCAG directory/funnel contrast pass.
+
+**Integration finding:** #1489 made `/get-matched` canonical (permanent
+`/quiz` redirect) while #1477 was in flight. The merged branch's lib/API/
+portal/profile/directory work is all live; the root `/quiz` page UI is the
+consolidation *reference implementation* behind the redirect. Port-list for
+Phase 5 recorded in QUIZ_REDESIGN.md §6 (multi-select needs + pickPrimary,
+readiness gate, trust strip, advisor-match engine convergence). Follow-up
+shipped: full-funnel PostHog on `/get-matched` (funnel_started /
+step_answered / step_back / resolved) — it previously had ZERO analytics,
+so drop-off analysis on the canonical funnel could not run.
+
+**Revisit:** Phase-5 consolidation (engine convergence + /find-advisor
+OTP decision); ratchet vitest coverage floors after the next few PRs.
+
 ### 2026-06-10 — Homepage cleanup: 24 sections → 13; paid-placement policy for the marketplace teaser
 
 Founder call ("way too long and bloated") + expert review. Decisions:

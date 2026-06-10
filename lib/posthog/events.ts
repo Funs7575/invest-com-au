@@ -1,12 +1,19 @@
 export type EventName =
   | 'quiz_started'
   | 'quiz_completed'
+  | 'funnel_started'
+  | 'funnel_step_answered'
+  | 'funnel_step_back'
+  | 'funnel_resolved'
   | 'advisor_viewed'
   | 'advisor_contacted'
   | 'lead_submitted'
   | 'advisor_response'
   | 'lead_outcome'
   | 'ai_referral'
+
+/** Which matching funnel a funnel_* event came from. */
+export type FunnelName = 'get_matched' | 'quiz' | 'find_advisor'
 
 export interface EventProps {
   quiz_started: {
@@ -30,6 +37,40 @@ export interface EventProps {
      * inbound corridor without a separate event name.
      */
     country: string | null
+  }
+  /**
+   * Mid-funnel events (§5.8): until these, only started/completed reached
+   * PostHog, so per-step drop-off analysis on the matching funnels could not
+   * run at all. Answer values are option keys / slugs (never free text or
+   * contact details) and are truncated by the callers.
+   */
+  funnel_started: {
+    funnel: FunnelName
+    source_page: string
+    mode: string | null
+    prefilled: boolean
+    resumed: boolean
+  }
+  funnel_step_answered: {
+    funnel: FunnelName
+    step_slug: string
+    step_index: number
+    total_steps: number
+    answer: string
+  }
+  funnel_step_back: {
+    funnel: FunnelName
+    step_slug: string
+    step_index: number
+  }
+  funnel_resolved: {
+    funnel: FunnelName
+    /** Result route/outcome kind (e.g. the get-matched ResultTemplate.route). */
+    outcome: string
+    advisor_type: string | null
+    match_count: number
+    step_count: number
+    time_taken_seconds: number
   }
   advisor_viewed: {
     advisor_id: number
