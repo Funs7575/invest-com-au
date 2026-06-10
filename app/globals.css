@@ -79,6 +79,13 @@
   --font-display: var(--font-inter), "Inter Display", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
   --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+
+  /* WCAG AA — slate-400's default #94a3b8 is ~3.5:1 on white, below the 4.5:1
+   * threshold for normal text. Override to #64748b (slate-500 value, 4.68:1 on
+   * white) so every `text-slate-400` body text use passes AA without touching
+   * 2500+ individual callsites. Icons and decorative elements (aria-hidden) are
+   * exempt from SC 1.4.3, so the slightly darker hue there is benign. */
+  --color-slate-400: #64748b;
 }
 
 html {

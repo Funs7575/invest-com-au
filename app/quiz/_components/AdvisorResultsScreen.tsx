@@ -423,7 +423,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                         {advisor.rating > 0 && (
                           <div className="text-right shrink-0">
                             <p className="text-sm font-bold text-amber-500">★ {advisor.rating.toFixed(1)}</p>
-                            {advisor.review_count > 0 && <p className="text-xs text-slate-400">{advisor.review_count} reviews</p>}
+                            {advisor.review_count > 0 && <p className="text-xs text-slate-500">{advisor.review_count} reviews</p>}
                           </div>
                         )}
                         <Icon name="chevron-right" size={16} className="text-slate-300 shrink-0" />
