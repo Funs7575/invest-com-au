@@ -204,14 +204,14 @@ export default function AdvisorCompareClient() {
             <thead>
               <tr className="border-b border-slate-200">
                 {/* Feature label header */}
-                <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide bg-slate-50 sticky left-0 z-10 min-w-[9rem]">
+                <th scope="col" className="px-3 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide bg-slate-50 sticky left-0 z-10 min-w-[8rem] md:min-w-[9rem]">
                   Feature
                 </th>
 
                 {columns.map((col) => {
                   const advisor = advisors.find((a) => a.slug === col.slug);
                   return (
-                    <th scope="col" key={col.slug} className="px-4 py-4 text-center min-w-[200px] align-top">
+                    <th scope="col" key={col.slug} className="px-3 py-3 text-center min-w-[150px] md:min-w-[170px] lg:min-w-[200px] align-top">
                       {/* Remove button */}
                       <div className="flex justify-end mb-1">
                         <button

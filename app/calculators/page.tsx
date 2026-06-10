@@ -142,15 +142,15 @@ export default async function CalculatorsPage() {
           subtitle="Answer 5-7 quick questions — we'll match you to the right platform, opportunity, or verified pro for your situation."
         />
         <ComplianceFooter variant="calculator" />
-        <div className="mt-8 space-y-3">
+        <div className="mt-8 space-y-2.5">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
           {CALCULATORS_FAQS.map((faq) => (
             <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
-              <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+              <summary className="px-4 py-3 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
                 {faq.q}
                 <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
               </summary>
-              <div className="px-5 pb-4">
+              <div className="px-4 pb-3">
                 <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </div>
             </details>

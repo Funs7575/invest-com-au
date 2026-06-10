@@ -100,7 +100,7 @@ export default async function AccountPage() {
       {dashboard && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 space-y-4">
           <AccountHero hero={dashboard.hero} />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <Kpi label="Action plans" value={String(dashboard.kpis.plans)} />
             <Kpi label="Match Requests" value={String(dashboard.kpis.briefs)} />
             <Kpi
@@ -241,7 +241,7 @@ function Kpi({
     ? "bg-amber-50 border-amber-200 text-amber-900"
     : "bg-white border-slate-200 text-slate-900";
   return (
-    <div className={`rounded-xl border p-4 ${cls}`}>
+    <div className={`rounded-xl border p-3 ${cls}`}>
       <p className="text-[11px] uppercase tracking-widest mb-1 opacity-80">{label}</p>
       <p className="text-2xl font-extrabold">{value}</p>
     </div>

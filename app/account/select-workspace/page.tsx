@@ -13,7 +13,6 @@ import { createClient } from "@/lib/supabase/server";
 import {
   getKindsForUser,
   type KindMembership,
-  type WorkspaceKind,
 } from "@/lib/account-kinds";
 import SelectWorkspaceClient from "./SelectWorkspaceClient";
 
@@ -50,14 +49,14 @@ export default async function SelectWorkspacePage() {
       ];
 
   return (
-    <main className="bg-slate-50 min-h-[60vh]">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
-        <header className="mb-8 text-center">
+    <main className="bg-slate-50">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 md:py-8">
+        <header className="mb-6 text-center">
           <h1 className="text-2xl font-bold text-slate-900 mb-2">
             Choose your workspace
           </h1>
           <p className="text-sm text-slate-600">
-            You have multiple roles on Invest.com.au. Pick the workspace you'd like to start in — you can switch any time from the header menu.
+            You have multiple roles on Invest.com.au. Pick the workspace you&apos;d like to start in — you can switch any time from the header menu.
           </p>
         </header>
         <SelectWorkspaceClient memberships={augmented} />

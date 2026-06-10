@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function AdvisorComparePage() {
   return (
-    <div className="max-w-6xl mx-auto px-4 pt-5 pb-10 md:pt-10 md:pb-14">
+    <div className="max-w-6xl mx-auto px-4 pt-3 pb-6 md:pt-4 md:pb-8">
       <Suspense
         fallback={
           <div className="animate-pulse space-y-4">
