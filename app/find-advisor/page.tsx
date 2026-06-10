@@ -11,6 +11,7 @@ import { Select } from "@/components/ui/Select";
 import { Card } from "@/components/ui/Card";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
+import { trackEvent as phTrack } from "@/lib/posthog/events";
 import { submitLead } from "@/lib/submit-lead-client";
 import { isCrossBorderSpecialty } from "@/lib/advisor-billing-multipliers";
 import { browseAdvisorsHref } from "@/lib/find-advisor/browse-link";
@@ -614,6 +615,29 @@ function FindAdvisorQuiz() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // §5.8 funnel analytics — mirrors /get-matched's events so drop-off and the
+  // preview-before-OTP change are measurable per step. Option keys only.
+  const funnelStartedAtRef = useRef<number>(Date.now());
+  useEffect(() => {
+    phTrack("funnel_started", {
+      funnel: "find_advisor",
+      source_page: typeof window !== "undefined" ? window.location.pathname : "/find-advisor",
+      mode: preferredSpecialty ?? null,
+      prefilled: !!initialIntent,
+      resumed: !!savedMatch || !!resumableQuiz,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only funnel start
+  }, []);
+
+  const phStep = (stepIndex: number, slug: string, answer: string) =>
+    phTrack("funnel_step_answered", {
+      funnel: "find_advisor",
+      step_slug: slug,
+      step_index: stepIndex,
+      total_steps: 4,
+      answer: answer.slice(0, 60),
+    });
+
   // ADV-008: on mount, offer "resume" if saved progress exists and no URL pre-fill
   useEffect(() => {
     if (quiz.step === 1 && !initialIntent) {
@@ -665,6 +689,7 @@ function FindAdvisorQuiz() {
     update({ intent, step: 2, context: [] });
     setErrors({});
     trackEvent("find_advisor_step1", { intent }, "/find-advisor");
+    phStep(1, "intent", intent);
   };
 
   const toggleContext = (id: string, isRadio: boolean) => {
@@ -681,6 +706,7 @@ function FindAdvisorQuiz() {
     setErrors({});
     update({ step: 3 });
     trackEvent("find_advisor_step2", { context: quiz.context }, "/find-advisor");
+    phStep(2, "context", quiz.context.join(","));
   };
 
   // §5.6: show the match preview BEFORE asking for contact details. The
@@ -723,6 +749,7 @@ function FindAdvisorQuiz() {
       }
       update({ step: 4 });
       trackEvent("find_advisor_match_previewed", { intent: quiz.intent, matched: !!data.matched }, "/find-advisor");
+      phStep(3, "location", quiz.state);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Network error. Please try again.");
     } finally {
@@ -815,6 +842,7 @@ function FindAdvisorQuiz() {
       setNowMs(sentAt);
       setOtpStage("sent");
       setOtpSentAt(Date.now());
+      phStep(4, "contact", "contact_submitted"); // no PII in analytics
     } catch {
       setOtpError("Network error. Please try again.");
       setOtpStage("idle");
@@ -878,6 +906,14 @@ function FindAdvisorQuiz() {
       clearQuizProgress(); // ADV-008: quiz finished — drop the resume snapshot.
       trackEvent("find_advisor_confirmed", { intent: quiz.intent, advisor: advisor.slug }, "/find-advisor");
       trackEvent("find_advisor_complete", { intent: quiz.intent, matched: true }, "/find-advisor");
+      phTrack("funnel_resolved", {
+        funnel: "find_advisor",
+        outcome: "lead_confirmed",
+        advisor_type: quiz.intent ? intentToNeed(quiz.intent) : null,
+        match_count: matchedAdvisors.length,
+        step_count: 4,
+        time_taken_seconds: Math.round((Date.now() - funnelStartedAtRef.current) / 1000),
+      });
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Network error. Please try again.");
     } finally {
@@ -965,7 +1001,15 @@ function FindAdvisorQuiz() {
     }
   };
 
-  const goBack = () => { setErrors({}); update({ step: quiz.step - 1 }); };
+  const goBack = () => {
+    setErrors({});
+    phTrack("funnel_step_back", {
+      funnel: "find_advisor",
+      step_slug: ["", "intent", "context", "location", "preview", "contact"][quiz.step] ?? String(quiz.step),
+      step_index: quiz.step,
+    });
+    update({ step: quiz.step - 1 });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16">
