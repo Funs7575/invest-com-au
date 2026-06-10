@@ -12,12 +12,17 @@ export interface MatchedAdvisor {
   firm_name: string | null;
   type: string;
   photo_url: string | null;
-  rating: number;
-  review_count: number;
+  rating: number | null;
+  review_count: number | null;
   location_display: string | null;
+  location_state?: string | null;
   specialties: string[];
   fee_description: string | null;
-  verified: boolean;
+  verified: boolean | null;
+  accepts_international_clients?: boolean;
+  available_in_countries?: string[];
+  median_response_hours?: number | null;
+  match_reasons?: string[]; // Dynamic match reasons generated from quiz + advisor attributes
 }
 
 function typeLabel(type: string): string {
@@ -47,7 +52,6 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
 }
 
 interface Props {
-  userEmail: string;
   userFirstName: string;
   currentMatch: MatchedAdvisor | null;
   allMatches: MatchedAdvisor[];
@@ -62,7 +66,7 @@ interface Props {
 }
 
 export default function AdvisorMatchedScreen({
-  userEmail, userFirstName, currentMatch, allMatches,
+  userFirstName, currentMatch, allMatches,
   matchIndex, onRematch, rematching, noMoreMatches, onRestart,
   submitError, onConfirm, confirming,
 }: Props) {
@@ -174,8 +178,8 @@ export default function AdvisorMatchedScreen({
                 <p className="text-xs text-slate-500 mt-0.5">{currentMatch.firm_name}</p>
               )}
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
-                {currentMatch.rating > 0 && (
-                  <StarRating rating={currentMatch.rating} count={currentMatch.review_count} />
+                {currentMatch.rating && currentMatch.rating > 0 && (
+                  <StarRating rating={currentMatch.rating} count={currentMatch.review_count ?? 0} />
                 )}
                 {currentMatch.location_display && (
                   <span className="text-xs text-slate-500 flex items-center gap-1">
@@ -195,6 +199,28 @@ export default function AdvisorMatchedScreen({
                   {s}
                 </span>
               ))}
+            </div>
+          )}
+
+          {/* Match reasons — why this advisor was matched */}
+          {currentMatch.match_reasons && currentMatch.match_reasons.length > 0 && (
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4 mb-5">
+              <div className="flex items-center gap-2 mb-3">
+                <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 10l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+                <p className="text-xs font-bold text-emerald-900 uppercase tracking-wide">Why we matched you</p>
+              </div>
+              <div className="space-y-2">
+                {currentMatch.match_reasons.map((reason, idx) => (
+                  <div key={idx} className="flex items-start gap-2.5 text-xs text-emerald-800">
+                    <svg className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>{reason}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

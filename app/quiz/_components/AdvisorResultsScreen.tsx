@@ -7,6 +7,14 @@ import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
 import { createClient } from "@/lib/supabase/client";
+import {
+  rankAdvisors,
+  getLatestQualityWeights,
+  type QualityWeight,
+  type RankerOptions,
+  type AdvisorForRanking,
+} from "@/lib/advisor-ranker";
+import { getAdvisorMatchReasons, type QuizAnswersForReasons } from "@/lib/quiz-advisor-match-reasons";
 import QuizComparisonTable from "./QuizComparisonTable";
 import AdvisorLocationStep from "./AdvisorLocationStep";
 import AdvisorMatchedScreen, { type MatchedAdvisor } from "./AdvisorMatchedScreen";
@@ -130,6 +138,9 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
   const [_confirmedAdvisorId, setConfirmedAdvisorId] = useState<number | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // Ranker state
+  const [qualityWeights, setQualityWeights] = useState<QualityWeight[]>([]);
+
   // Preview advisor — fetched on mount so the contact step shows a real
   // advisor card above the form, instead of asking for name/phone/email
   // before the user knows who they're being matched with. Best advisor of
@@ -141,6 +152,22 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
   const combos = COMBO_MAP[advisorType] || [];
   const topPlatforms = platformResults.filter((r) => r.broker).slice(0, 3);
   const canSubmitContact = name.trim().length >= 2 && phone.trim().length >= 8 && email.includes("@");
+
+  // Fetch quality weights for ranking on mount
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const weights = await getLatestQualityWeights(supabase);
+        if (!cancelled) setQualityWeights(weights);
+      } catch {
+        // Silent failure — fall back to default weights in ranker
+        if (!cancelled) setQualityWeights([]);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // Fetch a preview advisor when the contact step loads — best representative
   // of this advisor type, regardless of location. We're not committing the
@@ -241,77 +268,135 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
       // Non-blocking — still proceed to matching
     }
 
-    // Fetch matched advisors from Supabase
+    // Fetch matched advisors from Supabase and rank using multi-signal scoring
     try {
       const supabase = createClient();
       const dbType = TYPE_DB_MAP[advisorType];
 
-      const mapAdvisor = (p: Record<string, unknown>): MatchedAdvisor => ({
+      const fullAdvisorSelect =
+        "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, accepts_international_clients, available_in_countries, median_response_hours, recent_lead_count, recent_dispute_count, profile_quality_gate";
+
+      type AdvisorRow = MatchedAdvisor & AdvisorForRanking;
+
+      const mapAdvisor = (p: Record<string, unknown>): AdvisorRow => ({
         id: p.id as number,
         slug: p.slug as string,
         name: p.name as string,
         firm_name: (p.firm_name as string) ?? null,
         type: p.type as string,
         photo_url: (p.photo_url as string) ?? null,
-        rating: (p.rating as number) ?? 0,
-        review_count: (p.review_count as number) ?? 0,
+        rating: (p.rating as number) ?? null,
+        review_count: (p.review_count as number) ?? null,
         location_display: (p.location_display as string) ?? null,
+        location_state: (p.location_state as string) ?? null,
         specialties: (p.specialties as string[]) ?? [],
         fee_description: (p.fee_description as string) ?? null,
-        verified: (p.verified as boolean) ?? false,
+        verified: (p.verified as boolean) ?? null,
+        accepts_international_clients: (p.accepts_international_clients as boolean) ?? false,
+        available_in_countries: (p.available_in_countries as string[]) ?? [],
+        median_response_hours: (p.median_response_hours as number) ?? null,
+        recent_lead_count: (p.recent_lead_count as number) ?? null,
+        recent_dispute_count: (p.recent_dispute_count as number) ?? null,
+        profile_quality_gate: (p.profile_quality_gate as string) ?? null,
+        status: "active",
+        auto_pause_reason: null,
+        profile_gate_step: null,
       });
 
-      let matched: MatchedAdvisor[] = [];
+      let allAdvisors: AdvisorRow[] = [];
 
       if (isInternational) {
-        // For international investors: first try advisors with international flags
+        // For international investors: fetch intl-flagged advisors first
         let intlQuery = supabase
           .from("professionals")
-          .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, accepts_international_clients, international_tax_specialist, firb_specialist, languages")
+          .select(fullAdvisorSelect)
           .eq("status", "active")
           .eq("verified", true)
           .eq("accepts_international_clients", true);
         if (dbType) intlQuery = intlQuery.eq("type", dbType);
-        const { data: intlData } = await intlQuery.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(5);
-        matched = (intlData || []).map(mapAdvisor);
+        const { data: intlData } = await intlQuery.limit(50); // Fetch more for ranking
+        allAdvisors = (intlData || []).map(mapAdvisor);
 
-        // Fallback: search by international specialty keywords
-        if (matched.length < 3) {
+        // Fallback: search by international specialty keywords if too few
+        if (allAdvisors.length < 10) {
           const { data: specData } = await supabase
             .from("professionals")
-            .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
+            .select(fullAdvisorSelect)
             .eq("status", "active")
             .eq("verified", true)
             .contains("specialties", ["International Clients"])
-            .order("rating", { ascending: false })
-            .limit(5);
+            .limit(30);
           const specMapped = (specData || []).map(mapAdvisor);
-          const existingIds = new Set(matched.map(m => m.id));
-          matched.push(...specMapped.filter(m => !existingIds.has(m.id)));
+          const existingIds = new Set(allAdvisors.map((m) => m.id));
+          allAdvisors.push(...specMapped.filter((m) => !existingIds.has(m.id)));
         }
       } else {
+        // Domestic: fetch from state (or all if no state)
         let query = supabase
           .from("professionals")
-          .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
+          .select(fullAdvisorSelect)
           .eq("status", "active")
           .eq("verified", true);
         if (dbType) query = query.eq("type", dbType);
         if (stateValue) query = query.eq("location_state", stateValue);
-        const { data } = await query.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(5);
-        matched = (data || []).map(mapAdvisor);
+        const { data } = await query.limit(50); // Fetch more for ranking
+        allAdvisors = (data || []).map(mapAdvisor);
 
-        // Fallback: try without state filter if empty
-        if (matched.length === 0 && stateValue) {
+        // Fallback: try without state filter if too few
+        if (allAdvisors.length < 3 && stateValue) {
           let fallbackQuery = supabase
             .from("professionals")
-            .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
+            .select(fullAdvisorSelect)
             .eq("status", "active")
             .eq("verified", true);
           if (dbType) fallbackQuery = fallbackQuery.eq("type", dbType);
-          const { data: fallbackData } = await fallbackQuery.order("rating", { ascending: false }).limit(5);
-          matched.push(...(fallbackData || []).map(mapAdvisor));
+          const { data: fallbackData } = await fallbackQuery.limit(30);
+          const fallbackMapped = (fallbackData || []).map(mapAdvisor);
+          const existingIds = new Set(allAdvisors.map((m) => m.id));
+          allAdvisors.push(...fallbackMapped.filter((m) => !existingIds.has(m.id)));
         }
       }
+
+      // Rank advisors using multi-signal scoring (not naive rating sort)
+      const rankerOptions: RankerOptions = {};
+      if (isInternational && investorCountry) {
+        // Boost advisors serving the visitor's intent country
+        const countryMap: Record<string, string> = {
+          uk: "gb",
+          usa: "us",
+          china: "cn",
+          india: "in",
+          singapore: "sg",
+          hong_kong: "hk",
+          uae: "ae",
+          new_zealand: "nz",
+        };
+        const isoCode = countryMap[investorCountry] || investorCountry;
+        rankerOptions.countryMatch = { country: isoCode, boost: 20 };
+      }
+
+      const rankedAdvisors = rankAdvisors(allAdvisors, qualityWeights, rankerOptions);
+
+      // Generate match reasons for top 5
+      const quizAnswersForReasons: QuizAnswersForReasons = {
+        goal: quizAnswers.goal,
+        advisor_type: quizAnswers.advisor_type,
+        complexity: quizAnswers.complexity,
+        amount: quizAnswers.amount,
+        experience: quizAnswers.experience,
+        location: quizAnswers.location,
+        investor_goal_intl: investorGoalIntl,
+        visa_status: visaStatus,
+        investor_country: investorCountry,
+      };
+
+      const matched: MatchedAdvisor[] = rankedAdvisors.slice(0, 5).map((advisor) => {
+        const matchReasons = getAdvisorMatchReasons(quizAnswersForReasons, advisor, isInternational);
+        return {
+          ...advisor,
+          match_reasons: matchReasons,
+        };
+      });
 
       setAllMatches(matched);
       setMatchIndex(0);
@@ -411,7 +496,6 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           ) : (
             <>
               <AdvisorMatchedScreen
-                userEmail={email}
                 userFirstName={name.split(" ")[0]}
                 currentMatch={currentMatch}
                 allMatches={allMatches}
@@ -551,11 +635,11 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                   <p className="text-[0.69rem] md:text-xs text-slate-500 truncate">{previewAdvisor.firm_name}</p>
                 )}
                 <div className="flex items-center gap-2 mt-0.5 text-[0.65rem] md:text-xs text-slate-500">
-                  {previewAdvisor.rating > 0 && (
+                  {previewAdvisor.rating && previewAdvisor.rating > 0 && (
                     <span className="inline-flex items-center gap-0.5">
                       <Icon name="star" size={10} className="text-amber-500" />
                       <strong className="text-slate-700">{previewAdvisor.rating.toFixed(1)}</strong>
-                      {previewAdvisor.review_count > 0 && <span>({previewAdvisor.review_count})</span>}
+                      {previewAdvisor.review_count && previewAdvisor.review_count > 0 && <span>({previewAdvisor.review_count})</span>}
                     </span>
                   )}
                   <span className="inline-flex items-center gap-0.5">

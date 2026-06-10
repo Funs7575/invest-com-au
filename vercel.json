@@ -125,6 +125,10 @@
       "schedule": "0 8 * * 1"
     },
     {
+      "path": "/api/cron/dispatch/weekday-8",
+      "schedule": "0 8 * * 1-5"
+    },
+    {
       "path": "/api/cron/dispatch/weekly-mon-9",
       "schedule": "0 9 * * 1"
     },

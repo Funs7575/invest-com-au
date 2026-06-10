@@ -33,6 +33,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/confirm-lead-notify",
     "/api/cron/lead-sla-check",
     "/api/cron/editorial-auto-publish",
+    "/api/cron/geocode-listings",
   ],
   "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks", "/api/cron/retry-outbound-webhooks", "/api/cron/retry-consumer-webhooks", "/api/cron/auction-close"],
   // every-6h removed: its only member, /api/admin/run-migration, is now
@@ -156,9 +157,14 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/weekly-rate-update",
     "/api/cron/personalized-digest",
     "/api/cron/firm-performance-digest",
+    "/api/cron/premium-digest",
   ],
   "weekly-mon-9": ["/api/cron/fee-digest", "/api/cron/content-freshness", "/api/cron/stale-fee-editorial", "/api/cron/check-secret-rotation", "/api/cron/country-rule-alerts-digest", "/api/cron/watchlist-alerts", "/api/cron/life-event-wizard-nudge", "/api/cron/advisor-match-scores", "/api/cron/cpd-reminder"],
   "weekly-mon-11": ["/api/cron/advisor-dormant-nudge"],
+
+  "weekday-8": [
+    "/api/cron/rate-alerts-digest",
+  ],
 
   "monthly-1-3": ["/api/cron/property-suburb-refresh"],
   "monthly-1-6": ["/api/cron/monthly-affiliate-report", "/api/cron/affiliate-payout-recon", "/api/cron/cpd-year-renewal"],
