@@ -29,6 +29,9 @@ import EmptyState from "@/components/directory/EmptyState";
 import CompareBar from "@/components/directory/CompareBar";
 import { FilterPill, FilterPopover } from "@/components/directory/FilterPill";
 import SmartFilterBar from "@/components/directory/SmartFilterBar";
+import { INTENT_COUNTRY_COOKIE, isKnownIntentCountry, type IntentCountryCode } from "@/lib/intent-context";
+import { setIntentCountryAction } from "@/lib/intent-context-actions";
+import { isEligibleForCountry } from "@/lib/country-mode/eligibility-filter";
 
 export interface ExpertTeamCard {
   id: number;
@@ -160,7 +163,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
           className="w-full pl-8 pr-8 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30"
         />
         {selected && (
-          <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} aria-label="Clear location" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+          <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} aria-label="Clear location" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600">
             <Icon name="x" size={14} />
           </button>
         )}
@@ -395,23 +398,52 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     const pt = searchParams.get("provider_type");
     if (pt === "individual" || pt === "firm" || pt === "team") setProviderType(pt);
 
-    if (initialType || initialState) return;
-    const t = searchParams.get("type");
-    const s = searchParams.get("state");
+    // specialty / sort / q / language are orthogonal to the route-derived
+    // type+state, so honour them on route-scoped pages too — country hubs
+    // deep-link /advisors/international-tax-specialists?specialty=UK%20Pension%20Transfer
+    // and vertical hubs deep-link /advisors/mortgage-brokers?specialty=First+Home+Buyers.
+    // (These were previously dropped behind the initialType early-return.)
     const sp = searchParams.get("specialty");
     const sort = searchParams.get("sort");
     const q = searchParams.get("q");
     const lang = searchParams.get("language");
+    if (sp) setSpecialtyFilters(sp.split(","));
+    if (sort) setSortBy(sort as SortKey);
+    if (q) setSearch(q);
+    if (lang) setLanguageFilter(lang);
+
+    // Only type/state must never override the route-derived scope.
+    if (initialType || initialState) return;
+    const t = searchParams.get("type");
+    const s = searchParams.get("state");
     if (t) {
       const types = t.split(",").filter(v => TYPE_FILTERS.some(f => f.key === v)) as ProfessionalType[];
       if (types.length > 0) setTypeFilters(new Set(types));
     }
     if (s && AU_STATES.includes(s as typeof AU_STATES[number])) setStateFilter(s);
-    if (sp) setSpecialtyFilters(sp.split(","));
-    if (sort) setSortBy(sort as SortKey);
-    if (q) setSearch(q);
-    if (lang) setLanguageFilter(lang);
   }, [searchParams, initialType, initialState]);
+
+  // ── Country context (cross-border funnel) ──────────────────────────────
+  // The main /advisors page resolves the intent country server-side (cookie)
+  // and passes it as a prop; the route-scoped ISR pages ([type] and the
+  // specialist hubs) can't read cookies without losing ISR, so resolve it
+  // client-side: explicit ?country= deep-link (from the country-hub CTAs)
+  // beats the remembered cookie. An explicit deep-link is also persisted,
+  // so the rest of the journey stays country-aware.
+  const urlCountryRaw = searchParams.get("country");
+  const urlCountry: IntentCountryCode | null =
+    urlCountryRaw && isKnownIntentCountry(urlCountryRaw) ? urlCountryRaw : null;
+  const [cookieCountry, setCookieCountry] = useState<IntentCountryCode | null>(null);
+  useEffect(() => {
+    if (intentCountry || urlCountry) return; // higher-priority source available
+    const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${INTENT_COUNTRY_COOKIE}=([^;]+)`));
+    const value = match?.[1];
+    if (value && isKnownIntentCountry(value)) setCookieCountry(value);
+  }, [intentCountry, urlCountry]);
+  useEffect(() => {
+    if (urlCountry && urlCountry !== intentCountry) void setIntentCountryAction(urlCountry);
+  }, [urlCountry, intentCountry]);
+  const effectiveCountry: IntentCountryCode | null = intentCountry ?? urlCountry ?? cookieCountry;
 
   const initialRenderRef = useRef(true);
 
@@ -477,6 +509,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const filtered = useMemo(() => {
     if (isLocationActive && nearbyResults) {
       let result = [...nearbyResults];
+      if (!intentCountry && effectiveCountry) result = result.filter(p => isEligibleForCountry(p, effectiveCountry));
       if (verifiedOnly) result = result.filter(p => p.verified);
       if (languageFilter !== "all") result = result.filter(p => (p.languages ?? []).includes(languageFilter));
       if (acceptingOnly) result = result.filter(p =>
@@ -506,6 +539,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     }
 
     const result = professionals.filter(p => {
+      // Country eligibility: the main directory already filtered server-side
+      // (intentCountry prop set); on route-scoped ISR pages apply the same
+      // rule client-side from the deep-link/cookie country.
+      if (!intentCountry && effectiveCountry && !isEligibleForCountry(p, effectiveCountry)) return false;
       if (typeFilters.size > 0 && !typeFilters.has(p.type as ProfessionalType)) return false;
       if (stateFilter !== "all" && p.location_state !== stateFilter) return false;
       if (verifiedOnly && !p.verified) return false;
@@ -541,7 +578,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       return bFeatured - aFeatured;
     });
     return result;
-  }, [professionals, nearbyResults, isLocationActive, typeFilters, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, internationalOnly, languageFilter, acceptingOnly, videoOnly, search, sortBy]);
+  }, [professionals, nearbyResults, isLocationActive, typeFilters, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, internationalOnly, languageFilter, acceptingOnly, videoOnly, search, sortBy, intentCountry, effectiveCountry]);
 
   const filteredFirms = useMemo(() => {
     return firms.filter(f => {
@@ -1359,7 +1396,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         compact
                       />
                       {/* PR queue #12.5 — eligibility badge per visitor's intent country */}
-                      <EligibilityBadge entity={pro} intentCountry={intentCountry} compact />
+                      <EligibilityBadge entity={pro} intentCountry={effectiveCountry} compact />
                       {pro.accepts_international_clients && (
                         <span className="shrink-0 inline-flex items-center gap-0.5 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
                           <Icon name="globe" size={9} className="shrink-0" />Intl
@@ -1611,7 +1648,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <div className="relative">
             <p className="text-[0.65rem] font-bold uppercase tracking-widest text-amber-400 mb-2">For Professionals</p>
             <h3 className="text-base md:text-xl font-extrabold text-white mb-1.5 md:mb-2">Are you a financial professional?</h3>
-            <p className="text-xs md:text-sm text-slate-400 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
+            <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
               <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/25">
                 Get Listed Free

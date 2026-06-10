@@ -127,7 +127,7 @@ export default function SavedComparisonsClient() {
 
   if (userLoading || loading) {
     return (
-      <div className="py-16">
+      <div className="py-6">
         <div className="container-custom max-w-2xl">
           <div className="animate-pulse space-y-4" aria-busy="true" aria-label="Loading saved comparisons…">
             <div className="h-8 bg-slate-200 rounded w-56" />
@@ -142,7 +142,7 @@ export default function SavedComparisonsClient() {
   if (!user) return null;
 
   return (
-    <div className="py-5 md:py-12">
+    <div className="py-4 md:py-6">
       <div className="container-custom max-w-2xl">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">

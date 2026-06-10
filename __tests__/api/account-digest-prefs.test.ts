@@ -69,6 +69,29 @@ describe("/api/account/digest-prefs", () => {
     expect(json.prefs.advisor_digest).toBe(false);
   });
 
+  it("GET defaults research_digest to true (opt-out pref)", async () => {
+    mockGetInvestorProfile.mockResolvedValue({ meta: {} });
+    const res = await GET();
+    const json = await res.json();
+    expect(json.prefs.research_digest).toBe(true);
+  });
+
+  it("GET reflects an explicit research_digest opt-out", async () => {
+    mockGetInvestorProfile.mockResolvedValue({ meta: { research_digest: false } });
+    const res = await GET();
+    const json = await res.json();
+    expect(json.prefs.research_digest).toBe(false);
+  });
+
+  it("PUT can opt out of research_digest", async () => {
+    const res = await PUT(makeReq("PUT", { research_digest: false }));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.prefs.research_digest).toBe(false);
+    const patch = mockUpsertInvestorProfile.mock.calls[0]?.[1] as { meta: Record<string, unknown> };
+    expect(patch.meta.research_digest).toBe(false);
+  });
+
   it("PUT rejects unauthenticated", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
     const res = await PUT(makeReq("PUT", { watchlist_digest: true }));

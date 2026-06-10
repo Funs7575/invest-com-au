@@ -263,11 +263,11 @@ describe("HubHero", () => {
   });
 
   describe("theming", () => {
-    it("applies the default slate-900 panel when no className override is supplied", () => {
+    it("applies the default compact light header when no className override is supplied", () => {
       render(<HubHero hero={baseHero} breadcrumbs={baseCrumbs} />);
       const section = screen.getByTestId("hub-hero");
-      expect(section.className).toContain("bg-slate-900");
-      expect(section.className).toContain("text-white");
+      expect(section.className).toContain("bg-white");
+      expect(section.className).toContain("border-slate-100");
     });
 
     it("allows overriding the section className for hub-specific theming", () => {

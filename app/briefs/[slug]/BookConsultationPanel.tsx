@@ -280,7 +280,7 @@ export default function BookConsultationPanel({
                   </div>
                   <div className="flex flex-col gap-1">
                     {daySlots.length === 0 && (
-                      <span className="text-[10px] text-slate-400 text-center py-2">
+                      <span className="text-[10px] text-slate-500 text-center py-2">
                         —
                       </span>
                     )}

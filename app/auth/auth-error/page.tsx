@@ -38,7 +38,7 @@ export default async function AuthErrorPage({
   const { title, explanation } = describeReason(reason);
 
   return (
-    <div className="py-10 md:py-16">
+    <div className="py-8 md:py-10">
       <div className="container-custom max-w-md">
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-8">
           <div className="text-center mb-5">

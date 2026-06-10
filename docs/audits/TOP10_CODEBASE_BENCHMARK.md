@@ -31,6 +31,32 @@
 
 ---
 
+## ✅ FULL VERIFICATION PASS (2026-06-10 PM — 4 parallel code audits)
+
+Every opportunity was re-audited by reading the actual code (file paths verified).
+**These figures supersede the per-section "% complete" estimates below.**
+
+| # | Opportunity | Draft % | **Verified %** | What the code audit found |
+|---|---|---|---|---|
+| 1 | CPL lead gen | 40% | **~45%** | More built than claimed: `professional_leads.quality_score` + signals live, SLA cron tiers, firm-portal lead-quality analytics, `lib/dynamic-pricing.ts` engine + `dynamic_pricing_rules` table built. TRUE gaps: partner-facing dashboard UI (API at `app/api/partner/leads` is headless), multi-tenant partner accounts (env-var API key only), formal lead-status audit-history table, dynamic-pricing not wired into CPL flow. |
+| 2 | Co-brand products | 30% | **~5%** | Overstated: `cobranded_products` table exists but has ZERO app-code references; no partner pages, no handoff API, no account linking. Post-AFSL anyway. |
+| 3 | Hybrid auction | 50% | **~100% code** | SHIPPED 2026-06-10 (PR #1498 merged): quality multiplier, server-side reserve, broker-standing gate. Remaining blocker is RG 246 legal sign-off (non-code). |
+| 4 | Cross-border Phase B | 60% | **~60%** | FIRB explainer DONE (`app/foreign-investment/guides/firb-application-guide`). Partner panel component DONE but intentionally dark until referral deals signed (by-design note in `foreign-investment-country-data.ts`). TRUE gaps: domestic quiz never captures cross-border interest (international track only); country pages don't wire CTAs to `/find-advisor?country=X&specialty=Y` (quiz accepts `?country=` seed but pages don't use it). |
+| 5 | AI Q&A layer | 60% | **~70%** | More built than claimed: public `/questions` + `/questions/[slug]` pages live with FAQ JSON-LD, `QuestionCaptureForm` + `/api/answers/ask` live, `qa_questions`/`qa_answers` tables with RLS. `lib/market-intelligence.ts` exists (aggregations for `/market-pulse`) but no subscription monetization layer. |
+| 6 | Premium research | 95% | **~95%** | Confirmed: full server-side paywall (`ProPaywall`, `lib/server/premium-content.ts`, column-level RLS grants migration). Only code gap: consumer premium digest cron (`pro-digest` cron is B2B advisor briefs, not consumer). Real blocker: editorial content plan. |
+| 7 | Advisor monetization | 20% | **~85%** | Badly understated: full tier system in `lib/advisor-tiers.ts` (free/growth $49/pro $149/elite $499 + Stripe products + lead discounts + per-tier lead caps), `advisor_badges` system with 12+ badge types, billing in `lib/advisor-billing.ts`. Only gap: profile-completeness % tracker UI (boolean flag exists, no progress bar). |
+| 8 | Switching-as-a-service | 30% | **~20%** | Overstated: calculators + `/switch` guides + `CalculatorLeadCapture` exist, but zero e-sign integration, no `switching_transfers` table, no transfer APIs. Blocked on partner contracts regardless. |
+| 9 | Alt-asset verticals | 0% | **~80%** | (Corrected same-day, above.) `/invest/alternatives` live; remaining work is partner data feeds + affiliate deals (BD, not code). |
+| 10 | Concierge stack | 70% | **~75%** | Stack rendering SHIPPED (`buildStackResults` + `WealthStackStrip` + tests), secondary CTAs ~90% (`QuizNextBestActions`). TRUE gaps: product-handoff API (0%, affiliate links only), multi-lead drip sequences (secondary intent detected in `lib/getmatched/engine.ts` but never routed to a lead — this is P5–P7 of `docs/plans/UNIFIED_MATCHING_ENGINE.md`, don't build separately). |
+
+**Net effect on the build sequence:** #7 and #3 are nearly done (were ranked as big builds);
+#2 and #8 are thinner than claimed and blocked on non-code anyway. The unblocked,
+code-first queue is now: #10 product-handoff API → #1 partner dashboard/accounts →
+#4 Phase B wiring → #7 completeness tracker → #6 digest cron → get-matched P5+
+(which absorbs #10's remaining multi-lead work).
+
+---
+
 ## #1 — LEAD GENERATION (CPL — Cost Per Lead) CONVERSION
 
 **Revenue potential:** AUD $150–500k pre-AFSL; $500k–$2M+ post-AFSL  

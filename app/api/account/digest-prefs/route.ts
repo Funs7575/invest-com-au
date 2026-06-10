@@ -12,11 +12,14 @@ const log = logger("api:account:digest-prefs");
 export type DigestPrefs = {
   watchlist_digest: boolean;
   advisor_digest: boolean;
+  /** Pro research digest — part of the paid membership, so default ON (opt-out). */
+  research_digest: boolean;
 };
 
 const Body = z.object({
   watchlist_digest: z.boolean().optional(),
   advisor_digest: z.boolean().optional(),
+  research_digest: z.boolean().optional(),
 });
 
 /**
@@ -36,6 +39,7 @@ export async function GET() {
   const prefs: DigestPrefs = {
     watchlist_digest: meta.watchlist_digest === true,
     advisor_digest: meta.advisor_digest === true,
+    research_digest: meta.research_digest !== false,
   };
 
   return NextResponse.json({ prefs });
@@ -58,6 +62,7 @@ export const PUT = withValidatedBody(Body, async (_req, body) => {
   const mergedMeta: Record<string, unknown> = { ...currentMeta };
   if (body.watchlist_digest !== undefined) mergedMeta.watchlist_digest = body.watchlist_digest;
   if (body.advisor_digest !== undefined) mergedMeta.advisor_digest = body.advisor_digest;
+  if (body.research_digest !== undefined) mergedMeta.research_digest = body.research_digest;
 
   const ok = await upsertInvestorProfile(user.id, { meta: mergedMeta });
   if (!ok) {
@@ -68,6 +73,7 @@ export const PUT = withValidatedBody(Body, async (_req, body) => {
   const prefs: DigestPrefs = {
     watchlist_digest: mergedMeta.watchlist_digest === true,
     advisor_digest: mergedMeta.advisor_digest === true,
+    research_digest: mergedMeta.research_digest !== false,
   };
 
   return NextResponse.json({ prefs });

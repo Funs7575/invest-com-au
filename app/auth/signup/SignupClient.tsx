@@ -4,6 +4,8 @@ import { useState, useId } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 
 type Tab = "password" | "magic-link";
 
@@ -142,7 +144,7 @@ export default function SignupClient() {
 
   if (sent) {
     return (
-      <div className="py-16">
+      <div className="py-8 md:py-10">
         <div className="container-custom max-w-md">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center">
             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -180,7 +182,7 @@ export default function SignupClient() {
   const strength = getPasswordStrength(password);
 
   return (
-    <div className="py-16">
+    <div className="py-8 md:py-10">
       <div className="container-custom max-w-md">
         <div className="bg-white border border-slate-200 rounded-2xl p-8">
           <div className="text-center mb-6">
@@ -221,23 +223,21 @@ export default function SignupClient() {
           {/* Email & Password Tab */}
           {tab === "password" && (
             <form onSubmit={handlePasswordSignup} noValidate className="space-y-4">
-              <div>
-                <label htmlFor="signup-email" className="block text-sm font-semibold text-slate-700 mb-1">
-                  Email address
-                </label>
-                <input
-                  id="signup-email"
-                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  autoFocus
-                  aria-required="true"
-                  aria-describedby={error ? errorId : undefined}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
-                />
-              </div>
+              <Input
+                id="signup-email"
+                label="Email address"
+                type="email"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                autoFocus
+                aria-required="true"
+                aria-describedby={error ? errorId : undefined}
+              />
 
               <div>
                 <label htmlFor="signup-password" className="block text-sm font-semibold text-slate-700 mb-1">
@@ -253,7 +253,7 @@ export default function SignupClient() {
                     autoComplete="new-password"
                     aria-required="true"
                     aria-describedby={error ? `password-strength ${errorId}` : "password-strength"}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pr-11 text-sm text-slate-900 placeholder:text-slate-500 transition-all duration-150 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
                   />
                   <button
                     type="button"
@@ -292,7 +292,7 @@ export default function SignupClient() {
                     autoComplete="new-password"
                     aria-required="true"
                     aria-describedby={error ? errorId : undefined}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 pr-11 text-sm text-slate-900 placeholder:text-slate-500 transition-all duration-150 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
                   />
                   <button
                     type="button"
@@ -309,49 +309,37 @@ export default function SignupClient() {
                 <p id={errorId} role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
               )}
 
-              <button
-                type="submit"
-                disabled={loading}
-                aria-busy={loading}
-                className="w-full px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              <Button type="submit" loading={loading} className="w-full">
                 {loading ? "Creating account..." : "Create Account"}
-              </button>
+              </Button>
             </form>
           )}
 
           {/* Magic Link Tab */}
           {tab === "magic-link" && (
             <form onSubmit={handleMagicLinkSignup} noValidate className="space-y-4">
-              <div>
-                <label htmlFor="signup-magic-email" className="block text-sm font-semibold text-slate-700 mb-1">
-                  Email address
-                </label>
-                <input
-                  id="signup-magic-email"
-                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  aria-required="true"
-                  aria-describedby={error ? errorId : undefined}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
-                />
-              </div>
+              <Input
+                id="signup-magic-email"
+                label="Email address"
+                type="email"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                aria-required="true"
+                aria-describedby={error ? errorId : undefined}
+              />
 
               {error && (
                 <p id={errorId} role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
               )}
 
-              <button
-                type="submit"
-                disabled={loading}
-                aria-busy={loading}
-                className="w-full px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+              <Button type="submit" loading={loading} className="w-full">
                 {loading ? "Sending..." : "Send Magic Link"}
-              </button>
+              </Button>
             </form>
           )}
 

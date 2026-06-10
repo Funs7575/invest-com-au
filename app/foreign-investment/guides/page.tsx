@@ -44,6 +44,22 @@ export const revalidate = 86400;
 
 const GUIDES = [
   {
+    title: "FIRB Eligibility Explained: Who Can Buy What",
+    href: "/foreign-investment/guides/firb-eligibility",
+    desc: "Two questions, plain-English answer: which buyers need FIRB approval, which property types are generally approved, and what the 2025–27 ban changes.",
+    tag: "Property",
+    tagColor: "bg-emerald-100 text-emerald-700",
+    isNew: true,
+  },
+  {
+    title: "Non-Resident Mortgages in Australia: How They Work",
+    href: "/foreign-investment/guides/non-resident-mortgage",
+    desc: "The lender landscape for non-residents and expats — LVR and deposit expectations, foreign-income shading, and the process from FIRB to settlement.",
+    tag: "Finance",
+    tagColor: "bg-blue-100 text-blue-700",
+    isNew: true,
+  },
+  {
     title: "How to Buy Property in Australia as a Foreigner (2026 Guide)",
     href: "/foreign-investment/guides/buy-property-australia-foreigner",
     desc: "Complete step-by-step process from FIRB approval to settlement. Eligible property types, costs, and professionals you need to engage.",
