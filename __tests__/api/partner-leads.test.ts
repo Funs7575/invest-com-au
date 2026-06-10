@@ -8,12 +8,13 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+// Both the route and lib/partner-auth use the service-role client (partner API
+// is an anonymous path — API-key auth, no JWT).
 const mockFrom = vi.fn();
-vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({ from: mockFrom, rpc: mockRpc })),
-}));
-
 const mockRpc = vi.fn();
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: mockFrom, rpc: mockRpc })),
+}));
 
 vi.mock("@/lib/html-escape", () => ({
   escapeHtml: (s: string) => s,
@@ -65,14 +66,33 @@ const ADVISOR = {
   status: "active",
 };
 
-function setupDefaultMocks(advisors = [ADVISOR], existingLead: null | { id: number } = null) {
+interface MockState {
+  advisors?: (typeof ADVISOR & { specialties?: string[] })[];
+  existingLead?: null | { id: number };
+  /** api_customers row resolvePartner finds (managed multi-tenant partner). */
+  apiCustomer?: null | { id: string; company_name: string; status: string; rate_limit_per_min: number };
+}
+
+function setupMocks(state: MockState = {}) {
+  const { advisors = [ADVISOR], existingLead = null, apiCustomer = null } = state;
+  const leadInserts: Array<Record<string, unknown>> = [];
+  const billingInserts: Array<Record<string, unknown>> = [];
+
   mockRpc.mockResolvedValue({ data: null, error: null });
   mockFrom.mockImplementation((table: string) => {
+    if (table === "api_customers") {
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockResolvedValue({ data: apiCustomer, error: null }),
+      };
+    }
     if (table === "professionals") {
       return {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         update: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
         limit: vi.fn().mockResolvedValue({ data: advisors, error: null }),
       };
     }
@@ -83,7 +103,13 @@ function setupDefaultMocks(advisors = [ADVISOR], existingLead: null | { id: numb
         gte: vi.fn().mockReturnThis(),
         limit: vi.fn().mockReturnThis(),
         maybeSingle: vi.fn().mockResolvedValue({ data: existingLead, error: null }),
-        insert: vi.fn().mockReturnThis(),
+        insert: vi.fn((row: Record<string, unknown>) => {
+          leadInserts.push(row);
+          return {
+            select: vi.fn().mockReturnThis(),
+            single: vi.fn().mockResolvedValue({ data: { id: 99 }, error: null }),
+          };
+        }),
         update: vi.fn().mockReturnThis(),
         then: vi.fn((cb: (v: unknown) => void) => {
           cb({ data: null, error: null });
@@ -99,9 +125,12 @@ function setupDefaultMocks(advisors = [ADVISOR], existingLead: null | { id: numb
         single: vi.fn().mockResolvedValue({ data: { price_cents: 4900 }, error: null }),
       };
     }
-    // advisor_billing
+    // advisor_billing — capture the inserted row
     return {
-      insert: vi.fn().mockResolvedValue({ data: null, error: null }),
+      insert: vi.fn((row: Record<string, unknown>) => {
+        billingInserts.push(row);
+        return Promise.resolve({ data: null, error: null });
+      }),
       update: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       then: vi.fn((cb: (v: unknown) => void) => {
@@ -110,6 +139,8 @@ function setupDefaultMocks(advisors = [ADVISOR], existingLead: null | { id: numb
       }),
     };
   });
+
+  return { leadInserts, billingInserts };
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
@@ -120,7 +151,7 @@ describe("POST /api/partner/leads", () => {
     vi.stubEnv("PARTNER_API_KEY", PARTNER_API_KEY);
     vi.stubEnv("RESEND_API_KEY", "re_test");
     global.fetch = vi.fn().mockResolvedValue({ ok: true });
-    setupDefaultMocks();
+    setupMocks();
   });
 
   it("returns 401 when api_key is missing", async () => {
@@ -129,11 +160,11 @@ describe("POST /api/partner/leads", () => {
   });
 
   it("returns 401 when api_key is wrong", async () => {
-    const res = await POST(makePost({ api_key: "bad-key", leads: [VALID_LEAD] }));
+    const res = await POST(makePost({ api_key: "bad-key-bad-key", leads: [VALID_LEAD] }));
     expect(res.status).toBe(401);
   });
 
-  it("returns 401 when PARTNER_API_KEY env var is not set", async () => {
+  it("returns 401 when PARTNER_API_KEY env var is not set and key is unknown", async () => {
     vi.stubEnv("PARTNER_API_KEY", "");
     const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
     expect(res.status).toBe(401);
@@ -177,7 +208,7 @@ describe("POST /api/partner/leads", () => {
   });
 
   it("returns 200 with leads_failed when no advisors match", async () => {
-    setupDefaultMocks([]);
+    setupMocks({ advisors: [] });
     const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -193,18 +224,68 @@ describe("POST /api/partner/leads", () => {
     expect(body.leads_created).toBeGreaterThan(0);
   });
 
-  it("skips duplicate lead (same email + advisor in last 24h)", async () => {
-    // existingLead returned for duplicate check → lead skipped
-    setupDefaultMocks([ADVISOR], { id: 55 });
+  // ── Single-lead allocation (platform-wide rule: one lead → one advisor) ──
+
+  it("allocates ONE advisor even when several match (no fan-out)", async () => {
+    const { leadInserts } = setupMocks({
+      advisors: [
+        { ...ADVISOR, id: 1 },
+        { ...ADVISOR, id: 2, email: "second@advisory.com" },
+        { ...ADVISOR, id: 3, email: "third@advisory.com" },
+      ],
+    });
     const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
     expect(res.status).toBe(200);
-    // Lead was created (outer counter increments) but inner advisor loop skipped due to duplicate
     const body = await res.json();
-    expect(body.success).toBe(true);
+    expect(body.leads_created).toBe(1);
+    // Exactly one professional_leads insert — the top-ranked advisor.
+    expect(leadInserts).toHaveLength(1);
+    expect(leadInserts[0]?.professional_id).toBe(1);
+    // Exactly one notification email.
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports a duplicate (same email + advisor in last 24h) without re-routing it", async () => {
+    const { leadInserts } = setupMocks({ existingLead: { id: 55 } });
+    const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.leads_created).toBe(0);
+    expect(body.leads_duplicate).toBe(1);
+    expect(leadInserts).toHaveLength(0);
+  });
+
+  // ── Multi-tenant partner accounts ──
+
+  it("accepts a managed partner key and stamps partner_id on the lead", async () => {
+    const { leadInserts } = setupMocks({
+      apiCustomer: { id: "p-123", company_name: "Acme Leads", status: "active", rate_limit_per_min: 60 },
+    });
+    const res = await POST(makePost({ api_key: "pk_live_managed_key_xyz", leads: [VALID_LEAD] }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.leads_created).toBe(1);
+    expect(leadInserts[0]?.partner_id).toBe("p-123");
+    expect(leadInserts[0]?.utm_campaign).toBe("Acme Leads");
+  });
+
+  it("rejects a suspended managed partner", async () => {
+    setupMocks({
+      apiCustomer: { id: "p-123", company_name: "Acme Leads", status: "suspended", rate_limit_per_min: 60 },
+    });
+    const res = await POST(makePost({ api_key: "pk_live_managed_key_xyz", leads: [VALID_LEAD] }));
+    expect(res.status).toBe(401);
+  });
+
+  it("legacy env-key leads carry no partner_id", async () => {
+    const { leadInserts } = setupMocks();
+    const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
+    expect(res.status).toBe(200);
+    expect(leadInserts[0]?.partner_id).toBeNull();
   });
 
   it("uses free lead path when free_leads_used < 2", async () => {
-    setupDefaultMocks([{ ...ADVISOR, free_leads_used: 0 }]);
+    setupMocks({ advisors: [{ ...ADVISOR, free_leads_used: 0 }] });
     const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -212,7 +293,16 @@ describe("POST /api/partner/leads", () => {
   });
 
   it("returns 200 with leads_failed when per-lead error is thrown", async () => {
-    mockFrom.mockImplementation(() => { throw new Error("boom"); });
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "api_customers") {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+        };
+      }
+      throw new Error("boom");
+    });
     const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -220,52 +310,16 @@ describe("POST /api/partner/leads", () => {
   });
 
   // ── Cross-border premium pricing (FIN_NOTEBOOK #24 Phase A) ──
-  // Capture the amount billed via the advisor_billing insert so we can
-  // assert the 1.75× multiplier is applied to partner-API leads, matching
-  // the on-site advisor-enquiry path.
-  function setupBillingCapture(advisor: typeof ADVISOR & { specialties?: string[] }) {
-    const billingInserts: Array<Record<string, unknown>> = [];
-    mockRpc.mockResolvedValue({ data: null, error: null });
-    mockFrom.mockImplementation((table: string) => {
-      if (table === "professionals") {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          update: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockResolvedValue({ data: [advisor], error: null }),
-        };
-      }
-      if (table === "professional_leads") {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          gte: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
-          insert: vi.fn().mockReturnThis(),
-          update: vi.fn().mockReturnThis(),
-          then: vi.fn((cb: (v: unknown) => void) => { cb({ data: null, error: null }); return Promise.resolve(); }),
-          single: vi.fn().mockResolvedValue({ data: { id: 99 }, error: null }),
-        };
-      }
-      // advisor_billing — capture the inserted row
-      return {
-        insert: vi.fn((row: Record<string, unknown>) => { billingInserts.push(row); return Promise.resolve({ data: null, error: null }); }),
-        update: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockReturnThis(),
-        then: vi.fn((cb: (v: unknown) => void) => { cb({ data: null, error: null }); return Promise.resolve(); }),
-      };
-    });
-    return billingInserts;
-  }
 
   it("bills a cross-border specialty lead at the 1.75× premium", async () => {
     // free_leads_used >= 2 (not free) + sufficient credit → billing insert at full price
-    const billingInserts = setupBillingCapture({
-      ...ADVISOR,
-      lead_price_cents: 5000,
-      credit_balance_cents: 100000,
-      specialties: ["Retirement Planning", "UK Pension Transfer"],
+    const { billingInserts } = setupMocks({
+      advisors: [{
+        ...ADVISOR,
+        lead_price_cents: 5000,
+        credit_balance_cents: 100000,
+        specialties: ["Retirement Planning", "UK Pension Transfer"],
+      }],
     });
     const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
     expect(res.status).toBe(200);
@@ -276,11 +330,13 @@ describe("POST /api/partner/leads", () => {
   });
 
   it("bills a domestic (non-cross-border) lead at the flat base price", async () => {
-    const billingInserts = setupBillingCapture({
-      ...ADVISOR,
-      lead_price_cents: 5000,
-      credit_balance_cents: 100000,
-      specialties: ["Retirement Planning", "SMSF Setup"],
+    const { billingInserts } = setupMocks({
+      advisors: [{
+        ...ADVISOR,
+        lead_price_cents: 5000,
+        credit_balance_cents: 100000,
+        specialties: ["Retirement Planning", "SMSF Setup"],
+      }],
     });
     const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
     expect(res.status).toBe(200);
