@@ -62,6 +62,11 @@ export interface InvestListingsClientProps {
    *  search row. Set only on the cross-sector marketplace (/invest) — sector
    *  /listings pages keep their leaner toolbar. */
   showActionPlanCta?: boolean;
+  /** Hide the in-results "Filter results by type" chips. Set on pages that
+   *  render a SubCategoryNav tab bar above this component — two sub-type
+   *  selectors side by side read as a duplicate (the chips filter in place,
+   *  the tabs navigate to /invest/<cat>/listings/<sub>; users can't tell). */
+  hideSubCategoryChips?: boolean;
 }
 
 // ─── Australian states ───────────────────────────────────────────────
@@ -126,6 +131,7 @@ export default function InvestListingsClient({
   advisorOptInCounts,
   claimedSlugs,
   showActionPlanCta,
+  hideSubCategoryChips,
 }: InvestListingsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -731,6 +737,7 @@ export default function InvestListingsClient({
           {/* Results */}
           <div className="min-w-0">
             {(() => {
+              if (hideSubCategoryChips) return null;
               const canonicalChips = activeCategory !== "all" ? getSubCategoryChips(activeCategory) : [];
               const liveSubs = new Set(subCategories);
               // Merge canonical chips (with defined labels) + any DB subs not in canonical list
