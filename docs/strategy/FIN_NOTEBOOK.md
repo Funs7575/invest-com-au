@@ -14,37 +14,31 @@
 
 ## Active strategic decisions log
 
-### 2026-06-10 — Decision Engine COMPLETE: P1–P9 all merged; /find-advisor folded; engine now learns from outcomes
+### 2026-06-10 — Branch estate audited: 291 dead branches deleted, 4 held platforms inventoried, api-billing schema gap found
 
-The 9-phase program from the same-day "vision locked" entry below is fully
-on main (final PR #1524, squash da0c9db). One engine end-to-end: translator
-→ single-lead allocation → shared advisor scoring (P1–P2); user-named type
-always wins + missing-signal questions (P3); listings scorer with CSF
-exclusion + FIRB gate (P4); multi-lane composite results + My Options
-workspace + saved_items (P5); in-funnel lead capture with OTP at confirm +
-single-lead UI lockout (P6); side-by-side advisor comparison (P7a); P8 —
-this CLOSES the "Revisit: 301 /find-advisor only after get-matched gains
-lead capture" item below: /find-advisor now 308s to /get-matched, with
-?specialty= / ?country= deep-links carved out so the 1.75× cross-border
-corridor keeps its wizard until get-matched consumes those params; P9 —
-advisor ordering now blends engine fit with real engagement history via the
-shared Wilson ranker (fail-soft; fed by the /plans/[id]/connected stamp).
+Full audit of the ~335-branch estate (founder-requested). Permanent record with
+method, SHA recovery manifest and per-branch dispositions:
+`docs/audits/BRANCH_CLEANUP_2026-06-10.md` (PR #1527).
 
-Live state: advisor_match_v2_get_matched at 100%, prod schema applied
-(ledger 3⇄3, first persisted plan verified). **Sole live-path blocker is
-founder-side: restore a deploy target (Netlify credits or Vercel unblock)
-— everything queues at HEAD until then.**
+Strategic items surfaced (decisions pending, founder-owned):
 
-Open engineering backlog (post-program, none block launch): listings lane
-renders lane-level links, not the P4 scorer's specific listing cards —
-that resolve/UI wiring is the last gap vs the vision statement; get-matched
-consuming ?specialty=/?country= (then the wizard folds entirely and the
-~40 hardcoded /find-advisor literals can be repointed); P5 saved-criteria
-alerts.
-
-**Revisit:** 2026-06-17 — deploy restored? Founder device/visual pass on
-the new result surface. **Revisit:** 2026-09-10 — P9 ranking-weight review
-once professional_leads/connected has ~3 months of real outcome rows.
+- **API billing is half-shipped.** #1241/#1244 merged code for the tiered/billed
+  API + consumer webhooks, but the schema never reached prod — `/api/v1/webhooks`
+  errors on use and the 30-min retry cron fails silently every run. Recovered
+  schema parked in **#1526 (DO-NOT-MERGE)**. Decide: land schema + env vars and
+  activate the revenue line, or strip the dead code. (Revenue backlog adjacency:
+  this is the "API data platform" monetisation thread.)
+- **Identity-platform expansion** (81 files, 25 staged migrations, master plan
+  docs) sits unmerged on `claude/audit-account-architecture-7186H`; the
+  `principals` foundation is already in prod. Biggest held bet in the estate.
+- **Advisor-community wave** (CPD, courses, endorsements, gamification, orgs —
+  2026-05-22) held on `rescue/seo-infra-wave2` + `claude/inspiring-planck-c7u3s`.
+- **Sharesight portfolio sync** fully built, never merged
+  (`pre-launch/sharesight-oauth-*`) — needs partner API keys + product call.
+- Live taxonomy fork fixed + 69 orphaned test files (~950 tests) rescued in
+  **#1525**. The guard test that would have prevented the fork sat unmerged
+  since 2026-04-26 — same lesson as 2026-05-02: trackers and branches lag the
+  code; verify against main before scoping or deleting.
 
 ### 2026-06-10 — "Complete everything unblocked" wave: 12 parallel workstreams launched; CI unblocked; coordination lesson
 

@@ -40,6 +40,15 @@ export const STATIC_LISTING_SLUGS = [
   "private-equity",
   "royalties",
   "listed-securities",
+  // MM-V01b discovery vertical (PR #803) — its hand-built page was never
+  // registered here, so categoryListingsHref fell back to the
+  // /invest?category= filter, which couldn't select it either (no
+  // invest-categories entry until 2026-06-10). The other six MM-V01b
+  // verticals stay guide-intent and unregistered until they have listings
+  // supply — LISTING_PAGE_SLUGS must stay exactly the opportunity set
+  // (enforced by __tests__/lib/invest-listing-routes.test.ts), so flip
+  // intent and register here in the same change.
+  "digital-infrastructure",
 ] as const;
 
 /**

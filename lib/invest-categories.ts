@@ -103,6 +103,13 @@ const INTENT_BY_SLUG: Record<string, InvestCategoryIntent> = {
   // sign-off 2026-06-07; lean lane per docs/strategy/REGULATORY-AVOID-LIST.md).
   "listed-securities": "opportunity",
 
+  // MM-V01b discovery verticals (registered 2026-06-10). Only
+  // digital-infrastructure has live listings supply today; the other six
+  // (aquaculture, insurance-linked-securities, litigation-funding,
+  // livestock, public-social-infrastructure, venture-capital) stay on the
+  // "guide" default until seeded, then flip to opportunity here.
+  "digital-infrastructure": "opportunity",
+
   // Compare (4) — 301-redirected to canonical Compare/duplicate. The
   // entries are kept in categories[] for back-compat with iterators
   // that key off the array; redirects in next.config.ts intercept the
@@ -2235,6 +2242,280 @@ const categoriesRaw: Omit<InvestCategory, "intent">[] = [
     intro: `A factual directory of ASX-listed companies grouped by investment theme — uranium, hydrogen, oil & gas, critical minerals and more. These are publicly traded securities: you buy and sell them yourself through your own broker. We don't issue, sell, arrange or recommend them, and nothing here is a recommendation or an offer. General information only — do your own research and consider seeking licensed advice before investing.`,
     sections: [],
     faqs: [],
+    subcategories: [],
+  },
+
+  // ─── MM-V01b discovery-page verticals (registered 2026-06-10) ───
+  // PR #803 shipped hand-built /invest/<slug>/listings pages for these
+  // seven verticals but never registered them here, so the /invest
+  // filter IA could not select their listings (the 2026-04-26 taxonomy
+  // fork — guarded by __tests__/lib/taxonomy-consistency.test.ts).
+  // digital-infrastructure has live listings and is tagged opportunity;
+  // the rest default to "guide" until they have listings supply.
+  {
+    slug: "aquaculture",
+    label: "Aquaculture",
+    dbVerticals: ["aquaculture"],
+    color: {
+      bg: "bg-cyan-50",
+      border: "border-cyan-200",
+      text: "text-cyan-700",
+      accent: "bg-cyan-600",
+      gradient: "from-cyan-50 to-white",
+    },
+    icon: "sprout",
+    title: `Aquaculture Investment in Australia — Salmon, Oysters & Marine Farming (${yr})`,
+    h1: "Aquaculture Investment in Australia",
+    metaDescription: `Browse Australian aquaculture investment opportunities — salmon, oysters, prawns and marine farming. Lease structures, biosecurity and FIRB rules. ${upd}.`,
+    intro: `Australia's aquaculture industry spans Tasmanian salmon, Sydney rock oysters, prawn farming and emerging seaweed ventures. Browse aquaculture investment opportunities, from direct farm acquisitions and leases to agribusiness funds with marine farming exposure.`,
+    sections: [
+      {
+        heading: "How Aquaculture Investment Works in Australia",
+        body: "Access routes include direct acquisition or lease of licensed farming operations, agribusiness private equity funds, and managed investment schemes with aquaculture exposure. Marine farming operates under state-issued leases and licences, so due diligence covers lease tenure and conditions, biosecurity history, water quality and environmental compliance alongside the financials.",
+      },
+      {
+        heading: "Key Risks to Understand",
+        body: "Aquaculture carries production risks that land-based agriculture does not — disease and biosecurity events, marine heatwaves and water-quality incidents can affect an entire harvest. Licence and lease conditions are regulated at state level and can change. Review operator track record, insurance arrangements and environmental approvals before committing capital.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How can I invest in aquaculture in Australia?",
+        answer: "Common routes are buying or leasing a licensed operation directly, investing through agribusiness private equity funds, or holding ASX-listed seafood producers. Direct operations require state licences and leases; funds typically have minimum investment and investor-eligibility requirements set out in their offer documents.",
+      },
+      {
+        question: "Do FIRB rules apply to aquaculture investments?",
+        answer: "Foreign investors generally need FIRB notification for agricultural land and agribusiness acquisitions above the relevant thresholds, and aquaculture leases over Crown waters can involve additional state approvals. The rules depend on the structure and value of the deal — specialist advice is recommended for cross-border transactions.",
+      },
+    ],
+    subcategories: [],
+  },
+  {
+    slug: "digital-infrastructure",
+    label: "Digital Infrastructure",
+    dbVerticals: ["digital-infrastructure"],
+    color: {
+      bg: "bg-violet-50",
+      border: "border-violet-200",
+      text: "text-violet-700",
+      accent: "bg-violet-600",
+      gradient: "from-violet-50 to-white",
+    },
+    icon: "cpu",
+    title: `Digital Infrastructure Investment in Australia — Data Centres, Fibre & AI Compute (${yr})`,
+    h1: "Digital Infrastructure Investment in Australia",
+    metaDescription: `Browse Australian digital infrastructure investment opportunities — data centres, fibre networks, subsea cables, AI compute and tower assets. ${upd}.`,
+    intro: `Digital infrastructure — data centres, fibre networks, subsea cables, mobile towers and AI compute facilities — has become a distinct infrastructure asset class in Australia. Browse current opportunities, from unlisted funds and syndicates to development-stage projects.`,
+    sections: [
+      {
+        heading: "What Counts as Digital Infrastructure?",
+        body: "The asset class covers data centres (hyperscale, colocation and edge), fibre and subsea cable networks, mobile tower portfolios and specialised AI compute facilities. Revenue is typically contracted with corporate and government tenants on multi-year terms, which is why investors often analyse these assets with an infrastructure lens — contracted cash flows, capacity utilisation and power security — rather than as property or technology plays.",
+      },
+      {
+        heading: "Access Routes and Structures",
+        body: "Australian investors access the sector through ASX-listed operators, unlisted infrastructure funds, private syndicates and direct development projects. Unlisted vehicles commonly carry minimum-investment and wholesale-investor requirements set out in their offer documents. Key diligence points include tenant covenants and contract tenure, power supply and pricing, connectivity, and refresh capital requirements.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How do I invest in data centres in Australia?",
+        answer: "Routes include ASX-listed data centre operators, unlisted infrastructure funds with digital assets, and private placements in development projects. Listed exposure can be bought through any broker; unlisted vehicles have their own eligibility and minimum-investment rules disclosed in the offer documents.",
+      },
+      {
+        question: "What drives returns in digital infrastructure?",
+        answer: "Returns are driven by contracted tenancy revenue, capacity utilisation, power costs and asset valuations. Demand from cloud and AI workloads has supported the sector's growth, but individual outcomes depend on the specific asset, contract terms and capital structure — review each offer document carefully.",
+      },
+    ],
+    subcategories: [],
+  },
+  {
+    slug: "insurance-linked-securities",
+    label: "Insurance-Linked Securities",
+    dbVerticals: ["insurance-linked-securities"],
+    color: {
+      bg: "bg-slate-50",
+      border: "border-slate-200",
+      text: "text-slate-700",
+      accent: "bg-slate-600",
+      gradient: "from-slate-50 to-white",
+    },
+    icon: "shield",
+    title: `Insurance-Linked Securities (ILS) Investment in Australia — Cat Bonds & Reinsurance (${yr})`,
+    h1: "Insurance-Linked Securities in Australia",
+    metaDescription: `Browse insurance-linked securities opportunities for Australian investors — catastrophe bonds, collateralised reinsurance and ILS funds. ${upd}.`,
+    intro: `Insurance-linked securities (ILS) — catastrophe bonds, collateralised reinsurance and ILS funds — offer returns tied to insurance risk rather than equity or credit markets. Browse ILS opportunities accessible to Australian investors.`,
+    sections: [
+      {
+        heading: "How ILS Investing Works",
+        body: "ILS investors take on defined insurance risks — for example, losses from a specified natural catastrophe — in exchange for premium income. If the covered event does not occur during the risk period, investors earn the coupon; if it does, part or all of the principal pays claims. Because the trigger is an insured event rather than market movements, ILS returns historically show low correlation with shares and bonds.",
+      },
+      {
+        heading: "Access for Australian Investors",
+        body: "Most ILS exposure is accessed through specialist ILS funds, which are typically offered to wholesale or sophisticated investors under the Corporations Act tests. Diligence points include the perils and regions covered, attachment points and modelled loss probabilities, collateral arrangements, and the manager's track record across past catastrophe seasons.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What are catastrophe bonds?",
+        answer: "Catastrophe (cat) bonds are securities whose principal is at risk if a specified insured event — such as a cyclone or earthquake of defined severity — occurs during the bond's term. Investors receive premium-funded coupons for bearing that risk. They are a core instrument of the broader ILS market.",
+      },
+      {
+        question: "Can retail investors access ILS in Australia?",
+        answer: "Direct ILS funds are generally limited to wholesale or sophisticated investors. Retail investors sometimes gain indirect exposure through diversified alternative funds that allocate to ILS. Eligibility requirements and risks are set out in each fund's offer documents.",
+      },
+    ],
+    subcategories: [],
+  },
+  {
+    slug: "litigation-funding",
+    label: "Litigation Funding",
+    dbVerticals: ["litigation-funding"],
+    color: {
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      text: "text-amber-700",
+      accent: "bg-amber-600",
+      gradient: "from-amber-50 to-white",
+    },
+    icon: "scale",
+    title: `Litigation Funding Investment in Australia — Class Actions & Case Co-Investment (${yr})`,
+    h1: "Litigation Funding Investment in Australia",
+    metaDescription: `Browse litigation funding investment opportunities in Australia — class action funding, single-case co-investment and listed funders. ${upd}.`,
+    intro: `Litigation funding finances legal claims — most visibly class actions — in exchange for a share of any settlement or judgment. Australia is one of the world's most established litigation funding markets. Browse opportunities from listed funders to case co-investment vehicles.`,
+    sections: [
+      {
+        heading: "How Litigation Funding Returns Work",
+        body: "Funders pay a case's legal costs and typically receive a negotiated percentage of the resolution sum, or a multiple of capital deployed, if the case succeeds. If the case fails, the funder usually bears the costs — including potential adverse-costs exposure. Returns are therefore uncorrelated with markets but concentrated in case outcomes, durations and court processes.",
+      },
+      {
+        heading: "Ways to Access the Sector",
+        body: "Access routes include ASX-listed litigation funders, unlisted funds that diversify across case portfolios, and single-case co-investment for wholesale investors. Portfolio diversification matters: single-case outcomes are binary, while portfolio vehicles spread duration and judgment risk across many matters and jurisdictions.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How do litigation funders make money?",
+        answer: "A funder pays the legal costs of a claim in exchange for an agreed share of any settlement or judgment — commonly a percentage of the resolution or a multiple of funds deployed. If the claim fails, the funder typically loses its outlay and may bear adverse costs, which is why diversified portfolios are the dominant institutional structure.",
+      },
+      {
+        question: "Is litigation funding regulated in Australia?",
+        answer: "Yes. Funders of class actions have been subject to evolving regulatory requirements, including managed investment scheme and AFSL obligations in certain periods, and court oversight of funding arrangements. The regulatory settings have changed several times — check the current requirements and each offer's disclosures before investing.",
+      },
+    ],
+    subcategories: [],
+  },
+  {
+    slug: "livestock",
+    label: "Livestock & Pastoral",
+    dbVerticals: ["livestock"],
+    color: {
+      bg: "bg-lime-50",
+      border: "border-lime-200",
+      text: "text-lime-700",
+      accent: "bg-lime-600",
+      gradient: "from-lime-50 to-white",
+    },
+    icon: "map-pin",
+    title: `Livestock & Pastoral Station Investment in Australia (${yr})`,
+    h1: "Livestock & Pastoral Investment in Australia",
+    metaDescription: `Browse Australian livestock and pastoral investment opportunities — cattle stations, sheep properties and agricultural funds. FIRB rules covered. ${upd}.`,
+    intro: `Australia runs some of the world's largest cattle and sheep operations, from northern pastoral stations measured in thousands of square kilometres to high-rainfall finishing country. Browse livestock and pastoral investment opportunities, from station acquisitions to agricultural funds with livestock exposure.`,
+    sections: [
+      {
+        heading: "How Livestock Investment Works",
+        body: "Investors access the sector through direct station ownership or leasehold, livestock trading and agistment arrangements, ASX-listed pastoral companies, and agricultural funds. Returns combine livestock trading income with rural land values, and operations are exposed to seasonal conditions, water security and commodity prices for beef, lamb and wool.",
+      },
+      {
+        heading: "Due Diligence for Pastoral Assets",
+        body: "Key diligence points include land tenure (freehold versus pastoral lease and its conditions), carrying capacity and stocking history, water entitlements and infrastructure, herd or flock genetics and health status, and market access including processing capacity and live-export exposure where relevant. Foreign buyers should check FIRB agricultural land thresholds, which are cumulative.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How much does a cattle station cost in Australia?",
+        answer: "Values range enormously — from a few million dollars for smaller grazing properties to well over a hundred million for large northern pastoral aggregations with significant carrying capacity and water assets. Value is driven by carrying capacity, rainfall and water security, infrastructure and land tenure.",
+      },
+      {
+        question: "Can foreign investors buy Australian pastoral land?",
+        answer: "Yes, subject to FIRB rules for agricultural land, which apply cumulative monetary thresholds and a national-interest assessment. Pastoral leases in some jurisdictions carry additional state approval requirements. Cross-border buyers should obtain specialist advice before contracting.",
+      },
+    ],
+    subcategories: [],
+  },
+  {
+    slug: "public-social-infrastructure",
+    label: "Social Infrastructure",
+    dbVerticals: ["public-social-infrastructure"],
+    color: {
+      bg: "bg-teal-50",
+      border: "border-teal-200",
+      text: "text-teal-700",
+      accent: "bg-teal-600",
+      gradient: "from-teal-50 to-white",
+    },
+    icon: "building",
+    title: `Public & Social Infrastructure Investment in Australia — SDA, Social Housing & SIBs (${yr})`,
+    h1: "Public & Social Infrastructure Investment",
+    metaDescription: `Browse Australian social infrastructure investment opportunities — NDIS Specialist Disability Accommodation, social housing and social impact bonds. ${upd}.`,
+    intro: `Social infrastructure spans NDIS Specialist Disability Accommodation (SDA), social and affordable housing, and social impact bonds — assets whose income is partly or wholly backed by government programs. Browse current opportunities across funds, direct property and impact structures.`,
+    sections: [
+      {
+        heading: "Where the Income Comes From",
+        body: "Much of the sector's appeal is the source of revenue: SDA payments are funded through the NDIS for eligible dwellings and participants, social housing programs involve state-backed leases or availability payments, and social impact bonds pay returns linked to measured program outcomes. Government backing reduces tenant-default risk but introduces policy and program-rule risk — payment frameworks and eligibility criteria can and do change.",
+      },
+      {
+        heading: "Access Routes and What to Check",
+        body: "Investors access the sector through specialist SDA and affordable-housing funds, direct dwelling ownership within registered programs, and outcome-linked instruments. Diligence points include program registration and compliance obligations, vacancy and participant-matching risk for SDA, the credit standing of any availability-payment counterparty, and exit liquidity — these assets trade in thinner markets than mainstream property.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is Specialist Disability Accommodation (SDA) investment?",
+        answer: "SDA is purpose-built housing for NDIS participants with extreme functional impairment or very high support needs. Approved dwellings attract SDA payments under the NDIS framework in addition to rent contributions. Investment is available through direct dwelling ownership in registered programs or via specialist SDA funds; program rules and design standards are set by the NDIS.",
+      },
+      {
+        question: "What are social impact bonds?",
+        answer: "Social impact bonds (SIBs) are outcome-based contracts where investors fund a social program and receive returns from government if independently measured outcomes — such as reduced reoffending or improved housing stability — are achieved. Returns depend on program performance, so both the delivery partner's capability and the measurement framework matter.",
+      },
+    ],
+    subcategories: [],
+  },
+  {
+    slug: "venture-capital",
+    label: "Venture Capital",
+    dbVerticals: ["venture-capital"],
+    color: {
+      bg: "bg-fuchsia-50",
+      border: "border-fuchsia-200",
+      text: "text-fuchsia-700",
+      accent: "bg-fuchsia-600",
+      gradient: "from-fuchsia-50 to-white",
+    },
+    icon: "rocket",
+    title: `Venture Capital Investment in Australia — VC Funds, ESIC & Co-Investing (${yr})`,
+    h1: "Venture Capital Investment in Australia",
+    metaDescription: `Browse Australian venture capital opportunities — VC funds, co-investment vehicles, ESIC tax incentives and listed VC access routes. ${upd}.`,
+    intro: `Australian venture capital has matured into an established asset class, anchored by large local funds and a pipeline of globally competitive startups. Browse VC opportunities — fund commitments, co-investment vehicles and early-stage company rounds.`,
+    sections: [
+      {
+        heading: "How Australians Access Venture Capital",
+        body: "Primary routes are commitments to VC funds (typically wholesale-investor only, with multi-year capital calls and 10+ year horizons), co-investment platforms that syndicate access to individual rounds, direct angel investing, and a small number of ASX-listed vehicles holding venture portfolios. Fund selection matters enormously: VC return dispersion between managers is among the widest of any asset class.",
+      },
+      {
+        heading: "ESIC and Tax Settings",
+        body: "Investments in qualifying Early Stage Innovation Companies (ESICs) can attract a non-refundable carry-forward tax offset of 20% of the amount invested (capped) and a modified CGT exemption on shares held between one and ten years, subject to eligibility tests for both the company and the investor. The rules are specific — confirm current ATO guidance and the company's ESIC status before relying on the concessions.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is the minimum investment for VC funds in Australia?",
+        answer: "Institutional VC funds commonly set minimums in the hundreds of thousands of dollars and are restricted to wholesale investors, while syndicate and co-investment platforms can offer lower minimums for individual deals. Each vehicle's offer documents set out its eligibility tests, fees and capital-call schedule.",
+      },
+      {
+        question: "What are ESIC tax incentives?",
+        answer: "Qualifying investors in an Early Stage Innovation Company may receive a 20% non-refundable carry-forward tax offset (capped at $200,000 per year for sophisticated investors and $10,000 for retail investors) plus a modified CGT exemption for shares held 1–10 years. Both the company and the investment must meet the legislated tests at the time shares are issued.",
+      },
+    ],
     subcategories: [],
   },
 ];
