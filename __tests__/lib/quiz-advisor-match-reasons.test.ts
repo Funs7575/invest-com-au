@@ -56,6 +56,29 @@ describe("buildAdvisorMatchReasons", () => {
     expect(reasons).toContain("Works with investors from the UK");
   });
 
+  it("surfaces the corridor specialty first (UK pension / DASP) over a generic one", () => {
+    const advisor: AdvisorMatchAttrs = {
+      ...base,
+      type: "financial_planner",
+      specialties: ["International Tax", "UK Pension Transfer"],
+    };
+    const reasons = buildAdvisorMatchReasons(advisor, {
+      isInternational: true,
+      investorCountry: "uk",
+      advisorType: "financial-planner",
+    });
+    // The corridor-specific specialty wins, not the generic international one.
+    expect(reasons).toContain("Specialises in UK Pension Transfer");
+
+    const daspAdvisor: AdvisorMatchAttrs = { ...base, type: "tax_agent", specialties: ["DASP Processing"] };
+    const daspReasons = buildAdvisorMatchReasons(daspAdvisor, {
+      isInternational: true,
+      visaStatus: "temp_visa",
+      advisorType: "tax-agent",
+    });
+    expect(daspReasons).toContain("Specialises in DASP Processing");
+  });
+
   it("falls back to FIRB specialism for international property without a corridor match", () => {
     const advisor: AdvisorMatchAttrs = { ...base, type: "buyers_agent", firb_specialist: true };
     const reasons = buildAdvisorMatchReasons(advisor, {

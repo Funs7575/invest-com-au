@@ -97,6 +97,29 @@ export const INTL_KEYWORDS = [
   "cross-border", "cross border", "foreign", "overseas", "migration",
 ];
 
+/**
+ * Corridor-specific specialty keywords for an international user's situation
+ * (§5.5: route international by corridor specialty). Matches the canonical
+ * CROSS_BORDER_SPECIALTIES strings in lib/advisor-specialties.ts — without
+ * these, "UK Pension Transfer" / "DASP Processing" contain no generic
+ * INTL_KEYWORD at all, so the exact-corridor specialist scored as if they had
+ * no relevant specialty. Shared by the scorer and the match reasons.
+ */
+export function corridorKeywordsFor(ctx: {
+  investorCountry?: string;
+  visaStatus?: string;
+  investorGoalIntl?: string;
+}): string[] {
+  const out: string[] = [];
+  if (ctx.investorCountry === "uk") out.push("uk pension", "pension transfer", "qrops");
+  if (ctx.investorCountry === "usa") out.push("fatca", "us expat", "us tax");
+  // DASP (Departing Australia Superannuation Payment) is specifically the
+  // temporary-visa-holder pathway.
+  if (ctx.visaStatus === "temp_visa") out.push("dasp", "departing australia");
+  if (ctx.investorGoalIntl === "property") out.push("firb", "non-resident property");
+  return out;
+}
+
 function typeLabel(type: string): string {
   return type.replace(/[_-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()).trim();
 }
@@ -121,12 +144,20 @@ export function buildAdvisorMatchReasons(
   const country = ctx.investorCountry;
   const countryLabel = country ? COUNTRY_LABELS[country] ?? "your country" : null;
 
-  // 1) Specialty match — surface the advisor's OWN specialty that fits the need.
+  // 1) Specialty match — surface the advisor's OWN specialty that fits the
+  //    need. For international users the corridor-specific specialty (UK
+  //    pension / FATCA / DASP / FIRB) outranks a generic international one.
   const typeKeywords = ctx.advisorType ? TYPE_KEYWORDS[ctx.advisorType] ?? [] : [];
-  const keywordPool = ctx.isInternational ? [...typeKeywords, ...INTL_KEYWORDS] : typeKeywords;
-  const matchingSpecialty = specialties.find((s) =>
-    keywordPool.some((k) => s.toLowerCase().includes(k)),
+  const corridorKeywords = ctx.isInternational ? corridorKeywordsFor(ctx) : [];
+  const keywordPool = ctx.isInternational
+    ? [...corridorKeywords, ...typeKeywords, ...INTL_KEYWORDS]
+    : typeKeywords;
+  const corridorSpecialty = specialties.find((s) =>
+    corridorKeywords.some((k) => s.toLowerCase().includes(k)),
   );
+  const matchingSpecialty =
+    corridorSpecialty ??
+    specialties.find((s) => keywordPool.some((k) => s.toLowerCase().includes(k)));
   if (matchingSpecialty) pushUnique(reasons, `Specialises in ${matchingSpecialty}`);
 
   // 2) Cross-border corridor / language (international) OR local-to-you (domestic).

@@ -27,7 +27,7 @@ import {
   type CountryEligibility,
 } from "./country-mode/eligibility-filter";
 import { intentCountryFromQuizKey } from "./intent-context";
-import { TYPE_KEYWORDS, INTL_KEYWORDS } from "./quiz-advisor-match-reasons";
+import { TYPE_KEYWORDS, INTL_KEYWORDS, corridorKeywordsFor } from "./quiz-advisor-match-reasons";
 
 export type MatchConfidence = "strong" | "good" | "fair";
 
@@ -143,10 +143,14 @@ function scoreOne(c: QuizAdvisorCandidate, ctx: QuizAdvisorScoringContext): numb
   const specsLower = (c.specialties ?? []).filter(Boolean).map((s) => s.toLowerCase());
 
   // 1) Specialty / goal fit (35). Candidates are already the requested type,
-  //    so this rewards a sub-specialty that matches the goal/intl-goal.
+  //    so this rewards a sub-specialty that matches the goal/intl-goal. For
+  //    international users the corridor specialties (UK Pension Transfer /
+  //    FATCA / DASP / FIRB) count as first-class hits — they contain no
+  //    generic INTL_KEYWORD, so without this the exact-corridor specialist
+  //    scored as though they had no relevant specialty at all.
   const typeKeywords = ctx.advisorType ? TYPE_KEYWORDS[ctx.advisorType] ?? [] : [];
   const pool = ctx.isInternational
-    ? [...typeKeywords, ...goalKeywordsFor(ctx.goal, ctx.investorGoalIntl), ...INTL_KEYWORDS]
+    ? [...corridorKeywordsFor(ctx), ...typeKeywords, ...goalKeywordsFor(ctx.goal, ctx.investorGoalIntl), ...INTL_KEYWORDS]
     : [...typeKeywords, ...goalKeywordsFor(ctx.goal, ctx.investorGoalIntl)];
   if (pool.length > 0 && specsLower.some((s) => pool.some((k) => s.includes(k)))) {
     score += 35;

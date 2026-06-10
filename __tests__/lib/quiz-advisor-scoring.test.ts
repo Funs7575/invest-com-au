@@ -128,4 +128,34 @@ describe("scoreQuizAdvisors", () => {
     expect(out).toHaveLength(1);
     expect(scoreOf(out, "bare")).toBeGreaterThan(0);
   });
+
+  it("corridor specialties are first-class hits for their corridor (§5.5)", () => {
+    // "UK Pension Transfer" contains no generic INTL_KEYWORD — pre-fix it
+    // scored as if the specialist had no relevant specialty for a UK user.
+    const ukSpecialist = adv({ id: 1, slug: "uk-pension", specialties: ["UK Pension Transfer"] });
+    const unrelated = adv({ id: 2, slug: "unrelated", specialties: ["Business Tax"] });
+    const ukCtx: QuizAdvisorScoringContext = {
+      advisorType: "financial-planner",
+      isInternational: true,
+      investorCountry: "uk",
+    };
+    const out = scoreQuizAdvisors([unrelated, ukSpecialist], ukCtx);
+    expect(out[0]?.slug).toBe("uk-pension");
+    expect(scoreOf(out, "uk-pension")).toBeGreaterThan(scoreOf(out, "unrelated"));
+
+    // DASP is the temporary-visa-holder corridor.
+    const dasp = adv({ id: 3, slug: "dasp", specialties: ["DASP Processing"] });
+    const generic = adv({ id: 4, slug: "generic", specialties: ["Retirement Planning"] });
+    const tempVisaCtx: QuizAdvisorScoringContext = {
+      advisorType: "tax-agent",
+      isInternational: true,
+      visaStatus: "temp_visa",
+    };
+    const out2 = scoreQuizAdvisors([generic, dasp], tempVisaCtx);
+    expect(out2[0]?.slug).toBe("dasp");
+
+    // ...but DASP earns no corridor credit for a non-temp-visa user.
+    const out3 = scoreQuizAdvisors([dasp], { advisorType: "tax-agent", isInternational: true, investorCountry: "uk" });
+    expect(scoreOf(out3, "dasp")).toBeLessThan(scoreOf(out2, "dasp"));
+  });
 });
