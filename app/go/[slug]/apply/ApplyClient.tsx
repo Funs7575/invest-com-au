@@ -280,7 +280,7 @@ export default function ApplyClient({ broker }: { broker: ApplyBroker }) {
           <div className="mt-5 pt-4 border-t border-slate-100 text-center">
             {!cancelled ? (
               <div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Redirecting in{" "}
                   <span className="font-semibold text-slate-600">
                     {countdown}
@@ -289,20 +289,20 @@ export default function ApplyClient({ broker }: { broker: ApplyBroker }) {
                 </p>
                 <button
                   onClick={handleCancel}
-                  className="text-xs text-slate-400 underline hover:text-slate-600 transition-colors mt-1"
+                  className="text-xs text-slate-500 underline hover:text-slate-600 transition-colors mt-1"
                 >
                   Cancel auto-redirect
                 </button>
               </div>
             ) : (
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Auto-redirect cancelled. Click the button above when ready.
               </p>
             )}
           </div>
 
           {/* Fine print */}
-          <p className="text-[0.65rem] text-slate-400 text-center mt-4 leading-relaxed">
+          <p className="text-[0.65rem] text-slate-500 text-center mt-4 leading-relaxed">
             You&apos;re being redirected to {broker.name}&apos;s website.
             Invest.com.au may earn a commission.
           </p>

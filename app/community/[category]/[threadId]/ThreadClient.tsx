@@ -173,7 +173,7 @@ function VoteButtons({
         className={`p-1 rounded transition-colors ${
           vote === "up"
             ? "text-emerald-600"
-            : "text-slate-400 hover:text-slate-600"
+            : "text-slate-500 hover:text-slate-600"
         } disabled:opacity-50 disabled:cursor-not-allowed`}
         aria-label="Upvote"
       >
@@ -196,7 +196,7 @@ function VoteButtons({
         className={`p-1 rounded transition-colors ${
           vote === "down"
             ? "text-red-500"
-            : "text-slate-400 hover:text-slate-600"
+            : "text-slate-500 hover:text-slate-600"
         } disabled:opacity-50 disabled:cursor-not-allowed`}
         aria-label="Downvote"
       >
@@ -257,7 +257,7 @@ function PostCard({
               {badgeLabel(post.author_profile?.badge ?? null)}
             </span>
           )}
-          <span className="text-xs text-slate-400 flex items-center gap-1">
+          <span className="text-xs text-slate-500 flex items-center gap-1">
             <Icon name="clock" size={12} />
             {timeAgo(post.created_at)}
           </span>
@@ -318,7 +318,7 @@ function PostCard({
             className={`text-xs flex items-center gap-1 transition-colors ${
               reported
                 ? "text-slate-300 cursor-default"
-                : "text-slate-400 hover:text-slate-600"
+                : "text-slate-500 hover:text-slate-600"
             }`}
           >
             <Icon name="flag" size={14} />
@@ -701,7 +701,7 @@ export default function ThreadClient({
           <Icon
             name="lock"
             size={24}
-            className="text-slate-400 mx-auto mb-2"
+            className="text-slate-500 mx-auto mb-2"
           />
           <p className="text-sm text-slate-600 font-medium">
             This thread is locked. No new replies can be posted.
@@ -717,7 +717,7 @@ export default function ThreadClient({
           <Icon
             name="message-circle"
             size={24}
-            className="text-slate-400 mx-auto mb-2"
+            className="text-slate-500 mx-auto mb-2"
           />
           <p className="text-sm text-slate-600 mb-3">
             Sign in to join the discussion.
@@ -734,7 +734,7 @@ export default function ThreadClient({
           {replyTo && (
             <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 flex items-start gap-2">
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-slate-400 mb-1">
+                <p className="text-xs text-slate-500 mb-1">
                   Replying to{" "}
                   <span className="font-semibold text-slate-600">
                     {replyTo.author_name}
@@ -747,7 +747,7 @@ export default function ThreadClient({
               </div>
               <button
                 onClick={() => setReplyTo(null)}
-                className="text-slate-400 hover:text-slate-600 p-1"
+                className="text-slate-500 hover:text-slate-600 p-1"
               >
                 <Icon name="x" size={14} />
               </button>
@@ -766,7 +766,7 @@ export default function ThreadClient({
             className="w-full border border-slate-200 rounded-lg p-3 text-sm text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none min-h-30 resize-y"
           />
           <div className="flex items-center justify-between mt-3">
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500">
               {replyBody.length}/5000
             </span>
             <button

@@ -46,8 +46,8 @@ export default function DeveloperTermsPage() {
           <h1 className="text-2xl md:text-4xl font-extrabold mb-2">
             Developer &amp; Buyer&apos;s Agent Listing Terms
           </h1>
-          <p className="text-xs text-slate-400 mb-2">Version {VERSION} — Effective {EFFECTIVE_DATE}</p>
-          <p className="text-xs text-slate-400 mb-8">
+          <p className="text-xs text-slate-500 mb-2">Version {VERSION} — Effective {EFFECTIVE_DATE}</p>
+          <p className="text-xs text-slate-500 mb-8">
             {COMPANY_LEGAL_NAME} (ACN {COMPANY_ACN}, ABN {COMPANY_ABN})
           </p>
 

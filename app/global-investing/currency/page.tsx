@@ -76,7 +76,7 @@ export default function GlobalCurrencyPage() {
             multi-currency account options for Australians funding foreign broker accounts,
             converting dividends, and managing cross-border portfolios.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only</p>
         </div>
       </section>
 
@@ -103,14 +103,14 @@ export default function GlobalCurrencyPage() {
                     <td className="px-3 py-3 text-xs text-slate-600">{p.fixedFee}</td>
                     <td className="px-4 py-3 text-xs text-slate-600 leading-relaxed">{p.bestFor}</td>
                     <td className="px-3 py-3 text-center text-xs font-bold">
-                      {p.multiCurrency ? <span className="text-emerald-600">Yes</span> : <span className="text-slate-400">No</span>}
+                      {p.multiCurrency ? <span className="text-emerald-600">Yes</span> : <span className="text-slate-500">No</span>}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Spreads vary by currency pair, amount, and time. Verify current rates on each provider&apos;s calculator before transacting.</p>
+          <p className="text-xs text-slate-500 mt-2">Spreads vary by currency pair, amount, and time. Verify current rates on each provider&apos;s calculator before transacting.</p>
         </div>
       </section>
 

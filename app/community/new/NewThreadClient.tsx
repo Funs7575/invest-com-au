@@ -292,7 +292,7 @@ export default function NewThreadClient() {
             )}
             <span
               className={`text-xs ${
-                title.length > 180 ? "text-amber-500" : "text-slate-400"
+                title.length > 180 ? "text-amber-500" : "text-slate-500"
               }`}
             >
               {title.length}/200
@@ -328,7 +328,7 @@ export default function NewThreadClient() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-slate-400 italic">
+                <p className="text-sm text-slate-500 italic">
                   Nothing to preview yet.
                 </p>
               )}
@@ -357,13 +357,13 @@ export default function NewThreadClient() {
             {errors.body ? (
               <p className="text-xs text-red-500">{errors.body}</p>
             ) : (
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Use line breaks for paragraphs.
               </p>
             )}
             <span
               className={`text-xs ${
-                body.length > 9000 ? "text-amber-500" : "text-slate-400"
+                body.length > 9000 ? "text-amber-500" : "text-slate-500"
               }`}
             >
               {body.length.toLocaleString()}/10,000
@@ -411,7 +411,7 @@ export default function NewThreadClient() {
           </Link>
           <Link
             href="/community/guidelines"
-            className="text-sm text-slate-400 hover:text-slate-600 transition-colors ml-auto"
+            className="text-sm text-slate-500 hover:text-slate-600 transition-colors ml-auto"
           >
             Community guidelines
           </Link>

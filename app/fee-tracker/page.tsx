@@ -258,7 +258,7 @@ export default async function FeeTrackerPage() {
           ) : (
             <div className="py-12 text-center bg-slate-50 rounded-2xl border border-slate-200">
               <p className="text-sm font-bold text-slate-600 mb-1">Building our fee change database</p>
-              <p className="text-sm text-slate-400 leading-relaxed max-w-sm mx-auto">
+              <p className="text-sm text-slate-500 leading-relaxed max-w-sm mx-auto">
                 We&apos;re building our fee change database. Check back soon — or email us a fee change tip at{" "}
                 <a href="mailto:fees@invest.com.au" className="text-amber-600 hover:underline">
                   fees@invest.com.au
@@ -313,7 +313,7 @@ export default async function FeeTrackerPage() {
                             {broker.fee_changelog!.length} recorded
                           </span>
                         ) : (
-                          <span className="text-slate-400">None yet</span>
+                          <span className="text-slate-500">None yet</span>
                         )}
                       </td>
                       <td className="px-5 py-3 text-right">
@@ -418,7 +418,7 @@ export default async function FeeTrackerPage() {
             <p className="text-xs text-slate-500 leading-relaxed font-semibold">
               All fee changes are verified against official broker pricing pages before being recorded.
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-500 leading-relaxed">
               Fee data is checked weekly. There may be a lag between a broker publishing a fee change and our
               system recording it. Always verify current fees directly with the broker before executing trades.{" "}
               {ADVERTISER_DISCLOSURE_SHORT}

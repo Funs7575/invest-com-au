@@ -438,7 +438,7 @@ function HandoffBanner({ token }: { token: string }) {
 
 export default function FindAdvisorPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16"><div className="max-w-xl mx-auto px-4 text-center text-slate-400 text-sm">Loading quiz...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16"><div className="max-w-xl mx-auto px-4 text-center text-slate-500 text-sm">Loading quiz...</div></div>}>
       <FindAdvisorQuiz />
     </Suspense>
   );
@@ -1034,7 +1034,7 @@ function FindAdvisorQuiz() {
             </button>
             <button
               onClick={() => { setSavedProgress(null); clearQuizProgress(); }}
-              className="text-slate-400 hover:text-slate-600 text-lg leading-none p-0.5 shrink-0"
+              className="text-slate-500 hover:text-slate-600 text-lg leading-none p-0.5 shrink-0"
               aria-label="Dismiss"
             >
               ×
@@ -1043,7 +1043,7 @@ function FindAdvisorQuiz() {
         )}
 
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-6">
           <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
           <span className="mx-1.5 text-slate-300">/</span>
           <Link href="/advisors" className="hover:text-slate-700 transition-colors">Advisors</Link>
@@ -1202,7 +1202,7 @@ function FindAdvisorQuiz() {
 
         {/* Legal footer */}
         {quiz.step <= 5 && (
-          <p className="text-center text-xs text-slate-400 mt-8 leading-relaxed">
+          <p className="text-center text-xs text-slate-500 mt-8 leading-relaxed">
             This is not financial advice. We help you find the right type of professional — the choice is always yours.
           </p>
         )}
@@ -1436,7 +1436,7 @@ function Step3({
         {/* Postcode — primary input */}
         <div>
           <label htmlFor="postcode-input" className="block text-sm font-semibold text-slate-700 mb-1.5">
-            Postcode <span className="text-slate-400 font-normal">(recommended)</span>
+            Postcode <span className="text-slate-500 font-normal">(recommended)</span>
           </label>
           <div className="relative">
             <input
@@ -1549,7 +1549,7 @@ function Step3({
             value={budgetValue}
             onChange={(e) => onBudgetChange(e.target.value)}
           />
-          <p className="text-xs text-slate-400 mt-1.5">
+          <p className="text-xs text-slate-500 mt-1.5">
             Optional — helps us match you with advisors experienced at your level
           </p>
         </div>
@@ -1687,7 +1687,7 @@ function Step4({
               {otpActive && (
                 otpExpired
                   ? <p className="text-xs text-red-500 font-semibold mt-1">Code expired — resend below</p>
-                  : <p className="text-xs text-slate-400 mt-1">Expires in <span className={secondsLeft < 60 ? "text-red-500 font-semibold" : ""}>{countdownStr}</span></p>
+                  : <p className="text-xs text-slate-500 mt-1">Expires in <span className={secondsLeft < 60 ? "text-red-500 font-semibold" : ""}>{countdownStr}</span></p>
               )}
             </div>
             {/* ADV-015: live expiry countdown so users know when the code dies. */}
@@ -1750,7 +1750,7 @@ function Step4({
               </p>
             )}
 
-            <p className="text-center text-xs text-slate-400">
+            <p className="text-center text-xs text-slate-500">
               Didn&apos;t get it?{" "}
               {otpCanResend ? (
                 <button
@@ -1761,7 +1761,7 @@ function Step4({
                   Resend code
                 </button>
               ) : (
-                <span className="text-slate-400 tabular-nums">
+                <span className="text-slate-500 tabular-nums">
                   Resend in {formatCountdown(otpResendInSeconds)}
                 </span>
               )}
@@ -1882,7 +1882,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                         ))}
                       </div>
                       <span className="text-xs font-bold text-slate-700">{currentMatch.rating}</span>
-                      <span className="text-xs text-slate-400">({currentMatch.review_count})</span>
+                      <span className="text-xs text-slate-500">({currentMatch.review_count})</span>
                     </div>
                   )}
                   {currentMatch.location_display && (
@@ -1898,7 +1898,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
             {/* Specialties */}
             {currentMatch.specialties?.length > 0 && (
               <div className="mb-4">
-                <p className="text-[0.65rem] font-semibold text-slate-400 uppercase tracking-wider mb-2">Specialties</p>
+                <p className="text-[0.65rem] font-semibold text-slate-500 uppercase tracking-wider mb-2">Specialties</p>
                 <div className="flex flex-wrap gap-1.5">
                   {currentMatch.specialties.slice(0, 5).map((spec) => (
                     <span key={spec} className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-lg font-medium">
@@ -1990,7 +1990,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
       {/* Previously matched advisors */}
       {allMatches.length > 1 && (
         <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Previous Matches</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Previous Matches</p>
           <div className="space-y-2">
             {allMatches.slice(0, -1).reverse().map((advisor) => (
               <Link
@@ -2138,8 +2138,8 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
       <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-2 py-2">
         {[
           { icon: "shield-check", text: "Your details go to one advisor only", color: "text-emerald-500" },
-          { icon: "lock", text: "Data encrypted & secure", color: "text-slate-400" },
-          { icon: "x-circle", text: "Unsubscribe anytime", color: "text-slate-400" },
+          { icon: "lock", text: "Data encrypted & secure", color: "text-slate-500" },
+          { icon: "x-circle", text: "Unsubscribe anytime", color: "text-slate-500" },
         ].map((item) => (
           <span key={item.text} className="flex items-center gap-1.5 text-xs text-slate-500">
             <Icon name={item.icon} size={13} className={item.color} />
@@ -2160,12 +2160,12 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
         </Button>
       </div>
 
-      <p className="text-center text-xs text-slate-400 leading-relaxed">
+      <p className="text-center text-xs text-slate-500 leading-relaxed">
         Confirmation sent to <strong className="text-slate-600">{userEmail}</strong>
       </p>
 
       <div className="text-center">
-        <button onClick={onRestart} className="text-xs text-slate-400 hover:text-slate-600 transition-colors underline">
+        <button onClick={onRestart} className="text-xs text-slate-500 hover:text-slate-600 transition-colors underline">
           Start over with a different goal
         </button>
       </div>

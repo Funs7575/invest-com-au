@@ -265,7 +265,7 @@ export default function LMIPage() {
                   <tr key={row.lvr} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
                     <td className="px-5 py-3 font-medium text-slate-800">
                       {row.lvr}
-                      <span className="block text-xs font-normal text-slate-400 mt-0.5">{row.note}</span>
+                      <span className="block text-xs font-normal text-slate-500 mt-0.5">{row.note}</span>
                     </td>
                     {row.cells.map((cell, j) => (
                       <td
@@ -285,7 +285,7 @@ export default function LMIPage() {
               <strong>Worked figure:</strong> on an $800,000 property at 90% LVR — a $720,000 loan with an $80,000 deposit — LMI typically falls in the <strong>$20,000–$30,000</strong> range. Pushing from 90% to 95% LVR on the same purchase can lift the premium substantially, because the highest tier carries the steepest rate.
             </p>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             For an exact premium based on your purchase, a licensed mortgage broker can obtain a quote from the relevant LMI provider before you commit.
           </p>
         </div>
@@ -344,7 +344,7 @@ export default function LMIPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             Tier boundaries and rates are set by the LMI provider and differ between Helia and QBE. The bands above illustrate the pattern, not exact pricing.
           </p>
         </div>
@@ -390,9 +390,9 @@ export default function LMIPage() {
             </p>
           </div>
           <ul className="space-y-2 text-sm text-slate-600">
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>Capitalising raises your loan balance, which raises your ongoing repayments.</li>
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>It also nudges your LVR slightly higher, which can affect the rate tier you qualify for.</li>
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>Paying upfront is cheaper over the full term — capitalising is mainly a cash-flow convenience.</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>Capitalising raises your loan balance, which raises your ongoing repayments.</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>It also nudges your LVR slightly higher, which can affect the rate tier you qualify for.</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>Paying upfront is cheaper over the full term — capitalising is mainly a cash-flow convenience.</li>
           </ul>
         </div>
       </section>
@@ -429,8 +429,8 @@ export default function LMIPage() {
             LMI is rarely the only cost of a low deposit. Higher-LVR loans sometimes carry a <strong>higher interest rate</strong> as well, so the true cost of buying with a small deposit is the LMI premium <em>plus</em> any rate premium over the years you hold the loan. Set against that is the cost of waiting:
           </p>
           <ul className="space-y-2 text-sm text-slate-600 mb-5">
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span><strong>Cost of buying now:</strong> the LMI premium, plus any higher interest rate on a higher-LVR loan.</li>
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span><strong>Cost of waiting:</strong> more rent paid while you save, and the risk that property prices rise so the deposit target keeps moving.</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span><strong>Cost of buying now:</strong> the LMI premium, plus any higher interest rate on a higher-LVR loan.</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span><strong>Cost of waiting:</strong> more rent paid while you save, and the risk that property prices rise so the deposit target keeps moving.</li>
           </ul>
           <p className="text-slate-600">
             There is no universal right answer. If prices are rising faster than you can save, paying LMI to buy sooner can work out cheaper overall. If prices are flat or falling, waiting for a 20% deposit avoids both LMI and any rate premium. The comparison below makes the moving parts concrete.
@@ -469,7 +469,7 @@ export default function LMIPage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-4">
+          <p className="text-xs text-slate-500 mt-4">
             Because each insurer prices differently, the same borrower can be quoted different premiums by different lenders — one reason it pays to compare before committing.
           </p>
         </div>
@@ -488,9 +488,9 @@ export default function LMIPage() {
             </p>
           </div>
           <ul className="space-y-2 text-sm text-slate-600 mb-6">
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>Places are limited each year and can be taken up before year-end.</li>
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>Income caps and property-price caps apply, and the price caps vary by location.</li>
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>You still need to qualify for the loan itself and meet the lender&apos;s normal requirements.</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>Places are limited each year and can be taken up before year-end.</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>Income caps and property-price caps apply, and the price caps vary by location.</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>You still need to qualify for the loan itself and meet the lender&apos;s normal requirements.</li>
           </ul>
           <Link href="/first-home-buyer/first-home-guarantee" className="inline-block bg-slate-800 text-white font-semibold px-6 py-3 rounded-xl hover:bg-slate-900 transition-colors">
             Read the First Home Guarantee Guide

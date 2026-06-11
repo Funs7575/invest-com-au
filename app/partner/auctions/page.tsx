@@ -153,7 +153,7 @@ export default async function PartnerAuctionsPage({ searchParams }: PageProps) {
         </Link>
       </section>
 
-      <p className="mt-8 text-[0.65rem] text-slate-400">
+      <p className="mt-8 text-[0.65rem] text-slate-500">
         Operating under ASIC RG 246. Bids reflect lead-cost economics, not personal-advice quality.
         Quality multiplier reflects historical CTR + conversion data, not editorial preference.
       </p>

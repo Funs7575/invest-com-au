@@ -327,7 +327,7 @@ export default function AgePensionAssetsTestPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Taper: pension reduces $3 per fortnight per $1,000 of assessable assets above the lower
             threshold. Couple thresholds are combined household totals. Verify current rates at
             servicesaustralia.gov.au.

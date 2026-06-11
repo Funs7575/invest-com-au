@@ -143,7 +143,7 @@ export default function OutcomeForm({
           placeholder="What went well? What could have gone better?"
           className="w-full border border-slate-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
-        <p className="text-[10px] text-slate-400 mt-1">
+        <p className="text-[10px] text-slate-500 mt-1">
           {testimonial.length}/500
         </p>
         <label className="flex items-start gap-2 mt-2">
@@ -175,7 +175,7 @@ export default function OutcomeForm({
         {submitting ? "Submitting…" : "Submit"}
       </button>
 
-      <p className="text-[10px] text-slate-400 text-center">
+      <p className="text-[10px] text-slate-500 text-center">
         General information only — not personal advice.
       </p>
     </div>

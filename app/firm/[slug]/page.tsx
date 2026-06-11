@@ -322,7 +322,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                 </div>
                 {allSpecs.length > 0 && (
                   <>
-                    <p className="text-xs text-slate-400 mb-2">Specialties:</p>
+                    <p className="text-xs text-slate-500 mb-2">Specialties:</p>
                     <div className="flex flex-wrap gap-1.5">
                       {allSpecs.map(s => (
                         <span key={s} className="px-2.5 py-1 bg-slate-50 text-slate-600 text-[0.65rem] font-medium rounded-full border border-slate-200">{s}</span>
@@ -404,7 +404,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                   </a>
                 )}
                 {!typedFirm.website && !typedFirm.phone && !typedFirm.email && (
-                  <p className="text-xs text-slate-400">No contact details listed</p>
+                  <p className="text-xs text-slate-500">No contact details listed</p>
                 )}
               </div>
             </div>
@@ -464,7 +464,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                                 {member.rating.toFixed(1)}
                               </span>
                               {member.review_count > 0 && (
-                                <span className="text-xs text-slate-400">
+                                <span className="text-xs text-slate-500">
                                   ({member.review_count})
                                 </span>
                               )}
@@ -489,7 +489,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                             </span>
                           ))}
                           {member.specialties.length > 3 && (
-                            <span className="text-[0.6rem] text-slate-400">
+                            <span className="text-[0.6rem] text-slate-500">
                               +{member.specialties.length - 3}
                             </span>
                           )}
@@ -531,7 +531,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
             <pre className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-[0.7rem] text-slate-600 overflow-x-auto whitespace-pre-wrap break-all">
               {`<script src="https://invest.com.au/api/widget/trust-mark?type=firm&slug=${typedFirm.slug}"></script>`}
             </pre>
-            <p className="text-[0.65rem] text-slate-400 mt-2">
+            <p className="text-[0.65rem] text-slate-500 mt-2">
               Add <code className="bg-slate-100 px-1 py-0.5 rounded">?theme=dark</code> for a dark background.{" "}
               <Link href="/embed/licensing" className="text-violet-600 hover:underline">
                 White-label licensing →
@@ -566,7 +566,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                   </div>
 
                   <div className="mb-5">
-                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2.5">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2.5">
                       Roles typically sought
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -622,7 +622,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
           </div>
 
           {/* ── Footer disclaimer ── */}
-          <p className="text-[0.65rem] text-slate-400 text-center max-w-2xl mx-auto leading-relaxed">
+          <p className="text-[0.65rem] text-slate-500 text-center max-w-2xl mx-auto leading-relaxed">
             Information displayed on this page is provided by the advisory firm and verified where possible.
             Invest.com.au does not provide personal financial advice. Always verify credentials independently
             via the ASIC Financial Advisers Register. &copy; {CURRENT_YEAR} Invest.com.au

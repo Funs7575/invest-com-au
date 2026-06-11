@@ -98,7 +98,7 @@ export default function CertificateLookupClient() {
                   {error}
                 </p>
               ) : (
-                <p id="cert-hint" className="mt-2 text-xs text-slate-400">
+                <p id="cert-hint" className="mt-2 text-xs text-slate-500">
                   Format: INV-YYYY-NNNNN
                 </p>
               )}
@@ -113,7 +113,7 @@ export default function CertificateLookupClient() {
           </div>
 
           {/* Footer links */}
-          <p className="text-center text-xs text-slate-400 mt-6">
+          <p className="text-center text-xs text-slate-500 mt-6">
             <Link href="/academy" className="text-teal-600 hover:underline">
               Browse CPD courses
             </Link>

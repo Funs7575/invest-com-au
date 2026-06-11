@@ -326,7 +326,7 @@ export default function FeeAlertsPage() {
                     </div>
                   </div>
                 </div>
-                <span className="text-[0.62rem] text-slate-400 shrink-0 ml-2">
+                <span className="text-[0.62rem] text-slate-500 shrink-0 ml-2">
                   {new Date(c.changed_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
                 </span>
               </div>
@@ -334,7 +334,7 @@ export default function FeeAlertsPage() {
           </div>
         )}
 
-        <div className="mt-6 text-xs text-slate-400 text-center">
+        <div className="mt-6 text-xs text-slate-500 text-center">
           Fee data is sourced from official Product Disclosure Statements and broker websites. Always verify with the provider before making decisions.
         </div>
       </div>

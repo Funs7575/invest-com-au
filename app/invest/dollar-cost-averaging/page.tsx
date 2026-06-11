@@ -452,7 +452,7 @@ export default function DollarCostAveragingPage() {
               ))}
             </div>
 
-            <p className="text-xs text-slate-400 mt-4">
+            <p className="text-xs text-slate-500 mt-4">
               Tax rules are complex and depend on individual circumstances. The above is general information only — speak with a registered tax agent about your specific situation.
             </p>
           </div>
@@ -561,7 +561,7 @@ export default function DollarCostAveragingPage() {
                   <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
                     {item.q}
                     <svg
-                      className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform"
+                      className="w-4 h-4 text-slate-500 shrink-0 group-open:rotate-180 transition-transform"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

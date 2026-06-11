@@ -298,7 +298,7 @@ export default async function SwitchTypePage({
                 Find a financial advisor
               </Link>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               General information only — not financial advice or a personal recommendation.
             </p>
           </div>
@@ -309,7 +309,7 @@ export default async function SwitchTypePage({
           </div>
 
           {/* General advice warning — always present */}
-          <div className="mt-4 text-xs text-slate-400 leading-relaxed border-t border-slate-100 pt-4">
+          <div className="mt-4 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-4">
             {GENERAL_ADVICE_WARNING}
           </div>
         </div>

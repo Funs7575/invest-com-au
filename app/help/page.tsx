@@ -98,7 +98,7 @@ export default function HelpIndexPage() {
                       {cat.title}
                     </h2>
                     <p className="text-xs text-slate-500 line-clamp-2">{cat.description}</p>
-                    <p className="text-xs text-slate-400 mt-2">
+                    <p className="text-xs text-slate-500 mt-2">
                       {cat.articles.length} article{cat.articles.length !== 1 ? "s" : ""}
                     </p>
                   </div>
@@ -122,7 +122,7 @@ export default function HelpIndexPage() {
                     >
                       {art.title}
                     </Link>
-                    <span className="text-xs text-slate-400 ml-2">— {cat.title}</span>
+                    <span className="text-xs text-slate-500 ml-2">— {cat.title}</span>
                   </li>
                 ))
               )}

@@ -262,7 +262,7 @@ export default function EstatePlanningTaxPage() {
                   ))}
                 </tbody>
               </table>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 General information only. Verify current rules at ato.gov.au or with a specialist
                 tax adviser.
               </p>

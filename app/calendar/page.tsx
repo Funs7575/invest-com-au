@@ -155,7 +155,7 @@ export default async function CalendarPage() {
                       <p className="text-2xl font-extrabold text-slate-900 leading-none">
                         {new Date(ev.event_date + "T00:00:00").getDate()}
                       </p>
-                      <p className="text-xs text-slate-400 uppercase tracking-wide">
+                      <p className="text-xs text-slate-500 uppercase tracking-wide">
                         {new Date(ev.event_date + "T00:00:00").toLocaleDateString("en-AU", { month: "short" })}
                       </p>
                     </div>
@@ -168,7 +168,7 @@ export default async function CalendarPage() {
                         >
                           {MARKET_EVENT_TYPE_LABELS[ev.event_type] ?? "Other"}
                         </span>
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-slate-500">
                           {formatDate(ev.event_date)}
                           {ev.start_time && !ev.is_all_day && (
                             <> · {ev.start_time.slice(0, 5)} {ev.timezone.replace("Australia/", "")}</>
@@ -214,7 +214,7 @@ export default async function CalendarPage() {
       </section>
 
       <footer className="mt-8 pt-4 border-t border-slate-200">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           Dates are approximate for published economic releases. Always verify timing directly with
           the relevant authority (
           <a href="https://www.rba.gov.au" className="hover:underline" target="_blank" rel="noopener noreferrer">RBA</a>,{" "}

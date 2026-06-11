@@ -268,7 +268,7 @@ function TrendBadge({
   higherIsBetter: boolean;
 }) {
   if (direction === "insufficient_data" || pctChange === null) {
-    return <span className="text-xs text-slate-400">no trend data yet</span>;
+    return <span className="text-xs text-slate-500">no trend data yet</span>;
   }
 
   const isPositive =
@@ -320,14 +320,14 @@ function HealthScoreSection({
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Current avg</p>
               <p className="mt-1 text-xl font-bold tabular-nums text-slate-900">
                 {summary.latest !== null ? `${summary.latest}` : "—"}
-                <span className="text-sm font-normal text-slate-400">/100</span>
+                <span className="text-sm font-normal text-slate-500">/100</span>
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Series start</p>
               <p className="mt-1 text-xl font-bold tabular-nums text-slate-900">
                 {summary.earliest !== null ? `${summary.earliest}` : "—"}
-                <span className="text-sm font-normal text-slate-400">/100</span>
+                <span className="text-sm font-normal text-slate-500">/100</span>
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -344,7 +344,7 @@ function HealthScoreSection({
               <p className="mt-1 text-xl font-bold tabular-nums text-slate-900">
                 {summary.pointCount}
               </p>
-              <p className="text-xs text-slate-400">daily buckets</p>
+              <p className="text-xs text-slate-500">daily buckets</p>
             </div>
           </div>
 
@@ -369,7 +369,7 @@ function HealthScoreSection({
             />
             {/* X-axis labels */}
             {trendPoints.length >= 2 && (
-              <div className="flex justify-between mt-1 text-[0.6rem] text-slate-400">
+              <div className="flex justify-between mt-1 text-[0.6rem] text-slate-500">
                 <span>{trendPoints[0]!.day}</span>
                 <span>{trendPoints[trendPoints.length - 1]!.day}</span>
               </div>
@@ -423,13 +423,13 @@ function SavingsRateSection({
             <div className="rounded-xl border border-slate-200 bg-white p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Current best</p>
               <p className="mt-1 text-xl font-bold tabular-nums text-slate-900">
-                {fmtPct(summary.latestBest)} <span className="text-sm font-normal text-slate-400">p.a.</span>
+                {fmtPct(summary.latestBest)} <span className="text-sm font-normal text-slate-500">p.a.</span>
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Current avg</p>
               <p className="mt-1 text-xl font-bold tabular-nums text-slate-900">
-                {fmtPct(summary.latestAvg)} <span className="text-sm font-normal text-slate-400">p.a.</span>
+                {fmtPct(summary.latestAvg)} <span className="text-sm font-normal text-slate-500">p.a.</span>
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -445,7 +445,7 @@ function SavingsRateSection({
               <p className="mt-1 text-xl font-bold tabular-nums text-slate-900">
                 {summary.pointCount}
               </p>
-              <p className="text-xs text-slate-400">daily buckets</p>
+              <p className="text-xs text-slate-500">daily buckets</p>
             </div>
           </div>
 
@@ -469,7 +469,7 @@ function SavingsRateSection({
               label="Best savings rate over time"
             />
             {trendPoints.length >= 2 && (
-              <div className="flex justify-between mt-1 text-[0.6rem] text-slate-400">
+              <div className="flex justify-between mt-1 text-[0.6rem] text-slate-500">
                 <span>{trendPoints[0]!.day}</span>
                 <span>{trendPoints[trendPoints.length - 1]!.day}</span>
               </div>
@@ -491,7 +491,7 @@ function SavingsRateSection({
               label="Market-average savings rate over time"
             />
             {trendPoints.length >= 2 && (
-              <div className="flex justify-between mt-1 text-[0.6rem] text-slate-400">
+              <div className="flex justify-between mt-1 text-[0.6rem] text-slate-500">
                 <span>{trendPoints[0]!.day}</span>
                 <span>{trendPoints[trendPoints.length - 1]!.day}</span>
               </div>
@@ -555,7 +555,7 @@ function FeeDeltaSection({
               </p>
               <p className="text-lg font-bold tabular-nums text-slate-900 mb-3">
                 {fmtMoney(latestTrend?.avgAsxFee ?? null)}
-                <span className="text-xs font-normal text-slate-400 ml-1">latest</span>
+                <span className="text-xs font-normal text-slate-500 ml-1">latest</span>
               </p>
               <SvgLineChart
                 points={asxSvgPoints}
@@ -565,7 +565,7 @@ function FeeDeltaSection({
                 label="Average ASX brokerage fee level over time"
               />
               {trendPoints.length >= 2 && (
-                <div className="flex justify-between mt-1 text-[0.6rem] text-slate-400">
+                <div className="flex justify-between mt-1 text-[0.6rem] text-slate-500">
                   <span>{trendPoints[0]!.period}</span>
                   <span>{trendPoints[trendPoints.length - 1]!.period}</span>
                 </div>
@@ -590,14 +590,14 @@ function FeeDeltaSection({
                     label="Day-on-day change in average ASX brokerage fee"
                   />
                   {deltaPoints.length >= 2 && (
-                    <div className="flex justify-between mt-1 text-[0.6rem] text-slate-400">
+                    <div className="flex justify-between mt-1 text-[0.6rem] text-slate-500">
                       <span>{deltaPoints[0]!.period}</span>
                       <span>{deltaPoints[deltaPoints.length - 1]!.period}</span>
                     </div>
                   )}
                 </>
               ) : (
-                <p className="text-xs text-slate-400">Insufficient delta data.</p>
+                <p className="text-xs text-slate-500">Insufficient delta data.</p>
               )}
             </div>
           </div>
@@ -624,20 +624,20 @@ function FeeDeltaSection({
                         className={`border-b border-slate-50 ${i % 2 === 1 ? "bg-slate-50/50" : ""}`}
                       >
                         <td className="px-4 py-2 text-xs text-slate-500 tabular-nums">{d.period}</td>
-                        <td className={`px-4 py-2 text-right text-xs tabular-nums font-medium ${d.asxDelta !== null && d.asxDelta > 0 ? "text-rose-600" : d.asxDelta !== null && d.asxDelta < 0 ? "text-emerald-600" : "text-slate-400"}`}>
+                        <td className={`px-4 py-2 text-right text-xs tabular-nums font-medium ${d.asxDelta !== null && d.asxDelta > 0 ? "text-rose-600" : d.asxDelta !== null && d.asxDelta < 0 ? "text-emerald-600" : "text-slate-500"}`}>
                           {d.asxDelta !== null ? fmtDelta(d.asxDelta) : "—"}
                         </td>
-                        <td className={`px-4 py-2 text-right text-xs tabular-nums font-medium hidden sm:table-cell ${d.usDelta !== null && d.usDelta > 0 ? "text-rose-600" : d.usDelta !== null && d.usDelta < 0 ? "text-emerald-600" : "text-slate-400"}`}>
+                        <td className={`px-4 py-2 text-right text-xs tabular-nums font-medium hidden sm:table-cell ${d.usDelta !== null && d.usDelta > 0 ? "text-rose-600" : d.usDelta !== null && d.usDelta < 0 ? "text-emerald-600" : "text-slate-500"}`}>
                           {d.usDelta !== null ? fmtDelta(d.usDelta) : "—"}
                         </td>
-                        <td className={`px-4 py-2 text-right text-xs tabular-nums font-medium hidden md:table-cell ${d.fxDelta !== null && d.fxDelta > 0 ? "text-rose-600" : d.fxDelta !== null && d.fxDelta < 0 ? "text-emerald-600" : "text-slate-400"}`}>
+                        <td className={`px-4 py-2 text-right text-xs tabular-nums font-medium hidden md:table-cell ${d.fxDelta !== null && d.fxDelta > 0 ? "text-rose-600" : d.fxDelta !== null && d.fxDelta < 0 ? "text-emerald-600" : "text-slate-500"}`}>
                           {d.fxDelta !== null ? `${fmtDelta(d.fxDelta)}%` : "—"}
                         </td>
                       </tr>
                     ))}
                 </tbody>
               </table>
-              <p className="px-4 py-2 text-[0.6rem] text-slate-400 border-t border-slate-100">
+              <p className="px-4 py-2 text-[0.6rem] text-slate-500 border-t border-slate-100">
                 Showing latest 14 periods. Green = fee fell (consumer-positive), red = fee rose.
               </p>
             </div>

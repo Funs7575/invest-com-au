@@ -434,20 +434,20 @@ export default function RecordKeepingPage() {
                 <tr className="bg-white hover:bg-slate-50 transition-colors">
                   <td className="py-3 px-4 text-xs font-semibold text-slate-800">Legal / conveyancing fees</td>
                   <td className="py-3 px-4 text-xs text-slate-600">Solicitor tax invoices</td>
-                  <td className="py-3 px-4 text-center text-xs text-slate-400">N/A</td>
+                  <td className="py-3 px-4 text-center text-xs text-slate-500">N/A</td>
                   <td className="py-3 px-4 text-center text-xs text-green-700 font-bold">Yes</td>
                 </tr>
                 <tr className="bg-white hover:bg-slate-50 transition-colors">
                   <td className="py-3 px-4 text-xs font-semibold text-slate-800">Capital improvements</td>
                   <td className="py-3 px-4 text-xs text-slate-600">Contractor invoices, builder quotes + progress claims</td>
-                  <td className="py-3 px-4 text-center text-xs text-slate-400">N/A</td>
+                  <td className="py-3 px-4 text-center text-xs text-slate-500">N/A</td>
                   <td className="py-3 px-4 text-center text-xs text-green-700 font-bold">Yes</td>
                 </tr>
                 <tr className="bg-white hover:bg-slate-50 transition-colors">
                   <td className="py-3 px-4 text-xs font-semibold text-slate-800">Corporate actions</td>
                   <td className="py-3 px-4 text-xs text-slate-600">Scheme booklets, CHESS statements, DRP statements</td>
                   <td className="py-3 px-4 text-center text-xs text-green-700 font-bold">Yes</td>
-                  <td className="py-3 px-4 text-center text-xs text-slate-400">N/A</td>
+                  <td className="py-3 px-4 text-center text-xs text-slate-500">N/A</td>
                 </tr>
                 <tr className="bg-white hover:bg-slate-50 transition-colors">
                   <td className="py-3 px-4 text-xs font-semibold text-slate-800">Selling costs</td>

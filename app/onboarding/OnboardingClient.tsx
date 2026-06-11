@@ -107,7 +107,7 @@ function ProgressBar({ current }: { current: number }) {
               ) : (
                 <span
                   className={`text-xs font-bold ${
-                    isActive ? "text-emerald-600" : "text-slate-400"
+                    isActive ? "text-emerald-600" : "text-slate-500"
                   }`}
                 >
                   {step}
@@ -183,7 +183,7 @@ function InterestPill({
       <Icon
         name={icon}
         size={16}
-        className={selected ? "text-white" : "text-slate-400"}
+        className={selected ? "text-white" : "text-slate-500"}
       />
       {label}
     </button>

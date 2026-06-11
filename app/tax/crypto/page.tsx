@@ -639,7 +639,7 @@ export default async function CryptoTaxPage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               Based on ATO guidance current to {CURRENT_YEAR}. Verify at ato.gov.au/crypto.
             </p>
           </div>

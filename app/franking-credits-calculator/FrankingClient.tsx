@@ -87,7 +87,7 @@ export default function FrankingClient() {
                 and A200 pass through franking credits from the underlying holdings.
               </p>
             </div>
-            <p className="text-[0.65rem] text-slate-400 mt-4 leading-relaxed">
+            <p className="text-[0.65rem] text-slate-500 mt-4 leading-relaxed">
               This calculator is a simplified estimate and does not account for the 45-day holding rule, discount capital gains,
               or other complex tax situations. Consult a registered tax agent for advice specific to your situation.
             </p>

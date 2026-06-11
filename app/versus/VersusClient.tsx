@@ -282,7 +282,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
 
         {/* ───── SELECTORS ───── */}
         <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-xl md:rounded-2xl p-3.5 md:p-8 mb-3 md:mb-8 shadow-sm">
-          <div className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5 md:mb-4 flex items-center gap-2">
+          <div className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5 md:mb-4 flex items-center gap-2">
             <span>Select platforms to compare</span>
             <span className="h-px flex-1 bg-slate-200" />
           </div>
@@ -323,14 +323,14 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                           <BrokerLogo broker={broker} size="sm" />
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-xs md:text-sm text-slate-900 truncate">{broker.name}</div>
-                            <div className="text-[0.62rem] md:text-xs text-slate-400">
+                            <div className="text-[0.62rem] md:text-xs text-slate-500">
                               {SHOW_RATINGS && <>{broker.rating?.toFixed(1)}/5 · </>}{PLATFORM_LABELS[broker.platform_type] || 'Platform'}
                             </div>
                           </div>
                           {selectedSlugs.length > 2 && (
                             <button
                               onClick={() => removeSlot(index)}
-                              className="w-8 h-8 md:w-7 md:h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                              className="w-8 h-8 md:w-7 md:h-7 flex items-center justify-center text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
                               title="Remove platform"
                             >
                               <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -436,14 +436,14 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                     {SHOW_RATINGS ? (
                       <>
                         <div className="text-base md:text-xl font-extrabold" style={{ color: br.color }}>{br.rating}/5</div>
-                        <div className="text-[0.62rem] md:text-[0.69rem] text-slate-400 mt-0.5 md:mt-1">
+                        <div className="text-[0.62rem] md:text-[0.69rem] text-slate-500 mt-0.5 md:mt-1">
                           {winCounts[br.slug] || 0} {(winCounts[br.slug] || 0) === 1 ? 'win' : 'wins'}
                         </div>
                       </>
                     ) : (
                       <>
                         <div className="text-base md:text-xl font-extrabold" style={{ color: br.color }}>{winCounts[br.slug] || 0}</div>
-                        <div className="text-[0.62rem] md:text-[0.69rem] text-slate-400 mt-0.5 md:mt-1">
+                        <div className="text-[0.62rem] md:text-[0.69rem] text-slate-500 mt-0.5 md:mt-1">
                           category {(winCounts[br.slug] || 0) === 1 ? 'win' : 'wins'}
                         </div>
                       </>
@@ -462,7 +462,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                     <Icon name={v.icon} size={16} className="text-slate-400 shrink-0 md:hidden" />
                     <Icon name={v.icon} size={20} className="text-slate-400 shrink-0 hidden md:block" />
                     <div className="flex-1 min-w-0">
-                      <div className="text-[0.62rem] md:text-xs font-semibold text-slate-400 uppercase tracking-wide">{v.cat}</div>
+                      <div className="text-[0.62rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wide">{v.cat}</div>
                       {v.isTie ? (
                         <div className="text-xs md:text-sm font-bold text-slate-500 mt-0.5">Tie</div>
                       ) : v.winner ? (
@@ -573,7 +573,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-[0.69rem] md:text-xs text-slate-400 italic">Review in progress.</p>
+                          <p className="text-[0.69rem] md:text-xs text-slate-500 italic">Review in progress.</p>
                         )}
                       </div>
                       {/* Cons */}
@@ -591,7 +591,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-[0.69rem] md:text-xs text-slate-400 italic">Review in progress.</p>
+                          <p className="text-[0.69rem] md:text-xs text-slate-500 italic">Review in progress.</p>
                         )}
                       </div>
                       {/* CTA */}
@@ -741,7 +741,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
             <p className="text-slate-500 text-[0.69rem] md:text-lg mb-1 md:mb-2">Select two platforms above to see fees, features & our verdict.</p>
 
             <div className="mt-4 md:mt-8">
-              <p className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 md:mb-3">Popular comparisons</p>
+              <p className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 md:mb-3">Popular comparisons</p>
               <div className="flex flex-wrap justify-center gap-1.5 md:gap-2">
                 {popularComparisons.map((c) => (
                   <Link

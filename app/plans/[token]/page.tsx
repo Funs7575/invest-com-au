@@ -82,7 +82,7 @@ export default async function PlanPublicPage({
                   </span>
                   <span
                     className={`text-sm ${
-                      item.done ? "text-slate-400 line-through" : "text-slate-700"
+                      item.done ? "text-slate-500 line-through" : "text-slate-700"
                     }`}
                   >
                     {item.href ? (

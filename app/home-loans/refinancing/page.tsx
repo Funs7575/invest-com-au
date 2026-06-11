@@ -336,7 +336,7 @@ export default function RefinancingPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             Fixed-rate break costs can be very large — always get a written break cost quote from your existing lender before proceeding if you are on a fixed rate.
           </p>
         </div>

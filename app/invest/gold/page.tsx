@@ -269,7 +269,7 @@ export default function GoldPage() {
                   </tbody>
                 </table>
               </div>
-              <p className="text-xs text-slate-400 mt-2">Verify current fees with the fund manager. GDX holds equities (gold miners), not physical gold.</p>
+              <p className="text-xs text-slate-500 mt-2">Verify current fees with the fund manager. GDX holds equities (gold miners), not physical gold.</p>
             </div>
 
             {/* ASX Gold Miners */}
@@ -297,7 +297,7 @@ export default function GoldPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-slate-400 mt-3">
+              <p className="text-xs text-slate-500 mt-3">
                 Always verify current ASX listings and company status. Mining equities carry operational, exploration, and management risks beyond gold price exposure.
               </p>
             </div>

@@ -730,7 +730,7 @@ export default function EmbedBuilder() {
 
             <div>
               <label htmlFor="eb-rates-advisor" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                Advisor co-branding <span className="text-slate-400 font-normal lowercase">(optional)</span>
+                Advisor co-branding <span className="text-slate-500 font-normal lowercase">(optional)</span>
               </label>
               <input
                 id="eb-rates-advisor"
@@ -770,7 +770,7 @@ export default function EmbedBuilder() {
         {/* ── Shared partner ref ── */}
         <div>
           <label htmlFor="eb-partner-ref" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-            Partner ID <span className="text-slate-400 font-normal lowercase">(optional — adds ?ref= to outbound links)</span>
+            Partner ID <span className="text-slate-500 font-normal lowercase">(optional — adds ?ref= to outbound links)</span>
           </label>
           <input
             id="eb-partner-ref"

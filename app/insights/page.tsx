@@ -247,7 +247,7 @@ function HealthDistributionChart({
         {distribution.buckets.map((bucket, i) => (
           <div key={bucket.lowerBound} className="flex-1 text-center">
             {i % 2 === 0 && (
-              <span className="text-[0.6rem] text-slate-400">
+              <span className="text-[0.6rem] text-slate-500">
                 {bucket.lowerBound}
               </span>
             )}
@@ -304,7 +304,7 @@ function trendLabel(
   pct: number | null,
 ): { text: string; cls: string } {
   if (dir === "insufficient_data" || pct === null) {
-    return { text: "no trend data yet", cls: "text-slate-400" };
+    return { text: "no trend data yet", cls: "text-slate-500" };
   }
   if (dir === "falling") {
     return { text: `▼ down ${Math.abs(pct).toFixed(1)}%`, cls: "text-emerald-600" };
@@ -515,7 +515,7 @@ export default async function InsightsPage() {
                     Score distribution (0–100)
                   </p>
                   <HealthDistributionChart distribution={healthDist} />
-                  <p className="mt-3 text-[0.68rem] text-slate-400">
+                  <p className="mt-3 text-[0.68rem] text-slate-500">
                     Green = 80+, amber = 60–79, slate = below 60.
                   </p>
                 </div>

@@ -116,7 +116,7 @@ function trendCopy(d: TrendDelta | undefined): {
   className: string;
 } {
   if (!d || d.change === null || d.changePct === null) {
-    return { text: "no comparable data", className: "text-slate-400" };
+    return { text: "no comparable data", className: "text-slate-500" };
   }
   if (d.change === 0) return { text: "no change", className: "text-slate-500" };
   // Falling fees = good (green); rising = red. Factual framing only.

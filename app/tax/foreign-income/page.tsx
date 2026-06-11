@@ -235,7 +235,7 @@ export default function ForeignIncomeTaxPage() {
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-500 leading-relaxed">
               DTA rates apply only when the required declaration or withholding form is lodged with the foreign broker or custodian. Rates are subject to change — verify at ato.gov.au/treaties or with a tax adviser.
             </p>
           </div>

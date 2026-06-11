@@ -114,7 +114,7 @@ export default function TeamAvailabilityGrid({ slots, memberCount }: Props) {
                 <th
                   key={d.dayIndex}
                   className={`pb-2 px-1 text-center font-semibold ${
-                    d.isWeekend ? "text-slate-400" : "text-slate-700"
+                    d.isWeekend ? "text-slate-500" : "text-slate-700"
                   }`}
                   scope="col"
                 >

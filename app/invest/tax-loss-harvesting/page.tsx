@@ -168,7 +168,7 @@ export default function TaxLossHarvestingPage() {
                   </div>
                   <div className="flex justify-between py-2 border-b border-slate-100">
                     <span className="text-slate-600">Unrealised loss (gold ETF — NOT sold)</span>
-                    <span className="text-slate-400">$0 offset</span>
+                    <span className="text-slate-500">$0 offset</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-slate-100">
                     <span className="text-slate-600">Net capital gain</span>
@@ -178,7 +178,7 @@ export default function TaxLossHarvestingPage() {
                     <span className="text-slate-600">Tax at 32.5% marginal rate</span>
                     <span className="font-bold text-red-700">$6,500</span>
                   </div>
-                  <div className="flex justify-between py-2 text-xs text-slate-400">
+                  <div className="flex justify-between py-2 text-xs text-slate-500">
                     <span>(Assumes gain is fully assessable — no 50% discount in this example)</span>
                     <span></span>
                   </div>
@@ -309,7 +309,7 @@ export default function TaxLossHarvestingPage() {
                     <span>$975</span>
                   </div>
                 </div>
-                <p className="text-xs text-slate-400 mt-3">($7,500 − $4,500) × 32.5% = $975 tax saved</p>
+                <p className="text-xs text-slate-500 mt-3">($7,500 − $4,500) × 32.5% = $975 tax saved</p>
               </div>
 
               {/* Example 2 */}
@@ -350,7 +350,7 @@ export default function TaxLossHarvestingPage() {
                     <span>$3,700</span>
                   </div>
                 </div>
-                <p className="text-xs text-slate-400 mt-3">$20,000 × 50% × 37% = $3,700 tax saved</p>
+                <p className="text-xs text-slate-500 mt-3">$20,000 × 50% × 37% = $3,700 tax saved</p>
               </div>
             </div>
           </div>

@@ -234,7 +234,7 @@ function AdvisorCard({ advisor }: { advisor: AdvisorRow }) {
           <p className="mt-2 text-sm text-slate-600 line-clamp-2">{advisor.bio}</p>
         )}
 
-        <div className="flex flex-wrap gap-2 mt-2 text-xs text-slate-400">
+        <div className="flex flex-wrap gap-2 mt-2 text-xs text-slate-500">
           {advisor.location_suburb && (
             <span>{advisor.location_suburb}{advisor.location_state ? `, ${advisor.location_state}` : ""}</span>
           )}
@@ -298,7 +298,7 @@ export default async function FindAdvisorPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }} />
 
       <div className="container-custom py-8">
-        <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-6 flex flex-wrap gap-1">
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6 flex flex-wrap gap-1">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>›</span>
           <Link href="/advisors" className="hover:text-slate-600">Find an Advisor</Link>
@@ -323,7 +323,7 @@ export default async function FindAdvisorPage({ params }: Props) {
           ))}
         </div>
 
-        <p className="mt-8 text-xs text-slate-400 text-center">
+        <p className="mt-8 text-xs text-slate-500 text-center">
           All advisors listed on {SITE_NAME} are independently verified. Ratings are based on client reviews collected directly on the platform.
         </p>
       </div>

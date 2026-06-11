@@ -280,7 +280,7 @@ export default async function InvestSubcategoryListingsPage({
       {/* ── Interactive listings — same search / sort / filter toolbar as the
           parent /listings page, scoped to listings pre-filtered server-side
           to this sub-type. No pageTitle: the hero above owns the h1. ── */}
-      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+      <Suspense fallback={<div className="py-12 text-center text-slate-500">Loading listings...</div>}>
         <InvestListingsClient
           listings={listings}
           categories={categoryTabs}

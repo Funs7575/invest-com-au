@@ -183,7 +183,7 @@ export default function AdvisorShortlistClient() {
                   <span className="flex items-center gap-1 text-xs text-slate-600">
                     <span className="text-amber-400">{"★".repeat(Math.round(a.rating))}</span>
                     <span className="font-semibold">{a.rating.toFixed(1)}</span>
-                    <span className="text-slate-400">({a.review_count})</span>
+                    <span className="text-slate-500">({a.review_count})</span>
                   </span>
                 )}
                 <span className="text-xs text-slate-500">{formatFee(a)}</span>
@@ -235,7 +235,7 @@ export default function AdvisorShortlistClient() {
 
       {/* Add more */}
       {count < max && (
-        <p className="text-center text-xs text-slate-400 mt-4">
+        <p className="text-center text-xs text-slate-500 mt-4">
           You can save {max - count} more advisor{max - count !== 1 ? "s" : ""}.{" "}
           <Link href="/advisors" className="text-violet-600 hover:underline">Browse the directory →</Link>
         </p>

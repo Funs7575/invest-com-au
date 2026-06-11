@@ -401,7 +401,7 @@ export default async function ThreadPage({
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
+              <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
                 <span className="flex items-center gap-1">
                   <Icon name="clock" size={12} />
                   {timeAgo(thread.created_at)}
@@ -444,7 +444,7 @@ export default async function ThreadPage({
                   advisorType={expertPost.author_profile.verified_advisor.type}
                 />
               )}
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500">
                 {timeAgo(expertPost.created_at)}
               </span>
             </div>

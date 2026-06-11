@@ -128,7 +128,7 @@ function CourseCard({ course }: { course: AcademyCourse }) {
           {course.avg_rating != null && course.review_count > 0 ? (
             <StarRating rating={course.avg_rating} count={course.review_count} />
           ) : (
-            <span className="text-xs text-slate-400">No reviews yet</span>
+            <span className="text-xs text-slate-500">No reviews yet</span>
           )}
           <span
             className={`text-sm font-extrabold ${isFree ? "text-teal-600" : "text-slate-800"}`}
@@ -284,7 +284,7 @@ export default async function AcademyPage({
             return visibleCourses.length === 0 ? (
               <div className="text-center py-20 border border-dashed border-slate-200 rounded-2xl">
                 <p className="text-slate-500 text-lg mb-2">No courses available yet.</p>
-                <p className="text-slate-400 text-sm mb-6">
+                <p className="text-slate-500 text-sm mb-6">
                   Check back soon — new courses are added regularly.
                 </p>
                 <Link

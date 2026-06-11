@@ -103,7 +103,7 @@ export default function LegalPage() {
         </p>
 
         <section className="mb-10">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4">Consumer Documents</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-4">Consumer Documents</h2>
           <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">
             {documents.map((doc) => (
               <Link
@@ -116,7 +116,7 @@ export default function LegalPage() {
                     {doc.title}
                   </p>
                   <p className="text-xs md:text-sm text-slate-500 mt-0.5 leading-relaxed">{doc.description}</p>
-                  <p className="text-[0.65rem] text-slate-400 mt-1">
+                  <p className="text-[0.65rem] text-slate-500 mt-1">
                     Last updated: {doc.updated}{doc.version ? ` · ${doc.version}` : ""}
                   </p>
                 </div>
@@ -129,7 +129,7 @@ export default function LegalPage() {
         </section>
 
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4">Partner & Commercial Documents</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-4">Partner & Commercial Documents</h2>
           <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">
             {partnerDocuments.map((doc) => (
               <Link
@@ -142,7 +142,7 @@ export default function LegalPage() {
                     {doc.title}
                   </p>
                   <p className="text-xs md:text-sm text-slate-500 mt-0.5 leading-relaxed">{doc.description}</p>
-                  <p className="text-[0.65rem] text-slate-400 mt-1">
+                  <p className="text-[0.65rem] text-slate-500 mt-1">
                     Last updated: {doc.updated}{doc.version ? ` · ${doc.version}` : ""}
                   </p>
                 </div>
@@ -154,7 +154,7 @@ export default function LegalPage() {
           </div>
         </section>
 
-        <p className="text-xs text-slate-400 mt-8 text-center">
+        <p className="text-xs text-slate-500 mt-8 text-center">
           Questions about these documents?{" "}
           <Link href="/contact" className="underline hover:text-slate-600">Contact us</Link> or{" "}
           <Link href="/complaints" className="underline hover:text-slate-600">lodge a complaint</Link>.

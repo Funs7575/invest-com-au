@@ -214,7 +214,7 @@ function CertificateCard({ cert }: { cert: CertificateRow }) {
           </div>
 
           {cert.certificate_number && (
-            <p className="text-slate-400" style={{ fontSize: "0.75rem", margin: 0 }}>
+            <p className="text-slate-500" style={{ fontSize: "0.75rem", margin: 0 }}>
               Certificate #{cert.certificate_number}
             </p>
           )}
@@ -271,7 +271,7 @@ function CertificateCard({ cert }: { cert: CertificateRow }) {
             </a>
           ) : (
             <span
-              className="bg-slate-100 text-slate-400"
+              className="bg-slate-100 text-slate-500"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -391,7 +391,7 @@ export default async function MyLearningPage() {
             padding: "16px",
           }}
         >
-          <p className="text-slate-400" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 4px" }}>
+          <p className="text-slate-500" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 4px" }}>
             Enrolled
           </p>
           <p className="text-slate-900" style={{ fontSize: "1.5rem", fontWeight: 800, margin: 0 }}>
@@ -406,7 +406,7 @@ export default async function MyLearningPage() {
             padding: "16px",
           }}
         >
-          <p className="text-slate-400" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 4px" }}>
+          <p className="text-slate-500" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 4px" }}>
             Completed
           </p>
           <p className="text-slate-900" style={{ fontSize: "1.5rem", fontWeight: 800, margin: 0 }}>
@@ -422,7 +422,7 @@ export default async function MyLearningPage() {
             padding: "16px",
           }}
         >
-          <p className="text-slate-400" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 4px" }}>
+          <p className="text-slate-500" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 4px" }}>
             CPD Hours
           </p>
           <p
@@ -454,7 +454,7 @@ export default async function MyLearningPage() {
           >
             My Courses
             {enrollments.length > 0 && (
-              <span className="text-slate-400" style={{ marginLeft: "8px", fontWeight: 400 }}>
+              <span className="text-slate-500" style={{ marginLeft: "8px", fontWeight: 400 }}>
                 ({activeCount} active · {completedCount} completed)
               </span>
             )}
@@ -474,7 +474,7 @@ export default async function MyLearningPage() {
             <p className="text-slate-500" style={{ marginBottom: "8px", fontWeight: 600 }}>
               You are not enrolled in any courses yet.
             </p>
-            <p className="text-slate-400" style={{ fontSize: "0.875rem", marginBottom: "20px" }}>
+            <p className="text-slate-500" style={{ fontSize: "0.875rem", marginBottom: "20px" }}>
               Browse CPD-accredited courses from Australian advisors and providers.
             </p>
             <Link

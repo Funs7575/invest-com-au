@@ -240,7 +240,7 @@ export default function InvestmentLoanPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             Figures are indicative ranges based on publicly available market data. Individual lender pricing varies. General
             information only — not a credit recommendation.
           </p>

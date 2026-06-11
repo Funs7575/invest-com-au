@@ -303,7 +303,7 @@ export default function ListingSubmitForm() {
                 >
                   {done ? <Icon name="check" size={13} /> : i + 1}
                 </div>
-                <span className={`text-xs hidden sm:block ${active ? "text-slate-900 font-semibold" : "text-slate-400"}`}>
+                <span className={`text-xs hidden sm:block ${active ? "text-slate-900 font-semibold" : "text-slate-500"}`}>
                   {labels[s]}
                 </span>
               </div>
@@ -435,7 +435,7 @@ export default function ListingSubmitForm() {
               }
               className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
             />
-            <p className="text-xs text-slate-400 mt-1">{form.title.length}/120 characters</p>
+            <p className="text-xs text-slate-500 mt-1">{form.title.length}/120 characters</p>
           </div>
 
           <div>
@@ -450,7 +450,7 @@ export default function ListingSubmitForm() {
               placeholder="Describe the opportunity in detail — key highlights, financial performance, reason for sale, growth potential, and any relevant certifications or approvals..."
               className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent resize-y"
             />
-            <p className="text-xs text-slate-400 mt-1">Minimum 50 characters · {form.description.length} written</p>
+            <p className="text-xs text-slate-500 mt-1">Minimum 50 characters · {form.description.length} written</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

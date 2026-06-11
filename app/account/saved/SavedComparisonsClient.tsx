@@ -148,7 +148,7 @@ export default function SavedComparisonsClient() {
         <div className="flex items-center gap-3 mb-6">
           <Link
             href="/account"
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-slate-500 hover:text-slate-600 transition-colors"
             aria-label="Back to account"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,7 +239,7 @@ export default function SavedComparisonsClient() {
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       onClick={() => startRename(comparison)}
-                      className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
+                      className="p-1.5 text-slate-500 hover:text-slate-600 transition-colors"
                       aria-label="Rename comparison"
                       title="Rename"
                     >
@@ -252,7 +252,7 @@ export default function SavedComparisonsClient() {
                         setDeletingId(comparison.id);
                         setEditingId(null);
                       }}
-                      className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"
+                      className="p-1.5 text-slate-500 hover:text-red-500 transition-colors"
                       aria-label="Delete comparison"
                       title="Delete"
                     >

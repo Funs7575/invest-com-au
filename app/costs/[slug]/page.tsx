@@ -114,7 +114,7 @@ export default async function CostScenarioPage({
       <Header />
       <main className="max-w-4xl mx-auto px-4 py-12">
         {/* Breadcrumbs */}
-        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-6">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span className="mx-1.5">/</span>
           <Link href="/costs" className="hover:text-slate-600">Cost Comparisons</Link>
@@ -160,7 +160,7 @@ export default async function CostScenarioPage({
             ))}
           </ul>
           {brokerCosts.length > 1 && (
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               Savings: up to{" "}
               <span className="font-bold text-blue-700">
                 {formatCurrency(mostExpensive - cheapest)}
@@ -208,7 +208,7 @@ export default async function CostScenarioPage({
                         : ""
                     }`}
                   >
-                    <td className="py-3 pr-4 text-slate-400 text-xs">
+                    <td className="py-3 pr-4 text-slate-500 text-xs">
                       {isCheapest ? "🏆" : i + 1}
                     </td>
                     <td className="py-3 pr-4">
@@ -314,7 +314,7 @@ export default async function CostScenarioPage({
         </div>
 
         {/* How we calculated */}
-        <div className="mt-8 text-xs text-slate-400 text-center">
+        <div className="mt-8 text-xs text-slate-500 text-center">
           <p>
             Costs calculated using verified broker fees.{" "}
             <Link href="/methodology" className="underline hover:text-slate-900">

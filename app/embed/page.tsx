@@ -199,7 +199,7 @@ function ParamsTable({ rows }: {
             <tr key={row.param}>
               <td className="px-5 py-3 font-mono text-xs text-emerald-700">{row.param}</td>
               <td className="px-5 py-3 text-xs text-slate-600">{row.values}</td>
-              <td className="px-5 py-3 text-xs text-slate-400 hidden sm:table-cell">{row.def}</td>
+              <td className="px-5 py-3 text-xs text-slate-500 hidden sm:table-cell">{row.def}</td>
               <td className="px-5 py-3 text-xs text-slate-600">{row.desc}</td>
             </tr>
           ))}

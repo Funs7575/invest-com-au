@@ -143,7 +143,7 @@ export default function SavedSearchesClient() {
         <div className="flex items-center gap-3 mb-6">
           <Link
             href="/account"
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="text-slate-500 hover:text-slate-600 transition-colors"
             aria-label="Back to account"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,7 +222,7 @@ export default function SavedSearchesClient() {
                       onClick={() => setPendingDeleteId(row.id)}
                       disabled={busy}
                       aria-busy={busy}
-                      className="p-1.5 text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-1.5 text-slate-500 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       aria-label="Delete saved search"
                       title="Delete"
                     >

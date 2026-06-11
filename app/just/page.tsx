@@ -152,7 +152,7 @@ export default function JustPage() {
         className="mt-10 py-12 bg-amber-50 border border-amber-200 rounded-xl"
       />
 
-      <p className="mt-10 text-xs text-slate-400">
+      <p className="mt-10 text-xs text-slate-500">
         These guides provide general financial information only and do not constitute personal financial advice.
         Always consult a licensed financial adviser or tax agent for advice tailored to your situation.
       </p>

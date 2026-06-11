@@ -23,7 +23,7 @@ export default function Error({
           Try Again
         </button>
         {error.digest && (
-          <p className="mt-4 text-xs text-slate-400">Error ID: {error.digest}</p>
+          <p className="mt-4 text-xs text-slate-500">Error ID: {error.digest}</p>
         )}
       </div>
     </div>

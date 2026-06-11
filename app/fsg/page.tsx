@@ -29,7 +29,7 @@ export default function FSGPage() {
         <h1 className="text-2xl md:text-4xl font-extrabold mb-2">
           Financial Services Guide
         </h1>
-        <p className="text-xs text-slate-400 mb-8">Last updated: 18 March 2026</p>
+        <p className="text-xs text-slate-500 mb-8">Last updated: 18 March 2026</p>
 
         {/* Key callout */}
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8">

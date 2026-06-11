@@ -108,7 +108,7 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
 
       {/* Fetch-error notice — show only when user has voted (can't see correct tallies) */}
       {voted && fetchError && (
-        <p role="alert" className="text-xs text-slate-400 text-center py-2 mb-2">
+        <p role="alert" className="text-xs text-slate-500 text-center py-2 mb-2">
           Could not load vote tallies right now.
         </p>
       )}
@@ -174,7 +174,7 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
       </div>
 
       {!voted && (
-        <p className="text-[0.69rem] text-slate-400 text-center">
+        <p className="text-[0.69rem] text-slate-500 text-center">
           Click a broker card to cast your vote. One vote per comparison.
         </p>
       )}

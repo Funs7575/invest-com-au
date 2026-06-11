@@ -371,7 +371,7 @@ export default async function InvestMarketplacePage() {
                         <h3 className={`font-bold text-sm md:text-base text-slate-900 transition-colors ${accent.hover}`}>
                           {cat.label}
                         </h3>
-                        <span className="text-[0.62rem] md:text-xs font-semibold text-slate-400 tabular-nums">
+                        <span className="text-[0.62rem] md:text-xs font-semibold text-slate-500 tabular-nums">
                           {count} {count === 1 ? "listing" : "listings"}
                         </span>
                       </div>

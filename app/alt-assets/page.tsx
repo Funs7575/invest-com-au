@@ -122,7 +122,7 @@ export default function AltAssetsPage() {
             how they work, what they&apos;ve historically returned, how gains are taxed in Australia,
             and the platforms that give retail investors access.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not advice</p>
         </div>
       </section>
 
@@ -152,7 +152,7 @@ export default function AltAssetsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Platform names are illustrative, not endorsements. Verify ASIC registration before investing in pooled schemes.</p>
+          <p className="text-xs text-slate-500 mt-2">Platform names are illustrative, not endorsements. Verify ASIC registration before investing in pooled schemes.</p>
         </div>
       </section>
 

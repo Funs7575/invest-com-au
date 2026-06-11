@@ -140,7 +140,7 @@ export default function DividendReinvestmentClient() {
               <div>
                 <label htmlFor="drp-price" className="block text-xs font-semibold text-slate-600 mb-1">Share price</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="drp-price"
                     type="number" inputMode="decimal"
@@ -169,7 +169,7 @@ export default function DividendReinvestmentClient() {
               <div>
                 <label htmlFor="drp-yield" className="block text-xs font-semibold text-slate-600 mb-1">
                   Dividend yield (p.a.)
-                  <span className="text-slate-400 font-normal ml-1">e.g. VAS ≈ 4%</span>
+                  <span className="text-slate-500 font-normal ml-1">e.g. VAS ≈ 4%</span>
                 </label>
                 <div className="relative">
                   <input
@@ -182,7 +182,7 @@ export default function DividendReinvestmentClient() {
                     onChange={(e) => setDivYield(Number(e.target.value))}
                     className="w-full pr-8 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">%</span>
                 </div>
               </div>
 
@@ -199,7 +199,7 @@ export default function DividendReinvestmentClient() {
                     onChange={(e) => setGrowth(Number(e.target.value))}
                     className="w-full pr-8 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">%</span>
                 </div>
               </div>
 
@@ -216,7 +216,7 @@ export default function DividendReinvestmentClient() {
                     onChange={(e) => setYears(Number(e.target.value))}
                     className="w-full pr-12 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">yrs</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">yrs</span>
                 </div>
               </div>
             </div>
@@ -415,7 +415,7 @@ export default function DividendReinvestmentClient() {
           contextKeys={["dividend-reinvestment", "drp"]}
         />
 
-        <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
+        <p className="text-[0.65rem] text-slate-500 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial advice. Projections assume constant dividend yield and share price growth, which will vary in practice. Dividends received via DRP are still assessable income in Australia. Always verify your tax position with a registered tax agent.
         </p>
       </div>

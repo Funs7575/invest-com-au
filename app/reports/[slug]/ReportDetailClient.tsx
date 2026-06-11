@@ -25,7 +25,7 @@ export default function ReportDetailClient({ report, isPro, totals }: Props) {
             {report.quarter} {report.year}
           </span>
           {report.published_at && (
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500">
               Published {new Date(report.published_at).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}
             </span>
           )}
@@ -113,7 +113,7 @@ export default function ReportDetailClient({ report, isPro, totals }: Props) {
                     <tr key={i} className="border-b border-slate-50">
                       <td className="px-4 py-2 font-medium">{change.broker}</td>
                       <td className="px-4 py-2 text-slate-600">{change.field}</td>
-                      <td className="px-4 py-2 text-center text-slate-400 line-through">{change.old_value}</td>
+                      <td className="px-4 py-2 text-center text-slate-500 line-through">{change.old_value}</td>
                       <td className="px-4 py-2 text-center font-medium">{change.new_value}</td>
                     </tr>
                   ))}

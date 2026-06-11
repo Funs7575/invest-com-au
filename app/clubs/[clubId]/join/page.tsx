@@ -80,7 +80,7 @@ export default function JoinClubPage({ params }: { params: Promise<{ clubId: str
         >
           {joining ? "Joining…" : "Join club"}
         </button>
-        <p className="text-[10px] text-slate-400 text-center">
+        <p className="text-[10px] text-slate-500 text-center">
           Investment clubs are for information-sharing only. General information — not personal financial advice.
         </p>
       </form>

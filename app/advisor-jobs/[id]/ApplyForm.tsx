@@ -137,7 +137,7 @@ export default function ApplyForm({ jobId, jobTitle }: Props) {
           className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-y"
           placeholder="Introduce yourself and explain why you're a great fit…"
         />
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           {form.message.length}/3000 characters
         </p>
       </div>

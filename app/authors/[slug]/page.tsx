@@ -119,7 +119,7 @@ export default async function AuthorPage({
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             {/* Breadcrumb */}
-            <div className="text-sm text-slate-400 mb-8">
+            <div className="text-sm text-slate-500 mb-8">
               <Link href="/" className="hover:text-white transition-colors">
                 Home
               </Link>

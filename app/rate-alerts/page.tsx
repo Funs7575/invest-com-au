@@ -281,7 +281,7 @@ export default function RateAlertsPage() {
                     <span>{item.question}</span>
                     <span
                       aria-hidden="true"
-                      className="text-base text-slate-400 transition-transform group-open:rotate-45"
+                      className="text-base text-slate-500 transition-transform group-open:rotate-45"
                     >
                       +
                     </span>

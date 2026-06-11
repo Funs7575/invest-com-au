@@ -663,7 +663,7 @@ export default function WorkFromHomePage() {
               </table>
             </div>
 
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Effective lives from ATO Tax Ruling TR 2023/1. Verify current rates at ato.gov.au
               before lodging. Work-use proportion applies to all assets.
             </p>

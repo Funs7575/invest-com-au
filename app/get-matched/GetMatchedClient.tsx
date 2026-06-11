@@ -584,7 +584,7 @@ function QuestionScreen({
               submitting={submitting}
               onAnswer={onAnswer}
             />
-            <p className="lg:hidden text-[11px] text-slate-400 mt-3 text-center">
+            <p className="lg:hidden text-[11px] text-slate-500 mt-3 text-center">
               General information only · You stay in control
             </p>
           </main>
@@ -599,7 +599,7 @@ function QuestionScreen({
                 {budgetSummary && (<li className="text-slate-700"><strong>Budget:</strong> {humanise(budgetSummary)}</li>)}
                 {timelineSummary && (<li className="text-slate-700"><strong>Timeline:</strong> {humanise(timelineSummary)}</li>)}
                 {!intentSummary && (
-                  <li className="text-slate-400 italic">Answer the questions and your action plan appears here.</li>
+                  <li className="text-slate-500 italic">Answer the questions and your action plan appears here.</li>
                 )}
               </ul>
             </div>
@@ -778,7 +778,7 @@ function ActionPlanScreen({
                 </button>
                 <span
                   className={`text-sm ${
-                    item.done ? "text-slate-400 line-through" : "text-slate-700"
+                    item.done ? "text-slate-500 line-through" : "text-slate-700"
                   }`}
                 >
                   {item.href ? (
@@ -912,7 +912,7 @@ function ActionPlanScreen({
             <p role="alert" className="mt-2 text-xs text-red-700">{saveError}</p>
           )}
           {shareToken && !savedUrl && (
-            <p className="mt-3 text-[11px] text-slate-400">
+            <p className="mt-3 text-[11px] text-slate-500">
               Direct link:{" "}
               <Link href={`/plans/${shareToken}`} className="underline">
                 /plans/{shareToken.slice(0, 8)}…

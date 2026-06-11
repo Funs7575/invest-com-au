@@ -266,7 +266,7 @@ export default function MedicarePage() {
                   ))}
                 </tbody>
               </table>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 Family thresholds rise by roughly $4,000 for each dependent child. Figures for 2024&ndash;25; verify the current year at ato.gov.au.
               </p>
             </div>
@@ -346,7 +346,7 @@ export default function MedicarePage() {
                 </table>
               </div>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               The family threshold increases by $1,500 for each dependent child after the first. Figures for 2024&ndash;25; verify at ato.gov.au.
             </p>
           </div>
@@ -508,7 +508,7 @@ export default function MedicarePage() {
                   ))}
                 </tbody>
               </table>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 Rebate percentages are indexed annually (1 April) and shown for the 2024&ndash;25 year; verify at privatehealth.gov.au.
               </p>
             </div>

@@ -54,7 +54,7 @@ export default function ReportsClient({ reports }: { reports: QuarterlyReport[] 
                       {r.quarter} {r.year}
                     </span>
                     {r.published_at && (
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs text-slate-500">
                         {new Date(r.published_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                       </span>
                     )}
@@ -64,7 +64,7 @@ export default function ReportsClient({ reports }: { reports: QuarterlyReport[] 
                     <p className="text-sm text-slate-600 line-clamp-2">{r.executive_summary}</p>
                   )}
                   {r.key_findings && r.key_findings.length > 0 && (
-                    <p className="text-xs text-slate-400 mt-2">{r.key_findings.length} key findings</p>
+                    <p className="text-xs text-slate-500 mt-2">{r.key_findings.length} key findings</p>
                   )}
                 </div>
                 <svg className="w-5 h-5 text-slate-300 shrink-0 mt-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

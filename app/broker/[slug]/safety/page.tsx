@@ -529,7 +529,7 @@ export default async function BrokerSafetyPage({
                 <Icon
                   name="alert-triangle"
                   size={18}
-                  className="text-slate-400"
+                  className="text-slate-500"
                 />
                 Risk Factors
               </h2>

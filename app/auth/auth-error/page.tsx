@@ -66,7 +66,7 @@ export default async function AuthErrorPage({
                 Sign in with your password
               </Link>
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Having trouble? {" "}
               <Link
                 href="/contact"
@@ -81,7 +81,7 @@ export default async function AuthErrorPage({
               user comprehension but visible enough for support to quote */}
           {desc && (
             <details className="mt-4">
-              <summary className="text-[0.65rem] text-slate-400 cursor-pointer select-none hover:text-slate-600">
+              <summary className="text-[0.65rem] text-slate-500 cursor-pointer select-none hover:text-slate-600">
                 Technical details
               </summary>
               <p className="mt-1 px-3 py-2 text-[0.65rem] text-slate-500 bg-slate-50 border border-slate-100 rounded font-mono break-words">

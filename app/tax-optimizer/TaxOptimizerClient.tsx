@@ -191,15 +191,15 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
               {submitted && fieldErrors.ticker && <p role="alert" className="text-xs text-red-600">{fieldErrors.ticker}</p>}
             </div>
             <div className="flex flex-col gap-0.5">
-              <label htmlFor="tax-buy-date" className="text-xs font-semibold text-slate-600">Buy date <span className="text-slate-400 font-normal">(optional)</span></label>
+              <label htmlFor="tax-buy-date" className="text-xs font-semibold text-slate-600">Buy date <span className="text-slate-500 font-normal">(optional)</span></label>
               <input id="tax-buy-date" value={buyDate} onChange={e => setBuyDate(e.target.value)} type="date" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <label htmlFor="tax-buy-price" className="text-xs font-semibold text-slate-600">Buy price <span className="text-slate-400 font-normal">(optional)</span></label>
+              <label htmlFor="tax-buy-price" className="text-xs font-semibold text-slate-600">Buy price <span className="text-slate-500 font-normal">(optional)</span></label>
               <input id="tax-buy-price" value={buyPrice} onChange={e => setBuyPrice(e.target.value)} type="number" inputMode="decimal" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <label htmlFor="tax-current-price" className="text-xs font-semibold text-slate-600">Current price <span className="text-slate-400 font-normal">(optional)</span></label>
+              <label htmlFor="tax-current-price" className="text-xs font-semibold text-slate-600">Current price <span className="text-slate-500 font-normal">(optional)</span></label>
               <input id="tax-current-price" value={currentPrice} onChange={e => setCurrentPrice(e.target.value)} type="number" inputMode="decimal" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
@@ -221,7 +221,7 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
               </div>
             </div>
           </div>
-          <p className="text-xs text-slate-400 mb-2"><span className="text-red-500">*</span> Required</p>
+          <p className="text-xs text-slate-500 mb-2"><span className="text-red-500">*</span> Required</p>
 
           {holdings.length > 0 && (
             <div className="space-y-1 mb-3">

@@ -427,7 +427,7 @@ export default function OffsetRedrawPage() {
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               Break-even balance = annual fee cost &divide; interest rate. Most borrowers keeping more than $10,000 in offset will clear break-even comfortably.
             </p>
           </div>

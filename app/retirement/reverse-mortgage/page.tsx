@@ -86,7 +86,7 @@ export default function ReverseMortgagePage() {
             compounds, eroding your equity over time. The government&apos;s Home Equity Access Scheme (HEAS)
             offers a significantly lower rate alternative. Here&apos;s what to know before signing anything.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · This page does not constitute credit advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · This page does not constitute credit advice</p>
         </div>
       </section>
 

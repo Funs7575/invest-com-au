@@ -80,7 +80,7 @@ export default async function FeeImpactExportPage({
                 key={r.broker.slug}
                 className={`border-b border-slate-200 ${rowBg}`}
               >
-                <td className="px-2.5 py-1.5 text-slate-400">{i + 1}</td>
+                <td className="px-2.5 py-1.5 text-slate-500">{i + 1}</td>
                 <td className={`px-2.5 py-1.5 ${i === 0 ? "font-bold" : "font-medium"}`}>
                   {r.broker.name} {i === 0 && "⭐"}
                 </td>

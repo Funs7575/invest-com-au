@@ -33,7 +33,7 @@ function fmt(cents: number | null): string {
 }
 
 function growthColor(v: number | null): string {
-  if (v == null) return "text-slate-400";
+  if (v == null) return "text-slate-500";
   return v > 0 ? "text-emerald-600" : v < 0 ? "text-red-600" : "text-slate-500";
 }
 
@@ -129,7 +129,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
       {/* Hero */}
       <section className="bg-white border-b border-slate-100">
         <div className="container-custom py-6 md:py-8">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-600">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-600">Property</Link>
@@ -149,11 +149,11 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             <div className="bg-slate-50 rounded-xl p-3 text-center">
               <p className="text-lg font-extrabold text-slate-900">{fmt(s.median_price_house)}</p>
-              <p className="text-[0.65rem] text-slate-400">Median House</p>
+              <p className="text-[0.65rem] text-slate-500">Median House</p>
             </div>
             <div className="bg-slate-50 rounded-xl p-3 text-center">
               <p className="text-lg font-extrabold text-slate-900">{fmt(s.median_price_unit)}</p>
-              <p className="text-[0.65rem] text-slate-400">Median Unit</p>
+              <p className="text-[0.65rem] text-slate-500">Median Unit</p>
             </div>
             <div className="bg-emerald-50 rounded-xl p-3 text-center">
               <p className="text-lg font-extrabold text-emerald-700">
@@ -165,13 +165,13 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
               <p className="text-lg font-extrabold text-slate-900">
                 {s.vacancy_rate != null ? `${s.vacancy_rate}%` : "—"}
               </p>
-              <p className="text-[0.65rem] text-slate-400">Vacancy Rate</p>
+              <p className="text-[0.65rem] text-slate-500">Vacancy Rate</p>
             </div>
             <div className={`rounded-xl p-3 text-center ${s.capital_growth_10yr != null && s.capital_growth_10yr > 0 ? "bg-emerald-50" : "bg-slate-50"}`}>
               <p className={`text-lg font-extrabold ${growthColor(s.capital_growth_10yr)}`}>
                 {s.capital_growth_10yr != null ? `${s.capital_growth_10yr > 0 ? "+" : ""}${s.capital_growth_10yr}%` : "—"}
               </p>
-              <p className="text-[0.65rem] text-slate-400">10yr Growth</p>
+              <p className="text-[0.65rem] text-slate-500">10yr Growth</p>
             </div>
           </div>
         </div>
@@ -193,7 +193,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
                 <p className={`text-xl font-extrabold ${growthColor(item.value)}`}>
                   {item.value != null ? `${item.value > 0 ? "+" : ""}${item.value}%` : "—"}
                 </p>
-                <p className="text-xs text-slate-400 mt-1">{item.label}</p>
+                <p className="text-xs text-slate-500 mt-1">{item.label}</p>
               </div>
             ))}
           </div>
@@ -228,7 +228,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
               </tbody>
             </table>
           </div>
-          <p className="text-[0.62rem] text-slate-400 mt-2">State averages are approximate benchmarks.</p>
+          <p className="text-[0.62rem] text-slate-500 mt-2">State averages are approximate benchmarks.</p>
         </section>
 
         {/* Demographics */}
@@ -242,7 +242,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
               { label: "Median Income", value: s.median_income ? `$${s.median_income.toLocaleString()}` : "—" },
             ].map((item) => (
               <div key={item.label} className="bg-slate-50 rounded-xl p-3">
-                <p className="text-xs text-slate-400">{item.label}</p>
+                <p className="text-xs text-slate-500">{item.label}</p>
                 <p className="font-bold text-slate-900">{item.value}</p>
               </div>
             ))}

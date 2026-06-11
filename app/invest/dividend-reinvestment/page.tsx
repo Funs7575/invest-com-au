@@ -227,7 +227,7 @@ export default function DividendReinvestmentPage() {
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               Note: some newer online brokers do not support DRP. Your broker&apos;s platform may not automatically reflect DRP elections — enrolment must be done directly with the registry or ETF issuer.
             </p>
           </div>
@@ -344,7 +344,7 @@ export default function DividendReinvestmentPage() {
                 <p className="text-sm text-slate-700">Total brokerage paid across all reinvestments over the 20-year period.</p>
               </div>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               Assumes constant $95 unit price and constant 4% yield for illustrative purposes only. Actual returns will vary. Past performance is not indicative of future performance.
             </p>
           </div>

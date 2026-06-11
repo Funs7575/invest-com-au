@@ -263,7 +263,7 @@ export default function BusinessFinanceEnquiryForm() {
         {status === "submitting" ? "Submitting…" : "Submit Enquiry"}
       </button>
 
-      <p className="text-center text-[0.65rem] text-slate-400">
+      <p className="text-center text-[0.65rem] text-slate-500">
         By submitting you agree to our privacy policy. General information only — not financial advice.
       </p>
     </form>

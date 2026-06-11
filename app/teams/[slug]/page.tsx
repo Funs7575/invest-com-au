@@ -524,20 +524,20 @@ export default async function TeamProfilePage({ params }: PageProps) {
                         <Icon
                           name="chevron-down"
                           size={16}
-                          className="text-slate-400 shrink-0 transition-transform group-open:rotate-180"
+                          className="text-slate-500 shrink-0 transition-transform group-open:rotate-180"
                         />
                       </summary>
                       <div className="px-4 pb-4 space-y-3">
                         <div>
-                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Situation</p>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">Situation</p>
                           <p className="text-sm text-slate-600 leading-relaxed">{cs.situation}</p>
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Approach</p>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">Approach</p>
                           <p className="text-sm text-slate-600 leading-relaxed">{cs.approach}</p>
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Outcome</p>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">Outcome</p>
                           <p className="text-sm text-slate-600 leading-relaxed">{cs.outcome}</p>
                         </div>
                         {author && (

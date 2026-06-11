@@ -293,7 +293,7 @@ export default function ShortlistClient() {
                   <span className="text-[0.69rem] text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
                   <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span>
                   <span className="text-slate-200 hidden sm:inline">|</span>
-                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-400 hidden sm:inline">ASX {broker.asx_fee || "N/A"}</span>
+                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500 hidden sm:inline">ASX {broker.asx_fee || "N/A"}</span>
                 </div>
               </div>
               <a
@@ -365,7 +365,7 @@ export default function ShortlistClient() {
 
         {/* Popular broker chips */}
         <div className="border-t border-slate-100 pt-4">
-          <p className="text-[0.65rem] md:text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2.5">
+          <p className="text-[0.65rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2.5">
             Popular with Aussies
           </p>
           <div className="flex flex-wrap justify-center gap-2">
@@ -469,13 +469,13 @@ export default function ShortlistClient() {
                   <span className="text-[0.69rem] text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
                   <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span>
                   <span className="text-slate-200 hidden sm:inline">|</span>
-                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-400 hidden sm:inline">
+                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500 hidden sm:inline">
                     ASX {broker.asx_fee || "N/A"}
                   </span>
                   {broker.us_fee && (
                     <>
                       <span className="text-slate-200 hidden md:inline">|</span>
-                      <span className="text-[0.69rem] text-slate-400 hidden md:inline">
+                      <span className="text-[0.69rem] text-slate-500 hidden md:inline">
                         US {broker.us_fee}
                       </span>
                     </>
@@ -597,7 +597,7 @@ export default function ShortlistClient() {
 
       {count === 1 && (
         <div className="mt-4 text-center">
-          <p className="text-xs text-slate-400 mb-2">Save one more broker to compare side-by-side</p>
+          <p className="text-xs text-slate-500 mb-2">Save one more broker to compare side-by-side</p>
           <Link
             href="/compare"
             className="inline-block px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors min-h-11"

@@ -355,7 +355,7 @@ export default async function FrankingCreditsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             The break-even point is approximately the 30% corporate rate. Investors above 30% pay a top-up;
             those below 30% receive a refund of the difference.
           </p>
@@ -407,7 +407,7 @@ export default async function FrankingCreditsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Franking percentages vary year to year. Check the company announcement or your dividend statement for the
             exact franking percentage for each dividend payment.
           </p>
@@ -529,7 +529,7 @@ export default async function FrankingCreditsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Franking ratios are approximate and vary year to year with portfolio composition and company payout
             decisions. Verify the annual tax statement from your ETF manager for precise figures.
           </p>

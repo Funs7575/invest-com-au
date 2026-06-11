@@ -315,7 +315,7 @@ export default async function BestBrokerPage({
                 {SPONSORED_DISCLOSURE_SHORT}
               </p>
             )}
-            <p className="text-[0.56rem] md:text-xs text-slate-400 mt-1">
+            <p className="text-[0.56rem] md:text-xs text-slate-500 mt-1">
               {showRaw ? (
                 <>
                   Showing pure rating order.{" "}
@@ -397,7 +397,7 @@ export default async function BestBrokerPage({
               <Link href="/reviewers/editorial-team" className="font-semibold text-slate-700 hover:text-slate-900 transition-colors">
                 {REVIEW_AUTHOR.name}
               </Link>
-              <span className="text-slate-400">· {REVIEW_AUTHOR.jobTitle}</span>
+              <span className="text-slate-500">· {REVIEW_AUTHOR.jobTitle}</span>
             </span>
             <span className="flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -527,7 +527,7 @@ export default async function BestBrokerPage({
               <tbody className="divide-y divide-slate-200">
                 {filtered.map((broker, i) => (
                   <tr key={broker.id} className={`hover:bg-slate-50 ${i === 0 ? "bg-amber-50/40" : ""}`}>
-                    <td className="px-4 py-3 text-sm font-semibold text-slate-400">{i + 1}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-slate-500">{i + 1}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <Link href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-slate-900 transition-colors">
@@ -688,7 +688,7 @@ export default async function BestBrokerPage({
                       )}
                       <h4 className="text-sm font-bold mb-2 line-clamp-2 flex-1">{ra.title}</h4>
                       {ra.read_time && (
-                        <span className="text-xs text-slate-400">{ra.read_time} min read</span>
+                        <span className="text-xs text-slate-500">{ra.read_time} min read</span>
                       )}
                     </Link>
                   );

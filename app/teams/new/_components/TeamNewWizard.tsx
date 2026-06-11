@@ -325,7 +325,7 @@ export default function TeamNewWizard() {
                 {summary.description && <p className="text-sm text-indigo-100 mt-1 line-clamp-2">{summary.description}</p>}
               </div>
               <div className="bg-white px-5 py-3">
-                <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-2">Handles</p>
+                <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-2">Handles</p>
                 <div className="flex flex-wrap gap-1.5">
                   {summary.templates.slice(0, 4).map((t) => (
                     <span key={t} className="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full font-medium">{t}</span>
@@ -333,7 +333,7 @@ export default function TeamNewWizard() {
                   {summary.templates.length > 4 && (
                     <span className="text-xs bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full">+{summary.templates.length - 4} more</span>
                   )}
-                  {summary.templates.length === 0 && <span className="text-xs text-slate-400 italic">No scope selected yet</span>}
+                  {summary.templates.length === 0 && <span className="text-xs text-slate-500 italic">No scope selected yet</span>}
                 </div>
                 <div className="mt-3 flex items-center gap-2">
                   <span className="inline-flex items-center gap-1 text-xs text-slate-500">

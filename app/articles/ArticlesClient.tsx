@@ -81,7 +81,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
       {/* Search + Sort row */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="relative flex-1 min-w-[180px] max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="search" enterKeyHint="search"
             value={searchQuery}
@@ -177,7 +177,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
                     {article.evergreen ? "Evergreen" : "News"}
                   </span>
                   {article.read_time && (
-                    <span className="text-xs text-slate-400 ml-auto">
+                    <span className="text-xs text-slate-500 ml-auto">
                       {article.read_time} min read
                     </span>
                   )}
@@ -211,7 +211,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
       {filtered.length === 0 && (
         <div className="text-center py-12 col-span-full">
           <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Search className="w-6 h-6 text-slate-400" />
+            <Search className="w-6 h-6 text-slate-500" />
           </div>
           <p className="text-lg font-bold text-slate-800 mb-1">No articles found</p>
           <p className="text-sm text-slate-500 mb-5">
@@ -224,7 +224,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
             Browse all articles
           </button>
           <div className="text-left max-w-sm mx-auto">
-            <p className="text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Popular reads</p>
+            <p className="text-[0.7rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Popular reads</p>
             <div className="space-y-2">
               {[
                 { href: "/articles/how-to-start-investing", label: "How to start investing in Australia" },

@@ -232,7 +232,7 @@ export default function AgePensionPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             All amounts are per fortnight. Pension Supplement minimum amount is paid if you are overseas for
             more than 6 weeks. Verify current rates at servicesaustralia.gov.au.
           </p>
