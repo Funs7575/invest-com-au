@@ -7,6 +7,7 @@ import { FIRB_DISCLAIMER, FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/comp
 import { WHO_NEEDS_FIRB } from "@/lib/firb-data";
 import Icon from "@/components/Icon";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import CrossBorderNextStep from "@/components/foreign-investment/CrossBorderNextStep";
 import FirbEligibilityWalkthrough from "./FirbEligibilityWalkthrough";
 
 export const revalidate = 86400;
@@ -98,6 +99,16 @@ export default function FirbEligibilityPage() {
         {/* ── The walkthrough ── */}
         <section className="mb-10">
           <FirbEligibilityWalkthrough />
+        </section>
+
+        {/* ── Next step (quiz international track + advisor directory) ── */}
+        <section className="mb-10">
+          <CrossBorderNextStep
+            advisorHref="/advisors/firb-specialists"
+            advisorLabel="FIRB specialists"
+            title="Know what you can buy — now line up the right people"
+            body="Eligibility is only the first gate. Answer a few questions about your country, visa status and goal and we'll point you to the brokers, specialists or property route that fit your situation."
+          />
         </section>
 
         {/* ── Who needs FIRB (reference table) ── */}

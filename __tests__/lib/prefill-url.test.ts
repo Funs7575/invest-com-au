@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { buildAdvisorUrl, buildQuizUrl } from "@/lib/prefill-url";
+import {
+  buildAdvisorUrl,
+  buildQuizUrl,
+  buildCrossBorderQuizUrl,
+} from "@/lib/prefill-url";
 
 // ── buildAdvisorUrl ───────────────────────────────────────────────────────────
 
@@ -108,5 +112,54 @@ describe("buildQuizUrl", () => {
   it("omits state when not provided", () => {
     const url = buildQuizUrl({ vertical: "crypto" });
     expect(new URL(url, "https://x.test").searchParams.has("state")).toBe(false);
+  });
+});
+
+// ── buildCrossBorderQuizUrl ───────────────────────────────────────────────────
+
+describe("buildCrossBorderQuizUrl", () => {
+  it("returns a bare /quiz with no options (no trailing ?)", () => {
+    expect(buildCrossBorderQuizUrl()).toBe("/quiz");
+    expect(buildCrossBorderQuizUrl({})).toBe("/quiz");
+  });
+
+  it("sets track=international to open the international quiz track", () => {
+    const url = buildCrossBorderQuizUrl({ track: "international" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.get("track")).toBe("international");
+  });
+
+  it("supports the expat track", () => {
+    const url = buildCrossBorderQuizUrl({ track: "expat" });
+    expect(new URL(url, "https://x.test").searchParams.get("track")).toBe("expat");
+  });
+
+  it("forwards the country slug as the country param", () => {
+    const url = buildCrossBorderQuizUrl({ countrySlug: "united-kingdom" });
+    expect(new URL(url, "https://x.test").searchParams.get("country")).toBe("united-kingdom");
+  });
+
+  it("forwards the international goal as the intent param", () => {
+    const url = buildCrossBorderQuizUrl({ intent: "property" });
+    expect(new URL(url, "https://x.test").searchParams.get("intent")).toBe("property");
+  });
+
+  it("combines track + country + intent into one parseable URL", () => {
+    const url = buildCrossBorderQuizUrl({
+      track: "international",
+      countrySlug: "hong-kong",
+      intent: "shares",
+    });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.get("track")).toBe("international");
+    expect(params.get("country")).toBe("hong-kong");
+    expect(params.get("intent")).toBe("shares");
+  });
+
+  it("omits params that are not provided", () => {
+    const url = buildCrossBorderQuizUrl({ track: "international" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.has("country")).toBe(false);
+    expect(params.has("intent")).toBe(false);
   });
 });

@@ -17,6 +17,7 @@ import CountryAudiencesSection from "@/components/foreign-investment/sections/Co
 import CountryFaqSection from "@/components/foreign-investment/sections/CountryFaqSection";
 import CountrySchemesSection from "@/components/foreign-investment/CountrySchemesSection";
 import CrossBorderPartnerPanel from "@/components/foreign-investment/CrossBorderPartnerPanel";
+import CrossBorderNextStep from "@/components/foreign-investment/CrossBorderNextStep";
 import { isoForIntentCode } from "@/lib/intent-context";
 import SectionHeading from "@/components/SectionHeading";
 import ForeignInvestmentNav from "@/app/foreign-investment/ForeignInvestmentNav";
@@ -322,6 +323,13 @@ export default async function CountryHubTemplate({ config }: Props) {
             </div>
           </div>
         )}
+
+        {/* ── Next step (quiz international track + advisor directory) ── */}
+        <CrossBorderNextStep
+          countrySlug={config.slug}
+          title={`Get matched to the right next step for ${config.adjective} investors`}
+          body="Answer a few questions about your visa status and goal and we'll point you to the platforms, specialists or property route that fit — no obligation."
+        />
 
         {/* ── Jump-to cards ── */}
         {config.jumpToCards && config.jumpToCards.length > 0 && (

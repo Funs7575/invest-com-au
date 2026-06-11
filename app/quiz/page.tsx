@@ -308,23 +308,36 @@ export default function QuizPage() {
   // Country pages and the popular-links strip link to /quiz?country=<slug>
   // (and optionally &intent=<key>). We pre-seed investor_country and
   // investor_goal_intl so the user doesn't have to re-enter them after
-  // confirming the location question. We do NOT pre-set `location` —
-  // an HK-resident, an HK passport-holder living in AU, and an Aussie
-  // expat in HK all might land here, and Q1 is the only signal that
-  // distinguishes them. Prefill is a hint, not a bypass. Per user
-  // decision #6 in the v2 plan.
+  // confirming the location question. By default we do NOT pre-set
+  // `location` — an HK-resident, an HK passport-holder living in AU, and
+  // an Aussie expat in HK all might land here, and Q1 is the only signal
+  // that distinguishes them, so a bare ?country= stays a hint, not a
+  // bypass (user decision #6 in the v2 plan).
+  //
+  // The exception is an explicit `?track=international|expat`. Cross-border
+  // content surfaces (FIRB explainer, non-resident mortgage guide, country
+  // hubs) are unambiguously addressed to non-residents/expats, so their
+  // "answer a few questions" CTAs opt in to pre-selecting the international
+  // track. The user still confirms (and can change) Q1 — we only set the
+  // default answer, we don't skip the question.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const countryParam = params.get("country");
     const intentParam = params.get("intent");
+    const trackParam = params.get("track");
     const topParam = params.get("top");
 
     if (topParam) setSharedTopSlug(topParam);
 
-    if (!countryParam && !intentParam) return;
+    if (!countryParam && !intentParam && !trackParam) return;
 
     const seed: Partial<UnifiedAnswers> = {};
+    // Explicit cross-border entry: pre-select the international/expat Q1
+    // answer so the quiz starts on the international track.
+    if (trackParam === "international" || trackParam === "expat") {
+      seed.location = trackParam;
+    }
     if (countryParam) {
       const code = intentCountryFromSlug(countryParam);
       if (code) seed.investor_country = quizKeyForIntentCode(code);

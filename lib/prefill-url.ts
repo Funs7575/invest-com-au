@@ -67,3 +67,45 @@ export function buildQuizUrl(options: QuizPrefillOptions): string {
   if (options.state) params.set("state", options.state);
   return `/quiz?${params.toString()}`;
 }
+
+export interface CrossBorderQuizOptions {
+  /**
+   * Which Q1 answer to pre-select. "international" for non-residents,
+   * "expat" for Australians living abroad. Sets the quiz on its
+   * international track (see app/quiz/page.tsx prefill effect).
+   */
+  track?: "international" | "expat";
+  /**
+   * Intent-country slug (e.g. "united-kingdom", "hong-kong") — the
+   * folder name under app/foreign-investment/. Resolved by the quiz to
+   * the matching `investor_country` answer key. Pass an
+   * `intentCountryMeta(code).slug` value, never a hand-rolled string.
+   */
+  countrySlug?: string;
+  /**
+   * International investment goal — one of the quiz's investor_goal_intl
+   * keys ("property" | "shares" | "savings" | "business"). Anything else
+   * is dropped by the quiz prefill, so callers can pass through freely.
+   */
+  intent?: string;
+}
+
+/**
+ * Build a /quiz URL that opens on the international track for a
+ * cross-border visitor.
+ *
+ * Cross-border content surfaces (the FIRB explainer, non-resident
+ * mortgage guide and country hubs) are unambiguously addressed to
+ * non-residents / expats, so their "answer a few questions" CTA opts in
+ * to pre-selecting Q1 via `?track=`. `country` and `intent` further
+ * pre-seed the country and goal questions. All three are soft defaults —
+ * the quiz still shows (and lets the user change) every question.
+ */
+export function buildCrossBorderQuizUrl(options: CrossBorderQuizOptions = {}): string {
+  const params = new URLSearchParams();
+  if (options.track) params.set("track", options.track);
+  if (options.countrySlug) params.set("country", options.countrySlug);
+  if (options.intent) params.set("intent", options.intent);
+  const qs = params.toString();
+  return qs ? `/quiz?${qs}` : "/quiz";
+}

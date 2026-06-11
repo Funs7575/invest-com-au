@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import { faqJsonLd } from "@/lib/schema-markup";
+import CrossBorderNextStep from "@/components/foreign-investment/CrossBorderNextStep";
 
 const FI_GUIDES_FAQS = [
   {
@@ -290,6 +291,14 @@ export default function ForeignInvestmentGuidesPage() {
               </Link>
             ))}
           </div>
+        </section>
+
+        {/* ── Next step (quiz international track) ── */}
+        <section className="mb-8">
+          <CrossBorderNextStep
+            title="Not sure which guide applies to you? Take the 60-second match"
+            body="Tell us your country, visa status and goal, and we'll point you to the platforms, specialists or property route most relevant to your situation."
+          />
         </section>
 
         {/* ── Advisor CTA ── */}
