@@ -242,6 +242,11 @@ export interface TopMatch {
   location_display?: string | null;
   fee_description?: string | null;
   specialties_preview?: string[];
+  /** Showcase G3: factual annual-cost projection for broker matches, computed
+   *  server-side from the broker's documented fees + the user's stated goal.
+   *  Omitted when fee data is insufficient. `assumptionLabel` discloses the
+   *  trade-frequency assumption inline. */
+  fee_projection?: { annualCostAud: number; assumptionLabel: string };
 }
 
 /**

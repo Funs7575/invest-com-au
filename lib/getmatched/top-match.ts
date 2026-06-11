@@ -31,6 +31,7 @@ import {
   type AmountKey,
 } from "@/lib/quiz-scoring";
 import type { Broker } from "@/lib/types";
+import { projectAnnualFee } from "./fee-projection";
 
 import type { ActionPlanAnswers, TopMatch, Vertical } from "./types";
 
@@ -116,6 +117,25 @@ function oneLineWhy(broker: Broker, vertical: Vertical | null): string {
 }
 
 /**
+ * Showcase G3: build the factual annual-cost projection for a broker match
+ * from the user's stated answers. Returns undefined (not on the TopMatch)
+ * when fee data is insufficient — the carousel omits the line.
+ */
+function feeProjectionFor(
+  broker: Broker,
+  answers: ActionPlanAnswers,
+): TopMatch["fee_projection"] {
+  const p = projectAnnualFee({
+    broker,
+    budgetBand: (answers.budget_band as string | undefined) ?? null,
+    intent: (answers.intent as string | undefined) ?? null,
+    experience: (answers.experience as string | undefined) ?? null,
+    cryptoSub: (answers.crypto_sub as string | undefined) ?? null,
+  });
+  return p ? { annualCostAud: p.annualCostAud, assumptionLabel: p.assumptionLabel } : undefined;
+}
+
+/**
  * Compute the affiliate-tracked top match. Returns null on any DB failure
  * so the caller can skip rendering the hero card.
  */
@@ -177,6 +197,7 @@ export async function computeTopMatch(
       // The /broker/<slug> page handles affiliate-link rendering + tracking.
       cta_href: `/broker/${top.broker.slug}`,
       vertical,
+      fee_projection: feeProjectionFor(top.broker, answers),
     };
   } catch (err) {
     log.warn("computeTopMatch failed (skipping hero card)", {
@@ -246,6 +267,7 @@ export async function computeTopMatches(
         cta_href: `/broker/${s.broker!.slug}`,
         vertical,
         tier: i + 1,
+        fee_projection: feeProjectionFor(s.broker!, answers),
       }));
   } catch (err) {
     log.warn("computeTopMatches failed (skipping carousel)", {
