@@ -107,6 +107,13 @@ interface Props {
   initialContext: string | null;
   initialPlanId: number | null;
   initialMode: "fast" | "guided" | "both";
+  /**
+   * Extra answers to seed the start payload, computed server-side from
+   * deep-link params (e.g. ?specialty= / ?country= forwarded by the
+   * find-advisor redirect). Lower precedence than the explicit
+   * goal/intent props above so a direct ?goal= always wins.
+   */
+  initialPrefill?: ActionPlanAnswers | null;
 }
 
 const SESSION_STORAGE_KEY = "iv_gm_session";
@@ -192,12 +199,14 @@ export default function GetMatchedClient(props: Props) {
   }
 
   // Build the "start" payload based on context + goal hints from query.
+  // Deep-link prefill (specialty/country) seeds the base; an explicit
+  // ?goal= / ?intent= still overrides the intent on top.
   const startPrefill = useMemo(() => {
-    const prefill: ActionPlanAnswers = {};
+    const prefill: ActionPlanAnswers = { ...(props.initialPrefill ?? {}) };
     if (props.initialGoal) prefill.intent = props.initialGoal;
     if (props.initialIntent && !prefill.intent) prefill.intent = props.initialIntent;
     return prefill;
-  }, [props.initialGoal, props.initialIntent]);
+  }, [props.initialGoal, props.initialIntent, props.initialPrefill]);
 
   const start = useCallback(async () => {
     setLoading(true);
