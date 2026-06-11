@@ -267,7 +267,7 @@ export default function SponsorBillingPage() {
         {tab === "invoices" && (
           <div className="bg-white rounded-xl border border-slate-200">
             {invoices.length === 0 ? (
-              <div className="p-12 text-center text-sm text-slate-400">
+              <div className="p-12 text-center text-sm text-slate-500">
                 No invoices yet. Click &quot;Generate Monthly Invoices&quot; to create invoices for active sponsors.
               </div>
             ) : (

@@ -468,7 +468,7 @@ export default function ConciergeClient() {
                       }`}
                     >
                       {m.role === "assistant" && m.content.length === 0 ? (
-                        <span className="inline-flex items-center gap-1 text-slate-400">
+                        <span className="inline-flex items-center gap-1 text-slate-500">
                           <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse" />
                           <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse [animation-delay:150ms]" />
                           <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse [animation-delay:300ms]" />
@@ -480,7 +480,7 @@ export default function ConciergeClient() {
                           </p>
                           {m.role === "assistant" && m.citations && m.citations.length > 0 && (
                             <div className="mt-3 pt-2 border-t border-slate-100">
-                              <p className="text-[0.6rem] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Sources</p>
+                              <p className="text-[0.6rem] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Sources</p>
                               <div className="flex flex-wrap gap-1.5">
                                 {m.citations.map((c) => (
                                   <Link

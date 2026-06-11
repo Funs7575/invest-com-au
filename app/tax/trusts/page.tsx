@@ -574,7 +574,7 @@ export default function TrustsTaxPage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               Indicative ranges only &mdash; actual fees vary by adviser, state, and complexity.
               Confirm current ATO rules at ato.gov.au.
             </p>

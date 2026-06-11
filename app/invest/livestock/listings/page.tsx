@@ -79,7 +79,7 @@ export default async function LivestockListingsPage() {
           gate also surfaces the GENERAL_ADVICE_WARNING. */}
       <div className="mx-4 mt-6">
         <WholesaleAttestationGate productLabel="these livestock & equine opportunities">
-          <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+          <Suspense fallback={<div className="py-12 text-center text-slate-500">Loading listings...</div>}>
             <InvestListingsClient
               listings={listings}
               categories={categoryTabs}

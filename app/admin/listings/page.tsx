@@ -165,7 +165,7 @@ export default function AdminListingsPage() {
           <div className="text-center py-16">
             <Icon name="inbox" size={40} className="text-slate-300 mx-auto mb-3" />
             <p className="text-slate-500 font-medium">No listings match this filter</p>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               {filter === "all"
                 ? "No listings have been submitted yet."
                 : `No ${filter} listings found.`}
@@ -222,7 +222,7 @@ export default function AdminListingsPage() {
                       <p className="font-semibold text-slate-900 truncate max-w-50">
                         {listing.title}
                       </p>
-                      <p className="text-[0.65rem] text-slate-400">
+                      <p className="text-[0.65rem] text-slate-500">
                         {listing.slug}
                       </p>
                     </td>
@@ -284,7 +284,7 @@ export default function AdminListingsPage() {
                           Yes
                         </span>
                       ) : (
-                        <span className="text-slate-400 text-xs">No</span>
+                        <span className="text-slate-500 text-xs">No</span>
                       )}
                     </td>
 

@@ -202,7 +202,7 @@ export default async function BrokerChangelogPage({
               </Link>
               <Link
                 href="/methodology"
-                className="text-slate-400 hover:text-slate-600 underline"
+                className="text-slate-500 hover:text-slate-600 underline"
               >
                 How we track changes
               </Link>
@@ -215,7 +215,7 @@ export default async function BrokerChangelogPage({
               <p className="text-slate-500 text-sm">
                 No recorded changes yet for {broker.name}.
               </p>
-              <p className="text-slate-400 text-xs mt-1">
+              <p className="text-slate-500 text-xs mt-1">
                 Changes are logged when fee data is updated or corrected.
               </p>
             </div>
@@ -235,12 +235,12 @@ export default async function BrokerChangelogPage({
                         {CHANGE_TYPE_LABELS[row.change_type] ?? row.change_type}
                       </span>
                     </div>
-                    <span className="text-xs text-slate-400 shrink-0">
+                    <span className="text-xs text-slate-500 shrink-0">
                       {formatDate(row.changed_at)}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm mt-1">
-                    <span className="text-slate-400 line-through text-xs">
+                    <span className="text-slate-500 line-through text-xs">
                       {formatValue(row.field_name, row.old_value)}
                     </span>
                     <span className="text-slate-400 text-xs">&rarr;</span>
@@ -249,13 +249,13 @@ export default async function BrokerChangelogPage({
                     </span>
                   </div>
                   {row.source && (
-                    <p className="text-[0.65rem] text-slate-400 mt-1">
+                    <p className="text-[0.65rem] text-slate-500 mt-1">
                       Source: {row.source}
                     </p>
                   )}
                 </div>
               ))}
-              <p className="text-xs text-center text-slate-400 pt-2">
+              <p className="text-xs text-center text-slate-500 pt-2">
                 Showing up to 100 most recent changes. Full history in our audit log.
               </p>
             </div>

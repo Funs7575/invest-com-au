@@ -422,7 +422,7 @@ export default async function CapitalGainsTaxPage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">Excludes 2% Medicare Levy. FY2025–26 rates. Verify current rates at ato.gov.au.</p>
+            <p className="text-xs text-slate-500 mt-2">Excludes 2% Medicare Levy. FY2025–26 rates. Verify current rates at ato.gov.au.</p>
           </div>
         </div>
       </section>

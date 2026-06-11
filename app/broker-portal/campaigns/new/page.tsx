@@ -352,26 +352,26 @@ function BudgetEstimator({ rate, dailyBudget, totalBudget, type, monthlyImpressi
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
-          <p className="text-[0.6rem] text-slate-400 font-medium">Monthly Reach</p>
+          <p className="text-[0.6rem] text-slate-500 font-medium">Monthly Reach</p>
           <p className="text-sm font-extrabold text-slate-900">{monthlyImpressions.toLocaleString()}+</p>
-          <p className="text-[0.5rem] text-slate-400">{isRealData ? "impressions/mo" : "est. visitors/mo"}</p>
+          <p className="text-[0.5rem] text-slate-500">{isRealData ? "impressions/mo" : "est. visitors/mo"}</p>
         </div>
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
-          <p className="text-[0.6rem] text-slate-400 font-medium">Avg. CTR</p>
+          <p className="text-[0.6rem] text-slate-500 font-medium">Avg. CTR</p>
           <p className="text-sm font-extrabold text-slate-900">{avgCtrPct.toFixed(1)}%</p>
-          <p className="text-[0.5rem] text-slate-400">click-through rate</p>
+          <p className="text-[0.5rem] text-slate-500">click-through rate</p>
         </div>
         {type === "cpc" && (
           <div className="bg-white rounded-lg p-2.5 border border-slate-200">
-            <p className="text-[0.6rem] text-slate-400 font-medium">Est. Clicks/mo</p>
+            <p className="text-[0.6rem] text-slate-500 font-medium">Est. Clicks/mo</p>
             <p className="text-sm font-extrabold text-blue-700">~{estClicksMonth.toLocaleString()}</p>
-            <p className="text-[0.5rem] text-slate-400">at {avgCtrPct.toFixed(1)}% CTR</p>
+            <p className="text-[0.5rem] text-slate-500">at {avgCtrPct.toFixed(1)}% CTR</p>
           </div>
         )}
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
-          <p className="text-[0.6rem] text-slate-400 font-medium">Est. Cost/mo</p>
+          <p className="text-[0.6rem] text-slate-500 font-medium">Est. Cost/mo</p>
           <p className="text-sm font-extrabold text-slate-900">${(estMonthlyCost / 100).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</p>
-          <p className="text-[0.5rem] text-slate-400">{type === "cpc" ? "based on avg clicks" : "flat rate"}</p>
+          <p className="text-[0.5rem] text-slate-500">{type === "cpc" ? "based on avg clicks" : "flat rate"}</p>
         </div>
       </div>
       {daysToExhaust && (
@@ -422,7 +422,7 @@ function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
             className="w-full px-2 py-1.5 border border-slate-200 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-300"
           />
           {/* ADV-146: ROI estimator guidance hint */}
-          <p className="text-[0.55rem] text-slate-400 mt-0.5 leading-tight">
+          <p className="text-[0.55rem] text-slate-500 mt-0.5 leading-tight">
             Typical LTV: $500–$2,000 · Avg CPL: $25–$80
           </p>
         </div>
@@ -444,21 +444,21 @@ function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
       {/* Results */}
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
-          <p className="text-[0.6rem] text-slate-400 font-medium">Est. Conversions/mo</p>
+          <p className="text-[0.6rem] text-slate-500 font-medium">Est. Conversions/mo</p>
           <p className="text-sm font-extrabold text-purple-700">~{estConversions.toFixed(1)}</p>
         </div>
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
-          <p className="text-[0.6rem] text-slate-400 font-medium">Est. Revenue/mo</p>
+          <p className="text-[0.6rem] text-slate-500 font-medium">Est. Revenue/mo</p>
           <p className="text-sm font-extrabold text-emerald-700">${estRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
         </div>
         <div className={`rounded-lg p-2.5 border ${isProfitable ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
-          <p className="text-[0.6rem] text-slate-400 font-medium">Projected Profit/mo</p>
+          <p className="text-[0.6rem] text-slate-500 font-medium">Projected Profit/mo</p>
           <p className={`text-sm font-extrabold ${isProfitable ? "text-emerald-700" : "text-red-700"}`}>
             {isProfitable ? "+" : ""}${estProfit.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
         </div>
         <div className={`rounded-lg p-2.5 border ${isProfitable ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
-          <p className="text-[0.6rem] text-slate-400 font-medium">Projected ROI</p>
+          <p className="text-[0.6rem] text-slate-500 font-medium">Projected ROI</p>
           <p className={`text-sm font-extrabold ${isProfitable ? "text-emerald-700" : "text-red-700"}`}>
             {estROI > 0 ? "+" : ""}{estROI.toFixed(0)}%
           </p>
@@ -476,7 +476,7 @@ function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
 
       {/* Quick scenarios */}
       <div>
-        <p className="text-[0.55rem] text-slate-400 font-medium uppercase tracking-wider mb-1.5">Quick Scenarios</p>
+        <p className="text-[0.55rem] text-slate-500 font-medium uppercase tracking-wider mb-1.5">Quick Scenarios</p>
         <div className="space-y-1">
           {[
             { label: "Conservative", rate: 2.0 },
@@ -500,7 +500,7 @@ function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
         </div>
       </div>
 
-      <p className="text-[0.5rem] text-slate-400 italic">
+      <p className="text-[0.5rem] text-slate-500 italic">
         Based on {monthlyImpressions.toLocaleString()} impressions × {avgCtrPct.toFixed(1)}% CTR × {convRateOverride}% conv. rate × ${convValue} customer value
       </p>
     </div>
@@ -755,12 +755,12 @@ export default function NewCampaignPage() {
                           const hasReal = (p.monthly_impressions ?? 0) > 0;
                           const reach = hasReal ? p.monthly_impressions! : vis?.fallbackReach;
                           return reach ? (
-                            <span className="text-xs text-slate-400">
+                            <span className="text-xs text-slate-500">
                               {reach.toLocaleString()}+ {hasReal ? "impressions" : "est. visitors"}/mo
                             </span>
                           ) : null;
                         })()}
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-slate-500">
                           {p.max_slots} slot{p.max_slots > 1 ? "s" : ""}
                         </span>
                       </div>
@@ -785,7 +785,7 @@ export default function NewCampaignPage() {
                 }
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+                <span className="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
                 <input
                   id="cn-rate"
                   type="number" inputMode="decimal"
@@ -805,11 +805,11 @@ export default function NewCampaignPage() {
             <div>
               <label htmlFor="cn-daily-budget" className="block text-sm font-medium text-slate-700 mb-1">
                 Daily Budget (AUD)
-                <span className="text-xs text-slate-400 italic ml-1">(optional)</span>
+                <span className="text-xs text-slate-500 italic ml-1">(optional)</span>
                 <InfoTip text="Maximum amount that can be charged per day. Prevents unexpected high-spend days. Leave blank for unlimited." />
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+                <span className="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
                 <input
                   id="cn-daily-budget"
                   type="number" inputMode="decimal"
@@ -825,11 +825,11 @@ export default function NewCampaignPage() {
             <div>
               <label htmlFor="cn-total-budget" className="block text-sm font-medium text-slate-700 mb-1">
                 Total Budget (AUD)
-                <span className="text-xs text-slate-400 italic ml-1">(optional)</span>
+                <span className="text-xs text-slate-500 italic ml-1">(optional)</span>
                 <InfoTip text="Maximum cumulative spend for the entire campaign. Campaign automatically pauses when reached." />
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+                <span className="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
                 <input
                   id="cn-total-budget"
                   type="number" inputMode="decimal"
@@ -860,7 +860,7 @@ export default function NewCampaignPage() {
             <div>
               <label htmlFor="cn-end-date" className="block text-sm font-medium text-slate-700 mb-1">
                 End Date
-                <span className="text-xs text-slate-400 italic ml-1">(optional)</span>
+                <span className="text-xs text-slate-500 italic ml-1">(optional)</span>
               </label>
               <input
                 id="cn-end-date"
@@ -877,7 +877,7 @@ export default function NewCampaignPage() {
             <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
               <Icon name="clock" size={14} className="text-slate-400" />
               Scheduling &amp; Dayparting
-              <span className="text-xs text-slate-400 italic font-normal ml-1">(optional)</span>
+              <span className="text-xs text-slate-500 italic font-normal ml-1">(optional)</span>
               <InfoTip text="Control when your ads are shown. Only serve ads during specific hours or days of the week to optimize spend." />
             </h3>
             <div className="grid md:grid-cols-2 gap-4">
@@ -894,7 +894,7 @@ export default function NewCampaignPage() {
                       <option key={i} value={i}>{String(i).padStart(2, "0")}:00</option>
                     ))}
                   </select>
-                  <span className="text-xs text-slate-400">to</span>
+                  <span className="text-xs text-slate-500">to</span>
                   <select
                     value={activeHoursEnd ?? ""}
                     onChange={e => setActiveHoursEnd(e.target.value ? Number(e.target.value) : null)}
@@ -926,12 +926,12 @@ export default function NewCampaignPage() {
                   );
                 })()}
                 {activeHoursStart !== null && activeHoursEnd === null && (
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     Preview: <span className="font-medium text-slate-500">{(() => { const h = activeHoursStart; const ampm = h < 12 ? "AM" : "PM"; const h12 = h % 12 === 0 ? 12 : h % 12; return `${h12}:00 ${ampm}`; })()} – <span className="text-red-400">[end required]</span></span>
                   </p>
                 )}
                 {activeHoursEnd !== null && activeHoursStart === null && (
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     Preview: <span className="text-red-400">[start required]</span> – <span className="font-medium text-slate-500">{(() => { const h = activeHoursEnd; const ampm = h < 12 ? "AM" : "PM"; const h12 = h % 12 === 0 ? 12 : h % 12; return `${h12}:00 ${ampm}`; })()} UTC</span>
                   </p>
                 )}
@@ -1020,7 +1020,7 @@ export default function NewCampaignPage() {
             </button>
           </div>
 
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Campaigns are reviewed by our team before going live. You&apos;ll be notified once approved.
           </p>
         </form>
@@ -1054,7 +1054,7 @@ export default function NewCampaignPage() {
               placeholder="e.g. Compare Q1 — High Bid"
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-300/40 focus:border-blue-400 mb-1"
             />
-            <p className="text-xs text-slate-400 text-right mb-5">
+            <p className="text-xs text-slate-500 text-right mb-5">
               {templateNameInput.length} / 50
             </p>
             <div className="flex justify-end gap-3">
@@ -1119,7 +1119,7 @@ export default function NewCampaignPage() {
                 <Icon name="layout" size={24} className="text-slate-300" />
               </div>
               <p className="text-sm font-medium text-slate-500 mb-1">Select a placement</p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 See a live preview of how your ad will appear on invest.com.au
               </p>
             </div>
@@ -1173,7 +1173,7 @@ export default function NewCampaignPage() {
             <div className="rounded-xl border border-slate-200 bg-white p-6 text-center">
               <Icon name="image" size={32} className="text-slate-300 mx-auto mb-2" />
               <p className="text-sm font-medium text-slate-700">{selectedPlacement.name}</p>
-              <p className="text-xs text-slate-400 mt-1">{selectedPlacement.description || "Preview not available for this placement"}</p>
+              <p className="text-xs text-slate-500 mt-1">{selectedPlacement.description || "Preview not available for this placement"}</p>
             </div>
           )}
         </div>

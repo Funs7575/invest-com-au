@@ -126,15 +126,15 @@ export default function LicScreenerClient() {
           <div className="mt-4 grid grid-cols-3 gap-3 max-w-sm">
             <div className="bg-white/10 rounded-xl p-3 text-center">
               <p className="text-xl font-extrabold">{LIC_DATA.length}</p>
-              <p className="text-[0.65rem] text-slate-400">LICs covered</p>
+              <p className="text-[0.65rem] text-slate-500">LICs covered</p>
             </div>
             <div className="bg-white/10 rounded-xl p-3 text-center">
               <p className="text-xl font-extrabold">{LIC_DATA.filter((l) => l.frankingPct === 100).length}</p>
-              <p className="text-[0.65rem] text-slate-400">Fully franked</p>
+              <p className="text-[0.65rem] text-slate-500">Fully franked</p>
             </div>
             <div className="bg-white/10 rounded-xl p-3 text-center">
               <p className="text-xl font-extrabold">{LIC_DATA.filter((l) => ntaPremiumDiscount(l) < 0).length}</p>
-              <p className="text-[0.65rem] text-slate-400">At a discount</p>
+              <p className="text-[0.65rem] text-slate-500">At a discount</p>
             </div>
           </div>
         </div>
@@ -252,7 +252,7 @@ export default function LicScreenerClient() {
                     >
                       <td className="px-4 py-3">
                         <p className="font-bold text-slate-900">{lic.ticker}</p>
-                        <p className="text-[0.65rem] text-slate-400 truncate max-w-[120px]">{lic.name.split(" ").slice(0, 3).join(" ")}</p>
+                        <p className="text-[0.65rem] text-slate-500 truncate max-w-[120px]">{lic.name.split(" ").slice(0, 3).join(" ")}</p>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`inline-block text-[0.6rem] font-semibold px-1.5 py-0.5 rounded ${focusBadge(lic.focus)}`}>
@@ -281,7 +281,7 @@ export default function LicScreenerClient() {
                 })}
                 {sorted.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-slate-400 text-sm">
+                    <td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">
                       No LICs match the current filters.
                     </td>
                   </tr>
@@ -305,21 +305,21 @@ export default function LicScreenerClient() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
               <div className="bg-slate-50 rounded-xl p-3 text-center">
                 <p className="text-lg font-extrabold text-emerald-600">{selectedLic.dividendYield}%</p>
-                <p className="text-[0.65rem] text-slate-400">Dividend Yield</p>
+                <p className="text-[0.65rem] text-slate-500">Dividend Yield</p>
               </div>
               <div className="bg-slate-50 rounded-xl p-3 text-center">
                 <p className="text-lg font-extrabold text-slate-900">{selectedLic.frankingPct}%</p>
-                <p className="text-[0.65rem] text-slate-400">Franking</p>
+                <p className="text-[0.65rem] text-slate-500">Franking</p>
               </div>
               <div className="bg-slate-50 rounded-xl p-3 text-center">
                 <p className={`text-lg font-extrabold ${selectedDiscount < 0 ? "text-emerald-600" : "text-red-600"}`}>
                   {selectedDiscount >= 0 ? "+" : ""}{selectedDiscount.toFixed(1)}%
                 </p>
-                <p className="text-[0.65rem] text-slate-400">NTA Premium/Discount</p>
+                <p className="text-[0.65rem] text-slate-500">NTA Premium/Discount</p>
               </div>
               <div className="bg-slate-50 rounded-xl p-3 text-center">
                 <p className="text-lg font-extrabold text-slate-900">{selectedLic.managementCostPct.toFixed(2)}%</p>
-                <p className="text-[0.65rem] text-slate-400">Mgmt Cost</p>
+                <p className="text-[0.65rem] text-slate-500">Mgmt Cost</p>
               </div>
             </div>
             <div className="mb-4">
@@ -327,15 +327,15 @@ export default function LicScreenerClient() {
               <div className="grid grid-cols-3 gap-2">
                 <div className="bg-slate-50 rounded-lg p-2 text-center">
                   <p className="text-sm font-bold text-slate-900">{fmtPrice(selectedLic.sharePriceCents)}</p>
-                  <p className="text-[0.6rem] text-slate-400">Share Price</p>
+                  <p className="text-[0.6rem] text-slate-500">Share Price</p>
                 </div>
                 <div className="bg-slate-50 rounded-lg p-2 text-center">
                   <p className="text-sm font-bold text-slate-900">{fmtPrice(selectedLic.ntaPostTaxCents)}</p>
-                  <p className="text-[0.6rem] text-slate-400">Post-tax NTA</p>
+                  <p className="text-[0.6rem] text-slate-500">Post-tax NTA</p>
                 </div>
                 <div className="bg-slate-50 rounded-lg p-2 text-center">
                   <p className="text-sm font-bold text-slate-900">{fmtPrice(selectedLic.ntaPreTaxCents)}</p>
-                  <p className="text-[0.6rem] text-slate-400">Pre-tax NTA</p>
+                  <p className="text-[0.6rem] text-slate-500">Pre-tax NTA</p>
                 </div>
               </div>
             </div>
@@ -347,7 +347,7 @@ export default function LicScreenerClient() {
                 </li>
               ))}
             </ul>
-            <p className="text-[0.6rem] text-slate-400">
+            <p className="text-[0.6rem] text-slate-500">
               Data as at {selectedLic.dataAsOf}. Source: {selectedLic.dataSource}. NTA and price data are indicative only — verify current figures via the LIC&apos;s monthly NTA announcement on ASX.
             </p>
           </div>
@@ -369,7 +369,7 @@ export default function LicScreenerClient() {
           </Link>
         </div>
 
-        <p className="text-[0.65rem] text-slate-400 leading-relaxed">
+        <p className="text-[0.65rem] text-slate-500 leading-relaxed">
           Data as at May 2026. NTA figures are based on most recent monthly announcements and are indicative only. Share prices are approximate. Management costs may not include performance fees or transaction costs. This is general information only — not financial advice. Past performance is not indicative of future returns. Seek independent financial advice before investing.
         </p>
       </div>

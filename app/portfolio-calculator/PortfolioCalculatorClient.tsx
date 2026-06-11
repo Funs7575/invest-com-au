@@ -245,7 +245,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
             </button>
             <button
               onClick={() => { setHoldings([{ id: "1", market: "asx", trades_per_year: 12, avg_trade_size: 2000 }]); setCurrentBroker(""); }}
-              className="text-xs font-medium text-slate-400 hover:text-red-500 flex items-center gap-1 transition-colors"
+              className="text-xs font-medium text-slate-500 hover:text-red-500 flex items-center gap-1 transition-colors"
             >
               <Icon name="rotate-ccw" size={12} /> Reset
             </button>
@@ -329,7 +329,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                 const diff = currentBroker ? currentBrokerFees - r.totalFees : 0;
                 return (
                   <div key={r.broker.slug} className={`grid grid-cols-12 items-center px-3 md:px-4 py-2.5 border-b border-slate-100 last:border-b-0 ${isCurrent ? "bg-amber-50" : i === 0 ? "bg-emerald-50/30" : ""}`}>
-                    <span className="col-span-1 text-xs text-slate-400 font-bold">{i + 1}</span>
+                    <span className="col-span-1 text-xs text-slate-500 font-bold">{i + 1}</span>
                     <div className="col-span-4 md:col-span-3">
                       <Link href={`/broker/${r.broker.slug}`} className="text-xs md:text-sm font-semibold text-slate-900 hover:text-blue-700">
                         {r.broker.name}
@@ -339,7 +339,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                     </div>
                     <div className="col-span-3 md:col-span-2 text-right">
                       <span className="text-xs md:text-sm font-bold text-slate-900">${r.totalFees.toFixed(0)}</span>
-                      <span className="text-[0.56rem] text-slate-400">/yr</span>
+                      <span className="text-[0.56rem] text-slate-500">/yr</span>
                     </div>
                     <div className="col-span-4 md:col-span-3 text-right hidden md:block">
                       {currentBroker && diff !== 0 && (

@@ -600,7 +600,7 @@ function PillarCard({ article }: { article: Article }) {
               </span>
             )}
             {article.read_time && (
-              <span className="text-[0.6rem] md:text-xs text-slate-400 ml-auto">
+              <span className="text-[0.6rem] md:text-xs text-slate-500 ml-auto">
                 {article.read_time} min read
               </span>
             )}
@@ -668,7 +668,7 @@ function ArticleCard({ article, priority = false }: { article: Article; priority
             {article.evergreen ? "Evergreen" : "News"}
           </span>
           {article.read_time && (
-            <span className="text-[0.62rem] md:text-xs text-slate-400 ml-auto">
+            <span className="text-[0.62rem] md:text-xs text-slate-500 ml-auto">
               {article.read_time} min
             </span>
           )}

@@ -256,7 +256,7 @@ export default function ApiDocsPage() {
                 description="List all active brokers with public data. Supports filtering by platform type, CHESS sponsorship, SMSF support, and pagination."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Query Parameters
                   </h4>
                   <div className="text-sm space-y-1 text-slate-600">
@@ -309,7 +309,7 @@ export default function ApiDocsPage() {
                 description="Get a single broker's full public profile by slug. Includes the last 10 fee changes from the broker's fee changelog."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Path Parameters
                   </h4>
                   <p className="text-sm text-slate-600">
@@ -330,7 +330,7 @@ export default function ApiDocsPage() {
                 description="Compare up to 5 brokers side-by-side. Returns broker data in the same order as the requested slugs."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Query Parameters
                   </h4>
                   <p className="text-sm text-slate-600">
@@ -353,7 +353,7 @@ export default function ApiDocsPage() {
                 description="List active financial advisors and professionals. Returns public profile fields only — no PII, no billing data. Supports filtering and pagination."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Query Parameters
                   </h4>
                   <div className="text-sm space-y-1 text-slate-600">
@@ -407,7 +407,7 @@ export default function ApiDocsPage() {
                 description="Get a single advisor's full public profile by slug. Includes qualifications, education, FAQs, services metadata, and the last 10 approved reviews."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Path Parameters
                   </h4>
                   <p className="text-sm text-slate-600">
@@ -428,7 +428,7 @@ export default function ApiDocsPage() {
                 description="AU brokerage fee index: market-wide average and median ASX per-trade fee, US share fee, and FX spread across all tracked active brokers. Updated daily. Includes QoQ and YoY trend deltas. Factual aggregate data — not financial advice."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Query Parameters
                   </h4>
                   <p className="text-sm text-slate-600">
@@ -453,7 +453,7 @@ export default function ApiDocsPage() {
                 description="List savings account and term deposit platforms with the latest rate snapshot for each. Rate fields use basis points (bps): 525 bps = 5.25% p.a. Includes government-guaranteed ADI data."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Query Parameters
                   </h4>
                   <div className="text-sm space-y-1 text-slate-600">
@@ -487,7 +487,7 @@ export default function ApiDocsPage() {
                 description="Get a single savings platform's full public profile by slug. Includes all current rate snapshots and rate history (last 30 per product_kind)."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Path Parameters
                   </h4>
                   <p className="text-sm text-slate-600">
@@ -508,7 +508,7 @@ export default function ApiDocsPage() {
                 description="List active robo-advisor platforms (Stockspot, InvestSMART, Raiz, Spaceship, Six Park, etc.). Automated investment services backed by ASIC-regulated platforms."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Query Parameters
                   </h4>
                   <div className="text-sm space-y-1 text-slate-600">
@@ -542,7 +542,7 @@ export default function ApiDocsPage() {
                 description="Get a single robo-advisor's full public profile by slug. Includes fee changelog (last 10 changes)."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Path Parameters
                   </h4>
                   <p className="text-sm text-slate-600">
@@ -563,7 +563,7 @@ export default function ApiDocsPage() {
                 description="Current broker health scores across five dimensions: regulatory, financial stability, client money, insurance, and platform reliability. Scores 0–100. Informational data — not financial advice."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Query Parameters
                   </h4>
                   <div className="text-sm space-y-1 text-slate-600">
@@ -604,7 +604,7 @@ export default function ApiDocsPage() {
                 description="Time-series history of broker health scores (append-only snapshot table, populated by cron). broker_slug is required. Returns scores DESC by captured_at."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Query Parameters
                   </h4>
                   <div className="text-sm space-y-1 text-slate-600">
@@ -653,7 +653,7 @@ export default function ApiDocsPage() {
                 description="Request a new API key. The plain-text key is returned once in the response and cannot be retrieved again. Maximum 3 keys per email."
               >
                 <div>
-                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                  <h4 className="text-xs font-semibold uppercase text-slate-500 mb-2">
                     Request Body (JSON)
                   </h4>
                   <div className="text-sm space-y-1 text-slate-600">

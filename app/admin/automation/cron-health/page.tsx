@@ -314,7 +314,7 @@ export default async function CronHealthPage() {
                         className={
                           r.last24hErrors > 0
                             ? "text-rose-700 font-bold"
-                            : "text-slate-400"
+                            : "text-slate-500"
                         }
                       >
                         {r.last24hErrors}

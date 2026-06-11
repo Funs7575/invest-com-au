@@ -187,7 +187,7 @@ export default function SuperContributionsClient() {
                   Annual income (before tax)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="sc-income"
                     type="number" inputMode="decimal"
@@ -208,10 +208,10 @@ export default function SuperContributionsClient() {
               <div>
                 <label htmlFor="sc-employer-sg" className="block text-xs font-semibold text-slate-600 mb-1">
                   Employer SG contributions (annual)
-                  <span className="text-slate-400 font-normal ml-1">11.5% of salary</span>
+                  <span className="text-slate-500 font-normal ml-1">11.5% of salary</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="sc-employer-sg"
                     type="number" inputMode="decimal"
@@ -227,10 +227,10 @@ export default function SuperContributionsClient() {
               <div>
                 <label htmlFor="sc-extra-conc" className="block text-xs font-semibold text-slate-600 mb-1">
                   Extra concessional contributions
-                  <span className="text-slate-400 font-normal ml-1">salary sacrifice / personal deductible</span>
+                  <span className="text-slate-500 font-normal ml-1">salary sacrifice / personal deductible</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="sc-extra-conc"
                     type="number" inputMode="decimal"
@@ -246,10 +246,10 @@ export default function SuperContributionsClient() {
               <div>
                 <label htmlFor="sc-non-conc" className="block text-xs font-semibold text-slate-600 mb-1">
                   Non-concessional contributions
-                  <span className="text-slate-400 font-normal ml-1">after-tax money into super</span>
+                  <span className="text-slate-500 font-normal ml-1">after-tax money into super</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="sc-non-conc"
                     type="number" inputMode="decimal"
@@ -267,7 +267,7 @@ export default function SuperContributionsClient() {
                   Current super balance
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="sc-super-balance"
                     type="number" inputMode="decimal"
@@ -291,7 +291,7 @@ export default function SuperContributionsClient() {
                     Unused concessional cap (last 5 yrs)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                     <input
                       id="sc-carry-forward"
                       type="number" inputMode="decimal"
@@ -302,7 +302,7 @@ export default function SuperContributionsClient() {
                       className="w-full pl-7 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
                     />
                   </div>
-                  <p className="text-[0.68rem] text-slate-400 mt-1">
+                  <p className="text-[0.68rem] text-slate-500 mt-1">
                     Find this on your ATO myGov account
                   </p>
                 </div>
@@ -327,7 +327,7 @@ export default function SuperContributionsClient() {
                   </p>
                   <p className="text-2xl font-extrabold text-slate-900">
                     {formatCurrency(result.totalConcessional)}
-                    <span className="text-sm font-normal text-slate-400 ml-1">
+                    <span className="text-sm font-normal text-slate-500 ml-1">
                       / {formatCurrency(result.effectiveCap)}
                     </span>
                   </p>
@@ -529,7 +529,7 @@ export default function SuperContributionsClient() {
         />
 
         {/* Disclaimer */}
-        <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
+        <p className="text-[0.65rem] text-slate-500 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial advice. Contribution caps and tax rates are for FY2026 and are subject to change. Speak with a qualified financial adviser before making contribution decisions. Always verify figures with the ATO or your fund.
         </p>
       </div>

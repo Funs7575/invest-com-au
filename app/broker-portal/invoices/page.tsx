@@ -112,7 +112,7 @@ export default function InvoicesPage() {
             </div>
             <p className="text-xl font-extrabold text-slate-900">
               <CountUp end={paidCount} duration={800} />
-              <span className="text-sm font-medium text-slate-400 ml-1">/ {invoices.length}</span>
+              <span className="text-sm font-medium text-slate-500 ml-1">/ {invoices.length}</span>
             </p>
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
@@ -148,7 +148,7 @@ export default function InvoicesPage() {
               <Icon name="file-text" size={20} className="text-blue-500" />
             </div>
             <p className="text-sm font-medium text-slate-700 mb-1">No invoices yet</p>
-            <p className="text-xs text-slate-400 mb-4">Invoices are created when you top up your wallet or subscribe to a package.</p>
+            <p className="text-xs text-slate-500 mb-4">Invoices are created when you top up your wallet or subscribe to a package.</p>
             <a href="/broker-portal/wallet" className="inline-block px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors">
               Top Up Wallet &rarr;
             </a>

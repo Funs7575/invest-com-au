@@ -4,6 +4,7 @@ import { getAdminEmail } from "@/lib/admin";
 import { feeChangeAlertEmail } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 import { checkAutopilotGate } from "@/lib/autopilot";
 import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
 import { fireConsumerWebhook } from "@/lib/consumer-webhook-dispatch";
@@ -12,6 +13,24 @@ import { sendEmail } from "@/lib/resend";
 const log = logger("cron-check-fees");
 
 export const maxDuration = 60;
+
+/*
+ * Fee-recheck cron — daily via the `daily-6` dispatch group.
+ *
+ * Stall post-mortem (2026-05-23 → 2026-06, DISC-20260610 item C): this
+ * cron ran daily until 2026-05-23 06:00 UTC and then stopped together
+ * with the whole fleet — the Vercel account block halted every schedule
+ * (see docs/audits/CRON-HEALTH-2026-06-05.md). No code defect; it
+ * resumes when the account is unblocked. What the incident DID expose
+ * code-side is that this was the only fee-pipeline cron without
+ * wrapCronHandler: it never wrote its own `cron_run_log` rows, so the
+ * handler-level freshness watchers (cron-freshness / heartbeat /
+ * admin automation dashboard) were blind to it. It is now wrapped:
+ * every run logs a "check-fees" row; per-broker fetch failures are
+ * reported via `failed` in the response body (wrapCronHandler marks
+ * the run "partial"); a fatal top-level failure throws so the run is
+ * logged "error" with the message.
+ */
 
 function simpleHash(str: string): string {
   let hash = 0;
@@ -35,7 +54,7 @@ function extractFees(text: string): Record<string, string> {
   return fees;
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
   const gated = await checkAutopilotGate("check-fees");
@@ -49,7 +68,10 @@ export async function GET(req: NextRequest) {
     .eq("status", "active");
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    // Fatal: nothing was checked. Throw so wrapCronHandler records the
+    // run as status='error' with the message (a returned 500 would log
+    // as 'ok' and hide the failure from the freshness watchers).
+    throw new Error(`check-fees: brokers select failed: ${error.message}`);
   }
 
   const results: { slug: string; status: string; changed: boolean; fees_extracted?: Record<string, string> }[] = [];
@@ -426,11 +448,23 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // Brokers whose fee page could not be re-checked this run (network
+  // error or non-2xx from the fee URL). Reported as `failed` so
+  // wrapCronHandler marks the run 'partial' and persistent URL rot /
+  // blocks surface in the cron-health dashboard instead of hiding
+  // inside an "ok" run.
+  const failed = results.filter(
+    (r) => r.status === "fetch_error" || r.status.startsWith("http_"),
+  ).length;
+
   return NextResponse.json({
     checked: results.length,
     changed: changedBrokers.length,
+    failed,
     changed_brokers: changedBrokers,
     results,
     timestamp: new Date().toISOString(),
   });
 }
+
+export const GET = wrapCronHandler("check-fees", handler);

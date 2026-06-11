@@ -121,7 +121,7 @@ export default function InvestingForPage() {
       )}
 
       <div className="container-custom py-8">
-        <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-6 flex gap-1">
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6 flex gap-1">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>›</span>
           <span className="text-slate-600">Investing For</span>

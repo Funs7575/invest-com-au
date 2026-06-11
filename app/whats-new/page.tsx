@@ -201,7 +201,7 @@ export default async function WhatsNewPage() {
       {/* legacy <Header/> removed: the root layout already renders Navigation */}
       <main className="max-w-3xl mx-auto px-4 py-12">
         {/* Breadcrumbs */}
-        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-6">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span className="mx-1.5">/</span>
           <span className="text-slate-600">What Changed</span>
@@ -234,7 +234,7 @@ export default async function WhatsNewPage() {
 
         {groups.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-500">
               No changes recorded yet. When platform fees or data change,
               they&apos;ll appear here.
             </p>
@@ -246,7 +246,7 @@ export default async function WhatsNewPage() {
                 <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-blue-500" />
                   {group.label}
-                  <span className="text-xs font-normal text-slate-400 ml-1">
+                  <span className="text-xs font-normal text-slate-500 ml-1">
                     ({group.changes.length} change{group.changes.length !== 1 ? "s" : ""})
                   </span>
                 </h2>
@@ -271,7 +271,7 @@ export default async function WhatsNewPage() {
                           >
                             {formatBrokerName(c.broker_slug)}
                           </Link>
-                          <span className="text-slate-400 text-xs">
+                          <span className="text-slate-500 text-xs">
                             {formatFieldName(c.field_name)}
                           </span>
                         </div>
@@ -303,7 +303,7 @@ export default async function WhatsNewPage() {
                           </>
                         )}
                       </div>
-                      <div className="text-xs text-slate-400 whitespace-nowrap">
+                      <div className="text-xs text-slate-500 whitespace-nowrap">
                         {formatDate(c.changed_at)}
                       </div>
                     </div>
@@ -316,7 +316,7 @@ export default async function WhatsNewPage() {
 
         {/* Trust signals */}
         <div className="mt-12 border-t border-slate-200 pt-8">
-          <div className="flex flex-wrap gap-4 text-xs text-slate-400">
+          <div className="flex flex-wrap gap-4 text-xs text-slate-500">
             <span>Changes detected automatically via fee page monitoring</span>
             <span>&middot;</span>
             <Link href="/methodology" className="hover:text-slate-600 hover:underline">

@@ -52,7 +52,7 @@ export default function OfflinePage() {
 
         {/* Other pages that may be cached */}
         <div className="border-t border-slate-100 pt-6">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-4">
             May be available offline
           </p>
           <div className="grid grid-cols-2 gap-2 text-left max-w-sm mx-auto">
@@ -81,7 +81,7 @@ export default function OfflinePage() {
           </div>
         </div>
 
-        <p className="mt-8 text-xs text-slate-400">
+        <p className="mt-8 text-xs text-slate-500">
           Reconnect to the internet to access the full site.
         </p>
       </div>

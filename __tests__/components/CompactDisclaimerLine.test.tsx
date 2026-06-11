@@ -13,7 +13,7 @@ describe("CompactDisclaimerLine", () => {
 
   it("light variant applies slate text classes", () => {
     const { container } = render(<CompactDisclaimerLine />);
-    expect(container.querySelector("p")?.className).toContain("text-slate-400");
+    expect(container.querySelector("p")?.className).toContain("text-slate-500");
   });
 
   it("dark variant applies white text classes", () => {

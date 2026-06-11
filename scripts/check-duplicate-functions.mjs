@@ -201,7 +201,7 @@ const ALLOWED_NAMES = new Set([
   // CountryScheme rows by SchemeCategory. Same name, unrelated input/output types.
   "groupByCategory",
 
-  // app/quiz/page.tsx: inferAdvisorType(a: UnifiedAnswers): string — returns a plain
+  // lib/quiz-flow.ts: inferAdvisorType(a: UnifiedAnswers): string — returns a plain
   // string. lib/getmatched/inference.ts: inferAdvisorType(answers: ActionPlanAnswers):
   // AdvisorType — different input type and return type. Not substitutable.
   "inferAdvisorType",

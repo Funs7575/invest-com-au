@@ -82,7 +82,7 @@ export default async function AlternativesListingsPage() {
           <SubCategoryNav category={category} />
         </div>
       )}
-      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+      <Suspense fallback={<div className="py-12 text-center text-slate-500">Loading listings...</div>}>
         <InvestListingsClient
           listings={listings}
           categories={categoryTabs}

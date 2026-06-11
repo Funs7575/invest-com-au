@@ -266,7 +266,7 @@ export default async function IpoCalendarPage() {
             ))}
           </dl>
 
-          <p className="text-[11px] text-slate-400 mt-3 max-w-2xl">
+          <p className="text-[11px] text-slate-500 mt-3 max-w-2xl">
             Sources: ASX listing data, ASIC IPO Outcomes report. YTD count and
             first-day return ranges are editorially reviewed snapshots.
           </p>
@@ -473,7 +473,7 @@ export default async function IpoCalendarPage() {
             <p className="text-sm text-slate-500">No recent listings found. Check back soon.</p>
           )}
 
-          <p className="text-[11px] text-slate-400 mt-3">
+          <p className="text-[11px] text-slate-500 mt-3">
             Data is editorially compiled and reviewed; market data moves
             intraday and historical IPO data is sourced from public ASX
             announcements.
@@ -525,7 +525,7 @@ export default async function IpoCalendarPage() {
                   <Icon
                     name="plus"
                     size={18}
-                    className="text-slate-400 group-open:rotate-45 transition-transform shrink-0 mt-0.5"
+                    className="text-slate-500 group-open:rotate-45 transition-transform shrink-0 mt-0.5"
                   />
                 </summary>
                 <p className="text-sm text-slate-700 leading-relaxed mt-3">

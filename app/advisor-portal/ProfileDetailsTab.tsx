@@ -561,7 +561,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
             </div>
             <div>
               <label htmlFor="svc-desc" className="block text-xs font-medium text-slate-600 mb-1">
-                Description <span className="text-slate-400">(optional)</span>
+                Description <span className="text-slate-500">(optional)</span>
               </label>
               <textarea
                 id="svc-desc"
@@ -612,7 +612,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
               servicePriceFrom && (
                 <div>
                   <label htmlFor="svc-price-to" className="block text-xs font-medium text-slate-600 mb-1">
-                    Price to ($) <span className="text-slate-400">(optional upper bound)</span>
+                    Price to ($) <span className="text-slate-500">(optional upper bound)</span>
                   </label>
                   <input
                     id="svc-price-to"
@@ -680,7 +680,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                     <p className="text-xs text-slate-500 mt-0.5">{service.description}</p>
                   )}
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs text-slate-400">
+                    <span className="text-xs text-slate-500">
                       {PRICE_TYPE_LABELS[service.price_type] ?? service.price_type}
                     </span>
                     {service.price_from_cents !== null && (
@@ -695,7 +695,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 <button
                   type="button"
                   onClick={() => { void handleDeleteService(service.id); }}
-                  className="shrink-0 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="shrink-0 p-1.5 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   aria-label={`Delete service ${service.name}`}
                 >
                   <Icon name="trash-2" size={14} />
@@ -704,7 +704,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
             ))}
           </div>
         ) : (
-          <p className="text-xs text-slate-400 text-center py-4">
+          <p className="text-xs text-slate-500 text-center py-4">
             No services added yet. Click &quot;Add Service&quot; to get started.
           </p>
         )}
@@ -759,7 +759,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
               </div>
               <div>
                 <label htmlFor="cert-cred-id" className="block text-xs font-medium text-slate-600 mb-1">
-                  Credential / Licence ID <span className="text-slate-400">(optional)</span>
+                  Credential / Licence ID <span className="text-slate-500">(optional)</span>
                 </label>
                 <input
                   id="cert-cred-id"
@@ -772,7 +772,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
               </div>
               <div>
                 <label htmlFor="cert-issued-at" className="block text-xs font-medium text-slate-600 mb-1">
-                  Date issued <span className="text-slate-400">(optional)</span>
+                  Date issued <span className="text-slate-500">(optional)</span>
                 </label>
                 <input
                   id="cert-issued-at"
@@ -784,7 +784,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
               </div>
               <div>
                 <label htmlFor="cert-expires-at" className="block text-xs font-medium text-slate-600 mb-1">
-                  Expiry date <span className="text-slate-400">(optional)</span>
+                  Expiry date <span className="text-slate-500">(optional)</span>
                 </label>
                 <input
                   id="cert-expires-at"
@@ -796,7 +796,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
               </div>
               <div>
                 <label htmlFor="cert-url" className="block text-xs font-medium text-slate-600 mb-1">
-                  Certificate URL <span className="text-slate-400">(optional)</span>
+                  Certificate URL <span className="text-slate-500">(optional)</span>
                 </label>
                 <input
                   id="cert-url"
@@ -862,10 +862,10 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                   <p className="text-xs text-slate-500 mt-0.5">{cert.issuer}</p>
                   <div className="flex flex-wrap items-center gap-3 mt-1">
                     {cert.credential_id && (
-                      <span className="text-xs text-slate-400">ID: {cert.credential_id}</span>
+                      <span className="text-xs text-slate-500">ID: {cert.credential_id}</span>
                     )}
                     {cert.issued_at && (
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs text-slate-500">
                         Issued{" "}
                         {new Date(cert.issued_at).toLocaleDateString("en-AU", {
                           month: "short",
@@ -874,7 +874,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                       </span>
                     )}
                     {cert.expires_at && (
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs text-slate-500">
                         Expires{" "}
                         {new Date(cert.expires_at).toLocaleDateString("en-AU", {
                           month: "short",
@@ -897,7 +897,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 <button
                   type="button"
                   onClick={() => { void handleDeleteCert(cert.id); }}
-                  className="shrink-0 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="shrink-0 p-1.5 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   aria-label={`Delete qualification ${cert.name}`}
                 >
                   <Icon name="trash-2" size={14} />
@@ -906,7 +906,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
             ))}
           </div>
         ) : (
-          <p className="text-xs text-slate-400 text-center py-4">
+          <p className="text-xs text-slate-500 text-center py-4">
             No qualifications added yet. Click &quot;Add Qualification&quot; to get started.
           </p>
         )}

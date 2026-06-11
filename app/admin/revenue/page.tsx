@@ -175,23 +175,23 @@ export default function RevenuePage() {
               <p className="text-[0.55rem] opacity-70">${Math.round(totalRevenue / daysInPeriod)}/day</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Affiliate Clicks</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Affiliate Clicks</p>
               <p className="text-2xl font-extrabold text-slate-900">{totalClicks.toLocaleString()}</p>
-              <p className="text-[0.55rem] text-slate-400">{Math.round(totalClicks / daysInPeriod)}/day</p>
+              <p className="text-[0.55rem] text-slate-500">{Math.round(totalClicks / daysInPeriod)}/day</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Est. Conversions</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Est. Conversions</p>
               <p className="text-2xl font-extrabold text-slate-900">{totalConversions.toFixed(1)}</p>
-              <p className="text-[0.55rem] text-slate-400">{(CONV_RATE * 100).toFixed(1)}% conv rate</p>
+              <p className="text-[0.55rem] text-slate-500">{(CONV_RATE * 100).toFixed(1)}% conv rate</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Avg Revenue/Click</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Avg Revenue/Click</p>
               <p className="text-2xl font-extrabold text-slate-900">${totalClicks > 0 ? (totalRevenue / totalClicks).toFixed(2) : "0"}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Active Brokers</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Active Brokers</p>
               <p className="text-2xl font-extrabold text-slate-900">{byBroker.length}</p>
-              <p className="text-[0.55rem] text-slate-400">with clicks</p>
+              <p className="text-[0.55rem] text-slate-500">with clicks</p>
             </div>
           </div>
 
@@ -235,29 +235,29 @@ export default function RevenuePage() {
                 <div>
                   <p className="text-[0.6rem] text-slate-500 font-semibold">Broker Wallet Balances</p>
                   <p className="text-base font-extrabold text-slate-900">${((marketplaceRev?.totalBalanceCents || 0) / 100).toLocaleString()}</p>
-                  <p className="text-[0.5rem] text-slate-400">pre-funded by brokers</p>
+                  <p className="text-[0.5rem] text-slate-500">pre-funded by brokers</p>
                 </div>
                 <div>
                   <p className="text-[0.6rem] text-slate-500 font-semibold">Lifetime Deposits</p>
                   <p className="text-base font-extrabold text-slate-900">${((marketplaceRev?.totalDepositedCents || 0) / 100).toLocaleString()}</p>
-                  <p className="text-[0.5rem] text-slate-400">{marketplaceRev?.totalWallets || 0} wallets</p>
+                  <p className="text-[0.5rem] text-slate-500">{marketplaceRev?.totalWallets || 0} wallets</p>
                 </div>
                 <div>
                   <p className="text-[0.6rem] text-slate-500 font-semibold">Pending Advisor Invoices</p>
                   <p className="text-base font-extrabold text-amber-700">${((advisorRev?.pendingBillingCents || 0) / 100).toLocaleString()}</p>
-                  <p className="text-[0.5rem] text-slate-400">awaiting payment</p>
+                  <p className="text-[0.5rem] text-slate-500">awaiting payment</p>
                 </div>
                 <div>
                   <p className="text-[0.6rem] text-slate-500 font-semibold">Unpaid Article Fees</p>
                   <p className="text-base font-extrabold text-amber-700">${((articleRev?.unpaidCents || 0) / 100).toLocaleString()}</p>
-                  <p className="text-[0.5rem] text-slate-400">approved, awaiting payment</p>
+                  <p className="text-[0.5rem] text-slate-500">approved, awaiting payment</p>
                 </div>
                 <div>
                   <p className="text-[0.6rem] text-slate-500 font-semibold">Total Receivable</p>
                   <p className="text-base font-extrabold text-slate-900">
                     ${(((advisorRev?.pendingBillingCents || 0) + (articleRev?.unpaidCents || 0)) / 100).toLocaleString()}
                   </p>
-                  <p className="text-[0.5rem] text-slate-400">leads + articles</p>
+                  <p className="text-[0.5rem] text-slate-500">leads + articles</p>
                 </div>
               </div>
             </div>
@@ -319,17 +319,17 @@ export default function RevenuePage() {
               <div className="space-y-1.5 max-h-80 overflow-y-auto">
                 {byBroker.slice(0, 20).map((b, i) => (
                   <div key={b.slug} className="flex items-center gap-3 py-1.5 border-b border-slate-50 last:border-0">
-                    <span className="text-xs text-slate-400 w-5 text-right">{i + 1}</span>
+                    <span className="text-xs text-slate-500 w-5 text-right">{i + 1}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-slate-900 truncate">{b.name}</p>
-                      <p className="text-[0.6rem] text-slate-400">{b.clicks} clicks · {b.estConversions.toFixed(1)} est. conv</p>
+                      <p className="text-[0.6rem] text-slate-500">{b.clicks} clicks · {b.estConversions.toFixed(1)} est. conv</p>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-bold text-emerald-600">${b.estRevenue.toLocaleString()}</p>
                     </div>
                   </div>
                 ))}
-                {byBroker.length === 0 && <p className="text-sm text-slate-400 text-center py-4">No affiliate clicks in this period</p>}
+                {byBroker.length === 0 && <p className="text-sm text-slate-500 text-center py-4">No affiliate clicks in this period</p>}
               </div>
             </div>
 
@@ -360,7 +360,7 @@ export default function RevenuePage() {
             </div>
           </div>
 
-          <p className="text-[0.55rem] text-slate-400 mt-4 text-center">
+          <p className="text-[0.55rem] text-slate-500 mt-4 text-center">
             Revenue estimates use industry CPA rates: CFD $400, Shares $50, Crypto $30, Savings $15 at 2.5% click-to-signup conversion. Actual revenue depends on your affiliate agreements.
           </p>
         </>

@@ -265,7 +265,7 @@ export default async function OfficeHoursSessionPage({
                   {advisor.name}
                 </Link>
                 {advisor.firm_name && (
-                  <span className="text-slate-400"> · {advisor.firm_name}</span>
+                  <span className="text-slate-500"> · {advisor.firm_name}</span>
                 )}
               </p>
             )}
@@ -312,7 +312,7 @@ export default async function OfficeHoursSessionPage({
               <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
                 {q}
                 <svg
-                  className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                  className="w-4 h-4 shrink-0 text-slate-500 group-open:rotate-180 transition-transform"
                   aria-hidden="true"
                   fill="none"
                   viewBox="0 0 24 24"

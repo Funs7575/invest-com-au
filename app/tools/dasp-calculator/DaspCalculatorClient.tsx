@@ -64,12 +64,12 @@ function NumericInput({ label, id, value, onChange, hint }: NumericInputProps) {
         {label}
       </label>
       {hint && (
-        <p className="text-[0.65rem] text-slate-400 mb-1.5 leading-snug">
+        <p className="text-[0.65rem] text-slate-500 mb-1.5 leading-snug">
           {hint}
         </p>
       )}
       <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-semibold">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-semibold">
           $
         </span>
         <input
@@ -183,7 +183,7 @@ export default function DaspCalculatorClient() {
                   <span className="text-xs font-bold text-slate-800 block">
                     Working Holiday Maker (subclass 417 or 462)
                   </span>
-                  <span className="text-[0.65rem] text-slate-400 leading-snug">
+                  <span className="text-[0.65rem] text-slate-500 leading-snug">
                     WHM DASP withholding is {(DASP_WHM_RATE * 100).toFixed(0)}% on the
                     entire taxable component — significantly higher than the standard{" "}
                     {(DASP_TAXED_ELEMENT_RATE * 100).toFixed(0)}%.
@@ -281,7 +281,7 @@ export default function DaspCalculatorClient() {
             </h2>
 
             {!hasBalance ? (
-              <p className="text-sm text-slate-400 text-center py-8">
+              <p className="text-sm text-slate-500 text-center py-8">
                 Enter your super balance above to see the estimate.
               </p>
             ) : (
@@ -400,7 +400,7 @@ export default function DaspCalculatorClient() {
         <p className="text-xs text-slate-500 leading-relaxed">
           {GENERAL_ADVICE_WARNING}
         </p>
-        <p className="text-xs text-slate-400 leading-relaxed mt-2">
+        <p className="text-xs text-slate-500 leading-relaxed mt-2">
           This calculator is an estimate based on ATO published rates (current
           for DASP payments on or after 1 July 2017){/* // dated-ok — fixed legislative DASP rate-change date, never changes */}. It does not model
           low-income offsets, proportioning rules, or fund-specific fees.

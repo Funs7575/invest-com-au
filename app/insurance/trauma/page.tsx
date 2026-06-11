@@ -254,7 +254,7 @@ export default function TraumaInsurancePage() {
           <div className="mt-6 grid sm:grid-cols-2 gap-3">
             {COVERED_CONDITIONS.map((c) => (
               <div key={c.category} className={`flex items-start gap-3 p-4 rounded-xl border ${c.common ? "bg-white border-slate-200" : "bg-slate-50 border-slate-100"}`}>
-                <span className={`mt-0.5 shrink-0 text-sm ${c.common ? "text-green-500" : "text-slate-400"}`}>
+                <span className={`mt-0.5 shrink-0 text-sm ${c.common ? "text-green-500" : "text-slate-500"}`}>
                   {c.common ? "✓" : "○"}
                 </span>
                 <div>
@@ -264,7 +264,7 @@ export default function TraumaInsurancePage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-4">✓ = very commonly covered · ○ = covered in most but check definitions carefully. Always read the PDS.</p>
+          <p className="text-xs text-slate-500 mt-4">✓ = very commonly covered · ○ = covered in most but check definitions carefully. Always read the PDS.</p>
         </div>
       </section>
 
@@ -293,7 +293,7 @@ export default function TraumaInsurancePage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">Indicative only. Actual premiums depend on health history and individual underwriting. Trauma premiums are not tax-deductible.</p>
+            <p className="text-xs text-slate-500 mt-2">Indicative only. Actual premiums depend on health history and individual underwriting. Trauma premiums are not tax-deductible.</p>
           </div>
         </div>
       </section>

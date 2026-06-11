@@ -198,7 +198,7 @@ export default function AdminSupportPage() {
                   <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${PRIORITY_STYLES[activeTicket.priority]}`}>
                     {activeTicket.priority}
                   </span>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500">
                     #{activeTicket.id} · {activeTicket.broker_slug} · {activeTicket.category}
                   </span>
                 </div>
@@ -342,7 +342,7 @@ export default function AdminSupportPage() {
               <option value="low">Low</option>
             </select>
           </div>
-          <span className="text-xs text-slate-400">{filtered.length} ticket(s)</span>
+          <span className="text-xs text-slate-500">{filtered.length} ticket(s)</span>
         </div>
 
         {/* Tickets table */}
@@ -379,7 +379,7 @@ export default function AdminSupportPage() {
                       ticket.priority === "urgent" && ticket.status === "open" ? "bg-red-50/30" : ""
                     }`}
                   >
-                    <td className="px-4 py-3 text-slate-400 font-mono text-xs">{ticket.id}</td>
+                    <td className="px-4 py-3 text-slate-500 font-mono text-xs">{ticket.id}</td>
                     <td className="px-4 py-3 font-semibold text-slate-900 max-w-xs truncate">{ticket.subject}</td>
                     <td className="px-4 py-3 text-slate-600">{ticket.broker_slug}</td>
                     <td className="px-4 py-3 text-slate-600 capitalize">{ticket.category}</td>
@@ -393,7 +393,7 @@ export default function AdminSupportPage() {
                         {ticket.status.replace(/_/g, " ")}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-xs text-slate-400">
+                    <td className="px-4 py-3 text-right text-xs text-slate-500">
                       {new Date(ticket.updated_at).toLocaleDateString("en-AU", {
                         day: "numeric",
                         month: "short",

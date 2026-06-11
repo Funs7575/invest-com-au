@@ -145,19 +145,19 @@ export default function SEOHealthPage() {
               <p className="text-[0.55rem] opacity-70">{checks.filter(c => c.status === "pass").length}/{checks.length} passing</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Sitemap URLs</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Sitemap URLs</p>
               <p className="text-2xl font-extrabold text-slate-900">{sitemapUrls.length}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Broker Reviews</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Broker Reviews</p>
               <p className="text-2xl font-extrabold text-slate-900">{brokerCount}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Articles</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Articles</p>
               <p className="text-2xl font-extrabold text-slate-900">{articleCount}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Versus Pages</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Versus Pages</p>
               <p className="text-2xl font-extrabold text-slate-900">{versusCount}</p>
             </div>
           </div>
@@ -174,7 +174,7 @@ export default function SEOHealthPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-2">
                       <span className="text-sm font-semibold text-slate-900">{c.label}</span>
-                      <span className="text-xs text-slate-400">{c.value} / {c.target}</span>
+                      <span className="text-xs text-slate-500">{c.value} / {c.target}</span>
                     </div>
                     <p className="text-[0.6rem] text-slate-500">{c.detail}</p>
                   </div>
@@ -191,13 +191,13 @@ export default function SEOHealthPage() {
                 {topPages.map((p, i) => (
                   <div key={p.path} className="flex items-center justify-between py-1 border-b border-slate-50 last:border-0">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-xs text-slate-400 w-5 text-right shrink-0">{i + 1}</span>
+                      <span className="text-xs text-slate-500 w-5 text-right shrink-0">{i + 1}</span>
                       <span className="text-xs text-slate-700 truncate">{p.path}</span>
                     </div>
                     <span className="text-xs font-bold text-slate-900 shrink-0 ml-2">{p.views}</span>
                   </div>
                 ))}
-                {topPages.length === 0 && <p className="text-xs text-slate-400 text-center py-4">No page view data yet</p>}
+                {topPages.length === 0 && <p className="text-xs text-slate-500 text-center py-4">No page view data yet</p>}
               </div>
             </div>
 

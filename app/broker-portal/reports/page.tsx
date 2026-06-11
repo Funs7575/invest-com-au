@@ -173,7 +173,7 @@ export default function ReportsPage() {
                 onChange={(e) => setCustomFrom(e.target.value)}
                 className="px-2.5 py-2 min-h-10 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
               />
-              <span className="text-xs text-slate-400">to</span>
+              <span className="text-xs text-slate-500">to</span>
               <input
                 type="date"
                 value={customTo}
@@ -262,7 +262,7 @@ export default function ReportsPage() {
           </div>
         </div>
         {dailyTotals.length === 0 ? (
-          <p className="text-sm text-slate-400 py-8 text-center">No data for this period.</p>
+          <p className="text-sm text-slate-500 py-8 text-center">No data for this period.</p>
         ) : (
           <div className="overflow-x-auto">
             {(() => {
@@ -342,7 +342,7 @@ export default function ReportsPage() {
           )}
         </div>
         {campaignBreakdown.length === 0 ? (
-          <div className="p-8 text-center text-sm text-slate-400">No campaigns with data.</div>
+          <div className="p-8 text-center text-sm text-slate-500">No campaigns with data.</div>
         ) : (
           <div className="relative">
             <div className="overflow-x-auto portal-table-stagger">

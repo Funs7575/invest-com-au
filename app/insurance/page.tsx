@@ -179,7 +179,7 @@ export default function InsuranceHubPage() {
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               General guidance only. Personal circumstances vary — speak to a licensed insurance
               broker for tailored advice.
             </p>

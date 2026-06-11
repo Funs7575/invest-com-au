@@ -150,7 +150,7 @@ export default async function PublicListPage({ params }: Params) {
             {list.description && (
               <p className="text-slate-600 mt-1">{list.description}</p>
             )}
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               {list.item_count} {list.item_count === 1 ? "item" : "items"} ·{" "}
               {list.follower_count} {list.follower_count === 1 ? "follower" : "followers"} · created {createdLabel}
             </p>
@@ -232,7 +232,7 @@ export default async function PublicListPage({ params }: Params) {
 
       <footer className="mt-8 pt-4 border-t border-slate-200">
         <p className="text-xs text-slate-500">{GENERAL_ADVICE_WARNING}</p>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           This is a community-curated list. Invest.com.au does not endorse any specific product.{" "}
           <Link href="/lists" className="hover:underline">Browse public lists →</Link>
         </p>

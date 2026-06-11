@@ -53,7 +53,7 @@ export default function AdminClickChart({ dailyClicks }: Props) {
               />
               {/* Date label — show every other day */}
               {i % 2 === 0 && (
-                <div className="text-[0.55rem] text-slate-400 mt-1 leading-none">
+                <div className="text-[0.55rem] text-slate-500 mt-1 leading-none">
                   {new Date(d.date + "T12:00:00").toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
                 </div>
               )}

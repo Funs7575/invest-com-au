@@ -807,7 +807,7 @@ export default function PositiveGearingPage() {
                       {faq.q}
                     </span>
                     <span
-                      className="shrink-0 text-slate-400 group-open:rotate-45 transition-transform text-xl leading-none"
+                      className="shrink-0 text-slate-500 group-open:rotate-45 transition-transform text-xl leading-none"
                       aria-hidden="true"
                     >
                       +

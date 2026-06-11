@@ -104,7 +104,7 @@ function PostCard({ post }: { post: Post }) {
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm font-bold text-slate-900 truncate">{displayName}</span>
             {pro?.firm_name && (
-              <span className="text-xs text-slate-400 truncate">{pro.firm_name}</span>
+              <span className="text-xs text-slate-500 truncate">{pro.firm_name}</span>
             )}
           </div>
           <div className="flex items-center gap-2 mt-0.5">
@@ -112,7 +112,7 @@ function PostCard({ post }: { post: Post }) {
               <Icon name={typeIcon} size={10} />
               {typeStyle.label}
             </span>
-            <span className="text-[0.58rem] text-slate-400">{timeAgo(post.created_at)}</span>
+            <span className="text-[0.58rem] text-slate-500">{timeAgo(post.created_at)}</span>
           </div>
         </div>
       </div>
@@ -165,7 +165,7 @@ function PostCard({ post }: { post: Post }) {
           );
         })}
         {reactionCount > 0 && (
-          <span className="ml-1 text-xs text-slate-400">{reactionCount}</span>
+          <span className="ml-1 text-xs text-slate-500">{reactionCount}</span>
         )}
       </div>
     </div>
@@ -289,7 +289,7 @@ export default function FeedTab({ advisor }: Props) {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-[0.62rem] text-slate-400">{newPost.body.length}/2000</span>
+              <span className="text-[0.62rem] text-slate-500">{newPost.body.length}/2000</span>
               <div className="flex gap-2">
                 <button
                   type="button"

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { RISK_WARNING_CTA } from "@/lib/compliance";
 
 export default function CompactDisclaimerLine({ variant = "light" }: { variant?: "light" | "dark" }) {
-  const textClass = variant === "dark" ? "text-white/50" : "text-slate-400";
+  const textClass = variant === "dark" ? "text-white/50" : "text-slate-500";
   const linkClass = variant === "dark" ? "text-white/60 hover:text-white/80" : "text-slate-500 hover:text-slate-700";
   return (
     <p className={`text-xs ${textClass} mt-3 leading-tight flex items-center gap-1 justify-center`}>

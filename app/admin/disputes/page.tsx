@@ -49,7 +49,7 @@ export default async function AdminDisputesPage() {
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="p-6 text-center text-slate-400">
+                <td colSpan={5} className="p-6 text-center text-slate-500">
                   No open disputes right now.
                 </td>
               </tr>

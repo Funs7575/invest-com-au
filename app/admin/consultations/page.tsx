@@ -546,7 +546,7 @@ export default function AdminConsultationsPage() {
               placeholder="username/event-type"
               required
             />
-            <p className="text-xs text-slate-400 mt-0.5">Booking calendar URL — users are redirected here after payment</p>
+            <p className="text-xs text-slate-500 mt-0.5">Booking calendar URL — users are redirected here after payment</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
@@ -564,7 +564,7 @@ export default function AdminConsultationsPage() {
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 placeholder="price_..."
               />
-              <p className="text-xs text-slate-400 mt-0.5">Link to the Stripe payment product. Create the product in Stripe first.</p>
+              <p className="text-xs text-slate-500 mt-0.5">Link to the Stripe payment product. Create the product in Stripe first.</p>
             </div>
             <div>
               <label htmlFor="con-stripe-pro-price" className="block text-xs font-semibold text-slate-700 mb-1">
@@ -580,7 +580,7 @@ export default function AdminConsultationsPage() {
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 placeholder="price_..."
               />
-              <p className="text-xs text-slate-400 mt-0.5">Link to the Stripe payment product. Create the product in Stripe first.</p>
+              <p className="text-xs text-slate-500 mt-0.5">Link to the Stripe payment product. Create the product in Stripe first.</p>
             </div>
           </div>
 
@@ -683,7 +683,7 @@ export default function AdminConsultationsPage() {
                   <tr>
                     <td
                       colSpan={8}
-                      className="px-4 py-8 text-center text-slate-400"
+                      className="px-4 py-8 text-center text-slate-500"
                     >
                       No consultations yet. Create one to get started.
                     </td>
@@ -785,7 +785,7 @@ export default function AdminConsultationsPage() {
                   <tr>
                     <td
                       colSpan={6}
-                      className="px-4 py-8 text-center text-slate-400"
+                      className="px-4 py-8 text-center text-slate-500"
                     >
                       No bookings yet.
                     </td>

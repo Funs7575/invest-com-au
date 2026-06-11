@@ -27,7 +27,7 @@ describe("RiskWarningInline", () => {
 
   it("uses light text class by default", () => {
     const { container } = render(<RiskWarningInline />);
-    expect(container.firstElementChild).toHaveClass("text-slate-400");
+    expect(container.firstElementChild).toHaveClass("text-slate-500");
   });
 
   it("uses dark variant text class when variant='dark'", () => {

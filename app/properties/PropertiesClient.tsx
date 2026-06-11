@@ -397,7 +397,7 @@ export default function PropertiesClient() {
         </section>
 
         {/* Disclaimer */}
-        <p className="text-[0.65rem] md:text-xs text-slate-400 mt-6 border-t border-slate-100 pt-4">
+        <p className="text-[0.65rem] md:text-xs text-slate-500 mt-6 border-t border-slate-100 pt-4">
           Listings are illustrative examples only and do not represent real properties currently
           for sale. Actual listings come from third-party sources. Always conduct your own due
           diligence before making any investment decision.

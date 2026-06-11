@@ -309,7 +309,7 @@ export default function PresetCompareClient({
                     <div
                       className={`px-3 py-2.5 text-right font-semibold border-l border-slate-100 ${
                         Math.abs(d.absoluteDelta) < 0.005
-                          ? "text-slate-400"
+                          ? "text-slate-500"
                           : d.absoluteDelta > 0
                             ? "text-sky-700"
                             : "text-orange-700"
@@ -367,7 +367,7 @@ export default function PresetCompareClient({
                     <p className="text-xs font-bold text-slate-800 group-hover:text-violet-700 transition-colors leading-snug">
                       {p.title}
                     </p>
-                    <p className="text-[0.65rem] text-slate-400 mt-0.5 line-clamp-2 leading-snug">
+                    <p className="text-[0.65rem] text-slate-500 mt-0.5 line-clamp-2 leading-snug">
                       {p.summary.slice(0, 100)}…
                     </p>
                   </div>
@@ -402,7 +402,7 @@ export default function PresetCompareClient({
           <p className="text-[0.65rem] text-slate-500 leading-relaxed">
             {GENERAL_ADVICE_WARNING}
           </p>
-          <p className="text-[0.65rem] text-slate-400 mt-2 leading-relaxed">
+          <p className="text-[0.65rem] text-slate-500 mt-2 leading-relaxed">
             Projections use FY2026 tax rates and the nominal rates stated in each
             scenario assumption. Actual outcomes depend on investment returns,
             future tax-law changes, your personal circumstances, and factors not

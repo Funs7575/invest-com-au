@@ -67,3 +67,66 @@ export function buildQuizUrl(options: QuizPrefillOptions): string {
   if (options.state) params.set("state", options.state);
   return `/quiz?${params.toString()}`;
 }
+
+export interface CrossBorderMatchOptions {
+  /**
+   * Audience hint: "international" for non-residents, "expat" for
+   * Australians living abroad. Kept in the signature so call sites stay
+   * declarative about who the surface addresses.
+   */
+  track?: "international" | "expat";
+  /**
+   * Intent-country slug (e.g. "united-kingdom", "hong-kong") — the
+   * folder name under app/foreign-investment/. Emitted as `?country=` so
+   * the /find-advisor → /get-matched redirect carve-out keeps the
+   * dedicated cross-border flow alive (next.config.ts `missing` rule).
+   */
+  countrySlug?: string;
+  /**
+   * International investment goal ("property" | "shares" | "savings" |
+   * "business"). "property" maps to the FIRB specialty pre-filter;
+   * anything else is ignored by the matcher, so callers can pass through.
+   */
+  intent?: string;
+}
+
+/**
+ * Build the cross-border advisor-match URL for a non-resident / expat
+ * visitor.
+ *
+ * Targets `/find-advisor` — per next.config.ts, cross-border deep-links
+ * (`?specialty=` / `?country=`) keep the dedicated find-advisor flow (the
+ * 1.75× premium line) until /get-matched consumes those params. The old
+ * /quiz entry is a permanent redirect to /get-matched with no
+ * international handling on the other side, so quiz-targeted links would
+ * silently drop the visitor onto the domestic funnel.
+ *
+ * Specialty mapping (values from CROSS_BORDER_SPECIALTIES in
+ * lib/advisor-specialties.ts; /find-advisor validates with
+ * isCrossBorderSpecialty, so an out-of-sync value degrades to "no
+ * pre-filter", never an error):
+ *   - intent "property"            → "FIRB Property (Non-Resident)"
+ *   - country united-kingdom / uk  → "UK Pension Transfer"
+ *   - country united-states / us   → "FATCA-Aware US Expat Planning"
+ * With no mappable specialty and no country, the bare /find-advisor URL
+ * redirects to /get-matched — the generic funnel — the honest fallback
+ * for an unscoped visitor.
+ */
+export function buildCrossBorderMatchUrl(options: CrossBorderMatchOptions = {}): string {
+  const params = new URLSearchParams();
+
+  const slug = options.countrySlug ?? "";
+  const specialty =
+    options.intent === "property"
+      ? "FIRB Property (Non-Resident)"
+      : slug === "united-kingdom" || slug === "uk"
+        ? "UK Pension Transfer"
+        : slug === "united-states" || slug === "us"
+          ? "FATCA-Aware US Expat Planning"
+          : null;
+
+  if (specialty) params.set("specialty", specialty);
+  if (options.countrySlug) params.set("country", options.countrySlug);
+  const qs = params.toString();
+  return qs ? `/find-advisor?${qs}` : "/find-advisor";
+}

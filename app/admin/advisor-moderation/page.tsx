@@ -115,7 +115,7 @@ export default function AdvisorModerationPage() {
       )}
 
       {loading ? (
-        <div className="text-slate-400 text-sm py-12 text-center">Loading pending advisors...</div>
+        <div className="text-slate-500 text-sm py-12 text-center">Loading pending advisors...</div>
       ) : advisors.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center">
           <div className="text-4xl mb-3">&#10003;</div>
@@ -158,7 +158,7 @@ export default function AdvisorModerationPage() {
                   <td className="px-4 py-3">
                     <div className="font-semibold text-slate-900">{a.name}</div>
                     {a.afsl_number && (
-                      <div className="text-[0.62rem] text-slate-400">AFSL {a.afsl_number}</div>
+                      <div className="text-[0.62rem] text-slate-500">AFSL {a.afsl_number}</div>
                     )}
                   </td>
                   <td className="px-4 py-3 text-slate-600 text-xs">{a.email || "---"}</td>

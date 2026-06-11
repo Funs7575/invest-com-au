@@ -178,7 +178,7 @@ export default function AdminFeeQueuePage() {
         ))}
       </div>
 
-      {loading && <div className="text-center py-12 text-slate-400">Loading...</div>}
+      {loading && <div className="text-center py-12 text-slate-500">Loading...</div>}
 
       {/* ─── TAB: Fee Queue ─── */}
       {!loading && tab === "queue" && (
@@ -278,7 +278,7 @@ export default function AdminFeeQueuePage() {
                           <Icon name="arrow-right" size={14} className="text-slate-400" />
                           <span className="text-emerald-600 font-bold">{item.new_value || "N/A"}</span>
                         </div>
-                        <div className="text-[0.56rem] text-slate-400 mt-1">
+                        <div className="text-[0.56rem] text-slate-500 mt-1">
                           Detected {new Date(item.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                           {item.reviewed_at && ` · ${item.status} ${new Date(item.reviewed_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}`}
                           {item.extracted_from && <> · <a href={item.extracted_from} target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">source</a></>}

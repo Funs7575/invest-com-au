@@ -441,7 +441,7 @@ export default function DataHealthPage() {
               </button>
             ))}
             <div className="ml-auto flex items-center gap-2">
-              <span className="text-[0.6rem] text-slate-400">Last run: {lastRun}</span>
+              <span className="text-[0.6rem] text-slate-500">Last run: {lastRun}</span>
               <button onClick={runChecks} className="px-3 py-1.5 text-xs font-bold bg-slate-900 text-white rounded-lg hover:bg-slate-800">
                 Re-scan
               </button>
@@ -495,7 +495,7 @@ export default function DataHealthPage() {
           </div>
 
           {filtered.length === 0 && (
-            <div className="text-center py-12 text-slate-400">
+            <div className="text-center py-12 text-slate-500">
               <p className="text-lg font-bold mb-1">No checks match this filter</p>
               <p className="text-sm">Try selecting a different category or severity.</p>
             </div>

@@ -130,7 +130,7 @@ export default function NotificationsPage() {
             <Icon name="bell" size={20} className="text-slate-400" />
           </div>
           <p className="text-sm font-medium text-slate-700 mb-1">No notifications yet</p>
-          <p className="text-xs text-slate-400">We&apos;ll notify you about campaign updates, wallet alerts, and more.</p>
+          <p className="text-xs text-slate-500">We&apos;ll notify you about campaign updates, wallet alerts, and more.</p>
         </div>
       ) : (
         <div className="space-y-2 portal-stagger">
@@ -146,7 +146,7 @@ export default function NotificationsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <p className="text-sm font-semibold text-slate-900">{n.title}</p>
-                    <span className="text-xs text-slate-400 shrink-0">{timeAgo(n.created_at)}</span>
+                    <span className="text-xs text-slate-500 shrink-0">{timeAgo(n.created_at)}</span>
                   </div>
                   <p className="text-sm text-slate-600 mt-0.5">{n.message}</p>
                   {n.link && (

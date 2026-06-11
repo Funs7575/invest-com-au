@@ -3,6 +3,14 @@ import { render, screen } from "./setup";
 import BrokerCard from "@/components/BrokerCard";
 import type { Broker } from "@/lib/types";
 
+// Editorial ratings are licence-gated (DISC-20260610 A). Force the gate open
+// so the rating-render path stays covered regardless of the env's
+// LICENCE_MODE (factual_only hides ratings in CI).
+vi.mock("@/lib/compliance-config", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/compliance-config")>()),
+  SHOW_RATINGS: true,
+}));
+
 /**
  * Factory for creating test broker data with sensible defaults.
  * Override any field by passing a partial Broker.

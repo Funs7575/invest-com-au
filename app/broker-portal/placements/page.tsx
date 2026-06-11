@@ -166,7 +166,7 @@ export default function PlacementsPage() {
           </div>
           <p className="text-xl font-extrabold text-slate-900">
             <CountUp end={totalAvailableSlots} duration={800} />
-            <span className="text-sm font-medium text-slate-400 ml-1">of {totalSlots}</span>
+            <span className="text-sm font-medium text-slate-500 ml-1">of {totalSlots}</span>
           </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
@@ -185,7 +185,7 @@ export default function PlacementsPage() {
                 <CountUp end={maxCtr} decimals={1} duration={800} suffix="%" />
               </>
             ) : (
-              <span className="text-sm text-slate-400">No data yet</span>
+              <span className="text-sm text-slate-500">No data yet</span>
             )}
           </p>
         </div>
@@ -228,7 +228,7 @@ export default function PlacementsPage() {
           <p className="text-sm font-medium text-slate-700 mb-1">
             {filter === "full" ? "No placements are full" : "No placements found"}
           </p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             {filter === "full"
               ? "All placements currently have open slots."
               : "Check back soon for new advertising placements."}
@@ -299,7 +299,7 @@ export default function PlacementsPage() {
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   <div>
                     <div className="flex items-center gap-1">
-                      <p className="text-[0.62rem] text-slate-400 font-medium uppercase tracking-wide">Base Rate</p>
+                      <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">Base Rate</p>
                     </div>
                     <p className="text-sm font-bold text-slate-900">
                       {p.base_rate_cents != null
@@ -311,7 +311,7 @@ export default function PlacementsPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-1">
-                      <p className="text-[0.62rem] text-slate-400 font-medium uppercase tracking-wide">Impressions</p>
+                      <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">Impressions</p>
                       <InfoTip
                         text={
                           hasRealStats
@@ -322,15 +322,15 @@ export default function PlacementsPage() {
                     </div>
                     <p className="text-sm font-bold text-slate-900">
                       {impressions > 0 ? formatNumber(impressions) : "--"}
-                      <span className="text-[0.55rem] text-slate-400 font-normal ml-1">/mo</span>
+                      <span className="text-[0.55rem] text-slate-500 font-normal ml-1">/mo</span>
                     </p>
-                    <p className={`text-[0.55rem] mt-0.5 ${hasRealStats ? "text-emerald-500" : "text-slate-400"}`}>
+                    <p className={`text-[0.55rem] mt-0.5 ${hasRealStats ? "text-emerald-500" : "text-slate-500"}`}>
                       {hasRealStats ? "Real data" : "Estimated"}
                     </p>
                   </div>
                   <div>
                     <div className="flex items-center gap-1">
-                      <p className="text-[0.62rem] text-slate-400 font-medium uppercase tracking-wide">Avg CTR</p>
+                      <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">Avg CTR</p>
                       <InfoTip text="Average click-through rate: the percentage of impressions that result in a click." />
                     </div>
                     <p className="text-sm font-bold text-slate-900">
@@ -341,7 +341,7 @@ export default function PlacementsPage() {
 
                 {/* Stats updated date */}
                 {p.stats_updated_at && (
-                  <p className="text-[0.55rem] text-slate-400 mb-3 flex items-center gap-1">
+                  <p className="text-[0.55rem] text-slate-500 mb-3 flex items-center gap-1">
                     <Icon name="clock" size={9} className="text-slate-300" />
                     Stats updated {timeAgo(p.stats_updated_at)}
                   </p>

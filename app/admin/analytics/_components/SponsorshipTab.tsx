@@ -58,8 +58,8 @@ export default function SponsorshipTab({
             </div>
             <div className="bg-white border border-slate-200 rounded-lg p-5">
               <div className="text-sm text-slate-500 mb-1">Expiring Soon</div>
-              <div className={`text-3xl font-bold ${expiringIn30.length > 0 ? "text-amber-600" : "text-slate-400"}`}>{expiringIn30.length}</div>
-              <div className="text-xs text-slate-400 mt-0.5">within 30 days</div>
+              <div className={`text-3xl font-bold ${expiringIn30.length > 0 ? "text-amber-600" : "text-slate-500"}`}>{expiringIn30.length}</div>
+              <div className="text-xs text-slate-500 mt-0.5">within 30 days</div>
             </div>
           </div>
         );
@@ -97,7 +97,7 @@ export default function SponsorshipTab({
                 const endDate = b.sponsorship_end ? new Date(b.sponsorship_end) : null;
                 const daysLeft = endDate ? Math.ceil((endDate.getTime() - nowMs) / (1000 * 60 * 60 * 24)) : null;
                 const clicks = sponsorClickStats[b.slug] || 0;
-                const daysColor = daysLeft === null ? "text-slate-400" : daysLeft < 3 ? "text-red-600 font-bold" : daysLeft < 14 ? "text-amber-600 font-semibold" : "text-emerald-600";
+                const daysColor = daysLeft === null ? "text-slate-500" : daysLeft < 3 ? "text-red-600 font-bold" : daysLeft < 14 ? "text-amber-600 font-semibold" : "text-emerald-600";
                 return (
                   <tr key={b.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3 text-sm font-medium text-slate-900">{b.name}</td>
@@ -208,7 +208,7 @@ export default function SponsorshipTab({
                     <span className={`text-sm font-bold ${b.daysLeft < 3 ? "text-red-600" : b.daysLeft < 14 ? "text-amber-600" : "text-amber-500"}`}>
                       {b.daysLeft === 0 ? "Expires today" : `${b.daysLeft} day${b.daysLeft !== 1 ? "s" : ""} left`}
                     </span>
-                    <div className="text-xs text-slate-400">
+                    <div className="text-xs text-slate-500">
                       {b.endDate.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                     </div>
                   </div>

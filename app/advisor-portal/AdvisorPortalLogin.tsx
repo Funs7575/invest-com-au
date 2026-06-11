@@ -61,7 +61,7 @@ export default function AdvisorPortalLogin(_props: Props) {
               </div>
               <h2 className="text-lg font-bold text-slate-900 mb-1">Check your email</h2>
               <p className="text-sm text-slate-500">We&apos;ve sent a login link to <strong>{email}</strong>. Click the link to access your dashboard.</p>
-              <p className="text-xs text-slate-400 mt-3">Check spam if you don&apos;t see it within a minute.</p>
+              <p className="text-xs text-slate-500 mt-3">Check spam if you don&apos;t see it within a minute.</p>
               <button onClick={() => { setStatus("idle"); setError(""); }} className="mt-4 text-xs text-slate-500 hover:text-slate-700">Try a different email</button>
             </div>
           ) : status === "success" ? (
@@ -108,7 +108,7 @@ export default function AdvisorPortalLogin(_props: Props) {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword
@@ -171,7 +171,7 @@ export default function AdvisorPortalLogin(_props: Props) {
                     </button>
                     <button
                       onClick={() => { setMode("magic"); setError(""); setEmail(""); }}
-                      className="text-xs text-slate-400 hover:text-slate-600 block w-full"
+                      className="text-xs text-slate-500 hover:text-slate-600 block w-full"
                     >
                       Forgot password? Use magic link
                     </button>
@@ -189,7 +189,7 @@ export default function AdvisorPortalLogin(_props: Props) {
             </>
           )}
         </div>
-        <p className="text-center text-xs text-slate-400 mt-4">
+        <p className="text-center text-xs text-slate-500 mt-4">
           Not listed yet?{" "}
           <Link href="/for-advisors" className="text-slate-600 hover:text-slate-900 font-medium">
             Join the directory →

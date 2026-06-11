@@ -291,7 +291,7 @@ export default function ETFHubPage() {
                   {cat.title}
                 </h2>
                 <p className="text-xs text-slate-600 leading-relaxed mb-3">{cat.description}</p>
-                <p className="text-xs text-slate-400 font-mono">e.g. {cat.examples}</p>
+                <p className="text-xs text-slate-500 font-mono">e.g. {cat.examples}</p>
                 <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-amber-600 group-hover:text-amber-700">
                   Compare ETFs <span className="text-base leading-none">→</span>
                 </div>
@@ -318,7 +318,7 @@ export default function ETFHubPage() {
               >
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded">{pair.a}</span>
-                  <span className="text-slate-400 text-xs">vs</span>
+                  <span className="text-slate-500 text-xs">vs</span>
                   <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded">{pair.b}</span>
                 </div>
                 <span className="text-xs text-slate-600 group-hover:text-slate-800 leading-tight">{pair.title.split(" — ")[1]}</span>

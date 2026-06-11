@@ -86,7 +86,7 @@ export default function CgtClient() {
                 be carried forward indefinitely to offset future gains.
               </p>
             </div>
-            <p className="text-[0.65rem] text-slate-400 mt-4 leading-relaxed">
+            <p className="text-[0.65rem] text-slate-500 mt-4 leading-relaxed">
               This calculator is a simplified estimate for general information only and is not tax advice. Always consult a
               registered tax agent for your specific situation.
             </p>

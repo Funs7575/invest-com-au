@@ -134,7 +134,7 @@ export default function PortfolioClient() {
     <div className="max-w-3xl mx-auto px-4 pt-6 pb-12 md:pt-10 md:pb-16">
       {/* Header */}
       <div className="mb-6 md:mb-8">
-        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-2 flex items-center gap-1">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-2 flex items-center gap-1">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span>/</span>
           <span className="text-slate-700">Portfolio Monitor</span>
@@ -170,7 +170,7 @@ export default function PortfolioClient() {
             >
               {loading ? "Checking..." : "Get Started — Free"}
             </button>
-            <p className="text-[0.55rem] text-slate-400 text-center">No credit card required. We&apos;ll email you when fees change.</p>
+            <p className="text-[0.55rem] text-slate-500 text-center">No credit card required. We&apos;ll email you when fees change.</p>
           </div>
         </div>
       )}
@@ -186,7 +186,7 @@ export default function PortfolioClient() {
               {holdings.map((h, idx) => (
                 <div key={idx} className="bg-slate-50 rounded-xl p-4 relative">
                   {holdings.length > 1 && (
-                    <button onClick={() => removeHolding(idx)} aria-label="Remove holding" className="absolute top-2 right-2 p-2 text-slate-400 hover:text-red-500">
+                    <button onClick={() => removeHolding(idx)} aria-label="Remove holding" className="absolute top-2 right-2 p-2 text-slate-500 hover:text-red-500">
                       <Icon name="x-circle" size={16} />
                     </button>
                   )}
@@ -285,15 +285,15 @@ export default function PortfolioClient() {
           {/* Fee summary */}
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Your Annual Fees</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Your Annual Fees</p>
               <p className="text-xl md:text-2xl font-extrabold text-slate-900">${results.annual_fees.toLocaleString()}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Best Available</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Best Available</p>
               <p className="text-xl md:text-2xl font-extrabold text-emerald-600">${results.optimal_fees.toLocaleString()}</p>
             </div>
             <div className={`rounded-xl p-4 text-center ${results.savings > 0 ? "bg-gradient-to-br from-emerald-500 to-emerald-600 text-white" : "bg-white border border-slate-200"}`}>
-              <p className={`text-[0.6rem] font-bold uppercase ${results.savings > 0 ? "opacity-80" : "text-slate-400"}`}>Potential Savings</p>
+              <p className={`text-[0.6rem] font-bold uppercase ${results.savings > 0 ? "opacity-80" : "text-slate-500"}`}>Potential Savings</p>
               <p className={`text-xl md:text-2xl font-extrabold ${results.savings > 0 ? "" : "text-slate-900"}`}>${results.savings.toLocaleString()}/yr</p>
             </div>
           </div>
@@ -331,7 +331,7 @@ export default function PortfolioClient() {
                     {broker && <BrokerLogo broker={broker} size="sm" />}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-slate-900">{h.broker_name || h.broker_slug}</p>
-                      <p className="text-[0.6rem] text-slate-400">${(h.balance || 0).toLocaleString()} · {h.trades_per_year} trades/yr · {h.us_allocation}% US</p>
+                      <p className="text-[0.6rem] text-slate-500">${(h.balance || 0).toLocaleString()} · {h.trades_per_year} trades/yr · {h.us_allocation}% US</p>
                     </div>
                     <p className="text-sm font-bold text-slate-900">${(h.annual_fee || 0).toLocaleString()}/yr</p>
                   </div>
@@ -358,7 +358,7 @@ export default function PortfolioClient() {
           </div>
 
           {existingPortfolio && (
-            <p className="text-[0.55rem] text-slate-400 text-center">
+            <p className="text-[0.55rem] text-slate-500 text-center">
               Portfolio loaded from your previous visit. Last checked: {new Date().toLocaleDateString("en-AU")}.
             </p>
           )}

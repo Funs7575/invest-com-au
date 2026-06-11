@@ -100,7 +100,7 @@ function StepCard({
         className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 font-bold text-sm transition-all duration-150 ${
           isComplete
             ? `${accent.bg} border-transparent text-white`
-            : `border-slate-300 text-slate-400 hover:border-slate-400`
+            : `border-slate-300 text-slate-500 hover:border-slate-400`
         }`}
       >
         {isComplete ? (
@@ -120,7 +120,7 @@ function StepCard({
           >
             {KIND_LABEL[step.kind] ?? step.kind}
           </span>
-          <span className="text-[0.7rem] text-slate-400">
+          <span className="text-[0.7rem] text-slate-500">
             ~{step.estimatedMinutes} min
           </span>
         </div>
@@ -128,7 +128,7 @@ function StepCard({
         <Link
           href={href}
           className={`block font-bold text-slate-900 leading-snug mb-1 transition-colors group-hover:${accent.text} ${
-            isComplete ? "line-through text-slate-400" : ""
+            isComplete ? "line-through text-slate-500" : ""
           }`}
         >
           {step.title}
@@ -223,7 +223,7 @@ export default function LearningPathClient({
             <button
               type="button"
               onClick={resetProgress}
-              className="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors"
+              className="text-xs text-slate-500 hover:text-slate-600 underline underline-offset-2 transition-colors"
             >
               Reset
             </button>

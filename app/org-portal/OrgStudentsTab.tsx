@@ -122,7 +122,7 @@ export default function OrgStudentsTab({ org: _org }: Props) {
                   <tr key={`${s.user_id}-${s.course_id}`} className="text-xs hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-2.5">
                       <div className="font-semibold text-slate-900">{s.user_name}</div>
-                      <div className="text-[0.58rem] text-slate-400">{s.user_email}</div>
+                      <div className="text-[0.58rem] text-slate-500">{s.user_email}</div>
                     </td>
                     <td className="px-4 py-2.5 text-slate-600 max-w-[200px] truncate">
                       {s.course_title}

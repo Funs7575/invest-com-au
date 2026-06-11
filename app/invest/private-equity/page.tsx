@@ -360,7 +360,7 @@ export default function PrivateEquityPage() {
             </div>
           </div>
 
-          <p className="text-xs text-slate-400 mt-4">
+          <p className="text-xs text-slate-500 mt-4">
             Tax treatment is complex and fact-specific. Always obtain advice from an Australian tax adviser before investing.
           </p>
         </div>

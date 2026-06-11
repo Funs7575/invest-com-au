@@ -106,7 +106,7 @@ export default function GlobalPropertyPage() {
             buying property offshore. Foreign buyer restrictions, financing, tax treatment in
             both countries, and the risks that catch first-time overseas buyers.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not legal or tax advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not legal or tax advice</p>
         </div>
       </section>
 

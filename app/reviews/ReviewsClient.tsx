@@ -89,7 +89,7 @@ export default function ReviewsClient({ brokers, advisors = [] }: ReviewsClientP
             }`}
           >
             Platforms
-            <span className="ml-1.5 text-[0.65rem] md:text-xs text-slate-400 font-normal">({brokers.length})</span>
+            <span className="ml-1.5 text-[0.65rem] md:text-xs text-slate-500 font-normal">({brokers.length})</span>
           </button>
           <button
             onClick={() => setViewMode("advisors")}
@@ -100,7 +100,7 @@ export default function ReviewsClient({ brokers, advisors = [] }: ReviewsClientP
             }`}
           >
             Advisors
-            <span className="ml-1.5 text-[0.65rem] md:text-xs text-slate-400 font-normal">({advisors.length})</span>
+            <span className="ml-1.5 text-[0.65rem] md:text-xs text-slate-500 font-normal">({advisors.length})</span>
           </button>
         </div>
       )}
@@ -233,9 +233,9 @@ function AdvisorReviewCard({ advisor }: { advisor: Professional }) {
             {advisor.rating > 0 && (
               <div className="text-xs text-amber-500">
                 {"★".repeat(Math.floor(advisor.rating))}
-                <span className="text-slate-400 ml-1 text-[0.69rem]">{advisor.rating}/5</span>
+                <span className="text-slate-500 ml-1 text-[0.69rem]">{advisor.rating}/5</span>
                 {advisor.review_count > 0 && (
-                  <span className="text-slate-400 ml-1 text-[0.62rem]">({advisor.review_count})</span>
+                  <span className="text-slate-500 ml-1 text-[0.62rem]">({advisor.review_count})</span>
                 )}
               </div>
             )}
@@ -254,7 +254,7 @@ function AdvisorReviewCard({ advisor }: { advisor: Professional }) {
           <p className="text-xs text-slate-600 mb-1 truncate">{advisor.firm_name}</p>
         )}
         {advisor.location_display && (
-          <p className="text-[0.69rem] text-slate-400">{advisor.location_display}</p>
+          <p className="text-[0.69rem] text-slate-500">{advisor.location_display}</p>
         )}
 
         {/* Fee info */}
@@ -271,7 +271,7 @@ function AdvisorReviewCard({ advisor }: { advisor: Professional }) {
               </span>
             ))}
             {(advisor.specialties as string[]).length > 3 && (
-              <span className="text-[0.58rem] text-slate-400">+{(advisor.specialties as string[]).length - 3}</span>
+              <span className="text-[0.58rem] text-slate-500">+{(advisor.specialties as string[]).length - 3}</span>
             )}
           </div>
         )}
@@ -308,7 +308,7 @@ function BrokerReviewCard({ broker }: { broker: Broker }) {
             <h2 className="text-sm md:text-lg font-bold leading-tight truncate">{broker.name}</h2>
             <div className="text-xs text-amber">
               {"★".repeat(Math.floor(broker.rating || 0))}
-              <span className="text-slate-400 ml-1 text-[0.69rem]">{broker.rating}/5</span>
+              <span className="text-slate-500 ml-1 text-[0.69rem]">{broker.rating}/5</span>
             </div>
           </div>
         </div>
@@ -325,12 +325,12 @@ function BrokerReviewCard({ broker }: { broker: Broker }) {
 
         <div className="space-y-1 md:space-y-2 text-xs md:text-sm">
           <div className="flex justify-between">
-            <span className="text-slate-400 md:text-slate-500">ASX Fee</span>
+            <span className="text-slate-500 md:text-slate-500">ASX Fee</span>
             <span className="font-semibold">{broker.asx_fee || "N/A"}</span>
           </div>
           {broker.platform_type !== "research_tool" && (
             <div className="flex justify-between">
-              <span className="text-slate-400 md:text-slate-500">FX Rate</span>
+              <span className="text-slate-500 md:text-slate-500">FX Rate</span>
               <span className="font-semibold">{broker.fx_rate != null ? `${broker.fx_rate}%` : "N/A"}</span>
             </div>
           )}

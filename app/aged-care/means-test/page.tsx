@@ -83,7 +83,7 @@ export default function AgedCareMeansTestPage() {
             accommodation costs. Both income and assets are assessed — the higher calculation applies.
             Your family home may be exempt, and annual and lifetime fee caps protect against unlimited charges.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · 2024–25 thresholds · General information only</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · 2024–25 thresholds · General information only</p>
         </div>
       </section>
 

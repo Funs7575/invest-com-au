@@ -660,7 +660,7 @@ export default function RedundancyPage() {
                 >
                   <summary className="cursor-pointer font-bold text-slate-900 list-none flex items-center justify-between gap-3">
                     <span>{f.q}</span>
-                    <span className="text-slate-400 group-open:rotate-45 transition-transform text-xl leading-none">
+                    <span className="text-slate-500 group-open:rotate-45 transition-transform text-xl leading-none">
                       +
                     </span>
                   </summary>

@@ -136,15 +136,15 @@ export default function AdvisorPerformancePage() {
           {/* Summary cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Active Advisors</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Active Advisors</p>
               <p className="text-2xl font-extrabold text-slate-900">{totals.advisors}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Profile Views</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Profile Views</p>
               <p className="text-2xl font-extrabold text-slate-900">{totals.views.toLocaleString()}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Enquiries</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Enquiries</p>
               <p className="text-2xl font-extrabold text-slate-900">{totals.leads}</p>
             </div>
             <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-4 text-white">
@@ -183,7 +183,7 @@ export default function AdvisorPerformancePage() {
                       <td className="px-3 py-2.5 text-right text-slate-700">{m.views}</td>
                       <td className="px-3 py-2.5 text-right font-bold text-slate-900">{m.leads}</td>
                       <td className="px-3 py-2.5 text-right">
-                        <span className={`text-xs font-bold ${m.conversionRate >= 5 ? "text-emerald-600" : m.conversionRate >= 2 ? "text-amber-600" : "text-slate-400"}`}>
+                        <span className={`text-xs font-bold ${m.conversionRate >= 5 ? "text-emerald-600" : m.conversionRate >= 2 ? "text-amber-600" : "text-slate-500"}`}>
                           {m.conversionRate}%
                         </span>
                       </td>
@@ -198,14 +198,14 @@ export default function AdvisorPerformancePage() {
                     </tr>
                   ))}
                   {sorted.length === 0 && (
-                    <tr><td colSpan={6} className="text-center py-8 text-slate-400 text-sm">No active advisors</td></tr>
+                    <tr><td colSpan={6} className="text-center py-8 text-slate-500 text-sm">No active advisors</td></tr>
                   )}
                 </tbody>
               </table>
             </div>
           </div>
 
-          <p className="text-[0.55rem] text-slate-400 mt-3 text-center">
+          <p className="text-[0.55rem] text-slate-500 mt-3 text-center">
             Response time = time between lead submission and advisor&apos;s first action. Conversion = leads ÷ profile views.
           </p>
         </>

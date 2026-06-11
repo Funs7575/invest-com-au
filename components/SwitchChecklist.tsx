@@ -289,7 +289,7 @@ export default function SwitchChecklist({
         >
           <span>Capital Gains Tax (CGT) Implications</span>
           <svg
-            className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+            className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${
               cgtExpanded ? "rotate-180" : ""
             }`}
             fill="none"

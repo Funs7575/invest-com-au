@@ -227,11 +227,11 @@ export default function HowMuchRetirementPage() {
               <div key={stat.label} className="bg-slate-50 rounded-xl border border-slate-200 p-3">
                 <p className="text-xs text-slate-500 mb-1">{stat.label}</p>
                 <p className="text-xl font-extrabold text-slate-900">{stat.value}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{stat.sub}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{stat.sub}</p>
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not financial advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not financial advice</p>
         </div>
       </section>
 
@@ -267,7 +267,7 @@ export default function HowMuchRetirementPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             ASFA benchmarks updated quarterly at asfa.asn.au. The &quot;super needed&quot; figures assume
             homeownership and partial Age Pension access where applicable. Verify latest figures directly.
           </p>
@@ -516,7 +516,7 @@ export default function HowMuchRetirementPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Assumes 7% nominal annual return on existing balance only; no further contributions modelled.
             Super Guarantee contributions (11.5% in 2025–26, rising to 12%) will add significantly to
             these projections. Use the{" "}
@@ -595,13 +595,13 @@ export default function HowMuchRetirementPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {BENCHMARKS_BY_AGE.map((item, i) => (
               <div key={i} className="rounded-xl border border-slate-200 bg-white p-4">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Age {item.age}</p>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Age {item.age}</p>
                 <p className="text-lg font-extrabold text-slate-900 mb-1">{item.target}</p>
                 <p className="text-xs text-slate-500 leading-relaxed">{item.note}</p>
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             Benchmarks are indicative for a single individual targeting ASFA comfortable retirement.
             Couples should assess combined balances. ATO average super balances at 2023: age 35 ($42K),
             age 45 ($130K), age 55 ($220K) — well below these targets, which is why active saving matters.

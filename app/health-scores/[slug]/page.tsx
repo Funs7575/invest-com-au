@@ -399,7 +399,7 @@ export default async function HealthScoreDetailPage({
         <div className="container-custom py-6 md:py-8">
           {/* Breadcrumbs */}
           <nav
-            className="text-xs text-slate-400 mb-4 flex items-center gap-1.5"
+            className="text-xs text-slate-500 mb-4 flex items-center gap-1.5"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="hover:text-slate-600">
@@ -440,7 +440,7 @@ export default async function HealthScoreDetailPage({
                 </p>
               )}
               {lastReviewed && (
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Last reviewed: {lastReviewed}
                 </p>
               )}
@@ -455,12 +455,12 @@ export default async function HealthScoreDetailPage({
                         ? "text-emerald-600"
                         : trendSummary.direction === "down"
                           ? "text-red-500"
-                          : "text-slate-400"
+                          : "text-slate-500"
                     }`}
                   >
                     {formatDelta(trendSummary.delta)} pts
                   </span>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500">
                     over {trendSummary.count} snapshots
                   </span>
                 </div>
@@ -488,7 +488,7 @@ export default async function HealthScoreDetailPage({
                       <span className="text-sm font-semibold text-slate-800">
                         {d.label}
                       </span>
-                      <span className="ml-2 text-xs text-slate-400">
+                      <span className="ml-2 text-xs text-slate-500">
                         ({(d.weight * 100).toFixed(0)}% weight)
                       </span>
                     </div>

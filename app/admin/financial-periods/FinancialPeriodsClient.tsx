@@ -185,7 +185,7 @@ export default function FinancialPeriodsClient({
                   <td className="px-3 py-2 font-semibold text-slate-900">
                     {p.period_start} → {p.period_end}
                     {p.notes && (
-                      <p className="text-[10px] text-slate-400 font-normal mt-0.5">
+                      <p className="text-[10px] text-slate-500 font-normal mt-0.5">
                         {p.notes}
                       </p>
                     )}

@@ -163,7 +163,7 @@ export default async function HowToGuidePage({
               <span className="text-[0.6rem] md:text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
                 STEP-BY-STEP GUIDE
               </span>
-              <span className="text-[0.6rem] md:text-xs text-slate-400">
+              <span className="text-[0.6rem] md:text-xs text-slate-500">
                 ~10 min read
               </span>
             </div>
@@ -173,7 +173,7 @@ export default async function HowToGuidePage({
             <p className="text-xs md:text-base text-slate-500 leading-relaxed">
               {guide.intro}
             </p>
-            <div className="flex items-center gap-3 mt-3 md:mt-4 text-[0.6rem] md:text-xs text-slate-400">
+            <div className="flex items-center gap-3 mt-3 md:mt-4 text-[0.6rem] md:text-xs text-slate-500">
               <span>
                 By{" "}
                 <a
@@ -257,7 +257,7 @@ export default async function HowToGuidePage({
                           key={broker.slug}
                           className="flex items-center gap-2.5 md:gap-4 p-2.5 md:p-3.5 border border-slate-100 rounded-lg hover:border-slate-200 transition-colors"
                         >
-                          <span className="text-[0.6rem] md:text-xs font-bold text-slate-400 w-4 shrink-0">
+                          <span className="text-[0.6rem] md:text-xs font-bold text-slate-500 w-4 shrink-0">
                             {idx + 1}
                           </span>
                           <BrokerLogo broker={broker} size="sm" />
@@ -332,7 +332,7 @@ export default async function HowToGuidePage({
                       <Icon
                         name="chevron-down"
                         size={16}
-                        className="text-slate-400 group-open:rotate-180 transition-transform shrink-0 ml-2"
+                        className="text-slate-500 group-open:rotate-180 transition-transform shrink-0 ml-2"
                       />
                     </summary>
                     <div className="px-3 pb-3 md:px-4 md:pb-4 -mt-1">
@@ -363,7 +363,7 @@ export default async function HowToGuidePage({
                       <p className="text-xs md:text-sm font-semibold text-slate-900 group-hover:underline truncate">
                         {g.h1}
                       </p>
-                      <p className="text-[0.6rem] md:text-xs text-slate-400">
+                      <p className="text-[0.6rem] md:text-xs text-slate-500">
                         {g.steps.length} steps · ~10 min read
                       </p>
                     </div>

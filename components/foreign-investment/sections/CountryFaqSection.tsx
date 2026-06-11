@@ -30,7 +30,7 @@ export default function CountryFaqSection({
             <summary className="cursor-pointer px-5 py-4 font-bold text-sm text-slate-900 flex items-center justify-between gap-3 hover:bg-slate-50">
               <span>{entry.q}</span>
               <svg
-                className="w-4 h-4 text-slate-400 transition-transform group-open:rotate-180 shrink-0"
+                className="w-4 h-4 text-slate-500 transition-transform group-open:rotate-180 shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

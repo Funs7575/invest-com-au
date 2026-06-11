@@ -140,7 +140,7 @@ export default function WriteReviewClient() {
             <p className="text-sm text-slate-600 mb-4">
               Your review is pending approval. Pro access will be activated within 24 hours.
             </p>
-            <p className="text-xs text-slate-400 mb-6">
+            <p className="text-xs text-slate-500 mb-6">
               Our team reviews every submission to ensure quality. You will receive an email once approved.
             </p>
             <div className="flex justify-center gap-3">
@@ -200,7 +200,7 @@ export default function WriteReviewClient() {
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                       step >= s
                         ? "bg-emerald-600 text-white"
-                        : "bg-slate-100 text-slate-400"
+                        : "bg-slate-100 text-slate-500"
                     }`}
                   >
                     {step > s ? (
@@ -243,7 +243,7 @@ export default function WriteReviewClient() {
                 )}
 
                 {incentiveData?.brokers_reviewed && incentiveData.brokers_reviewed.length > 0 && (
-                  <p className="text-xs text-slate-400 mt-2">
+                  <p className="text-xs text-slate-500 mt-2">
                     You have already reviewed {incentiveData.brokers_reviewed.length} broker{incentiveData.brokers_reviewed.length !== 1 ? "s" : ""}.
                   </p>
                 )}
@@ -315,7 +315,7 @@ export default function WriteReviewClient() {
                     maxLength={200}
                     className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   />
-                  <p className="text-xs text-slate-400 mt-1">{title.length}/200</p>
+                  <p className="text-xs text-slate-500 mt-1">{title.length}/200</p>
                 </div>
 
                 {/* Body */}
@@ -330,7 +330,7 @@ export default function WriteReviewClient() {
                     maxLength={5000}
                     className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm text-slate-700 resize-y focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   />
-                  <p className={`text-xs mt-1 ${body.length < 100 ? "text-amber-600" : "text-slate-400"}`}>
+                  <p className={`text-xs mt-1 ${body.length < 100 ? "text-amber-600" : "text-slate-500"}`}>
                     {body.length}/5000 {body.length < 100 && `(minimum 100 characters, ${100 - body.length} more needed)`}
                   </p>
                 </div>

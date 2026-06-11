@@ -262,7 +262,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
                   aria-hidden="true"
                 />
 
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-400 font-semibold mb-3">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500 font-semibold mb-3">
                   Certificate of Completion
                 </p>
                 <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-2">
@@ -323,7 +323,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
               {/* Seal / signature row */}
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex flex-col gap-1">
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">Issued by</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-wider">Issued by</p>
                   <p className="text-sm font-semibold text-slate-700">Invest.com.au Academy</p>
                   <p className="text-xs text-slate-500">invest.com.au</p>
                 </div>
@@ -353,20 +353,20 @@ export default async function CertificateVerificationPage({ params }: PageProps)
                 </div>
 
                 <div className="flex flex-col gap-1 text-right">
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">Issue date</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-wider">Issue date</p>
                   <p className="text-sm font-semibold text-slate-700">{issueDate}</p>
                 </div>
               </div>
 
               {/* Certificate number */}
               <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Certificate No.{" "}
                   <span className="font-mono text-slate-500 select-all">
                     {cert.certificate_number}
                   </span>
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Verify at{" "}
                   <span className="font-mono text-slate-500">
                     invest.com.au/certificate/{cert.certificate_number}
@@ -385,7 +385,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
               issuedAt={cert.issued_at}
             />
 
-            <p className="text-xs text-slate-400 text-center">
+            <p className="text-xs text-slate-500 text-center">
               <Link
                 href="/certificate"
                 className="text-teal-600 hover:underline"

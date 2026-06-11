@@ -269,7 +269,7 @@ export default function AllocationDecisionsPage() {
               ))}
             </div>
           ) : decisions.length === 0 ? (
-            <div className="p-12 text-center text-sm text-slate-400">
+            <div className="p-12 text-center text-sm text-slate-500">
               No allocation decisions found for this filter.
             </div>
           ) : (
@@ -315,7 +315,7 @@ export default function AllocationDecisionsPage() {
                           <td className="px-4 py-2.5 text-sm text-slate-700 whitespace-nowrap">
                             <div className="flex items-center gap-1.5">
                               <svg
-                                className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
+                                className={`w-3.5 h-3.5 text-slate-500 transition-transform ${
                                   isExpanded ? "rotate-90" : ""
                                 }`}
                                 fill="none"
@@ -348,7 +348,7 @@ export default function AllocationDecisionsPage() {
                               className={
                                 rejectionCount > 0
                                   ? "text-red-600 font-medium"
-                                  : "text-slate-400"
+                                  : "text-slate-500"
                               }
                             >
                               {rejectionCount}

@@ -325,7 +325,7 @@ export default function JobsClient() {
                 className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-y"
                 placeholder="Role overview, responsibilities, required qualifications…"
               />
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 {form.description.length}/8000 characters
               </p>
             </div>
@@ -507,7 +507,7 @@ function ApplicationsPanel({ jobId, jobTitle }: { jobId: string; jobTitle: strin
         Applications for &ldquo;{jobTitle}&rdquo;
       </h4>
 
-      {loading && <p aria-live="polite" aria-atomic="true" className="text-xs text-slate-400">Loading…</p>}
+      {loading && <p aria-live="polite" aria-atomic="true" className="text-xs text-slate-500">Loading…</p>}
       {err && <p role="alert" className="text-xs text-red-600">{err}</p>}
 
       {!loading && !err && apps.length === 0 && (
@@ -531,7 +531,7 @@ function ApplicationsPanel({ jobId, jobTitle }: { jobId: string; jobTitle: strin
                 >
                   {app.applicant_email}
                 </a>
-                <p className="text-[0.65rem] text-slate-400 ml-auto">
+                <p className="text-[0.65rem] text-slate-500 ml-auto">
                   {new Date(app.created_at).toLocaleDateString("en-AU", {
                     day: "numeric",
                     month: "short",

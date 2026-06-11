@@ -110,12 +110,12 @@ function InputField({
       <label htmlFor={fieldId} className="block text-xs font-semibold text-slate-600 mb-1">
         {label}
         {hint && (
-          <span className="font-normal text-slate-400 ml-1">{hint}</span>
+          <span className="font-normal text-slate-500 ml-1">{hint}</span>
         )}
       </label>
       <div className="relative">
         {prefix && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium pointer-events-none">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium pointer-events-none">
             {prefix}
           </span>
         )}
@@ -130,7 +130,7 @@ function InputField({
           className={`w-full ${prefix ? "pl-7" : "pl-3"} ${suffix ? "pr-10" : "pr-3"} py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white`}
         />
         {suffix && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium pointer-events-none">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium pointer-events-none">
             {suffix}
           </span>
         )}
@@ -339,7 +339,7 @@ function ResultsPanel({ result }: { result: ScenarioResult }) {
 
           {/* Cap progress */}
           <div>
-            <div className="flex justify-between text-[0.65rem] text-slate-400 mb-0.5">
+            <div className="flex justify-between text-[0.65rem] text-slate-500 mb-0.5">
               <span>Cap: {formatCurrency(superContributions.effectiveCap)}</span>
               <span>{Math.round(concessionalUsedPct)}% used</span>
             </div>
@@ -432,7 +432,7 @@ function ResultsPanel({ result }: { result: ScenarioResult }) {
                 {formatCurrency(investmentTax.netInvestmentIncome)}
               </span>
             </div>
-            <p className="text-slate-400 text-[0.65rem]">
+            <p className="text-slate-500 text-[0.65rem]">
               Effective rate on investment income:{" "}
               {investmentTax.effectiveRateOnInvestmentIncome.toFixed(1)}%
             </p>
@@ -537,7 +537,7 @@ function ComparePanel({
                 <div
                   className={`px-3 py-2 text-right font-semibold border-l border-slate-100 text-[0.65rem] ${
                     Math.abs(row.absoluteDelta) < 0.005
-                      ? "text-slate-400"
+                      ? "text-slate-500"
                       : row.absoluteDelta > 0
                         ? "text-sky-700"
                         : "text-orange-700"
@@ -570,7 +570,7 @@ function ComparePanel({
         );
       })}
 
-      <p className="text-[0.6rem] text-slate-400 leading-relaxed">
+      <p className="text-[0.6rem] text-slate-500 leading-relaxed">
         Size indicator (&quot;A larger&quot; / &quot;A smaller&quot;) is factual — it reflects the
         numerical relationship between the two projections, not a recommendation
         about which scenario is preferable.
@@ -1227,7 +1227,7 @@ export default function ScenarioPlannerClient({
           <p className="text-[0.65rem] text-slate-500 leading-relaxed">
             {GENERAL_ADVICE_WARNING}
           </p>
-          <p className="text-[0.65rem] text-slate-400 mt-2 leading-relaxed">
+          <p className="text-[0.65rem] text-slate-500 mt-2 leading-relaxed">
             Projections use FY2026 tax rates and the nominal rates you enter.
             Actual outcomes depend on investment returns, future tax-law changes,
             and your personal circumstances. Contribution caps quoted are for

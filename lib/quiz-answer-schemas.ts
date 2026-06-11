@@ -107,25 +107,44 @@ export const QuizAdvisorTypeSchema = safeEnum([
 // deriveNeeds parses it and drops unknown tokens, so no enum is enforced.
 export const QuizNeedsSchema = z.string().max(200).optional().catch(undefined);
 
+// "not_sure" on property_sub → treated as a neutral property signal: no
+// physical-purchase advisor gate fires, so the DIY track continues naturally.
 export const QuizPropertySubSchema = safeEnum([
   "physical",
   "property-reit",
   "property-super",
+  "not_sure",
 ]);
 
+// "not_sure" on investor_goal_intl → falls through to the generic
+// international advisor-match outcome (no business-setup post-job fork).
 export const QuizInvestorGoalIntlSchema = safeEnum([
   "property",
   "shares",
   "savings",
   "business",
+  "not_sure",
 ]);
 
 // Free-text-ish fields stored as bounded strings. The bound must fit every
-// option key the quiz can emit (e.g. `saudi_arabia` = 12 chars) — too tight a
-// max silently nulls the field via `.catch(undefined)`. Pinned by the contract
-// test in __tests__/lib/quiz-questions.test.ts.
+// option key the quiz can emit (e.g. `saudi_arabia` = 12 chars, `not_sure` = 8
+// chars) — too tight a max silently nulls the field via `.catch(undefined)`.
+// Pinned by the contract test in __tests__/lib/quiz-questions.test.ts.
+// QuizInvestorCountrySchema: bumped max to 20 to fit "not_sure" (8 chars) and
+// "saudi_arabia" (12 chars) — the previous 20 already covered both, confirmed.
 export const QuizInvestorCountrySchema = z.string().max(20).optional().catch(undefined);
+// QuizVisaStatusSchema: "not_sure" (8 chars) fits within the existing max(50).
 export const QuizVisaStatusSchema = z.string().max(50).optional().catch(undefined);
+
+// stack_risk "not_sure" → treated as "balanced" for scoring purposes (the
+// vertical scoring engine has its own fallback; the schema just passes the
+// value through as a validated string so no type-checking breakage).
+export const QuizStackRiskSchema = safeEnum([
+  "conservative",
+  "balanced",
+  "growth",
+  "not_sure",
+]);
 
 export const UnifiedAnswersSchema = z
   .object({
@@ -143,6 +162,7 @@ export const UnifiedAnswersSchema = z
     investor_country: QuizInvestorCountrySchema,
     visa_status: QuizVisaStatusSchema,
     investor_goal_intl: QuizInvestorGoalIntlSchema,
+    stack_risk: QuizStackRiskSchema,
   })
   .optional();
 

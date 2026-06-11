@@ -93,7 +93,7 @@ export default async function ExpertInsightsPage() {
         <div className="flex items-center gap-2 mb-2">
           {a.category && <span className="text-[0.58rem] font-bold text-violet-700 bg-violet-50 px-2 py-0.5 rounded-full">{a.category}</span>}
           {a.featured && <span className="text-[0.58rem] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">Featured</span>}
-          {a.read_time ? <span className="text-[0.58rem] text-slate-400">{a.read_time} min read</span> : null}
+          {a.read_time ? <span className="text-[0.58rem] text-slate-500">{a.read_time} min read</span> : null}
         </div>
         <h2 className="text-sm md:text-base font-bold text-slate-900 mb-1.5 line-clamp-2 group-hover:text-violet-700">{a.title}</h2>
         {a.excerpt && <p className="text-xs text-slate-500 line-clamp-2 mb-3">{a.excerpt}</p>}
@@ -107,7 +107,7 @@ export default async function ExpertInsightsPage() {
           />
           <div className="flex-1 min-w-0">
             <span className="text-xs font-semibold text-slate-700 truncate block">{a.author_name}</span>
-            <span className="text-[0.58rem] text-slate-400 truncate block">
+            <span className="text-[0.58rem] text-slate-500 truncate block">
               {a.author_firm || typeLabel}
               {a.published_at && ` · ${new Date(a.published_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}`}
             </span>
@@ -164,7 +164,7 @@ export default async function ExpertInsightsPage() {
           {/* Category filter */}
           {categories.length > 1 && (
             <div className="flex flex-wrap gap-2 mb-5">
-              <span className="text-xs font-bold text-slate-400 self-center mr-1">Filter:</span>
+              <span className="text-xs font-bold text-slate-500 self-center mr-1">Filter:</span>
               {categories.map(c => (
                 <span key={c} className="text-[0.62rem] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full">{c}</span>
               ))}

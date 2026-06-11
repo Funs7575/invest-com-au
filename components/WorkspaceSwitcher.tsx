@@ -176,7 +176,7 @@ export default function WorkspaceSwitcher() {
                       </span>
                     )}
                     {switching === m.kind && (
-                      <span className="text-[10px] text-slate-400 mt-0.5">…</span>
+                      <span className="text-[10px] text-slate-500 mt-0.5">…</span>
                     )}
                   </button>
                 </li>

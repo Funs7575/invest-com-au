@@ -209,7 +209,7 @@ export default function WholesalePage() {
                   </div>
                   <div className="shrink-0 flex flex-col items-end gap-1">
                     <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-white border border-slate-200 text-slate-600">{t.badge}</span>
-                    <span className="text-[10px] font-mono text-slate-400">{t.section}</span>
+                    <span className="text-[10px] font-mono text-slate-500">{t.section}</span>
                   </div>
                 </div>
               </div>

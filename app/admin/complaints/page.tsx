@@ -93,7 +93,7 @@ export default async function AdminComplaintsPage({
             <div
               className={`text-2xl font-bold mt-1 ${
                 slaPct == null
-                  ? "text-slate-400"
+                  ? "text-slate-500"
                   : slaPct >= 95
                     ? "text-emerald-700"
                     : slaPct >= 80

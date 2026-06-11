@@ -205,7 +205,7 @@ export default function GrowthInvestingPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             No single metric is definitive. Metrics must be interpreted together alongside the business model, competitive dynamics, and management track record.
           </p>
         </div>
@@ -279,7 +279,7 @@ export default function GrowthInvestingPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">MERs and product details change — verify current fees on the issuer&apos;s website before investing.</p>
+          <p className="text-xs text-slate-500 mt-3">MERs and product details change — verify current fees on the issuer&apos;s website before investing.</p>
         </div>
       </section>
 
@@ -423,9 +423,9 @@ export default function GrowthInvestingPage() {
                 Use the satellite sleeve for high-conviction ASX growth names where you have done the research. Keep position sizes disciplined — 2–5% per stock is a common guide for managing single-stock risk. Focus on businesses with durable competitive moats, not just high revenue growth.
               </p>
               <ul className="space-y-1.5 text-sm text-slate-500">
-                <li className="flex gap-2"><span className="text-slate-400 font-bold mt-0.5">→</span>WTC, TNE, XRO, REA, PME (examples only)</li>
-                <li className="flex gap-2"><span className="text-slate-400 font-bold mt-0.5">→</span>2–5% max per position</li>
-                <li className="flex gap-2"><span className="text-slate-400 font-bold mt-0.5">→</span>No single stock &gt; 10% of total portfolio</li>
+                <li className="flex gap-2"><span className="text-slate-500 font-bold mt-0.5">→</span>WTC, TNE, XRO, REA, PME (examples only)</li>
+                <li className="flex gap-2"><span className="text-slate-500 font-bold mt-0.5">→</span>2–5% max per position</li>
+                <li className="flex gap-2"><span className="text-slate-500 font-bold mt-0.5">→</span>No single stock &gt; 10% of total portfolio</li>
               </ul>
             </div>
           </div>
@@ -522,7 +522,7 @@ export default function GrowthInvestingPage() {
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
                   {item.q}
                   <svg
-                    className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform"
+                    className="w-4 h-4 text-slate-500 shrink-0 group-open:rotate-180 transition-transform"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

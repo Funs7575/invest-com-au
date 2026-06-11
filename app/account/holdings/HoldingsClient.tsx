@@ -453,7 +453,7 @@ export default function HoldingsClient({
                     </>
                   ) : (
                     <div
-                      className="text-sm text-slate-400"
+                      className="text-sm text-slate-500"
                       title="Price unavailable — may be invalid ticker, unsupported exchange, or temporary data issue."
                     >
                       —

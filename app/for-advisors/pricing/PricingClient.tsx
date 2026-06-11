@@ -221,7 +221,7 @@ export default function PricingClient() {
               const subTextClass = isHighlight
                 ? "text-violet-200"
                 : tier.id === "elite"
-                ? "text-slate-400"
+                ? "text-slate-500"
                 : "text-slate-500";
 
               return (
@@ -429,7 +429,7 @@ export default function PricingClient() {
                   <Icon
                     name="chevron-down"
                     size={16}
-                    className="text-slate-400 shrink-0 ml-3 group-open:rotate-180 transition-transform"
+                    className="text-slate-500 shrink-0 ml-3 group-open:rotate-180 transition-transform"
                   />
                 </summary>
                 <div className="px-5 pb-4">

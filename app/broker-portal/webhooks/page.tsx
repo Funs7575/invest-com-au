@@ -179,7 +179,7 @@ export default function WebhooksPage() {
           </div>
         )}
         {!webhookUrl && !webhookInput && (
-          <p className="mt-2 text-xs text-slate-400">No webhook configured. Conversions will still be recorded but you won&apos;t receive real-time notifications.</p>
+          <p className="mt-2 text-xs text-slate-500">No webhook configured. Conversions will still be recorded but you won&apos;t receive real-time notifications.</p>
         )}
 
         {/* Webhook payload example */}
@@ -218,7 +218,7 @@ export default function WebhooksPage() {
             <code className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono text-slate-700 flex-1 overflow-x-auto">
               {baseUrl}/api/marketplace/postback
             </code>
-            <button onClick={() => copyToClipboard(`${baseUrl}/api/marketplace/postback`)} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+            <button onClick={() => copyToClipboard(`${baseUrl}/api/marketplace/postback`)} className="text-xs text-slate-500 hover:text-slate-600 transition-colors">
               Copy
             </button>
           </div>

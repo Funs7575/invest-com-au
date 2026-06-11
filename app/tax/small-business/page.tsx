@@ -284,7 +284,7 @@ export default function SmallBusinessTaxPage() {
                   ))}
                 </tbody>
               </table>
-              <p className="text-xs text-slate-400 px-4 py-2 border-t border-slate-100">General comparison only. Costs vary. Seek professional advice for your specific situation.</p>
+              <p className="text-xs text-slate-500 px-4 py-2 border-t border-slate-100">General comparison only. Costs vary. Seek professional advice for your specific situation.</p>
             </div>
           </div>
         </section>
@@ -407,7 +407,7 @@ export default function SmallBusinessTaxPage() {
                   ))}
                 </tbody>
               </table>
-              <p className="text-xs text-slate-400 px-4 py-2 border-t border-slate-100">Thresholds and rules for 2024-25. Verify eligibility at ato.gov.au before applying concessions.</p>
+              <p className="text-xs text-slate-500 px-4 py-2 border-t border-slate-100">Thresholds and rules for 2024-25. Verify eligibility at ato.gov.au before applying concessions.</p>
             </div>
           </div>
         </section>

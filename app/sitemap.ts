@@ -325,8 +325,10 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/market-pulse", "/rates/today", "/reports/annual",
     "/methodology/invest-score", "/advisor/trust-score-methodology",
     "/brokerage-fee-index",
-    // Business finance + advisor jobs
-    "/business-finance", "/advisor-jobs",
+    // Daily data-news surfaces
+    "/today", "/fees/today", "/calendar",
+    // Business finance + advisor jobs + careers demand probe
+    "/business-finance", "/advisor-jobs", "/careers",
   ];
 
   return staticPaths.map((path) => ({

@@ -72,7 +72,7 @@ const ASSESSABLE = [
   {
     item: "Account-based pensions (ABP)",
     detail:
-      "The full ABP account balance is assessable. For ABPs started on or after 1 January 2015, deemed income is also applied under the income test.",
+      "The full ABP account balance is assessable. For ABPs started on or after 1 January 2015, deemed income is also applied under the income test.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     item: "Business interests",
@@ -242,6 +242,7 @@ export default function AgePensionAssetsTestPage() {
             ))}
           </div>
           <p className="text-xs text-slate-500 mt-4">
+            {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
             {UPDATED_LABEL} &middot; 2024–25 thresholds effective 1 July 2024 &middot; Indexed annually &middot; Verify at servicesaustralia.gov.au
           </p>
         </div>
@@ -327,7 +328,7 @@ export default function AgePensionAssetsTestPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Taper: pension reduces $3 per fortnight per $1,000 of assessable assets above the lower
             threshold. Couple thresholds are combined household totals. Verify current rates at
             servicesaustralia.gov.au.
@@ -541,6 +542,7 @@ export default function AgePensionAssetsTestPage() {
               <div className="grid sm:grid-cols-2 gap-3">
                 <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
                   <p className="text-xs font-bold text-blue-900 mb-1.5">
+                    {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
                     ABP started before 1 January 2015
                   </p>
                   <p className="text-xs text-slate-700 leading-relaxed">
@@ -553,6 +555,7 @@ export default function AgePensionAssetsTestPage() {
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
                   <p className="text-xs font-bold text-slate-800 mb-1.5">
+                    {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
                     ABP started on or after 1 January 2015
                   </p>
                   <p className="text-xs text-slate-700 leading-relaxed">

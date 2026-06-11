@@ -175,7 +175,7 @@ export default async function AdvisorJobsPage({ searchParams }: PageProps) {
             </div>
           ) : (
             <>
-              <p className="text-xs text-slate-400 mb-4">
+              <p className="text-xs text-slate-500 mb-4">
                 {rows.length} position{rows.length !== 1 ? "s" : ""} available
               </p>
               <ul className="space-y-4" aria-label="Job listings">

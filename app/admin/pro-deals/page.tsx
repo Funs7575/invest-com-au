@@ -378,7 +378,7 @@ export default function ProDealsPage() {
                   placeholder="e.g. $50 credit"
                   className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 />
-                <p className="text-xs text-slate-400 mt-0.5">Dollar value of the deal shown to users</p>
+                <p className="text-xs text-slate-500 mt-0.5">Dollar value of the deal shown to users</p>
               </div>
               <div>
                 <label htmlFor="pd-redemption-code" className="block text-xs font-bold text-slate-500 uppercase mb-1">
@@ -605,7 +605,7 @@ export default function ProDealsPage() {
                         {item.featured ? (
                           <span className="text-emerald-600">Yes</span>
                         ) : (
-                          <span className="text-slate-400">No</span>
+                          <span className="text-slate-500">No</span>
                         )}
                       </td>
                       <td className="px-4 py-3">
@@ -639,7 +639,7 @@ export default function ProDealsPage() {
                         <div className="text-center py-12">
                           <div className="text-3xl mb-2">💎</div>
                           <p className="text-sm font-medium text-slate-700 mb-1">No pro deals yet</p>
-                          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                          <p className="text-xs text-slate-500 max-w-sm mx-auto">
                             Pro deals are exclusive broker offers available only to Pro subscribers, such as reduced fees, bonus credits, or special sign-up incentives.
                           </p>
                         </div>

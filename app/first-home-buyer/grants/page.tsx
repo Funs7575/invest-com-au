@@ -32,7 +32,7 @@ const FHOG_STATES = [
     amount: "$10,000",
     eligibleProperties: "New homes in regional VIC only (metro removed 2024)",
     propertyCap: "$750,000",
-    notes: "Regional VIC only from 1 July 2023",
+    notes: "Regional VIC only from 1 July 2023", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     state: "QLD",
@@ -273,7 +273,7 @@ export default function FirstHomeOwnerGrantsPage() {
                 {FHOG_STATES.map((row, i) => (
                   <tr key={i} className="hover:bg-slate-50">
                     <td className="px-4 py-3 font-bold text-slate-900 whitespace-nowrap">{row.state}</td>
-                    <td className={`px-4 py-3 font-semibold whitespace-nowrap ${row.amount === "No FHOG" ? "text-slate-400" : "text-emerald-700"}`}>
+                    <td className={`px-4 py-3 font-semibold whitespace-nowrap ${row.amount === "No FHOG" ? "text-slate-500" : "text-emerald-700"}`}>
                       {row.amount}
                     </td>
                     <td className="px-4 py-3 text-xs text-slate-600 leading-relaxed">{row.eligibleProperties}</td>
@@ -284,7 +284,8 @@ export default function FirstHomeOwnerGrantsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
+            {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
             ACT does not offer the FHOG — it has been replaced with the Home Buyer Concession Scheme (stamp duty relief). VIC removed the metropolitan FHOG from 1 July 2023.
           </p>
         </div>
@@ -306,7 +307,7 @@ export default function FirstHomeOwnerGrantsPage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-4">
+          <p className="text-xs text-slate-500 mt-4">
             The FHSS scheme is covered in detail at{" "}
             <Link href="/first-home-buyer/fhss-guide" className="underline hover:text-slate-700">
               /first-home-buyer/fhss-guide
@@ -383,7 +384,7 @@ export default function FirstHomeOwnerGrantsPage() {
                 {COMBINED_TABLE.map((row, i) => (
                   <tr key={i} className="hover:bg-slate-50">
                     <td className="px-4 py-3 font-bold text-slate-900">{row.state}</td>
-                    <td className={`px-4 py-3 text-xs font-semibold ${row.fhog === "No grant" ? "text-slate-400" : "text-emerald-700"}`}>
+                    <td className={`px-4 py-3 text-xs font-semibold ${row.fhog === "No grant" ? "text-slate-500" : "text-emerald-700"}`}>
                       {row.fhog}
                     </td>
                     <td className="px-4 py-3 text-xs text-slate-600 leading-relaxed">{row.stampDuty}</td>
@@ -393,7 +394,7 @@ export default function FirstHomeOwnerGrantsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             Combined benefit estimates are approximate and based on purchasing near the concession threshold. See the{" "}
             <Link href="/first-home-buyer/stamp-duty" className="underline hover:text-slate-700">
               stamp duty guide

@@ -243,7 +243,7 @@ export default function ManualBalancesPanel({
                   onClick={() => void handleDelete(b.id)}
                   disabled={deletingId === b.id}
                   aria-label={`Delete ${b.label}`}
-                  className="text-slate-400 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="text-slate-500 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {deletingId === b.id ? (
                     <svg aria-hidden="true" className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

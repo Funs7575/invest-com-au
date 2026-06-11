@@ -66,7 +66,7 @@ export default async function ClubsPage() {
                     {club.description && (
                       <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{club.description}</p>
                     )}
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className="text-[11px] text-slate-500 mt-0.5">
                       {club.role === "owner" ? "Owner" : "Member"} · {club.displayName}
                     </p>
                   </div>

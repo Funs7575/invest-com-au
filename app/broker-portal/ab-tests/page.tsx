@@ -215,7 +215,7 @@ export default function ABTestsPage() {
               </div>
               <p className="text-xl font-extrabold text-slate-900">
                 <CountUp end={running} duration={600} />
-                <span className="text-sm font-medium text-slate-400 ml-1">/ {tests.length}</span>
+                <span className="text-sm font-medium text-slate-500 ml-1">/ {tests.length}</span>
               </p>
             </div>
             <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
@@ -267,17 +267,17 @@ export default function ABTestsPage() {
             <input id="ab-name" type="text" value={name} onChange={(e) => setName(e.target.value)} required maxLength={80}
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
               placeholder="e.g. Homepage CTA — July 2026" />
-            <p className="mt-1 text-xs text-slate-400">Required. Max 80 characters — be specific so you can find it later.</p>
+            <p className="mt-1 text-xs text-slate-500">Required. Max 80 characters — be specific so you can find it later.</p>
           </div>
 
           <div>
             <label htmlFor="ab-description" className="block text-sm font-medium text-slate-700 mb-1">
-              Description <span className="text-slate-400 font-normal">(optional)</span>
+              Description <span className="text-slate-500 font-normal">(optional)</span>
             </label>
             <textarea id="ab-description" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} maxLength={300}
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-none"
               placeholder="What are you testing and why?" />
-            <p className="mt-1 text-xs text-slate-400">Max 300 characters. Helps your team understand the hypothesis behind this test.</p>
+            <p className="mt-1 text-xs text-slate-500">Max 300 characters. Helps your team understand the hypothesis behind this test.</p>
           </div>
 
           <div>
@@ -297,21 +297,21 @@ export default function ABTestsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="ab-variant-a" className="block text-sm font-medium text-slate-700 mb-1">
-                Variant A <span className="text-xs text-slate-400">(Control)</span> <span className="text-red-500">*</span>
+                Variant A <span className="text-xs text-slate-500">(Control)</span> <span className="text-red-500">*</span>
               </label>
               <input id="ab-variant-a" type="text" value={variantA} onChange={(e) => setVariantA(e.target.value)} required maxLength={200}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder={currentType?.placeholder_a ?? "e.g. Start investing today"} />
-              <p className="mt-1 text-xs text-slate-400">Required. Your existing or baseline variant. Max 200 characters.</p>
+              <p className="mt-1 text-xs text-slate-500">Required. Your existing or baseline variant. Max 200 characters.</p>
             </div>
             <div>
               <label htmlFor="ab-variant-b" className="block text-sm font-medium text-slate-700 mb-1">
-                Variant B <span className="text-xs text-slate-400">(Challenger)</span> <span className="text-red-500">*</span>
+                Variant B <span className="text-xs text-slate-500">(Challenger)</span> <span className="text-red-500">*</span>
               </label>
               <input id="ab-variant-b" type="text" value={variantB} onChange={(e) => setVariantB(e.target.value)} required maxLength={200}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder={currentType?.placeholder_b ?? "e.g. Open a free account"} />
-              <p className="mt-1 text-xs text-slate-400">Required. The new version you want to test. Max 200 characters.</p>
+              <p className="mt-1 text-xs text-slate-500">Required. The new version you want to test. Max 200 characters.</p>
             </div>
           </div>
 
@@ -319,7 +319,7 @@ export default function ABTestsPage() {
             <label htmlFor="ab-split" className="block text-sm font-medium text-slate-700 mb-1">Traffic Split: {split}% / {100 - split}% <InfoTip text="Percentage of traffic seeing each variant. Start with 50/50 for equal comparison, or use 80/20 to limit exposure to the new variant." /></label>
             <input id="ab-split" type="range" min={10} max={90} step={5} value={split} onChange={(e) => setSplit(Number(e.target.value))}
               className="w-full accent-slate-900" />
-            <div className="flex justify-between text-xs text-slate-400">
+            <div className="flex justify-between text-xs text-slate-500">
               <span>Variant A: {split}%</span>
               <span>Variant B: {100 - split}%</span>
             </div>
@@ -345,7 +345,7 @@ export default function ABTestsPage() {
             <Icon name="git-branch" size={20} className="text-emerald-500" />
           </div>
           <p className="text-sm font-medium text-slate-700 mb-1">No A/B tests yet</p>
-          <p className="text-xs text-slate-400 mb-4">A/B testing lets you compare two versions of your ad to find what performs best. Test CTA text, banners, or landing pages.</p>
+          <p className="text-xs text-slate-500 mb-4">A/B testing lets you compare two versions of your ad to find what performs best. Test CTA text, banners, or landing pages.</p>
         </div>
       ) : (
         <div className="space-y-4 portal-stagger">

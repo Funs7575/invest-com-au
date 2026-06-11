@@ -321,7 +321,7 @@ export default function AdminCoursesPage() {
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 placeholder="197.00"
               />
-              <p className="text-xs text-slate-400 mt-0.5">Discounted price for Pro members</p>
+              <p className="text-xs text-slate-500 mt-0.5">Discounted price for Pro members</p>
             </div>
             <div>
               <label htmlFor="c-level" className="block text-xs font-semibold text-slate-700 mb-1">Level</label>
@@ -364,7 +364,7 @@ export default function AdminCoursesPage() {
                 onChange={(e) => setForm({ ...form, revenue_share_percent: e.target.value })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
               />
-              <p className="text-xs text-slate-400 mt-0.5">Percentage of revenue paid to the course creator</p>
+              <p className="text-xs text-slate-500 mt-0.5">Percentage of revenue paid to the course creator</p>
             </div>
             <div>
               <label htmlFor="c-status" className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
@@ -452,7 +452,7 @@ export default function AdminCoursesPage() {
                 <tr key={c.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="font-semibold text-slate-900">{c.title}</div>
-                    <div className="text-xs text-slate-400">/{c.slug}</div>
+                    <div className="text-xs text-slate-500">/{c.slug}</div>
                   </td>
                   <td className="px-4 py-3 text-slate-600">
                     {c.creator?.full_name || "—"}
@@ -460,7 +460,7 @@ export default function AdminCoursesPage() {
                   <td className="px-4 py-3 text-slate-600">
                     ${(c.price / 100).toFixed(0)}
                     {c.pro_price && (
-                      <span className="text-xs text-slate-400 ml-1">
+                      <span className="text-xs text-slate-500 ml-1">
                         (Pro: ${(c.pro_price / 100).toFixed(0)})
                       </span>
                     )}
@@ -495,7 +495,7 @@ export default function AdminCoursesPage() {
               ))}
               {courses.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
                     No courses yet. Create your first course above.
                   </td>
                 </tr>
@@ -528,7 +528,7 @@ export default function AdminCoursesPage() {
               ))}
               {revenue.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
                     No revenue data yet.
                   </td>
                 </tr>

@@ -1,3 +1,4 @@
+// dated-strings-exempt — long-form template-literal bodies cite fixed legislative dates (pre-CGT 20 Sep 1985, QS depreciation 15 Sep 1987, FY lodgment/retention examples); line markers would render as content.
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
@@ -434,20 +435,20 @@ export default function RecordKeepingPage() {
                 <tr className="bg-white hover:bg-slate-50 transition-colors">
                   <td className="py-3 px-4 text-xs font-semibold text-slate-800">Legal / conveyancing fees</td>
                   <td className="py-3 px-4 text-xs text-slate-600">Solicitor tax invoices</td>
-                  <td className="py-3 px-4 text-center text-xs text-slate-400">N/A</td>
+                  <td className="py-3 px-4 text-center text-xs text-slate-500">N/A</td>
                   <td className="py-3 px-4 text-center text-xs text-green-700 font-bold">Yes</td>
                 </tr>
                 <tr className="bg-white hover:bg-slate-50 transition-colors">
                   <td className="py-3 px-4 text-xs font-semibold text-slate-800">Capital improvements</td>
                   <td className="py-3 px-4 text-xs text-slate-600">Contractor invoices, builder quotes + progress claims</td>
-                  <td className="py-3 px-4 text-center text-xs text-slate-400">N/A</td>
+                  <td className="py-3 px-4 text-center text-xs text-slate-500">N/A</td>
                   <td className="py-3 px-4 text-center text-xs text-green-700 font-bold">Yes</td>
                 </tr>
                 <tr className="bg-white hover:bg-slate-50 transition-colors">
                   <td className="py-3 px-4 text-xs font-semibold text-slate-800">Corporate actions</td>
                   <td className="py-3 px-4 text-xs text-slate-600">Scheme booklets, CHESS statements, DRP statements</td>
                   <td className="py-3 px-4 text-center text-xs text-green-700 font-bold">Yes</td>
-                  <td className="py-3 px-4 text-center text-xs text-slate-400">N/A</td>
+                  <td className="py-3 px-4 text-center text-xs text-slate-500">N/A</td>
                 </tr>
                 <tr className="bg-white hover:bg-slate-50 transition-colors">
                   <td className="py-3 px-4 text-xs font-semibold text-slate-800">Selling costs</td>

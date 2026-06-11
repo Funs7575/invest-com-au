@@ -53,7 +53,7 @@ export default async function DunningDrillDown() {
                 <td className="px-4 py-2 font-mono text-slate-500">#{r.id}</td>
                 <td className="px-4 py-2 text-slate-700">
                   {r.professionals?.name}
-                  <div className="text-[0.65rem] text-slate-400">{r.professionals?.email}</div>
+                  <div className="text-[0.65rem] text-slate-500">{r.professionals?.email}</div>
                 </td>
                 <td className="px-4 py-2 font-semibold text-slate-700">A${(r.amount_cents / 100).toFixed(2)}</td>
                 <td className="px-4 py-2">

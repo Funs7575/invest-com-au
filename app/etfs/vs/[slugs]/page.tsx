@@ -431,7 +431,7 @@ export default async function ETFVsPage({
                   <tr key={metric.label} className="hover:bg-slate-50 transition-colors">
                     <td className="py-3 pr-4">
                       <span className="text-xs font-semibold text-slate-700 block">{metric.label}</span>
-                      <span className="text-xs text-slate-400">{metric.description}</span>
+                      <span className="text-xs text-slate-500">{metric.description}</span>
                     </td>
                     <td className="text-center py-3 px-4">
                       <span className={`text-sm font-bold ${metric.winner === etfA.ticker ? "text-green-700" : "text-slate-700"}`}>
@@ -458,7 +458,7 @@ export default async function ETFVsPage({
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">Data approximate. Verify with ETF providers before investing.</p>
+          <p className="text-xs text-slate-500 mt-3">Data approximate. Verify with ETF providers before investing.</p>
         </div>
       </section>
 

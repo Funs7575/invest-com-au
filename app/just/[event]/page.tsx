@@ -644,7 +644,7 @@ export default async function JustEventPage({ params }: Props) {
 
       <div className="container-custom max-w-3xl py-8">
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-6 flex gap-1.5 flex-wrap">
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6 flex gap-1.5 flex-wrap">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>›</span>
           <Link href="/just" className="hover:text-slate-600">Life events</Link>

@@ -337,7 +337,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
         )}
 
         {!savings && (
-          <div className="text-center py-12 text-slate-400">
+          <div className="text-center py-12 text-slate-500">
             <p className="text-lg mb-2">
               Select both platforms above to see your savings.
             </p>

@@ -202,6 +202,7 @@ export default function SharedEquityPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Federal Help to Buy scheme</h2>
           <p className="text-sm text-slate-500 mb-6">
             Administered by Housing Australia. Passed into law June 2024 — applications open from the
+            {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
             1 January 2024 intake. 10,000 places available per year nationwide.
           </p>
 
@@ -290,7 +291,7 @@ export default function SharedEquityPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Verify current caps at housingaustralia.gov.au/support-buy-home/help-to-buy</p>
+          <p className="text-xs text-slate-500 mt-2">Verify current caps at housingaustralia.gov.au/support-buy-home/help-to-buy</p>
         </div>
       </section>
 
@@ -338,7 +339,7 @@ export default function SharedEquityPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             State programs are subject to funding availability and policy changes. Check directly with your state&apos;s housing authority for current eligibility and availability.
           </p>
         </div>
@@ -458,7 +459,7 @@ export default function SharedEquityPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             The two schemes cannot be combined — you must choose one. If you want to maximise your share of
             future capital gains, FHBG may be preferable. If you need the smallest possible loan and deposit,
             Help to Buy goes further.

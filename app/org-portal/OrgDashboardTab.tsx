@@ -346,7 +346,7 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-semibold ${step.done ? "line-through text-slate-400" : "text-slate-900"}`}>
+                  <p className={`text-sm font-semibold ${step.done ? "line-through text-slate-500" : "text-slate-900"}`}>
                     {step.label}
                   </p>
                   <p className="text-xs text-slate-500 mt-0.5">{step.detail}</p>

@@ -65,7 +65,7 @@ export default async function CountryPopularLinks() {
                 </span>
                 <span
                   aria-hidden
-                  className="text-slate-400 group-hover:text-amber-600 text-sm shrink-0 mt-0.5"
+                  className="text-slate-500 group-hover:text-amber-600 text-sm shrink-0 mt-0.5"
                 >
                   →
                 </span>

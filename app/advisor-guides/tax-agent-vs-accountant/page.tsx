@@ -166,7 +166,7 @@ export default function TaxAgentVsAccountantPage() {
             </div>
           </div>
 
-          <div className="mt-6 text-[0.56rem] md:text-xs text-slate-400 text-center leading-relaxed">
+          <div className="mt-6 text-[0.56rem] md:text-xs text-slate-500 text-center leading-relaxed">
             This guide is for informational purposes only and does not constitute financial or tax advice. Always verify credentials on the Tax Practitioners Board register before engaging any professional.
           </div>
         </div>

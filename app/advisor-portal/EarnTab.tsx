@@ -165,7 +165,7 @@ export default function EarnTab({ advisor }: Props) {
           </button>
         </div>
         {data?.referral_code && (
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Your code:{" "}
             <span className="font-mono font-semibold text-slate-600">
               {data.referral_code}
@@ -306,7 +306,7 @@ export default function EarnTab({ advisor }: Props) {
       <ClientReferralsSection />
 
       {advisor?.name && (
-        <p className="text-xs text-slate-400 text-center">
+        <p className="text-xs text-slate-500 text-center">
           Logged in as {advisor.name}
         </p>
       )}

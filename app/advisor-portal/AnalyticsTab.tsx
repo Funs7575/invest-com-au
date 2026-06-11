@@ -53,7 +53,7 @@ function BenchmarkRow({
     <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-center py-2 border-b border-slate-100 last:border-0 text-xs">
       <span className="text-slate-700 font-medium">{label}</span>
       <span className="font-bold text-slate-900 text-right">{format(yours)}</span>
-      <span className="text-slate-400 text-right">{format(peerMedian)}</span>
+      <span className="text-slate-500 text-right">{format(peerMedian)}</span>
       <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full text-right ${indicatorClass}`}>
         {indicatorLabel}
       </span>
@@ -191,7 +191,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
             </div>
             <p className="text-lg md:text-2xl font-bold text-slate-900">{typeof s.value === "number" ? s.value.toLocaleString() : s.value}</p>
             <p className="text-[0.6rem] md:text-xs text-slate-500">{s.label}</p>
-            <p className="text-[0.55rem] md:text-[0.6rem] text-slate-400">{s.sub}</p>
+            <p className="text-[0.55rem] md:text-[0.6rem] text-slate-500">{s.sub}</p>
           </div>
         ))}
       </div>
@@ -211,7 +211,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
               <Icon name={m.icon} size={16} className="text-slate-400 shrink-0" />
               <div>
                 <p className="text-sm font-bold text-slate-900">{m.value.toLocaleString()}</p>
-                <p className="text-[0.55rem] text-slate-400">{m.label}</p>
+                <p className="text-[0.55rem] text-slate-500">{m.label}</p>
               </div>
             </div>
           ))}
@@ -243,14 +243,14 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
           <div className="bg-slate-50 rounded-xl p-3 text-center">
             <p className="text-xl font-bold text-slate-900">{stats?.acceptRate ?? 0}%</p>
             <p className="text-[0.6rem] text-slate-500 mt-1">Accept Rate</p>
-            <p className="text-[0.55rem] text-slate-400 mt-0.5">
+            <p className="text-[0.55rem] text-slate-500 mt-0.5">
               {(stats?.acceptRate ?? 0) >= 60 ? "Excellent" : (stats?.acceptRate ?? 0) >= 40 ? "Average — aim for 60%" : "Low — aim for 60%+"}
             </p>
           </div>
           <div className="bg-slate-50 rounded-xl p-3 text-center">
             <p className="text-xl font-bold text-slate-900">{stats?.leadsThisMonth ?? 0}</p>
             <p className="text-[0.6rem] text-slate-500 mt-1">This Month</p>
-            <p className="text-[0.55rem] text-slate-400 mt-0.5">{stats?.leads7d ?? 0} in last 7 days</p>
+            <p className="text-[0.55rem] text-slate-500 mt-0.5">{stats?.leads7d ?? 0} in last 7 days</p>
           </div>
           <div className="bg-slate-50 rounded-xl p-3 text-center">
             {(() => {
@@ -265,7 +265,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
                     {isUp ? "▲" : "▼"} {Math.abs(delta)}
                   </p>
                   <p className="text-[0.6rem] text-slate-500 mt-1">vs Last Month</p>
-                  <p className="text-[0.55rem] text-slate-400 mt-0.5">
+                  <p className="text-[0.55rem] text-slate-500 mt-0.5">
                     {pct !== null ? `${pct >= 0 ? "+" : ""}${pct}% change` : "No prior data"}
                   </p>
                 </>
@@ -284,7 +284,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
               {formatResponseTime(stats?.avgResponseTimeMinutes ?? null)}
             </p>
             <p className="text-xs text-slate-500 mt-1">Avg. time to first response</p>
-            <p className="text-[0.6rem] text-slate-400 mt-0.5">
+            <p className="text-[0.6rem] text-slate-500 mt-0.5">
               {stats?.avgResponseTimeMinutes == null
                 ? "No responded leads yet"
                 : stats.avgResponseTimeMinutes <= 30
@@ -315,7 +315,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
       {(stats?.articles || []).length > 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
           <h3 className="text-sm font-bold text-slate-900 mb-1">Article Performance</h3>
-          <p className="text-[0.6rem] text-slate-400 mb-3">How your published expert articles are performing</p>
+          <p className="text-[0.6rem] text-slate-500 mb-3">How your published expert articles are performing</p>
           <div className="space-y-2">
             {(stats?.articles as { title: string; views: number; clicks: number; slug: string }[]).map((art, i) => (
               <div key={i} className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg">
@@ -334,7 +334,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
         <div className="bg-white border border-dashed border-slate-200 rounded-xl p-6 text-center">
           <Icon name="file-text" size={28} className="text-slate-300 mx-auto mb-2" />
           <p className="text-sm font-semibold text-slate-700 mb-1">No articles yet</p>
-          <p className="text-xs text-slate-400 mb-3">Advisors with expert articles get 40% more profile views.</p>
+          <p className="text-xs text-slate-500 mb-3">Advisors with expert articles get 40% more profile views.</p>
           <button
             onClick={() => onNavigate("articles")}
             className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors"
@@ -349,9 +349,9 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
       {stats && stats.sourceBreakdown.length > 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
           <h3 className="text-sm font-bold text-slate-900 mb-1">Lead Source Breakdown</h3>
-          <p className="text-[0.6rem] text-slate-400 mb-3">Where your leads are coming from and how they convert</p>
+          <p className="text-[0.6rem] text-slate-500 mb-3">Where your leads are coming from and how they convert</p>
           <div className="space-y-2">
-            <div className="grid grid-cols-3 text-[0.6rem] font-medium text-slate-400 uppercase px-1 mb-1">
+            <div className="grid grid-cols-3 text-[0.6rem] font-medium text-slate-500 uppercase px-1 mb-1">
               <span>Source</span>
               <span className="text-center">Leads</span>
               <span className="text-right">Converted</span>
@@ -366,7 +366,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
                 <div key={i} className="grid grid-cols-3 items-center py-1.5 px-1 rounded-lg hover:bg-slate-50 text-xs">
                   <span className="text-slate-700 font-medium truncate pr-2" title={row.source}>{label}</span>
                   <span className="text-center text-slate-600">{row.count}</span>
-                  <span className="text-right text-emerald-600 font-medium">{row.converted} <span className="text-slate-400 font-normal">({convPct}%)</span></span>
+                  <span className="text-right text-emerald-600 font-medium">{row.converted} <span className="text-slate-500 font-normal">({convPct}%)</span></span>
                 </div>
               );
             })}
@@ -391,19 +391,19 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
             </span>
           )}
         </div>
-        <p className="text-[0.6rem] text-slate-400 mb-3">
+        <p className="text-[0.6rem] text-slate-500 mb-3">
           Anonymous comparison with advisors of the same type and state. Peer names are never shown.
         </p>
 
         {benchmarkLoading && (
-          <div className="flex items-center gap-2 py-4 text-xs text-slate-400">
+          <div className="flex items-center gap-2 py-4 text-xs text-slate-500">
             <span aria-hidden="true" className="w-4 h-4 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0" />
             Loading peer benchmarks...
           </div>
         )}
 
         {benchmarkError && (
-          <p className="text-xs text-slate-400 py-2">Benchmarks unavailable — check back soon.</p>
+          <p className="text-xs text-slate-500 py-2">Benchmarks unavailable — check back soon.</p>
         )}
 
         {!benchmarkLoading && !benchmarkError && benchmarks && benchmarks.cohortSize < 3 && (
@@ -430,7 +430,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
         {!benchmarkLoading && !benchmarkError && benchmarks && benchmarks.cohortSize >= 3 && (
           <>
             {/* Column headers */}
-            <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 px-0 mb-1">
+            <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 px-0 mb-1">
               <span>Metric</span>
               <span className="text-right">You</span>
               <span className="text-right">Peer avg</span>
@@ -492,19 +492,19 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
             </span>
           )}
         </div>
-        <p className="text-[0.6rem] text-slate-400 mb-3">
+        <p className="text-[0.6rem] text-slate-500 mb-3">
           A higher score means more trust signals for investors browsing your profile.
         </p>
 
         {profileScoreLoading && (
-          <div className="flex items-center gap-2 py-4 text-xs text-slate-400">
+          <div className="flex items-center gap-2 py-4 text-xs text-slate-500">
             <span aria-hidden="true" className="w-4 h-4 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0" />
             Calculating score…
           </div>
         )}
 
         {profileScoreError && (
-          <p className="text-xs text-slate-400 py-2">Score unavailable — check back soon.</p>
+          <p className="text-xs text-slate-500 py-2">Score unavailable — check back soon.</p>
         )}
 
         {!profileScoreLoading && !profileScoreError && profileScore && (
@@ -527,7 +527,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
             <div className="space-y-1.5">
               {profileScore.breakdown.map((item, i) => (
                 <div key={i} className={`flex items-start gap-2.5 p-2 rounded-lg ${item.earned ? "bg-emerald-50" : "bg-slate-50"}`}>
-                  <span className={`mt-0.5 shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[0.55rem] font-bold ${item.earned ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+                  <span className={`mt-0.5 shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[0.55rem] font-bold ${item.earned ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-500"}`}>
                     {item.earned ? "✓" : "–"}
                   </span>
                   <div className="flex-1 min-w-0">
@@ -535,12 +535,12 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
                       <span className={`text-xs font-medium ${item.earned ? "text-emerald-800" : "text-slate-700"}`}>
                         {item.label}
                       </span>
-                      <span className={`text-[0.6rem] font-bold shrink-0 ${item.earned ? "text-emerald-600" : "text-slate-400"}`}>
+                      <span className={`text-[0.6rem] font-bold shrink-0 ${item.earned ? "text-emerald-600" : "text-slate-500"}`}>
                         {item.earned ? `+${item.points}` : `+0/${item.points}`}
                       </span>
                     </div>
                     {!item.earned && (
-                      <p className="text-[0.6rem] text-slate-400 mt-0.5 leading-relaxed">{item.tip}</p>
+                      <p className="text-[0.6rem] text-slate-500 mt-0.5 leading-relaxed">{item.tip}</p>
                     )}
                   </div>
                 </div>

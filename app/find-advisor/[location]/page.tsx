@@ -223,7 +223,7 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(locationFaqLd) }} />
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         {/* Breadcrumbs */}
-        <nav aria-label="Breadcrumb" className="text-[0.6rem] text-slate-400 mb-4 flex gap-1.5">
+        <nav aria-label="Breadcrumb" className="text-[0.6rem] text-slate-500 mb-4 flex gap-1.5">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>/</span>
           <Link href="/find-advisor" className="hover:text-slate-600">Find Advisor</Link>
@@ -256,7 +256,7 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-slate-900">{advisor.name}</p>
                     <p className="text-xs text-slate-500">{advisor.firm_name}{advisor.location_suburb ? ` · ${advisor.location_suburb}` : ""}</p>
-                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{advisor.bio?.slice(0, 150)}</p>
+                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{advisor.bio?.slice(0, 150)}</p>
                     <div className="flex gap-2 mt-2">
                       {advisor.fee_structure && <span className="text-[0.55rem] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">{advisor.fee_structure}</span>}
                       {advisor.verified && <span className="text-[0.55rem] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full">Verified</span>}
@@ -265,7 +265,7 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
                   {advisor.rating && (
                     <div className="text-right shrink-0">
                       <p className="text-sm font-bold text-slate-900">{advisor.rating}/5</p>
-                      <p className="text-[0.55rem] text-slate-400">{advisor.review_count || 0} reviews</p>
+                      <p className="text-[0.55rem] text-slate-500">{advisor.review_count || 0} reviews</p>
                     </div>
                   )}
                 </div>

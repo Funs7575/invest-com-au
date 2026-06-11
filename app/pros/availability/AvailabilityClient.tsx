@@ -175,7 +175,7 @@ export default function AvailabilityClient({ initialSlots }: Props) {
                         s.status === "booked"
                           ? "text-amber-600 font-semibold"
                           : s.status === "cancelled"
-                            ? "text-slate-400"
+                            ? "text-slate-500"
                             : "text-emerald-600 font-semibold"
                       }
                     >
@@ -229,7 +229,7 @@ export default function AvailabilityClient({ initialSlots }: Props) {
                 <p className="text-sm text-slate-600">
                   {formatRange(s.start_at, s.end_at)}
                 </p>
-                <span className="text-xs text-slate-400">{s.status}</span>
+                <span className="text-xs text-slate-500">{s.status}</span>
               </li>
             ))}
           </ul>
