@@ -116,6 +116,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
 
   "daily-10-30": [
     "/api/cron/marketplace-outcome-flywheel",
+    "/api/cron/engagement-checkins",
   ],
   "daily-10": [
     "/api/cron/advisor-profile-gate-drip",

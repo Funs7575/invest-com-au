@@ -217,6 +217,51 @@ export async function sendConsumerSlaReopened(input: {
 }
 
 /**
+ * Engagement check-in (30d / 90d) and annual adviser review (365d).
+ * One-click status links keep the relationship registry honest; the
+ * annual variant invites a 2-minute review. Factual framing only — we
+ * never suggest switching, only offer the option to compare.
+ */
+export async function sendEngagementCheckin(input: {
+  consumerEmail: string;
+  providerName: string;
+  briefTitle: string;
+  stage: number;
+  annual: boolean;
+  /** Path beginning /engagement/<token> — SITE_URL is prepended here. */
+  checkinUrl: string;
+}): Promise<boolean> {
+  const base = `${SITE_URL}${input.checkinUrl}`;
+  const subject = input.annual
+    ? `Your annual adviser review — ${input.providerName}`
+    : `How's it going with ${input.providerName}?`;
+  const intro = input.annual
+    ? `<p style="font-size:14px;color:#475569">It's been about a year since <strong>${input.providerName}</strong> accepted your request "${input.briefTitle}". A 2-minute review keeps your account up to date and helps other Australians — your answers are confidential.</p>`
+    : `<p style="font-size:14px;color:#475569">A while back <strong>${input.providerName}</strong> accepted your request "${input.briefTitle}". One tap tells us where things stand — no login needed.</p>`;
+  const buttons = input.annual
+    ? btn(`${base}?annual=1`, "Start your 2-minute review →")
+    : `<div style="text-align:center;margin:24px 0">
+        <a href="${base}?status=engaged" style="display:inline-block;margin:4px;padding:10px 20px;background:#10b981;color:white;text-decoration:none;border-radius:8px;font-size:13px;font-weight:600">Going well</a>
+        <a href="${base}?status=completed" style="display:inline-block;margin:4px;padding:10px 20px;background:#0f172a;color:white;text-decoration:none;border-radius:8px;font-size:13px;font-weight:600">It's wrapped up</a>
+        <a href="${base}?status=ended" style="display:inline-block;margin:4px;padding:10px 20px;background:#64748b;color:white;text-decoration:none;border-radius:8px;font-size:13px;font-weight:600">We didn't proceed</a>
+      </div>`;
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.consumerEmail,
+    subject,
+    html: wrap(
+      input.annual ? "Your annual adviser review" : "Quick check-in",
+      `<p style="font-size:15px">Hi,</p>
+      ${intro}
+      ${buttons}
+      <p style="font-size:12px;color:#64748b">This is the last automatic check-in for this stage — nothing happens if you ignore it.</p>
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}
+
+/**
  * Invite a provider to join an expert team (AJ-2). Sent on invite creation so
  * the invitee actually learns they were invited — previously no email was sent,
  * so invitations were undiscoverable. Links to the accept landing page, which
