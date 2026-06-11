@@ -14,6 +14,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { advisersForLicence, registerMeta } from "@/lib/adviser-register";
 import {
   AFSL_STATUS_LABELS,
   getAfslLicensee,
@@ -202,6 +203,33 @@ export default async function AfslLicenseePage({ params }: Props) {
           authorised representatives, search ASIC Connect directly.
         </p>
       </section>
+
+      {/* Advisers authorised under this licence — Adviser Register Atlas
+          cross-link. Empty while the bundled extract is the synthetic
+          preview, so nothing fictional can attach to a real licensee. */}
+      {!registerMeta().sample && advisersForLicence(licensee.afsl_number).length > 0 && (
+        <section className="border border-slate-200 rounded-xl p-5 space-y-3">
+          <h2 className="font-semibold text-slate-900">
+            Financial advisers authorised under this licence
+          </h2>
+          <p className="text-sm text-slate-600">
+            Current advisers on ASIC&apos;s Financial Advisers Register acting for this licensee.
+          </p>
+          <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200 overflow-hidden">
+            {advisersForLicence(licensee.afsl_number).map((a) => (
+              <li key={a.number}>
+                <Link
+                  href={`/adviser-register/${a.slug}`}
+                  className="flex items-center justify-between gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                >
+                  <span className="text-sm font-medium text-slate-800">{a.name}</span>
+                  <span className="text-xs text-slate-500">{a.role}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Fuzzy search — pre-seeded with this firm's name so users can explore
           related licences (e.g. a group with multiple AFSLs). */}

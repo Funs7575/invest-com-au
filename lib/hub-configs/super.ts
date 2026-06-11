@@ -56,6 +56,14 @@ export const superHubConfig: HubConfig = {
 
   serviceGrid: [
     {
+      title: "Fund Performance Explorer",
+      icon: "trending-up",
+      description:
+        "Every APRA-regulated fund's reported 5 and 10-year returns, operating expenses, assets and member numbers — straight from the regulator's fund-level statistics, sortable any way you like.",
+      href: "/super/funds",
+      cta: "Explore the Data",
+    },
+    {
       title: "Compare Super Funds",
       icon: "bar-chart",
       description:

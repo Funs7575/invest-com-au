@@ -111,6 +111,22 @@ export function searchRegister(query: string): RegisterSearchResult[] {
   return results.slice(0, REGISTER_SEARCH_MAX_RESULTS);
 }
 
+/** Current advisers authorised under a given AFS licence number — the
+ * Atlas ↔ AFSL-page cross-link. Empty while the dataset is the preview
+ * (callers must also check registerMeta().sample before rendering). */
+export function advisersForLicence(licenceNumber: string, limit = 8): RegisterAdviser[] {
+  const n = licenceNumber.replace(/\D/g, "");
+  if (!n) return [];
+  const out: RegisterAdviser[] = [];
+  for (const a of data.advisers) {
+    if (a.licenseeNumber === n) {
+      out.push(a);
+      if (out.length >= limit) break;
+    }
+  }
+  return out;
+}
+
 /** Licensees by current-adviser headcount, for the hub's browse module. */
 export function topLicensees(limit = 12): { name: string; count: number }[] {
   const counts = new Map<string, number>();
