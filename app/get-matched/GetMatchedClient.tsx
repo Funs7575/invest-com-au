@@ -16,6 +16,7 @@ import type {
   Vertical,
 } from "@/lib/getmatched/types";
 import { inferRoute } from "@/lib/getmatched/inference";
+import { buildInvestorProfile } from "@/lib/getmatched/investor-profile";
 import QuestionCard from "./_components/QuestionCard";
 import ProgressDots from "./_components/ProgressDots";
 import AnalyzingScreen from "./_components/AnalyzingScreen";
@@ -393,7 +394,12 @@ export default function GetMatchedClient(props: Props) {
   }
 
   if (analyzing && !result) {
-    return <AnalyzingScreen onComplete={() => setAnalyzingTimerDone(true)} />;
+    return (
+      <AnalyzingScreen
+        onComplete={() => setAnalyzingTimerDone(true)}
+        result={pendingResolveResult}
+      />
+    );
   }
 
   if (error) {
@@ -645,6 +651,42 @@ function humanise(s: string): string {
 
 // ─── Action plan result screen ────────────────────────────────────────────
 
+/** Match-score dial in the profile hero — counts up from 0 on mount.
+ *  prefers-reduced-motion: shows the final value immediately. */
+function ScoreDial({ score }: { score: number }) {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    const reduce =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setDisplay(score);
+      return;
+    }
+    const steps = 24;
+    let frame = 0;
+    const iv = setInterval(() => {
+      frame++;
+      setDisplay(Math.round((score * frame) / steps));
+      if (frame >= steps) clearInterval(iv);
+    }, 30);
+    return () => clearInterval(iv);
+  }, [score]);
+
+  return (
+    <div className="shrink-0 text-center" aria-label={`Match score ${score} out of 100`}>
+      <div className="w-20 h-20 rounded-full bg-white/10 border-2 border-amber-400/60 ring-2 ring-amber-400/20 flex items-center justify-center mx-auto">
+        <span className="text-3xl font-extrabold text-amber-400">{display}</span>
+      </div>
+      <p className="text-[10px] uppercase tracking-widest font-bold text-amber-400 mt-2">
+        Match score
+      </p>
+    </div>
+  );
+}
+
 function ActionPlanScreen({
   result,
   shareToken,
@@ -663,6 +705,10 @@ function ActionPlanScreen({
   onRestart: () => void;
 }) {
   const { plan, template, accept_credits_cost } = result;
+  // Showcase G2 — factual investor profile composed from the user's own
+  // answers (never advice; "based on what you told us"). See investor-profile.ts.
+  const profile = buildInvestorProfile(plan.answers ?? {});
+  const matchScore = result.match_explainer?.score ?? null;
   const [checklist, setChecklist] = useState(plan.checklist);
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
@@ -711,17 +757,48 @@ function ActionPlanScreen({
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* HEADLINE STRIP */}
+      {/* HEADLINE STRIP — Investor Profile hero (G2). Identity card composed
+          purely from the user's stated answers. */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <p className="text-amber-400 text-[11px] font-semibold uppercase tracking-widest mb-2">
-            Your Investment Action Plan
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">
-            {plan.goal ?? template.headline}
-          </h1>
-          <p className="text-slate-300 max-w-2xl leading-relaxed">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+            <div className="flex-1 min-w-0">
+              <p className="text-amber-400 text-[11px] font-semibold uppercase tracking-widest mb-2">
+                Your stated profile
+              </p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold mb-2">
+                {profile.label}
+              </h1>
+              {plan.goal && (
+                <p className="text-slate-300 text-sm sm:text-base mb-3">
+                  {plan.goal}
+                </p>
+              )}
+              {profile.signals.length > 0 && (
+                <ul className="flex flex-wrap gap-2 mb-1" aria-label="What you told us">
+                  {profile.signals.map((s) => (
+                    <li
+                      key={`${s.name}:${s.value}`}
+                      className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs"
+                    >
+                      <span className="text-slate-400">{s.name}:</span>
+                      <span className="font-semibold text-white">{s.value}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {matchScore !== null && (
+              <ScoreDial score={matchScore} />
+            )}
+          </div>
+
+          <p className="text-slate-300 max-w-2xl leading-relaxed mt-6">
             {template.why_text}
+          </p>
+          <p className="text-[11px] text-slate-400 mt-2 max-w-2xl">
+            Based on your answers. General information only — not personal advice.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-[11px]">
             {["Verified providers", "Masked previews", "Credit-based accept", "You stay in control"].map((s) => (
