@@ -52,6 +52,9 @@ const WRAPPER_COMPONENTS = [
   "CountryHubTemplate",
   "ListingSchemaScripts",
   "ListingProductSchema",
+  // Shared lot page — renders breadcrumb JSON-LD + ListingSchemaScripts
+  // for every /invest/<cat>/listings/<slug> detail route.
+  "ListingDetailView",
   "ForeignInvestmentLocalizedPage",
   "ForeignInvestmentSubPage",
   "JsonLd",
