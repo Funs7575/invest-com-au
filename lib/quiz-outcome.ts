@@ -30,6 +30,8 @@
 export interface UnifiedAnswersInput {
   location?: string;
   goal?: string;
+  /** Readiness/stage: "under-contract" | "ready" | "exploring" | "learning" */
+  stage?: string;
   mode?: string;
   experience?: string;
   complexity?: string;
@@ -229,7 +231,32 @@ export function resolveBestOutcome(a: UnifiedAnswersInput): BestOutcome {
     };
   }
 
-  // ─── 4. EDUCATION-FIRST: unsure + beginner with no clear goal
+  // ─── 4a. EDUCATION-FIRST: stage=learning (explicit "just learning" answer)
+  // The user told us directly they're not ready to act. Honour that signal —
+  // don't push a broker recommendation at someone who's explicitly learning.
+  // Triggered for any goal/mode combination when stage=learning (mirrors the
+  // resolveTrack "learning" → "diy" rule in lib/quiz-flow.ts).
+  if (a.stage === "learning") {
+    const calc = a.goal ? GOAL_CALCULATOR[a.goal] : undefined;
+    return {
+      kind: "education-first",
+      headline: "Great — learn first, act when you're ready",
+      reason: "You're building your understanding. Here's a targeted starting point for your goal. Come back and run the quiz again once you're ready to take action — the results will be more useful.",
+      ctaLabel: "Start learning →",
+      ctaHref: "/learn",
+      secondaryActions: [
+        ...(calc ? [{ label: calc.label, href: calc.href }] : []),
+        { label: "Browse platforms (no commitment)", href: "/compare" },
+        { label: "Browse advisors (no commitment)", href: "/find-advisor" },
+      ],
+      tone: "emerald",
+      icon: "lightbulb",
+      suppressBrokerResults: false,
+      suppressRunnerUps: true,
+    };
+  }
+
+  // ─── 4b. EDUCATION-FIRST: unsure + beginner with no clear goal
   // A platform pick is premature. Get oriented first.
   if (isUnsure && isBeginner) {
     return {
