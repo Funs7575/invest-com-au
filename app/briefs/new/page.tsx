@@ -149,6 +149,11 @@ export default async function NewBriefPage({
   const aiCopilotEnabled = await isFlagEnabled("ai_match_request_copilot", {
     userKey: visitorIp,
   });
+  // Response-guarantee copy only renders while enforcement is actually on —
+  // advertising a guarantee the sweep isn't enforcing would be a false claim.
+  const responseGuaranteeEnabled = await isFlagEnabled("response_guarantee", {
+    segment: "advisor",
+  });
 
   const [workspace, proSubscriber, proSupply] = await Promise.all([
     loadWorkspaceContext(),
@@ -193,6 +198,28 @@ export default async function NewBriefPage({
       />
 
       <div className="container-custom max-w-6xl pb-12 pt-4 md:pt-5">
+        {responseGuaranteeEnabled && (
+          <div className="mb-4 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <svg
+              className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <p className="text-xs leading-relaxed text-emerald-900">
+              <span className="font-semibold">24-hour response guarantee.</span>{" "}
+              If a provider accepts your brief and doesn&apos;t respond within 24
+              hours, we automatically release it to other providers and let you
+              know — you never get stuck waiting on a silent accept.
+            </p>
+          </div>
+        )}
         <BriefForm
           aiCopilotEnabled={aiCopilotEnabled}
           workspace={workspace}

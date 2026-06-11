@@ -72,6 +72,7 @@ export type LedgerKind =
   | "refund_to_credit"
   | "lead_spend"
   | "lead_dispute_refund"
+  | "sla_refund"
   | "tier_proration_credit"
   | "admin_adjustment"
   | "expiry"
