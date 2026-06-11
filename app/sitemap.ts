@@ -23,6 +23,7 @@ import {
   allRegisterAdvisers,
 } from "@/lib/adviser-register";
 import { superFundsMeta, allSuperFunds } from "@/lib/super-funds";
+import { ghostTickersMeta, allGhostTickers } from "@/lib/ghost-tickers";
 
 const log = logger("sitemap");
 
@@ -282,7 +283,7 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/global-investing/etfs", "/global-investing/etfs/us", "/global-investing/etfs/global",
     "/global-investing/shares/us",
     "/global-investing/calculators/direct-vs-asx-cost",
-    "/super/death-benefit", "/super/compare-guide", "/super/division-296", "/super/funds",
+    "/super/death-benefit", "/super/compare-guide", "/super/division-296", "/super/funds", "/asx/delisted",
     "/super/catch-up-contributions",
     "/super/co-contribution", "/super/spouse-contributions",
     "/super/transition-to-retirement", "/super/insurance",
@@ -819,6 +820,17 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
   // dataset is the synthetic preview (those pages are noindex'd).
   // Super Fund Performance Explorer — per-fund pages over the APRA
   // extract; excluded while the bundled dataset is the synthetic preview.
+  // ASX Ghost Tickers — per-company pages over the removed-companies
+  // extract; excluded while the bundled dataset is the synthetic preview.
+  const ghostTickerPages: MetadataRoute.Sitemap = ghostTickersMeta().sample
+    ? []
+    : allGhostTickers().map((t) => ({
+        url: `${base}/asx/delisted/${t.slug}`,
+        lastModified: new Date(ghostTickersMeta().extractedAt),
+        changeFrequency: "yearly" as const,
+        priority: 0.5,
+      }));
+
   const superFundPages: MetadataRoute.Sitemap = superFundsMeta().sample
     ? []
     : allSuperFunds().map((f) => ({
@@ -970,6 +982,7 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
     ...firmPages,
     ...registerPages,
     ...superFundPages,
+    ...ghostTickerPages,
   ];
 }
 
