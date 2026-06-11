@@ -32,7 +32,7 @@ async function responseOk(res: Response): Promise<boolean> {
  * button just fires the "save" event.
  */
 export default function BookmarkButton({ type, ref, label, className }: Props) {
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -74,7 +74,9 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
   }, [user, type, ref]);
 
   const toggle = async () => {
-    if (busy) return;
+    // Until auth resolves, a signed-in user looks anonymous — saving would
+    // write a stale inv_anon_saves mirror the authed unsave never cleans.
+    if (busy || userLoading) return;
     setBusy(true);
     const next = !saved;
     setSaved(next);
@@ -149,7 +151,7 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
       onClick={toggle}
       aria-label={saved ? "Remove bookmark" : "Save for later"}
       aria-pressed={saved}
-      disabled={busy}
+      disabled={busy || userLoading}
       aria-busy={busy}
       className={
         className ||

@@ -74,7 +74,7 @@ export default function LotSaveButton({
   vertical,
   variant = "pill",
 }: LotSaveButtonProps) {
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const instanceId = useId();
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -103,14 +103,17 @@ export default function LotSaveButton({
     );
   };
 
+  // Hydrate from the membership test in BOTH directions — the component
+  // instance survives client-side navigation between lot pages, so a
+  // saved→unsaved slug change must clear the previous state, not just
+  // set it when found.
   useEffect(() => {
     let cancelled = false;
     if (!user) {
-      if (readAnonCache().some((i) => i.type === "listing" && i.ref === slug)) {
-        setSaved(true);
-      }
+      setSaved(readAnonCache().some((i) => i.type === "listing" && i.ref === slug));
       return;
     }
+    setSaved(false);
     (async () => {
       try {
         const res = await fetch("/api/account/bookmarks", { cache: "no-store" });
@@ -119,9 +122,9 @@ export default function LotSaveButton({
           items?: Array<{ bookmark_type: string; ref: string }>;
         };
         if (cancelled) return;
-        if (json.items?.some((i) => i.bookmark_type === "listing" && i.ref === slug)) {
-          setSaved(true);
-        }
+        setSaved(
+          Boolean(json.items?.some((i) => i.bookmark_type === "listing" && i.ref === slug)),
+        );
       } catch {
         /* non-fatal — star stays empty */
       }
@@ -145,7 +148,9 @@ export default function LotSaveButton({
   };
 
   const toggle = async () => {
-    if (busy) return;
+    // Until auth resolves, a signed-in user looks anonymous — saving would
+    // write a stale inv_anon_saves mirror the authed unsave never cleans.
+    if (busy || userLoading) return;
     setBusy(true);
     const next = !saved;
     setSaved(next);
@@ -246,7 +251,7 @@ export default function LotSaveButton({
       <button
         type="button"
         onClick={toggle}
-        disabled={busy}
+        disabled={busy || userLoading}
         aria-pressed={saved}
         aria-busy={busy}
         aria-label={saved ? `Remove ${title} from saved` : `Save ${title} for later`}

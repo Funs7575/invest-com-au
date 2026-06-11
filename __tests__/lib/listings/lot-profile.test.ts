@@ -47,6 +47,21 @@ describe("buildLotProfile", () => {
     expect(hasPaperTrail(profile)).toBe(true);
   });
 
+  it("surfaces km.stage as a leading fact despite the card skip-list", () => {
+    const profile = buildLotProfile({
+      stage: "pre_construction",
+      hectares: 412,
+    });
+    expect(profile.facts[0]).toEqual({
+      key: "stage",
+      label: "Stage",
+      value: "Pre Construction",
+    });
+    // Still absent when the row has no stage.
+    const noStage = buildLotProfile({ hectares: 412 });
+    expect(noStage.facts.map((f) => f.key)).not.toContain("stage");
+  });
+
   it("parses structured modules and excludes them from facts", () => {
     const profile = buildLotProfile({
       hectares: 412,

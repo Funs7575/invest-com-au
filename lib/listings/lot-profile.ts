@@ -183,8 +183,22 @@ export function buildLotProfile(
     factSource[key] = value;
   }
 
+  // `stage` sits on the card formatter's skip-list (derivation input —
+  // the kind badge reflects it on compact cards), but on the lot page
+  // "exploration / construction / operating" is substantive detail the
+  // old Object.entries renders always showed. Surface it explicitly.
+  const facts = listingDisplayMetrics(factSource, FACT_LIMIT);
+  const stage = parseScalarText(metrics.stage, 40);
+  if (stage) {
+    facts.unshift({
+      key: "stage",
+      label: "Stage",
+      value: humanizeTitle(stage),
+    });
+  }
+
   return {
-    facts: listingDisplayMetrics(factSource, FACT_LIMIT),
+    facts,
     paperTrail: paperTrail.slice(0, 12),
     provenanceEvents,
     documents,

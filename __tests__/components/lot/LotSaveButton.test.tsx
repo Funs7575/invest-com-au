@@ -123,6 +123,38 @@ describe("LotSaveButton", () => {
     expect(cached).not.toContainEqual({ type: "listing", ref: PROPS.slug });
   });
 
+  it("resets saved state when the slug changes during client-side navigation", () => {
+    localStorage.setItem(
+      "inv_anon_saves",
+      JSON.stringify([{ type: "listing", ref: PROPS.slug }]),
+    );
+    mockFetch();
+    const view = render(<LotSaveButton {...PROPS} />);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
+
+    // Same component instance, new lot (related-listing navigation).
+    view.rerender(<LotSaveButton {...PROPS} slug="different-lot" title="Different Lot" />);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "false");
+
+    // …and back again.
+    view.rerender(<LotSaveButton {...PROPS} />);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("ignores clicks until auth has resolved (no stale anonymous mirror for signed-in users)", async () => {
+    mockUseUser.mockReturnValue({ user: null, loading: true });
+    const fetchFn = mockFetch();
+    render(<LotSaveButton {...PROPS} />);
+
+    const button = screen.getByRole("button");
+    expect(button).toBeDisabled();
+    await userEvent.click(button);
+
+    expect(button).toHaveAttribute("aria-pressed", "false");
+    expect(fetchFn).not.toHaveBeenCalled();
+    expect(localStorage.getItem("inv_anon_saves")).toBeNull();
+  });
+
   it("keeps sibling instances for the same slug in sync (header pill + sticky bar)", async () => {
     const fetchFn = mockFetch();
     render(
