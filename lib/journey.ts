@@ -101,6 +101,9 @@ export function recordMilestone(milestone: JourneyMilestone): MilestoneResult {
   if (isNew) {
     state.milestones[milestone] = new Date().toISOString();
     writeState(state);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("inv:journey"));
+    }
   }
   const count = Object.keys(state.milestones).length;
   return {
