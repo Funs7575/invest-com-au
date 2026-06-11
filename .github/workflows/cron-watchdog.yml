@@ -1,0 +1,58 @@
+# Cron-fleet dead-man switch.
+#
+# Every in-platform cron monitor is itself a cron, so a dead scheduler kills
+# its own watchdogs — the fleet ran dark 2026-05-23 → 2026-06-11 with zero
+# alerts. This workflow runs OUTSIDE the platform (GitHub's scheduler) and
+# fails red — which emails the repo owner — whenever /api/health/crons reports
+# the newest cron run is older than the threshold.
+#
+# It never dispatches or mutates anything; it is a read-only probe.
+
+name: Cron watchdog
+
+on:
+  schedule:
+    # Twice daily — enough to bound a dark-fleet window to ~12h instead of weeks.
+    - cron: "45 7,19 * * *"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Base URL to probe (defaults to the Netlify mirror)"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe cron-fleet liveness
+        env:
+          TARGET: ${{ inputs.target || vars.CRON_WATCHDOG_TARGET || 'https://lambent-sawine-17c3dd.netlify.app' }}
+        run: |
+          set -euo pipefail
+          echo "Probing $TARGET/api/health/crons"
+          # Retry transient network/edge errors before judging.
+          for attempt in 1 2 3; do
+            body=$(curl -ksS --max-time 30 "$TARGET/api/health/crons" || true)
+            status=$(echo "$body" | jq -r '.status // "unreachable"' 2>/dev/null || echo "unreachable")
+            [ "$status" != "unreachable" ] && break
+            echo "attempt $attempt unreachable; retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
+          echo "response: $body"
+          age=$(echo "$body" | jq -r '.ageMinutes // "null"')
+          case "$status" in
+            fresh)
+              echo "✅ cron fleet alive (newest run ${age} min ago)" ;;
+            stale)
+              echo "⚠️ cron fleet STALE (newest run ${age} min ago) — investigate before it goes dark"
+              exit 1 ;;
+            *)
+              echo "❌ cron fleet DARK or unreachable (status=$status, age=${age} min)."
+              echo "Restoration: set CRON_BRIDGE_ENABLED=true + CRON_SECRET in the Netlify env"
+              echo "(netlify/functions/cron-tick.mts) or unpark Vercel Cron. See docs/runbooks/cutover.md + docs/audits/CRON-HEALTH."
+              exit 1 ;;
+          esac

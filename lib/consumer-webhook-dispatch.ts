@@ -35,7 +35,8 @@ export type ConsumerWebhookEvent =
   | "broker.updated"
   | "health_score.updated"
   | "advisor.updated"
-  | "savings.updated";
+  | "savings.updated"
+  | "fee.changed";
 
 interface ConsumerWebhookRow {
   id: string;
@@ -236,7 +237,7 @@ export async function retryFailedConsumerWebhooks(
   const since = new Date(Date.now() - CONSUMER_RETRY_WINDOW_MS).toISOString();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: deliveries } = await (admin as any)
+  const { data: deliveries, error: fetchError } = await (admin as any)
     .from("consumer_webhook_deliveries")
     .select(
       "id, webhook_id, event_type, payload, response_status, error_message, attempt_count, needs_retry",
@@ -253,6 +254,15 @@ export async function retryFailedConsumerWebhooks(
     skipped_no_secret: 0,
     skipped_hook_gone: 0,
   };
+
+  // A fetch error must not masquerade as "queue empty" — that exact silent
+  // swallow hid the missing-schema state for weeks (the 30-min cron returned
+  // ok/all-zeros on every run while /api/v1/webhooks 500'd). Log loudly and
+  // throw so the cron run records a failure the health checks can see.
+  if (fetchError) {
+    log.error("consumer webhook retry queue read failed", { error: fetchError.message });
+    throw new Error(`consumer_webhook_deliveries read failed: ${fetchError.message}`);
+  }
 
   if (!deliveries || deliveries.length === 0) return stats;
 

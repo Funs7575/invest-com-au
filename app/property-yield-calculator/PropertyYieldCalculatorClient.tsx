@@ -229,7 +229,7 @@ export default function PropertyYieldCalculatorClient() {
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Property Yield Calculator</h1>
           <p className="text-sm md:text-base text-emerald-100">Enter your purchase price, rent, and expenses — we&rsquo;ll calculate your gross and net rental yield instantly.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
         </div>
       </div>
 

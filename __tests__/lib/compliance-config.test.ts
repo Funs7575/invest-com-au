@@ -75,7 +75,8 @@ describe("derived CTA strings", () => {
   it("primary CTA + href align with match mode", () => {
     if (SHOW_MATCH_LANGUAGE) {
       expect(PRIMARY_CTA_TEXT).toBe("Start My Free Match");
-      expect(PRIMARY_CTA_HREF).toBe("/quiz");
+      // /quiz is a 308 redirect — the CTA links the live route directly.
+      expect(PRIMARY_CTA_HREF).toBe("/get-matched");
     } else {
       expect(PRIMARY_CTA_TEXT).toBe("Compare Platforms");
       expect(PRIMARY_CTA_HREF).toBe("/compare");

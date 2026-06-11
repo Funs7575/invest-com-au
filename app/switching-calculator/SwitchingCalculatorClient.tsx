@@ -6,6 +6,7 @@ import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackClick, trackPageDuration } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import { getStoredUtm } from "@/components/UtmCapture";
 import type { Broker } from "@/lib/types";
 import { storeQualificationData } from "@/lib/qualification-store";
@@ -146,7 +147,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
             </div>
             <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much are you overpaying?</h1>
             <p className="text-sm md:text-base text-emerald-100">Enter your trading details below and we&apos;ll calculate your exact annual cost at every Australian broker — and how much you&apos;d save by switching.</p>
-            <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+            <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
           </div>
         </div>}
 
@@ -298,7 +299,9 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                           {isCurrent && <span className="text-[0.5rem] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">YOUR BROKER</span>}
                           {i === 0 && !isCurrent && <span className="text-[0.5rem] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">CHEAPEST</span>}
                         </div>
-                        <div className="text-xs text-slate-500"><span aria-hidden="true">{renderStars(r.broker.rating || 0)}</span> <span aria-label={`${r.broker.rating} out of 5 stars`}>{r.broker.rating}/5</span></div>
+                        {SHOW_RATINGS && (
+                          <div className="text-xs text-slate-500"><span aria-hidden="true">{renderStars(r.broker.rating || 0)}</span> <span aria-label={`${r.broker.rating} out of 5 stars`}>{r.broker.rating}/5</span></div>
+                        )}
                       </div>
                       <div className="text-right shrink-0">
                         <div className={`text-sm font-extrabold ${isCurrent ? "text-red-600" : "text-slate-900"}`}>${Math.round(r.cost).toLocaleString()}<span className="text-[0.6rem] font-normal text-slate-400">/yr</span></div>

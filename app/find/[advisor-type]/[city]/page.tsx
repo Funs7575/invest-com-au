@@ -7,6 +7,7 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/se
 import { logger } from "@/lib/logger";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { SPONSORED_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 
 export const revalidate = 3600;
 
@@ -285,7 +286,7 @@ export default async function FindAdvisorPage({ params }: Props) {
         name: a.name,
         url: absoluteUrl(`/advisor/${a.slug}`),
         ...(a.location_suburb ? { address: { "@type": "PostalAddress", addressLocality: a.location_suburb, addressCountry: "AU" } } : {}),
-        ...(a.rating !== null && a.review_count !== null && a.review_count > 0
+        ...(SHOW_ADVISOR_RATINGS && a.rating !== null && a.review_count !== null && a.review_count > 0
           ? { aggregateRating: { "@type": "AggregateRating", ratingValue: a.rating, reviewCount: a.review_count } }
           : {}),
       },

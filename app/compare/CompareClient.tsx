@@ -74,6 +74,10 @@ const minRatingOptions = [
   { value: 3.5, label: '3.5+' },
 ];
 
+/** Initial mobile-card page size; "Show more" reveals the next batch. */
+const MOBILE_PAGE_SIZE = 15;
+const MOBILE_PAGE_STEP = 25;
+
 const featureFilterMeta: Record<FeatureFilter, { label: string; icon: string }> = {
   chess: { label: 'CHESS Sponsored', icon: 'shield' },
   free: { label: '$0 Trades', icon: 'zap' },
@@ -173,6 +177,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [activeFeatures, setActiveFeatures] = useState<Set<FeatureFilter>>(initialFeatures);
   const [maxFee, setMaxFee] = useState(999);
   const [minRating, setMinRating] = useState(0);
+  // Mobile cards are paged — the full list renders a ~35,000px column on
+  // small screens (DISC-20260610-E). Desktop table is unaffected. Paging
+  // state carries the filter signature so a filter change resets it during
+  // render (React's "adjust state when props change" pattern — no effect).
+  const [mobilePaging, setMobilePaging] = useState({ signature: "", count: MOBILE_PAGE_SIZE });
   const resultsRef = useRef<HTMLDivElement>(null);
   const initialSortColForQuiz: SortCol =
     urlQuizPriority === "fees" ? "asx_fee_value" : initialSortCol;
@@ -348,6 +357,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   }), [brokers, activeFilter, activeFeatures, maxFee, minRating, searchQuery, scenario]);
 
   const ranked = useMemo(() => rankBrokers(filtered, scenario, costInputs), [filtered, scenario, costInputs]);
+
+  // Any filter change restarts mobile paging from the first batch (guarded
+  // render-time reset — equivalent to keying the list on the signature).
+  const filterSignature = `${activeFilter}|${maxFee}|${minRating}|${searchQuery}|${scenario}|${[...activeFeatures].sort().join(",")}`;
+  if (mobilePaging.signature !== filterSignature) {
+    setMobilePaging({ signature: filterSignature, count: MOBILE_PAGE_SIZE });
+  }
+  const mobileVisibleCount = mobilePaging.count;
 
   const sortedRows = useMemo(() => {
     const campaignWinnerSlugs = new Set(campaignWinners.map(w => w.broker_slug));
@@ -880,7 +897,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               Tap ○ to select 2–4 for side-by-side comparison
             </div>
           )}
-          {sortedRows.map(row => {
+          {sortedRows.slice(0, mobileVisibleCount).map(row => {
             const broker = row.broker;
             const mobileColumns = showAllMobileColumns ? schema.columns : schema.columns.slice(0, 4);
             return (
@@ -919,6 +936,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             </article>
             );
           })}
+          {sortedRows.length > mobileVisibleCount && (
+            <button
+              type="button"
+              onClick={() => setMobilePaging((p) => ({ ...p, count: p.count + MOBILE_PAGE_STEP }))}
+              className="w-full min-h-12 rounded-2xl border border-slate-200 bg-white py-3 text-sm font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+            >
+              Show more platforms ({sortedRows.length - mobileVisibleCount} remaining)
+            </button>
+          )}
         </div>
         </div>{/* close scroll ref */}
 

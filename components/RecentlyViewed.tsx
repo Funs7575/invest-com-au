@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { renderStars } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { Broker } from "@/lib/types";
 
 const STORAGE_KEY = "invest_recently_viewed";
@@ -29,6 +30,7 @@ export default function RecentlyViewed({ currentSlug }: { currentSlug?: string }
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed: RecentItem[] = JSON.parse(raw);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is browser-only; effect-then-set is the SSR-safe read pattern
         setItems(parsed.filter(i => i.slug !== currentSlug).slice(0, 4));
       }
     } catch {}
@@ -54,7 +56,9 @@ export default function RecentlyViewed({ currentSlug }: { currentSlug?: string }
             </div>
             <div className="min-w-0">
               <div className="text-xs font-bold text-slate-900 truncate">{item.name}</div>
-              <div className="text-[0.56rem] text-amber-700">{renderStars(item.rating)} {item.rating}</div>
+              {SHOW_RATINGS && (
+                <div className="text-[0.56rem] text-amber-700">{renderStars(item.rating)} {item.rating}</div>
+              )}
             </div>
           </Link>
         ))}

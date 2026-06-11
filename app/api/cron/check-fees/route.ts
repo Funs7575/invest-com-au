@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { checkAutopilotGate } from "@/lib/autopilot";
 import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
+import { fireConsumerWebhook } from "@/lib/consumer-webhook-dispatch";
 import { sendEmail } from "@/lib/resend";
 
 const log = logger("cron-check-fees");
@@ -194,6 +195,18 @@ export async function GET(req: NextRequest) {
                 if (numField && numField !== dbField) updateField[numField] = parseFloat(numericMatch[1]);
               }
               await supabase.from("brokers").update(updateField).eq("id", broker.id);
+
+              // Consumers can subscribe to "fee.changed" at registration; this
+              // auto-approve path is one of the two places a fee value
+              // actually lands on the broker row (the other is the admin
+              // fee-queue approve). Fire-and-forget per the dispatch contract.
+              void fireConsumerWebhook("fee.changed", {
+                broker_slug: broker.slug,
+                field: dbField,
+                old_value: currentVal,
+                new_value: extractedValue,
+                applied_by: "auto-rule",
+              });
 
               // Log as auto-approved
               await supabase.from("fee_update_queue").insert({

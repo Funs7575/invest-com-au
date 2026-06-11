@@ -4,6 +4,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import { createClient } from "@/lib/supabase/server";
 import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
@@ -222,7 +223,7 @@ export default async function SendMoneyAustraliaPage() {
                         </div>
                         {p.tagline && <p className="text-sm text-slate-500">Best for: {p.tagline}</p>}
                       </div>
-                      {p.rating && (
+                      {SHOW_RATINGS && p.rating && (
                         <div className="text-right">
                           <p className="font-extrabold text-2xl text-amber-600"><span aria-hidden="true">{renderStars(p.rating)}</span> <span aria-label={`${p.rating.toFixed(1)} out of 5 stars`}>{p.rating.toFixed(1)}</span></p>
                           <p className="text-xs text-slate-500">rating</p>

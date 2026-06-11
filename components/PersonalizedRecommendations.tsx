@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 
 interface QuizResultEntry {
   slug: string;
@@ -127,7 +128,7 @@ export default function PersonalizedRecommendations() {
                 )}
               </div>
               <p className="text-sm font-semibold text-slate-800 truncate">{result.name}</p>
-              {result.rating && (
+              {SHOW_RATINGS && result.rating && (
                 <p className="text-[0.62rem] text-slate-500">{result.rating}/5 rating</p>
               )}
             </div>

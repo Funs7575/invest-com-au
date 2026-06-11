@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 
 /**
  * Side-by-side comparison of up to 4 advisors.
@@ -121,25 +122,27 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
           </tr>
         </thead>
         <tbody>
-          <Row label="Rating">
-            {advisors.map((a) => (
-              <Cell key={a.id}>
-                {a.rating ? (
-                  <>
-                    <span className="font-bold text-slate-900">{a.rating.toFixed(1)}</span>
-                    <span className="text-slate-500 text-[0.65rem]"> /5</span>
-                    {a.review_count != null && (
-                      <div className="text-[0.6rem] text-slate-500">
-                        {a.review_count} review{a.review_count === 1 ? "" : "s"}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <span className="text-slate-400">—</span>
-                )}
-              </Cell>
-            ))}
-          </Row>
+          {SHOW_ADVISOR_RATINGS && (
+            <Row label="Rating">
+              {advisors.map((a) => (
+                <Cell key={a.id}>
+                  {a.rating ? (
+                    <>
+                      <span className="font-bold text-slate-900">{a.rating.toFixed(1)}</span>
+                      <span className="text-slate-500 text-[0.65rem]"> /5</span>
+                      {a.review_count != null && (
+                        <div className="text-[0.6rem] text-slate-500">
+                          {a.review_count} review{a.review_count === 1 ? "" : "s"}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <span className="text-slate-400">—</span>
+                  )}
+                </Cell>
+              ))}
+            </Row>
+          )}
 
           <Row label="Verified">
             {advisors.map((a) => (

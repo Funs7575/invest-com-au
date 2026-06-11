@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import {
   getAcademyCourse,
@@ -196,7 +197,7 @@ export default async function AcademyCourseDetailPage({ params }: PageProps) {
       ? { timeRequired: `PT${Math.ceil(course.cpd_hours)}H` }
       : {}),
     inLanguage: "en-AU",
-    ...(course.avg_rating != null && course.review_count > 0
+    ...(SHOW_RATINGS && course.avg_rating != null && course.review_count > 0
       ? {
           aggregateRating: {
             "@type": "AggregateRating",

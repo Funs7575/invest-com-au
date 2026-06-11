@@ -1,0 +1,24 @@
+# Legacy redirect map — CO-01 drop-in point for the apex domain cutover.
+#
+# This file lists every significant URL from the PRIOR invest.com.au host
+# (inbound links / GSC search traffic) and the path it must 301/308 to on the
+# new site. The real list is founder-supplied (CO-01 in the remediation queue,
+# see docs/runbooks/cutover.md "Generate the 301 redirect map") and is BLOCKED
+# until that list arrives — drop the rows in below and the harness picks them
+# up with zero code changes. Each entry also needs a matching rule in
+# next.config.ts redirects().
+#
+# Verified by: npm run cutover:redirects -- --target=https://<host>
+#   (asserts 301/308 + Location path match; absolute Locations tolerated on
+#    the target host; trailing-slash insensitive; "#" lines are ignored)
+#
+# Format: no quoting; the first two commas delimit columns, so only the note
+# column may contain commas. Destinations may be paths or absolute URLs.
+#
+# The three rows below are EXAMPLES wired to existing internal redirects so
+# the harness can be exercised end-to-end today. Replace/extend them with the
+# real prior-host list when CO-01 unblocks.
+source_path,expected_destination_path,note
+/brokers,/compare,EXAMPLE — existing internal redirect, replace with CO-01 prior-host list
+/quiz,/get-matched,EXAMPLE — existing internal redirect, replace with CO-01 prior-host list
+/super-funds,/super,EXAMPLE — existing internal redirect, replace with CO-01 prior-host list

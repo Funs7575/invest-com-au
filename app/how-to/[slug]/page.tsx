@@ -15,6 +15,7 @@ import {
 } from "@/lib/seo";
 import { ADVERTISER_DISCLOSURE_SHORT, GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
 import BrokerLogo from "@/components/BrokerLogo";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
@@ -24,6 +25,9 @@ import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
+// Guides are a static code registry — reject unknown slugs at the router with
+// a real 404 instead of streaming a 200 shell first (DISC-20260610-B).
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return getAllGuideSlugs().map((slug) => ({ slug }));
@@ -275,7 +279,7 @@ export default async function HowToGuidePage({
                               {broker.asx_fee
                                 ? `ASX: ${broker.asx_fee}`
                                 : PLATFORM_TYPE_LABELS[broker.platform_type]}
-                              {broker.rating && (
+                              {SHOW_RATINGS && broker.rating && (
                                 <>{" · "}<span aria-hidden="true">{renderStars(broker.rating)}</span>{" "}<span aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span></>
                               )}
                             </p>

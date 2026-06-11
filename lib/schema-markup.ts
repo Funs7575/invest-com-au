@@ -26,6 +26,7 @@
  */
 
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { SHOW_RATINGS, SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 
 const ORG = {
   "@type": "Organization" as const,
@@ -171,7 +172,9 @@ export function brokerFinancialProductJsonLd(input: BrokerSchemaInput) {
     description: input.description ?? undefined,
     image: input.logoUrl ?? undefined,
     brand: ORG,
-    ...(input.rating && input.reviewCount && input.reviewCount > 0
+    // Licence-gated: schema must mirror the visible page, which hides
+    // ratings entirely in factual_only mode (DISC-20260610-A).
+    ...(SHOW_RATINGS && input.rating && input.reviewCount && input.reviewCount > 0
       ? {
           aggregateRating: {
             "@type": "AggregateRating",
@@ -239,7 +242,7 @@ export function advisorJsonLd(input: AdvisorSchemaInput) {
               addressCountry: "AU",
             })
           : undefined,
-        ...(input.rating && input.reviewCount && input.reviewCount > 0
+        ...(SHOW_ADVISOR_RATINGS && input.rating && input.reviewCount && input.reviewCount > 0
           ? {
               aggregateRating: {
                 "@type": "AggregateRating",

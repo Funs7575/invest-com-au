@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { DesignIcon } from "@/components/design/DesignIcon";
 import { PROFESSIONAL_TYPE_LABELS, type ProfessionalType } from "@/lib/types";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 
 export interface HomeAdvisor {
   slug: string;
@@ -226,10 +227,12 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
                   <div style={{ fontSize: 11.5, fontWeight: 700, color: "var(--color-ink-900)" }}>
                     {a.fee_description ?? "Fee on enquiry"}
                   </div>
-                  <div style={{ fontSize: 10, color: "var(--color-ink-400)", marginTop: 1 }}>
-                    {a.rating ? `★ ${a.rating.toFixed(1)}` : "★ —"}
-                    {a.review_count ? ` · ${a.review_count}` : ""}
-                  </div>
+                  {SHOW_ADVISOR_RATINGS && (
+                    <div style={{ fontSize: 10, color: "var(--color-ink-400)", marginTop: 1 }}>
+                      {a.rating ? `★ ${a.rating.toFixed(1)}` : "★ —"}
+                      {a.review_count ? ` · ${a.review_count}` : ""}
+                    </div>
+                  )}
                 </div>
                 <span className="iv2-cta-ghost" style={{ fontSize: 11, padding: "5px 9px" }}>
                   View <DesignIcon name="arrow-right" size={10} />

@@ -88,3 +88,28 @@ Even after unblocking, these query relations that don't exist in prod (see
 Live `cron_run_log` aggregates (counts/timestamps only) + `vercel.json` schedule
 parse + cross-ref of each `app/api/cron/*` route's `.from()` targets against the
 live schema. No code changed — this is a diagnosis + escalation.
+
+---
+
+## Update 2026-06-11 — fleet STILL dark (19 days); external watchdog shipped
+
+Verified live: `cron_run_log` has **zero rows in the last 48 h across all job
+names**; newest run of any cron remains 2026-05-23 06:0x (`check-fees` ok). So
+the Netlify cron bridge merged in #1430 (`netlify/functions/cron-tick.mts`,
+safe-by-default) has **not been enabled** — the fleet has now been dark 19
+days, taking with it drips, alerts, digests, webhook retries, leaderboards,
+and the fee-recheck pipeline behind /compare's freshness claims
+(DISC-20260610-C is a symptom of this, not a check-fees bug).
+
+**Restoration (founder/ops, ~2 minutes):** in the Netlify site env set
+`CRON_BRIDGE_ENABLED=true` and confirm `CRON_SECRET` is set (the bridge sends
+it as the Bearer to `/api/cron/dispatch/<group>`). The bridge only fires jobs
+due at the current tick — no 19-day backfill flood. Retire when Vercel Cron
+is unparked.
+
+**Prevention shipped (this PR):** the recommendation-2 watchdog now exists
+without waiting for pg_cron — `GET /api/health/crons` exposes only the newest
+run age (service-role read of `cron_run_log`; no job names/stats), and
+`.github/workflows/cron-watchdog.yml` probes it from GitHub's scheduler twice
+daily, failing red (→ owner email) at >26 h. The watchdog lives OUTSIDE the
+platform precisely because every in-platform monitor is itself a cron.

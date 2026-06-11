@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { isSponsored } from "@/lib/sponsorship";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import BrokerCard from "@/components/BrokerCard";
 import BrokerLogo from "@/components/BrokerLogo";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -32,12 +33,13 @@ function getColumns(slug: string): ColumnDef[] {
       {
         label: "Rating",
         align: "center",
-        render: (b) => (
-          <>
-            <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
-            <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-          </>
-        ),
+        render: (b) =>
+          SHOW_RATINGS && (
+            <>
+              <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
+              <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
+            </>
+          ),
       },
     ];
   }
@@ -54,12 +56,13 @@ function getColumns(slug: string): ColumnDef[] {
       {
         label: "Rating",
         align: "center",
-        render: (b) => (
-          <>
-            <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
-            <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-          </>
-        ),
+        render: (b) =>
+          SHOW_RATINGS && (
+            <>
+              <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
+              <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
+            </>
+          ),
       },
     ];
   }
@@ -80,12 +83,13 @@ function getColumns(slug: string): ColumnDef[] {
       {
         label: "Rating",
         align: "center",
-        render: (b) => (
-          <>
-            <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
-            <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-          </>
-        ),
+        render: (b) =>
+          SHOW_RATINGS && (
+            <>
+              <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
+              <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
+            </>
+          ),
       },
     ];
   }
@@ -102,12 +106,13 @@ function getColumns(slug: string): ColumnDef[] {
       {
         label: "Rating",
         align: "center",
-        render: (b) => (
-          <>
-            <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
-            <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-          </>
-        ),
+        render: (b) =>
+          SHOW_RATINGS && (
+            <>
+              <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
+              <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
+            </>
+          ),
       },
     ];
   }
@@ -134,12 +139,13 @@ function getColumns(slug: string): ColumnDef[] {
     {
       label: "Rating",
       align: "center",
-      render: (b) => (
-        <>
-          <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
-          <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-        </>
-      ),
+      render: (b) =>
+        SHOW_RATINGS && (
+          <>
+            <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
+            <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
+          </>
+        ),
     },
   ];
 }

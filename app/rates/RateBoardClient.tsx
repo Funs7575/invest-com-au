@@ -175,7 +175,7 @@ export default function RateBoardClient({
             Every rate, compared. Updated daily.
           </p>
           <div className="mt-4">
-            <SocialProofCounter variant="badge" />
+            <SocialProofCounter variant="badge" surface="rates" />
           </div>
         </div>
       </div>

@@ -168,7 +168,7 @@ export default function QuizResultsScreen({
 
         {/* Social proof — shows activity count beneath results header */}
         <div className="mb-3 result-card-in">
-          <SocialProofCounter variant="badge" />
+          <SocialProofCounter variant="badge" surface="quiz" />
         </div>
 
         {/* Investor persona card — derived from quiz answers, no auth required.

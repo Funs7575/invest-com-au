@@ -218,7 +218,7 @@ export default function MortgageCalculatorClient() {
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much will your mortgage really cost?</h1>
           <p className="text-sm md:text-base text-rose-100">Enter your loan details — we&apos;ll show you monthly repayments, total interest, and how rate changes affect the cost.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
         </div>
       </div>
 
