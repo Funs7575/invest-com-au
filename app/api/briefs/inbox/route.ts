@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { maskBriefForProvider } from "@/lib/briefs/mask";
 import { isBriefVisibleToProvider } from "@/lib/briefs/eligibility";
+import { recordBriefReach } from "@/lib/briefs/activity";
 import { logger } from "@/lib/logger";
 import type { BriefRow } from "@/lib/briefs/types";
 
@@ -86,6 +87,13 @@ export async function GET(request: NextRequest) {
     const available = (openBriefs ?? [])
       .filter((row) => isBriefVisibleToProvider(row as unknown as BriefRow, visibilityCtx))
       .map((row) => maskBriefForProvider(row as unknown as BriefRow));
+
+    // Trust Centre: record that these briefs reached this adviser's inbox
+    // (deduplicated insert-or-ignore; consumer tracker shows the count).
+    void recordBriefReach(
+      available.map((b) => b.id),
+      advisorId,
+    );
 
     // ── Accepted bucket ────────────────────────────────────────────
     const { data: acceptedRaw } = await admin

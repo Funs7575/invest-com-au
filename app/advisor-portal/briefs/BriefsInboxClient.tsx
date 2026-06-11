@@ -42,6 +42,9 @@ export default function BriefsInboxClient() {
   const [busy, setBusy] = useState<string | null>(null);
   const [statusBusy, setStatusBusy] = useState<string | null>(null);
   const [topUpNeeded, setTopUpNeeded] = useState(false);
+  // Full masked details per slug, fetched lazily on "View details".
+  const [details, setDetails] = useState<Record<string, MaskedBrief | "loading" | undefined>>({});
+  const [openDetails, setOpenDetails] = useState<Record<string, boolean>>({});
 
   const load = useCallback(async () => {
     try {
@@ -82,6 +85,22 @@ export default function BriefsInboxClient() {
       setError(err instanceof Error ? err.message : "Could not accept");
     } finally {
       setBusy(null);
+    }
+  }
+
+  async function toggleDetails(slug: string) {
+    const nowOpen = !openDetails[slug];
+    setOpenDetails((prev) => ({ ...prev, [slug]: nowOpen }));
+    if (!nowOpen || details[slug]) return;
+    setDetails((prev) => ({ ...prev, [slug]: "loading" }));
+    try {
+      const res = await fetch(`/api/briefs/${slug}/preview`);
+      const json = await res.json();
+      if (!res.ok || !json?.brief) throw new Error(json?.error ?? "Could not load details");
+      setDetails((prev) => ({ ...prev, [slug]: json.brief as MaskedBrief }));
+    } catch {
+      setDetails((prev) => ({ ...prev, [slug]: undefined }));
+      setOpenDetails((prev) => ({ ...prev, [slug]: false }));
     }
   }
 
@@ -175,7 +194,37 @@ export default function BriefsInboxClient() {
                 <p className="text-sm text-slate-600 mb-4">
                   {b.description_preview}
                 </p>
+                {openDetails[b.slug] && details[b.slug] && details[b.slug] !== "loading" && (
+                  <dl className="mb-4 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
+                    {Object.entries(
+                      (details[b.slug] as MaskedBrief).brief_payload ?? {},
+                    )
+                      .filter(([, v]) => v !== null && v !== "" && v !== undefined)
+                      .slice(0, 12)
+                      .map(([k, v]) => (
+                        <div key={k} className="text-xs">
+                          <dt className="inline font-semibold text-slate-600 capitalize">
+                            {k.replace(/_/g, " ")}:
+                          </dt>{" "}
+                          <dd className="inline text-slate-700">
+                            {Array.isArray(v) ? v.join(", ") : String(v)}
+                          </dd>
+                        </div>
+                      ))}
+                  </dl>
+                )}
                 <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => toggleDetails(b.slug)}
+                    className="text-xs font-semibold text-slate-600 underline underline-offset-2 hover:text-slate-900"
+                  >
+                    {details[b.slug] === "loading"
+                      ? "Loading…"
+                      : openDetails[b.slug]
+                        ? "Hide details"
+                        : "View details"}
+                  </button>
                   <span className="text-xs text-slate-500">
                     Accept cost:{" "}
                     <strong className="text-slate-900">

@@ -6,6 +6,8 @@ import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 import { maskBriefForProvider } from "@/lib/briefs/mask";
 import { getAcceptCost } from "@/lib/briefs/credits";
+import { recordBriefView } from "@/lib/briefs/activity";
+import { enqueueUserNotificationByEmail } from "@/lib/user-notifications";
 import type { BriefRow, ProviderKind } from "@/lib/briefs/types";
 
 const log = logger("briefs:preview");
@@ -65,6 +67,26 @@ export async function GET(
         providerKind: providerKindForPref(masked.provider_preference),
       });
     }
+
+    // Trust Centre: record the detail view; the FIRST distinct adviser
+    // view drops a one-time "an adviser viewed your brief" note in the
+    // consumer's in-app inbox. Fire-and-forget — never blocks the preview.
+    void recordBriefView(brief.id, advisorId)
+      .then(({ firstViewOfBrief }) => {
+        if (!firstViewOfBrief || !brief.contact_email) return;
+        return enqueueUserNotificationByEmail(brief.contact_email, {
+          kind: "brief_viewed",
+          title: "An adviser viewed your Match Request",
+          body: `Re: ${brief.job_title || "your request"}. Advisers are looking — you'll be notified the moment one accepts.`,
+          href: `/briefs/${brief.slug}`,
+        });
+      })
+      .catch((err) => {
+        log.warn("brief view tracking failed", {
+          briefId: brief.id,
+          err: err instanceof Error ? err.message : String(err),
+        });
+      });
 
     return NextResponse.json({ masked: true, brief: masked });
   } catch (err) {

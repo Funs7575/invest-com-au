@@ -42,7 +42,7 @@ function makeReq(): NextRequest {
 function makeChain(result: { data: unknown; error?: unknown }) {
   const chain: Record<string, unknown> = {};
   const methods = [
-    "select", "eq", "in", "is", "or", "order", "limit", "maybeSingle", "single",
+    "select", "eq", "in", "is", "or", "order", "limit", "maybeSingle", "single", "upsert",
   ];
   for (const m of methods) chain[m] = vi.fn(() => chain);
   (chain as { then: unknown }).then = (resolve: (v: unknown) => unknown) =>
@@ -76,6 +76,7 @@ describe("GET /api/briefs/inbox", () => {
 
   it("happy path returns available + accepted buckets", async () => {
     const openBrief = {
+      id: 11,
       slug: "b1",
       routing_mode: "broadcast",
       provider_preference: "any",
@@ -84,12 +85,14 @@ describe("GET /api/briefs/inbox", () => {
     };
     // Calls in order: expert_team_members, expert_teams (only when the caller
     // has team memberships — AJ-9 name lookup), professionals,
-    // advisor_auctions(open), advisor_auctions(accepted).
+    // advisor_auctions(open), brief_views (Trust Centre reach upsert,
+    // fire-and-forget), advisor_auctions(accepted).
     mockFrom
       .mockReturnValueOnce(makeChain({ data: [{ team_id: 7 }] }))
       .mockReturnValueOnce(makeChain({ data: [{ id: 7, name: "Tax Crew" }] }))
       .mockReturnValueOnce(makeChain({ data: { type: "accountant", firm_id: null } }))
       .mockReturnValueOnce(makeChain({ data: [openBrief] }))
+      .mockReturnValueOnce(makeChain({ data: null }))
       .mockReturnValueOnce(makeChain({ data: [{ id: 1, slug: "acc1" }] }));
 
     const res = await GET(makeReq());

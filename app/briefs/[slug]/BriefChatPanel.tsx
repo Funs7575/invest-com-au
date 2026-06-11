@@ -64,6 +64,15 @@ export default function BriefChatPanel({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Latest own message the counterpart has read (drives the "Seen" receipt).
+  const lastSeenOwnMessageId = messages.reduce<number | null>((acc, m) => {
+    if (!senderIsViewer(m, viewerSide) || m.optimistic) return acc;
+    const counterpartReadAt =
+      viewerSide === "consumer" ? m.read_by_pro_at : m.read_by_consumer_at;
+    if (!counterpartReadAt) return acc;
+    return acc === null || m.id > acc ? m.id : acc;
+  }, null);
+
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
 
@@ -242,6 +251,12 @@ export default function BriefChatPanel({
         )}
         {messages.map((m) => {
           const mine = senderIsViewer(m, viewerSide);
+          // Read receipt: "Seen" on the viewer's LATEST own message the
+          // counterpart has read (the standard chat pattern — one receipt,
+          // not one per row). Counterpart read-state only refreshes with
+          // initialMessages (the Realtime sub covers INSERTs, not UPDATEs),
+          // which is fine for an email-link tracker page.
+          const seen = mine && !m.optimistic && m.id === lastSeenOwnMessageId;
           return (
             <div
               key={m.id}
@@ -260,6 +275,7 @@ export default function BriefChatPanel({
                 <p className="whitespace-pre-line break-words">{m.body}</p>
                 <p className="text-[10px] mt-1 opacity-60">
                   {formatTime(m.created_at)}
+                  {seen && <span className="font-semibold"> · Seen</span>}
                 </p>
               </div>
             </div>

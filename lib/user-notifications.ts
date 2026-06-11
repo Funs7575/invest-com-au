@@ -36,6 +36,7 @@ import {
 export type UserNotificationKind =
   | "brief_accepted"
   | "brief_reopened"
+  | "brief_viewed"
   | "message_received"
   | "outcome_request"
   | "plan_diff"
