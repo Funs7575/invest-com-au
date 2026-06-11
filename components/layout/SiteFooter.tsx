@@ -106,7 +106,7 @@ export function SiteFooter() {
 
         {/* Compliance Section */}
         <div className="border-t border-slate-800 pt-5 mb-6 space-y-3">
-          <h4 className="text-slate-500 font-medium text-[0.65rem] uppercase tracking-wider">Important Information</h4>
+          <h4 className="text-slate-400 font-medium text-[0.65rem] uppercase tracking-wider">Important Information</h4>
 
           {/* General Information Disclaimer — always visible */}
           <div className="p-3 bg-slate-800/40 border border-amber-100/10 rounded-xl">
@@ -151,15 +151,15 @@ export function SiteFooter() {
         <div className="border-t border-slate-800 pt-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-400">
                 © {CURRENT_YEAR} Invest.com.au Pty Ltd. All rights reserved.
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 ACN {COMPANY_ACN} · ABN {COMPANY_ABN}
               </p>
             </div>
 
-            <nav className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500" aria-label="Legal links">
+            <nav className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-400" aria-label="Legal links">
               {[
                 { label: "Privacy", href: "/privacy" },
                 { label: "Terms", href: "/terms" },
