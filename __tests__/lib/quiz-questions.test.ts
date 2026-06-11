@@ -17,11 +17,14 @@ import {
   QuizInvestorGoalIntlSchema,
   QuizInvestorCountrySchema,
   QuizVisaStatusSchema,
+  QuizStackRiskSchema,
 } from "@/lib/quiz-answer-schemas";
 
-// Each persisted question maps to the schema that validates its answer. The
-// `stack_*` questions feed the in-session vertical scorer and aren't persisted
-// via UnifiedAnswersSchema, so they intentionally have no row here.
+// Each persisted question maps to the schema that validates its answer.
+// stack_risk is now included because QuizStackRiskSchema was added to
+// catch the not_sure option key. stack_super / stack_savings remain out
+// (their option keys are super_yes/super_no/savings_yes/savings_no — valid
+// strings that degrade gracefully via the existing schema catch).
 const QUESTION_SCHEMA: Partial<Record<QuestionId, z.ZodTypeAny>> = {
   location: QuizLocationSchema,
   goal: QuizGoalSchema,
@@ -36,6 +39,7 @@ const QUESTION_SCHEMA: Partial<Record<QuestionId, z.ZodTypeAny>> = {
   investor_country: QuizInvestorCountrySchema,
   visa_status: QuizVisaStatusSchema,
   investor_goal_intl: QuizInvestorGoalIntlSchema,
+  stack_risk: QuizStackRiskSchema,
 };
 
 describe("quiz question ↔ answer-schema contract", () => {
@@ -75,15 +79,56 @@ describe("quiz question ↔ answer-schema contract", () => {
 
   it("offers a valid 'not sure' path on every subjective judgment question", () => {
     // The brief: "'not sure' is a valid path throughout." goal/mode/advisor_type
-    // already had one (other/unsure/not-sure); these four are the subjective
-    // judgment calls where an undecided user is most likely to abandon. The key
-    // must also survive its schema (asserted by the contract loop above), so the
-    // answer persists as a neutral no-signal rather than silently nulling.
-    for (const id of ["experience", "complexity", "amount", "priority"] as const) {
+    // already had one (other/unsure/not-sure); all subjective judgment questions
+    // now have a first-class not_sure exit. The key must survive its schema
+    // (asserted by the contract loop above) so the answer persists as a neutral
+    // no-signal rather than silently nulling.
+    const notSureQuestions = [
+      "experience", "complexity", "amount", "priority",
+      "property_sub", "investor_goal_intl", "visa_status", "stack_risk",
+    ] as const;
+    for (const id of notSureQuestions) {
       const keys = UNIFIED_QUESTIONS[id].options.map((o) => o.key);
       expect(keys, `${id} offers a not_sure option`).toContain("not_sure");
       // It must be last so it doesn't anchor the real choices.
       expect(keys[keys.length - 1], `${id} not_sure is last`).toBe("not_sure");
     }
+  });
+
+  it("investor_country offers a not_sure option and it validates", () => {
+    const keys = UNIFIED_QUESTIONS.investor_country.options.map((o) => o.key);
+    expect(keys).toContain("not_sure");
+    // Validates through the string-max schema (max 20 chars, "not_sure" = 8).
+    expect(QuizInvestorCountrySchema.parse("not_sure")).toBe("not_sure");
+  });
+
+  it("CHESS sponsored sub-text includes the key protection claim", () => {
+    const safety = UNIFIED_QUESTIONS.priority.options.find((o) => o.key === "safety");
+    expect(safety?.sub).toContain("protected if the broker fails");
+  });
+
+  it("pre-IPO sub-text includes the wholesale investor threshold", () => {
+    const preIpo = UNIFIED_QUESTIONS.goal.options.find((o) => o.key === "pre-ipo");
+    expect(preIpo?.sub).toContain("wholesale investor");
+  });
+
+  it("conveyancer sub-text describes legal settlement role", () => {
+    const conv = UNIFIED_QUESTIONS.advisor_type.options.find((o) => o.key === "conveyancer");
+    expect(conv?.sub).toContain("settlement");
+  });
+
+  it("estate-planner sub-text mentions wills and trusts", () => {
+    const ep = UNIFIED_QUESTIONS.advisor_type.options.find((o) => o.key === "estate-planner");
+    expect(ep?.sub).toMatch(/will|trust/i);
+  });
+
+  it("aged-care-advisor sub-text mentions Centrelink", () => {
+    const ac = UNIFIED_QUESTIONS.advisor_type.options.find((o) => o.key === "aged-care-advisor");
+    expect(ac?.sub).toMatch(/centrelink/i);
+  });
+
+  it("debt-counsellor sub-text mentions reduce/manage debt", () => {
+    const dc = UNIFIED_QUESTIONS.advisor_type.options.find((o) => o.key === "debt-counsellor");
+    expect(dc?.sub).toMatch(/debt/i);
   });
 });
