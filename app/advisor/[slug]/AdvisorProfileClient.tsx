@@ -1644,13 +1644,38 @@ export default function AdvisorProfileClient({
               {pro.firm_name && <span className="ml-2 text-xs text-slate-500">{pro.firm_name}</span>}
             </div>
           </div>
+          {/* When the advisor exposes a booking link, lead with "Book a Call"
+              (primary) and demote the enquiry anchor to secondary — keeping the
+              desktop sticky bar consistent with the hero and mobile sticky bar.
+              Without a booking link the enquiry CTA stays primary, unchanged. */}
           <div className="flex items-center gap-3">
-            <a
-              href="#contact"
-              className="px-7 py-2.5 bg-amber-500 text-slate-900 font-black text-sm rounded-xl hover:bg-amber-400 transition-all shadow-sm shadow-amber-200/50"
-            >
-              Request Free Consultation
-            </a>
+            {pro.booking_link ? (
+              <>
+                <a
+                  href="#contact"
+                  className="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-semibold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
+                >
+                  Request Free Consultation
+                </a>
+                <a
+                  href={pro.booking_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEvent("advisor_book_call_click", { professional_id: pro.id, advisor_slug: pro.slug, placement: "desktop_sticky" }, `/advisor/${pro.slug}`)}
+                  className="inline-flex items-center gap-2 px-7 py-2.5 bg-amber-500 text-slate-900 font-black text-sm rounded-xl hover:bg-amber-400 transition-all shadow-sm shadow-amber-200/50"
+                >
+                  <Icon name="calendar" size={15} />
+                  Book a Call
+                </a>
+              </>
+            ) : (
+              <a
+                href="#contact"
+                className="px-7 py-2.5 bg-amber-500 text-slate-900 font-black text-sm rounded-xl hover:bg-amber-400 transition-all shadow-sm shadow-amber-200/50"
+              >
+                Request Free Consultation
+              </a>
+            )}
           </div>
         </div>
       </div>
