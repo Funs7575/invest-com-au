@@ -59,7 +59,7 @@ const DEDUCTIBLE_EXPENSES = [
   {
     expense: "Depreciation — Division 43 (building)",
     notes:
-      "2.5% per year on the original construction cost for buildings built after 16 September 1987. A quantity surveyor&apos;s report establishes the eligible construction cost.",
+      "2.5% per year on the original construction cost for buildings built after 16 September 1987. A quantity surveyor&apos;s report establishes the eligible construction cost.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     expense: "Depreciation — Division 40 (plant & equipment)",

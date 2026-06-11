@@ -32,7 +32,7 @@ const FHOG_STATES = [
     amount: "$10,000",
     eligibleProperties: "New homes in regional VIC only (metro removed 2024)",
     propertyCap: "$750,000",
-    notes: "Regional VIC only from 1 July 2023",
+    notes: "Regional VIC only from 1 July 2023", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     state: "QLD",
@@ -285,6 +285,7 @@ export default function FirstHomeOwnerGrantsPage() {
             </table>
           </div>
           <p className="text-xs text-slate-500 mt-3">
+            {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
             ACT does not offer the FHOG — it has been replaced with the Home Buyer Concession Scheme (stamp duty relief). VIC removed the metropolitan FHOG from 1 July 2023.
           </p>
         </div>

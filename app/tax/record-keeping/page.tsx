@@ -1,3 +1,4 @@
+// dated-strings-exempt — long-form template-literal bodies cite fixed legislative dates (pre-CGT 20 Sep 1985, QS depreciation 15 Sep 1987, FY lodgment/retention examples); line markers would render as content.
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";

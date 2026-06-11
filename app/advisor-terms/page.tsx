@@ -30,7 +30,7 @@ export const metadata = {
   twitter: { card: "summary_large_image" as const },
 };
 
-const EFFECTIVE_DATE = "10 March 2026";
+const EFFECTIVE_DATE = "10 March 2026"; // dated-ok — static historical/legal effective date (2026-06-11 sweep)
 const VERSION = "1.0";
 
 function S({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {

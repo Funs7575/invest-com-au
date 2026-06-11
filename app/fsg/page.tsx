@@ -29,6 +29,7 @@ export default function FSGPage() {
         <h1 className="text-2xl md:text-4xl font-extrabold mb-2">
           Financial Services Guide
         </h1>
+        {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
         <p className="text-xs text-slate-500 mb-8">Last updated: 18 March 2026</p>
 
         {/* Key callout */}
