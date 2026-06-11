@@ -194,21 +194,30 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Update thread counters: reply_count, last_reply_at, last_reply_by
+    // Update thread counters. NOTE: prod forum_threads has no last_reply_by
+    // column (ledger fork) — including it made this whole update silently
+    // fail, so reply_count never bumped on any live reply. Keep the payload
+    // to columns that exist in prod, and surface errors instead of
+    // discarding them.
     const { data: currentThread } = await admin
       .from("forum_threads")
       .select("reply_count")
       .eq("id", thread_id)
       .single();
 
-    await admin
+    const { error: threadCounterError } = await admin
       .from("forum_threads")
       .update({
         reply_count: (currentThread?.reply_count ?? 0) + 1,
         last_reply_at: new Date().toISOString(),
-        last_reply_by: displayName,
       })
       .eq("id", thread_id);
+    if (threadCounterError) {
+      log.warn("Thread reply-counter update failed", {
+        thread_id,
+        error: threadCounterError.message,
+      });
+    }
 
     // Update category post_count and last_post_at
     const { data: currentCat } = await admin

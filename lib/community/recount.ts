@@ -30,9 +30,12 @@ export async function recountThread(threadId: number): Promise<void> {
     .eq("thread_id", threadId)
     .eq("is_removed", false);
 
+  // Prod column is `value` (the local migration file says `vote` — ledger
+  // fork; the vote API route also writes `value`). Verified against live
+  // information_schema 2026-06-10.
   const { data: votes, error: votesError } = await admin
     .from("forum_votes")
-    .select("vote")
+    .select("value")
     .eq("target_type", "thread")
     .eq("target_id", threadId);
 
@@ -45,7 +48,7 @@ export async function recountThread(threadId: number): Promise<void> {
     return;
   }
 
-  const voteScore = (votes ?? []).reduce((sum, v) => sum + (v.vote ?? 0), 0);
+  const voteScore = (votes ?? []).reduce((sum, v) => sum + (v.value ?? 0), 0);
 
   const { error: updateError } = await admin
     .from("forum_threads")
