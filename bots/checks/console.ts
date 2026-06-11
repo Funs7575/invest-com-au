@@ -12,6 +12,10 @@ const BENIGN = [
   /ResizeObserver loop/i,
   /\[Fast Refresh\]/i,
   /Failed to load resource:.*(analytics|posthog|sentry|googletagmanager|gtag|hotjar|clarity)/i,
+  // Pure duplicates of the network collector: every failed-resource console
+  // line mirrors a response that attachNetwork already records with full
+  // method/path/status evidence. 403/429/503 are additionally proxy-transient.
+  /Failed to load resource: the server responded with a status of (403|429|503)/i,
 ];
 
 function isBenign(text: string): boolean {
