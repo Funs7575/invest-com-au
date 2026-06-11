@@ -18,6 +18,7 @@ const ALLOWED_SOURCES = [
   "newsletter",
   "smsf_checklist",
   "learn_hub",
+  "advisor_careers",
 ] as const;
 type NewsletterSource = (typeof ALLOWED_SOURCES)[number];
 

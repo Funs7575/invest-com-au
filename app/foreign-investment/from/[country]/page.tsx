@@ -11,6 +11,7 @@ import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 import CrossBorderAdvisorCTA from "@/components/CrossBorderAdvisorCTA";
+import CrossBorderNextStep from "@/components/foreign-investment/CrossBorderNextStep";
 import { getCrossBorderCta } from "@/lib/cross-border-cta";
 
 // ── Country lookup helpers ───────────────────────────────────────────────────
@@ -421,6 +422,16 @@ export default async function CountryForeignInvestmentPage({
               </details>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Next step (quiz international track + advisor directory) ──── */}
+      <section className="py-8 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <CrossBorderNextStep
+            title={`Not sure which route fits — ${dtaCountry.country} resident or Aussie expat?`}
+            body="Answer a few questions about your visa status and what you want to do in Australia, and we'll point you to the platforms or specialists that match."
+          />
         </div>
       </section>
 

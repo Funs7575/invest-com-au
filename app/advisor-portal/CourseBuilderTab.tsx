@@ -101,7 +101,7 @@ function StepIndicator({ step, labels }: { step: number; labels: string[] }) {
               </div>
               <span
                 className={`text-xs font-semibold whitespace-nowrap ${
-                  isActive ? "text-slate-900" : isDone ? "text-violet-600" : "text-slate-400"
+                  isActive ? "text-slate-900" : isDone ? "text-violet-600" : "text-slate-500"
                 }`}
               >
                 {label}

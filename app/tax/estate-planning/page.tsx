@@ -27,7 +27,7 @@ const FAQS = [
   },
   {
     q: "Does CGT apply when someone dies?",
-    a: "CGT is deferred, not extinguished. When the beneficiary eventually sells the asset, they inherit the original cost base and acquisition date. However, main residence property sold within 2 years of death is generally CGT-free. Pre-CGT assets (acquired before 20 September 1985) remain exempt.",
+    a: "CGT is deferred, not extinguished. When the beneficiary eventually sells the asset, they inherit the original cost base and acquisition date. However, main residence property sold within 2 years of death is generally CGT-free. Pre-CGT assets (acquired before 20 September 1985) remain exempt.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     q: "Does super go through the estate?",

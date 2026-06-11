@@ -371,6 +371,7 @@ export default function StampDutyConcessionsPage() {
             <h2 className="text-2xl font-extrabold text-slate-900">NSW spotlight: the annual property tax option</h2>
           </div>
           <p className="text-slate-600 leading-relaxed mb-6">
+            {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
             From 16 January 2023, NSW first home buyers purchasing a property for $1.5 million or less can
             choose between two approaches to stamp duty:
           </p>

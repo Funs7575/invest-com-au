@@ -98,7 +98,7 @@ export default function AppScreenshotGallery({ screenshots, brokerName }: AppScr
                 {screenshots[lightboxIndex]?.label}
               </p>
             )}
-            <p className="text-center text-xs text-slate-400 mt-1">
+            <p className="text-center text-xs text-slate-500 mt-1">
               {lightboxIndex + 1} / {screenshots.length}
             </p>
           </div>

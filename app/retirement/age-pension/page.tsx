@@ -78,7 +78,7 @@ const ASSETS_THRESHOLDS = [
 const FAQS = [
   {
     q: "What is the Age Pension eligibility age in Australia?",
-    a: "The qualifying age is 67 for anyone born on or after 1 January 1957. The phased increases from age 65 are now complete. You must also be an Australian resident for at least 10 years (with 5 consecutive years), and satisfy both the assets and income tests. Australian citizens and permanent residents qualify. New Zealand citizens on special category visas have different rules.",
+    a: "The qualifying age is 67 for anyone born on or after 1 January 1957. The phased increases from age 65 are now complete. You must also be an Australian resident for at least 10 years (with 5 consecutive years), and satisfy both the assets and income tests. Australian citizens and permanent residents qualify. New Zealand citizens on special category visas have different rules.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     q: "Does my family home count in the assets test?",
@@ -86,7 +86,7 @@ const FAQS = [
   },
   {
     q: "How does superannuation interact with the Age Pension?",
-    a: "Super in the accumulation phase is NOT assessed for the assets test until you reach Age Pension age. Once you reach pension age (67), any remaining accumulation balance becomes fully assessable. If your super is already in pension phase (account-based pension, or ABP), the full account balance is assessed under the assets test AND deemed under the income test — unless your ABP started before 1 January 2015 and has grandfathered status, in which case only actual payments are assessed for the income test.",
+    a: "Super in the accumulation phase is NOT assessed for the assets test until you reach Age Pension age. Once you reach pension age (67), any remaining accumulation balance becomes fully assessable. If your super is already in pension phase (account-based pension, or ABP), the full account balance is assessed under the assets test AND deemed under the income test — unless your ABP started before 1 January 2015 and has grandfathered status, in which case only actual payments are assessed for the income test.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     q: "What is the difference between the assets test and the income test?",
@@ -247,7 +247,7 @@ export default function AgePensionPage() {
             {[
               {
                 title: "Age — 67 or older",
-                body: "You must have reached Age Pension age, currently 67, applicable to anyone born on or after 1 January 1957. The phased increase from 65 is complete.",
+                body: "You must have reached Age Pension age, currently 67, applicable to anyone born on or after 1 January 1957. The phased increase from 65 is complete.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
               },
               {
                 title: "Australian residency — 10 years",
@@ -484,6 +484,7 @@ export default function AgePensionPage() {
                 <strong className="text-slate-900">fully assessable</strong> under the assets test. If you
                 convert to a pension phase (account-based pension), the full ABP balance is also subject
                 to <strong>deeming</strong> under the income test for pensions started on or after
+                {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
                 1 January 2015.
               </p>
               <p className="text-sm text-slate-700 leading-relaxed">
@@ -498,6 +499,7 @@ export default function AgePensionPage() {
               </p>
               <p className="text-sm text-slate-700 leading-relaxed">
                 Account-based pensions (ABPs) that commenced before{" "}
+                {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
                 <strong className="text-slate-900">1 January 2015</strong> retain a{" "}
                 <em>grandfathered</em> status: only the actual pension payments received are assessed
                 for the income test (not the full account balance under deeming). This is typically more
@@ -522,6 +524,7 @@ export default function AgePensionPage() {
               If you sell a home you have owned for 10 or more years, you can make a{" "}
               <strong className="text-slate-900">downsizer contribution</strong> of up to $300,000 per
               person ($600,000 per couple) into superannuation from the sale proceeds. You must be 55 or
+              {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
               older (from 1 January 2023).
             </p>
             <p className="text-sm text-slate-700 leading-relaxed">

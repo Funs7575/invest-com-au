@@ -119,7 +119,7 @@ const FAQS = [
   },
   {
     q: "Is basic hospital cover enough to avoid the surcharge?",
-    a: "Yes, provided it is genuine hospital cover from a registered health insurer and is held for the full income year. There is no requirement to buy comprehensive ('gold') cover to escape the surcharge — a basic or 'bronze' hospital policy is sufficient. From 1 April 2019 policies with an excess above $750 for singles or $1,500 for families/couples do not qualify, so check the excess on a cheap policy before relying on it. Extras-only cover (dental, optical, physio) does not count, because it is not hospital cover.",
+    a: "Yes, provided it is genuine hospital cover from a registered health insurer and is held for the full income year. There is no requirement to buy comprehensive ('gold') cover to escape the surcharge — a basic or 'bronze' hospital policy is sufficient. From 1 April 2019 policies with an excess above $750 for singles or $1,500 for families/couples do not qualify, so check the excess on a cheap policy before relying on it. Extras-only cover (dental, optical, physio) does not count, because it is not hospital cover.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
 ];
 

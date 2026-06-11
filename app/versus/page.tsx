@@ -355,7 +355,7 @@ export default async function VersusHubPage() {
           </div>
 
           {/* E-E-A-T footer */}
-          <div className="mt-5 md:mt-8 text-[0.62rem] md:text-xs text-slate-400 text-center">
+          <div className="mt-5 md:mt-8 text-[0.62rem] md:text-xs text-slate-500 text-center">
             <p>
               All comparisons reviewed by{" "}
               <a

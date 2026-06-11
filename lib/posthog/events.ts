@@ -13,6 +13,13 @@ export type EventName =
   | 'ai_referral'
   | 'community_thread_submitted'
   | 'community_post_submitted'
+  // Careers demand-probe events (CO stream)
+  | 'careers_page_viewed'
+  | 'careers_notify_submitted'
+  | 'careers_notify_success'
+  | 'advisor_jobs_page_viewed'
+  | 'advisor_jobs_apply_clicked'
+  | 'firm_careers_interest_submitted'
 
 /** Which matching funnel a funnel_* event came from. */
 export type FunnelName = 'get_matched' | 'quiz' | 'find_advisor'
@@ -129,6 +136,33 @@ export interface EventProps {
     risk_score: number
     gate_reasons: string
     is_nested_reply: boolean
+  }
+
+  // ── Careers demand-probe events ────────────────────────────────────────────
+  /** User viewed the /careers demand-probe page. */
+  careers_page_viewed: Record<string, never>
+  /** User submitted the /careers "notify me when live" form. */
+  careers_notify_submitted: {
+    /** Whether the user included their name. */
+    has_name: boolean
+  }
+  /** Server accepted the /careers notify submission. */
+  careers_notify_success: Record<string, never>
+  /** User viewed the /advisor-jobs public jobs board. */
+  advisor_jobs_page_viewed: {
+    /** Active job count shown on page load. */
+    job_count: number
+    type_filter: string | null
+  }
+  /** User clicked "Apply" on an advisor job listing. */
+  advisor_jobs_apply_clicked: {
+    job_id: string
+    job_title: string
+    firm_name: string | null
+  }
+  /** Firm admin submitted the /firm-portal/careers interest form. */
+  firm_careers_interest_submitted: {
+    firm_id: string
   }
 }
 

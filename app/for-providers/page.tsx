@@ -409,7 +409,7 @@ export default function ForProvidersPage() {
             </div>
           </div>
 
-          <p className="text-xs text-slate-400 text-center mt-4">
+          <p className="text-xs text-slate-500 text-center mt-4">
             All plans include Stripe Connect payouts. Upgrade or downgrade
             anytime. No lock-in contracts.
           </p>

@@ -47,7 +47,7 @@ const PATH_FAQS: Record<string, Array<{ q: string; a: string }>> = {
   "retirement-and-super": [
     {
       q: "What is the superannuation guarantee rate for 2025–26?",
-      a: "The Superannuation Guarantee (SG) rate is 11.5% for FY2025–26. It rises to 12% from 1 July 2026 — and stays at 12% permanently. Your employer must contribute this percentage of your ordinary time earnings to your nominated super fund. Concessional contributions (including employer SG and salary sacrifice) are capped at $30,000 per year for FY2025–26; contributions above this cap are taxed at your marginal rate.",
+      a: "The Superannuation Guarantee (SG) rate is 11.5% for FY2025–26. It rises to 12% from 1 July 2026 — and stays at 12% permanently. Your employer must contribute this percentage of your ordinary time earnings to your nominated super fund. Concessional contributions (including employer SG and salary sacrifice) are capped at $30,000 per year for FY2025–26; contributions above this cap are taxed at your marginal rate.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
     },
     {
       q: "When can I access my superannuation?",

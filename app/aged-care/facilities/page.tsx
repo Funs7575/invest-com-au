@@ -65,7 +65,7 @@ const FAQS = [
   },
   {
     q: "What are the new staffing requirements for aged care?",
-    a: "From 1 October 2024, all residential aged care providers must: (1) deliver a minimum average of 200 minutes of care per resident per day (up from the previous 114-minute benchmark); (2) have a registered nurse on-site 24/7 (previously only required during day shifts). These mandated minimums were introduced following the Royal Commission into Aged Care Quality and Safety findings. Facilities that fail to meet the minimum are required to publish this information publicly. When evaluating a facility, ask for their current care minutes data and whether they consistently meet the 200-minute floor.",
+    a: "From 1 October 2024, all residential aged care providers must: (1) deliver a minimum average of 200 minutes of care per resident per day (up from the previous 114-minute benchmark); (2) have a registered nurse on-site 24/7 (previously only required during day shifts). These mandated minimums were introduced following the Royal Commission into Aged Care Quality and Safety findings. Facilities that fail to meet the minimum are required to publish this information publicly. When evaluating a facility, ask for their current care minutes data and whether they consistently meet the 200-minute floor.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     q: "Can I negotiate the RAD?",

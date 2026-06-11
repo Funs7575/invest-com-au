@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Icon from "@/components/Icon";
@@ -34,7 +35,13 @@ const CaseStudiesTab = dynamic(() => import("./CaseStudiesTab"));
 const ReviewsTab = dynamic(() => import("./ReviewsTab"));
 const EarnTab = dynamic(() => import("./EarnTab"));
 
+/** Score threshold below which new advisors are auto-redirected to the onboarding route. */
+const AUTO_ONBOARDING_SCORE_THRESHOLD = 40;
+/** localStorage key — once set, the auto-redirect to /advisor-portal/onboarding never fires. */
+const ONBOARDING_SEEN_KEY = "advisor-onboarding-seen";
+
 export default function AdvisorPortalPage() {
+  const router = useRouter();
   const [view, setView] = useState<ViewType>("login");
   const [advisor, setAdvisor] = useState<Advisor | null>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -61,8 +68,12 @@ export default function AdvisorPortalPage() {
 
   const [verifyError, setVerifyError] = useState<string | null>(null);
 
-  // Onboarding banner
-  const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
+  // Onboarding banner — persisted via sessionStorage so it re-appears on next
+  // login but stays dismissed for the current browser session.
+  const [dismissedOnboarding, setDismissedOnboarding] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return sessionStorage.getItem("advisor-onboarding-banner-dismissed") === "1";
+  });
   const [dataLoadedAt, setDataLoadedAt] = useState<Date | null>(null);
   const [moreNavOpen, setMoreNavOpen] = useState(false);
 
@@ -82,14 +93,29 @@ export default function AdvisorPortalPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /** Auto-redirect to the guided onboarding route if the advisor is below the
+   *  starter threshold and hasn't been through onboarding yet. */
+  const maybeRedirectToOnboarding = useCallback((a: Advisor) => {
+    if (typeof window === "undefined") return false;
+    if (localStorage.getItem(ONBOARDING_SEEN_KEY)) return false;
+    const completeness = deriveProfileCompleteness(a as unknown as Record<string, unknown>);
+    if (completeness.score < AUTO_ONBOARDING_SCORE_THRESHOLD) {
+      router.push("/advisor-portal/onboarding");
+      return true;
+    }
+    return false;
+  }, [router]);
+
   const checkSession = async () => {
     try {
       const res = await fetch("/api/advisor-auth/session");
       if (res.ok) {
         const { advisor: a } = await res.json();
         setAdvisor(a);
-        setView(a.status === "pending" ? "dashboard" : "dashboard");
-        if (a.status !== "pending") loadData();
+        if (!maybeRedirectToOnboarding(a)) {
+          setView(a.status === "pending" ? "dashboard" : "dashboard");
+          if (a.status !== "pending") loadData();
+        }
       } else {
         setView("login");
       }
@@ -109,10 +135,12 @@ export default function AdvisorPortalPage() {
       if (res.ok) {
         const { advisor: a } = await res.json();
         setAdvisor(a);
-        setView("dashboard");
-        // Clean URL
+        // Clean URL first, then check onboarding redirect.
         window.history.replaceState({}, "", "/advisor-portal");
-        loadData();
+        if (!maybeRedirectToOnboarding(a)) {
+          setView("dashboard");
+          loadData();
+        }
       } else {
         const err = await res.json();
         setVerifyError(err.error || "Invalid or expired link. Please request a new one.");
@@ -449,7 +477,11 @@ export default function AdvisorPortalPage() {
             if (completeness.score >= 80) return null;
             const next = completeness.steps.find((s) => !s.complete);
             return (
-              <div className="bg-violet-50 border border-violet-200 rounded-xl px-4 py-2.5 mb-6 flex items-center gap-3">
+              <div
+                role="complementary"
+                aria-label="Profile completion"
+                className="bg-violet-50 border border-violet-200 rounded-xl px-4 py-2.5 mb-6 flex items-center gap-3"
+              >
                 <div
                   className="hidden sm:block w-20 h-1.5 bg-violet-100 rounded-full overflow-hidden shrink-0"
                   role="progressbar"
@@ -478,7 +510,10 @@ export default function AdvisorPortalPage() {
                   Continue setup →
                 </button>
                 <button
-                  onClick={() => setDismissedOnboarding(true)}
+                  onClick={() => {
+                    sessionStorage.setItem("advisor-onboarding-banner-dismissed", "1");
+                    setDismissedOnboarding(true);
+                  }}
                   aria-label="Dismiss setup reminder"
                   className="shrink-0 w-8 h-8 min-h-0 flex items-center justify-center rounded-lg text-violet-400 hover:text-violet-600 hover:bg-violet-100"
                 >
@@ -501,7 +536,10 @@ export default function AdvisorPortalPage() {
             dismissedOnboarding={dismissedOnboarding}
             isPending={isPending}
             onNavigate={setView}
-            onDismissOnboarding={() => setDismissedOnboarding(true)}
+            onDismissOnboarding={() => {
+              sessionStorage.setItem("advisor-onboarding-banner-dismissed", "1");
+              setDismissedOnboarding(true);
+            }}
             billingSummary={billingSummary}
             dataLoadedAt={dataLoadedAt}
             onRefresh={loadData}
@@ -528,6 +566,7 @@ export default function AdvisorPortalPage() {
             onOpenDisputeModal={(m) => { setDisputeModal(m); setDisputeReason(""); setDisputeDetails(""); setDisputeError(""); setDisputeDone(false); }}
             onUpdateLeadStatus={updateLeadStatus}
             onUpdateLeadNotes={updateLeadNotes}
+            onNavigate={setView}
           />
         )}
 

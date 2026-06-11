@@ -303,7 +303,7 @@ export default function ListingSubmitForm() {
                 >
                   {done ? <Icon name="check" size={13} /> : i + 1}
                 </div>
-                <span className={`text-xs hidden sm:block ${active ? "text-slate-900 font-semibold" : "text-slate-400"}`}>
+                <span className={`text-xs hidden sm:block ${active ? "text-slate-900 font-semibold" : "text-slate-500"}`}>
                   {labels[s]}
                 </span>
               </div>

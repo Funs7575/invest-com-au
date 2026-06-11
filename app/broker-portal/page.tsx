@@ -436,7 +436,7 @@ export default function BrokerDashboard() {
               </div>
             )}
             {thirtyDayConversions > 0 && (
-              <div className="flex items-center gap-3 mt-1.5 text-[0.58rem] text-slate-400">
+              <div className="flex items-center gap-3 mt-1.5 text-[0.58rem] text-slate-500">
                 <span className="flex items-center gap-1"><span className={`w-1.5 h-1.5 rounded ${isProfitable ? "bg-emerald-500" : "bg-red-400"}`} /> Revenue vs Spend</span>
                 <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded bg-slate-900" /> Break-even</span>
               </div>

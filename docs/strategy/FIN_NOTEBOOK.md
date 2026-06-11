@@ -109,6 +109,68 @@ pages all healthy with apex canonicals.
 smoke-tested? (3) consider promoting noindex-appearance to exit-1 in the
 cutover differ once a real baseline exists.
 
+### 2026-06-11 — Wave-1 mega-integration on PR #1541 (8 workstreams, quiz elevation, DISC fixes)
+
+One PR integrates the full parallel wave: quiz not_sure paths + jargon microcopy +
+attribute-driven match reasons; DISC-20260610 A/C/D/F fixes; advisor-portal
+onboarding wizard + lead-cap upsell + pro-research admin CRUD + win-back cron;
+rate-alert mailer engine + tokenised manage-prefs (no-login, possession-of-token
+auth); calculators public API v1 (5 endpoints) + embed gating; /fees/today + /today
+data-news surfaces; community Phase 1 (cross-links, QOTD, newsletter highlights);
+GEO AI-crawler capture in proxy.ts; /careers demand probe; CO-stream cutover
+guardian scripts.
+
+Strategic decisions made (this session, founder gave blanket "make the best
+long-term call" authorisation):
+
+- **DISC-A direction — corrected twice, final answer is GATE the ratings**:
+  first pass wrongly reverted the agent's `SHOW_RATINGS` gate on `BrokerCard`
+  on a "ratings are factual" theory. The REMEDIATION_QUEUE row is explicit:
+  DISC-A = wire `SHOW_RATINGS`/`SHOW_ADVISOR_RATINGS` through the surfaces
+  that REMAINED un-gated (BrokerCard, DealCard, RecentlyViewed, quiz results,
+  advisor cards, versus) — #1489 had already gated the compare table etc.
+  Editorial star ratings are opinion (implied recommendation risk in
+  factual_only mode), unlike fee/CHESS facts. Gate restored; BrokerCard test
+  now mocks the flag. Lesson: **when an agent's change contradicts your memory
+  of an audit item, re-read the audit item before "fixing" the agent.**
+- **PR #1541 merged with a MERGE COMMIT, not squash**, deliberately breaking
+  the repo's squash convention for this one PR: 19 commits across 8 independent
+  workstreams — squashing would destroy per-stream blame/revert granularity,
+  and a same-branch follow-up PR after a squash would re-show old diffs
+  (merge-base lag) or force a Tier-E force-push. Merge commit avoids both.
+  Single-stream PRs stay squash.
+- **advisor-winback cron is fully wired** (cron-groups `weekly-mon-11` →
+  existing vercel.json dispatch) — no founder action needed for scheduling;
+  it degrades gracefully until its migration lands.
+- **Bot-fleet 403 noise root-cause hypothesis**: /advisors, /articles etc.
+  403 under the bot fleet but pass perf-budget single-hits on the same
+  Netlify preview → almost certainly DB-backed rate limiting tripping on
+  fleet concurrency, not a real outage. Backlog: give bots/ a preview-only
+  bypass header so smoke reports stop drowning in false highs.
+
+**FOUNDER ACTION REQUIRED (the only items Claude cannot do):**
+
+1. **`supabase db push`** for the two new migrations
+   (`20260611100000_rate_alert_mailer_support.sql`,
+   `20260611110000_advisor_winback_sends.sql`) — plus the still-unpushed
+   api-billing/consumer-webhook set from 2026-06-10. **Pre-req:** M05 shows
+   425-table ledger drift → per DB Migration Rules this is Tier E until you
+   run `supabase migration list` and reconcile. Until pushed: loan-rate
+   alerts stay silently skipped, win-back cron falls back to
+   last_notified_at stamping, API billing stays locked.
+2. **Stripe env vars** `STRIPE_PRICE_ID_*` for the API billing tiers
+   (calculators API v1 monetisation is code-complete behind these).
+3. **CO-01/02/04** — DNS + registrar credentials for the invest.com.au
+   cutover window (Oct–Dec 2026); guardian scripts are ready in
+   `scripts/cutover/`.
+4. **Vercel account blocked** — every commit carries a failing "Vercel —
+   Account is blocked" status; previews run on Netlify. Pay/unblock or
+   formally migrate; if Vercel stays dead the vercel.json cron fleet has no
+   runner (cron-health doc 2026-06-06 flagged 13 dark days already).
+5. **RG 246 legal sign-off** — `advisor_lead_referral_bonus` flag stays OFF
+   until then (unchanged from 2026-06-10).
+
+
 ### 2026-06-10 — Advisor ecosystem social layer shipped (7 workstreams, 1 migration)
 
 Built on `claude/confident-feynman-qdq82c` (plan: `docs/plans/ADVISOR_ECOSYSTEM_BUILD.md`).

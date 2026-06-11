@@ -146,7 +146,7 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
       </button>
 
       {!user && (
-        <p className="text-xs text-slate-400 mt-3">
+        <p className="text-xs text-slate-500 mt-3">
           Already have an account?{" "}
           <Link href={`/auth/login?next=/courses/${course.slug}`} className="text-slate-700 underline hover:text-slate-900">
             Sign in
@@ -155,7 +155,7 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
       )}
 
       {!isPro && user && proPriceDisplay && (
-        <p className="text-xs text-slate-400 mt-3">
+        <p className="text-xs text-slate-500 mt-3">
           <Link href="/pro" className="text-amber-600 underline hover:text-amber-700">
             Investor Pro members
           </Link>{" "}

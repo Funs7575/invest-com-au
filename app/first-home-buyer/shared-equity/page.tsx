@@ -202,6 +202,7 @@ export default function SharedEquityPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Federal Help to Buy scheme</h2>
           <p className="text-sm text-slate-500 mb-6">
             Administered by Housing Australia. Passed into law June 2024 — applications open from the
+            {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
             1 January 2024 intake. 10,000 places available per year nationwide.
           </p>
 

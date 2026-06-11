@@ -144,7 +144,7 @@ export default async function ConfessionsPage() {
       </header>
 
       {confessions.length === 0 ? (
-        <div className="text-center py-16 text-slate-400">
+        <div className="text-center py-16 text-slate-500">
           <p className="text-4xl mb-3" aria-hidden>🤐</p>
           <p className="font-semibold text-slate-600">No confessions yet</p>
           <p className="text-sm mt-1">Be the first to share yours — anonymously.</p>

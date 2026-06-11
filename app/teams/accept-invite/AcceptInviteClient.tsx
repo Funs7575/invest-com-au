@@ -172,7 +172,7 @@ export default function AcceptInviteClient({ token }: { token: string }) {
         </div>
       )}
 
-      <p className="text-xs text-slate-400 mt-6 text-center">
+      <p className="text-xs text-slate-500 mt-6 text-center">
         Invitations expire 7 days after they&apos;re sent.
       </p>
     </div>

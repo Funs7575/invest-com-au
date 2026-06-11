@@ -188,7 +188,7 @@ export default function FunnelPage() {
                   })}
                 </div>
               ) : (
-                <p className="text-xs text-slate-400 text-center py-6">Not enough data yet</p>
+                <p className="text-xs text-slate-500 text-center py-6">Not enough data yet</p>
               )}
             </div>
 

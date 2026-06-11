@@ -142,7 +142,7 @@ export default function AgedCareCentrelinkPage() {
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
                     <p className="font-bold text-slate-900">{item.stage}</p>
-                    <p className="text-xs text-slate-400 shrink-0">{item.timing}</p>
+                    <p className="text-xs text-slate-500 shrink-0">{item.timing}</p>
                   </div>
                   <p className="text-sm text-slate-600 leading-relaxed">{item.action}</p>
                 </div>

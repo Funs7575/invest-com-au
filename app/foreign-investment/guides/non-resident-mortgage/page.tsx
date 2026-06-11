@@ -11,6 +11,7 @@ import {
 } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import CrossBorderNextStep from "@/components/foreign-investment/CrossBorderNextStep";
 
 export const revalidate = 86400;
 
@@ -210,6 +211,15 @@ export default function NonResidentMortgagePage() {
               </li>
             ))}
           </ol>
+        </section>
+
+        {/* ── Next step (quiz international track + mortgage-broker directory) ── */}
+        <section className="mb-10">
+          <CrossBorderNextStep
+            advisorNeed="mortgage-broker"
+            title="Find the right broker for your situation"
+            body="The active non-resident lender panel turns on your country, currency and visa status. Answer a few questions and we'll point you to a broker who writes these files — or the wider specialist team if your purchase needs it."
+          />
         </section>
 
         {/* ── Expat vs foreign national ── */}

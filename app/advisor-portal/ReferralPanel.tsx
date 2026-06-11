@@ -129,7 +129,7 @@ export function ReferLeadButton({
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="text-xs text-slate-400 hover:text-slate-600"
+              className="text-xs text-slate-500 hover:text-slate-600"
             >
               Cancel
             </button>

@@ -206,7 +206,7 @@ const FAQS = [
   },
   {
     question: "When do I pay tax on capital gains in Australia?",
-    answer: "CGT is payable in the financial year you dispose of (sell, gift, or otherwise transfer) the asset. If you sell shares in June 2026, the gain is included in your 2025–26 tax return due by 31 October 2026 (or 28 February 2027 with a tax agent). Tax is not paid at the time of sale — it's calculated and paid when you lodge your annual return.",
+    answer: "CGT is payable in the financial year you dispose of (sell, gift, or otherwise transfer) the asset. If you sell shares in June 2026, the gain is included in your 2025–26 tax return due by 31 October 2026 (or 28 February 2027 with a tax agent). Tax is not paid at the time of sale — it's calculated and paid when you lodge your annual return.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     question: "Can I claim investment-related expenses as a tax deduction?",

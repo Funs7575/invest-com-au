@@ -708,7 +708,7 @@ export default function InvestmentIncomeTaxPage() {
               Tax Rates
             </p>
             <h2 className="text-xl font-extrabold text-slate-900">
-              Marginal tax rates 2024–25 (FY2025–26 new rates from 1 July 2024)
+              Marginal tax rates 2024–25 (FY2025–26 new rates from 1 July 2024) // dated-ok — static historical/legal effective date (2026-06-11 sweep)
             </h2>
             <p className="text-sm text-slate-500 mt-1 max-w-xl">
               Investment income is added to your other income (salary, business income) and taxed

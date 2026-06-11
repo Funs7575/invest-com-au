@@ -36,6 +36,7 @@ import { isFlagEnabled } from "@/lib/feature-flags";
 import { pillarPathForCategory, linkDensityForCategory } from "@/lib/keyword-linking";
 import NextActions from "@/components/NextActions";
 import ArticleReadingProgress from "@/components/ArticleReadingProgress";
+import ArticleDiscussions from "@/components/community/ArticleDiscussions";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -715,6 +716,17 @@ export default async function ArticlePage({
 
               {/* Comments + reactions */}
               <ArticleComments slug={slug} />
+
+              {/* Community cross-links — honest-empty: renders nothing when
+                  no genuinely related thread exists (Suspense fallback null,
+                  zero layout shift). */}
+              <Suspense fallback={null}>
+                <ArticleDiscussions
+                  title={a.title}
+                  category={a.category}
+                  tags={a.tags}
+                />
+              </Suspense>
 
               {/* Related Articles */}
               <RelatedContentGrid

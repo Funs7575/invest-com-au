@@ -291,8 +291,8 @@ export default function AffiliateDashboardPage() {
             })}
           </div>
           <div className="flex justify-between mt-1">
-            <span className="text-[0.6rem] text-slate-400">{dailyTrend.slice(-30)[0]?.date}</span>
-            <span className="text-[0.6rem] text-slate-400">{dailyTrend[dailyTrend.length - 1]?.date}</span>
+            <span className="text-[0.6rem] text-slate-500">{dailyTrend.slice(-30)[0]?.date}</span>
+            <span className="text-[0.6rem] text-slate-500">{dailyTrend[dailyTrend.length - 1]?.date}</span>
           </div>
         </div>
       )}

@@ -1,8 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
+import {
+  readRecentRateChanges,
+  bpsToPercent,
+  RATE_PRODUCT_LABELS,
+  type RateChangeRow,
+  type RateChangeDirection,
+} from "@/lib/rate-changes";
 
 export const revalidate = 3600;
 
@@ -18,38 +24,14 @@ export const metadata: Metadata = {
   },
 };
 
-type Direction = "up" | "down" | "new";
-
-interface ChangeRow {
-  id: string;
-  broker_slug: string;
-  broker_name: string;
-  product_kind: string;
-  old_rate_bps: number | null;
-  new_rate_bps: number;
-  delta_bps: number;
-  direction: Direction;
-  snapshot_captured_at: string;
-  logged_at: string;
-}
-
-const PRODUCT_LABELS: Record<string, string> = {
-  savings_account: "Savings Account",
-  term_deposit: "Term Deposit",
-};
-
-const DIRECTION_CONFIG: Record<Direction, { label: string; color: string; bg: string; arrow: string }> = {
+const DIRECTION_CONFIG: Record<RateChangeDirection, { label: string; color: string; bg: string; arrow: string }> = {
   up:   { label: "Rate up",   color: "#16a34a", bg: "#f0fdf4", arrow: "↑" },
   down: { label: "Rate down", color: "#dc2626", bg: "#fef2f2", arrow: "↓" },
   new:  { label: "New",       color: "#1d4ed8", bg: "#eff6ff", arrow: "★" },
 };
 
-function bpsToPercent(bps: number): string {
-  return (bps / 100).toFixed(2) + "%";
-}
-
-function groupByDate(changes: ChangeRow[]): Map<string, ChangeRow[]> {
-  const map = new Map<string, ChangeRow[]>();
+function groupByDate(changes: RateChangeRow[]): Map<string, RateChangeRow[]> {
+  const map = new Map<string, RateChangeRow[]>();
   for (const c of changes) {
     const date = new Date(c.snapshot_captured_at).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
     if (!map.has(date)) map.set(date, []);
@@ -80,15 +62,7 @@ const RATES_TODAY_FAQS = [
 const ratesTodayFaqLd = faqJsonLd(RATES_TODAY_FAQS);
 
 export default async function RatesTodayPage() {
-  const supabase = await createClient();
-
-  const { data } = await supabase
-    .from("rate_change_log")
-    .select("id, broker_slug, broker_name, product_kind, old_rate_bps, new_rate_bps, delta_bps, direction, snapshot_captured_at, logged_at")
-    .order("logged_at", { ascending: false })
-    .limit(100);
-
-  const changes = (data ?? []) as ChangeRow[];
+  const changes = await readRecentRateChanges(100);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -140,7 +114,7 @@ export default async function RatesTodayPage() {
                   <div className="iv2-card" style={{ overflow: "hidden" }}>
                     {rows.map((c, i) => {
                       const cfg = DIRECTION_CONFIG[c.direction] ?? DIRECTION_CONFIG.up;
-                      const productLabel = PRODUCT_LABELS[c.product_kind] ?? c.product_kind;
+                      const productLabel = RATE_PRODUCT_LABELS[c.product_kind] ?? c.product_kind;
                       const brokerPath = c.product_kind === "savings_account" || c.product_kind === "term_deposit"
                         ? `/savings/${c.broker_slug}`
                         : `/broker/${c.broker_slug}`;
@@ -197,6 +171,8 @@ export default async function RatesTodayPage() {
             <Link href="/rates" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink-600)", textDecoration: "none" }}>← Rate board</Link>
             <Link href="/savings" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink-600)", textDecoration: "none" }}>Browse savings accounts</Link>
             <Link href="/term-deposits" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink-600)", textDecoration: "none" }}>Browse term deposits</Link>
+            <Link href="/fees/today" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink-600)", textDecoration: "none" }}>Fee changes</Link>
+            <Link href="/today" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink-600)", textDecoration: "none" }}>Today&apos;s data</Link>
           </div>
 
           <section className="mt-10 border-t border-slate-200 pt-8">

@@ -179,7 +179,7 @@ export default function WebhooksPage() {
           </div>
         )}
         {!webhookUrl && !webhookInput && (
-          <p className="mt-2 text-xs text-slate-400">No webhook configured. Conversions will still be recorded but you won&apos;t receive real-time notifications.</p>
+          <p className="mt-2 text-xs text-slate-500">No webhook configured. Conversions will still be recorded but you won&apos;t receive real-time notifications.</p>
         )}
 
         {/* Webhook payload example */}

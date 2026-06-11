@@ -439,10 +439,14 @@ export default async function BrokerageFeeIndexPage() {
                 Want the per-broker detail behind these averages?{" "}
                 <Link href="/compare" className="font-semibold text-blue-700 underline">
                   Compare every platform&rsquo;s fees
-                </Link>{" "}
-                or follow{" "}
+                </Link>
+                , follow{" "}
                 <Link href="/fee-tracker" className="font-semibold text-blue-700 underline">
                   every fee change as it happens
+                </Link>{" "}
+                or see{" "}
+                <Link href="/fees/today" className="font-semibold text-blue-700 underline">
+                  the changes detected this week
                 </Link>
                 .
               </p>

@@ -204,7 +204,7 @@ function ConsultationCard({
         </Link>
 
         {!loading && !isPro && c.pro_price && c.pro_price < c.price && (
-          <p className="text-xs text-slate-400 mt-2 text-center">
+          <p className="text-xs text-slate-500 mt-2 text-center">
             <Link href="/pro" className="text-amber-600 underline hover:text-amber-700">
               Pro members
             </Link>{" "}

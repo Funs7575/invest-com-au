@@ -191,7 +191,7 @@ export default function ReviewPage() {
         {/* Header */}
         <div className="text-center mb-6">
           <Link href="/" className="text-sm font-bold text-slate-900 hover:text-slate-700">Invest.com.au</Link>
-          <p className="text-xs text-slate-400 mt-0.5">Advisor Review</p>
+          <p className="text-xs text-slate-500 mt-0.5">Advisor Review</p>
         </div>
 
         {/* Advisor card */}

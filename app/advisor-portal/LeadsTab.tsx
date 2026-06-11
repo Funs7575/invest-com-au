@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
-import type { Advisor, Stats, Lead, CategoryPricing, DisputeModal, FirmMemberOption } from "./types";
+import type { Advisor, Stats, Lead, CategoryPricing, DisputeModal, FirmMemberOption, ViewType } from "./types";
 import { ReferLeadButton, IncomingReferralsBanner } from "./ReferralPanel";
 import { logger } from "@/lib/logger";
+import { deriveProfileCompleteness } from "@/lib/advisor-portal/profile-completeness";
 
 const log = logger("advisor-portal-leads");
 
@@ -38,6 +39,8 @@ type Props = {
   onOpenDisputeModal: (modal: DisputeModal) => void;
   onUpdateLeadStatus: (leadId: number, status: string) => Promise<void>;
   onUpdateLeadNotes: (leadId: number, notes: string) => Promise<void>;
+  /** Navigate to a portal tab — used by completeness nudge on empty state. */
+  onNavigate?: (v: ViewType) => void;
 };
 
 export default function LeadsTab({
@@ -45,6 +48,7 @@ export default function LeadsTab({
   leadSearch, leadStatusFilter, leadSortByQuality, hotLeadsOnly,
   onLeadSearchChange, onLeadStatusFilterChange, onLeadSortByQualityChange, onHotLeadsOnlyChange,
   onLeadsUpdate, onOpenDisputeModal, onUpdateLeadStatus, onUpdateLeadNotes,
+  onNavigate,
 }: Props) {
   // Firm inbox — only visible to firm admins
   const isFirmAdmin = !!advisor?.is_firm_admin && !!advisor?.firm_id;
@@ -394,6 +398,25 @@ export default function LeadsTab({
           <Icon name="inbox" size={40} className="text-slate-300 mx-auto mb-3" />
           <h3 className="text-lg font-bold text-slate-900 mb-1">No enquiries yet</h3>
           <p className="text-sm text-slate-500">When investors submit a consultation request through your profile, they&apos;ll appear here.</p>
+          {/* Profile completeness nudge — only shown when the profile is below 80%. */}
+          {(() => {
+            if (!advisor || !onNavigate) return null;
+            const c = deriveProfileCompleteness(advisor as unknown as Record<string, unknown>);
+            if (c.score >= 80) return null;
+            return (
+              <p className="mt-3 text-xs text-violet-700">
+                Your profile is{" "}
+                <strong>{c.score}%</strong> complete — advisors with full profiles receive
+                up to 3× more leads.{" "}
+                <button
+                  onClick={() => onNavigate("dashboard")}
+                  className="underline underline-offset-2 font-semibold hover:text-violet-900"
+                >
+                  Complete your profile →
+                </button>
+              </p>
+            );
+          })()}
         </div>
       ) : filteredLeads.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">

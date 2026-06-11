@@ -56,7 +56,7 @@ const FAQS = [
   },
   {
     q: "Can I access my superannuation before age 60 for FIRE?",
-    a: "Generally no — super is locked until you meet a condition of release, which for most people means reaching preservation age (60 for anyone born after 30 June 1964) and retiring. The only early access route relevant to FIRE practitioners is the Transition to Retirement (TTR) income stream, which allows you to draw up to 10% of your super account balance per year once you reach preservation age, even while still working. This is not an early access mechanism — it only applies at age 60. You must fund the gap between your early retirement date and age 60 entirely from non-super assets.",
+    a: "Generally no — super is locked until you meet a condition of release, which for most people means reaching preservation age (60 for anyone born after 30 June 1964) and retiring. The only early access route relevant to FIRE practitioners is the Transition to Retirement (TTR) income stream, which allows you to draw up to 10% of your super account balance per year once you reach preservation age, even while still working. This is not an early access mechanism — it only applies at age 60. You must fund the gap between your early retirement date and age 60 entirely from non-super assets.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     q: "What is the super bridge strategy?",
@@ -377,6 +377,7 @@ export default function FireGuidePage() {
                   Superannuation preservation age (60)
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
+                  {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
                   For anyone born after 30 June 1964, the preservation age is 60. You cannot
                   access your super before 60 (except in rare compassionate or severe financial
                   hardship cases). This is the single most important constraint for Australian

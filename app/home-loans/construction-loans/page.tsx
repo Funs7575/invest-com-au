@@ -321,7 +321,7 @@ export default function ConstructionLoansPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             Drawdown percentages are indicative only and vary by lender and building contract. Your builder submits a progress claim at each stage — your lender verifies completion before releasing payment.
           </p>
         </div>

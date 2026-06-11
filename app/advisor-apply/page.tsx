@@ -713,7 +713,7 @@ function AdvisorApplyInner() {
                 />
                 <div className="pt-1">
                   <p className="text-xs text-slate-500">Almost done — add a headshot photo to complete your profile.</p>
-                  <p className="text-[0.56rem] text-slate-400 mt-0.5">JPG, PNG, or WebP. Max 5MB.</p>
+                  <p className="text-[0.56rem] text-slate-500 mt-0.5">JPG, PNG, or WebP. Max 5MB.</p>
                   {photoPreview && (
                     <button
                       type="button"

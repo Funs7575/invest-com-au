@@ -212,7 +212,7 @@ export default function SettingsTab({ advisor }: Props) {
         )}
         {priceError && <p role="alert" className="text-xs text-red-600 mt-2">{priceError}</p>}
         {sessionPriceDollars && !priceError && (
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Client pays A${sessionPriceDollars} → you receive ~A${Math.floor(Number(sessionPriceDollars) * 0.85)} after 15% platform fee.
           </p>
         )}

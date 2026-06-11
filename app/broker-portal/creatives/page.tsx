@@ -362,7 +362,7 @@ export default function CreativesPage() {
         <div key={group.value}>
           <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3 flex items-center gap-2">
             {group.label}
-            <span className="text-xs font-normal text-slate-400 lowercase">({group.items.length})</span>
+            <span className="text-xs font-normal text-slate-500 lowercase">({group.items.length})</span>
           </h2>
           {group.items.length === 0 ? (
             <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">

@@ -212,7 +212,7 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
           >
             Invest.com.au
           </Link>
-          <p className="text-xs text-slate-400 mt-0.5">Broker Review</p>
+          <p className="text-xs text-slate-500 mt-0.5">Broker Review</p>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6 flex items-center gap-4">

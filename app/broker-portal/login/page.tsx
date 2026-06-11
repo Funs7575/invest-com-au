@@ -136,7 +136,7 @@ export default function BrokerLoginPage() {
         {loading ? "Signing in..." : "Sign In"}
       </button>
 
-      <p className="text-xs text-slate-400 text-center">
+      <p className="text-xs text-slate-500 text-center">
         Don&apos;t have an account?{" "}
         <a href="/broker-portal/register" className="text-slate-700 underline font-medium">
           Apply to advertise →

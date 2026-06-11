@@ -15,7 +15,7 @@ export const metadata = {
   robots: { index: true, follow: true },
 };
 
-const EFFECTIVE_DATE = "10 March 2026";
+const EFFECTIVE_DATE = "10 March 2026"; // dated-ok — static historical/legal effective date (2026-06-11 sweep)
 const VERSION = "1.0";
 
 export default function ContentLicensePage() {

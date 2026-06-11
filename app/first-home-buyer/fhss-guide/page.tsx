@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 
 const KEY_STATS = [
   { stat: "$15,000/year", label: "max voluntary contributions designated for FHSS" },
-  { stat: "$50,000", label: "lifetime cap per person (from 1 July 2022)" },
+  { stat: "$50,000", label: "lifetime cap per person (from 1 July 2022)" }, // dated-ok — static legal effective date
   { stat: "$100,000", label: "combined cap for couples buying together" },
   { stat: "2.5%", label: "effective exit tax for 32.5% bracket earners" },
 ];

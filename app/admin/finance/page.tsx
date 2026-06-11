@@ -170,7 +170,7 @@ export default function FinanceDashboardPage() {
         </button>
       </div>
 
-      {loading && <div className="text-center py-12 text-slate-400">Loading...</div>}
+      {loading && <div className="text-center py-12 text-slate-500">Loading...</div>}
 
       {/* ─── OVERVIEW TAB ─── */}
       {!loading && tab === "overview" && (

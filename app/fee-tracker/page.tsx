@@ -168,7 +168,10 @@ export default async function FeeTrackerPage() {
               <span className="text-amber-600">Every Broker Fee Change in Australia</span>
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed">
-              We track when brokers raise or lower their fees. Updated when changes occur.
+              We track when brokers raise or lower their fees. Updated when changes occur.{" "}
+              <Link href="/fees/today" className="text-amber-600 hover:underline font-semibold">
+                See today&apos;s detected changes →
+              </Link>
             </p>
           </div>
         </div>

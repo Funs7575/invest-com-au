@@ -289,6 +289,113 @@ describe("GET /api/cron/check-fees", () => {
     globalThis.fetch = originalFetch;
   });
 
+  // ── Run-log visibility (wrapCronHandler) ──
+
+  it("writes a check-fees row to cron_run_log on every run", async () => {
+    mockFrom.mockImplementation((table: string) => {
+      const builder = createChainableBuilder(table, supabaseCalls);
+      if (table === "brokers") {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
+          cb({ data: [], error: null });
+          return Promise.resolve();
+        });
+      }
+      return builder;
+    });
+
+    const req = makeCronRequest("/api/cron/check-fees");
+    const res = await GET(req as unknown as NextRequest);
+    expect(res.status).toBe(200);
+
+    const runLogCalls = supabaseCalls["cron_run_log"] || [];
+    const insert = runLogCalls.find((c) => c.method === "insert");
+    expect(insert).toBeDefined();
+    expect(insert!.args[0]).toMatchObject({ name: "check-fees", status: "running" });
+  });
+
+  it("throws when the brokers select fails so the run is logged as an error", async () => {
+    mockFrom.mockImplementation((table: string) => {
+      const builder = createChainableBuilder(table, supabaseCalls);
+      if (table === "brokers") {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
+          cb({ data: null, error: { message: "db exploded" } });
+          return Promise.resolve();
+        });
+      }
+      return builder;
+    });
+
+    const req = makeCronRequest("/api/cron/check-fees");
+    await expect(GET(req as unknown as NextRequest)).rejects.toThrow(
+      /brokers select failed: db exploded/,
+    );
+
+    // The run row was still opened, so the stall is visible even though
+    // the handler aborted.
+    const runLogCalls = supabaseCalls["cron_run_log"] || [];
+    expect(runLogCalls.some((c) => c.method === "insert")).toBe(true);
+  });
+
+  // ── Partial-failure reporting ──
+
+  it("reports brokers whose fee page returned non-2xx in the failed count", async () => {
+    const broker = makeBroker({
+      id: 6,
+      slug: "blocked-broker",
+      fee_source_url: "https://example.com/blocked",
+    });
+
+    mockFrom.mockImplementation((table: string) => {
+      const builder = createChainableBuilder(table, supabaseCalls);
+      if (table === "brokers") {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
+          cb({ data: [broker], error: null });
+          return Promise.resolve();
+        });
+      }
+      return builder;
+    });
+
+    const originalFetch = globalThis.fetch;
+    (globalThis.fetch as unknown as FetchFn) = vi.fn((...args: Parameters<FetchFn>) => {
+      const url = typeof args[0] === "string" ? args[0] : "";
+      if (url === "https://example.com/blocked") {
+        return Promise.resolve(new Response("Forbidden", { status: 403 }));
+      }
+      return (originalFetch as FetchFn)(...args);
+    });
+
+    const req = makeCronRequest("/api/cron/check-fees");
+    const res = await GET(req as unknown as NextRequest);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.results[0].status).toBe("http_403");
+    expect(json.failed).toBe(1);
+
+    globalThis.fetch = originalFetch;
+  });
+
+  it("does not count brokers without a fee_source_url as failed", async () => {
+    const broker = makeBroker({ id: 7, slug: "no-url", fee_source_url: null });
+
+    mockFrom.mockImplementation((table: string) => {
+      const builder = createChainableBuilder(table, supabaseCalls);
+      if (table === "brokers") {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
+          cb({ data: [broker], error: null });
+          return Promise.resolve();
+        });
+      }
+      return builder;
+    });
+
+    const req = makeCronRequest("/api/cron/check-fees");
+    const res = await GET(req as unknown as NextRequest);
+    const json = await res.json();
+    expect(json.failed).toBe(0);
+    expect(json.results[0].status).toBe("no_url");
+  });
+
   // ── Handles fetch error gracefully ──
 
   it("handles fetch error for broker fee page gracefully", async () => {
@@ -327,6 +434,8 @@ describe("GET /api/cron/check-fees", () => {
     const json = await res.json();
     expect(json.results[0].status).toBe("fetch_error");
     expect(json.results[0].changed).toBe(false);
+    // Surfaced as a partial failure so wrapCronHandler marks the run.
+    expect(json.failed).toBe(1);
 
     globalThis.fetch = originalFetch;
   });

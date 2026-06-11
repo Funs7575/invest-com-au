@@ -105,7 +105,7 @@ export default function UnsubscribeClient() {
         </button>
       </div>
 
-      <p className="text-xs text-slate-400 mt-6">
+      <p className="text-xs text-slate-500 mt-6">
         If you have an account, you can also manage preferences from{" "}
         <Link href="/account" className="underline hover:text-slate-600">
           your account settings

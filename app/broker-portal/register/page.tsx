@@ -77,7 +77,7 @@ function PricingTiers() {
                 <span className="ml-2 text-xs font-medium bg-slate-900 text-white px-2 py-0.5 rounded-full">Popular</span>
               )}
             </span>
-            <span className="text-sm font-semibold text-slate-900">${tier.price}<span className="text-xs text-slate-400 font-normal">/mo</span></span>
+            <span className="text-sm font-semibold text-slate-900">${tier.price}<span className="text-xs text-slate-500 font-normal">/mo</span></span>
           </div>
           <ul className="space-y-1">
             {tier.perks.map((perk) => (
@@ -91,7 +91,7 @@ function PricingTiers() {
           </ul>
         </div>
       ))}
-      <p className="text-xs text-slate-400 pt-1">
+      <p className="text-xs text-slate-500 pt-1">
         Pricing confirmed after approval.{" "}
         <Link href="/advertise" className="text-slate-600 underline hover:text-slate-800">
           See full details →
@@ -326,7 +326,7 @@ export default function BrokerRegisterPage() {
               <input id="bp-reg-slug" type="text" value={brokerSlug} onChange={(e) => setBrokerSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="e.g. commsec (leave blank to auto-generate)" />
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Your unique URL on the platform — e.g.{" "}
                 <span className="font-mono text-slate-500">invest.com.au/broker/your-slug</span>. Use lowercase letters, numbers, and hyphens only.{" "}
                 <strong className="text-slate-500 font-semibold">Cannot be changed later.</strong>{" "}
@@ -427,7 +427,7 @@ export default function BrokerRegisterPage() {
         )}
       </div>
 
-      <p className="text-xs text-slate-400 text-center">
+      <p className="text-xs text-slate-500 text-center">
         Already have an account?{" "}
         <Link href="/broker-portal/login" className="text-slate-700 underline">Sign in</Link>
       </p>

@@ -170,7 +170,7 @@ export default function PortfolioClient() {
             >
               {loading ? "Checking..." : "Get Started — Free"}
             </button>
-            <p className="text-[0.55rem] text-slate-400 text-center">No credit card required. We&apos;ll email you when fees change.</p>
+            <p className="text-[0.55rem] text-slate-500 text-center">No credit card required. We&apos;ll email you when fees change.</p>
           </div>
         </div>
       )}

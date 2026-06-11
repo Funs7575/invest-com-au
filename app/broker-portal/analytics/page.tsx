@@ -410,7 +410,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
             {dailyTotals.length === 0 ? (
-              <p className="text-sm text-slate-400 py-8 text-center">No data for this period.</p>
+              <p className="text-sm text-slate-500 py-8 text-center">No data for this period.</p>
             ) : (
               <div className="overflow-x-auto">
                 {(() => {

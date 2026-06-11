@@ -479,7 +479,7 @@ export default function TeamsManagerClient() {
               </div>
               <div>
                 <label htmlFor="tm-edit-story" className="block text-xs font-semibold text-slate-700 mb-1">
-                  Our story <span className="font-normal text-slate-400">(long-form, optional)</span>
+                  Our story <span className="font-normal text-slate-500">(long-form, optional)</span>
                 </label>
                 <textarea
                   id="tm-edit-story"
@@ -578,7 +578,7 @@ export default function TeamsManagerClient() {
                     Pro #{m.professional_id} · {m.member_role}
                     <span
                       className={`text-[10px] font-semibold uppercase tracking-wider ml-2 ${
-                        m.status === "active" ? "text-emerald-700" : "text-slate-400"
+                        m.status === "active" ? "text-emerald-700" : "text-slate-500"
                       }`}
                     >
                       {m.status}

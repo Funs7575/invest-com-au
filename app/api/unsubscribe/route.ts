@@ -66,7 +66,19 @@ export async function POST(request: NextRequest) {
     .update({ unsubscribed: true } as Record<string, unknown>)
     .eq("email", sanitizedEmail);
 
-  // 3. Update profiles table if user has an account
+  // 3. Update professionals (advisor marketing comms — win-back, digests).
+  // digest_opt_out is the advisor-side consent column checked by
+  // /api/cron/advisor-winback before any send.
+  const { data: pros } = await supabase
+    .from("professionals")
+    .update({ digest_opt_out: true })
+    .eq("email", sanitizedEmail)
+    .select("id");
+  if (pros && pros.length > 0) {
+    updated = true;
+  }
+
+  // 4. Update profiles table if user has an account
   const { data: profiles } = await supabase
     .from("profiles")
     .select("id")
@@ -86,7 +98,7 @@ export async function POST(request: NextRequest) {
     updated = true;
   }
 
-  // 4. Sync unsubscribe to Resend Contacts (fire-and-forget)
+  // 5. Sync unsubscribe to Resend Contacts (fire-and-forget)
   if (process.env.RESEND_API_KEY) {
     try {
       await fetch("https://api.resend.com/contacts", {

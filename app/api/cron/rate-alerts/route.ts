@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
+import { isFeatureDisabled } from "@/lib/admin/classifier-config";
 import { sendEmail } from "@/lib/resend";
 import { notifyUser } from "@/lib/notifications";
 import { dispatchPushToUser } from "@/lib/push-dispatch";
@@ -11,9 +13,15 @@ import {
   evaluateThreshold,
   metricKindLabel,
   metricKindPath,
+  minMillisBetweenSends,
   type AlertSubscription,
   type MetricKind,
 } from "@/lib/alert-thresholds";
+import {
+  renderThresholdAlertEmail,
+  renderRateChangesEmail,
+  type RateChangeItem,
+} from "@/lib/rate-alert-emails";
 import {
   isTelegramConfigured,
   formatRateAlertMessage,
@@ -25,19 +33,37 @@ export const maxDuration = 120;
 
 const log = logger("cron:rate-alerts");
 
-// FIN_NOTEBOOK Revenue #4: evaluate all rate_alert_subscriptions against
-// current market data and dispatch email + in-app notifications when
-// a threshold is crossed.
+// FIN_NOTEBOOK Revenue #4: the rate-alert mailer. Two subscription modes,
+// both read from rate_alert_subscriptions (verified = true):
+//
+//   threshold (default)            — evaluate current market data against the
+//                                    user threshold; email when crossed.
+//   any_change (product_filters.mode='any_change')
+//                                  — email a digest of rate_change_log entries
+//                                    for the subscribed product kind since the
+//                                    last notification.
 //
 // Metric sources:
 //   savings_rate / term_deposit → savings_rate_snapshots (best per product_kind)
 //   loan_rate                   → investment_loan_rates (per lender_slug or best)
 //   broker_fee                  → brokers.asx_fee_value (per broker_slug)
+//   any_change digests          → rate_change_log (written by rate-change-digest)
 //
-// Idempotent:
-//   - Records last_notified_at + last_fired_value_bps on fire.
-//   - lib/alert-thresholds.ts enforces cooldown + hysteresis before fire.
+// Idempotency (layered):
+//   - rate_alert_sends: unique (subscription_id, period_key) claimed BEFORE
+//     send — a concurrent double-run can never double-send within a UTC day.
+//     Degrades gracefully (cooldown-only) until the table's migration is
+//     pushed to prod.
+//   - last_notified_at + frequency cooldown via lib/alert-thresholds.
+//   - hysteresis re-arm band for threshold subs.
 //   - notifyUser() deduplicates in-app notifications via email_delivery_key.
+//
+// Paused subscriptions (product_filters.paused = true, set from the
+// tokenised /rate-alerts/manage page) are skipped entirely.
+//
+// Compliance: emails are rendered by lib/rate-alert-emails.ts — factual
+// tone, GENERAL_ADVICE_WARNING, manage-preferences + unsubscribe links on
+// every send (Spam Act 2003).
 
 interface SubscriptionRow {
   id: string;
@@ -50,6 +76,8 @@ interface SubscriptionRow {
   frequency: string;
   broker_slug: string | null;
   lender_slug: string | null;
+  product_filters: Record<string, unknown> | null;
+  unsubscribe_token: string;
   last_notified_at: string | null;
   last_fired_value_bps: number | null;
   notification_count: number;
@@ -70,6 +98,15 @@ interface LoanRateRow {
 interface BrokerFeeRow {
   slug: string;
   asx_fee_value: number | null;
+}
+
+interface RateChangeRow {
+  broker_name: string;
+  product_kind: string;
+  old_rate_bps: number | null;
+  new_rate_bps: number;
+  direction: "up" | "down" | "new";
+  snapshot_captured_at: string;
 }
 
 // ── Resolve current market value for a subscription ───────────────────────────
@@ -103,14 +140,67 @@ function resolveCurrentValue(
   return null;
 }
 
-export async function GET(req: NextRequest) {
+/** product_kind in rate_change_log terms for an any-change subscription. */
+function changeProductKind(sub: SubscriptionRow): "savings_account" | "term_deposit" {
+  const kind = sub.metric_kind ?? sub.product_kind;
+  return kind === "term_deposit" ? "term_deposit" : "savings_account";
+}
+
+/** Normalised metric kind for rendering (legacy product_kind fallbacks). */
+function normalisedMetricKind(sub: SubscriptionRow): MetricKind {
+  const kind = sub.metric_kind ?? sub.product_kind;
+  if (kind === "savings_account") return "savings_rate";
+  if (kind === "term_deposit" || kind === "loan_rate" || kind === "broker_fee") {
+    return kind;
+  }
+  return "savings_rate";
+}
+
+// ── Idempotent send-slot claim ────────────────────────────────────────────────
+
+type SendSlot = "claimed" | "duplicate" | "unavailable";
+
+/**
+ * Claim the (subscription, UTC-day) send slot BEFORE sending. A unique
+ * violation means another run already sent today → skip. Any other failure
+ * (most importantly 42P01 while the rate_alert_sends migration hasn't been
+ * pushed) falls back to the cooldown-only dedupe that predates the table.
+ */
+async function claimSendSlot(
+  supabase: ReturnType<typeof createAdminClient>,
+  subscriptionId: string,
+  periodKey: string,
+  kind: "threshold" | "rate_change",
+): Promise<SendSlot> {
+  const { error } = await supabase
+    .from("rate_alert_sends")
+    .insert({ subscription_id: subscriptionId, period_key: periodKey, kind });
+  if (!error) return "claimed";
+  if (error.code === "23505") return "duplicate";
+  log.warn("rate_alert_sends unavailable — falling back to cooldown dedupe", {
+    code: error.code,
+    err: error.message,
+  });
+  return "unavailable";
+}
+
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+
+  // Ops kill switch (automation_kill_switches row 'rate_alerts' or 'global').
+  // No row present = enabled, matching the pre-switch behaviour.
+  if (await isFeatureDisabled("rate_alerts")) {
+    log.info("rate-alerts mailer disabled via kill switch — skipping");
+    return NextResponse.json({ skipped: true, reason: "kill_switch" });
+  }
 
   const supabase = createAdminClient();
   const startedAt = new Date().toISOString();
   const siteUrl = getSiteUrl();
   const nowMs = Date.now();
+  const dayKey = Math.floor(nowMs / 86_400_000);
+  const periodKey = `d${dayKey}`;
 
   // ── 1. Load market data ────────────────────────────────────────────────────
 
@@ -132,6 +222,13 @@ export async function GET(req: NextRequest) {
   if (savingsRes.error) {
     log.error("savings snapshots query failed", { err: savingsRes.error.message });
     return NextResponse.json({ error: savingsRes.error.message }, { status: 500 });
+  }
+  if (loansRes.error) {
+    // investment_loan_rates is absent until its migration is pushed —
+    // loan_rate subscriptions are skipped (no data), everything else runs.
+    log.warn("loan rates query failed — loan_rate alerts skipped", {
+      err: loansRes.error.message,
+    });
   }
 
   // Build best (highest rate_bps) per product_kind for savings/td.
@@ -163,7 +260,7 @@ export async function GET(req: NextRequest) {
   const { data: subs, error: subsErr } = await supabase
     .from("rate_alert_subscriptions")
     .select(
-      "id, user_id, email, metric_kind, product_kind, threshold_bps, direction, frequency, broker_slug, lender_slug, last_notified_at, last_fired_value_bps, notification_count",
+      "id, user_id, email, metric_kind, product_kind, threshold_bps, direction, frequency, broker_slug, lender_slug, product_filters, unsubscribe_token, last_notified_at, last_fired_value_bps, notification_count",
     )
     .eq("verified", true);
 
@@ -177,6 +274,22 @@ export async function GET(req: NextRequest) {
   if (verified === 0) {
     log.info("rate-alerts cron heartbeat — no verified subscriptions", { verified });
     return NextResponse.json({ startedAt, verified, notified: 0, status: "no_subscriptions" });
+  }
+
+  // ── 2a. Partition: paused / any-change / threshold ─────────────────────────
+
+  const thresholdSubs: SubscriptionRow[] = [];
+  const changeSubs: SubscriptionRow[] = [];
+  let skippedPaused = 0;
+
+  for (const rawSub of (subs ?? []) as SubscriptionRow[]) {
+    const filters = (rawSub.product_filters ?? {}) as Record<string, unknown>;
+    if (filters.paused === true) {
+      skippedPaused++;
+      continue;
+    }
+    if (filters.mode === "any_change") changeSubs.push(rawSub);
+    else thresholdSubs.push(rawSub);
   }
 
   // ── 2b. Load Telegram subscriptions (batch — one query for all emails) ─────
@@ -197,16 +310,53 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // ── 3. Evaluate thresholds and dispatch ───────────────────────────────────
+  // ── 2c. Load recent rate changes once (7-day window) for any-change subs ──
+
+  let recentChanges: RateChangeRow[] = [];
+  if (changeSubs.length > 0) {
+    const lookbackIso = new Date(nowMs - 7 * 86_400_000).toISOString();
+    const { data: changeRows, error: changesErr } = await supabase
+      .from("rate_change_log")
+      .select("broker_name, product_kind, old_rate_bps, new_rate_bps, direction, snapshot_captured_at")
+      .gte("snapshot_captured_at", lookbackIso)
+      .order("snapshot_captured_at", { ascending: false })
+      .limit(500);
+    if (changesErr) {
+      log.warn("rate_change_log query failed — any-change digests skipped", {
+        err: changesErr.message,
+      });
+    } else {
+      recentChanges = (changeRows ?? []) as RateChangeRow[];
+    }
+  }
+
+  // ── 3. Shared post-send bookkeeping ────────────────────────────────────────
 
   let notified = 0;
+  let changeNotified = 0;
   let skippedNoData = 0;
   let skippedNotCrossed = 0;
   let skippedCooldown = 0;
   let skippedHysteresis = 0;
+  let skippedDuplicate = 0;
+  let skippedNoChanges = 0;
   const failures: { id: string; err: string }[] = [];
 
-  for (const rawSub of (subs ?? []) as SubscriptionRow[]) {
+  async function stampSubscription(rawSub: SubscriptionRow, firedValueBps: number | null) {
+    await supabase
+      .from("rate_alert_subscriptions")
+      .update({
+        last_notified_at: new Date().toISOString(),
+        ...(firedValueBps !== null ? { last_fired_value_bps: firedValueBps } : {}),
+        notification_count: (rawSub.notification_count ?? 0) + 1,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", rawSub.id);
+  }
+
+  // ── 4. Threshold subscriptions ─────────────────────────────────────────────
+
+  for (const rawSub of thresholdSubs) {
     const currentValue = resolveCurrentValue(
       rawSub,
       bestSavingsByKind,
@@ -219,9 +369,10 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
+    const kind = normalisedMetricKind(rawSub);
     const alertSub: AlertSubscription = {
       id: rawSub.id,
-      metric_kind: (rawSub.metric_kind ?? rawSub.product_kind) as MetricKind,
+      metric_kind: kind,
       threshold_bps: rawSub.threshold_bps,
       direction: (rawSub.direction ?? "above") as "above" | "below",
       frequency: (rawSub.frequency ?? "instant") as AlertSubscription["frequency"],
@@ -238,48 +389,36 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    const kind = alertSub.metric_kind;
+    // Claim the per-day send slot before doing anything visible.
+    const slot = await claimSendSlot(supabase, rawSub.id, periodKey, "threshold");
+    if (slot === "duplicate") {
+      skippedDuplicate++;
+      continue;
+    }
+
     const label = metricKindLabel(kind);
     const path = metricKindPath(kind);
-    const valuePct = (currentValue / 100).toFixed(2);
     const thresholdPct = (rawSub.threshold_bps / 100).toFixed(2);
     const directionText = alertSub.direction === "above" ? "crossed above" : "dropped below";
     const valueDisplay =
       kind === "broker_fee"
-        ? `$${valuePct} (ASX fee)`
-        : `${valuePct}% p.a.`;
+        ? `$${(currentValue / 100).toFixed(2)} (ASX fee)`
+        : `${(currentValue / 100).toFixed(2)}% p.a.`;
 
-    const emailHtml = `
-      <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;color:#334155">
-        <div style="background:#0f172a;padding:20px 24px;border-radius:12px 12px 0 0">
-          <h1 style="color:white;margin:0;font-size:18px">Rate Alert</h1>
-        </div>
-        <div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">
-          <p style="font-size:15px;margin-top:0">
-            The <strong>${label}</strong> just ${directionText} your
-            <strong>${kind === "broker_fee" ? `$${thresholdPct}` : `${thresholdPct}%`}</strong> threshold.
-          </p>
-          <p style="font-size:14px;color:#64748b">
-            Current value: <strong>${valueDisplay}</strong>
-          </p>
-          <div style="text-align:center;margin:20px 0">
-            <a href="${siteUrl}${path}"
-               style="display:inline-block;padding:12px 32px;background:#0f172a;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600">
-              Compare now &rarr;
-            </a>
-          </div>
-          <p style="font-size:12px;color:#94a3b8">
-            This is a factual market data alert — not personal financial advice.
-            Rates and fees may vary. Always read the product disclosure statement.
-          </p>
-        </div>
-      </div>
-    `;
+    const email = renderThresholdAlertEmail({
+      siteUrl,
+      metricKind: kind,
+      direction: alertSub.direction,
+      thresholdBps: rawSub.threshold_bps,
+      currentValueBps: currentValue,
+      unsubscribeToken: rawSub.unsubscribe_token,
+    });
 
     const emailResult = await sendEmail({
       to: rawSub.email,
-      subject: `Alert: ${label} ${directionText} ${kind === "broker_fee" ? `$${thresholdPct}` : `${thresholdPct}%`}`,
-      html: emailHtml,
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
     });
 
     if (!emailResult.ok) {
@@ -292,7 +431,7 @@ export async function GET(req: NextRequest) {
       const tgMessage = formatRateAlertMessage({
         metricLabel: label,
         direction: alertSub.direction,
-        oldRatePct: kind === "broker_fee" ? `$${(rawSub.threshold_bps / 100).toFixed(2)}` : `${(rawSub.threshold_bps / 100).toFixed(2)}%`,
+        oldRatePct: kind === "broker_fee" ? `$${thresholdPct}` : `${thresholdPct}%`,
         newRatePct: valueDisplay,
         productName: rawSub.broker_slug ?? rawSub.lender_slug ?? label,
         deepLinkUrl: `${siteUrl}${path}`,
@@ -304,20 +443,11 @@ export async function GET(req: NextRequest) {
     }
 
     // Always stamp the row (even if email failed) so we don't immediately retry.
-    await supabase
-      .from("rate_alert_subscriptions")
-      .update({
-        last_notified_at: new Date().toISOString(),
-        last_fired_value_bps: currentValue,
-        notification_count: (rawSub.notification_count ?? 0) + 1,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", rawSub.id);
+    await stampSubscription(rawSub, currentValue);
 
     // Write in-app notification + browser push for user-linked subscriptions.
     if (rawSub.user_id) {
       // Dedup key: one in-app notification per subscription per calendar day.
-      const dayKey = Math.floor(nowMs / 86_400_000);
       const notifTitle = `${label.charAt(0).toUpperCase() + label.slice(1)} alert`;
       const notifBody = `${label.charAt(0).toUpperCase() + label.slice(1)} (${valueDisplay}) ${directionText} your ${kind === "broker_fee" ? `$${thresholdPct}` : `${thresholdPct}%`} threshold.`;
 
@@ -344,13 +474,100 @@ export async function GET(req: NextRequest) {
     notified++;
   }
 
+  // ── 5. Any-change subscriptions ────────────────────────────────────────────
+
+  for (const rawSub of changeSubs) {
+    const frequency = (rawSub.frequency ?? "instant") as AlertSubscription["frequency"];
+    const cooldownMs = minMillisBetweenSends(frequency);
+
+    // Frequency cooldown — same windows as threshold subs (instant=24h cap).
+    if (rawSub.last_notified_at !== null) {
+      const lastMs = new Date(rawSub.last_notified_at).getTime();
+      if (nowMs - lastMs < cooldownMs) {
+        skippedCooldown++;
+        continue;
+      }
+    }
+
+    // Changes since the last notification (or one cooldown window for new
+    // subs), capped at the 7-day query window.
+    const sinceMs = rawSub.last_notified_at
+      ? Math.max(new Date(rawSub.last_notified_at).getTime(), nowMs - 7 * 86_400_000)
+      : nowMs - cooldownMs;
+
+    const wantedKind = changeProductKind(rawSub);
+    const relevant = recentChanges.filter(
+      (change) =>
+        change.product_kind === wantedKind &&
+        new Date(change.snapshot_captured_at).getTime() > sinceMs,
+    );
+
+    if (relevant.length === 0) {
+      skippedNoChanges++;
+      continue;
+    }
+
+    const slot = await claimSendSlot(supabase, rawSub.id, periodKey, "rate_change");
+    if (slot === "duplicate") {
+      skippedDuplicate++;
+      continue;
+    }
+
+    const kind = normalisedMetricKind(rawSub);
+    const items: RateChangeItem[] = relevant.slice(0, 20).map((change) => ({
+      brokerName: change.broker_name,
+      productKind: change.product_kind,
+      oldRateBps: change.old_rate_bps,
+      newRateBps: change.new_rate_bps,
+      direction: change.direction,
+    }));
+
+    const email = renderRateChangesEmail({
+      siteUrl,
+      metricKind: kind,
+      changes: items,
+      unsubscribeToken: rawSub.unsubscribe_token,
+    });
+
+    const emailResult = await sendEmail({
+      to: rawSub.email,
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
+    });
+
+    if (!emailResult.ok) {
+      failures.push({ id: rawSub.id, err: emailResult.error ?? "unknown" });
+    }
+
+    await stampSubscription(rawSub, null);
+
+    if (rawSub.user_id) {
+      const label = metricKindLabel(kind);
+      await notifyUser({
+        userId: rawSub.user_id,
+        type: "fee_change",
+        title: `${relevant.length} ${label} change${relevant.length === 1 ? "" : "s"}`,
+        body: `${relevant.length} ${label} change${relevant.length === 1 ? "" : "s"} since your last update.`,
+        linkUrl: metricKindPath(kind),
+        emailDeliveryKey: `rate_alert:${rawSub.id}:${dayKey}`,
+      });
+    }
+
+    changeNotified++;
+  }
+
   log.info("rate-alerts cron complete", {
     verified,
     notified,
+    changeNotified,
+    skippedPaused,
     skippedNoData,
     skippedNotCrossed,
     skippedCooldown,
     skippedHysteresis,
+    skippedDuplicate,
+    skippedNoChanges,
     failures: failures.length,
   });
 
@@ -358,10 +575,18 @@ export async function GET(req: NextRequest) {
     startedAt,
     verifiedSubscriptions: verified,
     notified,
+    changeNotified,
+    skippedPaused,
     skippedNoData,
     skippedNotCrossed,
     skippedCooldown,
     skippedHysteresis,
+    skippedDuplicate,
+    skippedNoChanges,
     failures: failures.length,
+    // `failed` keys the withCronRunLog partial-status convention.
+    failed: failures.length,
   });
 }
+
+export const GET = wrapCronHandler("rate_alerts", handler);

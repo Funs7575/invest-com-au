@@ -10,6 +10,7 @@ import type { BillingSummary } from "./billing/types";
 import PinnedBillingWidget from "./billing/PinnedBillingWidget";
 import AnnualBillingPrompt from "./billing/AnnualBillingPrompt";
 import AvailabilityWidget from "./AvailabilityWidget";
+import LeadCapBanner from "./LeadCapBanner";
 import AdvisorTrustScoreCard from "@/components/AdvisorTrustScoreCard";
 import OnboardingWizard from "./OnboardingWizard";
 import { deriveProfileCompleteness, type WizardStepId } from "@/lib/advisor-portal/profile-completeness";
@@ -227,6 +228,10 @@ export default function DashboardTab({
           </button>
         </div>
       )}
+
+      {/* Monthly lead-cap upsell — factual usage vs tier allowance; CTA
+          reuses the existing /advisor-portal/upgrade Stripe flow. */}
+      <LeadCapBanner />
 
       {/* Annual-billing nudge for paid-tier advisors — PR-X4 */}
       <AnnualBillingPrompt advisorTier={advisor?.advisor_tier ?? null} />

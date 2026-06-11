@@ -188,7 +188,7 @@ export default function WalletPage() {
             {topupLoading ? "Processing..." : "Top Up"}
           </button>
         </div>
-        <p className="text-xs text-slate-400 mt-2">
+        <p className="text-xs text-slate-500 mt-2">
           Payments are processed securely via Stripe. Funds are available immediately.
         </p>
       </div>

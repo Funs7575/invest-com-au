@@ -340,7 +340,7 @@ export default function ReviewsTab({ advisor }: Props) {
                   </>
                 )}
               </button>
-              <p className="text-[0.62rem] text-slate-400">
+              <p className="text-[0.62rem] text-slate-500">
                 They will receive a direct link to your review page.
               </p>
             </div>

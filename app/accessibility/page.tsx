@@ -31,6 +31,7 @@ export default function AccessibilityPage() {
       <div className="container-custom max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-2">Accessibility Statement</h1>
         <p className="text-sm text-slate-500 mb-8">
+          {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
           Last updated: 18 March 2026
         </p>
 
