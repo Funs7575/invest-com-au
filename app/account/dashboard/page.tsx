@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ProfileStrengthCard, { type ProfileField } from "@/components/account/ProfileStrengthCard";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
@@ -78,6 +79,17 @@ type UserProfile = {
   state: string | null;
   onboarding_completed: boolean | null;
 };
+
+function missingProfileFields(profile: UserProfile | null): ProfileField[] {
+  const all: [ProfileField, boolean][] = [
+    ["display_name", !!profile?.display_name],
+    ["investing_experience", !!profile?.investing_experience],
+    ["investment_goals", !!profile?.investment_goals],
+    ["portfolio_size", !!profile?.portfolio_size],
+    ["interested_in", !!(profile?.interested_in && profile.interested_in.length > 0)],
+  ];
+  return all.filter(([, present]) => !present).map(([key]) => key);
+}
 
 function profileCompleteness(profile: UserProfile | null): number {
   if (!profile) return 0;
@@ -555,33 +567,9 @@ export default async function PersonalDashboardPage() {
         </section>
       )}
 
-      {/* Profile completeness nudge */}
-      {completeness < 100 && (
-        <section aria-labelledby="completeness-heading" className="mb-8">
-          <h2 id="completeness-heading" className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
-            Profile completeness
-          </h2>
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-blue-900">
-                {completeness}% complete
-              </span>
-              <Link href="/account/investor-profile" className="text-xs font-semibold text-blue-700 hover:underline">
-                Complete profile →
-              </Link>
-            </div>
-            <div className="h-2 bg-blue-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-600 rounded-full transition-all duration-700"
-                style={{ width: `${completeness}%` }}
-              />
-            </div>
-            <p className="text-xs text-blue-700 mt-2">
-              A complete profile unlocks personalised advisor matches, goal projections, and tailored content.
-            </p>
-          </div>
-        </section>
-      )}
+      {/* Profile strength ring + visible unlocks (Northstar D5). Fires the
+          profile_complete milestone client-side when it reaches 100. */}
+      <ProfileStrengthCard completeness={completeness} missing={missingProfileFields(profile)} />
 
       {/* Personalised quick actions */}
       <section aria-labelledby="actions-heading" className="mb-8">

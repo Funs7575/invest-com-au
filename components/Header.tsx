@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import YourPlanChip from "@/components/YourPlanChip";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
@@ -505,6 +506,7 @@ export default function Header() {
             <WorkspaceSwitcher />
             <ThemeToggle />
             <NotificationBell />
+            <YourPlanChip />
             {/* Inside the funnel the header stops shouting "Take the quiz" —
                 the page owns its own progress UI (Northstar F1.4). */}
             {!pathname?.startsWith("/get-matched") && (
@@ -575,6 +577,7 @@ export default function Header() {
               >
                 {SHOW_MATCH_LANGUAGE ? "Get Matched" : "Take the quiz"}
               </Link>
+              <YourPlanChip variant="menu-row" />
               <div className="flex gap-2">
                 <Link
                   href="/advisors"
