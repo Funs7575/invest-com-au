@@ -778,11 +778,11 @@ export default function BrokerReviewClient({
               <h3 className="font-semibold text-slate-800 mb-1">Account Closure &amp; Switching</h3>
               <ul className="space-y-1 text-xs text-slate-600">
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>You can close your {b.name} account at any time by contacting their support team.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>
                     {b.chess_sponsored
                       ? `CHESS-sponsored shares can be transferred to another broker via a HIN transfer (typically 3–5 business days). ${b.name} may charge a transfer-out fee.`
@@ -796,7 +796,7 @@ export default function BrokerReviewClient({
                   </li>
                 )}
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>
                     No cooling-off period applies to brokerage accounts in Australia. Once you open an account and place a trade, standard terms apply.{" "}
                     <Link href="/switch" className="text-blue-700 underline">Use our switch planner →</Link>
@@ -810,7 +810,7 @@ export default function BrokerReviewClient({
               <h3 className="font-semibold text-slate-800 mb-1">Regulatory Status</h3>
               <ul className="space-y-1 text-xs text-slate-600">
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>
                     {b.regulated_by
                       ? `${b.name} is regulated by ${b.regulated_by}.`
@@ -820,7 +820,7 @@ export default function BrokerReviewClient({
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>Client funds are subject to the protections outlined in their Financial Services Guide (FSG) and Product Disclosure Statement (PDS).</span>
                 </li>
               </ul>
@@ -861,11 +861,11 @@ export default function BrokerReviewClient({
               <h3 className="font-semibold text-slate-800 mb-1">Financial Services Guide &amp; Complaints</h3>
               <ul className="space-y-1 text-xs text-slate-600">
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>{FSG_NOTE}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>{AFCA_REFERENCE}</span>
                 </li>
               </ul>

@@ -22,18 +22,19 @@ export const metadata: Metadata = {
 };
 
 const PRESERVATION_AGES = [
-  { dob: "Before 1 July 1960", age: "55" },
-  { dob: "1 July 1960 – 30 June 1961", age: "56" },
-  { dob: "1 July 1961 – 30 June 1962", age: "57" },
-  { dob: "1 July 1962 – 30 June 1963", age: "58" },
-  { dob: "1 July 1963 – 30 June 1964", age: "59" },
-  { dob: "1 July 1964 or later", age: "60" },
+  // dated-ok — preservation-age cohorts, legislated and fixed forever
+  { dob: "Before 1 July 1960", age: "55" }, // dated-ok
+  { dob: "1 July 1960 – 30 June 1961", age: "56" }, // dated-ok
+  { dob: "1 July 1961 – 30 June 1962", age: "57" }, // dated-ok
+  { dob: "1 July 1962 – 30 June 1963", age: "58" }, // dated-ok
+  { dob: "1 July 1963 – 30 June 1964", age: "59" }, // dated-ok
+  { dob: "1 July 1964 or later", age: "60" }, // dated-ok
 ];
 
 const FAQS = [
   {
     q: "Who is eligible for a transition to retirement pension?",
-    a: "You must have reached your preservation age — which is 60 for anyone born on or after 1 July 1964, covering most Australians still in the workforce in 2026. You must still be in the workforce; once you permanently retire you move to a full retirement-phase pension, not a TTR. You can only access super as a non-commutable income stream under TTR, meaning no lump-sum withdrawals are permitted until you meet a full condition of release.",
+    a: "You must have reached your preservation age — which is 60 for anyone born on or after 1 July 1964, covering most Australians still in the workforce in 2026. You must still be in the workforce; once you permanently retire you move to a full retirement-phase pension, not a TTR. You can only access super as a non-commutable income stream under TTR, meaning no lump-sum withdrawals are permitted until you meet a full condition of release.",  // dated-ok — preservation-age cohort / legislative date, fixed forever
   },
   {
     q: "Is TTR income tax-free at age 60?",
@@ -99,6 +100,7 @@ export default function TransitionToRetirementPage() {
           <div className="container-custom">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
+                // dated-ok — legislative date, fixed forever
                 { v: "60", l: "Preservation age", sub: "For those born on or after 1 July 1964" },
                 { v: "4–10%", l: "Annual drawdown range", sub: "Minimum 4%, maximum 10% of balance" },
                 { v: "15%", l: "Earnings tax in TTR", sub: "Same as accumulation — not 0% like retirement phase" },
@@ -135,6 +137,7 @@ export default function TransitionToRetirementPage() {
                 people remain fully employed.
               </p>
               <p>
+                {/* // dated-ok — legislative date, fixed forever */}
                 Critically, since 1 July 2017, investment earnings inside a TTR account are taxed at{" "}
                 <strong>15%</strong> &mdash; the same rate as the accumulation phase. They are not tax-free
                 like earnings in a full retirement-phase pension. The tax benefit of TTR now comes primarily
@@ -309,7 +312,7 @@ export default function TransitionToRetirementPage() {
                 {
                   title: "Preservation age: 60 for most Australians",
                   badge: "Eligibility",
-                  body: "You must have reached preservation age to start a TTR pension. For everyone born on or after 1 July 1964, preservation age is 60. You do not need to have retired — you just need to have reached preservation age and still be in the workforce. See the preservation age table below for those born earlier.",
+                  body: "You must have reached preservation age to start a TTR pension. For everyone born on or after 1 July 1964, preservation age is 60. You do not need to have retired — you just need to have reached preservation age and still be in the workforce. See the preservation age table below for those born earlier.",  // dated-ok — preservation-age cohort / legislative date, fixed forever
                 },
                 {
                   title: "Minimum 4% / maximum 10% drawdown per year",
@@ -319,7 +322,7 @@ export default function TransitionToRetirementPage() {
                 {
                   title: "15% earnings tax — not 0% like retirement phase",
                   badge: "Tax treatment",
-                  body: "Since 1 July 2017, investment earnings inside a TTR pension are taxed at 15% — the same rate as the accumulation phase. This changed when the government removed the earnings tax exemption from TTR accounts as part of the 2016 Budget. Earnings only become tax-free (0%) once you fully retire and convert your TTR to a retirement-phase pension. The tax minimisation strategy still works through the concessional contributions side, but the earnings advantage that existed pre-2017 is gone.",
+                  body: "Since 1 July 2017, investment earnings inside a TTR pension are taxed at 15% — the same rate as the accumulation phase. This changed when the government removed the earnings tax exemption from TTR accounts as part of the 2016 Budget. Earnings only become tax-free (0%) once you fully retire and convert your TTR to a retirement-phase pension. The tax minimisation strategy still works through the concessional contributions side, but the earnings advantage that existed pre-2017 is gone.",  // dated-ok — preservation-age cohort / legislative date, fixed forever
                 },
                 {
                   title: "Non-commutable: no lump-sum withdrawals",
@@ -360,6 +363,7 @@ export default function TransitionToRetirementPage() {
             <p className="text-sm text-slate-600 mb-6">
               Super is &ldquo;preserved&rdquo; &mdash; it cannot be accessed before your preservation age except
               in limited circumstances. Preservation age depends on your date of birth. The age was phased
+              {/* // dated-ok — legislative date, fixed forever */}
               up to 60 for those born from 1 July 1964 onwards.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
@@ -406,6 +410,7 @@ export default function TransitionToRetirementPage() {
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-5 mb-6">
               <p className="text-sm font-bold text-amber-800 mb-1">The 2017 rule change reduced TTR&apos;s tax advantage</p>
               <p className="text-sm text-amber-700 leading-relaxed">
+                {/* // dated-ok — legislative date, fixed forever */}
                 Before 1 July 2017, investment earnings inside a TTR pension were also tax-free, making
                 TTR doubly attractive: 0% on earnings <em>and</em> the salary sacrifice tax saving.
                 The 2016 Budget removed the earnings tax exemption, so TTR now only saves tax on the
@@ -569,7 +574,7 @@ export default function TransitionToRetirementPage() {
                   <ul className="space-y-2">
                     {col.items.map((item) => (
                       <li key={item} className="text-sm flex gap-2 text-slate-700">
-                        <span className="flex-shrink-0 mt-0.5 font-bold text-slate-400">&bull;</span>
+                        <span className="flex-shrink-0 mt-0.5 font-bold text-slate-500">&bull;</span>
                         <span>{item}</span>
                       </li>
                     ))}
@@ -598,6 +603,7 @@ export default function TransitionToRetirementPage() {
                 <p className="text-sm text-slate-600 leading-relaxed">
                   TTR pension income payments are generally assessed under the Centrelink income test,
                   which could affect your Age Pension entitlement once you reach Age Pension age (67).
+                  {/* // dated-ok — legislative grandfathering date, never changes */}
                   Account-based pensions started on or after 1 January 2015 are assessed under deeming
                   rules on the account balance, regardless of actual drawdown. The interaction between
                   TTR income and the Age Pension income and assets tests is complex and depends on your

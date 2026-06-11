@@ -737,7 +737,7 @@ export default function WorkFromHomePage() {
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-slate-400 font-bold mt-0.5">&#8594;</span>
+                    <span className="text-slate-500 font-bold mt-0.5">&#8594;</span>
                     <span>
                       Must have a dedicated area used <em>exclusively and regularly</em> for
                       business — not the kitchen table

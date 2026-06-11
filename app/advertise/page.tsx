@@ -142,7 +142,7 @@ export default function AdvertisePage() {
               Contact Sales
             </a>
           </div>
-          <p className="mt-4 text-sm text-slate-400">
+          <p className="mt-4 text-sm text-slate-500">
             Already a partner?{" "}
             <Link href="/broker-portal/login" className="text-white underline hover:text-amber-300 transition-colors">
               Sign in to your dashboard &rarr;
@@ -317,7 +317,7 @@ export default function AdvertisePage() {
               partners@invest.com.au
             </a>
           </div>
-          <p className="mt-4 text-sm text-slate-400">
+          <p className="mt-4 text-sm text-slate-500">
             Existing partner?{" "}
             <Link href="/broker-portal/login" className="text-white underline hover:text-amber-300 transition-colors">
               Sign in &rarr;

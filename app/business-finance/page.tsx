@@ -249,7 +249,7 @@ export default function BusinessFinancePage() {
                 <details key={item.question} className="group p-4 open:bg-slate-50">
                   <summary className="flex cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-slate-900 marker:hidden">
                     <span>{item.question}</span>
-                    <span className="text-base text-slate-400 transition-transform group-open:rotate-45">+</span>
+                    <span className="text-base text-slate-500 transition-transform group-open:rotate-45">+</span>
                   </summary>
                   <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.answer}</p>
                 </details>

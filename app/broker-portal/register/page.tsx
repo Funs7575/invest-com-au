@@ -228,7 +228,7 @@ export default function BrokerRegisterPage() {
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
               i < step ? "bg-emerald-100 text-emerald-700" :
               i === step ? "bg-slate-900 text-white" :
-              "bg-slate-100 text-slate-400"
+              "bg-slate-100 text-slate-500"
             }`}>
               {i < step ? "✓" : i + 1}
             </div>

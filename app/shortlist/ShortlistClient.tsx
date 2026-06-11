@@ -298,7 +298,7 @@ export default function ShortlistClient() {
                       <span className="text-slate-200 hidden sm:inline">|</span>
                     </>
                   )}
-                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-400 hidden sm:inline">ASX {broker.asx_fee || "N/A"}</span>
+                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500 hidden sm:inline">ASX {broker.asx_fee || "N/A"}</span>
                 </div>
               </div>
               <a
@@ -478,13 +478,13 @@ export default function ShortlistClient() {
                       <span className="text-slate-200 hidden sm:inline">|</span>
                     </>
                   )}
-                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-400 hidden sm:inline">
+                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500 hidden sm:inline">
                     ASX {broker.asx_fee || "N/A"}
                   </span>
                   {broker.us_fee && (
                     <>
                       <span className="text-slate-200 hidden md:inline">|</span>
-                      <span className="text-[0.69rem] text-slate-400 hidden md:inline">
+                      <span className="text-[0.69rem] text-slate-500 hidden md:inline">
                         US {broker.us_fee}
                       </span>
                     </>
@@ -606,7 +606,7 @@ export default function ShortlistClient() {
 
       {count === 1 && (
         <div className="mt-4 text-center">
-          <p className="text-xs text-slate-400 mb-2">Save one more broker to compare side-by-side</p>
+          <p className="text-xs text-slate-500 mb-2">Save one more broker to compare side-by-side</p>
           <Link
             href="/compare"
             className="inline-block px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors min-h-11"

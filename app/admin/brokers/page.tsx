@@ -325,7 +325,7 @@ export default function AdminBrokersPage() {
                            "Deal"}
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-400">&mdash;</span>
+                        <span className="text-xs text-slate-500">&mdash;</span>
                       )}
                     </td>
                     <td className="px-4 py-3">

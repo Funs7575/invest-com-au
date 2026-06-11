@@ -366,7 +366,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
             {selectedSlugs.length < MAX_BROKERS && (
               <button
                 onClick={addSlot}
-                className="w-full md:w-auto px-4 py-2.5 md:px-5 md:py-4 border-2 border-dashed border-slate-200 rounded-lg md:rounded-xl text-slate-400 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50/30 text-xs md:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 md:gap-2"
+                className="w-full md:w-auto px-4 py-2.5 md:px-5 md:py-4 border-2 border-dashed border-slate-200 rounded-lg md:rounded-xl text-slate-500 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50/30 text-xs md:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 md:gap-2"
               >
                 <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

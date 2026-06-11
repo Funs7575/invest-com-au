@@ -526,7 +526,7 @@ export default function TeamMembersPage() {
                           </a>
                         )}
                         {!member.linkedin_url && !member.twitter_url && (
-                          <span className="text-xs text-slate-400">&mdash;</span>
+                          <span className="text-xs text-slate-500">&mdash;</span>
                         )}
                       </div>
                     </td>

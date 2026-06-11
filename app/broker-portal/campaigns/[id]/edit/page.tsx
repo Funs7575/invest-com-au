@@ -357,7 +357,7 @@ export default function EditCampaignPage() {
 
   // ADV-085: shared classes for disabled read-only fields on live campaigns
   const lockedFieldCls =
-    "w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed";
+    "w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-500 disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
     <div className="max-w-2xl space-y-6">

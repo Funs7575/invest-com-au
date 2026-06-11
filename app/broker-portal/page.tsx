@@ -679,7 +679,7 @@ export default function BrokerDashboard() {
                 wallet_topup: { icon: "plus", bg: "bg-emerald-50", color: "text-emerald-600" },
                 wallet_debit: { icon: "minus", bg: "bg-red-50", color: "text-red-500" },
               };
-              const cfg = iconMap[a.action] || { icon: "circle", bg: "bg-slate-50", color: "text-slate-400" };
+              const cfg = iconMap[a.action] || { icon: "circle", bg: "bg-slate-50", color: "text-slate-500" };
               const timeAgo = (() => {
                 const diff = Date.now() - new Date(a.created_at).getTime();
                 const mins = Math.floor(diff / 60000);

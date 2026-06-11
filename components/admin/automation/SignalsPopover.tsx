@@ -20,7 +20,7 @@ export default function SignalsPopover({
   const [open, setOpen] = useState(false);
 
   if (!reasons || reasons.length === 0) {
-    return <span className="text-xs text-slate-400">—</span>;
+    return <span className="text-xs text-slate-500">—</span>;
   }
 
   return (

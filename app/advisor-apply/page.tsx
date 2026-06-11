@@ -360,7 +360,7 @@ function AdvisorApplyInner() {
                   <div key={i} className="flex items-center flex-1">
                     <div className="flex flex-col items-center">
                       <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                        isDone ? "bg-violet-600 text-white" : isCurrent ? "bg-violet-100 text-violet-700 ring-2 ring-violet-400" : "bg-slate-100 text-slate-400"
+                        isDone ? "bg-violet-600 text-white" : isCurrent ? "bg-violet-100 text-violet-700 ring-2 ring-violet-400" : "bg-slate-100 text-slate-500"
                       }`}>
                         {isDone ? (
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

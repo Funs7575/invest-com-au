@@ -424,7 +424,7 @@ function ComparisonCard({
         </p>
       </div>
       <BrokerLogo broker={b} size="sm" />
-      <span className="text-slate-400 group-hover:text-slate-700 transition-colors shrink-0">
+      <span className="text-slate-500 group-hover:text-slate-700 transition-colors shrink-0">
         <Icon name="chevron-right" size={16} />
       </span>
     </Link>

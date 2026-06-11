@@ -232,7 +232,7 @@ export default function CompareSelectionBar({
                 );
               })}
             </div>
-            <p className="text-[0.56rem] text-slate-400 text-center mt-1.5">Swipe to compare</p>
+            <p className="text-[0.56rem] text-slate-500 text-center mt-1.5">Swipe to compare</p>
           </div>
         </div>
       )}

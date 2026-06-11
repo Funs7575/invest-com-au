@@ -221,7 +221,7 @@ export default function CaseStudiesTab({ advisor }: Props) {
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-900">{editingId !== null ? "Edit Case Study" : "New Case Study"}</h3>
-            <button onClick={closeForm} aria-label="Close form" className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+            <button onClick={closeForm} aria-label="Close form" className="text-slate-500 hover:text-slate-600 text-lg leading-none">✕</button>
           </div>
 
           <div className="space-y-4">

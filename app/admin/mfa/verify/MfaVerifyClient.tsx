@@ -107,7 +107,7 @@ export default function MfaVerifyClient({ adminEmail, redirectTo }: Props) {
                 placeholder="6-digit code"
                 maxLength={6}
                 autoFocus
-                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-emerald-700/30 focus:border-emerald-700"
+                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-emerald-700/30 focus:border-emerald-700"
               />
               <p className="text-xs text-slate-500 mt-1.5">
                 Open your authenticator app and enter the 6-digit code.
@@ -129,7 +129,7 @@ export default function MfaVerifyClient({ adminEmail, redirectTo }: Props) {
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="Enter a recovery code"
                 autoFocus
-                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 font-mono focus:outline-none focus:ring-2 focus:ring-emerald-700/30 focus:border-emerald-700"
+                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 font-mono focus:outline-none focus:ring-2 focus:ring-emerald-700/30 focus:border-emerald-700"
               />
               <p className="text-xs text-slate-500 mt-1.5">
                 Each recovery code can only be used once.

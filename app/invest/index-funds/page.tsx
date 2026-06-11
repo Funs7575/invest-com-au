@@ -866,7 +866,7 @@ export default async function IndexFundsPage() {
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
               <div className="bg-slate-700 px-5 py-3 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                     Template 3
                   </p>
                   <p className="font-extrabold text-white text-lg">

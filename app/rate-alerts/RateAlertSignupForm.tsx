@@ -302,7 +302,7 @@ export default function RateAlertSignupForm() {
             ))}
           </div>
           {mode === "any_change" && (
-            <p className="mt-1.5 text-xs text-slate-400">
+            <p className="mt-1.5 text-xs text-slate-500">
               We&apos;ll send a factual digest whenever a tracked{" "}
               {PRODUCT_LABELS[productKind].toLowerCase()} rate changes — batched
               to your chosen frequency.
@@ -330,7 +330,7 @@ export default function RateAlertSignupForm() {
                 aria-label="Target rate in per cent per annum"
                 className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 pr-16 text-sm text-white placeholder:text-slate-500 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
               />
-              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-slate-400">
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-slate-500">
                 % p.a.
               </span>
             </div>

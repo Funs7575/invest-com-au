@@ -433,7 +433,7 @@ export default function AdminPricingPage() {
                 <span className="font-medium text-slate-900">{TYPE_LABELS[log.advisor_type] || log.advisor_type}</span>
                 <span className="text-slate-500">{log.field_changed}:</span>
                 <span className="text-red-500 line-through">{formatCents(parseInt(log.old_value || "0"))}</span>
-                <span className="text-slate-400">→</span>
+                <span className="text-slate-500">→</span>
                 <span className="text-emerald-600 font-bold">{formatCents(parseInt(log.new_value || "0"))}</span>
               </div>
             ))}

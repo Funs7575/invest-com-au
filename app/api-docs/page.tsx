@@ -18,7 +18,7 @@ export const metadata = {
 function CodeBlock({ children, lang }: { children: string; lang: string }) {
   return (
     <div className="relative">
-      <div className="absolute top-2 right-3 text-[10px] font-mono uppercase text-slate-400">
+      <div className="absolute top-2 right-3 text-[10px] font-mono uppercase text-slate-500">
         {lang}
       </div>
       <pre className="bg-slate-900 text-slate-100 text-sm rounded-lg p-4 overflow-x-auto leading-relaxed">

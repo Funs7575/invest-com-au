@@ -84,7 +84,7 @@ function BenchmarkLine({
     status === "better" ? <span className="text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600">Above avg</span> :
     status === "worse"  ? <span className="text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full bg-red-50 text-red-500">Below avg</span> :
     status === "parity" ? <span className="text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">At avg</span> :
-    <span className="text-[0.6rem] text-slate-400">—</span>;
+    <span className="text-[0.6rem] text-slate-500">—</span>;
 
   return (
     <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-center py-2 border-b border-slate-100 last:border-0 text-xs">

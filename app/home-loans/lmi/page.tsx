@@ -512,7 +512,7 @@ export default function LMIPage() {
                 <ul className="space-y-2 text-sm text-slate-600">
                   {col.points.map((point, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <span className="text-slate-400 mt-0.5">•</span>
+                      <span className="text-slate-500 mt-0.5">•</span>
                       <span>{point}</span>
                     </li>
                   ))}

@@ -87,7 +87,7 @@ export default function FullServiceBrokerCard({ firm }: Props) {
               Fee model
             </dt>
             <dd className="text-sm font-bold text-slate-900">
-              {feeLabel || <span className="text-slate-400 font-normal">—</span>}
+              {feeLabel || <span className="text-slate-500 font-normal">—</span>}
             </dd>
           </div>
           <div>
@@ -97,7 +97,7 @@ export default function FullServiceBrokerCard({ firm }: Props) {
             <dd className="text-sm font-bold text-slate-900">
               {firm.office_states?.length
                 ? firm.office_states.join(", ")
-                : firm.location_state || <span className="text-slate-400 font-normal">—</span>}
+                : firm.location_state || <span className="text-slate-500 font-normal">—</span>}
             </dd>
           </div>
         </dl>

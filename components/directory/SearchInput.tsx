@@ -97,7 +97,7 @@ export default function SearchInput({
           aria-label={ariaLabel ?? placeholder}
           list={hasSuggestions ? listId : undefined}
           autoComplete={hasSuggestions ? "off" : undefined}
-          className={`w-full rounded-lg border border-slate-200 bg-white pl-9 pr-9 py-2 text-sm text-slate-800 placeholder:text-slate-400 ${FOCUS_RING}`}
+          className={`w-full rounded-lg border border-slate-200 bg-white pl-9 pr-9 py-2 text-sm text-slate-800 placeholder:text-slate-500 ${FOCUS_RING}`}
         />
         {hasSuggestions && (
           <datalist id={listId}>

@@ -63,7 +63,7 @@ export default function OfflinePage() {
               <Icon
                 name="calculator"
                 size={16}
-                className="text-slate-400 group-hover:text-amber-500 transition-colors shrink-0"
+                className="text-slate-500 group-hover:text-amber-500 transition-colors shrink-0"
               />
               <span className="text-xs font-medium text-slate-600">Fee Calculators</span>
             </Link>
@@ -74,7 +74,7 @@ export default function OfflinePage() {
               <Icon
                 name="lightbulb"
                 size={16}
-                className="text-slate-400 group-hover:text-amber-500 transition-colors shrink-0"
+                className="text-slate-500 group-hover:text-amber-500 transition-colors shrink-0"
               />
               <span className="text-xs font-medium text-slate-600">Investing Guides</span>
             </Link>

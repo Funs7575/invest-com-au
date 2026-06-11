@@ -424,7 +424,7 @@ export default function CreativesPage() {
                         disabled={togglingIds.has(c.id)}
                         className={`text-xs px-2 py-1 rounded font-medium transition-colors flex items-center gap-1 ${
                           togglingIds.has(c.id)
-                            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                            ? "bg-slate-100 text-slate-500 cursor-not-allowed"
                             : c.is_active
                               ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
                               : "bg-slate-100 text-slate-500 hover:bg-slate-200"

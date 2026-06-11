@@ -197,7 +197,7 @@ export default async function EventsPage() {
                       >
                         <span className="font-semibold">{ev.professional.name}</span>
                         {ev.professional.firm_name && (
-                          <span className="text-slate-400">·</span>
+                          <span className="text-slate-500">·</span>
                         )}
                         {ev.professional.firm_name && (
                           <span className="text-slate-500">{ev.professional.firm_name}</span>

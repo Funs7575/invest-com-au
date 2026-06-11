@@ -81,7 +81,7 @@ export default function CertificateLookupClient() {
                   setError(null);
                 }}
                 placeholder="INV-2026-00042"
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 font-mono placeholder:text-slate-400 placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 font-mono placeholder:text-slate-500 placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
                 aria-describedby={error ? "cert-error" : "cert-hint"}
                 autoComplete="off"
                 autoCorrect="off"

@@ -193,7 +193,7 @@ export default function EventsTab({ advisor }: Props) {
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-900">New Event</h3>
-            <button onClick={() => { setShowCreateForm(false); setError(""); }} aria-label="Close form" className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+            <button onClick={() => { setShowCreateForm(false); setError(""); }} aria-label="Close form" className="text-slate-500 hover:text-slate-600 text-lg leading-none">✕</button>
           </div>
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -419,7 +419,7 @@ export default function EventsTab({ advisor }: Props) {
           <div role="dialog" aria-modal="true" aria-labelledby="rsvp-modal-title" className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[80vh] flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h2 id="rsvp-modal-title" className="text-base font-bold text-slate-900">RSVPs</h2>
-              <button onClick={() => setRsvpModalEventId(null)} aria-label="Close" className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+              <button onClick={() => setRsvpModalEventId(null)} aria-label="Close" className="text-slate-500 hover:text-slate-600 text-lg leading-none">✕</button>
             </div>
             <div className="overflow-y-auto flex-1">
               {(rsvps[rsvpModalEventId] ?? []).length === 0 ? (

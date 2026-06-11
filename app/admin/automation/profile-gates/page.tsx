@@ -44,7 +44,7 @@ export default async function ProfileGateDrillDown() {
                     </div>
                   </li>
                 ))}
-                {byStep[step].length === 0 && <li className="text-[0.65rem] text-slate-400">—</li>}
+                {byStep[step].length === 0 && <li className="text-[0.65rem] text-slate-500">—</li>}
               </ul>
             </div>
           ))}

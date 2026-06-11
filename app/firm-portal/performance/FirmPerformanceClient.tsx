@@ -16,7 +16,7 @@ function fmt(n: number): string {
 }
 
 function StarRating({ rating }: { rating: number | null }) {
-  if (rating === null) return <span className="text-slate-400 text-xs">—</span>;
+  if (rating === null) return <span className="text-slate-500 text-xs">—</span>;
   return (
     <span className="text-slate-700 text-xs font-medium" title={`${rating.toFixed(2)} / 5`}>
       ★ {rating.toFixed(1)}
@@ -112,7 +112,7 @@ function MemberRow({ m, rank }: { m: MemberMetrics; rank: number }) {
             {m.score}
           </span>
         ) : (
-          <span className="text-slate-400 text-xs">—</span>
+          <span className="text-slate-500 text-xs">—</span>
         )}
       </td>
     </tr>

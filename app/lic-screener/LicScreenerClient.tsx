@@ -299,7 +299,7 @@ export default function LicScreenerClient() {
                 <h2 className="text-lg font-extrabold text-slate-900">{selectedLic.ticker} — {selectedLic.name}</h2>
                 <p className="text-xs text-slate-500">{selectedLic.manager} · Since {selectedLic.inceptionYear}</p>
               </div>
-              <button onClick={() => setSelected(null)} aria-label="Close" className="text-slate-400 hover:text-slate-600 text-xl leading-none">×</button>
+              <button onClick={() => setSelected(null)} aria-label="Close" className="text-slate-500 hover:text-slate-600 text-xl leading-none">×</button>
             </div>
             <p className="text-sm text-slate-600 leading-relaxed mb-4">{selectedLic.description}</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">

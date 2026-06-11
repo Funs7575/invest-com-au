@@ -70,7 +70,7 @@ export default function SwitchStoriesList({ stories, brokerSlug, brokerName }: S
                 <span className={`px-2 py-0.5 rounded-full font-medium ${isSwitchTo ? "bg-red-50 text-red-600" : "bg-slate-100 text-slate-600"}`}>
                   {formatBrokerName(story.source_broker_slug)}
                 </span>
-                <span className="text-slate-400">→</span>
+                <span className="text-slate-500">→</span>
                 <span className={`px-2 py-0.5 rounded-full font-medium ${isSwitchTo ? "bg-slate-50 text-slate-700" : "bg-slate-100 text-slate-600"}`}>
                   {formatBrokerName(story.dest_broker_slug)}
                 </span>
@@ -80,7 +80,7 @@ export default function SwitchStoriesList({ stories, brokerSlug, brokerName }: S
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex items-center gap-1">
                   <StarDisplay rating={story.source_rating} />
-                  <span className="text-xs text-slate-400">→</span>
+                  <span className="text-xs text-slate-500">→</span>
                   <StarDisplay rating={story.dest_rating} />
                 </div>
                 {story.dest_rating > story.source_rating && (

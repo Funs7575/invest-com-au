@@ -178,7 +178,7 @@ export default function JobsClient() {
       {/* Hero */}
       <section className="bg-gradient-to-r from-slate-700 to-slate-900 text-white py-10 md:py-16">
         <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
             <Link href="/" className="hover:text-white">
               Home
             </Link>

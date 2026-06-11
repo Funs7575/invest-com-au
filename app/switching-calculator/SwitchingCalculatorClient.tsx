@@ -304,7 +304,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                         )}
                       </div>
                       <div className="text-right shrink-0">
-                        <div className={`text-sm font-extrabold ${isCurrent ? "text-red-600" : "text-slate-900"}`}>${Math.round(r.cost).toLocaleString()}<span className="text-[0.6rem] font-normal text-slate-400">/yr</span></div>
+                        <div className={`text-sm font-extrabold ${isCurrent ? "text-red-600" : "text-slate-900"}`}>${Math.round(r.cost).toLocaleString()}<span className="text-[0.6rem] font-normal text-slate-500">/yr</span></div>
                         {currentBroker && savingsVsCurrent > 0 && !isCurrent && (
                           <div className="text-[0.6rem] font-bold text-emerald-700">Save ${Math.round(savingsVsCurrent).toLocaleString()}</div>
                         )}
@@ -324,7 +324,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
               </div>
 
               {!emailCaptured && results.length > 5 && (
-                <p className="text-center text-xs text-slate-400 mt-3">Enter your email above to see all {results.length} brokers</p>
+                <p className="text-center text-xs text-slate-500 mt-3">Enter your email above to see all {results.length} brokers</p>
               )}
             </div>
 

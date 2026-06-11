@@ -116,7 +116,7 @@ export default function WalletPage() {
                 width={100}
                 height={32}
               />
-              <p className="text-[0.56rem] text-slate-400 text-right mt-0.5">Balance trend</p>
+              <p className="text-[0.56rem] text-slate-500 text-right mt-0.5">Balance trend</p>
             </div>
           )}
         </div>

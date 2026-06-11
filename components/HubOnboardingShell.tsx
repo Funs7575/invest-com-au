@@ -154,7 +154,7 @@ function HubResultPanel({
                 aria-label="Your name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="flex-1 min-w-0 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="flex-1 min-w-0 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 autoComplete="name"
                 maxLength={100}
               />
@@ -165,7 +165,7 @@ function HubResultPanel({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="flex-1 min-w-0 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="flex-1 min-w-0 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 autoComplete="email"
                 maxLength={254}
               />

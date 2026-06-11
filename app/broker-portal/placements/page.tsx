@@ -181,7 +181,7 @@ export default function PlacementsPage() {
             {ctrValues.length > 0 ? (
               <>
                 <CountUp end={minCtr} decimals={1} duration={800} suffix="%" />
-                <span className="text-sm font-medium text-slate-400 mx-1">-</span>
+                <span className="text-sm font-medium text-slate-500 mx-1">-</span>
                 <CountUp end={maxCtr} decimals={1} duration={800} suffix="%" />
               </>
             ) : (

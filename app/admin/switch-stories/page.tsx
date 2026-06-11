@@ -273,7 +273,7 @@ export default function AdminSwitchStoriesPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       <Stars rating={story.source_rating} />
-                      <span className="text-xs text-slate-400 mx-0.5">→</span>
+                      <span className="text-xs text-slate-500 mx-0.5">→</span>
                       <Stars rating={story.dest_rating} />
                     </div>
                   </td>

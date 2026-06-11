@@ -526,7 +526,7 @@ export default function DashboardTab({
                                   onClick={(e) => e.stopPropagation()}
                                   onChange={(e) => setNoteInput((prev) => ({ ...prev, [lead.id]: e.target.value }))}
                                   onKeyDown={(e) => { if (e.key === "Enter") saveNote(lead.id, e as unknown as React.MouseEvent); }}
-                                  className="flex-1 min-w-0 text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-violet-300 focus:border-violet-300 placeholder:text-slate-400"
+                                  className="flex-1 min-w-0 text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-violet-300 focus:border-violet-300 placeholder:text-slate-500"
                                 />
                                 <button
                                   onClick={(e) => saveNote(lead.id, e)}

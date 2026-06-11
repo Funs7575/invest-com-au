@@ -360,12 +360,12 @@ export default function DaspCalculatorClient() {
               <p className="text-xs font-bold text-slate-700">Next steps</p>
               <ul className="space-y-1.5 text-xs text-slate-600">
                 <li>
-                  <span className="text-slate-400 mr-1">→</span>
+                  <span className="text-slate-500 mr-1">→</span>
                   Check your fund for the component breakdown (contact your
                   super fund if unsure)
                 </li>
                 <li>
-                  <span className="text-slate-400 mr-1">→</span>
+                  <span className="text-slate-500 mr-1">→</span>
                   Apply via the{" "}
                   <a
                     href="https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/super/leaving-australia-super/dasp-online-application"
@@ -378,7 +378,7 @@ export default function DaspCalculatorClient() {
                   after your visa has ceased and you have departed Australia
                 </li>
                 <li>
-                  <span className="text-slate-400 mr-1">→</span>
+                  <span className="text-slate-500 mr-1">→</span>
                   Most funds process claims in 28 days once the ATO has
                   validated your visa status
                 </li>

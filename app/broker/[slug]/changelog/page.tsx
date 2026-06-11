@@ -243,7 +243,7 @@ export default async function BrokerChangelogPage({
                     <span className="text-slate-500 line-through text-xs">
                       {formatValue(row.field_name, row.old_value)}
                     </span>
-                    <span className="text-slate-400 text-xs">&rarr;</span>
+                    <span className="text-slate-500 text-xs">&rarr;</span>
                     <span className="font-semibold text-slate-800 text-xs">
                       {formatValue(row.field_name, row.new_value)}
                     </span>

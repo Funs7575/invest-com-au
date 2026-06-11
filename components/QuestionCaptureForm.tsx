@@ -130,7 +130,7 @@ export default function QuestionCaptureForm({ category: initialCategory = "gener
           placeholder="e.g. What's the cheapest broker for buying US shares in an SMSF?"
           rows={3}
           disabled={submitting}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60 resize-none"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60 resize-none"
           aria-describedby={errors.question ? "qq-question-error" : undefined}
           data-testid="qq-question-input"
         />
@@ -191,7 +191,7 @@ export default function QuestionCaptureForm({ category: initialCategory = "gener
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
           disabled={submitting}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60"
           aria-describedby={errors.email ? "qq-email-error" : undefined}
           data-testid="qq-email-input"
         />

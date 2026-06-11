@@ -488,7 +488,7 @@ export default function AdminAdvisorsPage() {
                         <summary className="text-xs text-slate-500 truncate cursor-pointer hover:text-slate-700">{l.message}</summary>
                         <p className="text-xs text-slate-600 mt-1 whitespace-pre-wrap bg-slate-50 rounded p-2">{l.message}</p>
                       </details>
-                    ) : <span className="text-xs text-slate-400">—</span>}
+                    ) : <span className="text-xs text-slate-500">—</span>}
                   </td>
                   <td className="px-4 py-3">
                     <select

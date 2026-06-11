@@ -485,7 +485,7 @@ export default function SmallBusinessTaxPage() {
                   <ul className="space-y-1.5">
                     {col.items.map((item) => (
                       <li key={item} className="flex items-start gap-2 text-xs text-slate-700">
-                        <span className="mt-0.5 text-slate-400 shrink-0">&#8226;</span>
+                        <span className="mt-0.5 text-slate-500 shrink-0">&#8226;</span>
                         {item}
                       </li>
                     ))}

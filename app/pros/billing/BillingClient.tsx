@@ -408,7 +408,7 @@ export default function BillingClient(props: Props) {
                   Standard credits or success-only (pay at outcome).
                 </p>
               </div>
-              <span className="text-slate-400">→</span>
+              <span className="text-slate-500">→</span>
             </a>
           </li>
           <li>
@@ -422,7 +422,7 @@ export default function BillingClient(props: Props) {
                   Customise what consumers answer after you accept.
                 </p>
               </div>
-              <span className="text-slate-400">→</span>
+              <span className="text-slate-500">→</span>
             </a>
           </li>
         </ul>
