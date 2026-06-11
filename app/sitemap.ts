@@ -25,6 +25,7 @@ import {
 import { superFundsMeta, allSuperFunds } from "@/lib/super-funds";
 import { ghostTickersMeta, allGhostTickers } from "@/lib/ghost-tickers";
 import { postcodeAtlasMeta, allPostcodes } from "@/lib/postcode-atlas";
+import { FEE_DRAG_SCENARIOS } from "@/lib/fee-drag";
 
 const log = logger("sitemap");
 
@@ -284,7 +285,7 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/global-investing/etfs", "/global-investing/etfs/us", "/global-investing/etfs/global",
     "/global-investing/shares/us",
     "/global-investing/calculators/direct-vs-asx-cost",
-    "/super/death-benefit", "/super/compare-guide", "/super/division-296", "/super/funds", "/asx/delisted", "/postcodes",
+    "/super/death-benefit", "/super/compare-guide", "/super/division-296", "/super/funds", "/asx/delisted", "/postcodes", "/super/fee-drag",
     "/super/catch-up-contributions",
     "/super/co-contribution", "/super/spouse-contributions",
     "/super/transition-to-retirement", "/super/insurance",
@@ -825,6 +826,14 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
   // extract; excluded while the bundled dataset is the synthetic preview.
   // Postcode Wealth Atlas — per-postcode pages over the ATO extract;
   // excluded while the bundled dataset is the synthetic preview.
+  // Fee-drag scenario pages — pure-math static pages, always included.
+  const feeDragPages: MetadataRoute.Sitemap = FEE_DRAG_SCENARIOS.map((s) => ({
+    url: `${base}/super/fee-drag/${s.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "yearly" as const,
+    priority: 0.55,
+  }));
+
   const postcodePages: MetadataRoute.Sitemap = postcodeAtlasMeta().sample
     ? []
     : allPostcodes().map((p) => ({
@@ -996,6 +1005,7 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
     ...superFundPages,
     ...ghostTickerPages,
     ...postcodePages,
+    ...feeDragPages,
   ];
 }
 
