@@ -3,11 +3,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import {
   renderDigestEmail,
   shouldSkip,
   type DigestCandidate,
 } from "@/lib/account/plan-resume-digest";
+import { selectDripVariant } from "@/lib/getmatched/drip-lane";
+import type { ActionPlanAnswers, RouteType } from "@/lib/getmatched/types";
 
 const log = logger("plan-resume-digest");
 
@@ -24,6 +27,13 @@ export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
+  // Launch-ops kill switch: flip `email_drip_send` off in
+  // /admin/automation/flags to halt ALL drip campaigns at once. Same flag
+  // every other drip cron respects — no new flag for the lane-aware variants.
+  if (!(await isFlagEnabled("email_drip_send"))) {
+    return NextResponse.json({ sent: 0, skipped: "kill_switch_email_drip_send" });
+  }
+
   const admin = createAdminClient();
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://invest.com.au";
@@ -38,7 +48,7 @@ export async function GET(req: NextRequest) {
   // 1. Pull stale draft plans owned by authed users.
   const { data: plans, error: planErr } = await admin
     .from("get_matched_action_plans")
-    .select("id, auth_user_id, goal, intent_slug, share_token, updated_at")
+    .select("id, auth_user_id, goal, intent_slug, route, answers, share_token, updated_at")
     .eq("status", "draft")
     .not("auth_user_id", "is", null)
     .lt("updated_at", draftCutoff)
@@ -110,11 +120,19 @@ export async function GET(req: NextRequest) {
       share_token: plan.share_token as string,
       updated_at: plan.updated_at as string,
     };
+    // Lane-aware variant (§3): lead with the matched-advisor /
+    // new-listings / fee-comparison angle. Default lane keeps the original
+    // copy byte-for-byte (pass no variant).
+    const variant = selectDripVariant({
+      route: (plan.route as RouteType | null) ?? null,
+      answers: (plan.answers as ActionPlanAnswers | null) ?? null,
+    });
     const { subject, html } = renderDigestEmail({
       goal: candidate.goal,
       intent_slug: candidate.intent_slug,
       share_token: candidate.share_token,
       baseUrl,
+      variant: variant.lane === "default" ? undefined : variant,
     });
     const result = await sendEmail({ to: email, subject, html });
     if (result.ok) {
