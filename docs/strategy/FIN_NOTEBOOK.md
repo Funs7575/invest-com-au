@@ -36,9 +36,14 @@ several items found already shipped), COMMUNITY_MASTER_PLAN (belong-wave gated
 on its Phase 0). North-star metric proposed: Weekly Decision-Ready Returners
 (saved ≥1 + returned ≤7d).
 
-**Awaiting founder:** wave-order priority call (§10), D12 "Wrapped/EOFY"
-timing call, and the do-not-do list ratification (§9 — no trade-keyed
-celebration, no consumer leaderboards, no streak-loss guilt).
+**Founder greenlit same-day: "build this end to end to the highest quality."**
+Build session 1 shipped Wave 1 + the cream of Wave 2/3 on PR #1558 (see the
+doc's Status ledger): celebration primitives, first-save/shortlist-of-three/
+streak-surfacing moments, mobile fold fixes, the compare cost-engine chip
+with animated personal dollars, path-completion ceremony, signup claim
+preview, and the /go/ send-off + return loop. Remaining (next sessions): D4
+arrival, D5 ring, D10 delta strip, D11 reasons sheets, G4-G9 remainder,
+account IA, Tier-C drips, D12 Wrapped.
 
 ### 2026-06-11 — Get Matched "showcase" upgrade greenlit (founder); root cause of "looks the same" found and fixed
 

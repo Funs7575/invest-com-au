@@ -419,4 +419,25 @@ Verify-first: F2.6 mobile fade-stall (possible headless artifact)
 
 ---
 
+## Status ledger (updated 2026-06-11, build session 1)
+
+Founder greenlit "build this end to end". Shipped on `claude/fervent-shannon-qxhsdg` (PR #1558), all tested + type-checked:
+
+| Item | Status | Commit |
+|---|---|---|
+| §7.1 primitives: Toast v2 (queued, rich/milestone), `<Confetti>`, `<ProgressRing>`, `<AnimatedNumber>`, motion tokens; BottomSheet extended (footer/focus-restore/md-centring) instead of a duplicate Sheet | ✅ shipped | `d4ff58cf`, `83b930ef` |
+| D1 first-save moment (unified BookmarkButton/ShortlistButton feedback) | ✅ shipped | `d4ff58cf` |
+| D2 shortlist-of-three sheet | ✅ shipped | `d4ff58cf` |
+| D6 streak surfacing (interactive chip + sheet + mute + daily/3/7/30 toasts) | ✅ shipped | `d4ff58cf` |
+| 1.4 fold fixes (hero CTA above fold, trust-pill wrap, slim consent, calm in-funnel header, stale /quiz link) | ✅ shipped | `3c28eb8c` |
+| D9 compare slice (persistent scenario chip, animated $ cells both layouts, mobile column tooltips) + D7 first_compare on 2 pins | ✅ shipped | `83b930ef` |
+| D8 path ceremony (confetti on live completion, milestones, next-path link) | ✅ shipped | `371e84e6` |
+| 2.1 signup claim preview ("Keep what you've built — N saved items") | ✅ shipped | `371e84e6` |
+| D3 send-off + return loop (/go/ acknowledgment, "how did it go?", decided_broker milestone) | ✅ shipped | `371e84e6` |
+| D7 milestones: registry + first_save / first_compare / first_path_step / path_complete / first_article / streak_3·7·30 / decided_broker wired | ✅ shipped | this branch |
+| D4 arrival sequence · D5 profile ring · D7 first_calculator + profile_complete + first_plan_saved wiring · F4.1 plan chip · D10 delta strip · D11 reasons sheets · G4/G6/G7 · account IA (2.6) · Wave-3 crons (drips, morning brief — Tier C) · D12 Wrapped | ⏳ next session(s) | — |
+| 1.9 verify F2.6 mobile fade-stall via bot fleet | ⏳ open | — |
+
+---
+
 *Companion artifacts from this session: live mobile captures (home, compare, invest, get-matched, advisors, learn, signup, broker, community + 2 desktop) shared in the session thread; reproducible via the bots harness (`JOURNEY_BASE` mirror) — the capture script pattern is documented in `bots/journey/README.md`.*
