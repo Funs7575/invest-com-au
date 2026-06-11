@@ -5,6 +5,9 @@ export type EventName =
   | 'funnel_step_answered'
   | 'funnel_step_back'
   | 'funnel_resolved'
+  // Get Matched showcase Wave 2 — result-page interactivity (G4 + G7)
+  | 'whatif_used'
+  | 'sharpen_answered'
   | 'advisor_viewed'
   | 'advisor_contacted'
   | 'lead_submitted'
@@ -80,6 +83,26 @@ export interface EventProps {
     match_count: number
     step_count: number
     time_taken_seconds: number
+  }
+  /**
+   * Get Matched Showcase G4 — user adjusted a what-if control (budget /
+   * timeline / help) on the result page, triggering a stateless re-rank.
+   * `control` is the dimension changed; `from`/`to` are option keys (never
+   * free text). The persisted plan row is never mutated by a what-if.
+   */
+  whatif_used: {
+    control: 'budget' | 'timeline' | 'help'
+    from: string | null
+    to: string
+  }
+  /**
+   * Get Matched Showcase G7 — user answered a "sharpen my match" question,
+   * refining their plan inline. `new_score` is the post-refinement match
+   * score (0–100) or null when the resolve didn't return one.
+   */
+  sharpen_answered: {
+    question_slug: string
+    new_score: number | null
   }
   advisor_viewed: {
     advisor_id: number
