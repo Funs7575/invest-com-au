@@ -11,9 +11,11 @@ import type {
   ListingMatch,
   QuestionDef,
   ResultTemplate,
+  RouteType,
   TopMatch,
   Vertical,
 } from "@/lib/getmatched/types";
+import { inferRoute } from "@/lib/getmatched/inference";
 import QuestionCard from "./_components/QuestionCard";
 import ProgressDots from "./_components/ProgressDots";
 import AnalyzingScreen from "./_components/AnalyzingScreen";
@@ -507,6 +509,17 @@ export default function GetMatchedClient(props: Props) {
 
 // ─── Question screen ──────────────────────────────────────────────────────
 
+const ROUTE_PREVIEW: Record<RouteType, { emoji: string; label: string }> = {
+  compare:        { emoji: "🏆", label: "Compare platforms" },
+  browse:         { emoji: "👀", label: "Browse opportunities" },
+  individual:     { emoji: "👤", label: "Talk to a verified expert" },
+  firm:           { emoji: "🏢", label: "Talk to a verified firm" },
+  expert_team:    { emoji: "👥", label: "Get a Pro Squad" },
+  investor_brief: { emoji: "📋", label: "Get quotes from pros" },
+  listing_brief:  { emoji: "🏷️", label: "List your opportunity" },
+  second_opinion: { emoji: "🔍", label: "Get a second opinion" },
+  guide:          { emoji: "📖", label: "Start with guides" },
+};
 
 // ─── Question screen wrapper (3-pane desktop / single-column mobile) ───
 
@@ -534,8 +547,12 @@ function QuestionScreen({
   const budgetSummary = (answers.budget_band as string | undefined) ?? null;
   const timelineSummary = (answers.timeline as string | undefined) ?? null;
 
+  // Live route prediction — pure computation, updates on every answer change
+  const predictedRoute = intentSummary ? inferRoute(answers).route : null;
+  const routePreview = predictedRoute ? ROUTE_PREVIEW[predictedRoute] : null;
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {/* Mobile progress strip */}
         <div className="lg:hidden mb-4">
@@ -591,17 +608,27 @@ function QuestionScreen({
 
           {/* RIGHT — live plan preview */}
           <aside className="hidden lg:block">
-            <div className="sticky top-6 rounded-2xl border border-slate-200 p-5 bg-gradient-to-br from-slate-50 to-white" aria-live="polite">
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Your plan so far</p>
-              <ul className="text-sm space-y-1.5">
+            <div className="sticky top-6 rounded-2xl border border-slate-200 p-5 bg-white shadow-sm" aria-live="polite">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-3">Your plan so far</p>
+              <ul className="text-sm space-y-2">
                 {intentSummary && (<li className="text-slate-900"><strong>Goal:</strong> {humanise(intentSummary)}</li>)}
                 {helpSummary && (<li className="text-slate-700"><strong>Help:</strong> {humanise(helpSummary)}</li>)}
                 {budgetSummary && (<li className="text-slate-700"><strong>Budget:</strong> {humanise(budgetSummary)}</li>)}
                 {timelineSummary && (<li className="text-slate-700"><strong>Timeline:</strong> {humanise(timelineSummary)}</li>)}
                 {!intentSummary && (
-                  <li className="text-slate-500 italic">Answer the questions and your action plan appears here.</li>
+                  <li className="text-slate-500 italic text-xs">Answer the questions and your action plan appears here.</li>
                 )}
               </ul>
+              {routePreview && (
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Based on your answers</p>
+                  <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
+                    <span className="text-xl leading-none">{routePreview.emoji}</span>
+                    <span className="text-sm font-bold text-amber-900">{routePreview.label}</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-2">This updates as you answer — different choices lead to a different plan.</p>
+                </div>
+              )}
             </div>
           </aside>
         </div>
