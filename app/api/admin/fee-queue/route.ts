@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/require-admin";
+import { fireConsumerWebhook } from "@/lib/consumer-webhook-dispatch";
 import { logger } from "@/lib/logger";
 
 const log = logger("admin-fee-queue");
@@ -24,15 +26,20 @@ export async function GET() {
   }
 }
 
+const PostBody = z.object({
+  id: z.union([z.number(), z.string().min(1)]),
+  action: z.enum(["approve", "reject"]),
+});
+
 // POST — approve or reject a fee change
 export async function POST(request: NextRequest) {
   const guard = await requireAdmin();
   if (!guard.ok) return guard.response;
 
   const supabase = createAdminClient();
-  const { id, action } = await request.json();
-
-  if (!id || !action) return NextResponse.json({ error: "id and action required" }, { status: 400 });
+  const parsed = PostBody.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "id and action required" }, { status: 400 });
+  const { id, action } = parsed.data;
 
   const { data: item } = await supabase
     .from("fee_update_queue")
@@ -63,6 +70,16 @@ export async function POST(request: NextRequest) {
     }
 
     await supabase.from("brokers").update(updateField).eq("id", item.broker_id);
+
+    // Second of the two fee-apply paths (see check-fees auto-approve) —
+    // notify "fee.changed" consumer webhooks. Fire-and-forget.
+    void fireConsumerWebhook("fee.changed", {
+      broker_slug: item.broker_slug,
+      field: item.field_name,
+      old_value: item.old_value,
+      new_value: item.new_value,
+      applied_by: "admin",
+    });
 
     // Log the change in broker_data_changes
     const { error: logError } = await supabase.from("broker_data_changes").insert({

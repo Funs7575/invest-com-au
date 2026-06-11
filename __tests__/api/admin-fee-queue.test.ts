@@ -35,6 +35,15 @@ vi.mock("@/lib/supabase/admin", () => ({
   })),
 }));
 
+// Approve fires a fee.changed consumer webhook fire-and-forget; mock the
+// dispatch lib so the real one doesn't hit the supabase mock chain.
+const { mockFireConsumerWebhook } = vi.hoisted(() => ({
+  mockFireConsumerWebhook: vi.fn(async () => undefined),
+}));
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: mockFireConsumerWebhook,
+}));
+
 import { GET, POST } from "@/app/api/admin/fee-queue/route";
 
 function makeReq(method = "GET", body?: unknown): NextRequest {
@@ -110,6 +119,11 @@ describe("/api/admin/fee-queue", () => {
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.status).toBe("approved");
+    // Applying a fee change notifies fee.changed consumer webhooks.
+    expect(mockFireConsumerWebhook).toHaveBeenCalledWith(
+      "fee.changed",
+      expect.objectContaining({ field: "asx_fee", new_value: "$8.00", applied_by: "admin" }),
+    );
   });
 
   it("POST rejects fee change when item found", async () => {
