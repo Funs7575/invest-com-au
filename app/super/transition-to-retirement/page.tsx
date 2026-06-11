@@ -598,6 +598,7 @@ export default function TransitionToRetirementPage() {
                 <p className="text-sm text-slate-600 leading-relaxed">
                   TTR pension income payments are generally assessed under the Centrelink income test,
                   which could affect your Age Pension entitlement once you reach Age Pension age (67).
+                  {/* // dated-ok — legislative grandfathering date, never changes */}
                   Account-based pensions started on or after 1 January 2015 are assessed under deeming
                   rules on the account balance, regardless of actual drawdown. The interaction between
                   TTR income and the Age Pension income and assets tests is complex and depends on your
