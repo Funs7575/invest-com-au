@@ -125,7 +125,12 @@ export const CATEGORY_SCHEMAS: Record<CompareCategory, CategorySchema> = {
     label: "All platforms",
     shortLabel: "All",
     description: "Compare categories first, then switch to a specific category to hide irrelevant columns.",
-    platformTypes: ["share_broker", "crypto_exchange", "super_fund", "savings_account", "term_deposit", "research_tool", "property_platform"],
+    // Must stay the union of every other category's platformTypes — the hero
+    // "Platforms tracked" stat counts this view, so a platform reachable via
+    // any pill but missing here makes the headline number read as a lie
+    // (2026-06-10 audit: hero said 115 while the table listed 83). The union
+    // invariant is enforced by __tests__/lib/compare-engine.test.ts.
+    platformTypes: ["share_broker", "robo_advisor", "crypto_exchange", "super_fund", "savings_account", "term_deposit", "research_tool", "property_platform"],
     sortOptions: [{ col: "rank_score", label: "Scenario rank" }, { col: "rating", label: "Rating" }, { col: "estimated_annual_cost", label: "Est. annual cost" }, { col: "name", label: "Name" }],
     featureFilters: ["chess", "free", "smsf", "low-fx", "us", "has-deal"],
     columns: [annualCostColumn, ratingColumn, commercialColumn, freshnessColumn],
@@ -235,6 +240,28 @@ export const CATEGORY_SCHEMAS: Record<CompareCategory, CategorySchema> = {
   },
 };
 
+/**
+ * Platform types renderable anywhere on /compare — i.e. the "All platforms"
+ * view, which is kept as the union of every category pill's platformTypes
+ * (test-enforced). Derived from CATEGORY_SCHEMAS so any count shown in page
+ * copy is computed from the same source the table renders — it cannot drift.
+ */
+export const COMPARE_PLATFORM_TYPES: readonly BrokerPlatformType[] = CATEGORY_SCHEMAS.all.platformTypes;
+
+/** Number of selectable compare categories (excludes the "all" meta-view). */
+export const COMPARE_CATEGORY_COUNT = Object.keys(CATEGORY_SCHEMAS).filter((key) => key !== "all").length;
+
+/**
+ * True when the broker can appear in at least one /compare view. Mirrors
+ * filterBrokers exactly: platform-type membership in the "all" union, plus
+ * the crypto pill's is_crypto escape hatch. Use this (or a DB predicate built
+ * from COMPARE_PLATFORM_TYPES + is_crypto) for any "N platforms" claim so the
+ * headline number always equals what the table can actually list.
+ */
+export function isCompareListable(broker: Pick<Broker, "platform_type" | "is_crypto">): boolean {
+  return COMPARE_PLATFORM_TYPES.includes(broker.platform_type) || broker.is_crypto === true;
+}
+
 export const CATEGORY_ALIASES: Record<string, CompareCategory> = {
   shares: "share-trading",
   "share-trading": "share-trading",
@@ -302,7 +329,11 @@ export function filterBrokers(brokers: Broker[], options: FilterOptions): Broker
   const scenario = options.scenario === "none" ? undefined : options.scenario;
   const category = scenarioCategory(scenario, options.category);
   const schema = CATEGORY_SCHEMAS[category];
-  let list = brokers.filter((b) => schema.platformTypes.includes(b.platform_type) || (schema.key === "crypto-exchanges" && b.is_crypto));
+  // The is_crypto escape hatch applies to the crypto pill AND the "all" view:
+  // a crypto-flagged platform with an unusual platform_type is reachable via
+  // the crypto pill, so the maximal view (and the hero count built on
+  // isCompareListable) must include it too.
+  let list = brokers.filter((b) => schema.platformTypes.includes(b.platform_type) || ((schema.key === "crypto-exchanges" || schema.key === "all") && b.is_crypto));
   if (schema.include) list = list.filter(schema.include);
   const features = options.features ?? new Set<FeatureFilter>();
   if (scenario === "chess-only") list = list.filter((b) => b.chess_sponsored);

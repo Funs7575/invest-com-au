@@ -3,6 +3,7 @@
 import { memo, useState, useMemo } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import { isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 import BrokerLogo from "@/components/BrokerLogo";
@@ -27,10 +28,8 @@ export default memo(function DealCard({
       })
     : null;
 
-  // Calculate days and hours remaining for countdown
-  const msRemaining = expiryDate
-    ? Math.max(0, expiryDate.getTime() - Date.now())
-    : null;
+  // eslint-disable-next-line react-hooks/purity -- needed for deal expiry countdown
+  const msRemaining = expiryDate ? Math.max(0, expiryDate.getTime() - Date.now()) : null;
   const daysRemaining = msRemaining !== null
     ? Math.floor(msRemaining / (1000 * 60 * 60 * 24))
     : null;
@@ -135,12 +134,15 @@ export default memo(function DealCard({
               <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-amber-600">
-              {renderStars(broker.rating || 0)}
-            </span>
-            <span className="text-[0.69rem] text-slate-500">{broker.rating}/5</span>
-          </div>
+          {/* Editorial star rating — licence-gated (lib/compliance-config). */}
+          {SHOW_RATINGS && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-amber-600">
+                {renderStars(broker.rating || 0)}
+              </span>
+              <span className="text-[0.69rem] text-slate-500">{broker.rating}/5</span>
+            </div>
+          )}
         </div>
         {broker.deal_category && (
           <span className="text-[0.62rem] md:text-[0.69rem] px-1.5 md:px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full font-medium uppercase tracking-wide shrink-0">

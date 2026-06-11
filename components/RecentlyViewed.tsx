@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import Link from "next/link";
 import { renderStars } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { Broker } from "@/lib/types";
 
 const STORAGE_KEY = "invest_recently_viewed";
@@ -29,7 +30,8 @@ export default function RecentlyViewed({ currentSlug }: { currentSlug?: string }
       const raw = sessionStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed: RecentItem[] = JSON.parse(raw);
-        setItems(parsed.filter(i => i.slug !== currentSlug).slice(0, 4));
+        const next = parsed.filter(i => i.slug !== currentSlug).slice(0, 4);
+        startTransition(() => setItems(next));
       }
     } catch {}
   }, [currentSlug]);
@@ -54,7 +56,13 @@ export default function RecentlyViewed({ currentSlug }: { currentSlug?: string }
             </div>
             <div className="min-w-0">
               <div className="text-xs font-bold text-slate-900 truncate">{item.name}</div>
-              <div className="text-[0.56rem] text-amber-700">{renderStars(item.rating)} {item.rating}</div>
+              {/* Licence-gated rating; fee label keeps the second line so the
+                  chip height doesn't collapse when ratings are off. */}
+              {SHOW_RATINGS ? (
+                <div className="text-[0.56rem] text-amber-700">{renderStars(item.rating)} {item.rating}</div>
+              ) : item.asx_fee ? (
+                <div className="text-[0.56rem] text-slate-500 truncate">{item.asx_fee}</div>
+              ) : null}
             </div>
           </Link>
         ))}

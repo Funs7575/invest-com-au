@@ -2,6 +2,7 @@
 
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import RiskWarningInline from "@/components/RiskWarningInline";
 
 interface ScoredResult {
@@ -35,7 +36,10 @@ export default function QuizComparisonTable({ allResults }: Props) {
               {showShareCols && (
                 <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium hidden md:table-cell">ASX Fee</th>
               )}
-              <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">Rating</th>
+              {/* Editorial rating column — licence-gated (lib/compliance-config). */}
+              {SHOW_RATINGS && (
+                <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">Rating</th>
+              )}
               <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium"><span className="sr-only">Action</span></th>
             </tr>
           </thead>
@@ -70,7 +74,9 @@ export default function QuizComparisonTable({ allResults }: Props) {
                     {(!r.broker.platform_type || r.broker.platform_type === 'share_broker') ? (r.broker.asx_fee || 'N/A') : '—'}
                   </td>
                 )}
-                <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs font-semibold">{r.broker.rating}/5</td>
+                {SHOW_RATINGS && (
+                  <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs font-semibold">{r.broker.rating}/5</td>
+                )}
                 <td className="px-2 md:px-3 py-2 md:py-2.5 text-center">
                   <a
                     href={getAffiliateLink(r.broker)}

@@ -16,6 +16,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { LaneResolution, RankedLane, LaneKind } from "@/lib/getmatched/resolve-lanes";
 import type { ListingMatch, SavedItem, TopMatch } from "@/lib/getmatched/types";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 import ConnectAdvisorModal from "./ConnectAdvisorModal";
 
 interface Props {
@@ -222,7 +223,8 @@ export default function LaneResults({
                       {advisors.map((a) => (
                         <th key={a.slug} scope="col" className="px-3 pb-2 align-bottom min-w-[170px]">
                           <span className="block text-sm font-bold text-slate-900">{a.name}</span>
-                          {a.rating != null && (
+                          {/* Advisor star rating — licence-gated (lib/compliance-config). */}
+                          {SHOW_ADVISOR_RATINGS && a.rating != null && (
                             <span className="block text-xs text-slate-600">★ {a.rating.toFixed(1)}{a.rating_count ? ` (${a.rating_count})` : ""}</span>
                           )}
                         </th>

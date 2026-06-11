@@ -6,6 +6,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import { buildAdvisorMatchReasons, type AdvisorMatchContext } from "@/lib/quiz-advisor-match-reasons";
 import { confidenceLabel, type MatchConfidence } from "@/lib/quiz-advisor-scoring";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 import { trackEvent } from "@/lib/tracking";
 
 export interface MatchedAdvisor {
@@ -234,7 +235,8 @@ export default function AdvisorMatchedScreen({
                 <p className="text-xs text-slate-500 mt-0.5">{currentMatch.firm_name}</p>
               )}
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
-                {currentMatch.rating > 0 && (
+                {/* Advisor star rating — licence-gated (lib/compliance-config). */}
+                {SHOW_ADVISOR_RATINGS && currentMatch.rating > 0 && (
                   <StarRating rating={currentMatch.rating} count={currentMatch.review_count} />
                 )}
                 {currentMatch.location_display && (

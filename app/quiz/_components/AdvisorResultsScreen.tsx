@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 import { trackEvent } from "@/lib/tracking";
 import { createClient } from "@/lib/supabase/client";
 import QuizComparisonTable from "./QuizComparisonTable";
@@ -516,7 +517,8 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                   <p className="text-[0.69rem] md:text-xs text-slate-500 truncate">{previewAdvisor.firm_name}</p>
                 )}
                 <div className="flex items-center gap-2 mt-0.5 text-[0.65rem] md:text-xs text-slate-500">
-                  {previewAdvisor.rating > 0 && (
+                  {/* Advisor star rating — licence-gated (lib/compliance-config). */}
+                  {SHOW_ADVISOR_RATINGS && previewAdvisor.rating > 0 && (
                     <span className="inline-flex items-center gap-0.5">
                       <Icon name="star" size={10} className="text-amber-500" />
                       <strong className="text-slate-700">{previewAdvisor.rating.toFixed(1)}</strong>

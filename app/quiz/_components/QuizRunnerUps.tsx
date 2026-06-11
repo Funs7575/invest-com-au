@@ -2,6 +2,7 @@
 
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import { isSponsored } from "@/lib/sponsorship";
 import Icon from "@/components/Icon";
 import RiskWarningInline from "@/components/RiskWarningInline";
@@ -48,11 +49,18 @@ export default function QuizRunnerUps({ runnerUps, answers, getMatchReasons }: P
                   <h3 className="font-bold text-xs md:text-sm">{r.broker.name}</h3>
                   {isSponsored(r.broker) && <SponsorBadge broker={r.broker} />}
                 </div>
-                <div className="text-[0.62rem] md:text-xs text-slate-500">
-                  {(r.broker.platform_type === 'share_broker' || r.broker.platform_type === 'cfd_forex')
-                    ? `${r.broker.asx_fee || 'N/A'} · ${r.broker.chess_sponsored ? 'CHESS' : 'Custodial'} · ${r.broker.rating}/5`
-                    : `${r.broker.rating}/5`}
-                </div>
+                {/* Summary line — the rating segment is licence-gated; factual
+                    fee/custody facts stay so the line never goes empty for
+                    share platforms. */}
+                {(() => {
+                  const isShareType = r.broker.platform_type === 'share_broker' || r.broker.platform_type === 'cfd_forex';
+                  const facts = isShareType
+                    ? [`${r.broker.asx_fee || 'N/A'}`, r.broker.chess_sponsored ? 'CHESS' : 'Custodial']
+                    : r.broker.asx_fee ? [r.broker.asx_fee] : [];
+                  if (SHOW_RATINGS) facts.push(`${r.broker.rating}/5`);
+                  if (facts.length === 0) return null;
+                  return <div className="text-[0.62rem] md:text-xs text-slate-500">{facts.join(' · ')}</div>;
+                })()}
               </div>
               <a
                 href={getAffiliateLink(r.broker)}

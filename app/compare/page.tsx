@@ -6,6 +6,7 @@ import Icon from "@/components/Icon";
 import CompareClient from "./CompareClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
+import { COMPARE_CATEGORY_COUNT, COMPARE_PLATFORM_TYPES, isCompareListable } from "@/lib/compare-engine";
 import { speakableWebPageJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
@@ -110,6 +111,10 @@ async function CompareData() {
     .order('rating', { ascending: false });
 
   const activeBrokers = (brokers as Broker[]) || [];
+  // JSON-LD must describe the same population the table can render — not the
+  // full tracked universe (which includes platform types with no compare
+  // category, e.g. CFD platforms that live on /cfd).
+  const listableBrokers = activeBrokers.filter(isCompareListable);
 
   // JSON-LD structured data for search results
   const jsonLd = {
@@ -117,8 +122,8 @@ async function CompareData() {
     "@type": "ItemList",
     name: "Compare Australian Investing Platforms",
     description: "Side-by-side comparison of fees, features, and safety for Australian share trading platforms.",
-    numberOfItems: activeBrokers.length,
-    itemListElement: activeBrokers.slice(0, 10).map((b: Broker, i: number) => ({
+    numberOfItems: listableBrokers.length,
+    itemListElement: listableBrokers.slice(0, 10).map((b: Broker, i: number) => ({
       "@type": "ListItem",
       position: i + 1,
       name: b.name,
@@ -148,7 +153,16 @@ export default async function ComparePage() {
   try {
     const supabase = await createClient();
     const [{ count }, { data: deal }, { data: fresh }] = await Promise.all([
-      supabase.from("brokers").select("id", { count: "exact", head: true }).eq("status", "active"),
+      // Count only platforms the comparison table can actually list. The
+      // predicate is derived from the table's own category schemas
+      // (COMPARE_PLATFORM_TYPES + the crypto pill's is_crypto escape), so the
+      // hero stat and the table row count cannot drift apart again
+      // (2026-06-10 audit: hero claimed 115 tracked, table listed 83).
+      supabase
+        .from("brokers")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active")
+        .or(`platform_type.in.(${COMPARE_PLATFORM_TYPES.join(",")}),is_crypto.eq.true`),
       // Top live broker deal — surfaced as a slim promo strip inside the hero.
       supabase
         .from("brokers")
@@ -213,7 +227,9 @@ export default async function ComparePage() {
   ) : null;
   const heroStats = [
     { v: platformLabel, l: "Platforms tracked" },
-    { v: "9", l: "Categories" },
+    // Derived from CATEGORY_SCHEMAS — the hardcoded "9" went stale when a
+    // tenth category shipped. Computed counts can't drift.
+    { v: `${COMPARE_CATEGORY_COUNT}`, l: "Categories" },
     feesCheckedWeekly
       ? { v: "Weekly", l: "Fees rechecked" }
       : { v: lastVerifiedLabel ?? "Dated", l: "Fees last verified" },
