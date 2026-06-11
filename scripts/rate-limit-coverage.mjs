@@ -133,6 +133,11 @@ const EXEMPT_PATTERNS = [
   // absorbs repeat reads. No PII, no writes, no user input beyond URL segments
   // validated against a fixed enum — per-IP throttling adds nothing.
   { match: /\/api\/verified-count\//, reason: "public read w/ 60s CDN cache; provider-pooled; no writes" },
+  // social-proof is a public aggregate (daily-cached count of analytics
+  // events, lib/social-proof.ts). Cache-Control sets public, max-age=3600,
+  // stale-while-revalidate=86400 so the CDN absorbs repeats. No PII, no
+  // writes, single ?metric= param validated against a fixed enum.
+  { match: /\/api\/social-proof(\/|$)/, reason: "public read w/ 1h CDN cache + 24h server cache; provider-pooled; no writes" },
   // market-events GET and iCal are public reads with 1h CDN cache.
   // iCal output is deterministic and fully CDN-absorbed at this traffic level.
   // No writes, no user input, no PII — per-IP throttle adds nothing.

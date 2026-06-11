@@ -309,7 +309,7 @@ export default function DebtCalculatorClient() {
           </div>
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Could debt consolidation save you money?</h1>
           <p className="text-sm md:text-base text-amber-100">Add your debts below and we&apos;ll calculate whether consolidating into a single loan could reduce your interest, payments, and time to debt-free.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" metric="calculator" /></div>
         </div>
       </div>
 

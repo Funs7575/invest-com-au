@@ -465,8 +465,10 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-2 md:mb-3 text-[0.62rem] md:text-xs text-slate-500">
           <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
           <span className="text-slate-300">·</span>
-          <SocialProofCounter />
-          <span className="text-slate-300">·</span>
+          {/* Renders nothing below the visibility floor; when visible it
+              includes its own trailing "·" so the row reads cleanly in
+              both states (no double separator). */}
+          <SocialProofCounter metric="compare" />
           <Link href="/methodology" className="underline hover:text-slate-700">Methodology</Link>
           <span className="text-slate-300">·</span>
           <button

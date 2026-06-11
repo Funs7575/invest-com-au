@@ -212,7 +212,7 @@ export default function RetirementCalculatorClient() {
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much do you need to retire?</h1>
           <p className="text-sm md:text-base text-violet-100">Project your super balance, see how long it lasts, and find out if you&apos;re on track for the retirement you want.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" metric="calculator" /></div>
         </div>
       </div>
 

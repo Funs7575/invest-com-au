@@ -146,7 +146,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
             </div>
             <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much are you overpaying?</h1>
             <p className="text-sm md:text-base text-emerald-100">Enter your trading details below and we&apos;ll calculate your exact annual cost at every Australian broker — and how much you&apos;d save by switching.</p>
-            <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+            <div className="mt-3"><SocialProofCounter variant="badge" metric="calculator" /></div>
           </div>
         </div>}
 
