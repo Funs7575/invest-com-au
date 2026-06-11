@@ -14,6 +14,45 @@
 
 ## Active strategic decisions log
 
+
+### 2026-06-11 — /goal product-upgrade session: find-advisor elevated; Tasks 2–4 of the brief found already shipped
+
+The five-task product brief (quiz, advisor onboarding wizard, profile
+load-more/CTA, cross-border funnel, contrast sweep) was largely stale —
+grep-before-scope found the wizard (OnboardingWizard + shared
+profile-completeness lib), the profile reviews load-more + booking-CTA
+primacy (ADV-002/ADV-011), the FIRB eligibility walkthrough, the
+non-resident mortgage guide, and the homepage cross-border section all
+already on main. Lesson re-confirmed: any task brief older than ~a week
+must be re-grounded against the tree before scoping.
+
+**Funnel layering (worth remembering):** /quiz and bare /find-advisor 301
+to /get-matched (P8 Decision Engine); /find-advisor stays dedicated ONLY
+for ?specialty=/?country= cross-border arrivals (the 1.75x premium line).
+So quiz work splits: get-matched = volume funnel, find-advisor = premium
+corridor funnel.
+
+**Shipped this session (branch claude/modest-knuth-cchsde):**
+- find-advisor: answer-driven "why we matched you" engine
+  (lib/find-advisor/match-reasons, licence-mode-gated), overseas path
+  (country picker -> corridor cookie + derived cross-border specialty —
+  closes the quiz residency gap from the cross-border plan), optional
+  timeline lead-quality signal (timeline_* context ids), not-sure paths
+  with checkbox exclusivity, commercial-property option, PII-free resume
+  storage (localStorage now answers+position only; legacy blobs with
+  email/phone discarded on load), honest no-match state with pre-filtered
+  browse CTA, edit-answers loop, single OTP countdown, focus management.
+- resolveAdvisorTypes: commercial -> mortgage_broker+buyers_agent;
+  not_sure under smsf broadens to tax_agent.
+- Sitewide AA contrast: 1,892 text-slate-400 body-text instances -> 500
+  via context-aware codemod (scripts/codemods/slate-400-contrast.mjs);
+  icons/dark-sections/dark:/disabled: deliberately kept.
+
+**Decision:** lead-quality timeline signal rides in the context array
+(timeline_asap|weeks|research) rather than a schema change — advisors see
+it in the enquiry payload; revisit a first-class column only if reporting
+needs it.
+
 ### 2026-06-11 — Mega-session: launch-clean sweep (DISC A–F) + API-billing verified live-ready + cutover guardian; P1 found: cron fleet dark 19 days
 
 Founder picked three sessions (B cutover-readiness, C polish sweep, D API
