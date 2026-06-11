@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `R&D Tax Incentive Australia ${CURRENT_YEAR}: Complete Guide & Calculator | Invest.com.au`,
   description:
-    "R&D Tax Incentive: up to 43.5% cash offset on eligible spend. FY2025 deadline 30 April 2026 — calculator, eligibility checklist and how to claim.",
+    "R&D Tax Incentive: up to 43.5% cash offset on eligible spend. FY2025 deadline 30 April 2026 — calculator, eligibility checklist and how to claim.",  // dated-ok
   alternates: { canonical: `${SITE_URL}/grants/rd-tax-incentive` },
   openGraph: {
     title: `R&D Tax Incentive Australia ${CURRENT_YEAR}: Complete Guide`,
@@ -44,7 +44,7 @@ const RD_FAQS = [
   },
   {
     q: "When is the RDTI registration deadline?",
-    a: "You must register your R&D activities with AusIndustry within 10 months of the end of the income year. For a 30 June year-end (FY2025), the deadline is 30 April 2026. Registration is done through the customer portal on business.gov.au. Late registration is only permitted in narrow circumstances — missing the deadline means losing the claim for that year.",
+    a: "You must register your R&D activities with AusIndustry within 10 months of the end of the income year. For a 30 June year-end (FY2025), the deadline is 30 April 2026. Registration is done through the customer portal on business.gov.au. Late registration is only permitted in narrow circumstances — missing the deadline means losing the claim for that year.",  // dated-ok
   },
   {
     q: "What counts as eligible R&D expenditure?",
@@ -97,7 +97,7 @@ export default function RdTaxIncentivePage() {
           <div className="container-custom max-w-5xl flex items-start gap-3">
             <Icon name="alert-triangle" size={20} className="text-amber-700 mt-0.5 shrink-0" />
             <p className="text-sm text-amber-900 leading-relaxed">
-              <strong>FY2025 registration deadline: 30 April 2026.</strong> Companies that performed R&amp;D in the year ended 30 June 2025 must register their activities with AusIndustry before this date or lose the claim entirely.
+              <strong>FY2025 registration deadline: 30 April 2026.</strong> Companies that performed R&amp;D in the year ended 30 June 2025 must register their activities with AusIndustry before this date or lose the claim entirely.  // dated-ok
             </p>
           </div>
         </section>

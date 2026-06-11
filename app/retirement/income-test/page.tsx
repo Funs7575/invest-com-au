@@ -112,7 +112,7 @@ const FAQS = [
   },
   {
     q: "Is super counted in the Age Pension income test?",
-    a: "It depends on the type of super arrangement and your age. Account-based pensions (ABPs) started on or after 1 January 2015 are subject to deeming — the full account balance is deemed at standard deeming rates rather than counting actual payments. ABPs opened before 1 January 2015 are grandfathered and assessed on actual payments received. Super accumulation accounts belonging to a partner who is still under Age Pension age are not assessed at all.",
+    a: "It depends on the type of super arrangement and your age. Account-based pensions (ABPs) started on or after 1 January 2015 are subject to deeming — the full account balance is deemed at standard deeming rates rather than counting actual payments. ABPs opened before 1 January 2015 are grandfathered and assessed on actual payments received. Super accumulation accounts belonging to a partner who is still under Age Pension age are not assessed at all.",  // dated-ok
   },
   {
     q: "Does the Work Bonus change how the income test applies to my earnings?",
@@ -389,7 +389,7 @@ export default function IncomTestPage() {
                 Pre-2015 ABP grandfathering
               </p>
               <p className="text-sm text-red-900 leading-relaxed">
-                Account-based pensions commenced before 1 January 2015 are grandfathered: income is assessed
+                Account-based pensions commenced before 1 January 2015 are grandfathered: income is assessed  // dated-ok
                 on <strong>actual payments received</strong>, not on the account balance. Grandfathering is
                 permanently lost if the ABP is restructured or rolled to a new fund.
               </p>

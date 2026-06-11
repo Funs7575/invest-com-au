@@ -42,7 +42,7 @@ const DEEMED_ASSETS = [
   { asset: "Term deposits", notes: "Full balance at reporting date; actual interest earned is irrelevant for deeming purposes" },
   { asset: "Shares & ETFs", notes: "ASX-listed and international equities; market value is deemed at the applicable rate" },
   { asset: "Managed funds", notes: "Includes index funds, active funds, and unlisted managed investments" },
-  { asset: "Account-based pensions (post-2015)", notes: "ABPs commenced on or after 1 January 2015 — full balance is deemed" },
+  { asset: "Account-based pensions (post-2015)", notes: "ABPs commenced on or after 1 January 2015 — full balance is deemed" },  // dated-ok
   { asset: "Cash holdings", notes: "Physical cash above reasonable day-to-day amounts" },
   { asset: "Bonds & debentures", notes: "Face value of bonds, debentures, and similar fixed-income instruments" },
   { asset: "Loans to others", notes: "Money lent to family members or third parties is a financial asset subject to deeming" },
@@ -72,7 +72,7 @@ const FAQS = [
   },
   {
     q: "Are account-based pensions subject to deeming?",
-    a: "Account-based pensions started on or after 1 January 2015 are subject to deeming. The balance is treated as a financial asset and deemed income is calculated on it. Pre-2015 ABPs are grandfathered and assessed on actual payment amounts received. You permanently lose grandfathering if you switch funds or change the ABP structure.",
+    a: "Account-based pensions started on or after 1 January 2015 are subject to deeming. The balance is treated as a financial asset and deemed income is calculated on it. Pre-2015 ABPs are grandfathered and assessed on actual payment amounts received. You permanently lose grandfathering if you switch funds or change the ABP structure.",  // dated-ok
   },
   {
     q: "What happens if my financial assets generate more than the deeming rate?",
@@ -271,7 +271,7 @@ export default function DeemingRatesPage() {
           </h2>
           <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
             <p className="text-sm text-slate-700 leading-relaxed">
-              The <strong className="text-slate-900">1 January 2015 rule change</strong> is one of the most
+              The <strong className="text-slate-900">1 January 2015 rule change</strong> is one of the most  // dated-ok
               important deeming considerations for retirees. Account-based pensions (ABPs) started on or
               after that date are subject to deeming — the full account balance is treated as a financial
               asset and deemed income is calculated on it.
@@ -282,7 +282,7 @@ export default function DeemingRatesPage() {
                   Pre-2015 ABPs (grandfathered)
                 </p>
                 <p className="text-sm text-emerald-900 leading-relaxed">
-                  Account-based pensions commenced before 1 January 2015 retain their grandfathered status.
+                  Account-based pensions commenced before 1 January 2015 retain their grandfathered status.  // dated-ok
                   Income is assessed on <strong>actual payment amounts received</strong>, not on the
                   account balance. This is typically more favourable, particularly for larger balances
                   making minimum drawdowns.
@@ -293,7 +293,7 @@ export default function DeemingRatesPage() {
                   Post-2015 ABPs (deemed)
                 </p>
                 <p className="text-sm text-slate-700 leading-relaxed">
-                  Pensions commenced on or after 1 January 2015 are fully subject to deeming. Centrelink
+                  Pensions commenced on or after 1 January 2015 are fully subject to deeming. Centrelink  // dated-ok
                   assesses deemed income on the full account balance regardless of how much you draw down
                   each year.
                 </p>

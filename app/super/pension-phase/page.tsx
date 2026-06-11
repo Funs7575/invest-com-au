@@ -38,12 +38,12 @@ const DRAWDOWN_RATES = [
 ];
 
 const PRESERVATION_AGES = [
-  { dob: "Before 1 July 1960", preservationAge: "55" },
-  { dob: "1 July 1960 – 30 June 1961", preservationAge: "56" },
-  { dob: "1 July 1961 – 30 June 1962", preservationAge: "57" },
-  { dob: "1 July 1962 – 30 June 1963", preservationAge: "58" },
-  { dob: "1 July 1963 – 30 June 1964", preservationAge: "59" },
-  { dob: "1 July 1964 or later", preservationAge: "60" },
+  { dob: "Before 1 July 1960", preservationAge: "55" },  // dated-ok
+  { dob: "1 July 1960 – 30 June 1961", preservationAge: "56" },  // dated-ok
+  { dob: "1 July 1961 – 30 June 1962", preservationAge: "57" },  // dated-ok
+  { dob: "1 July 1962 – 30 June 1963", preservationAge: "58" },  // dated-ok
+  { dob: "1 July 1963 – 30 June 1964", preservationAge: "59" },  // dated-ok
+  { dob: "1 July 1964 or later", preservationAge: "60" },  // dated-ok
 ];
 
 const FAQS = [
@@ -53,7 +53,7 @@ const FAQS = [
   },
   {
     q: "What is the minimum I must withdraw from an account-based pension each year?",
-    a: "The minimum annual drawdown depends on your age and account balance at 1 July each year (or at commencement if starting mid-year, pro-rated). At age 55-64 you must withdraw at least 4% of your balance; 65-74 the minimum rises to 5%; 75-79 it is 6%; 80-84 it is 7%; 85-89 it is 9%; 90-94 it is 11%; and 95+ it is 14%. There is no maximum — you can draw as much as you like. Note: temporary COVID-19 halved minimums applied until 30 June 2024 but are no longer in effect from FY2024-25 onwards.",
+    a: "The minimum annual drawdown depends on your age and account balance at 1 July each year (or at commencement if starting mid-year, pro-rated). At age 55-64 you must withdraw at least 4% of your balance; 65-74 the minimum rises to 5%; 75-79 it is 6%; 80-84 it is 7%; 85-89 it is 9%; 90-94 it is 11%; and 95+ it is 14%. There is no maximum — you can draw as much as you like. Note: temporary COVID-19 halved minimums applied until 30 June 2024 but are no longer in effect from FY2024-25 onwards.",  // dated-ok
   },
   {
     q: "Are all super pension payments tax-free once I turn 60?",
@@ -69,7 +69,7 @@ const FAQS = [
   },
   {
     q: "How does an account-based pension affect the Age Pension income test?",
-    a: "Account-based pensions started on or after 1 January 2015 are assessed under deeming rules for the Age Pension income test. Centrelink deems you to earn a set rate on your total financial assets (including your ABP balance), regardless of your actual drawdown. For 2024-25, the lower deeming rate is 0.25% on the first $62,600 (singles) / $103,800 (couples) and 2.25% above that threshold. Your deemed income from the ABP counts toward the income test even if you draw less. See the income test guide at /retirement/income-test for full details including the assets test.",
+    a: "Account-based pensions started on or after 1 January 2015 are assessed under deeming rules for the Age Pension income test. Centrelink deems you to earn a set rate on your total financial assets (including your ABP balance), regardless of your actual drawdown. For 2024-25, the lower deeming rate is 0.25% on the first $62,600 (singles) / $103,800 (couples) and 2.25% above that threshold. Your deemed income from the ABP counts toward the income test even if you draw less. See the income test guide at /retirement/income-test for full details including the assets test.",  // dated-ok
   },
 ];
 
@@ -280,7 +280,7 @@ export default function PensionPhasePage() {
               <p className="text-sm font-bold text-amber-800 mb-1">COVID-19 temporary reduction: now ended</p>
               <p className="text-sm text-amber-700 leading-relaxed">
                 From FY2020&ndash;21 through FY2023&ndash;24, the government halved minimum drawdown rates as
-                a COVID-19 relief measure. These temporary reductions ended on 30 June 2024. From
+                a COVID-19 relief measure. These temporary reductions ended on 30 June 2024. From  // dated-ok
                 FY2024&ndash;25 onwards, the standard rates in the table above apply in full. If you were
                 drawing at the halved rate, your minimum payment has now doubled back to normal.
               </p>
@@ -442,7 +442,7 @@ export default function PensionPhasePage() {
                   badge: "Age 67",
                   color: "border-blue-200 bg-blue-50",
                   badgeColor: "bg-blue-100 text-blue-800",
-                  body: "The government Age Pension qualifying age is 67 for anyone born on or after 1 January 1957. Super pension payments drawn from age 60 are separate from the Age Pension — you can draw super tax-free from 60 while waiting until 67 for the Age Pension to kick in. Having an ABP may reduce your Age Pension entitlement under the income and assets tests.",
+                  body: "The government Age Pension qualifying age is 67 for anyone born on or after 1 January 1957. Super pension payments drawn from age 60 are separate from the Age Pension — you can draw super tax-free from 60 while waiting until 67 for the Age Pension to kick in. Having an ABP may reduce your Age Pension entitlement under the income and assets tests.",  // dated-ok
                 },
                 {
                   title: "Working after 60: contributions still count",
@@ -556,7 +556,7 @@ export default function PensionPhasePage() {
               <div className="rounded-xl border border-slate-200 bg-white p-5">
                 <h3 className="font-extrabold text-slate-900 mb-2">Income test: deeming for post-2015 ABPs</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  Account-based pensions opened on or after 1 January 2015 are assessed under Centrelink&apos;s
+                  Account-based pensions opened on or after 1 January 2015 are assessed under Centrelink&apos;s  // dated-ok
                   deeming rules. Centrelink assumes your ABP earns at the lower deeming rate (0.25% on the
                   first $62,600 for singles, $103,800 for couples) and the upper rate (2.25%) above that
                   threshold, regardless of your actual drawdown or investment return. The deemed income is

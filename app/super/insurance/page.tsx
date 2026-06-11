@@ -47,7 +47,7 @@ const INSURANCE_TYPES = [
     badge: "Monthly benefit",
     badgeColor: "bg-teal-100 text-teal-700",
     body: "Pays a monthly benefit — typically 70–75% of your pre-disability income — while you are temporarily unable to work due to illness or injury. Key variables are the waiting period (30, 60, or 90 days before payments start) and the benefit period (2 years, 5 years, or to age 65). A longer benefit period costs more in premiums but provides protection if you have a prolonged illness or injury. Payments are assessable income and taxed at your marginal rate.",
-    detail: "Tax note: income protection premiums paid by a super fund on behalf of members are not deductible to the fund for policies issued after 1 July 2014 under certain structures — but this does not directly affect how your premiums work inside super. If you hold IP outside super, those premiums are personally tax-deductible.",
+    detail: "Tax note: income protection premiums paid by a super fund on behalf of members are not deductible to the fund for policies issued after 1 July 2014 under certain structures — but this does not directly affect how your premiums work inside super. If you hold IP outside super, those premiums are personally tax-deductible.",  // dated-ok
   },
 ];
 
@@ -85,7 +85,7 @@ const DISADVANTAGES = [
   },
   {
     title: "IP not deductible by some funds (post-2014)",
-    body: "For income protection policies taken out inside super on or after 1 July 2014, the fund may not be able to claim a tax deduction for the premium under certain product structures. The ATO's position on 'integral link' products changed the tax treatment. In practice, most industry and retail funds restructured their offerings — but it is worth checking the fund's Product Disclosure Statement.",
+    body: "For income protection policies taken out inside super on or after 1 July 2014, the fund may not be able to claim a tax deduction for the premium under certain product structures. The ATO's position on 'integral link' products changed the tax treatment. In practice, most industry and retail funds restructured their offerings — but it is worth checking the fund's Product Disclosure Statement.",  // dated-ok
   },
 ];
 
@@ -414,7 +414,7 @@ export default function SuperInsurancePage() {
             <div className="rounded-xl border border-red-200 bg-red-50 p-5 mb-6">
               <p className="text-sm font-bold text-red-800 mb-1">Protecting Your Super (2019) — a common cover trap</p>
               <p className="text-sm text-red-700 leading-relaxed">
-                Under the Protecting Your Super package (effective 1 July 2019), APRA-regulated super funds
+                Under the Protecting Your Super package (effective 1 July 2019), APRA-regulated super funds  // dated-ok
                 must cancel insurance on accounts that have been inactive for 16 consecutive months (no
                 employer or personal contributions received) or where the account balance falls below $6,000.
                 The fund must notify you before cancelling. If you receive a notice, you can elect to retain
