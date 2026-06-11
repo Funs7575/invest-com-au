@@ -28,12 +28,16 @@ guardian scripts.
 Strategic decisions made (this session, founder gave blanket "make the best
 long-term call" authorisation):
 
-- **DISC-A interpretation corrected mid-flight**: the DISC-A agent ADDED a
-  `SHOW_RATINGS` licence gate to `BrokerCard` ratings — backwards. Editorial
-  star ratings/review counts are factual data (pre-AFSL s766B carve-out safe);
-  the gates belong on advice-adjacent actions (Apply CTAs, lead forms,
-  affiliate /go/). Reverted the gate. Rule of thumb going forward: **gate
-  actions, not facts.**
+- **DISC-A direction — corrected twice, final answer is GATE the ratings**:
+  first pass wrongly reverted the agent's `SHOW_RATINGS` gate on `BrokerCard`
+  on a "ratings are factual" theory. The REMEDIATION_QUEUE row is explicit:
+  DISC-A = wire `SHOW_RATINGS`/`SHOW_ADVISOR_RATINGS` through the surfaces
+  that REMAINED un-gated (BrokerCard, DealCard, RecentlyViewed, quiz results,
+  advisor cards, versus) — #1489 had already gated the compare table etc.
+  Editorial star ratings are opinion (implied recommendation risk in
+  factual_only mode), unlike fee/CHESS facts. Gate restored; BrokerCard test
+  now mocks the flag. Lesson: **when an agent's change contradicts your memory
+  of an audit item, re-read the audit item before "fixing" the agent.**
 - **PR #1541 merged with a MERGE COMMIT, not squash**, deliberately breaking
   the repo's squash convention for this one PR: 19 commits across 8 independent
   workstreams — squashing would destroy per-stream blame/revert granularity,

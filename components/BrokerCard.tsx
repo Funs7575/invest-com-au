@@ -4,6 +4,7 @@ import { memo } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { AFFILIATE_AD_TOOLTIP } from "@/lib/compliance";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import SponsorBadge from "@/components/SponsorBadge";
 import Icon from "@/components/Icon";
 import ShortlistButton from "@/components/ShortlistButton";
@@ -93,10 +94,14 @@ export default memo(function BrokerCard({
               {/* PR queue #12 — eligibility badge when visitor has intent country */}
               <EligibilityBadge entity={broker} intentCountry={intentCountry} compact />
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-amber-600 text-xs">{renderStars(broker.rating || 0)}</span>
-              <span className="text-[0.65rem] font-semibold text-slate-500">{broker.rating}/5</span>
-            </div>
+            {/* Editorial star rating — licence-gated per DISC-20260610 A
+                (factual_only mode hides editorial ratings until the AFSL). */}
+            {SHOW_RATINGS && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-amber-600 text-xs">{renderStars(broker.rating || 0)}</span>
+                <span className="text-[0.65rem] font-semibold text-slate-500">{broker.rating}/5</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
