@@ -9,16 +9,40 @@ const sig = (signals: ProfileSignal[], name: string) =>
   signals.find((s) => s.name === name);
 
 describe("buildInvestorProfile — label composition across all 13 retail intents", () => {
-  it("grow → long-term growth investor", () => {
+  it("grow base + each sub-answer variation", () => {
     expect(buildInvestorProfile({ intent: "grow" }).label).toBe(
       "Long-term growth investor",
     );
+    expect(
+      buildInvestorProfile({ intent: "grow", grow_sub: "just_starting" }).label,
+    ).toBe("First-step investor");
+    expect(
+      buildInvestorProfile({ intent: "grow", grow_sub: "etfs_longterm" }).label,
+    ).toBe("Long-term ETF investor");
+    expect(
+      buildInvestorProfile({ intent: "grow", grow_sub: "pick_shares" }).label,
+    ).toBe("Share-picking investor");
+    expect(
+      buildInvestorProfile({ intent: "grow", grow_sub: "guide_me" }).label,
+    ).toBe("Investor seeking guidance");
   });
 
-  it("income → income & dividend investor", () => {
+  it("income base + each sub-answer variation", () => {
     expect(buildInvestorProfile({ intent: "income" }).label).toBe(
       "Income & dividend investor",
     );
+    expect(
+      buildInvestorProfile({ intent: "income", income_sub: "dividend_shares" }).label,
+    ).toBe("Dividend-share investor");
+    expect(
+      buildInvestorProfile({ intent: "income", income_sub: "income_etfs" }).label,
+    ).toBe("Income-ETF / LIC investor");
+    expect(
+      buildInvestorProfile({ intent: "income", income_sub: "property_income" }).label,
+    ).toBe("REIT income investor");
+    expect(
+      buildInvestorProfile({ intent: "income", income_sub: "royalty_income" }).label,
+    ).toBe("Royalty-income investor");
   });
 
   it("crypto base + each sub-answer variation", () => {
@@ -39,14 +63,38 @@ describe("buildInvestorProfile — label composition across all 13 retail intent
     ).toBe("Crypto investor seeking tax help");
   });
 
-  it("trade → active trader", () => {
+  it("trade base + each sub-answer variation", () => {
     expect(buildInvestorProfile({ intent: "trade" }).label).toBe("Active trader");
+    expect(
+      buildInvestorProfile({ intent: "trade", trade_sub: "shares_etfs" }).label,
+    ).toBe("Shares & ETF trader");
+    expect(
+      buildInvestorProfile({ intent: "trade", trade_sub: "cfds_forex" }).label,
+    ).toBe("CFD & forex trader");
+    expect(
+      buildInvestorProfile({ intent: "trade", trade_sub: "options" }).label,
+    ).toBe("Options trader");
+    expect(
+      buildInvestorProfile({ intent: "trade", trade_sub: "crypto_trading" }).label,
+    ).toBe("Crypto trader");
   });
 
-  it("automate → hands-off / robo investor", () => {
+  it("automate base + each sub-answer variation", () => {
     expect(buildInvestorProfile({ intent: "automate" }).label).toBe(
       "Hands-off / robo investor",
     );
+    expect(
+      buildInvestorProfile({ intent: "automate", automate_sub: "full_robo" }).label,
+    ).toBe("Full robo-advice investor");
+    expect(
+      buildInvestorProfile({ intent: "automate", automate_sub: "round_ups" }).label,
+    ).toBe("Round-ups / micro-investor");
+    expect(
+      buildInvestorProfile({ intent: "automate", automate_sub: "managed_portfolio" }).label,
+    ).toBe("Managed-portfolio investor");
+    expect(
+      buildInvestorProfile({ intent: "automate", automate_sub: "compare_robo" }).label,
+    ).toBe("Robo-advisor comparer");
   });
 
   it("super base + each sub-answer variation", () => {
@@ -116,10 +164,23 @@ describe("buildInvestorProfile — label composition across all 13 retail intent
     ).toBe("Alternative-assets investor");
   });
 
-  it("royalties → royalties / income-asset investor", () => {
+  it("royalties base + each sub-answer variation", () => {
     expect(buildInvestorProfile({ intent: "royalties" }).label).toBe(
       "Royalties / income-asset investor",
     );
+    expect(
+      buildInvestorProfile({ intent: "royalties", royalties_sub: "music_ip" }).label,
+    ).toBe("Music / IP royalties investor");
+    expect(
+      buildInvestorProfile({ intent: "royalties", royalties_sub: "mining" }).label,
+    ).toBe("Mining-royalties investor");
+    expect(
+      buildInvestorProfile({ intent: "royalties", royalties_sub: "vending_atm" }).label,
+    ).toBe("Vending / ATM income investor");
+    // browse_all is not a named stream → falls back to the base label.
+    expect(
+      buildInvestorProfile({ intent: "royalties", royalties_sub: "browse_all" }).label,
+    ).toBe("Royalties / income-asset investor");
   });
 
   it("pre_ipo base + each sub-answer variation", () => {

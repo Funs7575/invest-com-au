@@ -68,6 +68,59 @@ describe("inferVertical", () => {
       inferVertical({ intent: "property", property_sub: "reit" }),
     ).toBe("property");
   });
+
+  it("income_sub=property_income → property vertical, royalty_income → royalties", () => {
+    expect(
+      inferVertical({ intent: "income", income_sub: "property_income" }),
+    ).toBe("property");
+    expect(
+      inferVertical({ intent: "income", income_sub: "royalty_income" }),
+    ).toBe("royalties");
+    // dividend / income_etfs keep the shares vertical (goal default).
+    expect(
+      inferVertical({ intent: "income", income_sub: "dividend_shares" }),
+    ).toBe("shares");
+    expect(
+      inferVertical({ intent: "income", income_sub: "income_etfs" }),
+    ).toBe("shares");
+  });
+
+  it("trade_sub=crypto_trading → crypto vertical, others keep trade", () => {
+    expect(
+      inferVertical({ intent: "trade", trade_sub: "crypto_trading" }),
+    ).toBe("crypto");
+    expect(
+      inferVertical({ intent: "trade", trade_sub: "shares_etfs" }),
+    ).toBe("trade");
+    expect(
+      inferVertical({ intent: "trade", trade_sub: "cfds_forex" }),
+    ).toBe("trade");
+    expect(inferVertical({ intent: "trade", trade_sub: "options" })).toBe(
+      "trade",
+    );
+  });
+
+  it("automate_sub options keep the robo vertical", () => {
+    for (const sub of ["full_robo", "round_ups", "managed_portfolio", "compare_robo"]) {
+      expect(inferVertical({ intent: "automate", automate_sub: sub })).toBe(
+        "robo",
+      );
+    }
+  });
+
+  it("grow_sub options keep the shares vertical", () => {
+    for (const sub of ["just_starting", "etfs_longterm", "pick_shares", "guide_me"]) {
+      expect(inferVertical({ intent: "grow", grow_sub: sub })).toBe("shares");
+    }
+  });
+
+  it("royalties_sub options keep the royalties vertical", () => {
+    for (const sub of ["music_ip", "mining", "vending_atm", "browse_all"]) {
+      expect(inferVertical({ intent: "royalties", royalties_sub: sub })).toBe(
+        "royalties",
+      );
+    }
+  });
 });
 
 describe("inferRoute", () => {
@@ -157,6 +210,100 @@ describe("inferRoute", () => {
       });
       expect(r.route).toBe("browse");
       expect(r.href).toBe("/invest?vertical=pre_ipo");
+    });
+  });
+
+  describe("new step-3 sub-questions — every option pinned (route + vertical)", () => {
+    // grow_sub
+    it("grow_sub=just_starting → compare?vertical=shares (default compare)", () => {
+      const r = inferRoute({ intent: "grow", grow_sub: "just_starting" });
+      expect(r.route).toBe("compare");
+      expect(r.href).toBe("/compare");
+      expect(r.vertical).toBe("shares");
+    });
+    it("grow_sub=etfs_longterm → compare shares", () => {
+      const r = inferRoute({ intent: "grow", grow_sub: "etfs_longterm" });
+      expect(r.route).toBe("compare");
+      expect(r.vertical).toBe("shares");
+    });
+    it("grow_sub=pick_shares → compare shares", () => {
+      const r = inferRoute({ intent: "grow", grow_sub: "pick_shares" });
+      expect(r.route).toBe("compare");
+      expect(r.vertical).toBe("shares");
+    });
+    it("grow_sub=guide_me → guide /articles", () => {
+      const r = inferRoute({ intent: "grow", grow_sub: "guide_me" });
+      expect(r.route).toBe("guide");
+      expect(r.href).toBe("/articles");
+    });
+
+    // income_sub
+    it("income_sub=dividend_shares → compare shares", () => {
+      const r = inferRoute({ intent: "income", income_sub: "dividend_shares" });
+      expect(r.route).toBe("compare");
+      expect(r.href).toBe("/compare");
+      expect(r.vertical).toBe("shares");
+    });
+    it("income_sub=income_etfs → compare shares", () => {
+      const r = inferRoute({ intent: "income", income_sub: "income_etfs" });
+      expect(r.route).toBe("compare");
+      expect(r.vertical).toBe("shares");
+    });
+    it("income_sub=property_income → compare?vertical=property (REIT compare)", () => {
+      const r = inferRoute({ intent: "income", income_sub: "property_income" });
+      expect(r.route).toBe("compare");
+      expect(r.href).toBe("/compare?vertical=property");
+      expect(r.vertical).toBe("property");
+    });
+    it("income_sub=royalty_income → browse?vertical=royalties", () => {
+      const r = inferRoute({ intent: "income", income_sub: "royalty_income" });
+      expect(r.route).toBe("browse");
+      expect(r.href).toBe("/invest?vertical=royalties");
+      expect(r.vertical).toBe("royalties");
+    });
+
+    // trade_sub
+    it("trade_sub=shares_etfs → compare?vertical=trade", () => {
+      const r = inferRoute({ intent: "trade", trade_sub: "shares_etfs" });
+      expect(r.route).toBe("compare");
+      expect(r.href).toBe("/compare?vertical=trade");
+      expect(r.vertical).toBe("trade");
+    });
+    it("trade_sub=cfds_forex → compare?vertical=trade", () => {
+      const r = inferRoute({ intent: "trade", trade_sub: "cfds_forex" });
+      expect(r.route).toBe("compare");
+      expect(r.vertical).toBe("trade");
+    });
+    it("trade_sub=options → compare?vertical=trade", () => {
+      const r = inferRoute({ intent: "trade", trade_sub: "options" });
+      expect(r.route).toBe("compare");
+      expect(r.vertical).toBe("trade");
+    });
+    it("trade_sub=crypto_trading → compare?vertical=crypto", () => {
+      const r = inferRoute({ intent: "trade", trade_sub: "crypto_trading" });
+      expect(r.route).toBe("compare");
+      expect(r.href).toBe("/compare?vertical=crypto");
+      expect(r.vertical).toBe("crypto");
+    });
+
+    // automate_sub — all robo compare
+    it("automate_sub options → compare?vertical=robo", () => {
+      for (const sub of ["full_robo", "round_ups", "managed_portfolio", "compare_robo"]) {
+        const r = inferRoute({ intent: "automate", automate_sub: sub });
+        expect(r.route).toBe("compare");
+        expect(r.href).toBe("/compare?vertical=robo");
+        expect(r.vertical).toBe("robo");
+      }
+    });
+
+    // royalties_sub — all browse royalties
+    it("royalties_sub options → browse?vertical=royalties", () => {
+      for (const sub of ["music_ip", "mining", "vending_atm", "browse_all"]) {
+        const r = inferRoute({ intent: "royalties", royalties_sub: sub });
+        expect(r.route).toBe("browse");
+        expect(r.href).toBe("/invest?vertical=royalties");
+        expect(r.vertical).toBe("royalties");
+      }
     });
   });
 
