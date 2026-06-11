@@ -467,7 +467,7 @@ export default function AttributionAnalyticsPage() {
                 </div>
                 <div className="p-6 text-sm text-slate-600">
                   {totalClicks === 0 && totalImpressions === 0 ? (
-                    <p className="text-center text-slate-400">
+                    <p className="text-center text-slate-500">
                       No campaign events recorded in this date range. Events will appear here once
                       campaigns start running.
                     </p>
@@ -478,7 +478,7 @@ export default function AttributionAnalyticsPage() {
                           Click Rate
                         </div>
                         <div className="text-lg font-bold text-slate-900">{ctr}%</div>
-                        <div className="text-xs text-slate-400">
+                        <div className="text-xs text-slate-500">
                           {totalClicks} clicks / {totalImpressions} impressions
                         </div>
                       </div>
@@ -487,14 +487,14 @@ export default function AttributionAnalyticsPage() {
                           Cost Efficiency
                         </div>
                         <div className="text-lg font-bold text-slate-900">${avgCpc}</div>
-                        <div className="text-xs text-slate-400">average cost per click</div>
+                        <div className="text-xs text-slate-500">average cost per click</div>
                       </div>
                       <div>
                         <div className="text-xs font-medium text-slate-500 uppercase mb-1">
                           Pages Tracked
                         </div>
                         <div className="text-lg font-bold text-slate-900">{pageStats.length}</div>
-                        <div className="text-xs text-slate-400">unique page URLs</div>
+                        <div className="text-xs text-slate-500">unique page URLs</div>
                       </div>
                       <div>
                         <div className="text-xs font-medium text-slate-500 uppercase mb-1">
@@ -503,7 +503,7 @@ export default function AttributionAnalyticsPage() {
                         <div className="text-lg font-bold text-slate-900">
                           {deviceStats.length}
                         </div>
-                        <div className="text-xs text-slate-400">unique device categories</div>
+                        <div className="text-xs text-slate-500">unique device categories</div>
                       </div>
                     </div>
                   )}
@@ -522,7 +522,7 @@ export default function AttributionAnalyticsPage() {
             {loading ? (
               <SkeletonRows count={8} />
             ) : pageStats.length === 0 ? (
-              <div className="p-12 text-center text-sm text-slate-400">
+              <div className="p-12 text-center text-sm text-slate-500">
                 No page data available for this date range.
               </div>
             ) : (
@@ -610,7 +610,7 @@ export default function AttributionAnalyticsPage() {
               {loading ? (
                 <SkeletonRows count={5} />
               ) : deviceStats.length === 0 ? (
-                <div className="p-12 text-center text-sm text-slate-400">
+                <div className="p-12 text-center text-sm text-slate-500">
                   No device data available for this date range.
                 </div>
               ) : (
@@ -701,7 +701,7 @@ export default function AttributionAnalyticsPage() {
             {loading ? (
               <SkeletonRows count={6} />
             ) : placementStats.length === 0 ? (
-              <div className="p-12 text-center text-sm text-slate-400">
+              <div className="p-12 text-center text-sm text-slate-500">
                 No placement data available for this date range.
               </div>
             ) : (
@@ -735,7 +735,7 @@ export default function AttributionAnalyticsPage() {
                         <td className="px-4 py-2.5 text-sm text-slate-900">
                           <div className="font-medium">{s.placement_name}</div>
                           {s.placement_name !== s.placement_slug && (
-                            <div className="text-xs text-slate-400">{s.placement_slug}</div>
+                            <div className="text-xs text-slate-500">{s.placement_slug}</div>
                           )}
                         </td>
                         <td className="px-4 py-2.5 text-sm text-right text-amber-600 font-semibold">

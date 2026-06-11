@@ -422,7 +422,7 @@ export default function AdvisorAuctionsPage() {
                               Your bid (AUD, min $50)
                             </label>
                             <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
                                 $
                               </span>
                               <input
@@ -613,7 +613,7 @@ export default function AdvisorAuctionsPage() {
                                     : isLost
                                     ? "bg-slate-100 text-slate-500"
                                     : isRetracted
-                                    ? "bg-slate-100 text-slate-400"
+                                    ? "bg-slate-100 text-slate-500"
                                     : jobExpired
                                     ? "bg-orange-100 text-orange-700"
                                     : "bg-amber-100 text-amber-800"

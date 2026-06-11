@@ -251,7 +251,7 @@ export default function AdminBrokersPage() {
                 Cancel
               </button>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Note: This creates a broker_accounts record. The broker will need to sign up via
               Supabase Auth and link their account separately.
             </p>
@@ -266,7 +266,7 @@ export default function AdminBrokersPage() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+                <span className="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
                 <input
                   type="number" inputMode="decimal"
                   step="0.01"
@@ -313,7 +313,7 @@ export default function AdminBrokersPage() {
             ))}
           </div>
         ) : brokers.length === 0 ? (
-          <div className="p-12 text-center text-sm text-slate-400">
+          <div className="p-12 text-center text-sm text-slate-500">
             No broker accounts yet. Click &quot;Invite Broker&quot; to get started.
           </div>
         ) : (

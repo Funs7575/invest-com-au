@@ -185,7 +185,7 @@ export default function BillingClient(props: Props) {
             <p className="text-sm text-slate-500">
               Current tier: <span className="font-bold text-slate-900 capitalize">{props.subscriptionTier}</span>
               {props.subscriptionStatus !== "inactive" && (
-                <span className="ml-2 text-xs text-slate-400 capitalize">({props.subscriptionStatus})</span>
+                <span className="ml-2 text-xs text-slate-500 capitalize">({props.subscriptionStatus})</span>
               )}
             </p>
           </div>
@@ -230,7 +230,7 @@ export default function BillingClient(props: Props) {
                   {isCurrent ? (
                     <p className="text-xs font-bold text-amber-700 text-center py-2">Current plan</p>
                   ) : isFree ? (
-                    <p className="text-xs text-slate-400 text-center py-2">Default</p>
+                    <p className="text-xs text-slate-500 text-center py-2">Default</p>
                   ) : (
                     <button
                       type="button"
@@ -274,7 +274,7 @@ export default function BillingClient(props: Props) {
               <p className="text-base font-bold text-slate-900">{p.name}</p>
               <p className="text-xs text-slate-500 mb-2">{p.description}</p>
               <p className="text-2xl font-extrabold text-slate-900">{fmtAud(p.priceCents)}</p>
-              <p className="text-[10px] text-slate-400 mb-3">
+              <p className="text-[10px] text-slate-500 mb-3">
                 A${(p.perLeadCents / 100).toFixed(2)} per credit
               </p>
               <button
@@ -428,7 +428,7 @@ export default function BillingClient(props: Props) {
         </ul>
       </section>
 
-      <p className="text-[10px] text-slate-400 text-center">
+      <p className="text-[10px] text-slate-500 text-center">
         Payments processed by Stripe. Receipts are emailed automatically. <a href="/account/notifications" className="underline">Email preferences</a>.
       </p>
     </div>

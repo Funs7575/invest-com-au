@@ -276,7 +276,7 @@ export default function AdminProSubscribersPage() {
             <tbody className="divide-y divide-slate-100">
               {paged.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
                     {loading ? "Loading..." : "No subscribers found."}
                   </td>
                 </tr>
@@ -294,7 +294,7 @@ export default function AdminProSubscribersPage() {
                   <td className="px-4 py-3">
                     <p className="font-medium text-slate-900">{sub.profiles?.email || "—"}</p>
                     {sub.profiles?.display_name && (
-                      <p className="text-xs text-slate-400">{sub.profiles.display_name}</p>
+                      <p className="text-xs text-slate-500">{sub.profiles.display_name}</p>
                     )}
                   </td>
                   <td className="px-4 py-3">

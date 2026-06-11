@@ -87,7 +87,7 @@ export default async function DisputesDrillDown() {
                     ) : r.status === "rejected" ? (
                       <OverrideButton feature="lead_disputes" rowId={r.id} targetVerdict="approved" label="→ Refund" requireReason />
                     ) : (
-                      <span className="text-[0.65rem] text-slate-400">pending</span>
+                      <span className="text-[0.65rem] text-slate-500">pending</span>
                     )}
                   </td>
                 </tr>

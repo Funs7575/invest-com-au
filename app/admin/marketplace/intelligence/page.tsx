@@ -740,7 +740,7 @@ export default function AdvertiserIntelligencePage() {
                       </div>
                       <p className="text-lg font-extrabold text-emerald-700">
                         ${(kpis.totalSpendCents / 100).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                        <span className="text-xs text-slate-400 font-normal ml-1">total</span>
+                        <span className="text-xs text-slate-500 font-normal ml-1">total</span>
                       </p>
                     </div>
                     <SVGLineChart
@@ -766,7 +766,7 @@ export default function AdvertiserIntelligencePage() {
                         $<CountUp end={kpis.activeBrokers > 0 ? kpis.totalSpendCents / 100 / kpis.activeBrokers : 0} decimals={2} duration={1000} />
                       </p>
                     </div>
-                    <div className="ml-auto text-xs text-slate-400">
+                    <div className="ml-auto text-xs text-slate-500">
                       ${(kpis.totalSpendCents / 100).toFixed(0)} ÷ {kpis.activeBrokers} broker{kpis.activeBrokers !== 1 ? "s" : ""}
                     </div>
                   </div>
@@ -827,7 +827,7 @@ export default function AdvertiserIntelligencePage() {
                             <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${GRADE_COLORS[sc.healthGrade]}`}>
                               {sc.healthGrade}
                             </span>
-                            <span className="text-[0.55rem] text-slate-400 ml-1">{sc.healthScore}</span>
+                            <span className="text-[0.55rem] text-slate-500 ml-1">{sc.healthScore}</span>
                           </td>
                           <td className="px-4 py-3 text-center">
                             <Sparkline
@@ -867,7 +867,7 @@ export default function AdvertiserIntelligencePage() {
                                       </div>
                                     </div>
                                   ) : (
-                                    <p className="text-sm text-slate-400">No active insights — performing well.</p>
+                                    <p className="text-sm text-slate-500">No active insights — performing well.</p>
                                   );
                                 })()}
 
@@ -929,7 +929,7 @@ export default function AdvertiserIntelligencePage() {
                                     { label: "Avg CPC", value: `$${sc.avgCpc.toFixed(2)}` },
                                   ].map(m => (
                                     <div key={m.label} className="bg-white rounded-lg border border-slate-200 p-2.5">
-                                      <p className="text-[0.6rem] text-slate-400 font-medium">{m.label}</p>
+                                      <p className="text-[0.6rem] text-slate-500 font-medium">{m.label}</p>
                                       <p className="text-sm font-extrabold text-slate-900">{m.value}</p>
                                     </div>
                                   ))}
@@ -943,7 +943,7 @@ export default function AdvertiserIntelligencePage() {
                   </tbody>
                 </table>
                 {scorecards.length === 0 && (
-                  <div className="p-12 text-center text-sm text-slate-400">No broker accounts found.</div>
+                  <div className="p-12 text-center text-sm text-slate-500">No broker accounts found.</div>
                 )}
               </div>
             )}
@@ -974,7 +974,7 @@ export default function AdvertiserIntelligencePage() {
                   <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
                     <div className="text-3xl mb-2">✅</div>
                     <p className="text-sm text-slate-500 font-medium">No actionable insights for this period.</p>
-                    <p className="text-xs text-slate-400 mt-1">All brokers are performing within normal parameters.</p>
+                    <p className="text-xs text-slate-500 mt-1">All brokers are performing within normal parameters.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -1034,7 +1034,7 @@ export default function AdvertiserIntelligencePage() {
                         width={460}
                       />
                     ) : (
-                      <p className="text-sm text-slate-400 py-8 text-center">No spend data in this period.</p>
+                      <p className="text-sm text-slate-500 py-8 text-center">No spend data in this period.</p>
                     )}
                   </div>
 
@@ -1050,7 +1050,7 @@ export default function AdvertiserIntelligencePage() {
                         size={180}
                       />
                     ) : (
-                      <p className="text-sm text-slate-400 py-8 text-center">No placement data in this period.</p>
+                      <p className="text-sm text-slate-500 py-8 text-center">No placement data in this period.</p>
                     )}
                   </div>
                 </div>
@@ -1168,7 +1168,7 @@ export default function AdvertiserIntelligencePage() {
                   </div>
                 ) : (
                   <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-                    <p className="text-sm text-slate-400">No campaign data to display for this period.</p>
+                    <p className="text-sm text-slate-500">No campaign data to display for this period.</p>
                   </div>
                 )}
 
@@ -1181,7 +1181,7 @@ export default function AdvertiserIntelligencePage() {
                     ))}
                   </div>
                   <span>High</span>
-                  <span className="ml-2 text-slate-400">— = no data</span>
+                  <span className="ml-2 text-slate-500">— = no data</span>
                 </div>
               </div>
             )}

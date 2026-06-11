@@ -267,7 +267,7 @@ export default function AuditLogPage() {
             onChange={(e) => { setDateFrom(e.target.value); setPage(0); }}
             className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
           />
-          <span className="text-xs text-slate-400">to</span>
+          <span className="text-xs text-slate-500">to</span>
           <input
             type="date"
             value={dateTo}
@@ -399,7 +399,7 @@ export default function AuditLogPage() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={(e) => { e.stopPropagation(); setDetailEntry(entry); }}
-                        className="text-xs text-slate-400 hover:text-slate-600 font-medium transition-colors"
+                        className="text-xs text-slate-500 hover:text-slate-600 font-medium transition-colors"
                       >
                         View
                       </button>
@@ -467,7 +467,7 @@ export default function AuditLogPage() {
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-slate-400">
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
                         <span>
                           {new Date(entry.created_at).toLocaleString("en-AU", {
                             month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
@@ -526,7 +526,7 @@ export default function AuditLogPage() {
               <h2 className="font-bold text-slate-900">Audit Entry Detail</h2>
               <button
                 onClick={() => setDetailEntry(null)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+                className="text-slate-500 hover:text-slate-600 transition-colors p-1"
                 aria-label="Close detail panel"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -539,7 +539,7 @@ export default function AuditLogPage() {
             <div className="px-6 py-5 space-y-5">
               {/* Action badge */}
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Action</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Action</p>
                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${actionColors[detailEntry.action] || "bg-slate-100 text-slate-600"}`}>
                   {detailEntry.action}
                 </span>
@@ -548,27 +548,27 @@ export default function AuditLogPage() {
               {/* Entity info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Entity Type</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Entity Type</p>
                   <p className="text-sm text-slate-900">{detailEntry.entity_type}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Entity ID</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Entity ID</p>
                   <p className="text-sm text-slate-700 font-mono">{detailEntry.entity_id || "\u2014"}</p>
                 </div>
               </div>
 
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Entity Name</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Entity Name</p>
                 <p className="text-sm text-slate-900">{detailEntry.entity_name || "\u2014"}</p>
               </div>
 
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Admin</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Admin</p>
                 <p className="text-sm text-slate-700">{detailEntry.admin_email || "\u2014"}</p>
               </div>
 
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Timestamp</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Timestamp</p>
                 <p className="text-sm text-slate-700">
                   {new Date(detailEntry.created_at).toLocaleString("en-AU", {
                     weekday: "long",
@@ -584,13 +584,13 @@ export default function AuditLogPage() {
 
               {/* Details JSON */}
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Details</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Details</p>
                 {detailEntry.details && Object.keys(detailEntry.details).length > 0 ? (
                   <pre className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs text-slate-700 overflow-x-auto whitespace-pre-wrap font-mono">
                     {JSON.stringify(detailEntry.details, null, 2)}
                   </pre>
                 ) : (
-                  <p className="text-sm text-slate-400 italic">No additional details recorded.</p>
+                  <p className="text-sm text-slate-500 italic">No additional details recorded.</p>
                 )}
               </div>
             </div>

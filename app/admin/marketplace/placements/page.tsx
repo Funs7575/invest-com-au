@@ -200,7 +200,7 @@ export default function AdminPlacementsPage() {
                 <input id="mp-base-rate" type="number" inputMode="decimal" value={baseRateCents} onChange={(e) => setBaseRateCents(Number(e.target.value))}
                   min={0}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" />
-                <p className="text-xs text-slate-400 mt-0.5">${(baseRateCents / 100).toFixed(2)}</p>
+                <p className="text-xs text-slate-500 mt-0.5">${(baseRateCents / 100).toFixed(2)}</p>
               </div>
             </div>
 

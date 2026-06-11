@@ -160,7 +160,7 @@ export function InviteCoAuthorButton({ articleId }: { articleId: number }) {
               setOpen(false);
               setState("idle");
             }}
-            className="text-xs text-slate-400 hover:text-slate-600"
+            className="text-xs text-slate-500 hover:text-slate-600"
           >
             Cancel
           </button>

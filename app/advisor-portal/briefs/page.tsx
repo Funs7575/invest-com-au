@@ -13,7 +13,7 @@ export default function AdvisorPortalBriefsPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-5xl mx-auto px-4 pt-4 pb-10 md:pt-5">
-        <nav aria-label="Breadcrumb" className="mb-1.5 text-[11px] md:text-xs text-slate-400">
+        <nav aria-label="Breadcrumb" className="mb-1.5 text-[11px] md:text-xs text-slate-500">
           <Link href="/advisor-portal" className="hover:text-slate-700">Advisor Portal</Link>
           <span className="mx-1.5" aria-hidden>/</span>
           <span className="text-slate-600">Brief inbox</span>

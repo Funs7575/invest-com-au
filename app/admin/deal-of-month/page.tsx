@@ -296,7 +296,7 @@ export default function DealOfMonthPage() {
                           )}
                         </div>
                         <p className="text-sm text-slate-700 ml-6">{broker.deal_text || "No deal text set"}</p>
-                        <div className="ml-6 mt-1 flex flex-wrap gap-3 text-xs text-slate-400">
+                        <div className="ml-6 mt-1 flex flex-wrap gap-3 text-xs text-slate-500">
                           {broker.deal_expiry && (
                             <span>Expires: {new Date(broker.deal_expiry).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</span>
                           )}
@@ -308,7 +308,7 @@ export default function DealOfMonthPage() {
                           )}
                         </div>
                         {broker.deal_terms && (
-                          <p className="ml-6 mt-1 text-xs text-slate-400 italic">{broker.deal_terms}</p>
+                          <p className="ml-6 mt-1 text-xs text-slate-500 italic">{broker.deal_terms}</p>
                         )}
                       </div>
                       <div className="flex gap-2 shrink-0">

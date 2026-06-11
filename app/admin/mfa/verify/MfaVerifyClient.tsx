@@ -160,7 +160,7 @@ export default function MfaVerifyClient({ adminEmail, redirectTo }: Props) {
           </button>
         </form>
 
-        <p className="text-center text-xs text-slate-400 mt-4">
+        <p className="text-center text-xs text-slate-500 mt-4">
           Need to enroll?{" "}
           <a
             href="/admin/settings/mfa"

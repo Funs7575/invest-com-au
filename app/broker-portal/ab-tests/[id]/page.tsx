@@ -457,7 +457,7 @@ export default function ABTestDetailPage() {
             <p className="text-sm font-mono text-slate-700">
               Z = (p1 - p2) / sqrt(p * (1 - p) * (1/n1 + 1/n2))
             </p>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               where p1={ctrA.toFixed(4)}%, p2={ctrB.toFixed(4)}%, n1={test.impressions_a.toLocaleString()}, n2={test.impressions_b.toLocaleString()}
             </p>
           </div>

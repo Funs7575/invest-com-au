@@ -147,12 +147,12 @@ export default function InvoiceDetailPage() {
             <h1 className="text-2xl font-extrabold text-slate-900">
               Invest.com.au
             </h1>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Invest.com.au Pty Ltd
             </p>
           </div>
           <div className="text-right">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
               Tax Invoice
             </span>
           </div>
@@ -161,13 +161,13 @@ export default function InvoiceDetailPage() {
         {/* Invoice meta */}
         <div className="grid grid-cols-2 gap-8 mb-8">
           <div>
-            <p className="text-xs text-slate-400 uppercase tracking-wide font-bold mb-1">
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-bold mb-1">
               Invoice Number
             </p>
             <p className="text-sm font-semibold text-slate-900">
               {invoice.invoice_number}
             </p>
-            <p className="text-xs text-slate-400 uppercase tracking-wide font-bold mt-3 mb-1">
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-bold mt-3 mb-1">
               Invoice Date
             </p>
             <p className="text-sm text-slate-700">
@@ -175,12 +175,12 @@ export default function InvoiceDetailPage() {
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-400 uppercase tracking-wide font-bold mb-1">
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-bold mb-1">
               From
             </p>
             <p className="text-sm text-slate-700">Invest.com.au Pty Ltd</p>
 
-            <p className="text-xs text-slate-400 uppercase tracking-wide font-bold mt-3 mb-1">
+            <p className="text-xs text-slate-500 uppercase tracking-wide font-bold mt-3 mb-1">
               To
             </p>
             <p className="text-sm font-semibold text-slate-900">
@@ -245,11 +245,11 @@ export default function InvoiceDetailPage() {
         {/* Footer meta */}
         <div className="flex items-center justify-between border-t border-slate-100 pt-4">
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400">Payment Status:</span>
+            <span className="text-xs text-slate-500">Payment Status:</span>
             {statusBadge(invoice.status)}
           </div>
           {truncatedStripeId && (
-            <div className="text-xs text-slate-400">
+            <div className="text-xs text-slate-500">
               Stripe Ref:{" "}
               <span className="font-mono text-slate-500">
                 {truncatedStripeId}

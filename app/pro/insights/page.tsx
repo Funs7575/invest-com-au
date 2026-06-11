@@ -77,7 +77,7 @@ function ComplianceNote({ text }: { text: string }) {
 function FeeComparisonTable({ rows }: { rows: BrokerFeeRow[] }) {
   if (rows.length === 0) {
     return (
-      <p className="text-sm text-slate-400 py-6 text-center">
+      <p className="text-sm text-slate-500 py-6 text-center">
         No fee snapshot data available yet. Check back after the next hourly snapshot.
       </p>
     );
@@ -147,7 +147,7 @@ function FeeComparisonTable({ rows }: { rows: BrokerFeeRow[] }) {
 function HealthScoreMoversCard({ movers }: { movers: HealthScoreMover[] }) {
   if (movers.length === 0) {
     return (
-      <p className="text-sm text-slate-400 py-6 text-center">
+      <p className="text-sm text-slate-500 py-6 text-center">
         No significant health score movements yet. Movers appear once trend history accumulates.
       </p>
     );
@@ -182,7 +182,7 @@ function HealthScoreMoversCard({ movers }: { movers: HealthScoreMover[] }) {
               >
                 {m.name}
               </Link>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 {m.trend.count} snapshot{m.trend.count !== 1 ? "s" : ""}
               </p>
             </div>
@@ -190,7 +190,7 @@ function HealthScoreMoversCard({ movers }: { movers: HealthScoreMover[] }) {
               <p className="text-lg font-bold text-slate-900 tabular-nums">
                 {m.currentScore.toFixed(0)}
               </p>
-              <p className="text-xs text-slate-400">/ 100</p>
+              <p className="text-xs text-slate-500">/ 100</p>
             </div>
             <div
               className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${trendBg} ${trendColor} shrink-0`}
@@ -210,7 +210,7 @@ function HealthScoreMoversCard({ movers }: { movers: HealthScoreMover[] }) {
 function LoanRateSummaryCard({ summary }: { summary: LoanRateSummary }) {
   if (summary.allRates.length === 0) {
     return (
-      <p className="text-sm text-slate-400 py-6 text-center">
+      <p className="text-sm text-slate-500 py-6 text-center">
         No loan rate data available yet.
       </p>
     );

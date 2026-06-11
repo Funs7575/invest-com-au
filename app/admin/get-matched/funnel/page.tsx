@@ -93,7 +93,7 @@ export default function AdminGmFunnelPage() {
               );
             })}
           </ul>
-          <p className="text-[10px] text-slate-400 mt-3">
+          <p className="text-[10px] text-slate-500 mt-3">
             Sample: {data.sampleCount} events since {new Date(data.since).toLocaleDateString()}
           </p>
         </section>

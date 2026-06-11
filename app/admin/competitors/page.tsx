@@ -158,7 +158,7 @@ export default function CompetitorWatchPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-2 flex-wrap">
                       <span className="text-xs font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{entry.competitor}</span>
-                      <span className="text-xs text-slate-400">{new Date(entry.spotted_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</span>
+                      <span className="text-xs text-slate-500">{new Date(entry.spotted_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</span>
                     </div>
                     <p className="text-sm font-semibold text-slate-900 mt-1">{entry.title}</p>
                     {entry.detail && <p className="text-xs text-slate-500 mt-0.5">{entry.detail}</p>}
@@ -168,7 +168,7 @@ export default function CompetitorWatchPage() {
                       </a>
                     )}
                   </div>
-                  <button onClick={() => handleDelete(entry.id)} aria-label="Delete entry" className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-500 transition-all shrink-0">
+                  <button onClick={() => handleDelete(entry.id)} aria-label="Delete entry" className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-500 hover:text-red-500 transition-all shrink-0">
                     <Icon name="trash-2" size={14} aria-hidden />
                   </button>
                 </div>
@@ -176,7 +176,7 @@ export default function CompetitorWatchPage() {
             })}
 
             {filtered.length === 0 && (
-              <div className="text-center py-12 text-slate-400">
+              <div className="text-center py-12 text-slate-500">
                 <p className="text-lg font-bold mb-1">{entries.length === 0 ? "No entries yet" : "No entries match this filter"}</p>
                 <p className="text-sm">Click &quot;+ Log Entry&quot; when you spot something a competitor does.</p>
               </div>

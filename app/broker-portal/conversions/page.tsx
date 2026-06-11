@@ -246,7 +246,7 @@ export default function ConversionsPage() {
                     {conversionRate !== null && (
                       <div className="flex items-center justify-center gap-1 py-1">
                         <Icon name="trending-up" size={11} className="text-slate-400" />
-                        <span className="text-[0.62rem] font-bold text-slate-400">{conversionRate}% conversion</span>
+                        <span className="text-[0.62rem] font-bold text-slate-500">{conversionRate}% conversion</span>
                       </div>
                     )}
                     <div
@@ -286,7 +286,7 @@ export default function ConversionsPage() {
           <p className="text-sm font-medium text-slate-700 mb-1">
             No conversions recorded yet
           </p>
-          <p className="text-slate-400 text-xs mb-4">
+          <p className="text-slate-500 text-xs mb-4">
             Use the Postback API to report conversion events.
           </p>
           <Link

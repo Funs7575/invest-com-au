@@ -74,15 +74,15 @@ export default function AdminPropertyDevelopers() {
                 <tr key={dev.id} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50">
                   <td className="px-4 py-3">
                     <p className="font-semibold text-slate-900">{dev.name}</p>
-                    <p className="text-[0.65rem] text-slate-400">{dev.slug}</p>
+                    <p className="text-[0.65rem] text-slate-500">{dev.slug}</p>
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell">
                     <p className="text-xs text-slate-600">{dev.contact_email || "—"}</p>
-                    <p className="text-[0.65rem] text-slate-400">{dev.contact_phone || ""}</p>
+                    <p className="text-[0.65rem] text-slate-500">{dev.contact_phone || ""}</p>
                   </td>
                   <td className="px-4 py-3 text-right text-slate-700 hidden md:table-cell">{dev.projects_completed}</td>
                   <td className="px-4 py-3 text-right">
-                    <span className={`font-bold ${dev.credit_balance_cents > 0 ? "text-emerald-600" : "text-slate-400"}`}>
+                    <span className={`font-bold ${dev.credit_balance_cents > 0 ? "text-emerald-600" : "text-slate-500"}`}>
                       ${(dev.credit_balance_cents / 100).toFixed(2)}
                     </span>
                   </td>

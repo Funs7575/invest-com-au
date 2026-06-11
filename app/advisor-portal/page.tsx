@@ -710,7 +710,7 @@ export default function AdvisorPortalPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="dispute-details" className="block text-xs font-semibold text-slate-600 mb-1.5">Additional details <span className="text-slate-400 font-normal">(optional{disputeReason === "other" ? ", required" : ""})</span></label>
+                  <label htmlFor="dispute-details" className="block text-xs font-semibold text-slate-600 mb-1.5">Additional details <span className="text-slate-500 font-normal">(optional{disputeReason === "other" ? ", required" : ""})</span></label>
                   <textarea
                     id="dispute-details"
                     value={disputeDetails}
@@ -965,16 +965,16 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
           </div>
 
           <div>
-            <label htmlFor="art-excerpt" className="block text-xs font-bold text-slate-700 mb-1">Excerpt <span className="font-normal text-slate-400">(1-2 sentences for preview cards)</span></label>
+            <label htmlFor="art-excerpt" className="block text-xs font-bold text-slate-700 mb-1">Excerpt <span className="font-normal text-slate-500">(1-2 sentences for preview cards)</span></label>
             <textarea id="art-excerpt" value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Brief summary of what the article covers..." rows={2} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical" />
           </div>
 
           <div>
-            <label htmlFor="art-content" className="block text-xs font-bold text-slate-700 mb-1">Content * <span className="font-normal text-slate-400">(Markdown supported)</span></label>
+            <label htmlFor="art-content" className="block text-xs font-bold text-slate-700 mb-1">Content * <span className="font-normal text-slate-500">(Markdown supported)</span></label>
             <textarea id="art-content" value={content} onChange={e => setContent(e.target.value)} placeholder={"Write your article here. Use **bold**, *italic*, ## headings, and - bullet points.\n\nRemember to include a general advice disclaimer, e.g.:\n\"This is general information only and does not constitute personal financial advice. Consider your own circumstances before acting.\""} rows={16} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical font-mono" />
             <div className="flex items-center justify-between mt-1">
               <p className={`text-[0.58rem] ${wc < 600 ? "text-amber-600" : "text-emerald-600"}`}>{wc} words {wc < 600 ? `(${600 - wc} more needed)` : "✓"}</p>
-              <p className="text-[0.58rem] text-slate-400">~{Math.max(1, Math.ceil(wc / 250))} min read</p>
+              <p className="text-[0.58rem] text-slate-500">~{Math.max(1, Math.ceil(wc / 250))} min read</p>
             </div>
           </div>
 
@@ -1056,7 +1056,7 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
           <div key={t.key} className="bg-white border border-slate-200 rounded-lg p-3 text-center">
             <div className="text-sm font-extrabold text-slate-900">{t.price}</div>
             <div className="text-[0.58rem] text-slate-500 capitalize">{t.key}</div>
-            <div className="text-[0.5rem] text-slate-400 mt-0.5">{t.desc}</div>
+            <div className="text-[0.5rem] text-slate-500 mt-0.5">{t.desc}</div>
           </div>
         ))}
       </div>
@@ -1075,7 +1075,7 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
                     {a.status.replace("_", " ")}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-[0.62rem] text-slate-400">
+                <div className="flex items-center gap-3 text-[0.62rem] text-slate-500">
                   <span>{a.category}</span>
                   <span className="capitalize">{a.pricing_tier} tier</span>
                   <span>{a.payment_status}</span>

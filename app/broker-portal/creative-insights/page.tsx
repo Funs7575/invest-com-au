@@ -271,7 +271,7 @@ export default function CreativeInsightsPage() {
             <Icon name="image" size={24} className="text-purple-500" />
           </div>
           <p className="text-sm font-medium text-slate-700 mb-1">No creatives uploaded yet</p>
-          <p className="text-xs text-slate-400 mb-5 max-w-sm mx-auto">
+          <p className="text-xs text-slate-500 mb-5 max-w-sm mx-auto">
             Upload logos, banners, icons, and screenshots to start tracking creative performance
             across your campaigns.
           </p>
@@ -392,7 +392,7 @@ export default function CreativeInsightsPage() {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-slate-900">{tp.label}</p>
-                        <p className="text-[0.62rem] text-slate-400">
+                        <p className="text-[0.62rem] text-slate-500">
                           {tp.creativeCount} asset{tp.creativeCount !== 1 ? "s" : ""}
                         </p>
                       </div>
@@ -547,7 +547,7 @@ export default function CreativeInsightsPage() {
                             <p className="text-sm font-semibold text-slate-900 truncate">
                               {c.label || c.type}
                             </p>
-                            <p className="text-[0.62rem] text-slate-400 truncate max-w-50">
+                            <p className="text-[0.62rem] text-slate-500 truncate max-w-50">
                               {c.url}
                             </p>
                           </div>

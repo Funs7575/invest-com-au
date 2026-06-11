@@ -40,7 +40,7 @@ export default async function SlaDrillDown() {
               <li key={a.id} className="px-4 py-3">
                 <p className="text-sm font-semibold text-slate-900">{a.name}</p>
                 <p className="text-xs text-slate-500">{a.email}</p>
-                <p className="text-[0.65rem] text-slate-400 mt-0.5">
+                <p className="text-[0.65rem] text-slate-500 mt-0.5">
                   Paused {a.auto_paused_at ? new Date(a.auto_paused_at).toLocaleString("en-AU") : "—"}
                 </p>
               </li>
@@ -61,7 +61,7 @@ export default async function SlaDrillDown() {
               <li key={a.id} className="px-4 py-3">
                 <p className="text-sm font-semibold text-slate-900">{a.name}</p>
                 <p className="text-xs text-slate-500">{a.email}</p>
-                <p className="text-[0.65rem] text-slate-400 mt-0.5">
+                <p className="text-[0.65rem] text-slate-500 mt-0.5">
                   Warned {a.pause_warning_sent_at ? new Date(a.pause_warning_sent_at).toLocaleString("en-AU") : "—"}
                 </p>
               </li>

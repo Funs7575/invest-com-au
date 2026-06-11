@@ -147,7 +147,7 @@ export default function FeatureFlagsClient({ initialFlags }: Props) {
                       className="w-full"
                     />
                   </label>
-                  <p className="text-[10px] text-slate-400 mt-1">
+                  <p className="text-[10px] text-slate-500 mt-1">
                     Sticky per (user, flag). Requires enabled=true to take
                     effect.
                   </p>

@@ -115,7 +115,7 @@ export default function OrgBillingTab({ org }: Props) {
               )}
             </div>
             {org?.stripe_connect_account_id && (
-              <p className="text-[0.62rem] text-slate-400">
+              <p className="text-[0.62rem] text-slate-500">
                 Account: <span className="font-mono">{org.stripe_connect_account_id}</span>
               </p>
             )}
@@ -208,7 +208,7 @@ export default function OrgBillingTab({ org }: Props) {
           </div>
         )}
         {isStripeConnected ? (
-          <p className="text-[0.62rem] text-slate-400 mt-3">
+          <p className="text-[0.62rem] text-slate-500 mt-3">
             Payout history and invoices are in your{" "}
             <a
               href="https://dashboard.stripe.com"
@@ -221,7 +221,7 @@ export default function OrgBillingTab({ org }: Props) {
             . Payouts are processed monthly.
           </p>
         ) : (
-          <p className="text-[0.62rem] text-slate-400 mt-3">
+          <p className="text-[0.62rem] text-slate-500 mt-3">
             Connect Stripe above to enable payouts. Revenue figures reflect course enrollments on this platform.
           </p>
         )}

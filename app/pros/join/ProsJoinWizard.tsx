@@ -564,7 +564,7 @@ export default function ProsJoinWizard() {
           {docError && (
             <p role="alert" className="text-xs text-red-600 font-medium mt-2">{docError}</p>
           )}
-          <p className="text-[0.62rem] text-slate-400 mt-3 leading-relaxed">
+          <p className="text-[0.62rem] text-slate-500 mt-3 leading-relaxed">
             Documents are stored privately and visible only to the
             Invest.com.au verification team. No information is published
             without your approval.
