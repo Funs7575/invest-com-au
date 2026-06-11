@@ -68,44 +68,65 @@ export function buildQuizUrl(options: QuizPrefillOptions): string {
   return `/quiz?${params.toString()}`;
 }
 
-export interface CrossBorderQuizOptions {
+export interface CrossBorderMatchOptions {
   /**
-   * Which Q1 answer to pre-select. "international" for non-residents,
-   * "expat" for Australians living abroad. Sets the quiz on its
-   * international track (see app/quiz/page.tsx prefill effect).
+   * Audience hint: "international" for non-residents, "expat" for
+   * Australians living abroad. Kept in the signature so call sites stay
+   * declarative about who the surface addresses.
    */
   track?: "international" | "expat";
   /**
    * Intent-country slug (e.g. "united-kingdom", "hong-kong") — the
-   * folder name under app/foreign-investment/. Resolved by the quiz to
-   * the matching `investor_country` answer key. Pass an
-   * `intentCountryMeta(code).slug` value, never a hand-rolled string.
+   * folder name under app/foreign-investment/. Emitted as `?country=` so
+   * the /find-advisor → /get-matched redirect carve-out keeps the
+   * dedicated cross-border flow alive (next.config.ts `missing` rule).
    */
   countrySlug?: string;
   /**
-   * International investment goal — one of the quiz's investor_goal_intl
-   * keys ("property" | "shares" | "savings" | "business"). Anything else
-   * is dropped by the quiz prefill, so callers can pass through freely.
+   * International investment goal ("property" | "shares" | "savings" |
+   * "business"). "property" maps to the FIRB specialty pre-filter;
+   * anything else is ignored by the matcher, so callers can pass through.
    */
   intent?: string;
 }
 
 /**
- * Build a /quiz URL that opens on the international track for a
- * cross-border visitor.
+ * Build the cross-border advisor-match URL for a non-resident / expat
+ * visitor.
  *
- * Cross-border content surfaces (the FIRB explainer, non-resident
- * mortgage guide and country hubs) are unambiguously addressed to
- * non-residents / expats, so their "answer a few questions" CTA opts in
- * to pre-selecting Q1 via `?track=`. `country` and `intent` further
- * pre-seed the country and goal questions. All three are soft defaults —
- * the quiz still shows (and lets the user change) every question.
+ * Targets `/find-advisor` — per next.config.ts, cross-border deep-links
+ * (`?specialty=` / `?country=`) keep the dedicated find-advisor flow (the
+ * 1.75× premium line) until /get-matched consumes those params. The old
+ * /quiz entry is a permanent redirect to /get-matched with no
+ * international handling on the other side, so quiz-targeted links would
+ * silently drop the visitor onto the domestic funnel.
+ *
+ * Specialty mapping (values from CROSS_BORDER_SPECIALTIES in
+ * lib/advisor-specialties.ts; /find-advisor validates with
+ * isCrossBorderSpecialty, so an out-of-sync value degrades to "no
+ * pre-filter", never an error):
+ *   - intent "property"            → "FIRB Property (Non-Resident)"
+ *   - country united-kingdom / uk  → "UK Pension Transfer"
+ *   - country united-states / us   → "FATCA-Aware US Expat Planning"
+ * With no mappable specialty and no country, the bare /find-advisor URL
+ * redirects to /get-matched — the generic funnel — the honest fallback
+ * for an unscoped visitor.
  */
-export function buildCrossBorderQuizUrl(options: CrossBorderQuizOptions = {}): string {
+export function buildCrossBorderMatchUrl(options: CrossBorderMatchOptions = {}): string {
   const params = new URLSearchParams();
-  if (options.track) params.set("track", options.track);
+
+  const slug = options.countrySlug ?? "";
+  const specialty =
+    options.intent === "property"
+      ? "FIRB Property (Non-Resident)"
+      : slug === "united-kingdom" || slug === "uk"
+        ? "UK Pension Transfer"
+        : slug === "united-states" || slug === "us"
+          ? "FATCA-Aware US Expat Planning"
+          : null;
+
+  if (specialty) params.set("specialty", specialty);
   if (options.countrySlug) params.set("country", options.countrySlug);
-  if (options.intent) params.set("intent", options.intent);
   const qs = params.toString();
-  return qs ? `/quiz?${qs}` : "/quiz";
+  return qs ? `/find-advisor?${qs}` : "/find-advisor";
 }

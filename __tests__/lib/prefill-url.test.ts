@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   buildAdvisorUrl,
   buildQuizUrl,
-  buildCrossBorderQuizUrl,
+  buildCrossBorderMatchUrl,
 } from "@/lib/prefill-url";
 
 // ── buildAdvisorUrl ───────────────────────────────────────────────────────────
@@ -115,51 +115,56 @@ describe("buildQuizUrl", () => {
   });
 });
 
-// ── buildCrossBorderQuizUrl ───────────────────────────────────────────────────
+// ── buildCrossBorderMatchUrl ──────────────────────────────────────────────────
 
-describe("buildCrossBorderQuizUrl", () => {
-  it("returns a bare /quiz with no options (no trailing ?)", () => {
-    expect(buildCrossBorderQuizUrl()).toBe("/quiz");
-    expect(buildCrossBorderQuizUrl({})).toBe("/quiz");
+describe("buildCrossBorderMatchUrl", () => {
+  it("returns a bare /find-advisor with no options (degrades to the generic funnel)", () => {
+    expect(buildCrossBorderMatchUrl()).toBe("/find-advisor");
+    expect(buildCrossBorderMatchUrl({})).toBe("/find-advisor");
   });
 
-  it("sets track=international to open the international quiz track", () => {
-    const url = buildCrossBorderQuizUrl({ track: "international" });
+  it("maps a property intent to the FIRB specialty pre-filter", () => {
+    const url = buildCrossBorderMatchUrl({ intent: "property" });
     const params = new URL(url, "https://x.test").searchParams;
-    expect(params.get("track")).toBe("international");
+    expect(url.startsWith("/find-advisor?")).toBe(true);
+    expect(params.get("specialty")).toBe("FIRB Property (Non-Resident)");
   });
 
-  it("supports the expat track", () => {
-    const url = buildCrossBorderQuizUrl({ track: "expat" });
-    expect(new URL(url, "https://x.test").searchParams.get("track")).toBe("expat");
-  });
-
-  it("forwards the country slug as the country param", () => {
-    const url = buildCrossBorderQuizUrl({ countrySlug: "united-kingdom" });
-    expect(new URL(url, "https://x.test").searchParams.get("country")).toBe("united-kingdom");
-  });
-
-  it("forwards the international goal as the intent param", () => {
-    const url = buildCrossBorderQuizUrl({ intent: "property" });
-    expect(new URL(url, "https://x.test").searchParams.get("intent")).toBe("property");
-  });
-
-  it("combines track + country + intent into one parseable URL", () => {
-    const url = buildCrossBorderQuizUrl({
-      track: "international",
-      countrySlug: "hong-kong",
-      intent: "shares",
-    });
+  it("maps the UK corridor to the pension-transfer specialty", () => {
+    const url = buildCrossBorderMatchUrl({ countrySlug: "united-kingdom" });
     const params = new URL(url, "https://x.test").searchParams;
-    expect(params.get("track")).toBe("international");
+    expect(params.get("specialty")).toBe("UK Pension Transfer");
+    expect(params.get("country")).toBe("united-kingdom");
+  });
+
+  it("maps the US corridor to the FATCA specialty", () => {
+    const url = buildCrossBorderMatchUrl({ countrySlug: "united-states" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.get("specialty")).toBe("FATCA-Aware US Expat Planning");
+  });
+
+  it("property intent outranks the corridor specialty", () => {
+    const url = buildCrossBorderMatchUrl({ countrySlug: "united-kingdom", intent: "property" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.get("specialty")).toBe("FIRB Property (Non-Resident)");
+    expect(params.get("country")).toBe("united-kingdom");
+  });
+
+  it("keeps the dedicated flow alive via ?country= for unmapped corridors", () => {
+    const url = buildCrossBorderMatchUrl({ track: "international", countrySlug: "hong-kong" });
+    const params = new URL(url, "https://x.test").searchParams;
     expect(params.get("country")).toBe("hong-kong");
-    expect(params.get("intent")).toBe("shares");
+    expect(params.has("specialty")).toBe(false);
   });
 
-  it("omits params that are not provided", () => {
-    const url = buildCrossBorderQuizUrl({ track: "international" });
+  it("non-property intents add no specialty (matcher ignores them)", () => {
+    const url = buildCrossBorderMatchUrl({ countrySlug: "hong-kong", intent: "shares" });
     const params = new URL(url, "https://x.test").searchParams;
-    expect(params.has("country")).toBe(false);
-    expect(params.has("intent")).toBe(false);
+    expect(params.has("specialty")).toBe(false);
+    expect(params.get("country")).toBe("hong-kong");
+  });
+
+  it("track alone produces the bare URL (no dangling params)", () => {
+    expect(buildCrossBorderMatchUrl({ track: "expat" })).toBe("/find-advisor");
   });
 });

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import Icon from "@/components/Icon";
-import { buildCrossBorderQuizUrl } from "@/lib/prefill-url";
+import { buildCrossBorderMatchUrl } from "@/lib/prefill-url";
 import { hrefForNeed, labelForNeed } from "@/lib/quiz-advisor-types";
 import {
   BANNER_PADDING,
@@ -23,16 +23,17 @@ import {
  * obvious next step so a non-resident never hits a dead end. This block
  * surfaces the two conversion points that exist for that audience:
  *
- *   1. The quiz's international track (`/quiz?track=international[&country=…]`),
- *      built via `buildCrossBorderQuizUrl` so the deep-link is never
+ *   1. The dedicated cross-border match flow (`/find-advisor?specialty=…`
+ *      — the carve-out next.config.ts preserves for these deep-links),
+ *      built via `buildCrossBorderMatchUrl` so the URL is never
  *      hand-rolled.
  *   2. A relevant advisor directory, resolved through
  *      `hrefForNeed`/`labelForNeed` (lib/quiz-advisor-types.ts) so the
  *      directory href is the single source of truth, not a literal.
  *
- * Strictly factual: it links to the quiz and a directory. It makes no
- * suitability claim and recommends no product (cross-border touches the
- * REGULATORY-AVOID-LIST — general information + referral only).
+ * Strictly factual: it links to the match flow and a directory. It makes
+ * no suitability claim and recommends no product (cross-border touches
+ * the REGULATORY-AVOID-LIST — general information + referral only).
  *
  * Visual tokens come from `banner-tokens.ts` so the block stays coherent
  * with the country-aware banner stack (DirectoryBanners) it sits near.
@@ -47,8 +48,8 @@ export interface CrossBorderNextStepProps {
   countrySlug?: string;
   /**
    * Whether the page is addressed to Australian expats rather than
-   * foreign nationals. Switches the quiz Q1 pre-selection to "expat".
-   * Defaults to the non-resident "international" track.
+   * foreign nationals. Defaults to the non-resident "international"
+   * audience.
    */
   expat?: boolean;
   /**
@@ -92,7 +93,7 @@ export default function CrossBorderNextStep({
   body = "Answer a few questions about your country, visa status and goal. We point you to the platforms, specialists or property route that match — no obligation.",
   quizCtaLabel = "Find my starting point",
 }: CrossBorderNextStepProps) {
-  const quizHref = buildCrossBorderQuizUrl({
+  const quizHref = buildCrossBorderMatchUrl({
     track: expat ? "expat" : "international",
     countrySlug,
   });
