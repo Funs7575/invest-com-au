@@ -223,9 +223,12 @@ describe("brokerReviewJsonLd", () => {
   it("includes review with rating", () => {
     const jsonLd = brokerReviewJsonLd(broker);
     expect(jsonLd.review["@type"]).toBe("Review");
-    expect(jsonLd.review.reviewRating.ratingValue).toBe(4.5);
-    expect(jsonLd.review.reviewRating.bestRating).toBe(5);
-    expect(jsonLd.review.reviewRating.worstRating).toBe(1);
+    // reviewRating is licence-gated (optional in the type); the test env runs
+    // general_advice, so it must be present here.
+    expect(jsonLd.review.reviewRating).toBeDefined();
+    expect(jsonLd.review.reviewRating?.ratingValue).toBe(4.5);
+    expect(jsonLd.review.reviewRating?.bestRating).toBe(5);
+    expect(jsonLd.review.reviewRating?.worstRating).toBe(1);
   });
 
   it("includes aggregateRating when review_count > 0", () => {

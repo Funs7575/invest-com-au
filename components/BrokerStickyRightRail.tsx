@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import BrokerLogo from "@/components/BrokerLogo";
 
 export default function BrokerStickyRightRail({
@@ -75,7 +76,7 @@ export default function BrokerStickyRightRail({
             <div className="font-bold text-sm text-slate-900 truncate" title={broker.name}>
               {broker.name}
             </div>
-            {broker.rating != null && (
+            {SHOW_RATINGS && broker.rating != null && (
               <div className="text-[0.65rem] text-slate-500">{broker.rating}/5 rating</div>
             )}
           </div>

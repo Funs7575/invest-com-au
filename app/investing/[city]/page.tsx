@@ -21,6 +21,7 @@ import {
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
 import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import BrokerLogo from "@/components/BrokerLogo";
 import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
@@ -352,12 +353,16 @@ export default async function CityInvestingPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-center">
-                      <span className="text-amber-600" aria-hidden="true">
-                        {renderStars(broker.rating || 0)}
-                      </span>
-                      <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>
-                        {broker.rating}
-                      </span>
+                      {SHOW_RATINGS && (
+                        <>
+                          <span className="text-amber-600" aria-hidden="true">
+                            {renderStars(broker.rating || 0)}
+                          </span>
+                          <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>
+                            {broker.rating}
+                          </span>
+                        </>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <a

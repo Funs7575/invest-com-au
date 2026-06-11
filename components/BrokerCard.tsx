@@ -12,6 +12,7 @@ import BrokerLogo from "@/components/BrokerLogo";
 import FeeVerifiedPill from "@/components/FeeVerifiedPill";
 import EligibilityBadge from "@/components/EligibilityBadge";
 import { isSponsored } from "@/lib/sponsorship";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { IntentCountryCode } from "@/lib/intent-context";
 import DealExpiryCountdown from "@/components/DealExpiryCountdown";
 
@@ -93,10 +94,12 @@ export default memo(function BrokerCard({
               {/* PR queue #12 — eligibility badge when visitor has intent country */}
               <EligibilityBadge entity={broker} intentCountry={intentCountry} compact />
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-amber-600 text-xs">{renderStars(broker.rating || 0)}</span>
-              <span className="text-[0.65rem] font-semibold text-slate-500">{broker.rating}/5</span>
-            </div>
+            {SHOW_RATINGS && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-amber-600 text-xs" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
+                <span className="text-[0.65rem] font-semibold text-slate-500" aria-label={`Rated ${broker.rating} out of 5`}>{broker.rating}/5</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />

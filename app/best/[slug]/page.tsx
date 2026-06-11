@@ -19,6 +19,7 @@ import {
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -69,6 +70,9 @@ const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
 };
 
 export const revalidate = 3600; // ISR: revalidate every hour
+// Categories are a static code registry — reject unknown slugs at the router
+// with a real 404 instead of streaming a 200 shell first (DISC-20260610-B).
+export const dynamicParams = false;
 
 // ── Static params for ISR ──
 export async function generateStaticParams() {
@@ -474,9 +478,13 @@ export default async function BestBrokerPage({
                     {topPick.tagline}
                   </p>
                   <div className="flex items-center gap-3 mt-2 text-sm">
-                    <span className="text-amber-600" aria-hidden="true">{renderStars(topPick.rating || 0)}</span>
-                    <span className="text-slate-500" aria-label={`${topPick.rating} out of 5 stars`}>{topPick.rating}/5</span>
-                    <span className="text-slate-400">·</span>
+                    {SHOW_RATINGS && (
+                      <>
+                        <span className="text-amber-600" aria-hidden="true">{renderStars(topPick.rating || 0)}</span>
+                        <span className="text-slate-500" aria-label={`${topPick.rating} out of 5 stars`}>{topPick.rating}/5</span>
+                        <span className="text-slate-400">·</span>
+                      </>
+                    )}
                     <span className="text-slate-600">{topPick.asx_fee || "N/A"} ASX</span>
                     {topPick.chess_sponsored && (
                       <>
@@ -550,8 +558,12 @@ export default async function BestBrokerPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
-                      <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}</span>
+                      {SHOW_RATINGS && (
+                        <>
+                          <span className="text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
+                          <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}</span>
+                        </>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <a

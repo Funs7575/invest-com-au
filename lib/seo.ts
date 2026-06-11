@@ -1,4 +1,5 @@
 import type { TeamMember, Broker, Course } from "./types";
+import { SHOW_RATINGS } from "./compliance-config";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
@@ -289,14 +290,20 @@ export function brokerReviewJsonLd(broker: {
       datePublished,
       dateModified,
       reviewBody,
-      reviewRating: {
-        "@type": "Rating",
-        ratingValue: Math.max(broker.rating || 1, 1),
-        bestRating: 5,
-        worstRating: 1,
-      },
+      // Licence-gated: factual_only pages render no star ratings, so the
+      // schema must not carry them either (DISC-20260610-A).
+      ...(SHOW_RATINGS
+        ? {
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: Math.max(broker.rating || 1, 1),
+              bestRating: 5,
+              worstRating: 1,
+            },
+          }
+        : {}),
     },
-    ...((broker.review_count ?? 0) > 0 ? {
+    ...(SHOW_RATINGS && (broker.review_count ?? 0) > 0 ? {
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: Math.max(broker.rating || 1, 1),
@@ -364,7 +371,7 @@ export function brokerProductJsonLd(broker: {
           },
         }
       : {}),
-    ...((broker.review_count ?? 0) > 0
+    ...(SHOW_RATINGS && (broker.review_count ?? 0) > 0
       ? {
           aggregateRating: {
             "@type": "AggregateRating",

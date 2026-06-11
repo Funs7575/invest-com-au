@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import BrokerLogo from "@/components/BrokerLogo";
 import { CURRENT_YEAR } from "@/lib/seo";
 import {
@@ -217,13 +218,17 @@ export default function BrokerReviewClient({
   const reviewVerified = searchParams.get('review_verified') === '1';
   const storyVerified = searchParams.get('story_verified') === '1';
 
-  const stickyDetail = (b.platform_type === 'share_broker' || b.platform_type === 'cfd_forex')
-    ? `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'} · ${b.rating}/5`
+  const stickyFacts = (b.platform_type === 'share_broker' || b.platform_type === 'cfd_forex')
+    ? `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'}`
     : b.platform_type === 'savings_account'
-    ? `${b.asx_fee || 'N/A'} rate · Gov. Guaranteed · ${b.rating}/5`
+    ? `${b.asx_fee || 'N/A'} rate · Gov. Guaranteed`
     : b.platform_type === 'term_deposit'
-    ? `${b.asx_fee || 'N/A'} rate · Min ${b.min_deposit || '$1k'} · ${b.rating}/5`
-    : `${b.rating}/5`;
+    ? `${b.asx_fee || 'N/A'} rate · Min ${b.min_deposit || '$1k'}`
+    : '';
+  // Rating segment is licence-gated like every other rating display.
+  const stickyDetail = SHOW_RATINGS
+    ? (stickyFacts ? `${stickyFacts} · ${b.rating}/5` : `${b.rating}/5`)
+    : stickyFacts;
   const bestFor = getBestFor(b);
 
   // Real cost calculations
@@ -301,8 +306,12 @@ export default function BrokerReviewClient({
               <h1 className="text-xl md:text-3xl font-extrabold leading-tight text-slate-900">{b.name} Review ({CURRENT_YEAR})</h1>
               <p className="text-slate-500 mt-0.5 md:mt-1 text-xs md:text-base">{b.tagline}</p>
               <div className="flex items-center gap-2 md:gap-3 flex-wrap mt-2">
-                <span className="text-amber-600 text-sm" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
-                <span className="text-sm font-bold text-slate-700" aria-hidden="true">{b.rating}/5</span>
+                {SHOW_RATINGS && (
+                  <>
+                    <span className="text-amber-600 text-sm" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
+                    <span className="text-sm font-bold text-slate-700" aria-hidden="true">{b.rating}/5</span>
+                  </>
+                )}
                 {b.chess_sponsored && (
                   <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">CHESS</span>
                 )}
@@ -386,7 +395,7 @@ export default function BrokerReviewClient({
             {reviewLinkCopied ? "Copied!" : "Copy Link"}
           </button>
           <a
-            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${b.name} Review — ${b.rating}/5 on Invest.com.au`)}&url=${encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://invest.com.au'}/broker/${b.slug}`)}`}
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(SHOW_RATINGS ? `${b.name} Review — ${b.rating}/5 on Invest.com.au` : `${b.name} Review on Invest.com.au`)}&url=${encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://invest.com.au'}/broker/${b.slug}`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[0.62rem] px-2 py-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 transition-colors"
@@ -478,10 +487,12 @@ export default function BrokerReviewClient({
               {b.chess_sponsored ? "CHESS sponsorship provides an important safety layer. " : ""}
             </p>
             <div className="flex items-center gap-4 pt-3 border-t border-white/10">
-              <div className="flex items-center gap-2">
-                <span className="text-amber-400 text-lg" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
-                <span className="text-2xl font-extrabold" aria-hidden="true">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
-              </div>
+              {SHOW_RATINGS && (
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-400 text-lg" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
+                  <span className="text-2xl font-extrabold" aria-hidden="true">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
+                </div>
+              )}
               <a
                 href={getAffiliateLink(b)}
                 target="_blank"
@@ -1009,7 +1020,7 @@ export default function BrokerReviewClient({
                       <Link href={`/broker/${d.slug}`} className="font-bold text-sm hover:text-blue-700 transition-colors">
                         {d.name}
                       </Link>
-                      <span className="text-xs text-amber">{d.rating}/5</span>
+                      {SHOW_RATINGS && <span className="text-xs text-amber">{d.rating}/5</span>}
                     </div>
                     <p className="text-sm font-semibold text-slate-800 leading-snug mb-1.5">
                       {d.deal_text}
@@ -1067,7 +1078,9 @@ export default function BrokerReviewClient({
                     <BrokerLogo broker={s} size="md" />
                   </div>
                   <h3 className="font-bold text-xs md:text-sm">{s.name}</h3>
-                  <div className="text-[0.62rem] md:text-xs text-amber-600" aria-label={`Rated ${s.rating ?? 0} out of 5 stars`}><span aria-hidden="true">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></span></div>
+                  {SHOW_RATINGS && (
+                    <div className="text-[0.62rem] md:text-xs text-amber-600" aria-label={`Rated ${s.rating ?? 0} out of 5 stars`}><span aria-hidden="true">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></span></div>
+                  )}
                   <div className="text-[0.58rem] md:text-xs text-slate-500 mt-0.5 md:mt-1">{s.asx_fee} · {s.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
                   <span className="inline-block mt-1.5 md:mt-2 text-[0.62rem] md:text-xs px-2 py-0.5 md:px-3 md:py-1 bg-slate-900 text-white rounded-md font-semibold">vs {b.name} →</span>
                 </Link>

@@ -19,6 +19,10 @@ process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
 process.env.NEXT_PUBLIC_SITE_URL = "https://invest.com.au";
 process.env.IP_HASH_SALT = "test-salt-vitest";
+// Tests run in the live deploy posture (the mirror sets general_advice).
+// factual_only behaviour is covered by explicit tests that vi.mock
+// "@/lib/compliance-config" — see __tests__/lib/compare-engine-gates.test.ts.
+process.env.NEXT_PUBLIC_LICENCE_MODE = "general_advice";
 
 // Mock Supabase client used by API routes
 const mockInsertResult = { data: { click_id: "test-click-id" }, error: null };

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import { getAffiliateLink, trackClick, trackEvent, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 
 interface MatchedBroker {
   slug: string;
@@ -174,10 +175,12 @@ export default function ExitIntentBrokerMatch() {
                   <BrokerLogo broker={match.broker} size="md" />
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-bold text-slate-900">{match.broker.name}</h3>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <span className="text-amber-500">{"★".repeat(Math.floor(match.broker.rating))}</span>
-                      <span>{match.broker.rating}/5</span>
-                    </div>
+                    {SHOW_RATINGS && (
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <span className="text-amber-500">{"★".repeat(Math.floor(match.broker.rating))}</span>
+                        <span>{match.broker.rating}/5</span>
+                      </div>
+                    )}
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-xs text-slate-500">ASX brokerage</p>

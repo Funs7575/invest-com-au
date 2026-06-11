@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useShortlist } from "@/lib/hooks/useShortlist";
 import { createClient } from "@/lib/supabase/client";
 import { trackClick, getAffiliateLink, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import Icon from "@/components/Icon";
 import { useToast } from "@/components/Toast";
 import type { Broker } from "@/lib/types";
@@ -290,9 +291,13 @@ export default function ShortlistClient() {
                   )}
                 </div>
                 <div className="flex items-center gap-2 md:gap-3 mt-0.5">
-                  <span className="text-[0.69rem] text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
-                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span>
-                  <span className="text-slate-200 hidden sm:inline">|</span>
+                  {SHOW_RATINGS && (
+                    <>
+                      <span className="text-[0.69rem] text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
+                      <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span>
+                      <span className="text-slate-200 hidden sm:inline">|</span>
+                    </>
+                  )}
                   <span className="text-[0.62rem] md:text-[0.69rem] text-slate-400 hidden sm:inline">ASX {broker.asx_fee || "N/A"}</span>
                 </div>
               </div>
@@ -466,9 +471,13 @@ export default function ShortlistClient() {
                   )}
                 </div>
                 <div className="flex items-center gap-2 md:gap-3 mt-0.5">
-                  <span className="text-[0.69rem] text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
-                  <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span>
-                  <span className="text-slate-200 hidden sm:inline">|</span>
+                  {SHOW_RATINGS && (
+                    <>
+                      <span className="text-[0.69rem] text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
+                      <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span>
+                      <span className="text-slate-200 hidden sm:inline">|</span>
+                    </>
+                  )}
                   <span className="text-[0.62rem] md:text-[0.69rem] text-slate-400 hidden sm:inline">
                     ASX {broker.asx_fee || "N/A"}
                   </span>

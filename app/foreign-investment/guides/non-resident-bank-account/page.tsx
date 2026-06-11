@@ -5,6 +5,7 @@ import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import { createClient } from "@/lib/supabase/server";
 import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { Broker } from "@/lib/types";
 import SectionHeading from "@/components/SectionHeading";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -355,7 +356,7 @@ export default async function NonResidentBankAccountPage() {
                             <span className="text-xs font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">{bestFor}</span>
                           )}
                         </div>
-                        {p.rating && (
+                        {SHOW_RATINGS && p.rating && (
                           <p className="text-xs text-amber-700 font-semibold"><span aria-hidden="true">{renderStars(p.rating)}</span> <span aria-label={`${p.rating.toFixed(1)} out of 5 stars`}>{p.rating.toFixed(1)}</span></p>
                         )}
                       </div>
