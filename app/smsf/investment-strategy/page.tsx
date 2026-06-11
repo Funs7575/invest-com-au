@@ -20,7 +20,7 @@ const SMSF_STRATEGY_FAQS = [
   },
   {
     q: "What is Division 296 and how does it affect SMSF investments?",
-    a: "Division 296 is an additional 15% tax on earnings attributable to the portion of a member's total super balance exceeding $3 million, effective from 1 July 2026. Crucially, it includes unrealised (notional) capital gains — meaning illiquid SMSF assets such as direct property can generate a tax bill without a sale. Trustees with balances approaching the threshold should model the impact and consider rebalancing before the transition.",
+    a: "Division 296 is an additional 15% tax on earnings attributable to the portion of a member's total super balance exceeding $3 million, effective from 1 July 2026. Crucially, it includes unrealised (notional) capital gains — meaning illiquid SMSF assets such as direct property can generate a tax bill without a sale. Trustees with balances approaching the threshold should model the impact and consider rebalancing before the transition.", // dated-ok — statutory Div 296 commencement date, fixed by legislation
   },
   {
     q: "Can an SMSF invest 100% in one asset class?",
