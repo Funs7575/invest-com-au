@@ -24,6 +24,7 @@ import AnalyzingScreen from "./_components/AnalyzingScreen";
 import TopMatchCarousel from "./_components/TopMatchCarousel";
 import MatchExplainerCard from "./_components/MatchExplainerCard";
 import LaneResults from "./_components/LaneResults";
+import OptionsBoard from "./_components/OptionsBoard";
 import WhatIfPanel, { type WhatIfControl } from "./_components/WhatIfPanel";
 import PlanRoadmap from "./_components/PlanRoadmap";
 import SharpenCard from "./_components/SharpenCard";
@@ -1060,6 +1061,14 @@ function ActionPlanScreen({
             advisorType={result.advisor_type ?? null}
           />
         )}
+        {/* Cross-lane options board (§4) — advisor vs listings vs DIY
+            platform on one screen. Hides itself under 2 content kinds. */}
+        <OptionsBoard
+          advisors={(result.top_matches ?? []).filter((m) => m.kind === "advisor")}
+          listings={result.listing_matches ?? []}
+          platforms={(result.top_matches ?? []).filter((m) => m.kind === "broker")}
+          saved={result.plan?.saved_items ?? []}
+        />
         {result.top_matches && result.top_matches.length > 0 && (
           <TopMatchCarousel matches={result.top_matches} />
         )}

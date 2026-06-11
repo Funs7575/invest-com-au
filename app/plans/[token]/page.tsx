@@ -7,6 +7,7 @@ import Icon from "@/components/Icon";
 import { getPlanByToken } from "@/lib/getmatched/action-plans";
 import { getResultTemplate } from "@/lib/getmatched/templates";
 import type { IntentSlug, RouteType } from "@/lib/getmatched/types";
+import OptionsBoard from "@/app/get-matched/_components/OptionsBoard";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,10 @@ export default async function PlanPublicPage({
         </section>
 
         <section className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          {/* Cross-lane options board (§4) — renders only when the persisted
+              shortlist spans ≥2 kinds. Additive; reads existing plan data. */}
+          <OptionsBoard saved={plan.saved_items ?? []} />
+
           <div className="bg-white border border-slate-200 rounded-3xl shadow-md p-6 sm:p-8 mb-6">
             <div className="flex items-center gap-2 mb-4 text-[11px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1 w-fit">
               <Icon name="check-circle" size={12} />
