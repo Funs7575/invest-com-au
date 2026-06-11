@@ -22,6 +22,7 @@ import {
   registerMeta as adviserRegisterMeta,
   allRegisterAdvisers,
 } from "@/lib/adviser-register";
+import { superFundsMeta, allSuperFunds } from "@/lib/super-funds";
 
 const log = logger("sitemap");
 
@@ -281,7 +282,7 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/global-investing/etfs", "/global-investing/etfs/us", "/global-investing/etfs/global",
     "/global-investing/shares/us",
     "/global-investing/calculators/direct-vs-asx-cost",
-    "/super/death-benefit", "/super/compare-guide", "/super/division-296",
+    "/super/death-benefit", "/super/compare-guide", "/super/division-296", "/super/funds",
     "/super/catch-up-contributions",
     "/super/co-contribution", "/super/spouse-contributions",
     "/super/transition-to-retirement", "/super/insurance",
@@ -816,6 +817,17 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
   // Adviser Register Atlas — the hub plus one page per current adviser on
   // the file-backed ASIC extract. Excluded entirely while the bundled
   // dataset is the synthetic preview (those pages are noindex'd).
+  // Super Fund Performance Explorer — per-fund pages over the APRA
+  // extract; excluded while the bundled dataset is the synthetic preview.
+  const superFundPages: MetadataRoute.Sitemap = superFundsMeta().sample
+    ? []
+    : allSuperFunds().map((f) => ({
+        url: `${base}/super/funds/${f.slug}`,
+        lastModified: new Date(superFundsMeta().extractedAt),
+        changeFrequency: "monthly" as const,
+        priority: 0.55,
+      }));
+
   const registerPages: MetadataRoute.Sitemap = adviserRegisterMeta().sample
     ? []
     : [
@@ -957,6 +969,7 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
     ...advisorLocationPages,
     ...firmPages,
     ...registerPages,
+    ...superFundPages,
   ];
 }
 

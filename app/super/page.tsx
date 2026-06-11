@@ -96,6 +96,7 @@ export default async function SuperPage() {
             <h2 className="text-xl font-bold text-slate-900 mb-4">Explore super topics</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {[
+                { label: "Fund Performance Explorer", href: "/super/funds", badge: "APRA returns & fees" },
                 { label: "SMSF Hub", href: "/smsf", badge: "Self-managed" },
                 { label: "Contributions", href: "/super/contributions", badge: "Salary sacrifice" },
                 { label: "Transition to Retirement", href: "/super/transition-to-retirement", badge: "TTR strategy" },

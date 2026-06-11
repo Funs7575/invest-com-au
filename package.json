@@ -73,7 +73,8 @@
     "db:types": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} > lib/database.types.ts",
     "db:types:check": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} > /tmp/database.types.generated.ts && diff -u lib/database.types.ts /tmp/database.types.generated.ts",
     "prepare": "husky || true",
-    "data:far": "npx tsx scripts/ingest-far.ts"
+    "data:far": "npx tsx scripts/ingest-far.ts",
+    "data:apra": "npx tsx scripts/ingest-apra.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",

@@ -183,6 +183,15 @@ export const SUPER_WARNING_SHORT =
   "Switching super funds may affect your insurance cover. Check your current fund's insurance before switching.";
 
 /**
+ * Past-performance warning — ASIC RG 53 / RG 234 requirement wherever
+ * historical investment returns are displayed.
+ */
+export const PAST_PERFORMANCE_WARNING =
+  "Past performance is not a reliable indicator of future performance. Returns shown are " +
+  "historical, net of fees and taxes as reported to APRA, and can vary significantly " +
+  "between investment options within the same fund.";
+
+/**
  * Aged care referral warning — used on /aged-care hub and any page that
  * references reverse mortgages or RAD/DAP decisions. Reverse mortgages are
  * credit products regulated under the National Consumer Credit Protection Act
