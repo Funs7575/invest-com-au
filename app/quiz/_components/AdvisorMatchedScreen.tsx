@@ -183,7 +183,17 @@ export default function AdvisorMatchedScreen({
       </div>
 
       {/* Advisor card */}
-      <div className="relative overflow-hidden rounded-2xl border-2 border-amber-200 bg-white shadow-lg match-ring-pulse">
+      <div
+        className="relative overflow-hidden rounded-2xl border-2 border-amber-200 bg-white shadow-lg match-ring-pulse"
+        role="region"
+        aria-label={[
+          currentMatch.name,
+          currentMatch.type ? typeLabel(currentMatch.type) : null,
+          currentMatch.rating > 0 ? `rated ${currentMatch.rating.toFixed(1)} out of 5` : null,
+          currentMatch.location_display ?? null,
+          currentMatch.fee_description ? `fee: ${currentMatch.fee_description}` : null,
+        ].filter(Boolean).join(", ")}
+      >
         {/* Top bar */}
         <div className="bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-2 text-white">

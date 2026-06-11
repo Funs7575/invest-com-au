@@ -23,8 +23,13 @@ export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Pro
   if (!topMatch.broker) return null;
   const broker = topMatch.broker;
 
+  const ratingText = broker.rating ? `, rated ${broker.rating} out of 5` : "";
+  const cardAriaLabel = `#1 match: ${broker.name}${ratingText}`;
+
   return (
     <div
+      aria-label={cardAriaLabel}
+      role="region"
       className="border-2 rounded-xl p-4 md:p-8 mb-3 md:mb-6 relative overflow-hidden result-card-in result-card-in-delay-1 shine-effect"
       style={{
         borderColor: broker.color || '#f59e0b',
