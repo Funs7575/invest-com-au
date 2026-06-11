@@ -435,7 +435,10 @@ Founder greenlit "build this end to end". Shipped on `claude/fervent-shannon-qxh
 | 2.1 signup claim preview ("Keep what you've built — N saved items") | ✅ shipped | `371e84e6` |
 | D3 send-off + return loop (/go/ acknowledgment, "how did it go?", decided_broker milestone) | ✅ shipped | `371e84e6` |
 | D7 milestones: registry + first_save / first_compare / first_path_step / path_complete / first_article / streak_3·7·30 / decided_broker wired | ✅ shipped | this branch |
-| D4 arrival sequence · D5 profile ring · D7 first_calculator + profile_complete + first_plan_saved wiring · F4.1 plan chip · D10 delta strip · D11 reasons sheets · G4/G6/G7 · account IA (2.6) · Wave-3 crons (drips, morning brief — Tier C) · D12 Wrapped | ⏳ next session(s) | — |
+| D4 arrival sequence (onboarding ends with the home assembling itself, skippable, reduced-motion-safe) | ✅ shipped | session 2 |
+| D5 profile-strength ring + visible unlocks + profile_complete milestone | ✅ shipped | `7db33587` |
+| F4.1 plan re-find ("Your plan" chip, header + mobile menu, 60-day stamp) + first_plan_saved + first_calculator wiring | ✅ shipped | `7db33587` |
+| D10 delta strip · D11 reasons sheets · G4/G6/G7 · account IA (2.6) · Wave-3 crons (drips, morning brief — Tier C) · D12 Wrapped | ⏳ next session(s) | — |
 | 1.9 verify F2.6 mobile fade-stall via bot fleet | ⏳ open | — |
 
 ---
