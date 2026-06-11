@@ -19,7 +19,7 @@ const FAQS = [
   },
   {
     q: "Can foreigners buy established (existing) homes in Australia?",
-    a: "Generally no. Non-residents cannot buy established dwellings, and from 1 April 2025 to 31 March 2027 the Australian Government has also banned temporary residents from buying established dwellings, with limited exceptions. New dwellings, off-the-plan purchases and vacant land for development remain the standard routes for foreign buyers, subject to FIRB approval.",
+    a: "Generally no. Non-residents cannot buy established dwellings, and from 1 April 2025 to 31 March 2027 the Australian Government has also banned temporary residents from buying established dwellings, with limited exceptions. New dwellings, off-the-plan purchases and vacant land for development remain the standard routes for foreign buyers, subject to FIRB approval.", // dated-ok — legislated ban window (fixed dates); page-level staleness is badged on the guides hub banner
   },
   {
     q: "What can foreign buyers still purchase during the 2025–2027 ban?",
