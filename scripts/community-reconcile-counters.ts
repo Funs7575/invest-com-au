@@ -28,7 +28,9 @@ const ASK_AN_ADVISOR_CATEGORY = {
     "Pose general questions for verified financial professionals to answer. General information only — not personal advice.",
   icon: "user-check",
   color: "#06b6d4",
-  status: "active",
+  // Prod's forum_categories.status is a GENERATED column derived from
+  // is_active — inserting status directly errors (verified 2026-06-10).
+  is_active: true,
 };
 
 async function ensureAskAnAdvisorCategory(): Promise<"created" | "exists"> {
