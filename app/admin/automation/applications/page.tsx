@@ -44,7 +44,7 @@ export default async function ApplicationsDrillDown() {
                   <td className="px-4 py-2 font-mono text-slate-500">#{r.id}</td>
                   <td className="px-4 py-2 text-slate-700">
                     <div className="truncate max-w-45">{r.name}</div>
-                    {r.firm_name && <div className="text-[0.65rem] text-slate-400 truncate max-w-45">{r.firm_name}</div>}
+                    {r.firm_name && <div className="text-[0.65rem] text-slate-500 truncate max-w-45">{r.firm_name}</div>}
                   </td>
                   <td className="px-4 py-2 text-slate-600">{r.type}</td>
                   <td className="px-4 py-2 text-slate-500 text-[0.65rem]">

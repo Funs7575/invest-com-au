@@ -146,7 +146,7 @@ export default async function TestimonialsPage() {
                 <p className="text-sm text-slate-700 leading-relaxed">
                   &quot;{r.testimonial}&quot;
                 </p>
-                <p className="text-[11px] text-slate-400 mt-2">
+                <p className="text-[11px] text-slate-500 mt-2">
                   {new Date(r.submitted_at).toLocaleDateString("en-AU", {
                     dateStyle: "medium",
                   })}
@@ -157,7 +157,7 @@ export default async function TestimonialsPage() {
         </ul>
       )}
 
-      <p className="text-[11px] text-slate-400 mt-10">
+      <p className="text-[11px] text-slate-500 mt-10">
         General information only. Testimonials are individual experiences and not
         a guarantee of similar outcomes.
       </p>

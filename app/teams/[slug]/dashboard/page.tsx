@@ -398,7 +398,7 @@ export default async function TeamDashboardPage({ params }: PageProps) {
             )}
           </section>
 
-          <p className="text-[10px] text-slate-400 text-center">
+          <p className="text-[10px] text-slate-500 text-center">
             General information only. Outcome scoreboard refreshed daily at 10:30 UTC.
           </p>
         </div>

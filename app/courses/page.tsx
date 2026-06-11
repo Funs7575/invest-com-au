@@ -108,7 +108,7 @@ function CourseCard({ course }: { course: Course }) {
 
         {/* Meta + price */}
         <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-          <div className="flex items-center gap-3 text-xs text-slate-400">
+          <div className="flex items-center gap-3 text-xs text-slate-500">
             {course.estimated_hours && (
               <span>~{course.estimated_hours}h</span>
             )}
@@ -189,7 +189,7 @@ export default async function CoursesPage() {
               {/* Featured courses */}
               {featured.length > 0 && (
                 <div className="mb-12">
-                  <h2 className={`text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 ${
+                  <h2 className={`text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 ${
                     featured.length <= 2 ? "text-center" : ""
                   }`}>
                     Featured
@@ -212,7 +212,7 @@ export default async function CoursesPage() {
               {rest.length > 0 && (
                 <div>
                   {featured.length > 0 && (
-                    <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">
+                    <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">
                       All Courses
                     </h2>
                   )}

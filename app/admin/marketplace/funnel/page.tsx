@@ -469,7 +469,7 @@ export default function FunnelAnalyticsPage() {
   const EmptyState = () => (
     <div className="bg-white border border-slate-200 rounded-lg p-16 text-center">
       <div className="text-4xl mb-3">🔬</div>
-      <p className="text-sm text-slate-400">No funnel data available for this date range.</p>
+      <p className="text-sm text-slate-500">No funnel data available for this date range.</p>
     </div>
   );
 
@@ -543,7 +543,7 @@ export default function FunnelAnalyticsPage() {
         <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
       </div>
       {rows.length === 0 ? (
-        <div className="p-8 text-center text-sm text-slate-400">No data available.</div>
+        <div className="p-8 text-center text-sm text-slate-500">No data available.</div>
       ) : (
         <>
           <div className="p-4">
@@ -808,7 +808,7 @@ export default function FunnelAnalyticsPage() {
                 <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
                   <div className="px-4 py-3 border-b border-slate-200">
                     <h2 className="text-lg font-semibold text-slate-900">Daily Funnel Rates</h2>
-                    <p className="text-xs text-slate-400 mt-0.5">CTR and click-to-conversion rate over time</p>
+                    <p className="text-xs text-slate-500 mt-0.5">CTR and click-to-conversion rate over time</p>
                   </div>
                   <div className="p-4 space-y-4">
                     <div>
@@ -846,7 +846,7 @@ export default function FunnelAnalyticsPage() {
                     <h2 className="text-lg font-semibold text-slate-900">Weekly Cohorts</h2>
                   </div>
                   {weeklyCohorts.length === 0 ? (
-                    <div className="p-8 text-center text-sm text-slate-400">No weekly data available.</div>
+                    <div className="p-8 text-center text-sm text-slate-500">No weekly data available.</div>
                   ) : (
                     <div className="overflow-auto">
                       <table className="w-full" aria-label="Weekly cohort performance">
@@ -925,7 +925,7 @@ export default function FunnelAnalyticsPage() {
                         ))}
                       </select>
                     </div>
-                    <div className="text-xs text-slate-400 font-medium pb-2.5">vs</div>
+                    <div className="text-xs text-slate-500 font-medium pb-2.5">vs</div>
                     <div className="flex-1">
                       <label htmlFor="mpf-broker-b" className="block text-xs font-medium text-slate-500 mb-1">Broker B</label>
                       <select
@@ -1007,7 +1007,7 @@ export default function FunnelAnalyticsPage() {
                           <tr key={b.broker_slug} className="hover:bg-slate-50">
                             <td className="px-4 py-2.5 text-sm text-slate-900">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs text-slate-400 w-5 text-right">{idx + 1}.</span>
+                                <span className="text-xs text-slate-500 w-5 text-right">{idx + 1}.</span>
                                 <span className="font-medium">{b.company_name}</span>
                               </div>
                             </td>

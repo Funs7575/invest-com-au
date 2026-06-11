@@ -74,7 +74,7 @@ export default function AdvisorCalendarEmbed({
             </span>
             <button
               onClick={() => setOpen(false)}
-              className="text-xs text-slate-400 hover:text-slate-700"
+              className="text-xs text-slate-500 hover:text-slate-700"
               aria-label="Close calendar"
             >
               ✕

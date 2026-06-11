@@ -173,7 +173,7 @@ export default function ReviewPage() {
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Thank you!</h1>
           <p className="text-sm text-slate-600 mb-1">Your review has been submitted.</p>
-          <p className="text-xs text-slate-400 mb-6">It will be moderated by our team before being published — usually within 24 hours.</p>
+          <p className="text-xs text-slate-500 mb-6">It will be moderated by our team before being published — usually within 24 hours.</p>
           <Link
             href={`/advisor/${advisor.slug}`}
             className="inline-block px-6 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 transition-colors"
@@ -211,7 +211,7 @@ export default function ReviewPage() {
           {advisor.rating > 0 && (
             <div className="text-right shrink-0">
               <p className="text-sm font-bold text-slate-900">{advisor.rating}</p>
-              <p className="text-[0.6rem] text-slate-400">{advisor.review_count} reviews</p>
+              <p className="text-[0.6rem] text-slate-500">{advisor.review_count} reviews</p>
             </div>
           )}
         </div>
@@ -251,7 +251,7 @@ export default function ReviewPage() {
 
             {/* Review title */}
             <div>
-              <label htmlFor="rv-title" className="block text-xs font-semibold text-slate-600 mb-1">Review title <span className="text-slate-400 font-normal">(optional)</span></label>
+              <label htmlFor="rv-title" className="block text-xs font-semibold text-slate-600 mb-1">Review title <span className="text-slate-500 font-normal">(optional)</span></label>
               <input
                 id="rv-title"
                 type="text"
@@ -275,7 +275,7 @@ export default function ReviewPage() {
                 placeholder="Tell others about your experience — what did they do well? Would you recommend them?"
                 className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
               />
-              <p className={`text-[0.6rem] mt-0.5 ${body.trim().length < 50 ? "text-slate-400" : "text-emerald-600"}`}>
+              <p className={`text-[0.6rem] mt-0.5 ${body.trim().length < 50 ? "text-slate-500" : "text-emerald-600"}`}>
                 {body.trim().length} / 50 characters minimum
               </p>
             </div>
@@ -283,7 +283,7 @@ export default function ReviewPage() {
             {/* Reviewer details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="rv-name" className="block text-xs font-semibold text-slate-600 mb-1">Your name <span className="text-slate-400 font-normal">(or leave blank for Anonymous)</span></label>
+                <label htmlFor="rv-name" className="block text-xs font-semibold text-slate-600 mb-1">Your name <span className="text-slate-500 font-normal">(or leave blank for Anonymous)</span></label>
                 <input
                   id="rv-name"
                   type="text"
@@ -295,7 +295,7 @@ export default function ReviewPage() {
                 />
               </div>
               <div>
-                <label htmlFor="rv-email" className="block text-xs font-semibold text-slate-600 mb-1">Email <span className="text-slate-400 font-normal">(not published, helps prevent duplicates)</span></label>
+                <label htmlFor="rv-email" className="block text-xs font-semibold text-slate-600 mb-1">Email <span className="text-slate-500 font-normal">(not published, helps prevent duplicates)</span></label>
                 <input
                   id="rv-email"
                   type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
@@ -319,7 +319,7 @@ export default function ReviewPage() {
               {submitting ? "Submitting..." : "Submit Review"}
             </button>
 
-            <p className="text-center text-[0.65rem] text-slate-400">
+            <p className="text-center text-[0.65rem] text-slate-500">
               Reviews are moderated before publishing. Your email is never shared.{" "}
               <Link href="/privacy" className="underline hover:text-slate-600">Privacy Policy</Link>
             </p>

@@ -316,7 +316,7 @@ export default function AdminCampaignsPage() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="p-12 text-center text-sm text-slate-400">No campaigns match this filter.</div>
+          <div className="p-12 text-center text-sm text-slate-500">No campaigns match this filter.</div>
         ) : (
           <div className="space-y-3">
             {/* Select All toggle */}
@@ -424,14 +424,14 @@ export default function AdminCampaignsPage() {
                       <div className="mt-2 text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-lg">
                         <strong>Review Notes:</strong> {c.review_notes}
                         {c.reviewed_by && (
-                          <span className="text-slate-400"> — {c.reviewed_by}</span>
+                          <span className="text-slate-500"> — {c.reviewed_by}</span>
                         )}
                       </div>
                     )}
                     {/* Budget progress bar */}
                     {c.total_budget_cents && c.total_budget_cents > 0 && (
                       <div className="mt-2">
-                        <div className="flex justify-between text-xs text-slate-400 mb-0.5">
+                        <div className="flex justify-between text-xs text-slate-500 mb-0.5">
                           <span>Budget usage</span>
                           <span>
                             {Math.min(100, Math.round((c.total_spent_cents / c.total_budget_cents) * 100))}%
@@ -513,7 +513,7 @@ export default function AdminCampaignsPage() {
                         Activate Now
                       </button>
                     )}
-                    <div className="text-xs text-slate-400">
+                    <div className="text-xs text-slate-500">
                       ID: {c.id} · Created{" "}
                       {new Date(c.created_at).toLocaleDateString("en-AU", {
                         day: "numeric",

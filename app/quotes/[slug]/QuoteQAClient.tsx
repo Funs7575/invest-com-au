@@ -75,7 +75,7 @@ export default function QuoteQAClient({ slug, initial, ownerEmailFromUrl }: Prop
     <div className="bg-white border border-slate-200 rounded-2xl p-6">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-base font-bold text-slate-900">
-          Q&amp;A <span className="text-slate-400 font-normal">({items.length})</span>
+          Q&amp;A <span className="text-slate-500 font-normal">({items.length})</span>
         </h2>
         <span className="text-xs text-slate-500">Public — visible to everyone</span>
       </div>
@@ -87,7 +87,7 @@ export default function QuoteQAClient({ slug, initial, ownerEmailFromUrl }: Prop
 
       <div className="space-y-3 mb-6">
         {items.length === 0 && (
-          <p className="text-sm text-slate-400 italic">No questions yet.</p>
+          <p className="text-sm text-slate-500 italic">No questions yet.</p>
         )}
         {items.map((q) => (
           <div key={q.id} className="border-l-2 border-slate-200 pl-3 py-1">
@@ -109,7 +109,7 @@ export default function QuoteQAClient({ slug, initial, ownerEmailFromUrl }: Prop
                   Advisor
                 </span>
               )}
-              <span className="text-slate-400">{timeAgo(q.created_at)}</span>
+              <span className="text-slate-500">{timeAgo(q.created_at)}</span>
             </div>
             <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{q.body}</p>
           </div>
@@ -143,7 +143,7 @@ export default function QuoteQAClient({ slug, initial, ownerEmailFromUrl }: Prop
           />
         </div>
         {err && <p role="alert" className="text-xs text-red-600">{err}</p>}
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           Verified advisors don&apos;t need an email — just <Link href="/advisor-portal" className="underline">log in</Link>.
         </p>
         <button

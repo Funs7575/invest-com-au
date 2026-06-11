@@ -569,7 +569,7 @@ export default function TransitionToRetirementPage() {
                   <ul className="space-y-2">
                     {col.items.map((item) => (
                       <li key={item} className="text-sm flex gap-2 text-slate-700">
-                        <span className="flex-shrink-0 mt-0.5 font-bold text-slate-400">&bull;</span>
+                        <span className="flex-shrink-0 mt-0.5 font-bold text-slate-500">&bull;</span>
                         <span>{item}</span>
                       </li>
                     ))}

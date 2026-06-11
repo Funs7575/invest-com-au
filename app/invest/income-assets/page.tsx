@@ -373,7 +373,7 @@ export default function IncomeAssetsPage() {
                   <Icon
                     name="plus"
                     size={18}
-                    className="text-slate-400 group-open:rotate-45 transition-transform shrink-0 mt-0.5"
+                    className="text-slate-500 group-open:rotate-45 transition-transform shrink-0 mt-0.5"
                   />
                 </summary>
                 <p className="text-sm text-slate-700 leading-relaxed mt-3">

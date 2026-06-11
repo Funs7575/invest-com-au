@@ -42,7 +42,7 @@ export default async function BrokerChangesDrillDown() {
                 <td className="px-4 py-2 text-slate-600">{r.field}</td>
                 <td className="px-4 py-2 text-[0.65rem] text-slate-500 max-w-50">
                   <div className="truncate" title={String(r.old_value)}>
-                    <span className="text-slate-400">from:</span> {String(r.old_value)?.slice(0, 40)}
+                    <span className="text-slate-500">from:</span> {String(r.old_value)?.slice(0, 40)}
                   </div>
                   <div className="truncate" title={String(r.new_value)}>
                     <span className="text-emerald-600">to:</span> {String(r.new_value)?.slice(0, 40)}

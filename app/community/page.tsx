@@ -240,7 +240,7 @@ export default async function CommunityPage() {
                   source="community-launch"
                   className="justify-center"
                 />
-                <p className="text-[0.65rem] text-slate-400 mt-2 text-center">
+                <p className="text-[0.65rem] text-slate-500 mt-2 text-center">
                   We&apos;ll only email you about the community launch. Unsubscribe any time.
                 </p>
               </div>
@@ -270,7 +270,7 @@ export default async function CommunityPage() {
                   <p className="text-sm text-slate-600 mt-1 line-clamp-2">
                     {cat.description}
                   </p>
-                  <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
+                  <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
                     <span>
                       {(cat.thread_count ?? 0).toLocaleString()} threads
                     </span>

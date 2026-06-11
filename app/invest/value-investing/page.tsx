@@ -212,7 +212,7 @@ export default function ValueInvestingPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             No single metric determines value. Ratios must be interpreted in context of the business, sector, and growth prospects.
           </p>
         </div>
@@ -412,7 +412,7 @@ export default function ValueInvestingPage() {
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
                   {item.q}
                   <svg
-                    className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform"
+                    className="w-4 h-4 text-slate-500 shrink-0 group-open:rotate-180 transition-transform"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

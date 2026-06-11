@@ -56,7 +56,7 @@ export default function UnsubscribeClient() {
         <p className="text-sm text-slate-500 mb-6">
           {message}
         </p>
-        <p className="text-xs text-slate-400 mb-6">
+        <p className="text-xs text-slate-500 mb-6">
           You won&apos;t receive any more emails from us. If you change your mind, you can re-subscribe anytime from your account settings.
         </p>
         <Link

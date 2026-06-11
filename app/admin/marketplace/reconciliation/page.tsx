@@ -198,7 +198,7 @@ export default function ReconciliationPage() {
                       {r.pending_invoices > 0 ? (
                         <span className="text-xs font-bold text-amber-700">${(r.pending_invoices / 100).toFixed(2)}</span>
                       ) : (
-                        <span className="text-xs text-slate-400">—</span>
+                        <span className="text-xs text-slate-500">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-center">

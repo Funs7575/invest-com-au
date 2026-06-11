@@ -52,7 +52,7 @@ export default function JargonTooltip({
         {children || term}
       </span>
       <svg
-        className="w-3 h-3 text-slate-400 shrink-0"
+        className="w-3 h-3 text-slate-500 shrink-0"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

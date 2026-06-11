@@ -139,7 +139,7 @@ function BrokerEstimateForm() {
         Calculate savings →
       </button>
       {result && <SavingResult annualDiff={result.annualDifference} current={result.currentAnnualCost} target={result.targetAnnualCost} projections={result.projectedSavings} label="brokerage" />}
-      <p className="text-xs text-slate-400 mt-2">
+      <p className="text-xs text-slate-500 mt-2">
         Estimate only — based on your inputs. Not a personal recommendation.
       </p>
     </div>
@@ -252,7 +252,7 @@ function SuperEstimateForm() {
         Calculate fee saving →
       </button>
       {result && <SavingResult annualDiff={result.annualDifference} current={result.currentAnnualFee} target={result.targetAnnualFee} projections={result.projectedSavings} label="fees" />}
-      <p className="text-xs text-slate-400 mt-2">
+      <p className="text-xs text-slate-500 mt-2">
         Estimate only — flat fee comparison based on your inputs. Does not model investment returns. Not a personal recommendation.
       </p>
     </div>
@@ -374,7 +374,7 @@ function SavingsEstimateForm() {
           gainLabel="gain"
         />
       )}
-      <p className="text-xs text-slate-400 mt-2">
+      <p className="text-xs text-slate-500 mt-2">
         Estimate only — uses simple (non-compounding) interest. Not a personal recommendation.
       </p>
     </div>
@@ -484,7 +484,7 @@ function ChecklistSection({ checklist }: { checklist: SwitchChecklist }) {
       <div className="space-y-6">
         {phases.map(({ phase, steps }) => (
           <div key={phase}>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
               {PHASE_LABELS[phase] ?? phase}
             </h3>
             <div className="space-y-2">
@@ -528,7 +528,7 @@ function ChecklistSection({ checklist }: { checklist: SwitchChecklist }) {
                       <div className="flex-1">
                         <p
                           className={`text-sm font-semibold ${
-                            done ? "line-through text-slate-400" : "text-slate-900"
+                            done ? "line-through text-slate-500" : "text-slate-900"
                           }`}
                         >
                           {step.heading}
@@ -545,7 +545,7 @@ function ChecklistSection({ checklist }: { checklist: SwitchChecklist }) {
                           </div>
                         )}
                         {step.source && !done && (
-                          <p className="text-[0.65rem] text-slate-400 mt-1">
+                          <p className="text-[0.65rem] text-slate-500 mt-1">
                             Source: {step.source}
                           </p>
                         )}

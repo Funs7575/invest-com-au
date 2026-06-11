@@ -89,7 +89,7 @@ export default function SalarySacrificeOptimiserClient() {
             Gross annual salary
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">$</span>
             <input
               id="ss-gross-salary"
               type="number" inputMode="decimal"
@@ -108,7 +108,7 @@ export default function SalarySacrificeOptimiserClient() {
             Annual salary sacrifice (pre-tax)
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">$</span>
             <input
               id="ss-sacrifice-amount"
               type="number" inputMode="decimal"
@@ -273,11 +273,11 @@ function Row({
 }) {
   return (
     <div className="flex justify-between">
-      <span className={dim ? "text-slate-400" : "text-slate-600"}>{label}</span>
+      <span className={dim ? "text-slate-500" : "text-slate-600"}>{label}</span>
       <span
         className={[
           bold ? "font-bold" : "font-semibold",
-          green ? "text-emerald-700" : dim ? "text-slate-400" : "text-slate-900",
+          green ? "text-emerald-700" : dim ? "text-slate-500" : "text-slate-900",
         ].join(" ")}
       >
         {value}

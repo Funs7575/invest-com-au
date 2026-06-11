@@ -80,7 +80,7 @@ export default function AnnuitiesVsAbpPage() {
             retirees near the threshold. But ABPs retain investment upside and capital access that
             annuities can&apos;t match. Here&apos;s how to choose — and why most retirees should use both.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not financial advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not financial advice</p>
         </div>
       </section>
 

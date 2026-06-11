@@ -91,7 +91,7 @@ export default function PensionPhasePage() {
             for members aged 60+, pension income tax-free too. How account-based pensions work,
             minimum drawdowns, TTR pensions, and the $1.9M transfer balance cap.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not financial advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not financial advice</p>
         </div>
       </section>
 
@@ -147,7 +147,7 @@ export default function PensionPhasePage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">COVID-era 50% reduction has ended. Standard rates apply from 2023–24 onwards.</p>
+          <p className="text-xs text-slate-500 mt-2">COVID-era 50% reduction has ended. Standard rates apply from 2023–24 onwards.</p>
         </div>
       </section>
 

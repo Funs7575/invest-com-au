@@ -118,7 +118,7 @@ export default function AdminPropertyLeads() {
                   </td>
                   <td className="px-4 py-3">
                     <p className="font-semibold text-slate-900">{lead.user_name}</p>
-                    <p className="text-[0.65rem] text-slate-400">{lead.user_email}</p>
+                    <p className="text-[0.65rem] text-slate-500">{lead.user_email}</p>
                   </td>
                   <td className="px-4 py-3 text-slate-600 hidden md:table-cell truncate max-w-[150px]">
                     {(lead.property_listings as { title: string } | null)?.title || "—"}

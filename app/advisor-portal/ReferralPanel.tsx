@@ -226,7 +226,7 @@ const REFERRAL_STATUS_STYLES: Record<ReferralRow["status"], string> = {
   accepted: "bg-blue-100 text-blue-700",
   converted: "bg-emerald-100 text-emerald-700",
   declined: "bg-slate-100 text-slate-500",
-  expired: "bg-slate-100 text-slate-400",
+  expired: "bg-slate-100 text-slate-500",
 };
 
 export function ClientReferralsSection() {
@@ -250,9 +250,9 @@ export function ClientReferralsSection() {
         share of any advice fee.
       </p>
       {referrals === null ? (
-        <p className="text-xs text-slate-400">Loading…</p>
+        <p className="text-xs text-slate-500">Loading…</p>
       ) : referrals.length === 0 ? (
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           No referrals yet. When an enquiry is outside your scope, use
           &ldquo;Refer to a colleague&rdquo; on the lead.
         </p>
@@ -264,7 +264,7 @@ export function ClientReferralsSection() {
                 <p className="text-xs font-semibold text-slate-800 m-0">
                   {r.client_name} → {r.counterpart_name ?? "advisor"}
                 </p>
-                <p className="text-[10px] text-slate-400 m-0">
+                <p className="text-[10px] text-slate-500 m-0">
                   {new Date(r.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                 </p>
               </div>

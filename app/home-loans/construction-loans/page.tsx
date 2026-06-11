@@ -397,10 +397,10 @@ export default function ConstructionLoansPage() {
             </p>
           </div>
           <ul className="space-y-2 text-sm text-slate-600">
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>Owner-builder permits are issued by state building authorities and have their own requirements and caps on project value</li>
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>Builder&apos;s warranty insurance is generally not available to owner-builders, creating a risk gap for future buyers</li>
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>Owner-built homes can be harder to sell and refinance in future due to the lack of builder&apos;s warranty</li>
-            <li className="flex items-start gap-2"><span className="text-slate-400 mt-0.5">•</span>Not recommended unless you have demonstrated, professional-level construction industry experience</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>Owner-builder permits are issued by state building authorities and have their own requirements and caps on project value</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>Builder&apos;s warranty insurance is generally not available to owner-builders, creating a risk gap for future buyers</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>Owner-built homes can be harder to sell and refinance in future due to the lack of builder&apos;s warranty</li>
+            <li className="flex items-start gap-2"><span className="text-slate-500 mt-0.5">•</span>Not recommended unless you have demonstrated, professional-level construction industry experience</li>
           </ul>
         </div>
       </section>

@@ -142,7 +142,7 @@ export default function FixedRateHomeLoanPage() {
             Lock in your repayments for 1–10 years. Understand break costs, rate lock fees,
             split strategies, and whether fixing makes sense at this point in the RBA cycle.
           </p>
-          <p className="text-xs text-slate-400 mb-6 md:mb-10">{UPDATED_LABEL}</p>
+          <p className="text-xs text-slate-500 mb-6 md:mb-10">{UPDATED_LABEL}</p>
 
           {/* Key stats */}
           <div className="grid grid-cols-3 gap-3 mb-6 md:mb-10">

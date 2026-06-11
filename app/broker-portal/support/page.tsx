@@ -198,7 +198,7 @@ export default function SupportPage() {
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${PRIORITY_STYLES[activeTicket.priority]}`}>
                   {activeTicket.priority}
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   #{activeTicket.id} · {CATEGORIES.find(c => c.value === activeTicket.category)?.label}
                 </span>
               </div>
@@ -366,7 +366,7 @@ export default function SupportPage() {
             <Icon name="message-circle" size={20} className="text-blue-500" />
           </div>
           <p className="text-sm font-medium text-slate-700 mb-1">No support tickets</p>
-          <p className="text-xs text-slate-400">Need help? Create a ticket above and our partner team will respond within 24 hours.</p>
+          <p className="text-xs text-slate-500">Need help? Create a ticket above and our partner team will respond within 24 hours.</p>
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 portal-stagger">

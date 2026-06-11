@@ -639,7 +639,7 @@ export default function HealthScoresPage() {
                         <div className="text-center py-12">
                           <div className="text-3xl mb-2">🛡️</div>
                           <p className="text-sm font-medium text-slate-700 mb-1">No health scores yet</p>
-                          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                          <p className="text-xs text-slate-500 max-w-sm mx-auto">
                             Health scores rate each broker across safety categories like regulation, client money handling, and platform reliability. These scores help users assess broker trustworthiness.
                           </p>
                         </div>

@@ -732,7 +732,7 @@ export default async function SmsfCryptoPage() {
                 >
                   <summary className="flex items-center justify-between gap-4 cursor-pointer px-5 py-4 font-extrabold text-slate-900 text-sm select-none list-none [&::-webkit-details-marker]:hidden">
                     {item.q}
-                    <span className="flex-shrink-0 text-slate-400 group-open:rotate-45 transition-transform duration-200 text-xl leading-none">+</span>
+                    <span className="flex-shrink-0 text-slate-500 group-open:rotate-45 transition-transform duration-200 text-xl leading-none">+</span>
                   </summary>
                   <div className="px-5 pb-5">
                     <p className="text-sm text-slate-600 leading-relaxed">{item.a}</p>

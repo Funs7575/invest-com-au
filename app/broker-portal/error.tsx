@@ -45,7 +45,7 @@ export default function BrokerPortalError({
           </a>
         </div>
         {error.digest && (
-          <p className="mt-5 text-[0.69rem] text-slate-400">
+          <p className="mt-5 text-[0.69rem] text-slate-500">
             Error ID: {error.digest}
           </p>
         )}

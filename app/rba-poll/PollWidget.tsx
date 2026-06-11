@@ -237,14 +237,14 @@ export default function PollWidget({ poll, isAuthenticated }: Props) {
               />
             );
           })}
-          <p className="text-xs text-slate-400 pt-1">
+          <p className="text-xs text-slate-500 pt-1">
             {tally.total} {tally.total === 1 ? "prediction" : "predictions"} cast
           </p>
         </div>
       )}
 
       {tally.total === 0 && isOpen && (
-        <p className="text-sm text-slate-400 text-center py-2">Be the first to predict!</p>
+        <p className="text-sm text-slate-500 text-center py-2">Be the first to predict!</p>
       )}
     </div>
   );

@@ -527,7 +527,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
               <div>
                 <label htmlFor="cb-price" className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">$</span>
                   <input
                     id="cb-price"
                     type="number" inputMode="decimal"
@@ -719,7 +719,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                   <div>
                     <label htmlFor="lesson-video-url" className="block text-xs font-bold text-slate-600 mb-1">
                       Video URL{" "}
-                      <span className="text-slate-400 font-normal">(YouTube / Vimeo)</span>
+                      <span className="text-slate-500 font-normal">(YouTube / Vimeo)</span>
                     </label>
                     <input
                       id="lesson-video-url"
@@ -878,7 +878,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                           <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[0.55rem] font-bold text-slate-500 shrink-0">{l.lesson_index}</span>
                           <span className="flex-1">{l.title}</span>
                           {l.is_free_preview && <span className="text-[0.55rem] text-emerald-600 font-bold px-1.5 py-0.5 bg-emerald-50 rounded">Free</span>}
-                          {l.duration_minutes != null && <span className="text-slate-400">{l.duration_minutes}m</span>}
+                          {l.duration_minutes != null && <span className="text-slate-500">{l.duration_minutes}m</span>}
                         </div>
                       ))}
                     </div>
@@ -1026,7 +1026,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                   <h3 className="text-sm font-bold text-slate-900 truncate">{course.title}</h3>
                   <StatusBadge status={course.status as CourseStatus} />
                 </div>
-                <div className="flex items-center gap-3 text-[0.62rem] text-slate-400 flex-wrap">
+                <div className="flex items-center gap-3 text-[0.62rem] text-slate-500 flex-wrap">
                   <span className="capitalize">{course.level ?? "beginner"}</span>
                   {course.price > 0 && <span>${(course.price / 100).toFixed(0)} AUD</span>}
                   {course.estimated_hours != null && <span>{course.estimated_hours}h</span>}
@@ -1123,12 +1123,12 @@ function LessonGroupList({
                         <p className="text-sm font-semibold text-slate-800 truncate">{lesson.title}</p>
                         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                           {lesson.video_url && (
-                            <span className="text-[0.55rem] text-slate-400 flex items-center gap-0.5">
+                            <span className="text-[0.55rem] text-slate-500 flex items-center gap-0.5">
                               <Icon name="play" size={10} className="text-slate-400" /> Video
                             </span>
                           )}
                           {lesson.duration_minutes != null && (
-                            <span className="text-[0.55rem] text-slate-400">{lesson.duration_minutes}m</span>
+                            <span className="text-[0.55rem] text-slate-500">{lesson.duration_minutes}m</span>
                           )}
                           {lesson.is_free_preview && (
                             <span className="text-[0.55rem] text-emerald-600 font-bold px-1.5 py-0.5 bg-emerald-50 rounded-full">

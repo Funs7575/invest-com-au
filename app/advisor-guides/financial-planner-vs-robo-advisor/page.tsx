@@ -145,7 +145,7 @@ export default function PlannerVsRoboPage() {
                 { q: "I want strategy advice but don't want to pay for ongoing management", a: "One-off SOA from planner + robo execution", link: "/advisors?type=financial_planner" },
               ].map((item, i) => (
                 <Link key={i} href={item.link} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors group">
-                  <span className="text-slate-400 text-xs font-bold mt-0.5 shrink-0">Q:</span>
+                  <span className="text-slate-500 text-xs font-bold mt-0.5 shrink-0">Q:</span>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs md:text-sm text-slate-700">{item.q}</div>
                     <div className="text-xs md:text-sm font-bold text-slate-900 mt-0.5 group-hover:text-blue-700">{item.a} →</div>

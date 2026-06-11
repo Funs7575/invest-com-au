@@ -181,21 +181,21 @@ export default function LeadsTab({
             <div className="space-y-2">
               <p className="text-sm text-slate-500 mb-3">{firmLeads.length} leads across {firmMembers.length} team member{firmMembers.length !== 1 ? "s" : ""}</p>
               {firmLeads.length === 0 && (
-                <div className="text-center py-10 text-slate-400 text-sm">No team leads yet.</div>
+                <div className="text-center py-10 text-slate-500 text-sm">No team leads yet.</div>
               )}
               {firmLeads.map((l) => (
                 <div key={l.id} className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-slate-900 text-sm truncate">{l.user_name}</p>
                     <p className="text-xs text-slate-500">{l.user_email}{l.user_phone ? ` · ${l.user_phone}` : ""}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{new Date(l.created_at).toLocaleDateString("en-AU")}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{new Date(l.created_at).toLocaleDateString("en-AU")}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${l.status === "new" ? "bg-emerald-100 text-emerald-700" : l.status === "converted" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600"}`}>
                       {l.status}
                     </span>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-slate-400">Assigned:</span>
+                      <span className="text-xs text-slate-500">Assigned:</span>
                       <select
                         value={l.professional_id ?? ""}
                         onChange={(e) => { if (e.target.value) reassignLead(l.id, Number(e.target.value)); }}
@@ -422,7 +422,7 @@ export default function LeadsTab({
                     {lead.user_phone && <> · <a href={`tel:${lead.user_phone}`} className="text-blue-600 hover:underline">{lead.user_phone}</a></>}
                   </div>
                 </div>
-                <span className="text-xs text-slate-400">{new Date(lead.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</span>
+                <span className="text-xs text-slate-500">{new Date(lead.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</span>
               </div>
               {lead.message && (
                 <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-600 mb-3 leading-relaxed">{lead.message}</div>
@@ -475,7 +475,7 @@ export default function LeadsTab({
                   <LeadScoreBadge score={lead.quality_score} signals={lead.quality_signals} tier={lead.lead_tier} />
                 )}
                 {lead.bill_amount_cents > 0 && (
-                  <span className="text-[0.56rem] text-slate-400">${(lead.bill_amount_cents / 100).toFixed(0)} billed</span>
+                  <span className="text-[0.56rem] text-slate-500">${(lead.bill_amount_cents / 100).toFixed(0)} billed</span>
                 )}
                 {lead.bill_amount_cents === 0 && lead.billed === false && (
                   <span className="text-[0.56rem] text-emerald-600 font-semibold">Free trial lead</span>
@@ -499,7 +499,7 @@ export default function LeadsTab({
                 )}
                 {lead.status === "converted" && (
                   lead.review_requested_at
-                    ? <span className="text-[0.56rem] text-slate-400 px-1.5 py-0.5">Review requested {new Date(lead.review_requested_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
+                    ? <span className="text-[0.56rem] text-slate-500 px-1.5 py-0.5">Review requested {new Date(lead.review_requested_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
                     : <>
                         <button
                           onClick={async () => {
@@ -534,7 +534,7 @@ export default function LeadsTab({
                         onOpenDisputeModal({ leadId: lead.id, leadName: lead.user_name, daysLeft });
                       }}
                       disabled={!canDispute}
-                      className={`text-xs font-semibold px-2 py-1 border rounded-lg ${canDispute ? "text-slate-400 hover:text-slate-600 border-slate-200 hover:bg-slate-50" : "text-slate-300 border-slate-100 cursor-not-allowed"}`}
+                      className={`text-xs font-semibold px-2 py-1 border rounded-lg ${canDispute ? "text-slate-500 hover:text-slate-600 border-slate-200 hover:bg-slate-50" : "text-slate-300 border-slate-100 cursor-not-allowed"}`}
                       title={!canDispute ? (daysSince > 14 ? "Dispute window closed (14 days)" : "Free leads cannot be disputed") : `${daysLeft} days left to dispute`}
                     >
                       Dispute{canDispute && daysLeft <= 5 ? ` (${daysLeft}d left)` : ""}
@@ -555,7 +555,7 @@ export default function LeadsTab({
                     className="flex-1 text-xs px-2 py-1 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400"
                   />
                   {notesFeedback?.id === lead.id && (
-                    <span className={`text-[0.6rem] font-semibold shrink-0 ${notesFeedback.status === "saved" ? "text-emerald-600" : "text-slate-400"}`}>
+                    <span className={`text-[0.6rem] font-semibold shrink-0 ${notesFeedback.status === "saved" ? "text-emerald-600" : "text-slate-500"}`}>
                       {notesFeedback.status === "saving" ? "Saving…" : "Saved"}
                     </span>
                   )}

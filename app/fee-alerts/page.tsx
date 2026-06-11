@@ -37,10 +37,10 @@ const ALERT_TYPE_LABELS: Record<AlertType, string> = {
 function ChangeDirection({ oldVal, newVal }: { oldVal: string; newVal: string }) {
   const o = parseFloat(oldVal);
   const n = parseFloat(newVal);
-  if (isNaN(o) || isNaN(n)) return <span className="text-slate-400">→</span>;
+  if (isNaN(o) || isNaN(n)) return <span className="text-slate-500">→</span>;
   if (n > o) return <span className="text-red-500 font-bold">↑</span>;
   if (n < o) return <span className="text-emerald-500 font-bold">↓</span>;
-  return <span className="text-slate-400">→</span>;
+  return <span className="text-slate-500">→</span>;
 }
 
 export default function FeeAlertsPage() {
@@ -245,7 +245,7 @@ export default function FeeAlertsPage() {
                         className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                           frequency === f
                             ? "bg-amber-500 text-white"
-                            : "bg-white/10 text-slate-400 hover:bg-white/15"
+                            : "bg-white/10 text-slate-500 hover:bg-white/15"
                         }`}
                       >
                         {f === "instant" ? "Instant" : "Weekly Digest"}
@@ -266,7 +266,7 @@ export default function FeeAlertsPage() {
                         className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                           alertType === value
                             ? "bg-amber-500 text-white"
-                            : "bg-white/10 text-slate-400 hover:bg-white/15"
+                            : "bg-white/10 text-slate-500 hover:bg-white/15"
                         }`}
                       >
                         {label}
@@ -326,7 +326,7 @@ export default function FeeAlertsPage() {
                     </div>
                   </div>
                 </div>
-                <span className="text-[0.62rem] text-slate-400 shrink-0 ml-2">
+                <span className="text-[0.62rem] text-slate-500 shrink-0 ml-2">
                   {new Date(c.changed_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
                 </span>
               </div>
@@ -334,7 +334,7 @@ export default function FeeAlertsPage() {
           </div>
         )}
 
-        <div className="mt-6 text-xs text-slate-400 text-center">
+        <div className="mt-6 text-xs text-slate-500 text-center">
           Fee data is sourced from official Product Disclosure Statements and broker websites. Always verify with the provider before making decisions.
         </div>
       </div>

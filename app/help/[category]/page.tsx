@@ -78,7 +78,7 @@ export default async function HelpCategoryPage(
                     {art.title}
                   </h2>
                   <p className="text-xs text-slate-500">{art.summary}</p>
-                  <p className="text-[0.65rem] text-slate-400 mt-2">
+                  <p className="text-[0.65rem] text-slate-500 mt-2">
                     Updated {art.updatedAt}
                   </p>
                 </Link>

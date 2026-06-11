@@ -267,7 +267,7 @@ export default async function ManagedFundsPage() {
                 <p className="font-bold text-slate-900">{m.name}</p>
                 <p className="text-sm text-slate-500 mt-1">{m.focus}</p>
                 <p className="text-xs text-amber-600 font-semibold mt-2">{m.aum}</p>
-                <p className="text-xs text-slate-400 mt-1">{m.note}</p>
+                <p className="text-xs text-slate-500 mt-1">{m.note}</p>
               </div>
             ))}
           </div>
@@ -369,7 +369,7 @@ export default async function ManagedFundsPage() {
               </Link>
             </div>
             {!SHOW_EDITORIAL_BADGES && (
-              <p className="text-xs text-slate-400 mt-3">{FACTUAL_COMPARISON_DISCLAIMER}</p>
+              <p className="text-xs text-slate-500 mt-3">{FACTUAL_COMPARISON_DISCLAIMER}</p>
             )}
           </div>
         </section>
@@ -393,7 +393,7 @@ export default async function ManagedFundsPage() {
                     {advisor.photo_url ? (
                       <Image src={advisor.photo_url} alt={advisor.name} width={48} height={48} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-lg font-bold text-slate-400">{advisor.name.charAt(0)}</span>
+                      <span className="text-lg font-bold text-slate-500">{advisor.name.charAt(0)}</span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -404,8 +404,8 @@ export default async function ManagedFundsPage() {
                     {advisor.firm_name && <p className="text-xs text-slate-500">{advisor.firm_name}</p>}
                     <div className="flex items-center gap-2 mt-1">
                       {SHOW_ADVISOR_RATINGS && advisor.rating && <span className="text-xs text-amber-600 font-semibold">&#9733; {advisor.rating.toFixed(1)}</span>}
-                      {SHOW_ADVISOR_RATINGS && advisor.review_count && advisor.review_count > 0 && <span className="text-xs text-slate-400">({advisor.review_count} reviews)</span>}
-                      {advisor.location_display && <span className="text-xs text-slate-400">{advisor.location_display}</span>}
+                      {SHOW_ADVISOR_RATINGS && advisor.review_count && advisor.review_count > 0 && <span className="text-xs text-slate-500">({advisor.review_count} reviews)</span>}
+                      {advisor.location_display && <span className="text-xs text-slate-500">{advisor.location_display}</span>}
                     </div>
                   </div>
                 </Link>

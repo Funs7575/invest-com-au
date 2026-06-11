@@ -268,12 +268,12 @@ export default function AdminSwitchStoriesPage() {
                   <td className="px-4 py-3 text-sm text-slate-700 font-medium">{story.dest_broker_slug}</td>
                   <td className="px-4 py-3">
                     <div className="text-sm text-slate-900">{story.display_name}</div>
-                    <div className="text-xs text-slate-400">{story.email}</div>
+                    <div className="text-xs text-slate-500">{story.email}</div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       <Stars rating={story.source_rating} />
-                      <span className="text-xs text-slate-400 mx-0.5">→</span>
+                      <span className="text-xs text-slate-500 mx-0.5">→</span>
                       <Stars rating={story.dest_rating} />
                     </div>
                   </td>
@@ -352,7 +352,7 @@ export default function AdminSwitchStoriesPage() {
                   <h3 className="font-bold text-slate-900">{s.title}</h3>
                   <button
                     onClick={() => setExpandedId(null)}
-                    className="text-xs text-slate-400 hover:text-slate-600"
+                    className="text-xs text-slate-500 hover:text-slate-600"
                   >
                     Close
                   </button>
@@ -380,7 +380,7 @@ export default function AdminSwitchStoriesPage() {
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-slate-400 mt-3 space-y-1">
+                <div className="text-xs text-slate-500 mt-3 space-y-1">
                   <p>Email: {s.email}</p>
                   <p>Verified: {s.verified_at ? new Date(s.verified_at).toLocaleString("en-AU") : "Not yet"}</p>
                   <p>Last updated: {new Date(s.updated_at).toLocaleString("en-AU")}</p>

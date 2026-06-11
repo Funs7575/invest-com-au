@@ -272,7 +272,7 @@ export default function AdminAdvisorsPage() {
                       <input
                         value={editing.photo_url || ""}
                         onChange={(e) => setEditing({ ...editing, photo_url: e.target.value })}
-                        className="w-full px-3 py-1.5 border rounded-lg text-xs mt-1.5 text-slate-400"
+                        className="w-full px-3 py-1.5 border rounded-lg text-xs mt-1.5 text-slate-500"
                         placeholder="Or paste URL..."
                       />
                     </div>
@@ -335,7 +335,7 @@ export default function AdminAdvisorsPage() {
 
           {/* Advisor list */}
           {loading ? (
-            <div className="text-slate-400 text-sm">Loading...</div>
+            <div className="text-slate-500 text-sm">Loading...</div>
           ) : (
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
               <table className="w-full text-sm" aria-label="Advisor list">
@@ -355,7 +355,7 @@ export default function AdminAdvisorsPage() {
                     <tr key={a.id} className="hover:bg-slate-50">
                       <td className="px-4 py-3">
                         <div className="font-semibold">{a.name}</div>
-                        <div className="text-xs text-slate-400">{a.firm_name}</div>
+                        <div className="text-xs text-slate-500">{a.firm_name}</div>
                       </td>
                       <td className="px-4 py-3 text-slate-600 text-xs">{PROFESSIONAL_TYPE_LABELS[a.type]}</td>
                       <td className="px-4 py-3 text-slate-600 text-xs">{a.location_display || "—"}</td>
@@ -417,7 +417,7 @@ export default function AdminAdvisorsPage() {
                 <p role="alert" className="px-4 py-2 text-xs text-emerald-700 bg-emerald-50 border-t border-emerald-200">{welcomeEmailMessage}</p>
               )}
               {advisors.length === 0 && (
-                <div className="text-center py-12 text-slate-400">
+                <div className="text-center py-12 text-slate-500">
                   <p className="mb-2">No advisors yet.</p>
                   <button onClick={() => setEditing({ ...EMPTY_ADVISOR })} className="text-blue-600 font-semibold hover:text-blue-800">Add your first advisor →</button>
                 </div>
@@ -478,8 +478,8 @@ export default function AdminAdvisorsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="font-semibold">{l.user_name}</div>
-                    <div className="text-xs text-slate-400">{l.user_email}</div>
-                    {l.user_phone && <div className="text-xs text-slate-400">{l.user_phone}</div>}
+                    <div className="text-xs text-slate-500">{l.user_email}</div>
+                    {l.user_phone && <div className="text-xs text-slate-500">{l.user_phone}</div>}
                   </td>
                   <td className="px-4 py-3 text-slate-600">{l.professional?.name || `ID: ${l.professional_id}`}</td>
                   <td className="px-4 py-3 max-w-[250px]">
@@ -488,7 +488,7 @@ export default function AdminAdvisorsPage() {
                         <summary className="text-xs text-slate-500 truncate cursor-pointer hover:text-slate-700">{l.message}</summary>
                         <p className="text-xs text-slate-600 mt-1 whitespace-pre-wrap bg-slate-50 rounded p-2">{l.message}</p>
                       </details>
-                    ) : <span className="text-xs text-slate-400">—</span>}
+                    ) : <span className="text-xs text-slate-500">—</span>}
                   </td>
                   <td className="px-4 py-3">
                     <select
@@ -514,7 +514,7 @@ export default function AdminAdvisorsPage() {
             </tbody>
           </table>
           {leads.length === 0 && (
-            <div className="text-center py-12 text-slate-400">No leads yet. They&apos;ll appear here when users submit enquiries.</div>
+            <div className="text-center py-12 text-slate-500">No leads yet. They&apos;ll appear here when users submit enquiries.</div>
           )}
         </div>
         </>
@@ -542,7 +542,7 @@ export default function AdminAdvisorsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="font-semibold text-xs">{String(r.reviewer_name)}</div>
-                    <div className="text-[0.62rem] text-slate-400">{String(r.reviewer_email)}</div>
+                    <div className="text-[0.62rem] text-slate-500">{String(r.reviewer_email)}</div>
                   </td>
                   <td className="px-4 py-3 text-xs text-slate-600">
                     {String((r.professionals as Record<string, unknown>)?.name || `ID: ${r.professional_id}`)}
@@ -598,7 +598,7 @@ export default function AdminAdvisorsPage() {
             </tbody>
           </table>
           {pendingReviews.length === 0 && (
-            <div className="text-center py-12 text-slate-400">No reviews yet.</div>
+            <div className="text-center py-12 text-slate-500">No reviews yet.</div>
           )}
         </div>
       )}
@@ -712,7 +712,7 @@ export default function AdminAdvisorsPage() {
                 </tbody>
               </table>
             </div>
-            <p className="text-[0.6rem] text-slate-400 mt-2">Red = no coverage (priority approve), Amber = 1-2 advisors, Green = 3+</p>
+            <p className="text-[0.6rem] text-slate-500 mt-2">Red = no coverage (priority approve), Amber = 1-2 advisors, Green = 3+</p>
           </div>
 
           {/* Filter bar — status + type + state */}
@@ -737,11 +737,11 @@ export default function AdminAdvisorsPage() {
               <option value="all">All States</option>
               {appStates.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
-            <span className="self-center text-xs text-slate-400">{filteredApps.length} result{filteredApps.length !== 1 ? "s" : ""}</span>
+            <span className="self-center text-xs text-slate-500">{filteredApps.length} result{filteredApps.length !== 1 ? "s" : ""}</span>
           </div>
 
           {filteredApps.length === 0 ? (
-            <div className="text-center py-12 text-slate-400">No matching applications.</div>
+            <div className="text-center py-12 text-slate-500">No matching applications.</div>
           ) : (
             <div className="space-y-3">
               {filteredApps.map((app) => {
@@ -764,7 +764,7 @@ export default function AdminAdvisorsPage() {
                           {/* Supply gap badge */}
                           <span className={`text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full ${gap.color}`}>{gap.label}</span>
                         </div>
-                        <span className="text-xs text-slate-400 whitespace-nowrap ml-3">
+                        <span className="text-xs text-slate-500 whitespace-nowrap ml-3">
                           {new Date(String(app.created_at)).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                         </span>
                       </div>
@@ -809,25 +809,25 @@ export default function AdminAdvisorsPage() {
                         <div>
                           <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Credentials</h4>
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            <div><span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">AFSL</span><span className="text-xs text-slate-700">{app.afsl_number ? String(app.afsl_number) : "—"}</span></div>
-                            <div><span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">Reg / TAN</span><span className="text-xs text-slate-700">{app.registration_number ? String(app.registration_number) : "—"}</span></div>
-                            <div><span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">ABN</span><span className="text-xs text-slate-700">{app.abn ? String(app.abn) : "—"}</span></div>
-                            <div><span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">Website</span>{app.website ? <a href={String(app.website)} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:text-blue-800 truncate block">{String(app.website)}</a> : <span className="text-xs text-slate-400">—</span>}</div>
+                            <div><span className="block text-[0.62rem] font-semibold text-slate-500 uppercase">AFSL</span><span className="text-xs text-slate-700">{app.afsl_number ? String(app.afsl_number) : "—"}</span></div>
+                            <div><span className="block text-[0.62rem] font-semibold text-slate-500 uppercase">Reg / TAN</span><span className="text-xs text-slate-700">{app.registration_number ? String(app.registration_number) : "—"}</span></div>
+                            <div><span className="block text-[0.62rem] font-semibold text-slate-500 uppercase">ABN</span><span className="text-xs text-slate-700">{app.abn ? String(app.abn) : "—"}</span></div>
+                            <div><span className="block text-[0.62rem] font-semibold text-slate-500 uppercase">Website</span>{app.website ? <a href={String(app.website)} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:text-blue-800 truncate block">{String(app.website)}</a> : <span className="text-xs text-slate-500">—</span>}</div>
                           </div>
                         </div>
 
                         {/* Experience & Client Types */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                          <div><span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">Years Exp</span><span className="text-xs text-slate-700">{app.years_experience ? String(app.years_experience) : "—"}</span></div>
-                          <div><span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">Languages</span><span className="text-xs text-slate-700">{app.languages ? String(app.languages) : "—"}</span></div>
-                          <div><span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">Client Types</span><span className="text-xs text-slate-700">{app.client_types ? String(app.client_types) : "—"}</span></div>
-                          <div><span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">Referral</span><span className="text-xs text-slate-700">{app.referral_source ? String(app.referral_source) : "—"}</span></div>
+                          <div><span className="block text-[0.62rem] font-semibold text-slate-500 uppercase">Years Exp</span><span className="text-xs text-slate-700">{app.years_experience ? String(app.years_experience) : "—"}</span></div>
+                          <div><span className="block text-[0.62rem] font-semibold text-slate-500 uppercase">Languages</span><span className="text-xs text-slate-700">{app.languages ? String(app.languages) : "—"}</span></div>
+                          <div><span className="block text-[0.62rem] font-semibold text-slate-500 uppercase">Client Types</span><span className="text-xs text-slate-700">{app.client_types ? String(app.client_types) : "—"}</span></div>
+                          <div><span className="block text-[0.62rem] font-semibold text-slate-500 uppercase">Referral</span><span className="text-xs text-slate-700">{app.referral_source ? String(app.referral_source) : "—"}</span></div>
                         </div>
 
                         {/* Bio & Specialties */}
                         <div>
                           <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">About</h4>
-                          {app.bio ? <p className="text-xs text-slate-600 whitespace-pre-wrap bg-slate-50 rounded-lg p-3 mb-2">{String(app.bio)}</p> : <p className="text-xs text-slate-400 mb-2">No bio.</p>}
+                          {app.bio ? <p className="text-xs text-slate-600 whitespace-pre-wrap bg-slate-50 rounded-lg p-3 mb-2">{String(app.bio)}</p> : <p className="text-xs text-slate-500 mb-2">No bio.</p>}
                           {!!app.specialties && String(app.specialties).trim() && (
                             <div className="flex flex-wrap gap-1.5 mt-1">
                               {String(app.specialties).split(",").map((s: string) => s.trim()).filter(Boolean).map((s, i) => (
@@ -949,7 +949,7 @@ export default function AdminAdvisorsPage() {
         <div>
           <p className="text-sm text-slate-600 mb-4">Review lead disputes from advisors. Approve to waive the charge or reject to uphold it.</p>
           {disputes.length === 0 ? (
-            <div className="text-center py-12 text-slate-400">No disputes filed.</div>
+            <div className="text-center py-12 text-slate-500">No disputes filed.</div>
           ) : (
             <div className="space-y-3">
               {disputes.map((d) => {
@@ -976,7 +976,7 @@ export default function AdminAdvisorsPage() {
                           {!!d.details && <span className="text-slate-500"> — {String(d.details)}</span>}
                         </div>
                       </div>
-                      <span className="text-xs text-slate-400">{new Date(String(d.created_at)).toLocaleDateString("en-AU")}</span>
+                      <span className="text-xs text-slate-500">{new Date(String(d.created_at)).toLocaleDateString("en-AU")}</span>
                     </div>
                     {d.status === "pending" && (
                       <div className="mt-2 space-y-2">

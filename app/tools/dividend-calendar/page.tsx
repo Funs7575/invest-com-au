@@ -52,7 +52,7 @@ export default function DividendCalendarPage() {
     <>
       <JsonLd data={[breadcrumbLd, toolLd, ...(divFaqLd ? [divFaqLd] : [])]} />
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
-      <nav aria-label="Breadcrumb" className="text-xs text-slate-400">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500">
         <Link href="/tools" className="hover:text-violet-700">Tools</Link>
         <span className="mx-1">›</span>
         <span className="text-slate-600">Dividend Calendar</span>

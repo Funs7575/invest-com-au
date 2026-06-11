@@ -82,7 +82,7 @@ export default async function VentureCapitalListingsPage() {
           This is general information only and not personal financial advice. Confirm your eligibility with a qualified professional before investing.
         </p>
       </div>
-      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+      <Suspense fallback={<div className="py-12 text-center text-slate-500">Loading listings...</div>}>
         <InvestListingsClient
           listings={listings}
           categories={categoryTabs}

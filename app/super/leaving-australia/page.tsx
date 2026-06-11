@@ -604,8 +604,8 @@ export default async function LeavingAustraliaPage() {
             transferred to the ATO as &apos;unclaimed super money&apos;. This happens automatically when:
           </p>
           <ul className="space-y-2 text-sm text-slate-600 mb-6 ml-4">
-            <li className="flex gap-2"><span className="text-slate-400 shrink-0">&bull;</span>An account has been inactive (no contributions, no rollovers, no contact) for five or more years, and</li>
-            <li className="flex gap-2"><span className="text-slate-400 shrink-0">&bull;</span>The fund cannot locate you to return the money.</li>
+            <li className="flex gap-2"><span className="text-slate-500 shrink-0">&bull;</span>An account has been inactive (no contributions, no rollovers, no contact) for five or more years, and</li>
+            <li className="flex gap-2"><span className="text-slate-500 shrink-0">&bull;</span>The fund cannot locate you to return the money.</li>
           </ul>
           <div className="grid sm:grid-cols-2 gap-4 mb-6">
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
@@ -746,10 +746,10 @@ export default async function LeavingAustraliaPage() {
             in Australia if:
           </p>
           <ul className="space-y-2 text-sm text-slate-600 mb-6 ml-4">
-            <li className="flex gap-2"><span className="text-slate-400 shrink-0">&bull;</span>They intend to return to Australia on a new visa in the future.</li>
-            <li className="flex gap-2"><span className="text-slate-400 shrink-0">&bull;</span>They are considering applying for permanent residency.</li>
-            <li className="flex gap-2"><span className="text-slate-400 shrink-0">&bull;</span>The DASP withholding tax (especially 65%) represents too large a loss.</li>
-            <li className="flex gap-2"><span className="text-slate-400 shrink-0">&bull;</span>They want the super to keep growing in a low-tax Australian super environment.</li>
+            <li className="flex gap-2"><span className="text-slate-500 shrink-0">&bull;</span>They intend to return to Australia on a new visa in the future.</li>
+            <li className="flex gap-2"><span className="text-slate-500 shrink-0">&bull;</span>They are considering applying for permanent residency.</li>
+            <li className="flex gap-2"><span className="text-slate-500 shrink-0">&bull;</span>The DASP withholding tax (especially 65%) represents too large a loss.</li>
+            <li className="flex gap-2"><span className="text-slate-500 shrink-0">&bull;</span>They want the super to keep growing in a low-tax Australian super environment.</li>
           </ul>
 
           <div className="grid sm:grid-cols-2 gap-4 mb-6">

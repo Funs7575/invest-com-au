@@ -102,7 +102,7 @@ export default function AgedCareFamilyHomePage() {
             if a spouse stays). When to sell, whether to rent it, CGT implications, and how to use
             proceeds to fund a RAD — these decisions have a $100,000+ impact on fees and estate.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not tax or legal advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not tax or legal advice</p>
         </div>
       </section>
 
@@ -145,7 +145,7 @@ export default function AgedCareFamilyHomePage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-3">CGT rules for aged care scenarios are complex — always confirm your specific situation with a registered tax agent. The ATO has rulings on various absence-rule scenarios.</p>
+          <p className="text-xs text-slate-500 mt-3">CGT rules for aged care scenarios are complex — always confirm your specific situation with a registered tax agent. The ATO has rulings on various absence-rule scenarios.</p>
         </div>
       </section>
 

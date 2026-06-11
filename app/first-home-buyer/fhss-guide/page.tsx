@@ -367,7 +367,7 @@ export default function FhssGuidePage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             The 30% tax offset applies to the assessable FHSS released amount. For earners in the 19%
             bracket, the effective exit tax is 0% (capped at 0%). For earners in the 47% bracket, the
             exit rate is 47% &minus; 30% = 17% &mdash; still much lower than the 47% that would have
@@ -517,7 +517,7 @@ export default function FhssGuidePage() {
               rates change.
             </p>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             Illustrative only. Sophie&apos;s employer SG contributions (11.5% of $85,000 = $9,775/year)
             are not affected by salary sacrifice and continue to go into her super fund separately.
           </p>

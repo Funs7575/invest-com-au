@@ -43,7 +43,7 @@ export default function BrokerTermsPage() {
           </div>
 
           <h1 className="text-2xl md:text-4xl font-extrabold mb-2">Advertising &amp; Listing Terms</h1>
-          <p className="text-xs text-slate-400 mb-8">Version {VERSION} — Effective {EFFECTIVE_DATE}</p>
+          <p className="text-xs text-slate-500 mb-8">Version {VERSION} — Effective {EFFECTIVE_DATE}</p>
 
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
             <p className="text-xs text-blue-700">

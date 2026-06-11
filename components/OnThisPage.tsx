@@ -119,7 +119,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
                 </p>
                 <button
                   onClick={() => setIsExpanded(false)}
-                  className="p-1.5 -mr-0.5 text-slate-400 hover:text-slate-600 rounded-lg"
+                  className="p-1.5 -mr-0.5 text-slate-500 hover:text-slate-600 rounded-lg"
                   aria-label="Close navigation"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -304,7 +304,7 @@ export default function BridgingFinancePage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             The interest rate premium is charged on peak debt for the entire bridging period — this is often the largest cost. Model your carrying costs carefully before committing.
           </p>
         </div>

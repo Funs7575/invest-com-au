@@ -251,7 +251,7 @@ export default function OrgCoursesTab({ org }: Props) {
                 {course.description && (
                   <p className="text-xs text-slate-500 truncate mb-1">{course.description}</p>
                 )}
-                <div className="flex items-center gap-3 text-[0.62rem] text-slate-400">
+                <div className="flex items-center gap-3 text-[0.62rem] text-slate-500">
                   <span className="capitalize">{course.level}</span>
                   <span>{course.estimated_hours}h CPD</span>
                   <span>${(course.price_cents / 100).toFixed(0)} AUD</span>

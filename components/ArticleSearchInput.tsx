@@ -31,7 +31,7 @@ export default function ArticleSearchInput() {
 
   return (
     <div className="relative mb-2 md:mb-4">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-slate-500" />
       <input
         type="text"
         defaultValue={current}

@@ -238,7 +238,7 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
               <p className="text-sm font-bold text-slate-900">
                 {broker.rating}
               </p>
-              <p className="text-[0.6rem] text-slate-400">editor rating</p>
+              <p className="text-[0.6rem] text-slate-500">editor rating</p>
             </div>
           ) : null}
         </div>
@@ -286,7 +286,7 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
             <div>
               <label htmlFor="bri-title" className="block text-xs font-semibold text-slate-600 mb-1">
                 Review title{" "}
-                <span className="text-slate-400 font-normal">(optional)</span>
+                <span className="text-slate-500 font-normal">(optional)</span>
               </label>
               <input
                 id="bri-title"
@@ -313,7 +313,7 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
                 className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
               />
               <p
-                className={`text-[0.6rem] mt-0.5 ${body.trim().length < 50 ? "text-slate-400" : "text-emerald-600"}`}
+                className={`text-[0.6rem] mt-0.5 ${body.trim().length < 50 ? "text-slate-500" : "text-emerald-600"}`}
               >
                 {body.trim().length} / 50 characters minimum
               </p>
@@ -323,7 +323,7 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
               <div>
                 <label htmlFor="bri-display-name" className="block text-xs font-semibold text-slate-600 mb-1">
                   Display name{" "}
-                  <span className="text-slate-400 font-normal">
+                  <span className="text-slate-500 font-normal">
                     (or leave blank for Anonymous)
                   </span>
                 </label>
@@ -340,7 +340,7 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
               <div>
                 <label htmlFor="bri-months" className="block text-xs font-semibold text-slate-600 mb-1">
                   Months using{" "}
-                  <span className="text-slate-400 font-normal">(optional)</span>
+                  <span className="text-slate-500 font-normal">(optional)</span>
                 </label>
                 <input
                   id="bri-months"
@@ -376,7 +376,7 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
               {submitting ? "Submitting…" : "Submit review"}
             </button>
 
-            <p className="text-center text-[0.65rem] text-slate-400">
+            <p className="text-center text-[0.65rem] text-slate-500">
               Your email stays private. Reviews that look fake are removed.{" "}
               <Link href="/privacy" className="underline hover:text-slate-600">
                 Privacy policy

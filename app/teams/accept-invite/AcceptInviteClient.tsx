@@ -121,7 +121,7 @@ export default function AcceptInviteClient({ token }: { token: string }) {
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-8">
-      <p className="text-xs uppercase tracking-widest text-slate-400 mb-2 text-center">
+      <p className="text-xs uppercase tracking-widest text-slate-500 mb-2 text-center">
         Team invitation
       </p>
       <h1 className="text-2xl font-extrabold text-slate-900 mb-2 text-center">

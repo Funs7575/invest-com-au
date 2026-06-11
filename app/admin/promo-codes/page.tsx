@@ -348,7 +348,7 @@ export default function PromoCodesAdminPage() {
                             )}
                           </>
                         ) : (
-                          <span className="text-slate-400">Never</span>
+                          <span className="text-slate-500">Never</span>
                         )}
                       </td>
                       <td className="px-4 py-2 text-xs text-slate-500 max-w-xs truncate">

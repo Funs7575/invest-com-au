@@ -43,7 +43,7 @@ function FooterLinkSection({
       >
         <h4 className="text-white font-semibold text-xs md:text-sm">{title}</h4>
         <svg
-          className={`w-4 h-4 shrink-0 text-slate-400 transition-transform duration-200 md:hidden ${open ? "rotate-180" : ""}`}
+          className={`w-4 h-4 shrink-0 text-slate-500 transition-transform duration-200 md:hidden ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

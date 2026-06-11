@@ -106,7 +106,7 @@ export default function AgedCareFacilitiesPage() {
             serve different needs and cost differently. Use Aged Care Star Ratings as a starting point
             — then visit, read inspection reports, and review the Resident Agreement carefully.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not financial or medical advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not financial or medical advice</p>
         </div>
       </section>
 

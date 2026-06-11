@@ -910,7 +910,7 @@ export default async function ArticlePage({
                             href={`#section-${i}`}
                             className="text-xs text-slate-700 hover:text-slate-900 transition-colors flex items-start gap-1.5"
                           >
-                            <span className="text-slate-400 font-semibold shrink-0 tabular-nums">
+                            <span className="text-slate-500 font-semibold shrink-0 tabular-nums">
                               {i + 1}.
                             </span>
                             <span className="leading-snug">{section.heading}</span>

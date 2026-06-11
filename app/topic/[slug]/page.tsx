@@ -99,7 +99,7 @@ export default async function TopicPage({ params }: Props) {
           <p className="text-sm md:text-base text-slate-500 max-w-2xl">
             {label.description}
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-500">
             {articles.length} article{articles.length === 1 ? "" : "s"}
           </p>
         </div>

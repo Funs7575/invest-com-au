@@ -111,17 +111,17 @@ export default function AdvisorDirectory() {
             {isProperty ? (
               <>
                 <span className="text-xs text-slate-600 font-medium">Buyer&apos;s Agents</span>
-                <span className="text-xs text-slate-400">·</span>
+                <span className="text-xs text-slate-500">·</span>
                 <span className="text-xs text-slate-600 font-medium">Mortgage Brokers</span>
-                <span className="text-xs text-slate-400">·</span>
+                <span className="text-xs text-slate-500">·</span>
                 <span className="text-xs text-slate-600 font-medium">Property Advisors</span>
               </>
             ) : (
               <>
                 <span className="text-xs text-slate-600 font-medium">Financial Planners</span>
-                <span className="text-xs text-slate-400">·</span>
+                <span className="text-xs text-slate-500">·</span>
                 <span className="text-xs text-slate-600 font-medium">SMSF Accountants</span>
-                <span className="text-xs text-slate-400">·</span>
+                <span className="text-xs text-slate-500">·</span>
                 <span className="text-xs text-slate-600 font-medium">Wealth Managers</span>
               </>
             )}

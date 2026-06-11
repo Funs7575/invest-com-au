@@ -188,7 +188,7 @@ export default function StateGrantsCalculatorClient() {
         <div>
           <span className="block text-sm font-medium text-slate-700 mb-2">
             Household income{" "}
-            <span className="text-slate-400 font-normal">
+            <span className="text-slate-500 font-normal">
               (ACT duty concession test — the First Home Guarantee no longer
               has an income cap)
             </span>

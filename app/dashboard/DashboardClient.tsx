@@ -34,7 +34,7 @@ function KPICard({ label, value, sub, icon, color }: { label: string; value: num
         <div>
           <div className="text-2xl font-extrabold text-slate-900">{typeof value === "number" ? value.toLocaleString() : value}</div>
           <div className="text-xs text-slate-500">{label}</div>
-          {sub && <div className="text-[0.6rem] text-slate-400">{sub}</div>}
+          {sub && <div className="text-[0.6rem] text-slate-500">{sub}</div>}
         </div>
       </div>
     </div>
@@ -145,7 +145,7 @@ export default function DashboardClient() {
         <div className="flex items-center justify-between mb-5 md:mb-8">
           <div>
             <h1 className="text-xl md:text-3xl font-extrabold text-slate-900">Analytics</h1>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Last updated: {new Date(data.generated_at).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" })}
             </p>
           </div>
@@ -188,7 +188,7 @@ export default function DashboardClient() {
           <div className="bg-white border border-slate-200 rounded-xl p-4">
             <h3 className="text-sm font-bold text-slate-900 mb-3">Daily Events (30d)</h3>
             <SparkChart data={data.daily_events} color="#8b5cf6" />
-            <div className="flex justify-between text-[0.55rem] text-slate-400 mt-1">
+            <div className="flex justify-between text-[0.55rem] text-slate-500 mt-1">
               <span>{data.daily_events[0]?.day.slice(5) || ""}</span>
               <span>{data.daily_events[data.daily_events.length - 1]?.day.slice(5) || ""}</span>
             </div>
@@ -198,7 +198,7 @@ export default function DashboardClient() {
           <div className="bg-white border border-slate-200 rounded-xl p-4">
             <h3 className="text-sm font-bold text-slate-900 mb-3">Daily Clicks (30d)</h3>
             <SparkChart data={data.daily_clicks} color="#d97706" />
-            <div className="flex justify-between text-[0.55rem] text-slate-400 mt-1">
+            <div className="flex justify-between text-[0.55rem] text-slate-500 mt-1">
               <span>{data.daily_clicks[0]?.day.slice(5) || ""}</span>
               <span>{data.daily_clicks[data.daily_clicks.length - 1]?.day.slice(5) || ""}</span>
             </div>
@@ -248,7 +248,7 @@ export default function DashboardClient() {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-slate-400 text-center py-4">No events yet</p>
+              <p className="text-xs text-slate-500 text-center py-4">No events yet</p>
             )}
           </div>
 

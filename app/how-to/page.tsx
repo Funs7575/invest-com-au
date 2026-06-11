@@ -269,7 +269,7 @@ export default function HowToHubPage() {
                         <h3 className="text-sm md:text-base font-semibold text-slate-800 group-hover:text-slate-900 leading-snug mb-0.5 transition-colors">
                           {guide.h1}
                         </h3>
-                        <p className="text-[0.65rem] md:text-xs text-slate-400 line-clamp-1">
+                        <p className="text-[0.65rem] md:text-xs text-slate-500 line-clamp-1">
                           {guide.steps.length} steps · ~10 min read
                         </p>
                       </div>
@@ -300,7 +300,7 @@ export default function HowToHubPage() {
                         <h3 className="text-sm md:text-base font-semibold text-slate-800 group-hover:text-slate-900 leading-snug mb-0.5 transition-colors">
                           {guide.h1}
                         </h3>
-                        <p className="text-[0.65rem] md:text-xs text-slate-400 line-clamp-1">
+                        <p className="text-[0.65rem] md:text-xs text-slate-500 line-clamp-1">
                           {guide.steps.length} steps · ~10 min read
                         </p>
                       </div>

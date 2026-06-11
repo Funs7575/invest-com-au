@@ -134,7 +134,7 @@ export default function ReviewForm({ slug, token, advisorName, defaultDisplayNam
           className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
           placeholder="What was your experience like?"
         />
-        <p className="text-xs text-slate-400 mt-1">{body.length}/2000</p>
+        <p className="text-xs text-slate-500 mt-1">{body.length}/2000</p>
       </div>
 
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}

@@ -160,7 +160,7 @@ export default function FHSSCalculatorClient() {
         <div>
           <label htmlFor="fhss-conc" className="block text-sm font-medium text-slate-700 mb-1">
             Annual concessional contributions (salary sacrifice / personal deductible)
-            <span className="ml-2 text-slate-400 font-normal">max $15,000/yr</span>
+            <span className="ml-2 text-slate-500 font-normal">max $15,000/yr</span>
           </label>
           <div className="flex items-center gap-4">
             <input
@@ -183,7 +183,7 @@ export default function FHSSCalculatorClient() {
         <div>
           <label htmlFor="fhss-non-conc" className="block text-sm font-medium text-slate-700 mb-1">
             Annual non-concessional contributions (after-tax personal)
-            <span className="ml-2 text-slate-400 font-normal">up to $15,000 – concessional/yr</span>
+            <span className="ml-2 text-slate-500 font-normal">up to $15,000 – concessional/yr</span>
           </label>
           <div className="flex items-center gap-4">
             <input
@@ -241,7 +241,7 @@ export default function FHSSCalculatorClient() {
                 }`}
               >
                 {opt.label}{" "}
-                <span className="text-slate-400">({opt.rate})</span>
+                <span className="text-slate-500">({opt.rate})</span>
               </button>
             ))}
           </div>

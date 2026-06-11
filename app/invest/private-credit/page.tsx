@@ -150,7 +150,7 @@ export default async function PrivateCreditPage() {
                   <span className="text-xs bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded">{m.yield}</span>
                   <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">{m.aum}</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-2">{m.min} &middot; {m.access}</p>
+                <p className="text-xs text-slate-500 mt-2">{m.min} &middot; {m.access}</p>
               </div>
             ))}
           </div>
@@ -354,7 +354,7 @@ export default async function PrivateCreditPage() {
                     {advisor.photo_url ? (
                       <Image src={advisor.photo_url} alt={advisor.name} width={48} height={48} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-lg font-bold text-slate-400">{advisor.name.charAt(0)}</span>
+                      <span className="text-lg font-bold text-slate-500">{advisor.name.charAt(0)}</span>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -365,8 +365,8 @@ export default async function PrivateCreditPage() {
                     {advisor.firm_name && <p className="text-xs text-slate-500">{advisor.firm_name}</p>}
                     <div className="flex items-center gap-2 mt-1">
                       {SHOW_ADVISOR_RATINGS && advisor.rating && <span className="text-xs text-amber-600 font-semibold">&#9733; {advisor.rating.toFixed(1)}</span>}
-                      {SHOW_ADVISOR_RATINGS && advisor.review_count && advisor.review_count > 0 && <span className="text-xs text-slate-400">({advisor.review_count} reviews)</span>}
-                      {advisor.location_display && <span className="text-xs text-slate-400">{advisor.location_display}</span>}
+                      {SHOW_ADVISOR_RATINGS && advisor.review_count && advisor.review_count > 0 && <span className="text-xs text-slate-500">({advisor.review_count} reviews)</span>}
+                      {advisor.location_display && <span className="text-xs text-slate-500">{advisor.location_display}</span>}
                     </div>
                   </div>
                 </Link>

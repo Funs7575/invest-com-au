@@ -562,7 +562,7 @@ export default function AutopilotPage() {
                     {/* Expand toggle */}
                     <button
                       onClick={() => toggleExpanded(automation.id)}
-                      className="text-xs text-slate-400 hover:text-slate-600 font-medium transition-colors"
+                      className="text-xs text-slate-500 hover:text-slate-600 font-medium transition-colors"
                     >
                       {expanded ? "Less" : "What this does"}
                       <svg

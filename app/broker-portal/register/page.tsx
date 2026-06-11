@@ -41,7 +41,7 @@ function PricingPreview() {
         >
           <span>Pricing preview — from $299/month</span>
           <svg
-            className={`w-4 h-4 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`}
+            className={`w-4 h-4 text-slate-500 transition-transform ${open ? "rotate-180" : ""}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -192,7 +192,7 @@ export default function BrokerRegisterPage() {
         <p className="text-sm text-slate-600">
           Your broker advertising account is pending review. We&apos;ll email you at <strong>{email}</strong> once your account is approved.
         </p>
-        <p className="text-xs text-slate-400">This typically takes 1–2 business days. Once approved, you can log in to set up your first campaign.</p>
+        <p className="text-xs text-slate-500">This typically takes 1–2 business days. Once approved, you can log in to set up your first campaign.</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-2">
           <Link
             href="/broker-portal/login"
@@ -228,11 +228,11 @@ export default function BrokerRegisterPage() {
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
               i < step ? "bg-emerald-100 text-emerald-700" :
               i === step ? "bg-slate-900 text-white" :
-              "bg-slate-100 text-slate-400"
+              "bg-slate-100 text-slate-500"
             }`}>
               {i < step ? "✓" : i + 1}
             </div>
-            <span className={`text-xs font-medium ${i === step ? "text-slate-900" : "text-slate-400"}`}>{label}</span>
+            <span className={`text-xs font-medium ${i === step ? "text-slate-900" : "text-slate-500"}`}>{label}</span>
             {i < STEPS.length - 1 && <div className="w-8 h-px bg-slate-200" />}
           </div>
         ))}
@@ -279,7 +279,7 @@ export default function BrokerRegisterPage() {
                   className="w-full px-4 py-2.5 pr-11 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                   placeholder="Min. 8 characters" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600"
                   aria-label={showPassword ? "Hide password" : "Show password"}>
                   {showPassword
                     ? <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.59 6.59m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>
@@ -295,7 +295,7 @@ export default function BrokerRegisterPage() {
                   className="w-full px-4 py-2.5 pr-11 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                   placeholder="••••••••" />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600"
                   aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}>
                   {showConfirmPassword
                     ? <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.59 6.59m7.532 7.532l3.29 3.29M3 3l18 18" /></svg>

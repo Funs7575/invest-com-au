@@ -27,7 +27,7 @@ const STATUS_COLORS: Record<string, string> = {
   budget_exhausted: "bg-red-50 text-red-700",
   completed: "bg-slate-100 text-slate-500",
   rejected: "bg-red-50 text-red-600",
-  cancelled: "bg-slate-100 text-slate-400",
+  cancelled: "bg-slate-100 text-slate-500",
 };
 
 export default function CampaignsPage() {
@@ -356,7 +356,7 @@ export default function CampaignsPage() {
           <p className="text-sm font-medium text-slate-700 mb-1">
             {filter === "all" ? "No campaigns yet" : `No ${filter.replace(/_/g, " ")} campaigns`}
           </p>
-          <p className="text-xs text-slate-400 mb-4">
+          <p className="text-xs text-slate-500 mb-4">
             {filter === "all" ? "Create your first campaign to get started." : "Try a different filter or create a new campaign."}
           </p>
           <Link href="/broker-portal/campaigns/new" className="inline-block px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors">
@@ -409,7 +409,7 @@ export default function CampaignsPage() {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mb-3">
                   <div>
-                    <p className="text-xs text-slate-400">Rate</p>
+                    <p className="text-xs text-slate-500">Rate</p>
                     <p className="font-semibold">
                       {c.inventory_type === "cpc"
                         ? `$${(c.rate_cents / 100).toFixed(2)}/click`
@@ -417,17 +417,17 @@ export default function CampaignsPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400">Spent</p>
+                    <p className="text-xs text-slate-500">Spent</p>
                     <p className="font-semibold">${(c.total_spent_cents / 100).toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400">Budget</p>
+                    <p className="text-xs text-slate-500">Budget</p>
                     <p className="font-semibold">
                       {c.total_budget_cents ? `$${(c.total_budget_cents / 100).toFixed(0)}` : "Unlimited"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-400">Dates</p>
+                    <p className="text-xs text-slate-500">Dates</p>
                     <p className="font-semibold text-xs">
                       {c.start_date?.slice(0, 10)} — {c.end_date?.slice(0, 10) || "Ongoing"}
                     </p>
@@ -436,7 +436,7 @@ export default function CampaignsPage() {
 
                 {/* Dayparting info */}
                 {(c.active_hours_start != null || (c.active_days && c.active_days.length > 0)) && (
-                  <div className="flex items-center gap-2 text-[0.62rem] text-slate-400 mb-2">
+                  <div className="flex items-center gap-2 text-[0.62rem] text-slate-500 mb-2">
                     <Icon name="clock" size={10} />
                     {c.active_hours_start != null && c.active_hours_end != null && (
                       <span>Active {c.active_hours_start}:00–{c.active_hours_end}:00</span>

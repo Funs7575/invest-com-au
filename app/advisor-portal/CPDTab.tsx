@@ -214,7 +214,7 @@ export default function CPDTab() {
           })}
         </div>
 
-        <p className="text-[0.6rem] text-slate-400 mt-3">
+        <p className="text-[0.6rem] text-slate-500 mt-3">
           ASIC does not mandate a split between categories — all hours count toward the 40-hour total.
           The breakdown is shown for your own records.
         </p>
@@ -223,7 +223,7 @@ export default function CPDTab() {
       {/* Completed CPD courses */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
         <h3 className="text-sm font-bold text-slate-900 mb-1">CPD Courses Completed</h3>
-        <p className="text-[0.6rem] text-slate-400 mb-3">
+        <p className="text-[0.6rem] text-slate-500 mb-3">
           Courses you&apos;ve finished that count toward your {year} CPD hours.
         </p>
 
@@ -246,7 +246,7 @@ export default function CPDTab() {
                     >
                       {CATEGORY_LABELS[c.cpd_category] ?? c.cpd_category}
                     </span>
-                    <span className="text-[0.6rem] text-slate-400">
+                    <span className="text-[0.6rem] text-slate-500">
                       {new Date(c.completed_at).toLocaleDateString("en-AU")}
                     </span>
                   </div>
@@ -256,7 +256,7 @@ export default function CPDTab() {
                     +{c.hours_earned} hr{c.hours_earned !== 1 ? "s" : ""}
                   </p>
                   {c.certificate_number && (
-                    <p className="text-[0.55rem] text-slate-400 mt-0.5">
+                    <p className="text-[0.55rem] text-slate-500 mt-0.5">
                       {c.certificate_number}
                     </p>
                   )}

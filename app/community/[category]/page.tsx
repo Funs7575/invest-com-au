@@ -318,7 +318,7 @@ export default async function CategoryPage({
 
             {/* Popular topics */}
             <div className="border-t border-slate-100 pt-6 max-w-md mx-auto">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">
                 Popular topics in this category
               </p>
               <div className="space-y-2 text-left">
@@ -370,7 +370,7 @@ export default async function CategoryPage({
                         {thread.title}
                       </h3>
                     </div>
-                    <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
+                    <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
                       <span className="flex items-center gap-1">
                         <Icon name="user" size={12} />
                         {thread.author_name}
@@ -381,7 +381,7 @@ export default async function CategoryPage({
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-slate-400 shrink-0">
+                  <div className="flex items-center gap-4 text-xs text-slate-500 shrink-0">
                     <span
                       className="flex items-center gap-1"
                       title="Replies"

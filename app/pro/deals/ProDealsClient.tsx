@@ -97,7 +97,7 @@ export default function ProDealsClient({
         </p>
 
         {deals.length === 0 ? (
-          <div className="text-center py-16 text-slate-400">
+          <div className="text-center py-16 text-slate-500">
             <p className="text-lg mb-1">No active deals right now</p>
             <p className="text-sm">New Pro deals are added regularly. Check back soon!</p>
           </div>
@@ -140,7 +140,7 @@ export default function ProDealsClient({
                               {deal.deal_value}
                             </span>
                           )}
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-slate-500">
                             {broker?.name || deal.broker_slug}
                           </span>
                         </div>

@@ -250,7 +250,7 @@ export default function CurrencyConverterPage() {
                 );
               })}
             </div>
-            <p className="text-xs text-slate-400 mt-3">Indicative mid-market rates. Not live.</p>
+            <p className="text-xs text-slate-500 mt-3">Indicative mid-market rates. Not live.</p>
           </div>
 
           <div className="bg-white rounded-xl border border-slate-200 p-4">
@@ -267,7 +267,7 @@ export default function CurrencyConverterPage() {
                   href={href}
                   className="flex justify-between text-sm text-blue-600 hover:underline"
                 >
-                  {label} <span className="text-slate-400">→</span>
+                  {label} <span className="text-slate-500">→</span>
                 </Link>
               ))}
             </div>

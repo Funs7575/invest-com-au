@@ -55,7 +55,7 @@ export default async function SharedProfilePage({
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <header className="mb-8">
-          <Link href="/" className="text-xs text-slate-400 hover:text-slate-600 mb-4 inline-block">
+          <Link href="/" className="text-xs text-slate-500 hover:text-slate-600 mb-4 inline-block">
             ← Invest.com.au
           </Link>
           <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
@@ -99,7 +99,7 @@ export default async function SharedProfilePage({
           </Link>
         </div>
 
-        <p className="mt-6 text-xs text-slate-400 text-center">
+        <p className="mt-6 text-xs text-slate-500 text-center">
           This is a read-only factual snapshot of investor preferences — not personal financial advice.
           <br />
           <Link href={`${SITE_URL}/privacy`} className="underline hover:text-slate-600">
@@ -235,7 +235,7 @@ function WatchlistCard({ items }: { items: WatchlistItem[] }) {
       <div className="space-y-3">
         {Object.entries(grouped).map(([type, group]) => (
           <div key={type}>
-            <p className="text-xs uppercase tracking-wide text-slate-400 font-medium mb-1.5 capitalize">
+            <p className="text-xs uppercase tracking-wide text-slate-500 font-medium mb-1.5 capitalize">
               {type}
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -268,13 +268,13 @@ function HealthCard({ health }: { health: HealthScore }) {
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <h2 className="text-base font-semibold text-slate-800">Portfolio health</h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             As of {new Date(health.scored_month + "-01").toLocaleDateString("en-AU", { month: "long", year: "numeric" })}
           </p>
         </div>
         <div className="text-right shrink-0">
           <span className="text-3xl font-extrabold text-slate-900">{health.overall}</span>
-          <span className="text-sm text-slate-400 ml-1">/ 100</span>
+          <span className="text-sm text-slate-500 ml-1">/ 100</span>
         </div>
       </div>
       <div className="space-y-2.5">

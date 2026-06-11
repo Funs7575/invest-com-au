@@ -44,7 +44,7 @@ export default function FunnelChart({ title, description, stages, loading }: Fun
       </div>
       <div className="p-4 md:p-6">
         {stages.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-8">No data available yet.</p>
+          <p className="text-sm text-slate-500 text-center py-8">No data available yet.</p>
         ) : (
           <div className="space-y-2">
             {stages.map((stage, i) => {
@@ -69,7 +69,7 @@ export default function FunnelChart({ title, description, stages, loading }: Fun
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-slate-800">{stage.value.toLocaleString()}</span>
-                      <span className="text-[0.62rem] text-slate-400">{totalRate}%</span>
+                      <span className="text-[0.62rem] text-slate-500">{totalRate}%</span>
                     </div>
                   </div>
                   <div className="h-8 bg-slate-50 rounded-lg overflow-hidden relative">
@@ -90,7 +90,7 @@ export default function FunnelChart({ title, description, stages, loading }: Fun
                   </div>
                   {i < stages.length - 1 && (
                     <div className="flex justify-center py-0.5">
-                      <div className="flex items-center gap-1 text-[0.56rem] text-slate-400">
+                      <div className="flex items-center gap-1 text-[0.56rem] text-slate-500">
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                         </svg>

@@ -113,7 +113,7 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
       <div className="mb-4">
         {isPro && proPriceDisplay ? (
           <>
-            <span className="text-lg text-slate-400 line-through mr-2">${fullPriceDisplay}</span>
+            <span className="text-lg text-slate-500 line-through mr-2">${fullPriceDisplay}</span>
             <span className="text-2xl md:text-4xl font-extrabold text-slate-800">${proPriceDisplay}</span>
           </>
         ) : (

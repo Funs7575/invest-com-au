@@ -148,7 +148,7 @@ export default function RetirementIncomePage() {
             longevity planning all interact. This guide covers the key strategies Australian retirees
             use to make their money last.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not financial advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not financial advice</p>
         </div>
       </section>
 
@@ -220,7 +220,7 @@ export default function RetirementIncomePage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Age Pension rate as at March 2026. Subject to annual indexation. Verify current rates at servicesaustralia.gov.au.</p>
+          <p className="text-xs text-slate-500 mt-2">Age Pension rate as at March 2026. Subject to annual indexation. Verify current rates at servicesaustralia.gov.au.</p>
         </div>
       </section>
 

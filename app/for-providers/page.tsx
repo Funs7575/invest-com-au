@@ -204,7 +204,7 @@ export default function ForProvidersPage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 text-center mt-4">
+          <p className="text-xs text-slate-500 text-center mt-4">
             Organisations do not need an AFSL to list training content — only
             individual advisors giving personal advice require a licence.
           </p>
@@ -271,7 +271,7 @@ export default function ForProvidersPage() {
           <div className="grid md:grid-cols-4 gap-4">
             {/* Free */}
             <div className="border border-slate-200 rounded-xl p-6">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                 Free
               </p>
               <p className="text-3xl font-extrabold text-slate-900 mb-1">$0</p>
@@ -303,11 +303,11 @@ export default function ForProvidersPage() {
 
             {/* Starter */}
             <div className="border border-slate-200 rounded-xl p-6">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                 Starter
               </p>
               <p className="text-3xl font-extrabold text-slate-900 mb-1">
-                $99<span className="text-base text-slate-400 font-normal">/mo</span>
+                $99<span className="text-base text-slate-500 font-normal">/mo</span>
               </p>
               <p className="text-xs text-slate-500 mb-5">Up to 20 courses</p>
               <ul className="space-y-2 mb-6">
@@ -344,7 +344,7 @@ export default function ForProvidersPage() {
                 Growth
               </p>
               <p className="text-3xl font-extrabold text-slate-900 mb-1">
-                $299<span className="text-base text-slate-400 font-normal">/mo</span>
+                $299<span className="text-base text-slate-500 font-normal">/mo</span>
               </p>
               <p className="text-xs text-slate-500 mb-5">Unlimited courses</p>
               <ul className="space-y-2 mb-6">

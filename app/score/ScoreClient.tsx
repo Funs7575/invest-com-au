@@ -386,7 +386,7 @@ export default function ScoreClient() {
                 <span className={`text-5xl font-extrabold ${getScoreColor(totalScore)}`}>
                   {totalScore}
                 </span>
-                <span className="text-sm text-slate-400">/100</span>
+                <span className="text-sm text-slate-500">/100</span>
               </div>
             </div>
 
@@ -635,7 +635,7 @@ export default function ScoreClient() {
                   setFadeState("in");
                 }, 200);
               }}
-              className="mx-auto mt-6 flex items-center gap-1 text-sm text-slate-400 hover:text-slate-600 transition-colors"
+              className="mx-auto mt-6 flex items-center gap-1 text-sm text-slate-500 hover:text-slate-600 transition-colors"
             >
               <Icon name="arrow-left" size={14} />
               Back

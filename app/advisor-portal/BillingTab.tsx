@@ -101,7 +101,7 @@ export default function BillingTab({ advisor, stats, onNavigate, initialSummary 
 
       <LedgerHistoryTable summary={effectiveSummary} />
 
-      <p className="text-xs text-slate-400 mt-6 text-center">
+      <p className="text-xs text-slate-500 mt-6 text-center">
         Questions about a charge or refund? Read our{" "}
         <a href="/billing-policy" className="underline hover:text-slate-600">
           billing policy
@@ -124,7 +124,7 @@ function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
       {/* ADV-104: one-line benefit statement */}
       <p className="text-xs text-amber-700 font-medium mb-2">Avg. 3× more profile views &amp; priority in search</p>
       <div className="text-2xl font-extrabold text-slate-900 mb-1">
-        $149<span className="text-sm font-normal text-slate-400">/month</span>
+        $149<span className="text-sm font-normal text-slate-500">/month</span>
       </div>
       <ul className="text-xs text-slate-600 space-y-1 mb-3">
         <li className="flex items-center gap-1.5">
@@ -199,7 +199,7 @@ function ExpertArticleCard({ onNavigate }: { onNavigate: (v: ViewType) => void }
       {/* ADV-104: one-line benefit statement */}
       <p className="text-xs text-violet-700 font-medium mb-2">Builds E-E-A-T authority &amp; ranks on Google</p>
       <div className="text-2xl font-extrabold text-slate-900 mb-1">
-        $299<span className="text-sm font-normal text-slate-400">/article</span>
+        $299<span className="text-sm font-normal text-slate-500">/article</span>
       </div>
       <ul className="text-xs text-slate-600 space-y-1 mb-3">
         <li className="flex items-center gap-1.5">

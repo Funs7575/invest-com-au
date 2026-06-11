@@ -302,7 +302,7 @@ export default function ApplyClient({ broker }: { broker: ApplyBroker }) {
           </div>
 
           {/* Fine print */}
-          <p className="text-[0.65rem] text-slate-400 text-center mt-4 leading-relaxed">
+          <p className="text-[0.65rem] text-slate-500 text-center mt-4 leading-relaxed">
             You&apos;re being redirected to {broker.name}&apos;s website.
             Invest.com.au may earn a commission.
           </p>

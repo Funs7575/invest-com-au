@@ -134,7 +134,7 @@ function CompareTable({ listings, onRemove }: { listings: InvestmentListing[]; o
         const p = formatListingPrice(l);
         return p ? (
           <div>
-            <div className="text-[0.55rem] text-slate-400 uppercase">{p.label}</div>
+            <div className="text-[0.55rem] text-slate-500 uppercase">{p.label}</div>
             <div className="text-sm font-extrabold text-slate-900">{p.value}</div>
           </div>
         ) : <span className="text-slate-300">—</span>;
@@ -149,7 +149,7 @@ function CompareTable({ listings, onRemove }: { listings: InvestmentListing[]; o
       render: (l) => (
         <span className="text-slate-700">
           {l.location_state ?? "—"}
-          {l.location_city ? <span className="text-slate-400"> · {l.location_city}</span> : null}
+          {l.location_city ? <span className="text-slate-500"> · {l.location_city}</span> : null}
         </span>
       ),
     },

@@ -290,7 +290,7 @@ export default function SharedEquityPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Verify current caps at housingaustralia.gov.au/support-buy-home/help-to-buy</p>
+          <p className="text-xs text-slate-500 mt-2">Verify current caps at housingaustralia.gov.au/support-buy-home/help-to-buy</p>
         </div>
       </section>
 
@@ -338,7 +338,7 @@ export default function SharedEquityPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             State programs are subject to funding availability and policy changes. Check directly with your state&apos;s housing authority for current eligibility and availability.
           </p>
         </div>
@@ -458,7 +458,7 @@ export default function SharedEquityPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             The two schemes cannot be combined — you must choose one. If you want to maximise your share of
             future capital gains, FHBG may be preferable. If you need the smallest possible loan and deposit,
             Help to Buy goes further.

@@ -181,7 +181,7 @@ export default function MarketplaceOverviewPage() {
                 <h2 className="font-bold text-slate-900">Recent Wallet Transactions</h2>
               </div>
               {stats.recentTransactions.length === 0 ? (
-                <div className="p-8 text-center text-sm text-slate-400">No transactions yet.</div>
+                <div className="p-8 text-center text-sm text-slate-500">No transactions yet.</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm" aria-label="Recent wallet transactions">

@@ -171,7 +171,7 @@ export default function SiteSettingsPage() {
                   </label>
                   {renderField(field)}
                   {field.hint && (
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-500 mt-0.5">
                       {field.hint}
                     </p>
                   )}

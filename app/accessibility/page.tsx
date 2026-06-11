@@ -195,7 +195,7 @@ export default function AccessibilityPage() {
           </section>
 
           <div className="pt-4 border-t border-slate-100">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Related:{" "}
               <Link href="/privacy" className="hover:text-slate-600 underline">
                 Privacy Policy

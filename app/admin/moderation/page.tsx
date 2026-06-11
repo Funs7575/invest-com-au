@@ -479,7 +479,7 @@ export default function ModerationQueuePage() {
         <div className="bg-white border border-slate-200 rounded-lg p-12 text-center">
           <div className="text-4xl mb-3">&#10003;</div>
           <p className="text-slate-600 font-medium">All clear!</p>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             {search || tab !== "all" ? "No items match your filters." : "No content pending review."}
           </p>
         </div>
@@ -535,7 +535,7 @@ export default function ModerationQueuePage() {
                       <p className="text-sm text-slate-700 line-clamp-2 mb-1">{item.contentPreview}</p>
 
                       {/* Submitter + date */}
-                      <div className="flex items-center gap-3 text-xs text-slate-400">
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
                         <span>{item.submittedBy}</span>
                         {item.email && <span>{item.email}</span>}
                         <span>{formatDate(item.dateSubmitted)}</span>
@@ -580,7 +580,7 @@ export default function ModerationQueuePage() {
                         </h3>
                         <button
                           onClick={() => setExpandedKey(null)}
-                          className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                          className="text-xs text-slate-500 hover:text-slate-600 transition-colors"
                         >
                           Close
                         </button>
@@ -647,7 +647,7 @@ export default function ModerationQueuePage() {
                       )}
 
                       {/* Submitter info */}
-                      <div className="text-xs text-slate-400 space-y-1 mb-4">
+                      <div className="text-xs text-slate-500 space-y-1 mb-4">
                         <p>Submitted by: {item.submittedBy}{item.email ? ` (${item.email})` : ""}</p>
                         <p>Date: {new Date(item.dateSubmitted).toLocaleString("en-AU")}</p>
                         {!!item.meta.verified_at && (

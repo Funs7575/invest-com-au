@@ -411,7 +411,7 @@ export default function WealthStackClient() {
             </label>
           ))}
         </div>
-        <p className="mt-1 text-[0.65rem] text-slate-400">
+        <p className="mt-1 text-[0.65rem] text-slate-500">
           Defaults to skipping the super pick if left blank. Your current super stays put either way.
         </p>
       </fieldset>

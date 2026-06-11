@@ -407,7 +407,7 @@ export default async function CountryForeignInvestmentPage({
                 <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
                   {q}
                   <svg
-                    className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                    className="w-4 h-4 shrink-0 text-slate-500 group-open:rotate-180 transition-transform"
                     aria-hidden="true"
                     fill="none"
                     viewBox="0 0 24 24"

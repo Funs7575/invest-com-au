@@ -77,7 +77,7 @@ export default function HubFAQ({
                 >
                   {item.q}
                   <span
-                    className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
+                    className="text-slate-500 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
                     aria-hidden="true"
                   >
                     ⌄

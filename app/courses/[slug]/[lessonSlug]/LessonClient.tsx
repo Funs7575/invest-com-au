@@ -91,7 +91,7 @@ export default function LessonClient({
         <div className="px-4 pb-3 space-y-2 max-h-64 overflow-y-auto">
           {modules.map((mod) => (
             <div key={mod.index}>
-              <p className="text-[0.69rem] font-bold uppercase tracking-wide text-slate-400 mb-1">
+              <p className="text-[0.69rem] font-bold uppercase tracking-wide text-slate-500 mb-1">
                 Module {mod.index}: {mod.title}
               </p>
               <ul className="space-y-0.5 mb-2">
@@ -140,7 +140,7 @@ export default function LessonClient({
           <nav aria-label="Course lessons" className="space-y-3 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
             {modules.map((mod) => (
               <div key={mod.index}>
-                <p className="text-[0.69rem] font-bold uppercase tracking-wide text-slate-400 mb-1">
+                <p className="text-[0.69rem] font-bold uppercase tracking-wide text-slate-500 mb-1">
                   Module {mod.index}: {mod.title}
                 </p>
                 <ul className="space-y-0.5">
@@ -189,11 +189,11 @@ export default function LessonClient({
       <div className="flex-1 min-w-0">
         {/* Module badge */}
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs text-slate-400 font-medium">
+          <span className="text-xs text-slate-500 font-medium">
             Module {moduleInfo.index}
           </span>
           <span className="text-xs text-slate-300">·</span>
-          <span className="text-xs text-slate-400">{moduleInfo.title}</span>
+          <span className="text-xs text-slate-500">{moduleInfo.title}</span>
           {isFreePreview && (
             <span className="text-[0.69rem] px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full font-medium">
               FREE PREVIEW
@@ -227,7 +227,7 @@ export default function LessonClient({
 
         {/* Creator attribution */}
         {creator && (
-          <div className="mt-8 flex items-center gap-3 text-xs text-slate-400">
+          <div className="mt-8 flex items-center gap-3 text-xs text-slate-500">
             {creator.avatarUrl ? (
               <Image src={creator.avatarUrl} alt={creator.fullName} width={20} height={20} className="rounded-full object-cover" />
             ) : (

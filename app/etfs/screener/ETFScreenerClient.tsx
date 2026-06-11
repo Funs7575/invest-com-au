@@ -40,7 +40,7 @@ function formatAUM(millions: number): string {
 }
 
 function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
-  if (sortKey !== col) return <span className="text-slate-400 ml-1">↕</span>;
+  if (sortKey !== col) return <span className="text-slate-500 ml-1">↕</span>;
   return <span className="text-amber-600 ml-1">{sortDir === "asc" ? "↑" : "↓"}</span>;
 }
 
@@ -247,7 +247,7 @@ export default function ETFScreenerClient() {
                     </td>
                     <td className="py-3 px-4">
                       <p className="text-xs font-medium text-slate-700 leading-snug max-w-xs">{etf.name}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{etf.provider}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{etf.provider}</p>
                     </td>
                     <td className="py-3 px-4 hidden sm:table-cell">
                       <span className={`px-2 py-0.5 rounded text-xs font-semibold ${assetClassBadge(etf.assetClass)}`}>

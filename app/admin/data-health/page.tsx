@@ -495,7 +495,7 @@ export default function DataHealthPage() {
           </div>
 
           {filtered.length === 0 && (
-            <div className="text-center py-12 text-slate-400">
+            <div className="text-center py-12 text-slate-500">
               <p className="text-lg font-bold mb-1">No checks match this filter</p>
               <p className="text-sm">Try selecting a different category or severity.</p>
             </div>

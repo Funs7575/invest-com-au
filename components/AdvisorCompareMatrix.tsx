@@ -84,7 +84,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
                     type="button"
                     onClick={() => onRemove(a.id)}
                     aria-label={`Remove ${a.name} from comparison`}
-                    className="absolute top-1 right-1 text-slate-400 hover:text-slate-600 text-lg leading-none"
+                    className="absolute top-1 right-1 text-slate-500 hover:text-slate-600 text-lg leading-none"
                   >
                     ×
                   </button>
@@ -137,7 +137,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
                       )}
                     </>
                   ) : (
-                    <span className="text-slate-400">—</span>
+                    <span className="text-slate-500">—</span>
                   )}
                 </Cell>
               ))}
@@ -159,7 +159,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
           <Row label="Location">
             {advisors.map((a) => (
               <Cell key={a.id}>
-                {a.location_display || <span className="text-slate-400">—</span>}
+                {a.location_display || <span className="text-slate-500">—</span>}
               </Cell>
             ))}
           </Row>
@@ -178,7 +178,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
                     </span>
                   )
                 ) : (
-                  <span className="text-slate-400">—</span>
+                  <span className="text-slate-500">—</span>
                 )}
               </Cell>
             ))}
@@ -187,7 +187,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
           <Row label="Type">
             {advisors.map((a) => (
               <Cell key={a.id}>
-                {a.type || <span className="text-slate-400">—</span>}
+                {a.type || <span className="text-slate-500">—</span>}
               </Cell>
             ))}
           </Row>
@@ -216,7 +216,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
             {advisors.map((a) => (
               <Cell key={a.id}>
                 <span className="text-[0.7rem] text-slate-600 line-clamp-4">
-                  {a.bio || <span className="text-slate-400">—</span>}
+                  {a.bio || <span className="text-slate-500">—</span>}
                 </span>
               </Cell>
             ))}

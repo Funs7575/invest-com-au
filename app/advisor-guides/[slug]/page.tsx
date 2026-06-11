@@ -186,7 +186,7 @@ export default async function AdvisorGuidePage({ params }: { params: Promise<{ s
           </div>
 
           {/* Compliance */}
-          <div className="mt-6 text-[0.56rem] md:text-xs text-slate-400 text-center leading-relaxed">
+          <div className="mt-6 text-[0.56rem] md:text-xs text-slate-500 text-center leading-relaxed">
             This guide is for informational purposes only and does not constitute financial advice. Always verify credentials on the ASIC Financial Advisers Register or Tax Practitioners Board before engaging any professional.
           </div>
         </div>

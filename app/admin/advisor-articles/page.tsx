@@ -148,8 +148,8 @@ export default function AdminAdvisorArticlesPage() {
               <button key={a.id} onClick={() => selectArticle(a)} className={`w-full text-left bg-white border rounded-lg p-3 hover:shadow-md transition-all ${selected?.id === a.id ? "border-violet-400 ring-2 ring-violet-400/20" : "border-slate-200"}`}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className={`text-[0.5rem] font-bold px-1.5 py-0.5 rounded-full ${SC[a.status] || SC.draft}`}>{a.status.replace("_", " ")}</span>
-                  <span className="text-[0.5rem] text-slate-400 capitalize">{a.pricing_tier}</span>
-                  <span className={`text-[0.5rem] font-semibold ${a.payment_status === "paid" ? "text-emerald-600" : a.payment_status === "waived" ? "text-blue-600" : "text-slate-400"}`}>{a.payment_status}</span>
+                  <span className="text-[0.5rem] text-slate-500 capitalize">{a.pricing_tier}</span>
+                  <span className={`text-[0.5rem] font-semibold ${a.payment_status === "paid" ? "text-emerald-600" : a.payment_status === "waived" ? "text-blue-600" : "text-slate-500"}`}>{a.payment_status}</span>
                   {issues.length > 0 && <span className="text-[0.5rem] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-bold">{issues.length} issues</span>}
                 </div>
                 <h3 className="text-sm font-bold text-slate-900 truncate">{a.title}</h3>
@@ -189,7 +189,7 @@ export default function AdminAdvisorArticlesPage() {
                       <span className="text-slate-500">By <Link href={`/advisor/${selected.author_slug}`} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:underline">{selected.author_name}</Link></span>
                       <span className="text-slate-500">{selected.category}</span>
                       <span className="text-slate-500 capitalize">{selected.pricing_tier} (${(selected.price_cents / 100).toFixed(0)})</span>
-                      <span className={selected.payment_status === "paid" ? "text-emerald-600 font-semibold" : "text-slate-400"}>{selected.payment_status}</span>
+                      <span className={selected.payment_status === "paid" ? "text-emerald-600 font-semibold" : "text-slate-500"}>{selected.payment_status}</span>
                     </div>
 
                     {/* Quality check */}
@@ -208,7 +208,7 @@ export default function AdminAdvisorArticlesPage() {
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-bold text-slate-700">Content Preview</span>
-                        <span className="text-[0.62rem] text-slate-400">{wordCount(selected.content || "")} words</span>
+                        <span className="text-[0.62rem] text-slate-500">{wordCount(selected.content || "")} words</span>
                       </div>
                       <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 max-h-48 overflow-y-auto text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">
                         {selected.content}
@@ -226,7 +226,7 @@ export default function AdminAdvisorArticlesPage() {
 
                     {/* Admin notes */}
                     <div>
-                      <label htmlFor="aa-admin-notes" className="block text-xs font-bold text-slate-700 mb-1">Admin Notes <span className="font-normal text-slate-400">(visible to advisor)</span></label>
+                      <label htmlFor="aa-admin-notes" className="block text-xs font-bold text-slate-700 mb-1">Admin Notes <span className="font-normal text-slate-500">(visible to advisor)</span></label>
                       <textarea id="aa-admin-notes" value={adminNotes} onChange={e => setAdminNotes(e.target.value)} rows={2} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Feedback for the advisor..." />
                     </div>
 
@@ -285,13 +285,13 @@ export default function AdminAdvisorArticlesPage() {
                     <div>
                       <div className="flex items-center justify-between mb-1">
                         <label htmlFor="aa-content" className="text-xs font-bold text-slate-700">Content (Markdown)</label>
-                        <span className="text-[0.62rem] text-slate-400">{wordCount(editContent)} words</span>
+                        <span className="text-[0.62rem] text-slate-500">{wordCount(editContent)} words</span>
                       </div>
                       <textarea id="aa-content" value={editContent} onChange={e => setEditContent(e.target.value)} rows={14} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg font-mono resize-vertical" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor="aa-meta-title" className="block text-xs font-bold text-slate-700 mb-1">Meta Title <span className="font-normal text-slate-400">(SEO)</span></label>
+                        <label htmlFor="aa-meta-title" className="block text-xs font-bold text-slate-700 mb-1">Meta Title <span className="font-normal text-slate-500">(SEO)</span></label>
                         <input id="aa-meta-title" value={editMetaTitle} onChange={e => setEditMetaTitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
                       </div>
                       <div>
@@ -300,13 +300,13 @@ export default function AdminAdvisorArticlesPage() {
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="aa-related-brokers" className="block text-xs font-bold text-slate-700 mb-1">Related Broker Slugs <span className="font-normal text-slate-400">(comma-separated, shows on those broker pages)</span></label>
+                      <label htmlFor="aa-related-brokers" className="block text-xs font-bold text-slate-700 mb-1">Related Broker Slugs <span className="font-normal text-slate-500">(comma-separated, shows on those broker pages)</span></label>
                       <input id="aa-related-brokers" value={editRelatedBrokers} onChange={e => setEditRelatedBrokers(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. selfwealth, stake, superhero" />
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" checked={editFeatured} onChange={e => setEditFeatured(e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
                       <span className="text-xs font-bold text-slate-700">Featured</span>
-                      <span className="text-xs text-slate-400">— shows on homepage Expert Insights and top of hub</span>
+                      <span className="text-xs text-slate-500">— shows on homepage Expert Insights and top of hub</span>
                     </label>
                     <button onClick={saveEdit} disabled={busy} className="px-4 py-2 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50">
                       {busy ? "Saving..." : "Save Changes"}
@@ -322,7 +322,7 @@ export default function AdminAdvisorArticlesPage() {
                       <div className="space-y-2">
                         {modLog.map(log => (
                           <div key={log.id} className="flex items-start gap-3 text-xs border-b border-slate-100 pb-2">
-                            <div className="w-16 shrink-0 text-[0.56rem] text-slate-400">
+                            <div className="w-16 shrink-0 text-[0.56rem] text-slate-500">
                               {new Date(log.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
                               <br />
                               {new Date(log.created_at).toLocaleTimeString("en-AU", { hour: "2-digit", minute: "2-digit" })}
@@ -331,13 +331,13 @@ export default function AdminAdvisorArticlesPage() {
                               <span className={`font-bold px-1.5 py-0.5 rounded text-[0.56rem] ${SC[log.new_status || ""] || "bg-slate-100 text-slate-600"}`}>{log.action.replace("_", " ")}</span>
                               <span className="text-slate-500 ml-2">by {log.performed_by}</span>
                               {log.notes && <p className="text-slate-600 mt-0.5">{log.notes}</p>}
-                              {log.old_status && log.new_status && <p className="text-slate-400 text-[0.56rem]">{log.old_status} → {log.new_status}</p>}
+                              {log.old_status && log.new_status && <p className="text-slate-500 text-[0.56rem]">{log.old_status} → {log.new_status}</p>}
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-xs text-slate-400 text-center py-4">No moderation history yet.</p>
+                      <p className="text-xs text-slate-500 text-center py-4">No moderation history yet.</p>
                     )}
                   </div>
                 )}

@@ -63,7 +63,7 @@ export default function TopMatchCarousel({ matches }: Props) {
                 <Icon name="star" size={14} className="text-amber-500" />
                 {hero.rating.toFixed(1)}
               </div>
-              <p className="text-[10px] text-slate-400">out of 5</p>
+              <p className="text-[10px] text-slate-500">out of 5</p>
             </div>
           )}
         </div>
@@ -75,7 +75,7 @@ export default function TopMatchCarousel({ matches }: Props) {
           {hero.cta_label}
           <Icon name="arrow-right" size={14} />
         </Link>
-        <p className="mt-3 text-[11px] text-slate-400 text-center">
+        <p className="mt-3 text-[11px] text-slate-500 text-center">
           {ADVERTISER_DISCLOSURE_SHORT}
         </p>
       </div>
@@ -134,7 +134,7 @@ export default function TopMatchCarousel({ matches }: Props) {
         </>
       )}
 
-      <p className="text-[11px] text-slate-400 mt-3 text-center">
+      <p className="text-[11px] text-slate-500 mt-3 text-center">
         Routed from your answers. General information only — not personal advice.
       </p>
       <style>{`

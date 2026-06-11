@@ -69,7 +69,7 @@ function OrgCard({ org }: { org: Awaited<ReturnType<typeof getVerifiedOrganisati
       )}
       <div className="flex items-center justify-between mt-auto pt-1">
         {org.location_state ? (
-          <span className="text-xs text-slate-400">{org.location_state}</span>
+          <span className="text-xs text-slate-500">{org.location_state}</span>
         ) : (
           <span />
         )}

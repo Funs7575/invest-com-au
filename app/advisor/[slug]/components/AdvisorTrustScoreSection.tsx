@@ -101,7 +101,7 @@ function barColor(score: number): string {
 function labelColor(score: number): string {
   if (score >= 80) return "text-emerald-600";
   if (score >= 50) return "text-amber-600";
-  return "text-slate-400";
+  return "text-slate-500";
 }
 
 /* ─── Component ─── */
@@ -147,7 +147,7 @@ export default function AdvisorTrustScoreSection({
           >
             Trust Score
           </h2>
-          <p className="text-xs text-slate-400 leading-tight">
+          <p className="text-xs text-slate-500 leading-tight">
             Factual credential &amp; compliance signals &mdash; not a recommendation
           </p>
         </div>
@@ -157,7 +157,7 @@ export default function AdvisorTrustScoreSection({
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 px-5 py-5 border-b border-slate-100">
         <TrustScoreGauge score={trustScore.overall} size={112} />
         <div className="flex-1 text-center sm:text-left">
-          <p className="text-xs text-slate-400 mb-0.5">Overall Trust Score</p>
+          <p className="text-xs text-slate-500 mb-0.5">Overall Trust Score</p>
           <p
             className={`text-2xl font-extrabold mb-1 ${labelColor(trustScore.overall)}`}
           >
@@ -189,7 +189,7 @@ export default function AdvisorTrustScoreSection({
                 <span className="text-xs font-semibold text-slate-700">
                   {dim.label}
                 </span>
-                <span className="ml-1.5 text-xs text-slate-400">
+                <span className="ml-1.5 text-xs text-slate-500">
                   ({(dim.weight * 100).toFixed(0)}% weight)
                 </span>
               </div>
@@ -209,7 +209,7 @@ export default function AdvisorTrustScoreSection({
               />
             </div>
             {/* Dimension description */}
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-500 leading-relaxed">
               {dim.description}
             </p>
             {/* Rationale */}
@@ -246,7 +246,7 @@ export default function AdvisorTrustScoreSection({
         </div>
 
         {/* General advice warning */}
-        <p className="text-[11px] text-slate-400 leading-relaxed">
+        <p className="text-[11px] text-slate-500 leading-relaxed">
           <strong className="font-semibold">General Advice Warning:</strong>{" "}
           {generalAdviceWarning}
         </p>

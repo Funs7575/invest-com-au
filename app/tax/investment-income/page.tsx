@@ -335,7 +335,7 @@ export default function InvestmentIncomeTaxPage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               FY2024–25 treatment. Verify current rules at ato.gov.au.
             </p>
           </div>
@@ -693,7 +693,7 @@ export default function InvestmentIncomeTaxPage() {
             ))}
           </div>
 
-          <p className="text-xs text-slate-400 mt-4">
+          <p className="text-xs text-slate-500 mt-4">
             Deductibility depends on individual circumstances. Confirm with a registered tax
             agent.
           </p>
@@ -745,7 +745,7 @@ export default function InvestmentIncomeTaxPage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               Rates for resident individuals FY2024–25 / FY2025–26 (Stage 3 tax cuts in effect).
               Does not include the Low Income Tax Offset (LITO) or Medicare Levy Surcharge (MLS).
               Verify at ato.gov.au.

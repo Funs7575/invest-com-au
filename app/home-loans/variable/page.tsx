@@ -746,7 +746,7 @@ export default function VariableRateHomeLoanPage() {
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-semibold text-sm text-slate-900 hover:bg-slate-50 transition-colors">
                     <span>{item.q}</span>
                     <span
-                      className="text-slate-400 shrink-0 group-open:rotate-180 transition-transform"
+                      className="text-slate-500 shrink-0 group-open:rotate-180 transition-transform"
                       aria-hidden="true"
                     >
                       &#9660;

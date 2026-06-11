@@ -664,7 +664,7 @@ export default function EmbedBuilder() {
                   value={badgeSlug}
                   onChange={(e) => setBadgeSlug(e.target.value)}
                   placeholder={badgeType === "advisor" ? "e.g. jane-smith-cfp" : "e.g. stake"}
-                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm placeholder:text-slate-400"
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm placeholder:text-slate-500"
                   maxLength={128}
                 />
                 <p className="mt-1 text-[11px] text-slate-500">
@@ -730,7 +730,7 @@ export default function EmbedBuilder() {
 
             <div>
               <label htmlFor="eb-rates-advisor" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                Advisor co-branding <span className="text-slate-400 font-normal lowercase">(optional)</span>
+                Advisor co-branding <span className="text-slate-500 font-normal lowercase">(optional)</span>
               </label>
               <input
                 id="eb-rates-advisor"
@@ -738,7 +738,7 @@ export default function EmbedBuilder() {
                 value={ratesAdvisorSlug}
                 onChange={(e) => setRatesAdvisorSlug(e.target.value)}
                 placeholder="e.g. jane-smith-cfp"
-                className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm placeholder:text-slate-400"
+                className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm placeholder:text-slate-500"
                 maxLength={128}
               />
               <p className="mt-1 text-[11px] text-slate-500">
@@ -770,7 +770,7 @@ export default function EmbedBuilder() {
         {/* ── Shared partner ref ── */}
         <div>
           <label htmlFor="eb-partner-ref" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-            Partner ID <span className="text-slate-400 font-normal lowercase">(optional — adds ?ref= to outbound links)</span>
+            Partner ID <span className="text-slate-500 font-normal lowercase">(optional — adds ?ref= to outbound links)</span>
           </label>
           <input
             id="eb-partner-ref"
@@ -778,7 +778,7 @@ export default function EmbedBuilder() {
             value={partnerRef}
             onChange={(e) => setPartnerRef(e.target.value)}
             placeholder="e.g. moneymag, yoursite"
-            className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm placeholder:text-slate-400"
+            className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm placeholder:text-slate-500"
             maxLength={64}
           />
           <p className="mt-1 text-[11px] text-slate-500">

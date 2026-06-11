@@ -334,7 +334,7 @@ export default function NegativeGearingPage() {
                 </tr>
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               Illustrative only. Rates for FY{CURRENT_YEAR}. Does not include depreciation, which would
               increase the deductible loss further. Always verify with a registered tax agent.
             </p>
@@ -559,7 +559,7 @@ export default function NegativeGearingPage() {
                 <span className="text-green-700">+$112,600</span>
               </div>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               Simplified illustration. Excludes loan principal repayments, stamp duty, selling costs,
               and depreciation recapture. Capital growth is not guaranteed.
             </p>
@@ -680,7 +680,7 @@ export default function NegativeGearingPage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               Excludes Medicare Levy. FY{CURRENT_YEAR} marginal rates. Tax saving does not include
               depreciation deductions, which would increase the saving further.
             </p>

@@ -309,7 +309,7 @@ export default async function VersusHubPage() {
                 ))}
               </div>
               {sharePairs.length > 30 && (
-                <p className="text-xs text-slate-400 mt-3 text-center">
+                <p className="text-xs text-slate-500 mt-3 text-center">
                   + {sharePairs.length - 30} more comparisons available via
                   search above
                 </p>
@@ -418,13 +418,13 @@ function ComparisonCard({
         <p className="text-xs md:text-sm font-semibold text-slate-900 truncate">
           {a.name} vs {b.name}
         </p>
-        <p className="text-[0.6rem] md:text-xs text-slate-400 truncate">
+        <p className="text-[0.6rem] md:text-xs text-slate-500 truncate">
           {a.asx_fee || PLATFORM_TYPE_LABELS[a.platform_type]} vs{" "}
           {b.asx_fee || PLATFORM_TYPE_LABELS[b.platform_type]}
         </p>
       </div>
       <BrokerLogo broker={b} size="sm" />
-      <span className="text-slate-400 group-hover:text-slate-700 transition-colors shrink-0">
+      <span className="text-slate-500 group-hover:text-slate-700 transition-colors shrink-0">
         <Icon name="chevron-right" size={16} />
       </span>
     </Link>

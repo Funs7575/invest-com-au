@@ -126,7 +126,7 @@ export default function FireCalculatorClient() {
                 <button
                   type="button"
                   onClick={() => { setCurrentAge(30); setCurrentSavings(50_000); setAnnualSavings(30_000); setAnnualExpenses(60_000); setReturnRate(7); setWithdrawalRate(4); }}
-                  className="text-xs text-slate-400 hover:text-slate-600 underline"
+                  className="text-xs text-slate-500 hover:text-slate-600 underline"
                 >
                   Reset to defaults
                 </button>
@@ -149,7 +149,7 @@ export default function FireCalculatorClient() {
               <div>
                 <label htmlFor="fire-savings" className="block text-xs font-semibold text-slate-600 mb-1">Current savings / investments</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="fire-savings"
                     type="number" inputMode="decimal"
@@ -165,7 +165,7 @@ export default function FireCalculatorClient() {
               <div>
                 <label htmlFor="fire-annual-savings" className="block text-xs font-semibold text-slate-600 mb-1">Annual savings / investments</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="fire-annual-savings"
                     type="number" inputMode="decimal"
@@ -181,10 +181,10 @@ export default function FireCalculatorClient() {
               <div>
                 <label htmlFor="fire-expenses" className="block text-xs font-semibold text-slate-600 mb-1">
                   Annual expenses in retirement
-                  <span className="text-slate-400 font-normal ml-1">today&apos;s dollars</span>
+                  <span className="text-slate-500 font-normal ml-1">today&apos;s dollars</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="fire-expenses"
                     type="number" inputMode="decimal"
@@ -210,14 +210,14 @@ export default function FireCalculatorClient() {
                     onChange={(e) => setReturnRate(Number(e.target.value))}
                     className="w-full pr-8 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">%</span>
                 </div>
               </div>
 
               <div>
                 <label htmlFor="fire-withdrawal" className="block text-xs font-semibold text-slate-600 mb-1">
                   Safe withdrawal rate
-                  <span className="text-slate-400 font-normal ml-1">4% = 25× rule</span>
+                  <span className="text-slate-500 font-normal ml-1">4% = 25× rule</span>
                 </label>
                 <div className="relative">
                   <input
@@ -230,7 +230,7 @@ export default function FireCalculatorClient() {
                     onChange={(e) => setWithdrawalRate(Number(e.target.value))}
                     className="w-full pr-8 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">%</span>
                 </div>
               </div>
             </div>
@@ -250,7 +250,7 @@ export default function FireCalculatorClient() {
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Your FIRE Number</p>
                   <p className="text-3xl font-extrabold text-slate-900">{fmt(result.fireNumber)}</p>
-                  <p className="text-xs text-slate-400 mt-1">{fmt(annualExpenses)} ÷ {withdrawalRate}% withdrawal rate</p>
+                  <p className="text-xs text-slate-500 mt-1">{fmt(annualExpenses)} ÷ {withdrawalRate}% withdrawal rate</p>
                 </div>
                 <span className={`text-xs font-bold px-2 py-1 rounded-full ${
                   result.years === 0 ? "bg-emerald-100 text-emerald-700" : "bg-orange-100 text-orange-700"
@@ -297,7 +297,7 @@ export default function FireCalculatorClient() {
             <div className="bg-white border border-slate-200 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Portfolio Growth to FIRE</p>
-                <p className="text-xs text-slate-400">Target: {fmt(result.fireNumber)}</p>
+                <p className="text-xs text-slate-500">Target: {fmt(result.fireNumber)}</p>
               </div>
               <div className="space-y-2.5">
                 {result.snapshots.filter((_, i) => i % Math.max(1, Math.floor(result.snapshots.length / 8)) === 0 || i === result.snapshots.length - 1).map((s) => (
@@ -370,7 +370,7 @@ export default function FireCalculatorClient() {
           contextKeys={["fire", "early-retirement"]}
         />
 
-        <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
+        <p className="text-[0.65rem] text-slate-500 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial advice. Returns are not guaranteed and the 4% withdrawal rate is based on US historical data and may not reflect Australian market conditions. Speak with a licensed financial adviser before making retirement planning decisions.
         </p>
       </div>

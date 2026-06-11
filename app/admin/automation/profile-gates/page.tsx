@@ -39,12 +39,12 @@ export default async function ProfileGateDrillDown() {
                 {byStep[step].slice(0, 20).map((a) => (
                   <li key={a.id} className="text-[0.7rem]">
                     <div className="font-semibold text-slate-800 truncate">{a.name}</div>
-                    <div className="text-slate-400 text-[0.6rem]">
+                    <div className="text-slate-500 text-[0.6rem]">
                       {(a.profile_missing_fields || []).slice(0, 3).join(", ")}
                     </div>
                   </li>
                 ))}
-                {byStep[step].length === 0 && <li className="text-[0.65rem] text-slate-400">—</li>}
+                {byStep[step].length === 0 && <li className="text-[0.65rem] text-slate-500">—</li>}
               </ul>
             </div>
           ))}

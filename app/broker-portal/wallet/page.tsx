@@ -116,7 +116,7 @@ export default function WalletPage() {
                 width={100}
                 height={32}
               />
-              <p className="text-[0.56rem] text-slate-400 text-right mt-0.5">Balance trend</p>
+              <p className="text-[0.56rem] text-slate-500 text-right mt-0.5">Balance trend</p>
             </div>
           )}
         </div>
@@ -164,7 +164,7 @@ export default function WalletPage() {
         </div>
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+            <span className="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
             <input
               type="number" inputMode="decimal"
               min="50"
@@ -204,7 +204,7 @@ export default function WalletPage() {
               <Icon name="wallet" size={20} className="text-slate-400" />
             </div>
             <p className="text-sm font-medium text-slate-700 mb-1">No transactions yet</p>
-            <p className="text-xs text-slate-400">Top up your wallet to get started.</p>
+            <p className="text-xs text-slate-500">Top up your wallet to get started.</p>
           </div>
         ) : (
           <div className="overflow-x-auto portal-table-stagger">

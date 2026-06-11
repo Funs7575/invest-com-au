@@ -307,7 +307,7 @@ export default function AdvisorSignupPage() {
           ].map((s) => (
             <div key={s.n} className="flex-1">
               <div className={`h-1.5 rounded-full transition-colors ${step >= s.n ? "bg-violet-500" : "bg-slate-200"}`} />
-              <p className={`text-[0.62rem] mt-1 font-medium ${step >= s.n ? "text-violet-600" : "text-slate-400"}`}>
+              <p className={`text-[0.62rem] mt-1 font-medium ${step >= s.n ? "text-violet-600" : "text-slate-500"}`}>
                 Step {s.n}: {s.label}
               </p>
             </div>
@@ -577,7 +577,7 @@ export default function AdvisorSignupPage() {
                   className={inputClass}
                   placeholder="Tell investors about your experience, qualifications, and approach to financial advice..."
                 />
-                <p className="text-[0.65rem] text-slate-400 mt-0.5">{form.bio.length}/500 characters</p>
+                <p className="text-[0.65rem] text-slate-500 mt-0.5">{form.bio.length}/500 characters</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -603,7 +603,7 @@ export default function AdvisorSignupPage() {
                     className={inputClass}
                     placeholder="e.g. English, Mandarin, Hindi"
                   />
-                  <p className="text-[0.65rem] text-slate-400 mt-0.5">Comma-separated</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Comma-separated</p>
                 </div>
               </div>
 
@@ -616,7 +616,7 @@ export default function AdvisorSignupPage() {
                   className={inputClass}
                   placeholder="e.g. SMSF trustees, retirees, high-net-worth individuals, first-home buyers"
                 />
-                <p className="text-[0.65rem] text-slate-400 mt-0.5">Who do you work best with? Comma-separated.</p>
+                <p className="text-[0.65rem] text-slate-500 mt-0.5">Who do you work best with? Comma-separated.</p>
               </div>
             </div>
           )}
@@ -679,7 +679,7 @@ export default function AdvisorSignupPage() {
                 {fieldErrors.pitch_message && touched.pitch_message ? (
                   <p id="as-pitch-error" className="text-xs text-red-500 mt-1">{fieldErrors.pitch_message}</p>
                 ) : (
-                  <p className="text-[0.65rem] text-slate-400 mt-0.5">{form.pitch_message.length}/2,000 characters — visible to our team during review</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">{form.pitch_message.length}/2,000 characters — visible to our team during review</p>
                 )}
               </div>
 
@@ -762,11 +762,11 @@ export default function AdvisorSignupPage() {
           </label>
         </div>
 
-        <p className="text-[0.58rem] text-slate-400 mt-2 text-center">
+        <p className="text-[0.58rem] text-slate-500 mt-2 text-center">
           We&apos;ll verify your AFSL/registration with ASIC before activating your listing.
         </p>
 
-        <p className="text-center text-xs text-slate-400 mt-4">
+        <p className="text-center text-xs text-slate-500 mt-4">
           Already have an account?{" "}
           <Link href="/advisor-portal" className="text-slate-600 hover:text-slate-900 font-medium">
             Log in to your portal

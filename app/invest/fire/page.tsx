@@ -501,7 +501,7 @@ export default function FireGuidePage() {
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               7% real return is a commonly used assumption — actual returns will differ. Starting
               with an existing portfolio shortens the timeline significantly. These projections do
               not constitute financial advice.
@@ -885,7 +885,7 @@ export default function FireGuidePage() {
                   <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-100 rounded-xl transition-colors">
                     {item.q}
                     <span
-                      className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
+                      className="text-slate-500 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
                       aria-hidden="true"
                     >
                       &#x2304;
@@ -951,7 +951,7 @@ export default function FireGuidePage() {
             <p className="text-xs text-slate-500 leading-relaxed">
               {GENERAL_ADVICE_WARNING}
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed mt-3">
+            <p className="text-xs text-slate-500 leading-relaxed mt-3">
               Return projections (7% real return), withdrawal rates, and savings rate tables are
               illustrative models based on historical data. They do not constitute a forecast or
               guarantee of future returns. Past performance is not a reliable indicator of future

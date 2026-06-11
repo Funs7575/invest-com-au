@@ -342,7 +342,7 @@ export default function ReportsPage() {
           )}
         </div>
         {campaignBreakdown.length === 0 ? (
-          <div className="p-8 text-center text-sm text-slate-400">No campaigns with data.</div>
+          <div className="p-8 text-center text-sm text-slate-500">No campaigns with data.</div>
         ) : (
           <div className="relative">
             <div className="overflow-x-auto portal-table-stagger">

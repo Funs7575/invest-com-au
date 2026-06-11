@@ -53,7 +53,7 @@ export default function FundsPageClient({ listings }: Props) {
       {/* Hero */}
       <section className="bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 text-white py-14 md:py-20">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-600" />
             <Link href="/invest" className="hover:text-white transition-colors">Invest</Link>

@@ -36,9 +36,9 @@ export default function AdminActivityFeed({ activity }: Props) {
               <span className="text-base mt-0.5 shrink-0">{item.icon}</span>
               <div className="flex-1 min-w-0">
                 <div className="text-sm text-slate-900 group-hover:text-amber-700 truncate">{item.title}</div>
-                <div className="text-xs text-slate-400 truncate">{item.detail}</div>
+                <div className="text-xs text-slate-500 truncate">{item.detail}</div>
               </div>
-              <div className="text-[0.6rem] text-slate-400 shrink-0 mt-1 whitespace-nowrap">
+              <div className="text-[0.6rem] text-slate-500 shrink-0 mt-1 whitespace-nowrap">
                 {(() => {
                   const diff = Date.now() - new Date(item.time).getTime();
                   const mins = Math.floor(diff / 60000);

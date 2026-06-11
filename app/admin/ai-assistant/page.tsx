@@ -227,7 +227,7 @@ export default function AiAssistantPage() {
                       }`}
                     >
                       {msg.content || (loading && i === messages.length - 1 ? (
-                        <span className="flex gap-1 items-center text-slate-400">
+                        <span className="flex gap-1 items-center text-slate-500">
                           <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                           <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
                           <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />

@@ -569,7 +569,7 @@ export default function QuarterlyReportsPage() {
                         <div className="text-center py-12">
                           <div className="text-3xl mb-2">📊</div>
                           <p className="text-sm font-medium text-slate-700 mb-1">No quarterly reports yet</p>
-                          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                          <p className="text-xs text-slate-500 max-w-sm mx-auto">
                             Quarterly reports summarize industry trends, broker fee changes, new market entrants, and key findings to keep your audience informed each quarter.
                           </p>
                         </div>

@@ -663,7 +663,7 @@ export default function WorkFromHomePage() {
               </table>
             </div>
 
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Effective lives from ATO Tax Ruling TR 2023/1. Verify current rates at ato.gov.au
               before lodging. Work-use proportion applies to all assets.
             </p>
@@ -733,7 +733,7 @@ export default function WorkFromHomePage() {
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-slate-400 font-bold mt-0.5">&#8594;</span>
+                    <span className="text-slate-500 font-bold mt-0.5">&#8594;</span>
                     <span>
                       Must have a dedicated area used <em>exclusively and regularly</em> for
                       business — not the kitchen table

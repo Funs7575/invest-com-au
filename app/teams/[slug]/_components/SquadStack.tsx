@@ -69,7 +69,7 @@ export default function SquadStack({ members }: Props) {
         <p className="text-xs uppercase tracking-widest text-slate-500">
           The Squad
         </p>
-        <span className="text-[11px] text-slate-400">
+        <span className="text-[11px] text-slate-500">
           {members.length} member{members.length === 1 ? "" : "s"}
         </span>
       </div>
@@ -123,7 +123,7 @@ export default function SquadStack({ members }: Props) {
                       <span className="ml-2 inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700">
                         <Icon name="star" size={10} className="text-amber-500" />
                         {m.pro_rating.toFixed(1)}
-                        <span className="font-normal text-slate-400">
+                        <span className="font-normal text-slate-500">
                           ({m.pro_review_count})
                         </span>
                       </span>

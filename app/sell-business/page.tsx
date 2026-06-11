@@ -76,9 +76,9 @@ export default function SellBusinessHubPage() {
                 { v: "12 mo", l: "Recommended prep", sub: "before going to market" },
               ].map((s) => (
                 <div key={s.l} className="bg-white/10 border border-white/10 rounded-lg px-3 py-2.5">
-                  <dt className="text-[10px] font-bold uppercase text-slate-400 tracking-wide">{s.l}</dt>
+                  <dt className="text-[10px] font-bold uppercase text-slate-500 tracking-wide">{s.l}</dt>
                   <dd className="text-xl md:text-2xl font-extrabold text-white mt-0.5">{s.v}</dd>
-                  <p className="text-[10px] text-slate-400 mt-0.5">{s.sub}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">{s.sub}</p>
                 </div>
               ))}
             </div>

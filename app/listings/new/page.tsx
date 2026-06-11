@@ -70,7 +70,7 @@ export default function NewListingPage() {
                 className="bg-white/5 rounded-xl p-4 border border-white/10"
               >
                 <p className="text-sm font-bold text-white mb-1">{t.title}</p>
-                <p className="text-xs text-slate-400 leading-snug">{t.desc}</p>
+                <p className="text-xs text-slate-500 leading-snug">{t.desc}</p>
               </div>
             ))}
           </div>

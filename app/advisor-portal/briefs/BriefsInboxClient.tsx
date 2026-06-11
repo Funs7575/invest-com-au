@@ -161,7 +161,7 @@ export default function BriefsInboxClient() {
               >
                 <div className="flex items-start justify-between gap-4 mb-2">
                   <div>
-                    <p className="text-xs uppercase tracking-wider text-slate-400 mb-0.5">
+                    <p className="text-xs uppercase tracking-wider text-slate-500 mb-0.5">
                       {b.brief_template ?? "general"}
                     </p>
                     <h3 className="text-base font-bold text-slate-900">
@@ -271,7 +271,7 @@ export default function BriefsInboxClient() {
                       </option>
                     ))}
                   </select>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500">
                     Update status as you progress.
                   </span>
                 </div>

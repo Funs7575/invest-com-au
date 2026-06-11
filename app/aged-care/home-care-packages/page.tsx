@@ -112,7 +112,7 @@ export default function HomeCarePkgsPage() {
             ($10k–$60k/year subsidy) for different care complexity. Wait times can be 12–36 months at
             higher levels — register with My Aged Care early.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · 2024–25 subsidy rates · General information only</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · 2024–25 subsidy rates · General information only</p>
         </div>
       </section>
 
@@ -144,7 +144,7 @@ export default function HomeCarePkgsPage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-2">Wait times are national estimates — vary significantly by region and level. Check current queue at health.gov.au/resources/publications/home-care-packages-waitlist-data.</p>
+          <p className="text-xs text-slate-500 mt-2">Wait times are national estimates — vary significantly by region and level. Check current queue at health.gov.au/resources/publications/home-care-packages-waitlist-data.</p>
         </div>
       </section>
 

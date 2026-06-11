@@ -436,7 +436,7 @@ export default function ArticleEditorClient({
               <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
                 Live scorecard
               </p>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 {scoring ? "Scoring…" : "Ready"}
               </p>
             </div>

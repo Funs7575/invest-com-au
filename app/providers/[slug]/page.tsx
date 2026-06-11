@@ -72,7 +72,7 @@ export default async function ProviderProfilePage({ params }: Props) {
       {/* Hero */}
       <section className="bg-white border-b border-slate-200 py-10 px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="text-sm text-slate-400 mb-4">
+          <div className="text-sm text-slate-500 mb-4">
             <Link href="/providers" className="hover:text-teal-600">Providers</Link>
             <span className="mx-2">/</span>
             <span className="text-slate-600">{org.name}</span>
@@ -144,7 +144,7 @@ export default async function ProviderProfilePage({ params }: Props) {
         <h2 className="text-xl font-bold text-slate-800 mb-5">
           Courses by {org.name}
           {orgCourses.length > 0 && (
-            <span className="ml-2 text-sm font-normal text-slate-400">
+            <span className="ml-2 text-sm font-normal text-slate-500">
               {orgCourses.length} course{orgCourses.length !== 1 ? "s" : ""}
             </span>
           )}
@@ -154,7 +154,7 @@ export default async function ProviderProfilePage({ params }: Props) {
           <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center">
             <div className="text-3xl mb-2">📚</div>
             <p className="text-slate-500">No courses published yet.</p>
-            <p className="text-sm text-slate-400 mt-1">Check back soon.</p>
+            <p className="text-sm text-slate-500 mt-1">Check back soon.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -191,7 +191,7 @@ export default async function ProviderProfilePage({ params }: Props) {
                     </span>
                   )}
                   {course.estimated_hours && (
-                    <span className="text-xs text-slate-400">{course.estimated_hours}h</span>
+                    <span className="text-xs text-slate-500">{course.estimated_hours}h</span>
                   )}
                 </div>
                 <div className="mt-auto flex items-center justify-between">

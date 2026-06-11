@@ -262,7 +262,7 @@ export default function EstatePlanningTaxPage() {
                   ))}
                 </tbody>
               </table>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 General information only. Verify current rules at ato.gov.au or with a specialist
                 tax adviser.
               </p>
@@ -402,7 +402,7 @@ export default function EstatePlanningTaxPage() {
                     "Beneficiary control may be limited depending on trust deed terms",
                   ].map((item) => (
                     <li key={item} className="flex gap-2">
-                      <span className="flex-shrink-0 text-slate-400">&#8594;</span>
+                      <span className="flex-shrink-0 text-slate-500">&#8594;</span>
                       {item}
                     </li>
                   ))}
@@ -428,7 +428,7 @@ export default function EstatePlanningTaxPage() {
                   key={item}
                   className="flex gap-3 bg-slate-50 rounded-xl border border-slate-200 p-4 text-sm text-slate-700"
                 >
-                  <span className="flex-shrink-0 text-slate-400 text-base leading-5">&#9744;</span>
+                  <span className="flex-shrink-0 text-slate-500 text-base leading-5">&#9744;</span>
                   <span>{item}</span>
                 </div>
               ))}

@@ -354,7 +354,7 @@ export default function ASX200ETFPage() {
                     </td>
                     <td className="px-4 py-3 text-slate-700">
                       <span className="font-medium">{etf.name}</span>
-                      <span className="block text-xs text-slate-400">{etf.provider}</span>
+                      <span className="block text-xs text-slate-500">{etf.provider}</span>
                     </td>
                     <td className="px-4 py-3 text-slate-600 text-xs">{etf.index}</td>
                     <td className="px-4 py-3">
@@ -449,7 +449,7 @@ export default function ASX200ETFPage() {
               <tbody className="divide-y divide-slate-100">
                 {TOP_HOLDINGS.map((h, i) => (
                   <tr key={h.name} className="hover:bg-slate-50/60">
-                    <td className="px-4 py-2.5 text-slate-400 font-mono text-xs">{i + 1}</td>
+                    <td className="px-4 py-2.5 text-slate-500 font-mono text-xs">{i + 1}</td>
                     <td className="px-4 py-2.5 font-medium text-slate-800">{h.name}</td>
                     <td className="px-4 py-2.5 text-slate-500 text-xs">{h.sector}</td>
                     <td className="px-4 py-2.5 text-right font-mono font-semibold text-slate-900">{h.weight}</td>

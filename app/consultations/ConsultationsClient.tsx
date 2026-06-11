@@ -177,7 +177,7 @@ function ConsultationCard({
           <div className="flex items-baseline gap-2">
             {!loading && hasDiscount ? (
               <>
-                <span className="text-sm text-slate-400 line-through">
+                <span className="text-sm text-slate-500 line-through">
                   ${fullPriceDisplay}
                 </span>
                 <span className="text-2xl font-extrabold text-slate-800">
@@ -192,7 +192,7 @@ function ConsultationCard({
                 ${fullPriceDisplay}
               </span>
             )}
-            <span className="text-xs text-slate-400">AUD</span>
+            <span className="text-xs text-slate-500">AUD</span>
           </div>
         </div>
 

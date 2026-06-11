@@ -376,7 +376,7 @@ export default function TaxHubPage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">Tax rates for FY2025–26. Low Income Tax Offset (LITO) and other offsets may reduce effective tax rates. Verify with ato.gov.au.</p>
+            <p className="text-xs text-slate-500 mt-2">Tax rates for FY2025–26. Low Income Tax Offset (LITO) and other offsets may reduce effective tax rates. Verify with ato.gov.au.</p>
           </div>
         </div>
       </section>

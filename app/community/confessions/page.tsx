@@ -178,7 +178,7 @@ export default async function ConfessionsPage() {
                         {c.title}
                       </h2>
                       <p className="text-sm text-slate-500 mt-1 line-clamp-2">{excerpt}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                      <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
                         <span className="font-medium text-slate-500 italic">Anonymous Investor</span>
                         <span>{timeAgo(c.created_at)}</span>
                         <span>{c.reply_count} {c.reply_count === 1 ? "reply" : "replies"}</span>
@@ -198,7 +198,7 @@ export default async function ConfessionsPage() {
       )}
 
       <footer className="mt-8 pt-4 border-t border-slate-200">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           Confessions are posted anonymously. Author identity is never revealed publicly — only
           moderation staff can access metadata in the event of a Terms of Service violation.
         </p>

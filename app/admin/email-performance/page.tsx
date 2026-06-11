@@ -72,25 +72,25 @@ export default function EmailPerformancePage() {
               <p className="text-[0.55rem] opacity-70">{listHealth.healthPct}% healthy</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Email Captures</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Email Captures</p>
               <p className="text-2xl font-extrabold text-slate-900">{totalCaptures}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Quiz Leads</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Quiz Leads</p>
               <p className="text-2xl font-extrabold text-slate-900">{totalQuiz}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Fee Alerts</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Fee Alerts</p>
               <p className="text-2xl font-extrabold text-slate-900">{totalFeeAlerts}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Drips Sent</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Drips Sent</p>
               <p className="text-2xl font-extrabold text-slate-900">{dripsSent}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
               <p className="text-[0.6rem] font-bold text-red-400 uppercase">Bounced</p>
               <p className="text-2xl font-extrabold text-red-500">{bounced}</p>
-              <p className="text-[0.55rem] text-slate-400">+ {unsubscribed} unsub</p>
+              <p className="text-[0.55rem] text-slate-500">+ {unsubscribed} unsub</p>
             </div>
           </div>
 
@@ -124,7 +124,7 @@ export default function EmailPerformancePage() {
                     <span className="text-xs font-bold text-slate-900">{count}</span>
                   </div>
                 ))}
-                {capturesBySource.length === 0 && <p className="text-xs text-slate-400 text-center py-2">No data</p>}
+                {capturesBySource.length === 0 && <p className="text-xs text-slate-500 text-center py-2">No data</p>}
               </div>
             </div>
 
@@ -138,7 +138,7 @@ export default function EmailPerformancePage() {
                     <span className="text-xs font-bold text-slate-900">{count}</span>
                   </div>
                 ))}
-                {capturesByUtm.length === 0 && <p className="text-xs text-slate-400 text-center py-2">No UTM data yet</p>}
+                {capturesByUtm.length === 0 && <p className="text-xs text-slate-500 text-center py-2">No UTM data yet</p>}
               </div>
             </div>
 
@@ -153,7 +153,7 @@ export default function EmailPerformancePage() {
                       <span className="text-xs font-bold text-slate-900">{count} sent</span>
                     </div>
                   ))}
-                  {dripByTemplate.length === 0 && <p className="text-xs text-slate-400 text-center py-2">No drips sent yet</p>}
+                  {dripByTemplate.length === 0 && <p className="text-xs text-slate-500 text-center py-2">No drips sent yet</p>}
                 </div>
               </div>
 

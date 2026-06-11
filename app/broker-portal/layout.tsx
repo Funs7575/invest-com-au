@@ -89,7 +89,7 @@ function SidebarContent({
               className={`sidebar-nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
                 isActive
                   ? "is-active bg-amber-500/15 text-amber-500 font-semibold"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white font-medium"
+                  : "text-slate-500 hover:bg-white/5 hover:text-white font-medium"
               }`}
             >
               <Icon name={item.icon} size={16} className={isActive ? "text-amber-500" : "text-slate-400"} />
@@ -110,20 +110,20 @@ function SidebarContent({
       <div className="p-3 border-t border-slate-700/50 space-y-1">
         <div className="flex items-center justify-between px-3 py-1">
           {brokerName && (
-            <p className="text-xs text-slate-400 truncate">{brokerName}</p>
+            <p className="text-xs text-slate-500 truncate">{brokerName}</p>
           )}
           <ThemeToggle />
         </div>
         <Link
           href="/"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-500 hover:bg-white/5 hover:text-white transition-colors"
         >
           <Icon name="globe" size={16} />
           View Site
         </Link>
         <button
           onClick={onLogout}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-red-400 transition-colors"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-500 hover:bg-white/5 hover:text-red-400 transition-colors"
         >
           <Icon name="log-out" size={16} />
           Sign Out

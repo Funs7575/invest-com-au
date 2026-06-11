@@ -375,7 +375,7 @@ export default function HomepageComparisonTable({
                 <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 block truncate">{broker.name}</a>
                 <div className="flex items-center gap-2 mt-0.5 text-[0.7rem] text-slate-500">
                   <span className="font-semibold text-slate-700">{activeColumns[0].accessor(broker)}</span>
-                  {activeColumns.length > 1 && <span className="text-slate-400">·</span>}
+                  {activeColumns.length > 1 && <span className="text-slate-500">·</span>}
                   {activeColumns.length > 1 && <span className="font-semibold text-slate-700">{activeColumns[1].accessor(broker)}</span>}
                   {(isSponsored(broker) || isCampaignMobile) && <span className="text-[0.56rem] font-bold uppercase text-blue-700 bg-blue-50 px-1 py-px rounded">Ad</span>}
                 </div>

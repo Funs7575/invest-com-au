@@ -76,7 +76,7 @@ export default function GlobalBondsPage() {
             global fixed income with AUD currency hedging. Yield comparison, hedging tradeoffs, and
             how bond interest is taxed in Australia.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only</p>
         </div>
       </section>
 
@@ -104,7 +104,7 @@ export default function GlobalBondsPage() {
                     <td className="px-4 py-3 text-xs text-slate-600 leading-relaxed">{b.exposure}</td>
                     <td className="px-3 py-3 text-xs text-slate-600">{b.mer}</td>
                     <td className="px-3 py-3 text-center text-xs font-bold">
-                      {b.hedged === "Yes" ? <span className="text-emerald-600">Yes</span> : b.hedged === "N/A (AUD assets)" || b.hedged === "N/A (AUD)" ? <span className="text-slate-400">N/A</span> : <span className="text-slate-400">No</span>}
+                      {b.hedged === "Yes" ? <span className="text-emerald-600">Yes</span> : b.hedged === "N/A (AUD assets)" || b.hedged === "N/A (AUD)" ? <span className="text-slate-500">N/A</span> : <span className="text-slate-500">No</span>}
                     </td>
                     <td className="px-3 py-3 text-xs text-slate-600">{b.yield}</td>
                   </tr>
@@ -112,7 +112,7 @@ export default function GlobalBondsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Yields are approximate and change with interest rates. Check the ETF issuer&apos;s fact sheet for current yield to maturity.</p>
+          <p className="text-xs text-slate-500 mt-2">Yields are approximate and change with interest rates. Check the ETF issuer&apos;s fact sheet for current yield to maturity.</p>
         </div>
       </section>
 

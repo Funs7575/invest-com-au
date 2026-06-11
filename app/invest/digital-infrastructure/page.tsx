@@ -248,7 +248,7 @@ export default async function DigitalInfrastructurePage() {
                   <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                     <span className="text-xs font-semibold text-slate-700">{l.price_display ?? "Enquire"}</span>
                     {l.location_state && (
-                      <span className="text-[0.6rem] text-slate-400">{l.location_state}</span>
+                      <span className="text-[0.6rem] text-slate-500">{l.location_state}</span>
                     )}
                   </div>
                 </Link>
@@ -317,7 +317,7 @@ export default async function DigitalInfrastructurePage() {
                 >
                   <div className="text-sm font-bold text-slate-900 mb-0.5">{a.name}</div>
                   {a.firm_name && <div className="text-xs text-slate-500">{a.firm_name}</div>}
-                  {a.location_display && <div className="text-[0.6rem] text-slate-400 mt-2">{a.location_display}</div>}
+                  {a.location_display && <div className="text-[0.6rem] text-slate-500 mt-2">{a.location_display}</div>}
                   {a.verified && (
                     <span className="inline-block mt-2 text-[0.6rem] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Verified</span>
                   )}

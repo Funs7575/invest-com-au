@@ -90,7 +90,7 @@ export default function HomeVsResidentialPage() {
             the right Home Care Package. But safety risks, dementia, and carer burnout eventually
             make residential care the better option. Here&apos;s how to assess the decision honestly.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not medical or financial advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not medical or financial advice</p>
         </div>
       </section>
 

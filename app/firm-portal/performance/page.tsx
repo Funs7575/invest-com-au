@@ -94,7 +94,7 @@ export default async function FirmPerformancePage() {
       <div className="min-h-screen bg-slate-50 py-6 md:py-12">
         <div className="container-custom max-w-5xl">
           <header className="mb-6 md:mb-8">
-            <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-2">
+            <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-2">
               <Link href="/firm-portal/billing" className="hover:text-slate-600">
                 Firm portal
               </Link>

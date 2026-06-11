@@ -175,7 +175,7 @@ export default function LoanRatesEditor() {
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={10} className="text-center text-slate-400 py-6">
+                <td colSpan={10} className="text-center text-slate-500 py-6">
                   No loan rates. Add the first lender above.
                 </td>
               </tr>
@@ -198,7 +198,7 @@ export default function LoanRatesEditor() {
                   </span>
                 </td>
                 <td className="px-3 py-2 text-right text-slate-500 text-xs">{formatMinLoan(r.min_loan_cents)}</td>
-                <td className="px-3 py-2 text-xs text-slate-400">
+                <td className="px-3 py-2 text-xs text-slate-500">
                   {new Date(r.updated_at).toLocaleDateString("en-AU", {
                     day: "numeric",
                     month: "short",
@@ -323,7 +323,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveErr
           onChange={(e) => set("min_loan_cents", parseInt(e.target.value, 10) || 0)}
           className="w-full text-sm border rounded px-2 py-1.5"
         />
-        <span className="text-xs text-slate-400 mt-0.5 block">
+        <span className="text-xs text-slate-500 mt-0.5 block">
           Display value: {formatMinLoan(draft.min_loan_cents)}
         </span>
       </Field>

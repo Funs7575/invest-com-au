@@ -97,7 +97,7 @@ export default function AgedCareCentrelinkPage() {
             assesses your income and assets to determine your means-tested fee. The SA486 and SA457
             forms are key. Here&apos;s what happens, in what order, and what mistakes to avoid.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not financial or legal advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not financial or legal advice</p>
         </div>
       </section>
 

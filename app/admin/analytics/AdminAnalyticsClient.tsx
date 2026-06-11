@@ -687,7 +687,7 @@ export default function AdminAnalyticsClient() {
               onChange={(e) => setCustomFrom(e.target.value)}
               className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
             />
-            <span className="text-xs text-slate-400">to</span>
+            <span className="text-xs text-slate-500">to</span>
             <input
               type="date"
               value={customTo}

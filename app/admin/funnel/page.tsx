@@ -167,7 +167,7 @@ export default function FunnelPage() {
                     <span className="text-xs font-bold text-slate-900">{s.count}</span>
                   </div>
                 ))}
-                {emailSources.length === 0 && <p className="text-xs text-slate-400 text-center py-2">No captures yet</p>}
+                {emailSources.length === 0 && <p className="text-xs text-slate-500 text-center py-2">No captures yet</p>}
               </div>
             </div>
 
@@ -200,12 +200,12 @@ export default function FunnelPage() {
                   <div key={i} className="flex items-center justify-between py-1 border-b border-slate-50 last:border-0">
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-slate-900 truncate">{c.email}</p>
-                      <p className="text-[0.55rem] text-slate-400">{c.source}{c.utm_source ? ` · ${c.utm_source}` : ""}</p>
+                      <p className="text-[0.55rem] text-slate-500">{c.source}{c.utm_source ? ` · ${c.utm_source}` : ""}</p>
                     </div>
-                    <span className="text-[0.55rem] text-slate-400 shrink-0 ml-2">{new Date(c.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
+                    <span className="text-[0.55rem] text-slate-500 shrink-0 ml-2">{new Date(c.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
                   </div>
                 ))}
-                {recentCaptures.length === 0 && <p className="text-xs text-slate-400 text-center py-4">No captures yet</p>}
+                {recentCaptures.length === 0 && <p className="text-xs text-slate-500 text-center py-4">No captures yet</p>}
               </div>
             </div>
           </div>

@@ -473,7 +473,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
                     }`}
                     onClick={() => handleSelect(b.slug)}
                   >
-                    <td className="px-4 py-3 font-bold text-slate-400">
+                    <td className="px-4 py-3 font-bold text-slate-500">
                       {i + 1}
                     </td>
                     <td className="px-4 py-3">

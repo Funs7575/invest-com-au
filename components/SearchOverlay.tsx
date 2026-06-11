@@ -443,7 +443,7 @@ export default function SearchOverlay({
                         <Icon
                           name={CATEGORY_ICONS[category] ?? "file"}
                           size={10}
-                          className="text-slate-400"
+                          className="text-slate-500"
                         />
                         {category}
                       </p>

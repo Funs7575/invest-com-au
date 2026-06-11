@@ -233,7 +233,7 @@ export default function BrokerDashboard() {
             <CountUp end={balance / 100} prefix="$" decimals={2} duration={1000} />
           </p>
           {daysLeft !== null && daysLeft < 30 && (
-            <p className="text-[0.69rem] text-slate-400 mt-0.5">~{daysLeft} days of budget left</p>
+            <p className="text-[0.69rem] text-slate-500 mt-0.5">~{daysLeft} days of budget left</p>
           )}
           {balance < (wallet?.low_balance_threshold_cents || 5000) ? (
             <Link href="/broker-portal/wallet" className="text-xs text-amber-600 hover:text-amber-700 font-medium mt-2 inline-block">
@@ -265,7 +265,7 @@ export default function BrokerDashboard() {
                     strokeDasharray={donutCircumference} strokeDashoffset={donutOffset}
                     strokeLinecap="round" className="transition-all duration-1000" />
                 </svg>
-                <span className="text-[0.62rem] text-slate-400">of {totalCampaignCount}</span>
+                <span className="text-[0.62rem] text-slate-500">of {totalCampaignCount}</span>
               </div>
             )}
           </div>
@@ -350,7 +350,7 @@ export default function BrokerDashboard() {
         return (
           <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
             <h2 className="font-bold text-slate-900 text-sm mb-1">Last 7 days vs previous 7 days</h2>
-            <p className="text-[0.65rem] text-slate-400 mb-3">
+            <p className="text-[0.65rem] text-slate-500 mb-3">
               <span className="font-medium text-slate-600">{thisLabel}</span>
               {" "}vs{" "}
               <span>{prevLabel}</span>
@@ -359,7 +359,7 @@ export default function BrokerDashboard() {
               <div className="text-center">
                 <p className="text-xs text-slate-500 mb-1">Clicks</p>
                 <p className="text-lg font-extrabold text-slate-900">{currWeekClicks.toLocaleString()}</p>
-                <p className="text-[0.62rem] text-slate-400">prev: {prevClicks.toLocaleString()}</p>
+                <p className="text-[0.62rem] text-slate-500">prev: {prevClicks.toLocaleString()}</p>
                 {clicksChange !== 0 && (
                   <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${clicksChange > 0 ? "text-emerald-600" : "text-red-500"}`}>
                     <Icon name={clicksChange > 0 ? "arrow-up" : "arrow-down"} size={10} />
@@ -370,7 +370,7 @@ export default function BrokerDashboard() {
               <div className="text-center">
                 <p className="text-xs text-slate-500 mb-1">Spend</p>
                 <p className="text-lg font-extrabold text-slate-900">${(currWeekSpend / 100).toFixed(2)}</p>
-                <p className="text-[0.62rem] text-slate-400">prev: ${(prevSpend / 100).toFixed(2)}</p>
+                <p className="text-[0.62rem] text-slate-500">prev: ${(prevSpend / 100).toFixed(2)}</p>
                 {spendChange !== 0 && (
                   <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${spendChange > 0 ? "text-red-500" : "text-emerald-600"}`}>
                     <Icon name={spendChange > 0 ? "arrow-up" : "arrow-down"} size={10} />
@@ -381,7 +381,7 @@ export default function BrokerDashboard() {
               <div className="text-center">
                 <p className="text-xs text-slate-500 mb-1">Conversions</p>
                 <p className="text-lg font-extrabold text-slate-900">{currWeekConversions.toLocaleString()}</p>
-                <p className="text-[0.62rem] text-slate-400">prev: {prevConversions.toLocaleString()}</p>
+                <p className="text-[0.62rem] text-slate-500">prev: {prevConversions.toLocaleString()}</p>
                 {conversionsChange !== 0 && (
                   <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${conversionsChange > 0 ? "text-emerald-600" : "text-red-500"}`}>
                     <Icon name={conversionsChange > 0 ? "arrow-up" : "arrow-down"} size={10} />
@@ -512,7 +512,7 @@ export default function BrokerDashboard() {
               <Icon name="megaphone" size={20} className="text-amber-500" />
             </div>
             <p className="text-sm font-medium text-slate-700 mb-1">No campaigns yet</p>
-            <p className="text-xs text-slate-400 mb-4">Launch your first campaign to start driving traffic.</p>
+            <p className="text-xs text-slate-500 mb-4">Launch your first campaign to start driving traffic.</p>
             <div className="flex items-center justify-center gap-3">
               <Link
                 href="/broker-portal/campaigns/new"
@@ -586,7 +586,7 @@ export default function BrokerDashboard() {
                         />
                       </div>
                       <div className="flex items-center justify-between mt-0.5">
-                        <p className="text-[0.62rem] text-slate-400">{budgetPct}% budget used</p>
+                        <p className="text-[0.62rem] text-slate-500">{budgetPct}% budget used</p>
                         {c.status === "budget_exhausted" && (
                           <Link
                             href="/broker-portal/packages"
@@ -661,7 +661,7 @@ export default function BrokerDashboard() {
               <Icon name="activity" size={14} className="text-slate-400" />
               Recent Activity
             </h2>
-            <span className="text-[0.62rem] text-slate-400">{activityLog.length} events</span>
+            <span className="text-[0.62rem] text-slate-500">{activityLog.length} events</span>
           </div>
           <div className="space-y-0 max-h-72 overflow-y-auto">
             {activityLog.map((a, i) => {
@@ -679,7 +679,7 @@ export default function BrokerDashboard() {
                 wallet_topup: { icon: "plus", bg: "bg-emerald-50", color: "text-emerald-600" },
                 wallet_debit: { icon: "minus", bg: "bg-red-50", color: "text-red-500" },
               };
-              const cfg = iconMap[a.action] || { icon: "circle", bg: "bg-slate-50", color: "text-slate-400" };
+              const cfg = iconMap[a.action] || { icon: "circle", bg: "bg-slate-50", color: "text-slate-500" };
               const timeAgo = (() => {
                 const diff = Date.now() - new Date(a.created_at).getTime();
                 const mins = Math.floor(diff / 60000);
@@ -699,7 +699,7 @@ export default function BrokerDashboard() {
                   </div>
                   <div className="flex-1 pb-3 min-w-0">
                     <p className="text-xs font-medium text-slate-700 truncate">{a.detail || a.action.replace(/_/g, " ")}</p>
-                    <p className="text-[0.62rem] text-slate-400 mt-0.5">{timeAgo}</p>
+                    <p className="text-[0.62rem] text-slate-500 mt-0.5">{timeAgo}</p>
                   </div>
                 </div>
               );

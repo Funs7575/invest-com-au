@@ -178,7 +178,7 @@ export default function JobsClient() {
       {/* Hero */}
       <section className="bg-gradient-to-r from-slate-700 to-slate-900 text-white py-10 md:py-16">
         <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
             <Link href="/" className="hover:text-white">
               Home
             </Link>
@@ -264,7 +264,7 @@ export default function JobsClient() {
                   <p className="text-xs md:text-sm text-slate-500 mb-2 line-clamp-2">
                     {job.description}
                   </p>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
                     <span className="font-semibold text-slate-700">{job.salary_range}</span>
                     <span>Posted {formatDate(job.posted_date)}</span>
                   </div>

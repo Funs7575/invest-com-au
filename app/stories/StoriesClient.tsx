@@ -99,7 +99,7 @@ export default function StoriesClient({ stories, brokers: _brokers }: StoriesCli
                   <span className="px-2 py-0.5 rounded-full font-medium bg-red-50 text-red-600">
                     {formatBrokerName(story.source_broker_slug)}
                   </span>
-                  <span className="text-slate-400">→</span>
+                  <span className="text-slate-500">→</span>
                   <span className="px-2 py-0.5 rounded-full font-medium bg-slate-50 text-slate-700">
                     {formatBrokerName(story.dest_broker_slug)}
                   </span>
@@ -109,7 +109,7 @@ export default function StoriesClient({ stories, brokers: _brokers }: StoriesCli
                 <div className="flex items-center gap-3 mb-2">
                   <div className="flex items-center gap-1">
                     <StarDisplay rating={story.source_rating} />
-                    <span className="text-xs text-slate-400">→</span>
+                    <span className="text-xs text-slate-500">→</span>
                     <StarDisplay rating={story.dest_rating} />
                   </div>
                   {story.dest_rating > story.source_rating && (
@@ -145,7 +145,7 @@ export default function StoriesClient({ stories, brokers: _brokers }: StoriesCli
                       {story.time_with_source} with old platform
                     </span>
                   )}
-                  <span className="text-xs text-slate-400 ml-auto">
+                  <span className="text-xs text-slate-500 ml-auto">
                     — {story.display_name} ·{" "}
                     {new Date(story.created_at).toLocaleDateString("en-AU", {
                       day: "numeric",
@@ -173,7 +173,7 @@ export default function StoriesClient({ stories, brokers: _brokers }: StoriesCli
               {search ? "No stories match your search." : "No switching stories yet."}
             </p>
             {!search && (
-              <p className="text-slate-400 text-xs">
+              <p className="text-slate-500 text-xs">
                 Be the first to share your platform switching experience!
               </p>
             )}
