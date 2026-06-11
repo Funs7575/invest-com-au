@@ -259,11 +259,44 @@ export default function ListingDetailView({
             </div>
 
             <div className="space-y-5">
-              <div id="enquire" className="bg-white border border-slate-200 rounded-xl p-6 lg:sticky lg:top-20 scroll-mt-24">
-                <h2 className="text-base font-bold text-slate-900 mb-1">{intel.enquiryHeading}</h2>
-                <p className="text-xs text-slate-500 mb-4">{intel.enquirySubcopy}</p>
-                <ListingEnquiryForm listingId={l.id} listingTitle={l.title} vertical={categorySlug} />
-              </div>
+              {/* externalCta kinds (listed securities) must not solicit
+                  enquiries — the sanctioned posture is factual listing +
+                  "buy via your own broker" referral. The card keeps the
+                  #enquire id so the mobile sticky bar's anchor lands here. */}
+              {kindMeta.externalCta ? (
+                <div id="enquire" className="bg-white border border-slate-200 rounded-xl p-6 lg:sticky lg:top-20 scroll-mt-24">
+                  <h2 className="text-base font-bold text-slate-900 mb-1">How to invest</h2>
+                  <p className="text-xs text-slate-500 mb-4">
+                    This is an ASX-listed security — you buy it on-market through
+                    your own broker, not by enquiry. Listing shown for general
+                    information only; not an offer or recommendation.
+                  </p>
+                  <Link
+                    href="/share-trading"
+                    className="inline-flex w-full items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-4 py-2.5 rounded-xl transition-colors text-sm"
+                  >
+                    Compare share-trading platforms
+                    <Icon name="arrow-right" size={14} />
+                  </Link>
+                  {l.external_url && /^https?:\/\//.test(l.external_url) && (
+                    <a
+                      href={l.external_url}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900"
+                    >
+                      Official company information
+                      <Icon name="external-link" size={12} />
+                    </a>
+                  )}
+                </div>
+              ) : (
+                <div id="enquire" className="bg-white border border-slate-200 rounded-xl p-6 lg:sticky lg:top-20 scroll-mt-24">
+                  <h2 className="text-base font-bold text-slate-900 mb-1">{intel.enquiryHeading}</h2>
+                  <p className="text-xs text-slate-500 mb-4">{intel.enquirySubcopy}</p>
+                  <ListingEnquiryForm listingId={l.id} listingTitle={l.title} vertical={categorySlug} />
+                </div>
+              )}
 
               <ListingDecisionTools listing={l} />
 

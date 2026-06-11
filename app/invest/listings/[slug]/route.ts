@@ -32,6 +32,9 @@ export async function GET(
       .from("investment_listings")
       .select("slug, vertical, sub_category, listing_kind")
       .eq("slug", slug)
+      // The canonical lot pages only render active rows — redirecting an
+      // expired/sold slug there would land on a 404 instead of /invest.
+      .eq("status", "active")
       .maybeSingle();
 
     if (data) {
