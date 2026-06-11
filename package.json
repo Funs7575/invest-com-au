@@ -75,7 +75,8 @@
     "prepare": "husky || true",
     "data:far": "npx tsx scripts/ingest-far.ts",
     "data:apra": "npx tsx scripts/ingest-apra.ts",
-    "data:asx-removed": "npx tsx scripts/ingest-asx-removed.ts"
+    "data:asx-removed": "npx tsx scripts/ingest-asx-removed.ts",
+    "data:postcodes": "npx tsx scripts/ingest-ato-postcodes.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",

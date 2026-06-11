@@ -24,6 +24,7 @@ import {
 } from "@/lib/adviser-register";
 import { superFundsMeta, allSuperFunds } from "@/lib/super-funds";
 import { ghostTickersMeta, allGhostTickers } from "@/lib/ghost-tickers";
+import { postcodeAtlasMeta, allPostcodes } from "@/lib/postcode-atlas";
 
 const log = logger("sitemap");
 
@@ -283,7 +284,7 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/global-investing/etfs", "/global-investing/etfs/us", "/global-investing/etfs/global",
     "/global-investing/shares/us",
     "/global-investing/calculators/direct-vs-asx-cost",
-    "/super/death-benefit", "/super/compare-guide", "/super/division-296", "/super/funds", "/asx/delisted",
+    "/super/death-benefit", "/super/compare-guide", "/super/division-296", "/super/funds", "/asx/delisted", "/postcodes",
     "/super/catch-up-contributions",
     "/super/co-contribution", "/super/spouse-contributions",
     "/super/transition-to-retirement", "/super/insurance",
@@ -822,6 +823,17 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
   // extract; excluded while the bundled dataset is the synthetic preview.
   // ASX Ghost Tickers — per-company pages over the removed-companies
   // extract; excluded while the bundled dataset is the synthetic preview.
+  // Postcode Wealth Atlas — per-postcode pages over the ATO extract;
+  // excluded while the bundled dataset is the synthetic preview.
+  const postcodePages: MetadataRoute.Sitemap = postcodeAtlasMeta().sample
+    ? []
+    : allPostcodes().map((p) => ({
+        url: `${base}/postcodes/${p.postcode}`,
+        lastModified: new Date(postcodeAtlasMeta().extractedAt),
+        changeFrequency: "yearly" as const,
+        priority: 0.5,
+      }));
+
   const ghostTickerPages: MetadataRoute.Sitemap = ghostTickersMeta().sample
     ? []
     : allGhostTickers().map((t) => ({
@@ -983,6 +995,7 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
     ...registerPages,
     ...superFundPages,
     ...ghostTickerPages,
+    ...postcodePages,
   ];
 }
 
