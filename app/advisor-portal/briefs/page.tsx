@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import BriefsInboxClient from "./BriefsInboxClient";
+import StandingOrdersPanel from "./StandingOrdersPanel";
 
 export const metadata: Metadata = {
   title: "Brief inbox — Advisor Portal",
@@ -9,7 +11,10 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function AdvisorPortalBriefsPage() {
+export default async function AdvisorPortalBriefsPage() {
+  const responseGuaranteeEnabled = await isFlagEnabled("response_guarantee", {
+    segment: "advisor",
+  });
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-5xl mx-auto px-4 pt-4 pb-10 md:pt-5">
@@ -25,7 +30,16 @@ export default function AdvisorPortalBriefsPage() {
           Verified providers see masked previews. Accept a brief to unlock the
           consumer&apos;s contact details — your credit balance is debited at
           the moment of acceptance.
+          {responseGuaranteeEnabled && (
+            <>
+              {" "}
+              A 24-hour first-response guarantee applies: accepted briefs with
+              no first message are released back to the pool and your credits
+              refunded, so only accept what you can respond to today.
+            </>
+          )}
         </p>
+        <StandingOrdersPanel />
         <BriefsInboxClient />
       </div>
     </div>

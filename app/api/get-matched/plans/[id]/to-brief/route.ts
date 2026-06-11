@@ -13,6 +13,7 @@ import { getEnabledIntents } from "@/lib/getmatched/intents";
 import { resolveActionPlan } from "@/lib/getmatched/engine";
 import { scanBrief } from "@/lib/briefs/risk-flags";
 import { getAcceptCost } from "@/lib/briefs/credits";
+import { runStandingOrdersForBrief } from "@/lib/briefs/standing-orders";
 import { logEvent } from "@/lib/getmatched/events";
 import { logger } from "@/lib/logger";
 
@@ -178,6 +179,19 @@ export async function POST(
         event_type: "risk_flagged",
         actor_kind: "system",
         payload: { flags: risk.flags, severity: risk.severity },
+      });
+    }
+
+    // Standing orders may instant-accept the new brief (flag-gated +
+    // capped inside the engine; never blocks the response). Held briefs
+    // are skipped — the engine re-checks risk status itself, but skipping
+    // here avoids a pointless round-trip.
+    if (risk.reviewStatus !== "pending_review") {
+      void runStandingOrdersForBrief(brief.id as number).catch((err) => {
+        log.warn("runStandingOrdersForBrief failed", {
+          briefId: brief.id,
+          err: err instanceof Error ? err.message : String(err),
+        });
       });
     }
 

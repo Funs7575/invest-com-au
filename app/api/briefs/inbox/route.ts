@@ -4,6 +4,7 @@ import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { maskBriefForProvider } from "@/lib/briefs/mask";
+import { isBriefVisibleToProvider } from "@/lib/briefs/eligibility";
 import { logger } from "@/lib/logger";
 import type { BriefRow } from "@/lib/briefs/types";
 
@@ -76,34 +77,14 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: false })
       .limit(100);
 
+    const visibilityCtx = {
+      professionalId: advisorId,
+      advisorType: (advisor?.type as string | null) ?? null,
+      firmId: (advisor?.firm_id as number | null) ?? null,
+      teamIds,
+    };
     const available = (openBriefs ?? [])
-      .filter((row) => {
-        const b = row as unknown as BriefRow;
-        // Direct-targeted briefs: only the matched provider sees them.
-        if (b.routing_mode === "direct") {
-          if (b.target_professional_id === advisorId) return true;
-          if (b.target_team_id && teamIds.includes(b.target_team_id)) return true;
-          if (b.target_firm_id && advisor?.firm_id === b.target_firm_id) return true;
-          return false;
-        }
-        // Preference filter.
-        if (b.provider_preference === "expert_team" && teamIds.length === 0) return false;
-        if (b.provider_preference === "firm" && !advisor?.firm_id) return false;
-        if (b.provider_preference === "individual") {
-          // Anyone with a professional row counts.
-        }
-        // Optional advisor_types filter — only if the brief specified types
-        // and the professional has a type assigned.
-        if (
-          b.advisor_types &&
-          b.advisor_types.length > 0 &&
-          advisor?.type &&
-          !b.advisor_types.includes(advisor.type)
-        ) {
-          return false;
-        }
-        return true;
-      })
+      .filter((row) => isBriefVisibleToProvider(row as unknown as BriefRow, visibilityCtx))
       .map((row) => maskBriefForProvider(row as unknown as BriefRow));
 
     // ── Accepted bucket ────────────────────────────────────────────

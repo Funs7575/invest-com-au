@@ -23,7 +23,7 @@
 export const CRON_GROUPS: Record<string, readonly string[]> = {
   "hourly-0": ["/api/cron/auto-resolve-disputes", "/api/cron/cron-health-alert", "/api/cron/hub-silence-check"],
   "hourly-5": ["/api/cron/broker-snapshot"],
-  "hourly-15": ["/api/cron/automation-verdict-rollup", "/api/cron/quote-expiry-reminders"],
+  "hourly-15": ["/api/cron/automation-verdict-rollup", "/api/cron/quote-expiry-reminders", "/api/cron/brief-sla-sweep"],
   "hourly-20": ["/api/cron/cron-freshness"],
   "hourly-30": ["/api/cron/embeddings-refresh", "/api/cron/slo-monitor"],
 
@@ -34,6 +34,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/lead-sla-check",
     "/api/cron/editorial-auto-publish",
     "/api/cron/geocode-listings",
+    "/api/cron/standing-orders-sweep",
   ],
   "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks", "/api/cron/retry-outbound-webhooks", "/api/cron/retry-consumer-webhooks", "/api/cron/auction-close"],
   // every-6h removed: its only member, /api/admin/run-migration, is now

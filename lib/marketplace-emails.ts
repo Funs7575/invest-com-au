@@ -78,6 +78,145 @@ export async function sendProviderNewMatchRequest(input: {
 }
 
 /**
+ * A standing order auto-accepted a Match Request on the provider's
+ * behalf. Tells them what was claimed, what it cost, and links straight
+ * to the unlocked contact details — the consumer has already been told
+ * a provider accepted, so the email pushes an immediate first response.
+ */
+export async function sendProviderStandingOrderAccepted(input: {
+  providerEmail: string;
+  providerName: string;
+  briefTitle: string;
+  briefSlug: string;
+  creditsSpent: number;
+  briefBudgetBand: string | null;
+  briefLocation: string | null;
+}): Promise<boolean> {
+  const inboxUrl = `${SITE_URL}/advisor-portal/briefs`;
+  const budgetLine = input.briefBudgetBand
+    ? `<p style="font-size:13px;color:#475569;margin:4px 0"><strong>Budget:</strong> ${input.briefBudgetBand.replace(/_/g, " ")}</p>`
+    : "";
+  const locationLine = input.briefLocation
+    ? `<p style="font-size:13px;color:#475569;margin:4px 0"><strong>Location:</strong> ${input.briefLocation}</p>`
+    : "";
+  const chargeLine =
+    input.creditsSpent > 0
+      ? `<p style="font-size:13px;color:#475569;margin:8px 0 0 0"><strong>Charged:</strong> ${input.creditsSpent} credits (standing order)</p>`
+      : "";
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.providerEmail,
+    subject: `Standing order matched — ${input.briefTitle}`,
+    html: wrap(
+      "Your standing order claimed a Match Request",
+      `<p style="font-size:15px">Hi ${input.providerName},</p>
+      <p style="font-size:14px;color:#475569">A new Match Request matched one of your standing orders and was accepted automatically. The consumer's contact details are unlocked in your inbox — they've been told you accepted, so a fast first response matters.</p>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:16px 0">
+        <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0 0 8px 0">${input.briefTitle}</p>
+        ${budgetLine}
+        ${locationLine}
+        ${chargeLine}
+      </div>
+      ${btn(inboxUrl, "Open the brief →")}
+      <p style="font-size:12px;color:#64748b">Pause or edit your standing orders any time from the brief inbox.</p>
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}
+
+/**
+ * Response-guarantee warning: the provider accepted a brief and hasn't
+ * sent a first message; N hours remain before the accept is released and
+ * the credits refunded. One warning per brief/provider pair.
+ */
+export async function sendProviderSlaWarning(input: {
+  providerEmail: string;
+  providerName: string;
+  briefTitle: string;
+  briefSlug: string;
+  hoursLeft: number;
+}): Promise<boolean> {
+  const inboxUrl = `${SITE_URL}/advisor-portal/briefs`;
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.providerEmail,
+    subject: `${input.hoursLeft}h left to respond — ${input.briefTitle}`,
+    html: wrap(
+      "A brief you accepted is waiting on you",
+      `<p style="font-size:15px">Hi ${input.providerName},</p>
+      <p style="font-size:14px;color:#475569">You accepted <strong>${input.briefTitle}</strong> but haven't sent the consumer a first message yet. Under the response guarantee, the brief is released to other providers (and your credits refunded) if there's no response within the window.</p>
+      <p style="font-size:14px;color:#0f172a;font-weight:600">About ${input.hoursLeft} hour${input.hoursLeft === 1 ? "" : "s"} left.</p>
+      ${btn(inboxUrl, "Send a first message →")}
+      <p style="font-size:12px;color:#64748b">Already spoken with them by phone? Update the brief's tracker status and the guarantee clock stops.</p>
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}
+
+/**
+ * Response-guarantee clawback: the accept was released after the SLA
+ * lapsed. Factual, not punitive — tells the provider exactly what
+ * happened and what was refunded.
+ */
+export async function sendProviderSlaClawback(input: {
+  providerEmail: string;
+  providerName: string;
+  briefTitle: string;
+  creditsRefunded: number;
+  slaHours: number;
+}): Promise<boolean> {
+  const refundLine =
+    input.creditsRefunded > 0
+      ? `<p style="font-size:14px;color:#475569">Your ${input.creditsRefunded} credit${input.creditsRefunded === 1 ? "" : "s"} have been refunded to your balance.</p>`
+      : "";
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.providerEmail,
+    subject: `Brief released — ${input.briefTitle}`,
+    html: wrap(
+      "A brief you accepted was released",
+      `<p style="font-size:15px">Hi ${input.providerName},</p>
+      <p style="font-size:14px;color:#475569"><strong>${input.briefTitle}</strong> went ${input.slaHours} hours without a first response, so under the response guarantee it has been released back to other providers.</p>
+      ${refundLine}
+      <p style="font-size:13px;color:#64748b">Repeated releases affect your marketplace standing. If you're heading away, pause your standing orders and set your availability to "not taking new clients" so accepts don't land while you can't respond.</p>
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}
+
+/**
+ * Consumer side of a clawback: their request is live again and other
+ * providers have been notified — no action needed from them.
+ */
+export async function sendConsumerSlaReopened(input: {
+  consumerEmail: string;
+  consumerName: string;
+  briefTitle: string;
+  briefSlug: string;
+  slaHours: number;
+}): Promise<boolean> {
+  const trackerUrl = `${SITE_URL}/briefs/${input.briefSlug}`;
+  const greeting = input.consumerName ? `Hi ${input.consumerName},` : "Hi,";
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.consumerEmail,
+    subject: `Your Match Request is open again — ${input.briefTitle}`,
+    html: wrap(
+      "We've re-opened your Match Request",
+      `<p style="font-size:15px">${greeting}</p>
+      <p style="font-size:14px;color:#475569">The provider who accepted <strong>${input.briefTitle}</strong> didn't respond within ${input.slaHours} hours. That's not the experience we want for you, so we've released your request and notified other eligible providers — there's nothing you need to do.</p>
+      ${btn(trackerUrl, "View your request →")}
+      <p style="font-size:12px;color:#64748b">You can edit or withdraw your request from the tracker at any time.</p>
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}
+
+/**
  * Invite a provider to join an expert team (AJ-2). Sent on invite creation so
  * the invitee actually learns they were invited — previously no email was sent,
  * so invitations were undiscoverable. Links to the accept landing page, which
