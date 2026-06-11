@@ -134,7 +134,7 @@ export default function PushNotificationPrompt() {
               </div>
               <button
                 onClick={dismiss}
-                className="text-slate-400 hover:text-slate-600 shrink-0 -mt-1 -mr-1 p-2"
+                className="text-slate-500 hover:text-slate-600 shrink-0 -mt-1 -mr-1 p-2"
                 aria-label="Dismiss"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -83,7 +83,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
                     type="button"
                     onClick={() => onRemove(a.id)}
                     aria-label={`Remove ${a.name} from comparison`}
-                    className="absolute top-1 right-1 text-slate-400 hover:text-slate-600 text-lg leading-none"
+                    className="absolute top-1 right-1 text-slate-500 hover:text-slate-600 text-lg leading-none"
                   >
                     ×
                   </button>

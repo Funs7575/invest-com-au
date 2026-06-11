@@ -66,7 +66,7 @@ export default function ArticleBookmarkButton({ slug, title }: Props) {
       }`}
     >
       <svg
-        className={`w-3.5 h-3.5 transition-colors ${bookmarked ? "text-violet-600" : "text-slate-400"}`}
+        className={`w-3.5 h-3.5 transition-colors ${bookmarked ? "text-violet-600" : "text-slate-500"}`}
         fill={bookmarked ? "currentColor" : "none"}
         stroke="currentColor"
         strokeWidth={2}

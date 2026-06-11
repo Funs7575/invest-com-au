@@ -113,18 +113,18 @@ export default function TeamBriefComments({ teamId, briefId, callerName }: Props
 
       {open && (
         <div className="mt-3">
-          <p className="text-[10px] text-slate-400 mb-2">
+          <p className="text-[10px] text-slate-500 mb-2">
             Private to active squad members — the client never sees these notes.
           </p>
 
           {loadError ? (
             <p className="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg p-3">{loadError}</p>
           ) : comments === null ? (
-            <p className="text-xs text-slate-400">Loading…</p>
+            <p className="text-xs text-slate-500">Loading…</p>
           ) : (
             <>
               {comments.length === 0 ? (
-                <p className="text-xs text-slate-400 mb-2">
+                <p className="text-xs text-slate-500 mb-2">
                   No notes yet — start the thread for {callerName === "You" ? "your" : "the"} squad.
                 </p>
               ) : (
@@ -151,7 +151,7 @@ export default function TeamBriefComments({ teamId, briefId, callerName }: Props
                       <div className="min-w-0 flex-1 bg-slate-50 border border-slate-100 rounded-xl px-3 py-2">
                         <p className="text-[11px] font-bold text-slate-700 mb-0.5">
                           {c.author_name ?? "Squad member"}
-                          <span className="font-normal text-slate-400 ml-2">{timeAgo(c.created_at)}</span>
+                          <span className="font-normal text-slate-500 ml-2">{timeAgo(c.created_at)}</span>
                         </p>
                         <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line break-words">
                           {c.body}

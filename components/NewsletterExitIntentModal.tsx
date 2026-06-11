@@ -211,7 +211,7 @@ export default function NewsletterExitIntentModal({
           type="button"
           onClick={dismiss}
           aria-label="Close"
-          className="absolute top-3 right-3 text-slate-400 hover:text-slate-700 text-xl leading-none w-8 h-8 flex items-center justify-center"
+          className="absolute top-3 right-3 text-slate-500 hover:text-slate-700 text-xl leading-none w-8 h-8 flex items-center justify-center"
         >
           ×
         </button>

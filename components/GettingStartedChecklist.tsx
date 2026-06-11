@@ -174,7 +174,7 @@ export default function GettingStartedChecklist({
             </h3>
             <button
               onClick={() => setExpanded(false)}
-              className="text-slate-400 hover:text-slate-600 transition-colors"
+              className="text-slate-500 hover:text-slate-600 transition-colors"
               aria-label="Collapse checklist"
             >
               <svg
