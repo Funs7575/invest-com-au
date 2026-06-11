@@ -86,7 +86,7 @@ export default function FamilyOfficePage() {
             trust administration, SMSF integration, and estate planning — and when a dedicated family
             office structure is worth the complexity.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not advice</p>
         </div>
       </section>
 

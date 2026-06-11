@@ -618,7 +618,7 @@ function Field({ label, name, defaultValue, required, type = "text", placeholder
     <div>
       <label htmlFor={name} className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
       <input id={name} name={name} type={type} defaultValue={defaultValue || ""} required={required} placeholder={placeholder} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" {...props} />
-      {hint && <p className="text-xs text-slate-400 mt-0.5">{hint}</p>}
+      {hint && <p className="text-xs text-slate-500 mt-0.5">{hint}</p>}
     </div>
   );
 }

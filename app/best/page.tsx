@@ -134,7 +134,7 @@ export default function BestBrokersHub() {
                     {cat.h1.replace(" in Australia", "").replace("Best ", "")}
                   </h2>
                 </div>
-                <p className="text-[0.68rem] text-slate-400 leading-snug line-clamp-2">
+                <p className="text-[0.68rem] text-slate-500 leading-snug line-clamp-2">
                   {cat.intro ? cat.intro.slice(0, 60) + '...' : cat.metaDescription.slice(0, 60) + '...'}
                 </p>
               </Link>
@@ -204,7 +204,7 @@ export default function BestBrokersHub() {
           </div>
 
           {/* E-E-A-T footer */}
-          <div className="mt-5 md:mt-8 text-xs text-slate-400 text-center">
+          <div className="mt-5 md:mt-8 text-xs text-slate-500 text-center">
             <p>
               All guides are reviewed by{" "}
               <a href={REVIEW_AUTHOR.url} className="underline hover:text-slate-900">

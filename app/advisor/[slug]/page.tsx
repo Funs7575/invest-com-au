@@ -462,7 +462,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
             followerCount={pro.follower_count ?? 0}
           />
           {profileUpdatedAt && (
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500">
               Profile updated{" "}
               {(() => {
                 // eslint-disable-next-line react-hooks/purity -- server component, Date.now() is safe

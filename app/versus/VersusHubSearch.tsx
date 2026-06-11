@@ -100,7 +100,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
                     >
                       <BrokerLogo broker={b} size="xs" />
                       <span className="text-sm text-slate-900">{b.name}</span>
-                      <span className="text-[0.6rem] text-slate-400 ml-auto">
+                      <span className="text-[0.6rem] text-slate-500 ml-auto">
                         {PLATFORM_TYPE_LABELS[b.platform_type]}
                       </span>
                     </button>
@@ -113,7 +113,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
 
         {/* VS divider */}
         <div className="flex items-end justify-center pb-1 md:pb-2">
-          <span className="text-xs md:text-sm font-bold text-slate-400">VS</span>
+          <span className="text-xs md:text-sm font-bold text-slate-500">VS</span>
         </div>
 
         {/* Broker B */}
@@ -162,7 +162,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
                     >
                       <BrokerLogo broker={b} size="xs" />
                       <span className="text-sm text-slate-900">{b.name}</span>
-                      <span className="text-[0.6rem] text-slate-400 ml-auto">
+                      <span className="text-[0.6rem] text-slate-500 ml-auto">
                         {PLATFORM_TYPE_LABELS[b.platform_type]}
                       </span>
                     </button>

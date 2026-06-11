@@ -48,6 +48,13 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: () => null,
 }));
 
+// The run-log wrapper is exercised (with a chainable cron_run_log mock)
+// in __tests__/api/cron-check-fees.test.ts; here we isolate the email
+// branch, so pass the handler through untouched.
+vi.mock("@/lib/cron-run-log", () => ({
+  wrapCronHandler: (_name: string, h: unknown) => h,
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: () => ({ info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() }),
 }));

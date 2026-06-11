@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { buildAdvisorUrl, buildQuizUrl } from "@/lib/prefill-url";
+import {
+  buildAdvisorUrl,
+  buildQuizUrl,
+  buildCrossBorderMatchUrl,
+} from "@/lib/prefill-url";
 
 // ── buildAdvisorUrl ───────────────────────────────────────────────────────────
 
@@ -108,5 +112,59 @@ describe("buildQuizUrl", () => {
   it("omits state when not provided", () => {
     const url = buildQuizUrl({ vertical: "crypto" });
     expect(new URL(url, "https://x.test").searchParams.has("state")).toBe(false);
+  });
+});
+
+// ── buildCrossBorderMatchUrl ──────────────────────────────────────────────────
+
+describe("buildCrossBorderMatchUrl", () => {
+  it("returns a bare /find-advisor with no options (degrades to the generic funnel)", () => {
+    expect(buildCrossBorderMatchUrl()).toBe("/find-advisor");
+    expect(buildCrossBorderMatchUrl({})).toBe("/find-advisor");
+  });
+
+  it("maps a property intent to the FIRB specialty pre-filter", () => {
+    const url = buildCrossBorderMatchUrl({ intent: "property" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(url.startsWith("/find-advisor?")).toBe(true);
+    expect(params.get("specialty")).toBe("FIRB Property (Non-Resident)");
+  });
+
+  it("maps the UK corridor to the pension-transfer specialty", () => {
+    const url = buildCrossBorderMatchUrl({ countrySlug: "united-kingdom" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.get("specialty")).toBe("UK Pension Transfer");
+    expect(params.get("country")).toBe("united-kingdom");
+  });
+
+  it("maps the US corridor to the FATCA specialty", () => {
+    const url = buildCrossBorderMatchUrl({ countrySlug: "united-states" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.get("specialty")).toBe("FATCA-Aware US Expat Planning");
+  });
+
+  it("property intent outranks the corridor specialty", () => {
+    const url = buildCrossBorderMatchUrl({ countrySlug: "united-kingdom", intent: "property" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.get("specialty")).toBe("FIRB Property (Non-Resident)");
+    expect(params.get("country")).toBe("united-kingdom");
+  });
+
+  it("keeps the dedicated flow alive via ?country= for unmapped corridors", () => {
+    const url = buildCrossBorderMatchUrl({ track: "international", countrySlug: "hong-kong" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.get("country")).toBe("hong-kong");
+    expect(params.has("specialty")).toBe(false);
+  });
+
+  it("non-property intents add no specialty (matcher ignores them)", () => {
+    const url = buildCrossBorderMatchUrl({ countrySlug: "hong-kong", intent: "shares" });
+    const params = new URL(url, "https://x.test").searchParams;
+    expect(params.has("specialty")).toBe(false);
+    expect(params.get("country")).toBe("hong-kong");
+  });
+
+  it("track alone produces the bare URL (no dangling params)", () => {
+    expect(buildCrossBorderMatchUrl({ track: "expat" })).toBe("/find-advisor");
   });
 });

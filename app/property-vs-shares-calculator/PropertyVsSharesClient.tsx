@@ -171,7 +171,7 @@ export default function PropertyVsSharesClient() {
                   Deposit / cash to invest
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="pvs-deposit"
                     type="number" inputMode="decimal"
@@ -189,7 +189,7 @@ export default function PropertyVsSharesClient() {
               <div>
                 <label htmlFor="pvs-property-value" className="block text-xs font-semibold text-slate-600 mb-1">Purchase price</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="pvs-property-value"
                     type="number" inputMode="decimal"
@@ -200,7 +200,7 @@ export default function PropertyVsSharesClient() {
                     className="w-full pl-7 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                 </div>
-                <p className="text-[0.68rem] text-slate-400 mt-1">
+                <p className="text-[0.68rem] text-slate-500 mt-1">
                   LVR: {result.lvr.toFixed(0)}% · loan: {fmt(propertyValue - deposit)}
                 </p>
               </div>
@@ -218,7 +218,7 @@ export default function PropertyVsSharesClient() {
                     onChange={(e) => setPropertyGrowth(Number(e.target.value))}
                     className="w-full pr-8 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">%</span>
                 </div>
               </div>
 
@@ -235,7 +235,7 @@ export default function PropertyVsSharesClient() {
                     onChange={(e) => setRentalYield(Number(e.target.value))}
                     className="w-full pr-8 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">%</span>
                 </div>
               </div>
 
@@ -254,7 +254,7 @@ export default function PropertyVsSharesClient() {
                     onChange={(e) => setHoldingCosts(Number(e.target.value))}
                     className="w-full pr-16 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">% of value/yr</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs">% of value/yr</span>
                 </div>
               </div>
 
@@ -263,7 +263,7 @@ export default function PropertyVsSharesClient() {
               <div>
                 <label htmlFor="pvs-shares-return" className="block text-xs font-semibold text-slate-600 mb-1">
                   Expected annual return
-                  <span className="text-slate-400 font-normal ml-1">dividends + growth</span>
+                  <span className="text-slate-500 font-normal ml-1">dividends + growth</span>
                 </label>
                 <div className="relative">
                   <input
@@ -276,7 +276,7 @@ export default function PropertyVsSharesClient() {
                     onChange={(e) => setSharesReturn(Number(e.target.value))}
                     className="w-full pr-8 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">%</span>
                 </div>
               </div>
 
@@ -293,7 +293,7 @@ export default function PropertyVsSharesClient() {
                     onChange={(e) => setYears(Number(e.target.value))}
                     className="w-full pr-12 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">yrs</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">yrs</span>
                 </div>
               </div>
             </div>
@@ -371,7 +371,7 @@ export default function PropertyVsSharesClient() {
                   </div>
                   <div className="flex justify-between">
                     <span>No leverage</span>
-                    <span className="text-slate-400">unleveraged</span>
+                    <span className="text-slate-500">unleveraged</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Liquidity</span>
@@ -451,7 +451,7 @@ export default function PropertyVsSharesClient() {
           contextKeys={["asset-allocation", "property-vs-shares"]}
         />
 
-        <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
+        <p className="text-[0.65rem] text-slate-500 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial or property investment advice. Assumes a {(MORTGAGE_RATE * 100).toFixed(1)}% interest rate on a 30-year principal and interest loan. Property figures do not include stamp duty, conveyancing, property management fees or depreciation. Returns are not guaranteed. Always obtain independent advice before making investment decisions.
         </p>
       </div>

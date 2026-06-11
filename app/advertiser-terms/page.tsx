@@ -30,7 +30,7 @@ export const metadata = {
   twitter: { card: "summary_large_image" as const },
 };
 
-const EFFECTIVE_DATE = "16 March 2026";
+const EFFECTIVE_DATE = "16 March 2026"; // dated-ok — static historical/legal effective date (2026-06-11 sweep)
 const VERSION = "1.0";
 
 function S({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
@@ -60,7 +60,7 @@ export default function AdvertiserTermsPage() {
           </div>
 
           <h1 className="text-2xl md:text-4xl font-extrabold mb-2">Advertiser Terms &amp; Conditions</h1>
-          <p className="text-xs text-slate-400 mb-8">Version {VERSION} — Effective {EFFECTIVE_DATE}</p>
+          <p className="text-xs text-slate-500 mb-8">Version {VERSION} — Effective {EFFECTIVE_DATE}</p>
 
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
             <p className="text-xs text-amber-700">

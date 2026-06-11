@@ -15,7 +15,7 @@ export const metadata = {
   robots: { index: true, follow: true },
 };
 
-const EFFECTIVE_DATE = "10 March 2026";
+const EFFECTIVE_DATE = "10 March 2026"; // dated-ok — static historical/legal effective date (2026-06-11 sweep)
 const VERSION = "1.0";
 
 export default function ContentLicensePage() {
@@ -43,7 +43,7 @@ export default function ContentLicensePage() {
           </div>
 
           <h1 className="text-2xl md:text-4xl font-extrabold mb-2">Content Licence Agreement</h1>
-          <p className="text-xs text-slate-400 mb-8">Version {VERSION} — Effective {EFFECTIVE_DATE}</p>
+          <p className="text-xs text-slate-500 mb-8">Version {VERSION} — Effective {EFFECTIVE_DATE}</p>
 
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6">
             <p className="text-xs text-emerald-700">

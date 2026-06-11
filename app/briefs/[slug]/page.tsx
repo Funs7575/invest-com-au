@@ -348,14 +348,14 @@ export default async function BriefTrackerPage({
                           className={`mx-auto flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold ${
                             reached
                               ? "bg-amber-500 text-slate-900"
-                              : "bg-slate-100 text-slate-400"
+                              : "bg-slate-100 text-slate-500"
                           }`}
                         >
                           {idx + 1}
                         </div>
                         <p
                           className={`mt-1 text-[9px] leading-tight ${
-                            reached ? "font-semibold text-slate-700" : "text-slate-400"
+                            reached ? "font-semibold text-slate-700" : "text-slate-500"
                           }`}
                         >
                           {STATUS_LABELS[s]}

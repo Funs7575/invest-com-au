@@ -288,7 +288,7 @@ export default function TeamMembersPage() {
 
           <div>
             <label htmlFor="tm-credentials" className="block text-xs font-medium text-slate-500 mb-1">
-              Credentials <span className="text-slate-400 font-normal">(one per line)</span>
+              Credentials <span className="text-slate-500 font-normal">(one per line)</span>
             </label>
             <textarea
               id="tm-credentials"
@@ -352,13 +352,13 @@ export default function TeamMembersPage() {
               placeholder="https://..."
               className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
             />
-            <p className="text-xs text-slate-400 mt-0.5">Headshot image URL — shown on articles and the about page</p>
+            <p className="text-xs text-slate-500 mt-0.5">Headshot image URL — shown on articles and the about page</p>
           </div>
 
           <div>
             <label htmlFor="tm-publications" className="block text-xs font-medium text-slate-500 mb-1">
               Publications{" "}
-              <span className="text-slate-400 font-normal">
+              <span className="text-slate-500 font-normal">
                 (JSON array or &quot;Name | URL&quot; per line)
               </span>
             </label>

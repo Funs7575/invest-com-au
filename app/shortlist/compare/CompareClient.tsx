@@ -280,7 +280,7 @@ export default function CompareClient() {
                         ))}
                       </ul>
                     ) : (
-                      <span className="text-slate-400">---</span>
+                      <span className="text-slate-500">---</span>
                     )}
                   </td>
                 ))}
@@ -303,7 +303,7 @@ export default function CompareClient() {
                         ))}
                       </ul>
                     ) : (
-                      <span className="text-slate-400">---</span>
+                      <span className="text-slate-500">---</span>
                     )}
                   </td>
                 ))}
@@ -322,7 +322,7 @@ export default function CompareClient() {
                         <span className="text-amber-700 font-semibold">{broker.deal_text}</span>
                       </div>
                     ) : (
-                      <span className="text-slate-400">No current deal</span>
+                      <span className="text-slate-500">No current deal</span>
                     )}
                   </td>
                 ))}

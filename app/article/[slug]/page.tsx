@@ -36,6 +36,7 @@ import { isFlagEnabled } from "@/lib/feature-flags";
 import { pillarPathForCategory, linkDensityForCategory } from "@/lib/keyword-linking";
 import NextActions from "@/components/NextActions";
 import ArticleReadingProgress from "@/components/ArticleReadingProgress";
+import ArticleDiscussions from "@/components/community/ArticleDiscussions";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -716,6 +717,17 @@ export default async function ArticlePage({
               {/* Comments + reactions */}
               <ArticleComments slug={slug} />
 
+              {/* Community cross-links — honest-empty: renders nothing when
+                  no genuinely related thread exists (Suspense fallback null,
+                  zero layout shift). */}
+              <Suspense fallback={null}>
+                <ArticleDiscussions
+                  title={a.title}
+                  category={a.category}
+                  tags={a.tags}
+                />
+              </Suspense>
+
               {/* Related Articles */}
               <RelatedContentGrid
                 heading="Related Articles"
@@ -910,7 +922,7 @@ export default async function ArticlePage({
                             href={`#section-${i}`}
                             className="text-xs text-slate-700 hover:text-slate-900 transition-colors flex items-start gap-1.5"
                           >
-                            <span className="text-slate-400 font-semibold shrink-0 tabular-nums">
+                            <span className="text-slate-500 font-semibold shrink-0 tabular-nums">
                               {i + 1}.
                             </span>
                             <span className="leading-snug">{section.heading}</span>

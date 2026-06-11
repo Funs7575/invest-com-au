@@ -73,7 +73,7 @@ export default async function FirmJobsPage() {
           <header className="mb-6 md:mb-8">
             <nav
               aria-label="Breadcrumb"
-              className="text-xs text-slate-400 mb-2"
+              className="text-xs text-slate-500 mb-2"
             >
               <Link href="/firm-portal/billing" className="hover:text-slate-600">
                 Firm portal

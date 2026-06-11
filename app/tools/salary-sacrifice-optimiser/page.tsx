@@ -76,7 +76,7 @@ export default function SalarySacrificeOptimiserPage() {
       />
 
       <div className="container-custom max-w-2xl py-8">
-        <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-6 flex gap-1.5 flex-wrap">
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6 flex gap-1.5 flex-wrap">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>›</span>
           <Link href="/tools" className="hover:text-slate-600">Tools</Link>

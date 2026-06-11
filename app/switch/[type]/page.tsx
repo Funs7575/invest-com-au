@@ -12,6 +12,11 @@ import {
 } from "@/lib/compliance";
 
 export const revalidate = 3600;
+// Unknown switch-type slugs must 404 cleanly, not soft-404 (HTTP 200 +
+// streamed React #419 — DISC-B / DISC-20260610). SWITCH_TYPES is the static
+// source of truth enumerated by generateStaticParams() below, so
+// dynamicParams=false rejects any other slug at the routing layer.
+export const dynamicParams = false;
 
 // ─── Static params ────────────────────────────────────────────────────────────
 
@@ -298,7 +303,7 @@ export default async function SwitchTypePage({
                 Find a financial advisor
               </Link>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               General information only — not financial advice or a personal recommendation.
             </p>
           </div>
@@ -309,7 +314,7 @@ export default async function SwitchTypePage({
           </div>
 
           {/* General advice warning — always present */}
-          <div className="mt-4 text-xs text-slate-400 leading-relaxed border-t border-slate-100 pt-4">
+          <div className="mt-4 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-4">
             {GENERAL_ADVICE_WARNING}
           </div>
         </div>

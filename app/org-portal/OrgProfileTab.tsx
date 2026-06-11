@@ -122,7 +122,7 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="https://example.com/logo.png"
           />
-          <p className="text-[0.55rem] text-slate-400 mt-1">Paste a direct image URL. Square PNG or SVG recommended.</p>
+          <p className="text-[0.55rem] text-slate-500 mt-1">Paste a direct image URL. Square PNG or SVG recommended.</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">

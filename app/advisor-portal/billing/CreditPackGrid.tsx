@@ -70,7 +70,7 @@ export default function CreditPackGrid() {
               ${(pack.priceCents / 100).toFixed(0)}
             </div>
             <p className="text-xs text-slate-500 mb-1">{pack.leads} exclusive leads</p>
-            <p className="text-xs text-slate-400 mb-3">
+            <p className="text-xs text-slate-500 mb-3">
               ${(pack.perLeadCents / 100).toFixed(2)} per lead
             </p>
             <button
@@ -85,7 +85,7 @@ export default function CreditPackGrid() {
             >
               {busySlug === pack.slug ? "Opening checkout…" : `Buy ${pack.name}`}
             </button>
-            <p className="text-[0.6rem] text-slate-400 mt-2">{pack.description}</p>
+            <p className="text-[0.6rem] text-slate-500 mt-2">{pack.description}</p>
           </div>
         ))}
       </div>

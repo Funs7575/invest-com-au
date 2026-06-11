@@ -203,7 +203,7 @@ export default function SchemesEditor() {
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={7} className="text-center text-slate-400 py-6">
+                <td colSpan={7} className="text-center text-slate-500 py-6">
                   No schemes match the filter.
                 </td>
               </tr>
@@ -222,7 +222,7 @@ export default function SchemesEditor() {
                   </td>
                   <td className="px-3 py-2">
                     <span
-                      className={`text-xs font-semibold ${r.active ? "text-emerald-700" : "text-slate-400"}`}
+                      className={`text-xs font-semibold ${r.active ? "text-emerald-700" : "text-slate-500"}`}
                     >
                       {r.active ? "Active" : "Hidden"}
                     </span>

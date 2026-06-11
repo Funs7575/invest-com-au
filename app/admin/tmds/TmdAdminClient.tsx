@@ -217,7 +217,7 @@ export default function TmdAdminClient({ initialItems }: Props) {
                     </td>
                     <td className="px-3 py-2 font-semibold text-slate-900">
                       {t.product_name}{" "}
-                      <span className="text-slate-400 font-normal">
+                      <span className="text-slate-500 font-normal">
                         ({t.product_ref})
                       </span>
                     </td>

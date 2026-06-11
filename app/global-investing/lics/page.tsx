@@ -81,7 +81,7 @@ export default function GlobalLicsPage() {
             How NTA discounts work, how LICs differ from ETFs, and when active global exposure makes sense
             for Australian investors.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only</p>
         </div>
       </section>
 
@@ -113,7 +113,7 @@ export default function GlobalLicsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">MER figures are approximate and may vary. Check the manager&apos;s current PDS/ASX announcement for exact fees.</p>
+          <p className="text-xs text-slate-500 mt-2">MER figures are approximate and may vary. Check the manager&apos;s current PDS/ASX announcement for exact fees.</p>
         </div>
       </section>
 

@@ -116,7 +116,7 @@ export default function CompoundInterestClient() {
                 <button
                   type="button"
                   onClick={() => { setPrincipal(10_000); setRate(7); setYears(20); setMonthly(200); setFreq(12); }}
-                  className="text-xs text-slate-400 hover:text-slate-600 underline"
+                  className="text-xs text-slate-500 hover:text-slate-600 underline"
                 >
                   Reset to defaults
                 </button>
@@ -125,7 +125,7 @@ export default function CompoundInterestClient() {
               <div>
                 <label htmlFor="ci-principal" className="block text-xs font-semibold text-slate-600 mb-1">Initial investment</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="ci-principal"
                     type="number" inputMode="decimal"
@@ -141,7 +141,7 @@ export default function CompoundInterestClient() {
               <div>
                 <label htmlFor="ci-monthly" className="block text-xs font-semibold text-slate-600 mb-1">Monthly contribution</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">$</span>
                   <input
                     id="ci-monthly"
                     type="number" inputMode="decimal"
@@ -167,7 +167,7 @@ export default function CompoundInterestClient() {
                     onChange={(e) => setRate(Number(e.target.value))}
                     className="w-full pr-8 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">%</span>
                 </div>
               </div>
 
@@ -184,7 +184,7 @@ export default function CompoundInterestClient() {
                     onChange={(e) => setYears(Number(e.target.value))}
                     className="w-full pr-12 pl-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">yrs</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-medium">yrs</span>
                 </div>
               </div>
 
@@ -273,7 +273,7 @@ export default function CompoundInterestClient() {
                     <div className="flex justify-between text-xs mb-1">
                       <span className="text-slate-500">Year {s.year}</span>
                       <div className="flex gap-3">
-                        <span className="text-slate-400">Contrib: {fmt(s.contributions)}</span>
+                        <span className="text-slate-500">Contrib: {fmt(s.contributions)}</span>
                         <span className="font-semibold text-slate-700">{fmt(s.amount)}</span>
                       </div>
                     </div>
@@ -366,7 +366,7 @@ export default function CompoundInterestClient() {
           contextKeys={["compound-interest", "wealth-building"]}
         />
 
-        <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
+        <p className="text-[0.65rem] text-slate-500 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial advice. Returns shown are projections only and are not guaranteed. Past performance is not indicative of future performance. Always seek independent financial advice before making investment decisions.
         </p>
       </div>

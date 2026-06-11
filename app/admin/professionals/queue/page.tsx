@@ -137,7 +137,7 @@ export default function ProfessionalsQueuePage() {
         )}
 
         {loading ? (
-          <div className="text-slate-400 text-sm py-12 text-center">
+          <div className="text-slate-500 text-sm py-12 text-center">
             Loading queue…
           </div>
         ) : items.length === 0 ? (
@@ -369,7 +369,7 @@ function CredField({
 }) {
   return (
     <div>
-      <dt className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400">
+      <dt className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500">
         {label}
       </dt>
       <dd className="text-xs text-slate-700 font-medium truncate">

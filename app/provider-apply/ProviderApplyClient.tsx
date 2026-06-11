@@ -591,7 +591,7 @@ export default function ProviderApplyClient() {
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
                 placeholder="e.g. We deliver ASIC-approved ethics CPD, AFSL compliance workshops, and financial planning technical training. Our courses are available online and in-person across Australia..."
               />
-              <p className="text-[0.56rem] text-slate-400 mt-0.5">
+              <p className="text-[0.56rem] text-slate-500 mt-0.5">
                 Max 2,000 characters
               </p>
             </div>
@@ -603,7 +603,7 @@ export default function ProviderApplyClient() {
                 className="block text-xs font-semibold text-slate-600 mb-1"
               >
                 CPD Provider Number{" "}
-                <span className="font-normal text-slate-400">(optional)</span>
+                <span className="font-normal text-slate-500">(optional)</span>
               </label>
               <input
                 id="pa-cpd-number"
@@ -614,7 +614,7 @@ export default function ProviderApplyClient() {
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
                 placeholder="e.g. FPA-CPD-12345"
               />
-              <p className="text-[0.56rem] text-slate-400 mt-0.5">
+              <p className="text-[0.56rem] text-slate-500 mt-0.5">
                 If registered with FPA, SMSFA, AFA or similar association as an
                 accredited CPD provider.
               </p>
@@ -634,7 +634,7 @@ export default function ProviderApplyClient() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-slate-400 mt-4">
+        <p className="text-center text-xs text-slate-500 mt-4">
           Already have an account?{" "}
           <Link
             href="/auth/login"

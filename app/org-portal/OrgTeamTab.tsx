@@ -131,7 +131,7 @@ export default function OrgTeamTab({ org: _org }: Props) {
               <option value="editor">Editor</option>
               <option value="viewer">Viewer</option>
             </select>
-            <p className="text-[0.62rem] text-slate-400 mt-1">{ROLE_DESCRIPTIONS[inviteRole]}</p>
+            <p className="text-[0.62rem] text-slate-500 mt-1">{ROLE_DESCRIPTIONS[inviteRole]}</p>
           </div>
 
           {inviteError && (
@@ -182,7 +182,7 @@ export default function OrgTeamTab({ org: _org }: Props) {
               <div key={m.id} className="px-4 py-3 flex items-center justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-slate-900 truncate">{m.invited_email}</p>
-                  <p className="text-[0.58rem] text-slate-400 mt-0.5">
+                  <p className="text-[0.58rem] text-slate-500 mt-0.5">
                     Invited {new Date(m.invited_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                   </p>
                 </div>

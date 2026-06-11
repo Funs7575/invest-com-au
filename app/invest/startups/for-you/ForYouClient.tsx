@@ -76,7 +76,7 @@ function RoundCard({ item }: { item: ScoredRound }) {
           <div className="text-lg font-extrabold text-slate-900">
             {formatAud(round.target_aud_cents)}
           </div>
-          <div className="text-xs text-slate-400">target</div>
+          <div className="text-xs text-slate-500">target</div>
         </div>
       </div>
 
@@ -127,7 +127,7 @@ export default function ForYouClient({ rounds, hasThesis, isWholesaleVerified }:
           Set investment thesis
         </Link>
         {rounds.length > 0 && (
-          <p className="mt-4 text-xs text-slate-400">
+          <p className="mt-4 text-xs text-slate-500">
             Showing all {rounds.length} open round{rounds.length !== 1 ? "s" : ""} below.
           </p>
         )}
@@ -159,7 +159,7 @@ export default function ForYouClient({ rounds, hasThesis, isWholesaleVerified }:
           </Link>
         </div>
         {!isWholesaleVerified && (
-          <p className="mt-5 text-xs text-slate-400">
+          <p className="mt-5 text-xs text-slate-500">
             Some rounds require wholesale investor certification.{" "}
             <Link href="/account/wholesale-cert" className="text-violet-600 hover:underline">
               Get certified
@@ -182,7 +182,7 @@ export default function ForYouClient({ rounds, hasThesis, isWholesaleVerified }:
         ))}
       </div>
       {!isWholesaleVerified && (
-        <p className="mt-6 text-xs text-slate-400 text-center">
+        <p className="mt-6 text-xs text-slate-500 text-center">
           Wholesale-only rounds are hidden.{" "}
           <Link href="/account/wholesale-cert" className="text-violet-600 hover:underline">
             Get s708 certified

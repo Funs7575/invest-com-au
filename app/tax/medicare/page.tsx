@@ -119,7 +119,7 @@ const FAQS = [
   },
   {
     q: "Is basic hospital cover enough to avoid the surcharge?",
-    a: "Yes, provided it is genuine hospital cover from a registered health insurer and is held for the full income year. There is no requirement to buy comprehensive ('gold') cover to escape the surcharge — a basic or 'bronze' hospital policy is sufficient. From 1 April 2019 policies with an excess above $750 for singles or $1,500 for families/couples do not qualify, so check the excess on a cheap policy before relying on it. Extras-only cover (dental, optical, physio) does not count, because it is not hospital cover.",
+    a: "Yes, provided it is genuine hospital cover from a registered health insurer and is held for the full income year. There is no requirement to buy comprehensive ('gold') cover to escape the surcharge — a basic or 'bronze' hospital policy is sufficient. From 1 April 2019 policies with an excess above $750 for singles or $1,500 for families/couples do not qualify, so check the excess on a cheap policy before relying on it. Extras-only cover (dental, optical, physio) does not count, because it is not hospital cover.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
 ];
 
@@ -266,7 +266,7 @@ export default function MedicarePage() {
                   ))}
                 </tbody>
               </table>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 Family thresholds rise by roughly $4,000 for each dependent child. Figures for 2024&ndash;25; verify the current year at ato.gov.au.
               </p>
             </div>
@@ -346,7 +346,7 @@ export default function MedicarePage() {
                 </table>
               </div>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               The family threshold increases by $1,500 for each dependent child after the first. Figures for 2024&ndash;25; verify at ato.gov.au.
             </p>
           </div>
@@ -508,7 +508,7 @@ export default function MedicarePage() {
                   ))}
                 </tbody>
               </table>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-slate-500 mt-2">
                 Rebate percentages are indexed annually (1 April) and shown for the 2024&ndash;25 year; verify at privatehealth.gov.au.
               </p>
             </div>

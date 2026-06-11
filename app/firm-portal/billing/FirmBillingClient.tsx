@@ -218,7 +218,7 @@ export default function FirmBillingClient({ summary: initialSummary }: Props) {
                         <Icon name="check-circle" className="h-3.5 w-3.5" /> On
                       </span>
                     ) : (
-                      <span className="text-slate-400">Off</span>
+                      <span className="text-slate-500">Off</span>
                     )}
                   </td>
                   <td className="px-3 py-3 text-slate-500 text-xs">

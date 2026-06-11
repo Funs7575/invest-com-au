@@ -157,7 +157,7 @@ export default async function SquadTopicLeadMagnetPage({ params }: PageProps) {
         </section>
       )}
 
-      <p className="text-[11px] text-slate-400 mt-10">
+      <p className="text-[11px] text-slate-500 mt-10">
         General information only. {data.team.name} delivers their services
         under their own professional licence.
       </p>

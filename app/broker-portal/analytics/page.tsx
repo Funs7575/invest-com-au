@@ -329,7 +329,7 @@ export default function AnalyticsPage() {
             <Icon name="download" size={11} />
             Export CSV
           </button>
-          {loading && <span aria-live="polite" aria-atomic="true" className="text-xs text-slate-400 animate-pulse">Loading…</span>}
+          {loading && <span aria-live="polite" aria-atomic="true" className="text-xs text-slate-500 animate-pulse">Loading…</span>}
           {(["7d", "30d", "90d"] as DateRange[]).map(d => (
             <button key={d} onClick={() => setDays(d)} disabled={loading}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
@@ -410,7 +410,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
             {dailyTotals.length === 0 ? (
-              <p className="text-sm text-slate-400 py-8 text-center">No data for this period.</p>
+              <p className="text-sm text-slate-500 py-8 text-center">No data for this period.</p>
             ) : (
               <div className="overflow-x-auto">
                 {(() => {
@@ -459,7 +459,7 @@ export default function AnalyticsPage() {
           <div className="bg-white rounded-xl border border-slate-200 p-5">
             <h2 className="font-bold text-slate-900 mb-4">Daily Spend</h2>
             {dailyTotals.length === 0 ? (
-              <p className="text-sm text-slate-400 py-8 text-center">No data for this period.</p>
+              <p className="text-sm text-slate-500 py-8 text-center">No data for this period.</p>
             ) : (
               <div className="overflow-x-auto">
                 {renderBarChart(dailyTotals.map(d => ({ label: d.date, value: d.spend })), "#f59e0b")}
@@ -509,7 +509,7 @@ export default function AnalyticsPage() {
               </div>
             </div>
             {dailyFunnel.length === 0 ? (
-              <p className="text-sm text-slate-400 py-8 text-center">No conversion data for this period.</p>
+              <p className="text-sm text-slate-500 py-8 text-center">No conversion data for this period.</p>
             ) : (
               <div className="overflow-x-auto">{renderStackedChart(dailyFunnel)}</div>
             )}
@@ -532,7 +532,7 @@ export default function AnalyticsPage() {
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-medium text-slate-700">{stage.label}</span>
                         <span className="text-sm font-bold text-slate-900">
-                          {stage.count} <span className="text-xs text-slate-400 font-normal">({pct.toFixed(1)}%)</span>
+                          {stage.count} <span className="text-xs text-slate-500 font-normal">({pct.toFixed(1)}%)</span>
                         </span>
                       </div>
                       <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
@@ -581,7 +581,7 @@ export default function AnalyticsPage() {
           <div className="bg-white rounded-xl border border-slate-200 p-5">
             <h2 className="font-bold text-slate-900 mb-4">Daily Spend vs Conversion Value</h2>
             {dailyTotals.length === 0 ? (
-              <p className="text-sm text-slate-400 py-8 text-center">No data for this period.</p>
+              <p className="text-sm text-slate-500 py-8 text-center">No data for this period.</p>
             ) : (
               <div className="overflow-x-auto">
                 <div className="flex items-center gap-4 mb-3 text-xs">
@@ -764,7 +764,7 @@ export default function AnalyticsPage() {
                         <div className="bg-slate-50 rounded-lg p-3">
                           <p className="text-xs text-slate-500 font-medium mb-1">Min. customer value needed for break-even</p>
                           <p className="text-lg font-extrabold text-slate-900">${costPerConversion.toFixed(2)}</p>
-                          <p className="text-[0.62rem] text-slate-400 mt-0.5">If your avg customer is worth more than this, you&apos;re effectively profitable</p>
+                          <p className="text-[0.62rem] text-slate-500 mt-0.5">If your avg customer is worth more than this, you&apos;re effectively profitable</p>
                         </div>
                       )}
                     </div>
@@ -827,7 +827,7 @@ export default function AnalyticsPage() {
                       <span className={`text-xs font-bold ${indicator.color}`} title={indicator.label}>{indicator.icon}</span>
                     </div>
                     <div className="mt-2 space-y-1">
-                      <div className="flex items-center justify-between text-[0.69rem] text-slate-400">
+                      <div className="flex items-center justify-between text-[0.69rem] text-slate-500">
                         <span>Industry avg</span>
                         <span className="font-medium text-slate-500">{metric.format(metric.industry)}</span>
                       </div>
@@ -877,7 +877,7 @@ export default function AnalyticsPage() {
               <p className="text-xs text-slate-500 mt-0.5">Campaigns ranked by composite performance score</p>
             </div>
             {campaignBenchmarks.campaigns.length === 0 ? (
-              <div className="p-8 text-center text-sm text-slate-400">No campaign data for this period.</div>
+              <div className="p-8 text-center text-sm text-slate-500">No campaign data for this period.</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm" aria-label="Campaign performance benchmark ranking">
@@ -896,7 +896,7 @@ export default function AnalyticsPage() {
                   <tbody className="divide-y divide-slate-100">
                     {campaignBenchmarks.campaigns.map((c, i) => (
                       <tr key={c.id} className="hover:bg-slate-50">
-                        <td className="px-5 py-3 text-slate-400 font-mono text-xs">#{i + 1}</td>
+                        <td className="px-5 py-3 text-slate-500 font-mono text-xs">#{i + 1}</td>
                         <td className="px-5 py-3 font-semibold text-slate-900">Campaign #{c.id}</td>
                         <td className="px-5 py-3 text-right">{c.clicks}</td>
                         <td className="px-5 py-3 text-right">
@@ -1010,7 +1010,7 @@ export default function AnalyticsPage() {
                 <p className="text-red-600 mt-0.5">Significantly below benchmarks</p>
               </div>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               Performance score is a weighted composite: CTR (30%), Conversion Rate (40%), Cost Efficiency (30%), benchmarked against industry averages for financial services advertising.
             </p>
           </div>

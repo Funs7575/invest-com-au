@@ -203,7 +203,7 @@ export default async function ReviewerPage({
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             {/* Breadcrumb */}
-            <div className="text-sm text-slate-400 mb-8">
+            <div className="text-sm text-slate-500 mb-8">
               <Link href="/" className="hover:text-white transition-colors">
                 Home
               </Link>
@@ -241,7 +241,7 @@ export default async function ReviewerPage({
                 </span>
 
                 {/* Credential stats line */}
-                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-400">
+                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500">
                   {totalReviews > 0 && (
                     <span>
                       <span className="text-white font-semibold">{totalReviews}</span>{" "}

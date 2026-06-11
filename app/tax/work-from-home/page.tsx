@@ -92,7 +92,7 @@ const FAQS = [
   },
   {
     q: "What records does the ATO require for WFH deductions?",
-    a: "From 1 July 2022, the ATO requires a contemporaneous record of actual hours worked from home for the full income year — a 4-week representative diary is no longer accepted. Acceptable records include: a work calendar, diary, timesheet, roster, or technology-generated logs (Microsoft Teams meeting history, Zoom logs, building access records). You must also have evidence that you incurred additional running expenses (utility bills, internet invoices). Under the actual cost method you additionally need receipts and a written basis for each work-use percentage calculation. Keep all records for 5 years after lodging the relevant return.",
+    a: "From 1 July 2022, the ATO requires a contemporaneous record of actual hours worked from home for the full income year — a 4-week representative diary is no longer accepted. Acceptable records include: a work calendar, diary, timesheet, roster, or technology-generated logs (Microsoft Teams meeting history, Zoom logs, building access records). You must also have evidence that you incurred additional running expenses (utility bills, internet invoices). Under the actual cost method you additionally need receipts and a written basis for each work-use percentage calculation. Keep all records for 5 years after lodging the relevant return.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     q: "Can I switch between WFH deduction methods each year?",
@@ -215,6 +215,7 @@ export default function WorkFromHomePage() {
                   separately.
                 </p>
                 <ul className="text-xs text-slate-600 space-y-1">
+                  {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
                   <li>Applies from: 1 July 2022</li>
                   <li>Records: full-year hours log + expense evidence</li>
                   <li>Best for: most WFH employees</li>
@@ -255,6 +256,7 @@ export default function WorkFromHomePage() {
                 <p className="text-3xl font-extrabold text-red-400 mb-2 line-through">80c per hour</p>
                 <p className="text-sm text-slate-600 leading-relaxed mb-3">
                   The COVID-era shortcut method (80 cents/hour, all-inclusive) was available only
+                  {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
                   for 2019–20, 2020–21, and 2021–22. It ended on 30 June 2022 and cannot be used
                   in 2024–25.
                 </p>
@@ -301,6 +303,7 @@ export default function WorkFromHomePage() {
               Fixed rate method — 67 cents per hour
             </h2>
             <p className="text-sm text-slate-600 mb-8 max-w-3xl">
+              {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
               The revised fixed rate method applies from 1 July 2022. The 67c/hour rate is a
               composite rate covering five categories of running expense. It replaced the earlier
               52c/hour rate and the COVID shortcut.
@@ -411,6 +414,7 @@ export default function WorkFromHomePage() {
                 Record-keeping change from 2023 — no more 4-week sample
               </h3>
               <p className="text-sm text-amber-900 leading-relaxed">
+                {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
                 The ATO confirmed in PCG 2023/1 that from 1 July 2022 onwards, a 4-week
                 representative diary is no longer sufficient to substantiate WFH claims under the
                 fixed rate method. You must keep a record of{" "}
@@ -663,7 +667,7 @@ export default function WorkFromHomePage() {
               </table>
             </div>
 
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Effective lives from ATO Tax Ruling TR 2023/1. Verify current rates at ato.gov.au
               before lodging. Work-use proportion applies to all assets.
             </p>

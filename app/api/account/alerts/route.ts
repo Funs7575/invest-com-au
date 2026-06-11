@@ -34,20 +34,32 @@ export const runtime = "nodejs";
 
 const METRIC_KINDS = ["savings_rate", "term_deposit", "loan_rate", "broker_fee"] as const;
 
-const CreateBody = z.object({
-  metric_kind: z.enum(METRIC_KINDS),
-  /** Threshold as a percentage (e.g. 5.25). Converted to basis points on insert. */
-  threshold_pct: z.number().min(0).max(100),
-  /** "above" fires when current ≥ threshold; "below" when current ≤ threshold. */
-  direction: z.enum(["above", "below"]).default("above"),
-  frequency: z.enum(["instant", "daily", "weekly"]).default("instant"),
-  /** Required for broker_fee subscriptions. */
-  broker_slug: z.string().max(100).optional().nullable(),
-  /** Required for loan_rate subscriptions. */
-  lender_slug: z.string().max(100).optional().nullable(),
-  /** Optional JSON filter bag for future refinement (min_balance etc.). */
-  product_filters: z.record(z.string(), z.unknown()).optional(),
-});
+const CreateBody = z
+  .object({
+    metric_kind: z.enum(METRIC_KINDS),
+    /**
+     * threshold (default): fire when the metric crosses threshold_pct.
+     * any_change: fire whenever a tracked rate for the product changes
+     * (savings_rate / term_deposit only — change detection reads
+     * rate_change_log, which only covers savings products).
+     */
+    mode: z.enum(["threshold", "any_change"]).default("threshold"),
+    /** Threshold as a percentage (e.g. 5.25). Converted to basis points on insert. */
+    threshold_pct: z.number().min(0).max(100).optional(),
+    /** "above" fires when current ≥ threshold; "below" when current ≤ threshold. */
+    direction: z.enum(["above", "below"]).default("above"),
+    frequency: z.enum(["instant", "daily", "weekly"]).default("instant"),
+    /** Required for broker_fee subscriptions. */
+    broker_slug: z.string().max(100).optional().nullable(),
+    /** Required for loan_rate subscriptions. */
+    lender_slug: z.string().max(100).optional().nullable(),
+    /** Optional JSON filter bag for future refinement (min_balance etc.). */
+    product_filters: z.record(z.string(), z.unknown()).optional(),
+  })
+  .refine((body) => body.mode === "any_change" || body.threshold_pct !== undefined, {
+    message: "threshold_pct is required for threshold alerts",
+    path: ["threshold_pct"],
+  });
 
 const DeleteBody = z.object({
   id: z.string().uuid(),
@@ -105,17 +117,33 @@ export const POST = withValidatedBody(CreateBody, async (_req: NextRequest, body
       { status: 400 },
     );
   }
+  if (
+    body.mode === "any_change" &&
+    body.metric_kind !== "savings_rate" &&
+    body.metric_kind !== "term_deposit"
+  ) {
+    return NextResponse.json(
+      { error: "any_change alerts are available for savings and term-deposit rates only" },
+      { status: 400 },
+    );
+  }
 
-  const thresholdBps = Math.round(body.threshold_pct * 100);
+  const thresholdBps =
+    body.mode === "any_change" ? 0 : Math.round((body.threshold_pct ?? 0) * 100);
 
-  // Map metric_kind to legacy product_kind for backward compat with the
-  // existing cron which still reads product_kind.
+  // Map metric_kind to product_kind. The (lower(email), product_kind) unique
+  // index means one alert per product per email, so each metric kind needs a
+  // distinct value. 'loan' and 'brokerage' require the relaxed CHECK from
+  // migration 20260611100000 — until that's pushed, those inserts 23514 and
+  // we surface a clear 503 below.
   const legacyProductKind =
     body.metric_kind === "savings_rate"
       ? "savings_account"
       : body.metric_kind === "term_deposit"
       ? "term_deposit"
-      : "other";
+      : body.metric_kind === "loan_rate"
+      ? "loan"
+      : "brokerage";
 
   // Signed-in users skip double-opt-in — their session is already verified.
   const unsubscribeToken = randomBytes(24).toString("hex");
@@ -133,7 +161,10 @@ export const POST = withValidatedBody(CreateBody, async (_req: NextRequest, body
       frequency: body.frequency,
       broker_slug: body.broker_slug ?? null,
       lender_slug: body.lender_slug ?? null,
-      product_filters: body.product_filters ?? {},
+      product_filters: {
+        ...(body.product_filters ?? {}),
+        ...(body.mode === "any_change" ? { mode: "any_change" } : {}),
+      },
       verified: true, // signed-in users are auto-verified
       verify_token: verifyToken,
       unsubscribe_token: unsubscribeToken,
@@ -144,6 +175,25 @@ export const POST = withValidatedBody(CreateBody, async (_req: NextRequest, body
     .single();
 
   if (insertErr) {
+    // 23505: unique (lower(email), product_kind) — one alert per product.
+    if (insertErr.code === "23505") {
+      return NextResponse.json(
+        { error: "You already have an alert for this product. Remove it first to change it." },
+        { status: 409 },
+      );
+    }
+    // 23514: product_kind CHECK still on the pre-migration value list —
+    // loan/brokerage alerts need migration 20260611100000 pushed.
+    if (insertErr.code === "23514") {
+      log.warn("alerts POST blocked by product_kind CHECK (migration pending)", {
+        userId: user.id,
+        metricKind: body.metric_kind,
+      });
+      return NextResponse.json(
+        { error: "This alert type isn't available yet. Please try again later." },
+        { status: 503 },
+      );
+    }
     log.warn("alerts POST insert failed", {
       userId: user.id,
       err: insertErr.message,

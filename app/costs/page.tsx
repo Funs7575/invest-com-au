@@ -154,7 +154,7 @@ export default function CostsHub() {
           </div>
 
           {/* E-E-A-T footer */}
-          <div className="mt-8 text-xs text-slate-400 text-center">
+          <div className="mt-8 text-xs text-slate-500 text-center">
             <p>
               All costs calculated using verified platform fees by{" "}
               <a href={REVIEW_AUTHOR.url} className="underline hover:text-slate-900">

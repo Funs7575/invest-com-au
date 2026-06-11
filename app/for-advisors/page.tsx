@@ -145,7 +145,7 @@ export default async function ForAdvisorsPage() {
           <div className="grid md:grid-cols-3 gap-4">
             {/* Free Trial */}
             <div className="border border-slate-200 rounded-xl p-6">
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Free Trial</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Free Trial</p>
               <p className="text-3xl font-extrabold text-slate-900 mb-1">$0</p>
               <p className="text-sm text-slate-500 mb-5">First 3 leads free</p>
               <ul className="space-y-2 mb-6">
@@ -162,7 +162,7 @@ export default async function ForAdvisorsPage() {
             <div className="border-2 border-violet-500 rounded-xl p-6 relative bg-gradient-to-br from-violet-50 to-indigo-50 shadow-lg shadow-violet-100 md:scale-[1.03] md:z-10">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-violet-600 text-white text-xs font-extrabold rounded-full shadow-sm shadow-violet-300 tracking-wide">★ Most Popular</div>
               <p className="text-sm font-bold text-violet-600 uppercase tracking-wider mb-1">Pay Per Lead</p>
-              <p className="text-3xl font-extrabold text-slate-900 mb-1">$39<span className="text-lg text-slate-400 font-normal">/lead</span></p>
+              <p className="text-3xl font-extrabold text-slate-900 mb-1">$39<span className="text-lg text-slate-500 font-normal">/lead</span></p>
               <p className="text-sm text-slate-500 mb-5">After 3 free trial leads</p>
               <ul className="space-y-2 mb-6">
                 {["Everything in Free", "Unlimited leads", "Lead quality scoring", "Priority listing", "Email notifications", "Response time tracking"].map(f => (
@@ -176,7 +176,7 @@ export default async function ForAdvisorsPage() {
 
             {/* Expert Articles */}
             <div className="border border-slate-200 rounded-xl p-6">
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Expert Articles</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Expert Articles</p>
               <p className="text-3xl font-extrabold text-slate-900 mb-1">$199–$599</p>
               <p className="text-sm text-slate-500 mb-5">One-off thought leadership pieces</p>
               <ul className="space-y-2 mb-6">
@@ -213,7 +213,7 @@ export default async function ForAdvisorsPage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 text-center mt-4">
+          <p className="text-xs text-slate-500 text-center mt-4">
             All advisors must hold a current AFSL, be an authorised representative, or be registered with a relevant body (TPB, ASIC).
           </p>
         </div>

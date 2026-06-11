@@ -118,7 +118,7 @@ export default function ComplaintsIntakeForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <label htmlFor="c-name" className="block text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 mb-1">
-            Your name <span className="text-slate-400">(optional)</span>
+            Your name <span className="text-slate-500">(optional)</span>
           </label>
           <input
             id="c-name"
@@ -147,7 +147,7 @@ export default function ComplaintsIntakeForm() {
 
       <div>
         <label htmlFor="c-phone" className="block text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 mb-1">
-          Phone <span className="text-slate-400">(optional)</span>
+          Phone <span className="text-slate-500">(optional)</span>
         </label>
         <input
           id="c-phone"
@@ -208,7 +208,7 @@ export default function ComplaintsIntakeForm() {
           placeholder="Describe the issue in as much detail as you can. Include dates, reference numbers, and any relevant context."
           className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none text-sm"
         />
-        <p className="text-[0.6rem] text-slate-400 mt-1">
+        <p className="text-[0.6rem] text-slate-500 mt-1">
           {body.length} / 10,000 characters
         </p>
       </div>

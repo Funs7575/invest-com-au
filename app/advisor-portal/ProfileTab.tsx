@@ -78,7 +78,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
         {/* Availability Status */}
         <div>
           <p className="block text-xs font-semibold text-slate-600 mb-1">Availability Status</p>
-          <p className="text-[0.62rem] text-slate-400 mb-2">
+          <p className="text-[0.62rem] text-slate-500 mb-2">
             Shown as a badge on your profile and in the advisor directory.
           </p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -101,7 +101,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
                     <p className={`text-xs font-semibold leading-tight ${isSelected ? 'text-slate-900' : 'text-slate-700'}`}>
                       {opt.label}
                     </p>
-                    <p className="text-[0.6rem] text-slate-400 mt-0.5 leading-tight">{opt.description}</p>
+                    <p className="text-[0.6rem] text-slate-500 mt-0.5 leading-tight">{opt.description}</p>
                   </div>
                 </button>
               );
@@ -188,7 +188,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
             placeholder="https://calendly.com/your-name/30min"
             autoComplete="url"
           />
-          <p className="text-[0.55rem] text-slate-400 mt-1">Paste your Calendly or Cal.com link. A &quot;Book Free Call&quot; button will appear on your profile.</p>
+          <p className="text-[0.55rem] text-slate-500 mt-1">Paste your Calendly or Cal.com link. A &quot;Book Free Call&quot; button will appear on your profile.</p>
         </div>
 
         <div>
@@ -230,7 +230,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
                   placeholder="e.g. Free 30-minute initial consultation"
                   maxLength={100}
                 />
-                <p className="text-[0.55rem] text-slate-400 mt-1">Keep it short and compelling. This is the main text investors see.</p>
+                <p className="text-[0.55rem] text-slate-500 mt-1">Keep it short and compelling. This is the main text investors see.</p>
               </div>
               <div>
                 <label htmlFor="pt-offer-terms" className="block text-xs font-semibold text-slate-600 mb-1">Terms & Conditions (optional)</label>
@@ -280,7 +280,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
                 </div>
                 {r.title && <div className="text-sm font-medium text-slate-800 mb-1">{r.title}</div>}
                 {r.body && <p className="text-xs text-slate-600 leading-relaxed">{r.body}</p>}
-                <div className="text-[0.56rem] text-slate-400 mt-2">{new Date(r.created_at).toLocaleDateString("en-AU")}</div>
+                <div className="text-[0.56rem] text-slate-500 mt-2">{new Date(r.created_at).toLocaleDateString("en-AU")}</div>
               </div>
             ))}
           </div>
@@ -321,7 +321,7 @@ function CountriesServedField({ value, onChange }: CountriesServedFieldProps) {
       <p className="block text-xs font-semibold text-slate-600 mb-1">
         Cross-border corridors you serve
       </p>
-      <p className="text-[0.62rem] text-slate-400 mb-2">
+      <p className="text-[0.62rem] text-slate-500 mb-2">
         Tick the countries you actively help clients with. Investors landing on
         country pages get matched to you first when their country is one you
         flagged. AU is implicit — every advisor here is AU-licensed.

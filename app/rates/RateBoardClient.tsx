@@ -277,7 +277,7 @@ export default function RateBoardClient({
                     <tr>
                       <td
                         colSpan={6}
-                        className="px-3 py-10 text-center text-slate-400"
+                        className="px-3 py-10 text-center text-slate-500"
                       >
                         No{" "}
                         {activeTab === "savings"
@@ -396,10 +396,10 @@ export default function RateBoardClient({
 
             {/* Last updated */}
             <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
-              <p className="text-[0.62rem] md:text-xs text-slate-400">
+              <p className="text-[0.62rem] md:text-xs text-slate-500">
                 Last updated: {lastUpdated}
               </p>
-              <p className="text-[0.62rem] md:text-xs text-slate-400">
+              <p className="text-[0.62rem] md:text-xs text-slate-500">
                 {sorted.length}{" "}
                 {activeTab === "savings" ? "savings accounts" : "term deposits"}
               </p>
@@ -480,7 +480,7 @@ export default function RateBoardClient({
           </section>
 
           {/* Disclosure */}
-          <div className="mt-8 text-[0.62rem] md:text-xs text-slate-400 text-center">
+          <div className="mt-8 text-[0.62rem] md:text-xs text-slate-500 text-center">
             <p>
               Rates are sourced from official provider websites and may change
               without notice. This page is for general comparison purposes only

@@ -259,3 +259,54 @@ describe("allocateAdvisors / resolveLeadAdvisorType", () => {
     expect(resolveLeadAdvisorType({ location: "international", investor_goal_intl: "property" })).toBe("buyers-agent");
   });
 });
+
+describe("not_sure paths — graceful neutral routing", () => {
+  describe("property_sub = not_sure", () => {
+    it("does NOT gate into the advisor track (only physical does)", () => {
+      const a: UnifiedAnswers = { location: "australia", goal: "property", mode: "diy", property_sub: "not_sure" };
+      expect(resolveTrack(a)).toBe("diy");
+    });
+
+    it("continues to wealth-stack questions (treated like REIT/super)", () => {
+      const a: UnifiedAnswers = { location: "australia", goal: "property", mode: "diy", property_sub: "not_sure" };
+      expect(getNextId("property_sub", a)).toBe("stack_risk");
+    });
+  });
+
+  describe("investor_goal_intl = not_sure", () => {
+    it("inferAdvisorType falls back to financial-planner", () => {
+      expect(inferAdvisorType({ location: "international", investor_goal_intl: "not_sure" })).toBe("financial-planner");
+    });
+
+    it("does NOT trigger the business post-job fork in the flow", () => {
+      // The outcome resolver (quiz-outcome.ts) routes business → post-job;
+      // not_sure must not accidentally trigger it.
+      const a: UnifiedAnswers = { location: "international", investor_goal_intl: "not_sure" };
+      // Flow ends after advisor_type (international track)
+      expect(getNextId("investor_goal_intl", a)).toBe("amount");
+    });
+  });
+
+  describe("visa_status = not_sure", () => {
+    it("validates via QuizVisaStatusSchema (string ≤ 50 chars)", () => {
+      // Tested via the contract loop in quiz-questions.test.ts; here we verify
+      // the routing continues normally (no crash, no schema rejection).
+      const a: UnifiedAnswers = { location: "international", visa_status: "not_sure" };
+      expect(getNextId("visa_status", a)).toBe("investor_goal_intl");
+    });
+  });
+
+  describe("investor_country = not_sure", () => {
+    it("international track continues past country to visa_status", () => {
+      const a: UnifiedAnswers = { location: "international", investor_country: "not_sure" };
+      expect(getNextId("investor_country", a)).toBe("visa_status");
+    });
+  });
+
+  describe("stack_risk = not_sure", () => {
+    it("flow continues to stack_super", () => {
+      const a: UnifiedAnswers = { location: "australia", goal: "grow", mode: "diy", stack_risk: "not_sure" };
+      expect(getNextId("stack_risk", a)).toBe("stack_super");
+    });
+  });
+});

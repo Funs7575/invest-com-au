@@ -145,7 +145,7 @@ export default function BusinessFinancePage() {
               <p className="mx-auto max-w-xl text-center text-sm leading-relaxed text-slate-600 md:text-lg">
                 {vertical.heroSubtext}
               </p>
-              <p className="mt-2 text-center text-xs text-slate-400">{UPDATED_LABEL}</p>
+              <p className="mt-2 text-center text-xs text-slate-500">{UPDATED_LABEL}</p>
             </div>
           </div>
 
@@ -279,7 +279,7 @@ export default function BusinessFinancePage() {
           {/* Compliance */}
           <p className="text-center text-[0.7rem] text-slate-500">{GENERAL_ADVICE_WARNING}</p>
           {vertical.disclaimer && (
-            <p className="mt-2 text-center text-[0.65rem] text-slate-400">{vertical.disclaimer}</p>
+            <p className="mt-2 text-center text-[0.65rem] text-slate-500">{vertical.disclaimer}</p>
           )}
         </div>
       </div>

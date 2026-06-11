@@ -21,17 +21,27 @@ const log = logger("rate-alerts");
 // capture is valuable on its own (a list of users actively shopping
 // for savings rates is high-quality lifecycle-email + BD-pitch fuel).
 
-const SubscribeSchema = z.object({
-  email: z.string().email().max(254),
-  product_kind: z.enum(["savings_account", "term_deposit"]),
-  // Rate as a percentage (e.g. 5.25). Persisted as basis points to
-  // avoid floating-point comparison pain in the cron query.
-  threshold_pct: z.number().min(0).max(50),
-  product_filters: z.record(z.string(), z.unknown()).optional(),
-  frequency: z.enum(["instant", "daily", "weekly"]).default("instant"),
-  // Honeypot — bots fill, real users never see.
-  website: z.string().optional(),
-});
+const SubscribeSchema = z
+  .object({
+    email: z.string().email().max(254),
+    product_kind: z.enum(["savings_account", "term_deposit"]),
+    // threshold (default): alert when the best rate crosses threshold_pct.
+    // any_change: alert whenever any tracked rate for the product changes
+    // (stored as product_filters.mode = 'any_change'; threshold unused).
+    mode: z.enum(["threshold", "any_change"]).default("threshold"),
+    // Rate as a percentage (e.g. 5.25). Persisted as basis points to
+    // avoid floating-point comparison pain in the cron query. Required
+    // for threshold mode; ignored for any_change.
+    threshold_pct: z.number().min(0).max(50).optional(),
+    product_filters: z.record(z.string(), z.unknown()).optional(),
+    frequency: z.enum(["instant", "daily", "weekly"]).default("instant"),
+    // Honeypot — bots fill, real users never see.
+    website: z.string().optional(),
+  })
+  .refine((body) => body.mode === "any_change" || body.threshold_pct !== undefined, {
+    message: "threshold_pct is required for threshold alerts",
+    path: ["threshold_pct"],
+  });
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -53,7 +63,8 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
-  const { email, product_kind, threshold_pct, product_filters, frequency, website } = parsed.data;
+  const { email, product_kind, mode, threshold_pct, product_filters, frequency, website } =
+    parsed.data;
 
   // Honeypot: silently 200 so bots don't probe.
   if (website && website.length > 0) {
@@ -79,7 +90,14 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const verifyToken = randomBytes(24).toString("hex");
   const unsubscribeToken = randomBytes(24).toString("hex");
-  const thresholdBps = Math.round(threshold_pct * 100);
+  // any_change subscriptions carry no meaningful threshold — store 0 (valid
+  // per the 0..10000 CHECK) and flag the mode in product_filters so the
+  // cron can partition without a schema change.
+  const thresholdBps = mode === "any_change" ? 0 : Math.round((threshold_pct ?? 0) * 100);
+  const filters: Record<string, unknown> = {
+    ...(product_filters ?? {}),
+    ...(mode === "any_change" ? { mode: "any_change" } : {}),
+  };
 
   // Anon RLS on rate_alert_subscriptions grants INSERT ONLY (see
   // supabase/migrations/20260518010000_rate_alert_subscriptions.sql) — an
@@ -98,7 +116,7 @@ export async function POST(request: NextRequest) {
     email: email.toLowerCase(),
     product_kind,
     threshold_bps: thresholdBps,
-    product_filters: product_filters ?? {},
+    product_filters: filters,
     frequency,
     verified: false,
     verify_token: verifyToken,
@@ -140,6 +158,10 @@ export async function POST(request: NextRequest) {
   const resendKey = process.env.RESEND_API_KEY;
   if (resendKey) {
     const productLabel = product_kind === "savings_account" ? "savings account" : "term deposit";
+    const confirmLine =
+      mode === "any_change"
+        ? `We'll email you whenever a tracked Australian ${productLabel} rate changes.`
+        : `We'll email you when any Australian ${productLabel} crosses <strong>${(threshold_pct ?? 0).toFixed(2)}% p.a.</strong>`;
     try {
       await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -158,8 +180,7 @@ export async function POST(request: NextRequest) {
               </div>
               <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
                 <p style="font-size: 15px; margin-top: 0;">
-                  We'll email you when any Australian ${productLabel} crosses
-                  <strong>${threshold_pct.toFixed(2)}% p.a.</strong>
+                  ${confirmLine}
                 </p>
                 <div style="text-align: center; margin: 20px 0;">
                   <a href="${siteUrl}/rate-alerts?verify=${verifyToken}"
@@ -168,6 +189,8 @@ export async function POST(request: NextRequest) {
                   </a>
                 </div>
                 <p style="font-size: 12px; color: #94a3b8;">
+                  <a href="${siteUrl}/rate-alerts/manage?token=${unsubscribeToken}" style="color: #64748b;">Manage preferences</a>
+                  &nbsp;&middot;&nbsp;
                   Didn't mean to subscribe?
                   <a href="${siteUrl}/rate-alerts?unsubscribe=${unsubscribeToken}" style="color: #64748b;">Unsubscribe</a>
                 </p>

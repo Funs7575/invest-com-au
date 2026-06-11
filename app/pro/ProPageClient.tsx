@@ -332,7 +332,7 @@ export default function ProPageClient() {
               <span className="text-2xl md:text-4xl font-extrabold text-slate-900">
                 ${plan === "yearly" ? "89" : "9"}
               </span>
-              <span className="text-slate-400 text-[0.69rem] md:text-sm">/{plan === "yearly" ? "year" : "month"}</span>
+              <span className="text-slate-500 text-[0.69rem] md:text-sm">/{plan === "yearly" ? "year" : "month"}</span>
             </div>
             {plan === "yearly" && (
               <p className="text-[0.62rem] md:text-xs text-emerald-600 font-medium mb-3 md:mb-5">
@@ -385,7 +385,7 @@ export default function ProPageClient() {
             <p className="text-[0.69rem] md:text-sm text-slate-500 mb-2 md:mb-4">Everything you need to get started</p>
             <div className="flex items-baseline gap-1 mb-3 md:mb-6">
               <span className="text-2xl md:text-4xl font-extrabold text-slate-900">$0</span>
-              <span className="text-slate-400 text-[0.69rem] md:text-sm">/forever</span>
+              <span className="text-slate-500 text-[0.69rem] md:text-sm">/forever</span>
             </div>
             <Link
               href="/compare"
@@ -453,7 +453,7 @@ export default function ProPageClient() {
                   <span className="text-[0.69rem] md:text-sm font-semibold text-slate-900">{faq.q}</span>
                   <svg
                     aria-hidden="true"
-                    className={`w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400 shrink-0 transition-transform ${
+                    className={`w-3.5 h-3.5 md:w-4 md:h-4 text-slate-500 shrink-0 transition-transform ${
                       expandedFaq === i ? "rotate-180" : ""
                     }`}
                     fill="none"

@@ -43,7 +43,7 @@ export default function CoursesGate({ children }: { children: React.ReactNode })
             </svg>
           </Link>
           {!user && (
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               Already a Pro member?{" "}
               <Link href="/auth/login?next=/courses" className="text-slate-700 underline hover:text-slate-900">
                 Sign in

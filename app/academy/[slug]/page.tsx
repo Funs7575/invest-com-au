@@ -340,7 +340,7 @@ export default async function AcademyCourseDetailPage({ params }: PageProps) {
                   {priceDisplay}
                 </p>
                 {!isFree && (
-                  <p className="text-xs text-slate-400 mb-4">One-time payment</p>
+                  <p className="text-xs text-slate-500 mb-4">One-time payment</p>
                 )}
 
                 <EnrollButton

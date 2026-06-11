@@ -153,7 +153,7 @@ export default function TrustScoreMethodologyPage() {
         <div className="container-custom py-6 md:py-8 max-w-4xl">
           {/* Breadcrumbs */}
           <nav
-            className="text-xs text-slate-400 mb-4 flex items-center gap-1.5"
+            className="text-xs text-slate-500 mb-4 flex items-center gap-1.5"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="hover:text-slate-600">
@@ -245,7 +245,7 @@ export default function TrustScoreMethodologyPage() {
               <span className={`inline-block w-3 h-3 rounded-full ${d.color}`} />
               <h2 className="text-lg font-extrabold text-slate-900">
                 {d.label}{" "}
-                <span className="text-sm font-normal text-slate-400">
+                <span className="text-sm font-normal text-slate-500">
                   ({(d.weight * 100).toFixed(0)}% weight)
                 </span>
               </h2>
@@ -508,7 +508,7 @@ export default function TrustScoreMethodologyPage() {
         </section>
 
         {/* Attribution */}
-        <section className="text-xs text-slate-400 space-y-1">
+        <section className="text-xs text-slate-500 space-y-1">
           <p>
             Published by {SITE_NAME} &middot; Last updated {CURRENT_YEAR}.
           </p>

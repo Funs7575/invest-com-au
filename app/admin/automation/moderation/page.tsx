@@ -109,7 +109,7 @@ function ReviewTable({
               </div>
             </div>
             <div className="flex items-center gap-1 mt-1.5">
-              <span className="text-[0.6rem] text-slate-400">{r.verdict || "no classifier verdict"}</span>
+              <span className="text-[0.6rem] text-slate-500">{r.verdict || "no classifier verdict"}</span>
               <span className="ml-auto flex gap-1">
                 {r.status === "pending" && (
                   <>

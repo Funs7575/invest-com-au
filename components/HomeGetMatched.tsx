@@ -234,7 +234,7 @@ export default async function HomeGetMatched() {
               <Icon
                 name={chip.icon}
                 size={13}
-                className="text-slate-400 group-hover:text-amber-600 shrink-0"
+                className="text-slate-500 group-hover:text-amber-600 shrink-0"
               />
               {chip.label}
             </Link>

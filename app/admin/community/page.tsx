@@ -169,7 +169,7 @@ export default function AdminCommunityPage() {
                     Live
                   </span>
                 )}
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   {new Date(item.reported_at).toLocaleString("en-AU")}
                 </span>
               </div>
@@ -180,7 +180,7 @@ export default function AdminCommunityPage() {
               <p className="text-sm text-slate-600 mb-2 whitespace-pre-line">
                 {item.body_excerpt ?? "(content unavailable)"}
               </p>
-              <p className="text-xs text-slate-400 mb-3">
+              <p className="text-xs text-slate-500 mb-3">
                 By {item.author_name ?? "unknown"}
                 {item.reason && (
                   <>

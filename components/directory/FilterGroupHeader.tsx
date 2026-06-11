@@ -61,7 +61,7 @@ export default function FilterGroupHeader({
         <Icon
           name="chevron-down"
           size={14}
-          className={`text-slate-400 transition-transform duration-200 shrink-0 ${isOpen ? "rotate-180" : ""}`}
+          className={`text-slate-500 transition-transform duration-200 shrink-0 ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
 

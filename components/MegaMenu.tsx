@@ -67,7 +67,7 @@ export function MegaMenu({
         <Icon
           name="chevron-down"
           size={14}
-          className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`text-slate-500 transition-transform ${open ? "rotate-180" : ""}`}
           aria-hidden="true"
         />
       </button>

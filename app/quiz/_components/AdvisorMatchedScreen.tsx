@@ -6,6 +6,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import { buildAdvisorMatchReasons, type AdvisorMatchContext } from "@/lib/quiz-advisor-match-reasons";
 import { confidenceLabel, type MatchConfidence } from "@/lib/quiz-advisor-scoring";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 import { trackEvent } from "@/lib/tracking";
 
 export interface MatchedAdvisor {
@@ -183,7 +184,17 @@ export default function AdvisorMatchedScreen({
       </div>
 
       {/* Advisor card */}
-      <div className="relative overflow-hidden rounded-2xl border-2 border-amber-200 bg-white shadow-lg match-ring-pulse">
+      <div
+        className="relative overflow-hidden rounded-2xl border-2 border-amber-200 bg-white shadow-lg match-ring-pulse"
+        role="region"
+        aria-label={[
+          currentMatch.name,
+          currentMatch.type ? typeLabel(currentMatch.type) : null,
+          currentMatch.rating > 0 ? `rated ${currentMatch.rating.toFixed(1)} out of 5` : null,
+          currentMatch.location_display ?? null,
+          currentMatch.fee_description ? `fee: ${currentMatch.fee_description}` : null,
+        ].filter(Boolean).join(", ")}
+      >
         {/* Top bar */}
         <div className="bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-2 text-white">
@@ -224,7 +235,8 @@ export default function AdvisorMatchedScreen({
                 <p className="text-xs text-slate-500 mt-0.5">{currentMatch.firm_name}</p>
               )}
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
-                {currentMatch.rating > 0 && (
+                {/* Advisor star rating — licence-gated (lib/compliance-config). */}
+                {SHOW_ADVISOR_RATINGS && currentMatch.rating > 0 && (
                   <StarRating rating={currentMatch.rating} count={currentMatch.review_count} />
                 )}
                 {currentMatch.location_display && (

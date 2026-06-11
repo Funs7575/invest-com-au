@@ -207,14 +207,14 @@ export default function IposPage() {
               </thead>
               <tbody>
                 <tr>
-                  <td colSpan={5} className="py-8 px-4 text-center text-slate-400 text-sm">
+                  <td colSpan={5} className="py-8 px-4 text-center text-slate-500 text-sm">
                     Check ASX.com.au for current upcoming listings — this data changes daily
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Source: <a href="https://www2.asx.com.au/listings/upcoming-listings" className="underline hover:text-slate-600" target="_blank" rel="noopener noreferrer">ASX Upcoming Listings</a> — always verify directly with the company prospectus and ASX announcements.
           </p>
         </div>
@@ -252,7 +252,7 @@ export default function IposPage() {
                     <td className="py-3 px-4 text-slate-500 border-b border-slate-100">{r.sector}</td>
                     <td className="py-3 px-4 font-bold text-amber-700 border-b border-slate-100">{r.code}</td>
                     <td className="py-3 px-4 text-slate-700 border-b border-slate-100">{r.offer}</td>
-                    <td className="py-3 px-4 text-slate-400 text-xs border-b border-slate-100">{r.note}</td>
+                    <td className="py-3 px-4 text-slate-500 text-xs border-b border-slate-100">{r.note}</td>
                   </tr>
                 ))}
               </tbody>

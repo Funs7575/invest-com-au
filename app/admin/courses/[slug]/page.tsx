@@ -601,7 +601,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                 <td className="px-4 py-3 text-slate-500 text-xs">{l.lesson_index}</td>
                 <td className="px-4 py-3">
                   <div className="font-medium text-slate-900">{l.title}</div>
-                  <div className="text-xs text-slate-400">{l.slug}</div>
+                  <div className="text-xs text-slate-500">{l.slug}</div>
                 </td>
                 <td className="px-4 py-3 text-center">
                   {l.video_url ? (
@@ -758,7 +758,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
             ))}
             {lessons.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={6} className="px-4 py-8 text-center text-slate-500">
                   No lessons yet. Add your first lesson above.
                 </td>
               </tr>

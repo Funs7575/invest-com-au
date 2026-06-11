@@ -202,7 +202,7 @@ export default function AffiliateDashboardPage() {
                 </tr>
               ))}
               {brokerStats.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-400">No affiliate data yet</td></tr>
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500">No affiliate data yet</td></tr>
               )}
             </tbody>
           </table>
@@ -237,7 +237,7 @@ export default function AffiliateDashboardPage() {
                 </tr>
               ))}
               {signups.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-400">No signups recorded yet. Set up postback URLs with your broker partners.</td></tr>
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500">No signups recorded yet. Set up postback URLs with your broker partners.</td></tr>
               )}
             </tbody>
           </table>
@@ -268,7 +268,7 @@ export default function AffiliateDashboardPage() {
                 </tr>
               ))}
               {monthlyReports.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-400">Monthly reports will be generated on the 1st of each month.</td></tr>
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500">Monthly reports will be generated on the 1st of each month.</td></tr>
               )}
             </tbody>
           </table>
@@ -291,8 +291,8 @@ export default function AffiliateDashboardPage() {
             })}
           </div>
           <div className="flex justify-between mt-1">
-            <span className="text-[0.6rem] text-slate-400">{dailyTrend.slice(-30)[0]?.date}</span>
-            <span className="text-[0.6rem] text-slate-400">{dailyTrend[dailyTrend.length - 1]?.date}</span>
+            <span className="text-[0.6rem] text-slate-500">{dailyTrend.slice(-30)[0]?.date}</span>
+            <span className="text-[0.6rem] text-slate-500">{dailyTrend[dailyTrend.length - 1]?.date}</span>
           </div>
         </div>
       )}

@@ -181,7 +181,7 @@ export default function OrgModerationPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className="text-xs text-slate-400">{new Date(org.created_at).toLocaleDateString("en-AU")}</span>
+                      <span className="text-xs text-slate-500">{new Date(org.created_at).toLocaleDateString("en-AU")}</span>
                       <a
                         href={`/providers/${org.slug}`}
                         target="_blank"
@@ -241,37 +241,37 @@ export default function OrgModerationPage() {
                       )}
                     </div>
                   </div>
-                  <span className="text-xs text-slate-400 flex-shrink-0">
+                  <span className="text-xs text-slate-500 flex-shrink-0">
                     {new Date(app.applied_at).toLocaleDateString("en-AU")}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
                   <div>
-                    <span className="text-xs text-slate-400 block">Contact</span>
+                    <span className="text-xs text-slate-500 block">Contact</span>
                     <span className="text-slate-700">{app.contact_name}</span>
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 block">Email</span>
+                    <span className="text-xs text-slate-500 block">Email</span>
                     <a href={`mailto:${app.contact_email}`} className="text-teal-600 hover:underline">
                       {app.contact_email}
                     </a>
                   </div>
                   {app.contact_phone && (
                     <div>
-                      <span className="text-xs text-slate-400 block">Phone</span>
+                      <span className="text-xs text-slate-500 block">Phone</span>
                       <span className="text-slate-700">{app.contact_phone}</span>
                     </div>
                   )}
                   {app.abn && (
                     <div>
-                      <span className="text-xs text-slate-400 block">ABN</span>
+                      <span className="text-xs text-slate-500 block">ABN</span>
                       <span className="text-slate-700">{app.abn}</span>
                     </div>
                   )}
                   {app.website && (
                     <div>
-                      <span className="text-xs text-slate-400 block">Website</span>
+                      <span className="text-xs text-slate-500 block">Website</span>
                       <a href={app.website} target="_blank" rel="noopener noreferrer" className="text-teal-600 hover:underline truncate block max-w-[180px]">
                         {app.website}
                       </a>

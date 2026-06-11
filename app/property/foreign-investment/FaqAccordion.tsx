@@ -20,7 +20,7 @@ export default function FaqAccordion({ faqs }: { faqs: FaqItem[] }) {
           >
             <span className="text-sm font-semibold text-slate-900 leading-snug">{faq.question}</span>
             <svg
-              className={`shrink-0 w-4 h-4 text-slate-400 transition-transform ${open === i ? "rotate-180" : ""}`}
+              className={`shrink-0 w-4 h-4 text-slate-500 transition-transform ${open === i ? "rotate-180" : ""}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

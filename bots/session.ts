@@ -109,9 +109,19 @@ export class BotSession {
   async visit(route: string): Promise<number> {
     const target = this.config.baseUrl.replace(/\/$/, "") + route;
     let status = 0;
+    // The sandbox proxy throws transient 403/503s (and fleet concurrency can
+    // trip rate limiting) that are not real bugs — re-verify before reporting.
+    const TRANSIENT = new Set([403, 429, 503]);
+    const MAX_ATTEMPTS = 3;
+    let attempt = 0;
     try {
-      const res = await this.page.goto(target, { waitUntil: "domcontentloaded", timeout: 30_000 });
-      status = res?.status() ?? 0;
+      for (;;) {
+        attempt += 1;
+        const res = await this.page.goto(target, { waitUntil: "domcontentloaded", timeout: 30_000 });
+        status = res?.status() ?? 0;
+        if (!TRANSIENT.has(status) || attempt >= MAX_ATTEMPTS) break;
+        await this.page.waitForTimeout(1_500 * attempt);
+      }
       await this.page.waitForLoadState("load", { timeout: 30_000 }).catch(() => undefined);
       await this.page.waitForTimeout(600);
       const sample = await capturePerfSample(this.page, this.persona);
@@ -130,11 +140,12 @@ export class BotSession {
     }
 
     if (status >= 400) {
+      const persisted = TRANSIENT.has(status) ? ` (persisted across ${attempt} attempts)` : "";
       this.store.add({
         severity: status >= 500 ? "critical" : "high",
         category: "http-error",
         title: `${status} on ${route}`,
-        detail: `Navigating to ${route} returned HTTP ${status}.`,
+        detail: `Navigating to ${route} returned HTTP ${status}${persisted}.`,
         url: target,
         persona: this.persona,
         signatureKey: `nav:${status}:${route}`,
@@ -171,6 +182,14 @@ export class BotSession {
     brokenImages?: boolean;
     visual?: boolean;
   } = {}): Promise<void> {
+    // Never audit an error page: a failed navigation leaves chrome-error://
+    // (or about:blank) on screen, and content checks would then report the
+    // page's disclosures / JSON-LD / links as "missing" — false findings
+    // attributed to the route that failed to load.
+    const currentUrl = this.page.url();
+    if (currentUrl.startsWith("chrome-error://") || currentUrl === "about:blank") {
+      return;
+    }
     await runAxe(this.page, this.store, this.persona);
     await checkSchemaMarkup(this.page, this.store, this.persona);
     if (opts.links) {

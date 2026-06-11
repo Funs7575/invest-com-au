@@ -178,14 +178,14 @@ export default function AffiliateLinksPage() {
         );
       case "no_url":
         return (
-          <span className="inline-flex items-center gap-1 text-slate-400 text-xs font-medium">
+          <span className="inline-flex items-center gap-1 text-slate-500 text-xs font-medium">
             <span className="w-2 h-2 bg-slate-300 rounded-full" />
             No URL
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 text-slate-400 text-xs font-medium">
+          <span className="inline-flex items-center gap-1 text-slate-500 text-xs font-medium">
             <span className="w-2 h-2 bg-slate-300 rounded-full" />
             Unchecked
           </span>
@@ -302,11 +302,11 @@ export default function AffiliateLinksPage() {
               </div>
               <div className={`border rounded-lg p-4 ${linksBroken > 0 ? "bg-red-50 border-red-200" : "bg-white border-slate-200"}`}>
                 <p className="text-slate-500 text-sm">Broken / Errored</p>
-                <p className={`text-2xl font-bold ${linksBroken > 0 ? "text-red-600" : "text-slate-400"}`}>{linksBroken}</p>
+                <p className={`text-2xl font-bold ${linksBroken > 0 ? "text-red-600" : "text-slate-500"}`}>{linksBroken}</p>
               </div>
               <div className={`border rounded-lg p-4 ${dealsExpiringSoon > 0 ? "bg-amber-50 border-amber-200" : "bg-white border-slate-200"}`}>
                 <p className="text-slate-500 text-sm">Deals Expiring &le;7d</p>
-                <p className={`text-2xl font-bold ${dealsExpiringSoon > 0 ? "text-amber-600" : "text-slate-400"}`}>{dealsExpiringSoon}</p>
+                <p className={`text-2xl font-bold ${dealsExpiringSoon > 0 ? "text-amber-600" : "text-slate-500"}`}>{dealsExpiringSoon}</p>
               </div>
             </>
           )}
@@ -533,7 +533,7 @@ export default function AffiliateLinksPage() {
                                   Active
                                 </span>
                               ) : (
-                                <span className="text-xs text-slate-400">No deal</span>
+                                <span className="text-xs text-slate-500">No deal</span>
                               )}
                             </td>
                             <td className="px-4 py-3">
@@ -549,7 +549,7 @@ export default function AffiliateLinksPage() {
                                   {getDealExpiryBadge(broker)}
                                 </div>
                               ) : (
-                                <span className="text-xs text-slate-400">No expiry</span>
+                                <span className="text-xs text-slate-500">No expiry</span>
                               )}
                             </td>
                           </>

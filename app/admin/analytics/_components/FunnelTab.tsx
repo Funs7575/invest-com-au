@@ -201,28 +201,28 @@ export default function FunnelTab({ loading: parentLoading, funnelData }: Funnel
         <div className="bg-white border border-slate-200 rounded-lg p-4">
           <div className="text-2xl font-bold text-violet-600">{advisorConvRate}%</div>
           <div className="text-xs text-slate-500">Advisor Directory-to-Enquiry</div>
-          <div className="text-[0.62rem] text-slate-400 mt-1">
+          <div className="text-[0.62rem] text-slate-500 mt-1">
             {funnelCounts?.advisor_directory_view.toLocaleString() || 0} views / {funnelCounts?.advisor_enquiry_submitted.toLocaleString() || 0} enquiries
           </div>
         </div>
         <div className="bg-white border border-slate-200 rounded-lg p-4">
           <div className="text-2xl font-bold text-emerald-600">{brokerConvRate}%</div>
           <div className="text-xs text-slate-500">Compare-to-Affiliate Click</div>
-          <div className="text-[0.62rem] text-slate-400 mt-1">
+          <div className="text-[0.62rem] text-slate-500 mt-1">
             {funnelCounts?.compare_select.toLocaleString() || 0} selections / {funnelCounts?.affiliate_click.toLocaleString() || 0} clicks
           </div>
         </div>
         <div className="bg-white border border-slate-200 rounded-lg p-4">
           <div className="text-2xl font-bold text-amber-600">{quizConvRate}%</div>
           <div className="text-xs text-slate-500">Quiz Start-to-Complete</div>
-          <div className="text-[0.62rem] text-slate-400 mt-1">
+          <div className="text-[0.62rem] text-slate-500 mt-1">
             {funnelCounts?.quiz_start.toLocaleString() || 0} started / {funnelCounts?.quiz_completed.toLocaleString() || 0} completed
           </div>
         </div>
         <div className="bg-white border border-slate-200 rounded-lg p-4">
           <div className="text-2xl font-bold text-cyan-600">{signupConvRate}%</div>
           <div className="text-xs text-slate-500">Advisor Signup Conversion</div>
-          <div className="text-[0.62rem] text-slate-400 mt-1">
+          <div className="text-[0.62rem] text-slate-500 mt-1">
             {funnelCounts?.advisor_signup_started.toLocaleString() || 0} started / {funnelCounts?.advisor_signup_completed.toLocaleString() || 0} completed
           </div>
         </div>
@@ -314,7 +314,7 @@ export default function FunnelTab({ loading: parentLoading, funnelData }: Funnel
                       {i > 0 ? (
                         <span className="text-emerald-600 font-semibold">{stepConv}%</span>
                       ) : (
-                        <span className="text-slate-400">---</span>
+                        <span className="text-slate-500">---</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-right text-slate-600">{overallConv}%</td>
@@ -359,7 +359,7 @@ export default function FunnelTab({ loading: parentLoading, funnelData }: Funnel
                       {i > 0 ? (
                         <span className="text-emerald-600 font-semibold">{stepConv}%</span>
                       ) : (
-                        <span className="text-slate-400">---</span>
+                        <span className="text-slate-500">---</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-right text-slate-600">{overallConv}%</td>

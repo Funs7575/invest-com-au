@@ -4,6 +4,7 @@ import { memo } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { AFFILIATE_AD_TOOLTIP } from "@/lib/compliance";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import SponsorBadge from "@/components/SponsorBadge";
 import Icon from "@/components/Icon";
 import ShortlistButton from "@/components/ShortlistButton";
@@ -12,7 +13,6 @@ import BrokerLogo from "@/components/BrokerLogo";
 import FeeVerifiedPill from "@/components/FeeVerifiedPill";
 import EligibilityBadge from "@/components/EligibilityBadge";
 import { isSponsored } from "@/lib/sponsorship";
-import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { IntentCountryCode } from "@/lib/intent-context";
 import DealExpiryCountdown from "@/components/DealExpiryCountdown";
 
@@ -94,6 +94,8 @@ export default memo(function BrokerCard({
               {/* PR queue #12 — eligibility badge when visitor has intent country */}
               <EligibilityBadge entity={broker} intentCountry={intentCountry} compact />
             </div>
+            {/* Editorial star rating — licence-gated per DISC-20260610 A
+                (factual_only mode hides editorial ratings until the AFSL). */}
             {SHOW_RATINGS && (
               <div className="flex items-center gap-1.5">
                 <span className="text-amber-600 text-xs" aria-hidden="true">{renderStars(broker.rating || 0)}</span>

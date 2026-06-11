@@ -78,9 +78,13 @@ describe("GET /api/cron/rate-alerts", () => {
   });
 
   it("returns 500 when snapshot query errors", async () => {
-    mockFrom.mockImplementationOnce(() =>
-      makeBuilder({ data: null, error: { message: "DB error" } }),
-    );
+    // wrapCronHandler inserts into cron_run_log first, then isFeatureDisabled
+    // queries automation_kill_switches — both must succeed before the savings
+    // snapshot query that we want to fail.
+    mockFrom
+      .mockImplementationOnce(() => makeBuilder({ data: [{ id: "r1" }], error: null })) // cron_run_log insert
+      .mockImplementationOnce(() => makeBuilder({ data: [], error: null }))              // automation_kill_switches
+      .mockImplementationOnce(() => makeBuilder({ data: null, error: { message: "DB error" } })); // savings_rate_snapshots → 500
     const res = await GET(req({ authorization: `Bearer ${SECRET}` }));
     expect(res.status).toBe(500);
   });

@@ -147,15 +147,15 @@ export default function ContentPerformancePage() {
               <p className="text-2xl font-extrabold">${totals.revenue.toLocaleString()}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Affiliate Clicks</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Affiliate Clicks</p>
               <p className="text-2xl font-extrabold text-slate-900">{totals.clicks.toLocaleString()}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Page Views</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Page Views</p>
               <p className="text-2xl font-extrabold text-slate-900">{totals.views.toLocaleString()}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Avg CTR</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Avg CTR</p>
               <p className="text-2xl font-extrabold text-slate-900">{totals.views > 0 ? ((totals.clicks / totals.views) * 100).toFixed(1) : 0}%</p>
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function ContentPerformancePage() {
                     <tr key={c.path} className="border-b border-slate-50 hover:bg-slate-50">
                       <td className="px-4 py-2.5 max-w-[250px]">
                         <Link href={c.path} className="text-sm font-medium text-slate-900 hover:text-blue-600 truncate block capitalize">{c.label}</Link>
-                        <span className="text-[0.55rem] text-slate-400">{c.path}</span>
+                        <span className="text-[0.55rem] text-slate-500">{c.path}</span>
                       </td>
                       <td className="px-3 py-2.5">
                         <span className={`text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${TYPE_COLORS[c.type] || TYPE_COLORS.other}`}>{c.type}</span>
@@ -202,7 +202,7 @@ export default function ContentPerformancePage() {
                       <td className="px-3 py-2.5 text-right text-slate-700">{c.views.toLocaleString()}</td>
                       <td className="px-3 py-2.5 text-right font-bold text-slate-900">{c.clicks}</td>
                       <td className="px-3 py-2.5 text-right">
-                        <span className={`text-xs font-bold ${c.ctr >= 5 ? "text-emerald-600" : c.ctr >= 2 ? "text-amber-600" : "text-slate-400"}`}>{c.ctr}%</span>
+                        <span className={`text-xs font-bold ${c.ctr >= 5 ? "text-emerald-600" : c.ctr >= 2 ? "text-amber-600" : "text-slate-500"}`}>{c.ctr}%</span>
                       </td>
                       <td className="px-3 py-2.5 text-right font-bold text-emerald-600">${c.estRevenue.toLocaleString()}</td>
                     </tr>
@@ -212,7 +212,7 @@ export default function ContentPerformancePage() {
             </div>
           </div>
 
-          <p className="text-[0.55rem] text-slate-400 mt-3 text-center">
+          <p className="text-[0.55rem] text-slate-500 mt-3 text-center">
             CTR = affiliate clicks ÷ page views. Revenue uses $60 blended CPA at 2.5% conversion. Sort any column by clicking the header.
           </p>
         </>

@@ -276,7 +276,7 @@ export default function QuizQuestionsPage() {
                   }
                   className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                 />
-                <p className="text-xs text-slate-400 mt-0.5">Display order in the quiz flow. Lower numbers appear first.</p>
+                <p className="text-xs text-slate-500 mt-0.5">Display order in the quiz flow. Lower numbers appear first.</p>
               </div>
               <div className="flex items-end">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -307,7 +307,7 @@ export default function QuizQuestionsPage() {
                 className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                 placeholder="Enter your question text..."
               />
-              <p className="text-xs text-slate-400 mt-0.5">The question shown to users.</p>
+              <p className="text-xs text-slate-500 mt-0.5">The question shown to users.</p>
             </div>
 
             {/* Options Editor */}
@@ -321,7 +321,7 @@ export default function QuizQuestionsPage() {
                   + Add Option
                 </button>
               </div>
-              <p className="text-xs text-slate-400 mb-3">Each option needs a display label and a unique key. Keys are matched against Quiz Weights.</p>
+              <p className="text-xs text-slate-500 mb-3">Each option needs a display label and a unique key. Keys are matched against Quiz Weights.</p>
               <div className="space-y-2">
                 {form.options.map((option, index) => (
                   <div key={index} className="flex items-center gap-2">
@@ -409,7 +409,7 @@ export default function QuizQuestionsPage() {
             <div className="text-center py-12">
               <div className="text-3xl mb-2">❓</div>
               <p className="text-sm font-medium text-slate-700 mb-1">No quiz questions yet</p>
-              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
                 Quiz questions power the broker-matching quiz on your site. Each question helps narrow down which broker suits a visitor&apos;s needs based on their answers.
               </p>
             </div>

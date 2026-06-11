@@ -54,7 +54,7 @@ export default function ProDealsClient({
     return (
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-3xl mx-auto">
-          <div className="text-center py-16 text-slate-400">Loading...</div>
+          <div className="text-center py-16 text-slate-500">Loading...</div>
         </div>
       </div>
     );
@@ -97,7 +97,7 @@ export default function ProDealsClient({
         </p>
 
         {deals.length === 0 ? (
-          <div className="text-center py-16 text-slate-400">
+          <div className="text-center py-16 text-slate-500">
             <p className="text-lg mb-1">No active deals right now</p>
             <p className="text-sm">New Pro deals are added regularly. Check back soon!</p>
           </div>
@@ -140,7 +140,7 @@ export default function ProDealsClient({
                               {deal.deal_value}
                             </span>
                           )}
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-slate-500">
                             {broker?.name || deal.broker_slug}
                           </span>
                         </div>
@@ -196,19 +196,19 @@ export default function ProDealsClient({
                             termsExpanded ? next.delete(deal.id) : next.add(deal.id);
                             return next;
                           })}
-                          className="text-[0.69rem] text-slate-400 hover:text-slate-600"
+                          className="text-[0.69rem] text-slate-500 hover:text-slate-600"
                         >
                           {termsExpanded ? "Hide terms" : "View terms & conditions"}
                         </button>
                         {termsExpanded && (
-                          <p className="text-[0.69rem] text-slate-400 mt-1 leading-relaxed">{deal.terms}</p>
+                          <p className="text-[0.69rem] text-slate-500 mt-1 leading-relaxed">{deal.terms}</p>
                         )}
                       </div>
                     )}
 
                     {/* Expiry */}
                     {deal.end_date && (
-                      <p className="text-[0.69rem] text-slate-400 mt-2">
+                      <p className="text-[0.69rem] text-slate-500 mt-2">
                         Expires {new Date(deal.end_date).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                       </p>
                     )}

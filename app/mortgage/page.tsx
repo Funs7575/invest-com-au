@@ -87,7 +87,7 @@ export default function MortgagePage() {
               Find a mortgage broker
             </Link>
           </div>
-          <p className="text-xs text-slate-400 mt-4">{UPDATED_LABEL} · General information only · Not credit advice</p>
+          <p className="text-xs text-slate-500 mt-4">{UPDATED_LABEL} · General information only · Not credit advice</p>
         </div>
       </section>
 

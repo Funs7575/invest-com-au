@@ -172,7 +172,7 @@ export default function RetirementAnnuitiesPage() {
             for a fixed period. You trade flexibility for certainty: once purchased, you cannot access the
             lump sum, but your income is guaranteed regardless of markets or how long you live.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not financial advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not financial advice</p>
         </div>
       </section>
 
@@ -406,7 +406,7 @@ export default function RetirementAnnuitiesPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Rates are indicative for a 65-year-old purchasing in a moderate interest rate environment. Actual
             annuity rates fluctuate with bond yields — obtain current quotes directly from providers or an
             accredited financial adviser.

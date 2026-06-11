@@ -197,7 +197,7 @@ export default function ConnectClient({
         )}
       </div>
 
-      <p className="text-[11px] text-slate-400">
+      <p className="text-[11px] text-slate-500">
         Platform fee: 10% of each transaction. Funds payout to your bank per
         your Stripe schedule.
       </p>

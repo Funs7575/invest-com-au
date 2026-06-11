@@ -36,7 +36,7 @@ function MoneyField({ label, hint, value, onChange, placeholder }: MoneyFieldPro
         {label}
       </label>
       {hint && (
-        <p id={hintId} className="text-xs text-slate-400 mb-1.5 leading-snug">
+        <p id={hintId} className="text-xs text-slate-500 mb-1.5 leading-snug">
           {hint}
         </p>
       )}
@@ -217,7 +217,7 @@ export default function InvestmentIncomeTaxClient() {
                   className="h-4 w-4 rounded border-slate-300 text-brand focus:ring-brand/40"
                 />
                 <span className="text-sm text-slate-700">
-                  Held over 12 months <span className="text-slate-400">(50% CGT discount)</span>
+                  Held over 12 months <span className="text-slate-500">(50% CGT discount)</span>
                 </span>
               </label>
               <label className="flex items-center gap-2.5 cursor-pointer select-none">
@@ -246,7 +246,7 @@ export default function InvestmentIncomeTaxClient() {
                   <>
                     {/* Hero figure */}
                     <div className="pb-4 mb-4 border-b border-slate-200">
-                      <span className="text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-400">
+                      <span className="text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500">
                         {isRefund ? "Estimated refund from franking credits" : "Tax on your investment income"}
                       </span>
                       <div
@@ -362,7 +362,7 @@ export default function InvestmentIncomeTaxClient() {
                 of 2% applies on top.
               </p>
             </div>
-            <p className="text-[0.65rem] text-slate-400 mt-4 leading-relaxed">
+            <p className="text-[0.65rem] text-slate-500 mt-4 leading-relaxed">
               This calculator is a simplified estimate for general information only and is not tax advice. It
               ignores the Medicare levy surcharge, low-income offsets, HELP/HECS debts, the 45-day franking
               holding rule, capital losses, and non-resident, super-fund and company rates. Always consult a
@@ -441,12 +441,12 @@ interface RowProps {
 function Row({ label, value, strong, muted, accent }: RowProps) {
   return (
     <div className="flex items-baseline justify-between gap-3">
-      <dt className={`${muted ? "text-slate-400" : "text-slate-600"} ${strong ? "font-bold text-slate-900" : ""}`}>
+      <dt className={`${muted ? "text-slate-500" : "text-slate-600"} ${strong ? "font-bold text-slate-900" : ""}`}>
         {label}
       </dt>
       <dd
         className={`tabular-nums shrink-0 ${
-          accent === "emerald" ? "text-emerald-600" : muted ? "text-slate-400" : "text-slate-900"
+          accent === "emerald" ? "text-emerald-600" : muted ? "text-slate-500" : "text-slate-900"
         } ${strong ? "font-extrabold text-base" : "font-semibold"}`}
       >
         {value}

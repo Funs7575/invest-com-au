@@ -424,8 +424,8 @@ function FunnelCard({
         })}
       </div>
       <div className="flex justify-between mt-1">
-        <span className="text-[9px] text-slate-400">7 days ago</span>
-        <span className="text-[9px] text-slate-400">today</span>
+        <span className="text-[9px] text-slate-500">7 days ago</span>
+        <span className="text-[9px] text-slate-500">today</span>
       </div>
     </div>
   );
@@ -452,7 +452,7 @@ function ConversionRate({
       <p className={`text-xl font-extrabold ${color}`}>
         {rate.toFixed(1)}%
       </p>
-      <p className="text-[10px] text-slate-400">
+      <p className="text-[10px] text-slate-500">
         {numerator} / {denominator}
       </p>
     </div>

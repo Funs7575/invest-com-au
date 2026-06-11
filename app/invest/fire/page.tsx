@@ -56,7 +56,7 @@ const FAQS = [
   },
   {
     q: "Can I access my superannuation before age 60 for FIRE?",
-    a: "Generally no — super is locked until you meet a condition of release, which for most people means reaching preservation age (60 for anyone born after 30 June 1964) and retiring. The only early access route relevant to FIRE practitioners is the Transition to Retirement (TTR) income stream, which allows you to draw up to 10% of your super account balance per year once you reach preservation age, even while still working. This is not an early access mechanism — it only applies at age 60. You must fund the gap between your early retirement date and age 60 entirely from non-super assets.",
+    a: "Generally no — super is locked until you meet a condition of release, which for most people means reaching preservation age (60 for anyone born after 30 June 1964) and retiring. The only early access route relevant to FIRE practitioners is the Transition to Retirement (TTR) income stream, which allows you to draw up to 10% of your super account balance per year once you reach preservation age, even while still working. This is not an early access mechanism — it only applies at age 60. You must fund the gap between your early retirement date and age 60 entirely from non-super assets.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
   },
   {
     q: "What is the super bridge strategy?",
@@ -377,6 +377,7 @@ export default function FireGuidePage() {
                   Superannuation preservation age (60)
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
+                  {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
                   For anyone born after 30 June 1964, the preservation age is 60. You cannot
                   access your super before 60 (except in rare compassionate or severe financial
                   hardship cases). This is the single most important constraint for Australian
@@ -501,7 +502,7 @@ export default function FireGuidePage() {
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               7% real return is a commonly used assumption — actual returns will differ. Starting
               with an existing portfolio shortens the timeline significantly. These projections do
               not constitute financial advice.
@@ -885,7 +886,7 @@ export default function FireGuidePage() {
                   <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-100 rounded-xl transition-colors">
                     {item.q}
                     <span
-                      className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
+                      className="text-slate-500 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
                       aria-hidden="true"
                     >
                       &#x2304;
@@ -951,7 +952,7 @@ export default function FireGuidePage() {
             <p className="text-xs text-slate-500 leading-relaxed">
               {GENERAL_ADVICE_WARNING}
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed mt-3">
+            <p className="text-xs text-slate-500 leading-relaxed mt-3">
               Return projections (7% real return), withdrawal rates, and savings rate tables are
               illustrative models based on historical data. They do not constitute a forecast or
               guarantee of future returns. Past performance is not a reliable indicator of future

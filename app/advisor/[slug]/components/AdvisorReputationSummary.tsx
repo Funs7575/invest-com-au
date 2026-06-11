@@ -30,7 +30,7 @@ function scoreFg(score: number): string {
   if (score >= 75) return "text-emerald-600";
   if (score >= 55) return "text-teal-600";
   if (score >= 35) return "text-amber-600";
-  return "text-slate-400";
+  return "text-slate-500";
 }
 
 /* ─── Small star renderer ─── */
@@ -94,7 +94,7 @@ export default function AdvisorReputationSummary({
           >
             Reputation Summary
           </h2>
-          <p className="text-xs text-slate-400 leading-tight">
+          <p className="text-xs text-slate-500 leading-tight">
             Factual review signals &mdash; not a recommendation
           </p>
         </div>
@@ -110,11 +110,11 @@ export default function AdvisorReputationSummary({
           >
             {reputation.overall}
           </span>
-          <span className="text-[0.62rem] text-slate-400 font-medium">/&nbsp;100</span>
+          <span className="text-[0.62rem] text-slate-500 font-medium">/&nbsp;100</span>
         </div>
 
         <div className="flex-1 text-center sm:text-left">
-          <p className="text-xs text-slate-400 mb-0.5">Reputation Score</p>
+          <p className="text-xs text-slate-500 mb-0.5">Reputation Score</p>
           <p className={`text-2xl font-extrabold mb-1 ${reputation.labelColor}`}>
             {reputation.label}
           </p>
@@ -161,7 +161,7 @@ export default function AdvisorReputationSummary({
                 <span className="text-xs font-semibold text-slate-700">
                   {dim.label}
                 </span>
-                <span className="ml-1.5 text-xs text-slate-400">
+                <span className="ml-1.5 text-xs text-slate-500">
                   ({(dim.weight * 100).toFixed(0)}% weight)
                 </span>
               </div>
@@ -179,14 +179,14 @@ export default function AdvisorReputationSummary({
                 role="presentation"
               />
             </div>
-            <p className="text-xs text-slate-400 italic">{dim.rationale}</p>
+            <p className="text-xs text-slate-500 italic">{dim.rationale}</p>
           </div>
         ))}
       </div>
 
       {/* Compliance footer */}
       <div className="px-5 pb-5">
-        <p className="text-[11px] text-slate-400 leading-relaxed">
+        <p className="text-[11px] text-slate-500 leading-relaxed">
           <strong className="font-semibold">General Advice Warning:</strong>{" "}
           {generalAdviceWarning}
         </p>

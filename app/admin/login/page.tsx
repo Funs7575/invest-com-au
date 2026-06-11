@@ -113,7 +113,7 @@ function AdminLoginForm() {
               <span className="font-semibold text-slate-900">{email}</span>.
               Click it to access the admin dashboard.
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Didn&apos;t get it? Check spam, or{" "}
               <button
                 onClick={() => { setSent(false); setError(""); }}
@@ -230,7 +230,7 @@ function AdminLoginForm() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-slate-400 mt-4">
+        <p className="text-center text-xs text-slate-500 mt-4">
           {mode === "magic"
             ? "We\u2019ll email you a one-time sign-in link."
             : "Use your admin email and password."

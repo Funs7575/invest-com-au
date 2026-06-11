@@ -82,7 +82,7 @@ function ReviewCard({ review }: { review: ReviewRow }) {
           </div>
           <StarRow rating={review.rating} />
         </div>
-        <span className="text-xs text-slate-400 shrink-0">{date}</span>
+        <span className="text-xs text-slate-500 shrink-0">{date}</span>
       </div>
 
       {review.title && (
@@ -183,7 +183,7 @@ export default function ReviewsTab({ advisor }: Props) {
   const trendColor =
     stats?.trend === "up" ? "text-emerald-600" :
     stats?.trend === "down" ? "text-red-500" :
-    "text-slate-400";
+    "text-slate-500";
 
   if (loading) {
     return (
@@ -245,7 +245,7 @@ export default function ReviewsTab({ advisor }: Props) {
                 ? "Declining trend"
                 : "Stable trend"}
           </div>
-          <div className="text-[0.58rem] text-slate-400 mt-0.5">vs previous 5 reviews</div>
+          <div className="text-[0.58rem] text-slate-500 mt-0.5">vs previous 5 reviews</div>
         </div>
       </div>
 
@@ -340,7 +340,7 @@ export default function ReviewsTab({ advisor }: Props) {
                   </>
                 )}
               </button>
-              <p className="text-[0.62rem] text-slate-400">
+              <p className="text-[0.62rem] text-slate-500">
                 They will receive a direct link to your review page.
               </p>
             </div>

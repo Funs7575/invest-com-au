@@ -766,7 +766,7 @@ export default function SuperConsolidationPage() {
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
                   {faq.q}
                   <span
-                    className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
+                    className="text-slate-500 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
                     aria-hidden="true"
                   >
                     &#8964;

@@ -905,7 +905,7 @@ export default function GlobalInvestingEtfsPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-slate-400 mt-3">
+              <p className="text-xs text-slate-500 mt-3">
                 Brokerage fees and account features change frequently. Verify
                 directly with each broker before opening an account.
               </p>
@@ -1117,7 +1117,7 @@ export default function GlobalInvestingEtfsPage() {
                   <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-bold text-slate-900 hover:bg-slate-50 text-sm">
                     {item.q}
                     <svg
-                      className="w-4 h-4 text-slate-400 flex-shrink-0 ml-2"
+                      className="w-4 h-4 text-slate-500 flex-shrink-0 ml-2"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

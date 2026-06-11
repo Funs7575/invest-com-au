@@ -116,7 +116,7 @@ function trendCopy(d: TrendDelta | undefined): {
   className: string;
 } {
   if (!d || d.change === null || d.changePct === null) {
-    return { text: "no comparable data", className: "text-slate-400" };
+    return { text: "no comparable data", className: "text-slate-500" };
   }
   if (d.change === 0) return { text: "no change", className: "text-slate-500" };
   // Falling fees = good (green); rising = red. Factual framing only.
@@ -439,10 +439,14 @@ export default async function BrokerageFeeIndexPage() {
                 Want the per-broker detail behind these averages?{" "}
                 <Link href="/compare" className="font-semibold text-blue-700 underline">
                   Compare every platform&rsquo;s fees
-                </Link>{" "}
-                or follow{" "}
+                </Link>
+                , follow{" "}
                 <Link href="/fee-tracker" className="font-semibold text-blue-700 underline">
                   every fee change as it happens
+                </Link>{" "}
+                or see{" "}
+                <Link href="/fees/today" className="font-semibold text-blue-700 underline">
+                  the changes detected this week
                 </Link>
                 .
               </p>

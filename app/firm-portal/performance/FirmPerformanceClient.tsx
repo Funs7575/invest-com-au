@@ -48,7 +48,7 @@ function MemberRow({ m, rank }: { m: MemberMetrics; rank: number }) {
     <tr className="border-t border-slate-100 hover:bg-slate-50/60 transition-colors">
       <td className="px-4 py-3">
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-xs font-bold text-slate-400 w-5 text-center shrink-0">{rank}</span>
+          <span className="text-xs font-bold text-slate-500 w-5 text-center shrink-0">{rank}</span>
           {m.photoUrl ? (
             <Image
               src={m.photoUrl}
@@ -72,7 +72,7 @@ function MemberRow({ m, rank }: { m: MemberMetrics; rank: number }) {
               {m.name}
             </Link>
             {m.rank !== null && (
-              <span className="text-[11px] text-slate-400">
+              <span className="text-[11px] text-slate-500">
                 Platform rank #{m.rank}
               </span>
             )}
@@ -83,7 +83,7 @@ function MemberRow({ m, rank }: { m: MemberMetrics; rank: number }) {
         <span className="text-sm font-bold text-slate-900">{fmt(m.views30d)}</span>
       </td>
       <td className="px-4 py-3 text-right tabular-nums">
-        <span className={`text-sm font-bold ${m.enquiries30d > 0 ? "text-emerald-700" : "text-slate-400"}`}>
+        <span className={`text-sm font-bold ${m.enquiries30d > 0 ? "text-emerald-700" : "text-slate-500"}`}>
           {fmt(m.enquiries30d)}
         </span>
       </td>
@@ -93,7 +93,7 @@ function MemberRow({ m, rank }: { m: MemberMetrics; rank: number }) {
       <td className="px-4 py-3 hidden md:table-cell">
         <StarRating rating={m.avgRating} />
         {m.reviewCount > 0 && (
-          <div className="text-[10px] text-slate-400 mt-0.5">{m.reviewCount} review{m.reviewCount !== 1 ? "s" : ""}</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">{m.reviewCount} review{m.reviewCount !== 1 ? "s" : ""}</div>
         )}
       </td>
       <td className="px-4 py-3 hidden lg:table-cell min-w-[120px]">
@@ -103,7 +103,7 @@ function MemberRow({ m, rank }: { m: MemberMetrics; rank: number }) {
             <ScoreBar value={m.profileScore} color="bg-blue-400" />
           </div>
         ) : (
-          <span className="text-xs text-slate-400">No data</span>
+          <span className="text-xs text-slate-500">No data</span>
         )}
       </td>
       <td className="px-4 py-3 text-right hidden sm:table-cell">
@@ -160,7 +160,7 @@ export default function FirmPerformanceClient({ summary: initialSummary }: Props
           >
             <p className="text-xs uppercase tracking-wide text-slate-500 font-medium">{card.label}</p>
             <p className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-1">{card.value}</p>
-            <p className="text-xs text-slate-400 mt-1">{card.sub}</p>
+            <p className="text-xs text-slate-500 mt-1">{card.sub}</p>
           </div>
         ))}
       </div>
@@ -170,7 +170,7 @@ export default function FirmPerformanceClient({ summary: initialSummary }: Props
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <div>
             <h2 className="text-base font-semibold text-slate-900">Member performance</h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               {summary.windowStart} – {summary.windowEnd} · {summary.yearMonth} leaderboard
             </p>
           </div>
@@ -196,7 +196,7 @@ export default function FirmPerformanceClient({ summary: initialSummary }: Props
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm" aria-label="Firm performance metrics">
               <thead>
-                <tr className="text-[11px] uppercase tracking-wide text-slate-400">
+                <tr className="text-[11px] uppercase tracking-wide text-slate-500">
                   <th scope="col" className="px-4 py-2.5 font-medium">Advisor</th>
                   <th scope="col" className="px-4 py-2.5 font-medium text-right">Views</th>
                   <th scope="col" className="px-4 py-2.5 font-medium text-right">Enquiries</th>

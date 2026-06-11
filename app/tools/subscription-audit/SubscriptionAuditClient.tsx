@@ -317,7 +317,7 @@ export default function SubscriptionAuditClient() {
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-sm font-bold text-slate-900">{fmt(annualCost(s))}<span className="text-xs font-normal text-slate-400">/yr</span></p>
+                      <p className="text-sm font-bold text-slate-900">{fmt(annualCost(s))}<span className="text-xs font-normal text-slate-500">/yr</span></p>
                     </div>
                     <button onClick={() => remove(s.id)} aria-label={`Remove ${s.name}`} className="text-slate-300 hover:text-red-500 transition-colors ml-1">×</button>
                   </li>
@@ -339,7 +339,7 @@ export default function SubscriptionAuditClient() {
                       <div key={cat}>
                         <div className="flex items-center justify-between mb-1">
                           <span className={`text-xs font-semibold px-2 py-0.5 rounded ${CATEGORY_COLORS[cat]}`}>{cat}</span>
-                          <span className="text-sm font-bold text-slate-800">{fmt(annual)}/yr <span className="text-slate-400 font-normal text-xs">({pct}%)</span></span>
+                          <span className="text-sm font-bold text-slate-800">{fmt(annual)}/yr <span className="text-slate-500 font-normal text-xs">({pct}%)</span></span>
                         </div>
                         <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                           <div className="h-full bg-violet-500 rounded-full" style={{ width: `${pct}%` }} />
@@ -371,7 +371,7 @@ export default function SubscriptionAuditClient() {
                       </li>
                     ))}
                   </ul>
-                  <p className="text-[0.65rem] text-slate-400 mt-3">
+                  <p className="text-[0.65rem] text-slate-500 mt-3">
                     Tip: check if any of these overlap — e.g. multiple streaming services covering similar content.
                   </p>
                 </section>

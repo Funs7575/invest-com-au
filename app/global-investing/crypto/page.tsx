@@ -75,7 +75,7 @@ export default function GlobalCryptoPage() {
             Binance, Kraken, Bybit vs Australian AUSTRAC-registered exchanges — regulatory status, AUD
             on-ramp options, fees, and how gains on offshore exchanges are taxed by the ATO.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only</p>
         </div>
       </section>
 

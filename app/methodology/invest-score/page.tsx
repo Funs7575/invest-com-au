@@ -107,7 +107,7 @@ export default function InvestScoreMethodologyPage() {
       )}
       <div className="container-custom max-w-3xl py-10 md:py-16">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+        <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-slate-600 transition-colors">Home</Link>
           <span>/</span>
           <Link href="/methodology" className="hover:text-slate-600 transition-colors">Methodology</Link>
@@ -151,7 +151,7 @@ export default function InvestScoreMethodologyPage() {
                 </span>
               </div>
               <p className="text-xs md:text-sm text-slate-500 leading-relaxed mb-2">{c.description}</p>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-500">
                 Source: <code className="font-mono bg-slate-100 px-1 rounded">{c.source}</code>
               </p>
             </div>

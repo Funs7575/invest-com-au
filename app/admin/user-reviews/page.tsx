@@ -269,7 +269,7 @@ export default function AdminUserReviewsPage() {
                   <td className="px-4 py-3 text-sm text-slate-700 font-medium">{review.broker_slug}</td>
                   <td className="px-4 py-3">
                     <div className="text-sm text-slate-900">{review.display_name}</div>
-                    <div className="text-xs text-slate-400">{review.email}</div>
+                    <div className="text-xs text-slate-500">{review.email}</div>
                   </td>
                   <td className="px-4 py-3">
                     <Stars rating={review.rating} />
@@ -349,7 +349,7 @@ export default function AdminUserReviewsPage() {
                   <h3 className="font-bold text-slate-900">{r.title}</h3>
                   <button
                     onClick={() => setExpandedId(null)}
-                    className="text-xs text-slate-400 hover:text-slate-600"
+                    className="text-xs text-slate-500 hover:text-slate-600"
                   >
                     Close
                   </button>
@@ -367,7 +367,7 @@ export default function AdminUserReviewsPage() {
                     <p className="text-xs text-slate-700">{r.cons}</p>
                   </div>
                 )}
-                <div className="text-xs text-slate-400 mt-3 space-y-1">
+                <div className="text-xs text-slate-500 mt-3 space-y-1">
                   <p>Email: {r.email}</p>
                   <p>Verified: {r.verified_at ? new Date(r.verified_at).toLocaleString("en-AU") : "Not yet"}</p>
                   <p>Last updated: {new Date(r.updated_at).toLocaleString("en-AU")}</p>

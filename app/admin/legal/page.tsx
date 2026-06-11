@@ -222,7 +222,7 @@ export default function LegalDashboardPage() {
 
       {/* Document list */}
       {loading ? (
-        <div className="text-center py-12 text-slate-400">Loading...</div>
+        <div className="text-center py-12 text-slate-500">Loading...</div>
       ) : (
         <div className="space-y-2">
           {filtered.map(doc => (
@@ -243,28 +243,28 @@ export default function LegalDashboardPage() {
                   {doc.description}
                 </p>
                 {doc.expires_at && (
-                  <p className={`text-[0.6rem] mt-0.5 ${new Date(doc.expires_at) < new Date() ? "text-red-600 font-bold" : "text-slate-400"}`}>
+                  <p className={`text-[0.6rem] mt-0.5 ${new Date(doc.expires_at) < new Date() ? "text-red-600 font-bold" : "text-slate-500"}`}>
                     {new Date(doc.expires_at) < new Date() ? "EXPIRED" : "Expires"}: {new Date(doc.expires_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                   </p>
                 )}
               </div>
               <div className="flex gap-1.5 shrink-0">
                 {doc.file_url && (
-                  <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-400 hover:text-blue-600 rounded">
+                  <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-500 hover:text-blue-600 rounded">
                     <Icon name="external-link" size={14} />
                   </a>
                 )}
-                <button onClick={() => setEditing(doc)} aria-label="Edit document" className="p-1.5 text-slate-400 hover:text-slate-700 rounded">
+                <button onClick={() => setEditing(doc)} aria-label="Edit document" className="p-1.5 text-slate-500 hover:text-slate-700 rounded">
                   <Icon name="pencil" size={14} aria-hidden />
                 </button>
-                <button onClick={() => handleDelete(doc.id)} aria-label="Delete document" className="p-1.5 text-slate-400 hover:text-red-600 rounded">
+                <button onClick={() => handleDelete(doc.id)} aria-label="Delete document" className="p-1.5 text-slate-500 hover:text-red-600 rounded">
                   <Icon name="trash-2" size={14} aria-hidden />
                 </button>
               </div>
             </div>
           ))}
           {filtered.length === 0 && (
-            <div className="text-center py-8 text-slate-400 text-sm">No documents in this category.</div>
+            <div className="text-center py-8 text-slate-500 text-sm">No documents in this category.</div>
           )}
         </div>
       )}

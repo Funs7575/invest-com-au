@@ -168,7 +168,7 @@ export default async function OfficeHoursPage() {
       )}
 
       <footer className="mt-12 pt-4 border-t border-slate-200">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           Sessions cover general financial topics — not personal financial advice. Always consider
           your own circumstances before making investment decisions.
         </p>
@@ -230,7 +230,7 @@ function SessionCard({ session }: { session: Session }) {
           {session.description && (
             <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{session.description}</p>
           )}
-          <div className="flex items-center gap-4 mt-1.5 text-xs text-slate-400">
+          <div className="flex items-center gap-4 mt-1.5 text-xs text-slate-500">
             <span>{fmtScheduled(session.scheduled_at)}</span>
             {session.rsvp_count > 0 && (
               <span>{session.rsvp_count} RSVP{session.rsvp_count !== 1 ? "s" : ""}</span>

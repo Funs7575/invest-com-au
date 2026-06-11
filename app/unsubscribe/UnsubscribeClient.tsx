@@ -56,7 +56,7 @@ export default function UnsubscribeClient() {
         <p className="text-sm text-slate-500 mb-6">
           {message}
         </p>
-        <p className="text-xs text-slate-400 mb-6">
+        <p className="text-xs text-slate-500 mb-6">
           You won&apos;t receive any more emails from us. If you change your mind, you can re-subscribe anytime from your account settings.
         </p>
         <Link
@@ -105,7 +105,7 @@ export default function UnsubscribeClient() {
         </button>
       </div>
 
-      <p className="text-xs text-slate-400 mt-6">
+      <p className="text-xs text-slate-500 mt-6">
         If you have an account, you can also manage preferences from{" "}
         <Link href="/account" className="underline hover:text-slate-600">
           your account settings

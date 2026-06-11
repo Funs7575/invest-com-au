@@ -170,7 +170,7 @@ export default function FinanceDashboardPage() {
         </button>
       </div>
 
-      {loading && <div className="text-center py-12 text-slate-400">Loading...</div>}
+      {loading && <div className="text-center py-12 text-slate-500">Loading...</div>}
 
       {/* ─── OVERVIEW TAB ─── */}
       {!loading && tab === "overview" && (
@@ -183,21 +183,21 @@ export default function FinanceDashboardPage() {
               <p className="text-[0.55rem] opacity-70">all time</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Total Income</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Total Income</p>
               <p className="text-2xl font-extrabold text-emerald-600">{fmt(totalIncome)}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Total Expenses</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Total Expenses</p>
               <p className="text-2xl font-extrabold text-red-600">{fmt(totalExpenses)}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">This Month Income</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">This Month Income</p>
               <p className="text-2xl font-extrabold text-emerald-600">{fmt(thisMonthIncome)}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Monthly Burn</p>
+              <p className="text-[0.6rem] font-bold text-slate-500 uppercase">Monthly Burn</p>
               <p className="text-2xl font-extrabold text-red-600">{fmt(monthlyRecurringExpenses)}</p>
-              <p className="text-[0.55rem] text-slate-400">recurring</p>
+              <p className="text-[0.55rem] text-slate-500">recurring</p>
             </div>
           </div>
 
@@ -205,7 +205,7 @@ export default function FinanceDashboardPage() {
           <div className="grid md:grid-cols-2 gap-4 mb-6">
             <div className="bg-white border border-slate-200 rounded-xl p-5">
               <h3 className="text-sm font-bold text-slate-900 mb-3">Income by Category</h3>
-              {incomeByCategory.length === 0 ? <p className="text-sm text-slate-400">No income recorded yet</p> : (
+              {incomeByCategory.length === 0 ? <p className="text-sm text-slate-500">No income recorded yet</p> : (
                 <div className="space-y-2">
                   {incomeByCategory.map(c => (
                     <div key={c.key} className="flex items-center gap-3">
@@ -219,7 +219,7 @@ export default function FinanceDashboardPage() {
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-5">
               <h3 className="text-sm font-bold text-slate-900 mb-3">Expenses by Category</h3>
-              {expenseByCategory.length === 0 ? <p className="text-sm text-slate-400">No expenses recorded yet</p> : (
+              {expenseByCategory.length === 0 ? <p className="text-sm text-slate-500">No expenses recorded yet</p> : (
                 <div className="space-y-2">
                   {expenseByCategory.map(c => (
                     <div key={c.key} className="flex items-center gap-3">
@@ -288,7 +288,7 @@ export default function FinanceDashboardPage() {
               </div>
             </div>
           ))}
-          {txns.length === 0 && <div className="text-center py-12 text-slate-400 text-sm">No transactions yet. Add your first one above.</div>}
+          {txns.length === 0 && <div className="text-center py-12 text-slate-500 text-sm">No transactions yet. Add your first one above.</div>}
         </div>
       )}
 
@@ -323,7 +323,7 @@ export default function FinanceDashboardPage() {
                 <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} aria-label="Edit transaction" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="pencil" size={14} aria-hidden /></button>
               </div>
             ))}
-            {recurringTxns.length === 0 && <div className="text-center py-8 text-slate-400 text-sm">No recurring transactions. Add expenses like hosting, domains, and software.</div>}
+            {recurringTxns.length === 0 && <div className="text-center py-8 text-slate-500 text-sm">No recurring transactions. Add expenses like hosting, domains, and software.</div>}
           </div>
         </>
       )}

@@ -79,7 +79,7 @@ export default function SearchInput({
         <Icon
           name="search"
           size={16}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
         />
         <input
           id={id}

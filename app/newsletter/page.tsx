@@ -155,7 +155,7 @@ export default async function NewsletterArchivePage() {
                           {edition.deals_count === 1 ? "deal" : "deals"}
                         </span>
                       )}
-                      <span className="text-xs md:text-sm font-semibold text-slate-400 group-hover:text-amber-600 transition-colors">
+                      <span className="text-xs md:text-sm font-semibold text-slate-500 group-hover:text-amber-600 transition-colors">
                         Read &rarr;
                       </span>
                     </div>
