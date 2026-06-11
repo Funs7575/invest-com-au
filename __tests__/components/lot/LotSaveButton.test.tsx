@@ -182,6 +182,30 @@ describe("LotSaveButton", () => {
     expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("reverts the authed optimistic state when the server answers a non-ok response", async () => {
+    mockUseUser.mockReturnValue({ user: { id: "user-1" }, loading: false });
+    mockFetch(async (url, init) => {
+      if (!init?.method || init.method === "GET") {
+        return new Response(JSON.stringify({ items: [] }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      // fetch resolves (no throw) on server errors — the component must
+      // read res.ok / { ok } itself.
+      return new Response(JSON.stringify({ error: "boom" }), { status: 500 });
+    });
+
+    render(<LotSaveButton {...PROPS} />);
+    const button = screen.getByRole("button", { name: /save/i });
+
+    await userEvent.click(button);
+    await waitFor(() => expect(button).toHaveAttribute("aria-busy", "false"));
+
+    expect(button).toHaveAttribute("aria-pressed", "false");
+    expect(button).toHaveTextContent("Save");
+  });
+
   it("hydrates from the bookmarks API and deletes server-side for authed users", async () => {
     mockUseUser.mockReturnValue({ user: { id: "user-1" }, loading: false });
     const fetchFn = mockFetch(async (url, init) => {

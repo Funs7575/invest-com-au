@@ -11,6 +11,14 @@ interface Props {
   className?: string;
 }
 
+/** fetch resolves on 4xx/5xx and the API can answer { ok: false } — treat
+ *  both as a failed write so authed optimistic state can be reverted. */
+async function responseOk(res: Response): Promise<boolean> {
+  if (!res.ok) return false;
+  const json = (await res.json().catch(() => ({ ok: false }))) as { ok?: boolean };
+  return json.ok === true;
+}
+
 /**
  * Save/unsave toggle that works for both authenticated and
  * anonymous visitors.
@@ -90,11 +98,14 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
         }
         const body: Record<string, unknown> = { type, ref, label };
         if (!user) body.session_id = getSessionId();
-        await fetch("/api/account/bookmarks", {
+        const res = await fetch("/api/account/bookmarks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
+        if (user && !(await responseOk(res))) {
+          setSaved(!next);
+        }
       } else {
         if (!user) {
           // Drop the localStorage mirror first so the unsave survives a
@@ -114,11 +125,14 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
         }
         const body: Record<string, unknown> = { type, ref };
         if (!user) body.session_id = getSessionId();
-        await fetch("/api/account/bookmarks", {
+        const res = await fetch("/api/account/bookmarks", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
+        if (user && !(await responseOk(res))) {
+          setSaved(!next);
+        }
       }
     } catch {
       // Anonymous state lives in localStorage (already written above);

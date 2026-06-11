@@ -191,6 +191,7 @@ export default function LotSaveButton({
     }
 
     try {
+      let res: Response;
       if (next) {
         const body: Record<string, unknown> = {
           type: "listing",
@@ -198,7 +199,7 @@ export default function LotSaveButton({
           label: title,
         };
         if (!user) body.session_id = getSessionId();
-        await fetch("/api/account/bookmarks", {
+        res = await fetch("/api/account/bookmarks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
@@ -208,11 +209,23 @@ export default function LotSaveButton({
         // without the server delete, claim-on-signup resurrects the save.
         const body: Record<string, unknown> = { type: "listing", ref: slug };
         if (!user) body.session_id = getSessionId();
-        await fetch("/api/account/bookmarks", {
+        res = await fetch("/api/account/bookmarks", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
+      }
+      // fetch resolves on 4xx/5xx and the API can answer { ok: false } —
+      // for authed users the server is the source of truth, so a non-write
+      // must un-stick the optimistic state.
+      if (user) {
+        const ok =
+          res.ok &&
+          ((await res.json().catch(() => ({ ok: false }))) as { ok?: boolean }).ok === true;
+        if (!ok) {
+          setSaved(!next);
+          broadcast(!next);
+        }
       }
     } catch {
       // Anonymous saves live in localStorage regardless; only revert when

@@ -52,7 +52,7 @@ export function deriveListingKind(row: DerivableListing): ListingKind {
 
   if (v === "royalties" || km["stage"] === "royalty" || km["royalty_type"]) return "royalty";
 
-  if (["buy-business", "franchise"].includes(v)) return "for_sale_business";
+  if (["business", "buy-business", "franchise"].includes(v)) return "for_sale_business";
   if (["commercial_property", "commercial-property", "farmland", "livestock"].includes(v)) return "for_sale_asset";
   if (["startups", "startup", "pre_ipo", "pre-ipo"].includes(v)) return "equity_raise";
 

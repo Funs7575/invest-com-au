@@ -53,6 +53,9 @@ export default function LotStickyActions({
   return (
     <div
       aria-hidden={!visible}
+      // `inert` (React 19) removes the off-screen bar's Save/Enquire from
+      // the tab order — aria-hidden alone leaves them keyboard-focusable.
+      inert={!visible}
       className={[
         "fixed inset-x-0 bottom-0 z-40 md:hidden border-t border-slate-200 bg-white/95 backdrop-blur",
         "transition-transform duration-300",

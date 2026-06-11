@@ -30,7 +30,7 @@ export async function GET(
     const supabase = await createClient();
     const { data } = await supabase
       .from("investment_listings")
-      .select("slug, vertical, sub_category")
+      .select("slug, vertical, sub_category, listing_kind")
       .eq("slug", slug)
       .maybeSingle();
 

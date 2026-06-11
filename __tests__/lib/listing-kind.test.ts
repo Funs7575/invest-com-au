@@ -112,6 +112,9 @@ describe("deriveListingKind", () => {
   it("maps buy-business / franchise to for_sale_business", () => {
     expect(deriveListingKind(deriveRow({ vertical: "buy-business" as InvestmentListing["vertical"] }))).toBe("for_sale_business");
     expect(deriveListingKind(deriveRow({ vertical: "franchise" as InvestmentListing["vertical"] }))).toBe("for_sale_business");
+    // The canonical DB union value — buy-business/franchise are the URL
+    // category slugs; rows fetched by the lot pages carry "business".
+    expect(deriveListingKind(deriveRow({ vertical: "business" as InvestmentListing["vertical"] }))).toBe("for_sale_business");
   });
 
   it("maps commercial / farmland / livestock to for_sale_asset", () => {

@@ -22,6 +22,7 @@ import {
   deriveListingKind,
   listingKindMeta,
   formatListingPrice,
+  formatAudCompact,
   freshnessSignal,
   type FreshnessSignal,
 } from "@/lib/listing-kind";
@@ -85,9 +86,28 @@ export default function ListingDetailView({
   const highlightKey = intel.highlightMetricKeys.find(
     (key) => km[key] != null && km[key] !== "",
   );
-  const highlight = highlightKey
-    ? { label: humanizeTitle(highlightKey), value: formatMetricValue(highlightKey, km[highlightKey]) }
-    : null;
+  // Top-level annual_profit_cents wins the price-card highlight slot (the
+  // bespoke business/franchise pages always led with it); otherwise fall
+  // back to the vertical's preferred key_metrics highlight.
+  const highlight = l.annual_profit_cents
+    ? { label: "Annual Net Profit", value: formatAudCompact(l.annual_profit_cents) }
+    : highlightKey
+      ? { label: humanizeTitle(highlightKey), value: formatMetricValue(highlightKey, km[highlightKey]) }
+      : null;
+
+  // Financials stored as top-level columns (not key_metrics) — the facts
+  // grid is built from key_metrics, so fold these in or they vanish.
+  // Profit is excluded here because it always owns the highlight slot.
+  const facts = l.annual_revenue_cents
+    ? [
+        {
+          key: "annual_revenue_cents",
+          label: "Annual Revenue",
+          value: formatAudCompact(l.annual_revenue_cents),
+        },
+        ...profile.facts,
+      ]
+    : profile.facts;
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -191,11 +211,11 @@ export default function ListingDetailView({
                 </div>
               </div>
 
-              {profile.facts.length > 0 && (
+              {facts.length > 0 && (
                 <div className="bg-white border border-slate-200 rounded-xl p-6">
                   <h2 className="text-base font-bold text-slate-900 mb-4">{intel.detailsHeading}</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {profile.facts.map((fact) => (
+                    {facts.map((fact) => (
                       <div key={fact.key} className="bg-slate-50 rounded-lg p-3">
                         <p className="text-xs text-slate-500 mb-1">{fact.label}</p>
                         <p className="text-sm font-bold text-slate-900">{fact.value}</p>
