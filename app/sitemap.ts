@@ -26,6 +26,7 @@ import { superFundsMeta, allSuperFunds } from "@/lib/super-funds";
 import { ghostTickersMeta, allGhostTickers } from "@/lib/ghost-tickers";
 import { postcodeAtlasMeta, allPostcodes } from "@/lib/postcode-atlas";
 import { FEE_DRAG_SCENARIOS } from "@/lib/fee-drag";
+import { CGT_SCENARIOS } from "@/lib/cgt-scenarios";
 
 const log = logger("sitemap");
 
@@ -826,6 +827,14 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
   // extract; excluded while the bundled dataset is the synthetic preview.
   // Postcode Wealth Atlas — per-postcode pages over the ATO extract;
   // excluded while the bundled dataset is the synthetic preview.
+  // CGT scenario pages — pure-math static pages, always included.
+  const cgtScenarioPages: MetadataRoute.Sitemap = CGT_SCENARIOS.map((s) => ({
+    url: `${base}/cgt-calculator/${s.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "yearly" as const,
+    priority: 0.55,
+  }));
+
   // Fee-drag scenario pages — pure-math static pages, always included.
   const feeDragPages: MetadataRoute.Sitemap = FEE_DRAG_SCENARIOS.map((s) => ({
     url: `${base}/super/fee-drag/${s.slug}`,
@@ -1006,6 +1015,7 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
     ...ghostTickerPages,
     ...postcodePages,
     ...feeDragPages,
+    ...cgtScenarioPages,
   ];
 }
 

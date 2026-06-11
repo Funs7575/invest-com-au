@@ -1325,6 +1325,13 @@ Brainstormed list of self-contained builds (each one Claude session, no founder 
 10. **"Is X regulated?" checker pages** — AFSL/ACL/unlicensed status pages for every entity in the AFSL register cache.
 11–25. (lower-confidence ideas — regenerate from this list's spirit when reached: state-by-state stamp duty matrices, visa-by-visa investment right pages, SMSF cost benchmarks by balance, dividend calendar pages, broker outage log, term-deposit ladder builders, CGT scenario library, currency-corridor remittance pages, super contribution deadline pages, advisor fee benchmarks by region, FIRB application timeline tracker, bond yield explainers, IPO archive, LIC NTA discount tracker, robo-advisor comparison matrix.)
 
+**Loop status (2026-06-11 PM session):**
+- #6-as-attempted (AFSL permalinks): already existed (parallel session) — shipped the Atlas↔AFSL adviser cross-link instead (#1551, merged).
+- #9 (broker fee-history): already exists — `broker/[slug]/changelog` + `broker_data_changes` + market-pulse cover it. Marked done.
+- #8 (glossary i18n): deferred — 195 terms × 3 locales of hand-authored translations; needs founder sign-off on translation approach before it's worth building.
+- CGT scenario library (from the 11–25 tail): ✅ SHIPPED — 18 prerendered worked-example pages at `/cgt-calculator/[scenario]` over the existing `computeCgt` engine; pure math, live immediately, same posture as fee-drag.
+- Remaining buildable-without-data items are thinning; most of the tail now waits on founder-run ingests (the four `data:*` commands) or founder decisions.
+
 **Pattern established (#1, #2):** file-backed JSON in `data/` + typed lib loader + alias-driven CSV ingest script + hub/detail ISR routes + synthetic preview with `meta.sample` → banner + noindex until real extract lands → one-command hydration, ships as PR diff. Egress from build sandboxes is blocked for AU data portals — run ingests locally.
 
 ## Open commitments / revisit-by dates
