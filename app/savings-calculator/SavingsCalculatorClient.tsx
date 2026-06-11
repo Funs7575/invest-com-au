@@ -7,6 +7,8 @@ import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDurat
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useMoneyProfilePrefill } from "@/hooks/use-money-profile";
+import MoneyProfileChip from "@/components/MoneyProfileChip";
 import { useUrlSync } from "@/app/calculators/_components/CalcShared";
 import ShareResult from "@/components/ShareResult";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
@@ -54,6 +56,18 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
   useEffect(() => {
     setPersistedInputs({ balance, current_rate: currentRate });
   }, [balance, currentRate, setPersistedInputs]);
+
+  // Money Profile prefill — savings balance from /account/net-worth,
+  // applied only while the inputs are still pristine.
+  const moneyPrefill = useMoneyProfilePrefill({
+    hydrated: persistHydrated,
+    current: persistedInputs,
+    defaults: { balance: 25000, current_rate: 0.5 },
+    build: (p) => ({ balance: p.savings_balance }),
+    apply: (patch) => {
+      if (typeof patch.balance === "number") setBalance(patch.balance);
+    },
+  });
 
   // Auto-show results when loaded from a shared link.
   useEffect(() => {
@@ -141,6 +155,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
       </div>}
 
       <div className={inline ? "" : "container-custom max-w-3xl py-6 md:py-10"}>
+        <MoneyProfileChip prefill={moneyPrefill} />
         {/* Input form */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 shadow-sm mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">

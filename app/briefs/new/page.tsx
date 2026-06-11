@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/server";
 // eslint-disable-next-line no-restricted-imports -- cross-table workspace lookup: resolves the caller's active account kind label so the brief form can prefill business/listing-owner context. Reads only the user's own profile under service-role because business_accounts / listing_owner_accounts have no anon SELECT path.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getActiveKind, type WorkspaceKind } from "@/lib/account-kinds";
+import { getInvestorProfile } from "@/lib/investor-profiles";
+import { parseMoneyMeta } from "@/lib/money-profile";
 import DirectoryHero from "@/components/directory/DirectoryHero";
 import BriefForm from "./BriefForm";
 
@@ -84,6 +86,33 @@ async function loadWorkspaceContext(): Promise<WorkspaceContext | null> {
   }
 }
 
+/**
+ * Money Profile fallback prefill for signed-in investors: contact name /
+ * email from the account, location state from meta.money. The workspace
+ * context (business / listing owner) wins where both exist.
+ */
+async function loadInvestorPrefill(): Promise<{
+  name: string | null;
+  email: string | null;
+  state: string | null;
+} | null> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
+    const profile = await getInvestorProfile(user.id);
+    return {
+      name: profile?.displayName ?? null,
+      email: user.email ?? null,
+      state: parseMoneyMeta(profile?.meta).state,
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function isProSubscriber(): Promise<boolean> {
   try {
     const supabase = await createClient();
@@ -155,8 +184,9 @@ export default async function NewBriefPage({
     segment: "advisor",
   });
 
-  const [workspace, proSubscriber, proSupply] = await Promise.all([
+  const [workspace, investorPrefill, proSubscriber, proSupply] = await Promise.all([
     loadWorkspaceContext(),
+    loadInvestorPrefill(),
     isProSubscriber(),
     loadProviderSupply(),
   ]);
@@ -223,6 +253,7 @@ export default async function NewBriefPage({
         <BriefForm
           aiCopilotEnabled={aiCopilotEnabled}
           workspace={workspace}
+          investorPrefill={investorPrefill}
           proSubscriber={proSubscriber}
           proSupply={proSupply}
         />

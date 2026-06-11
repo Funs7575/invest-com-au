@@ -11,6 +11,8 @@ import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { formatCurrency } from "@/lib/utils";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useMoneyProfilePrefill } from "@/hooks/use-money-profile";
+import MoneyProfileChip from "@/components/MoneyProfileChip";
 import { useUrlSync } from "@/app/calculators/_components/CalcShared";
 import ShareResult from "@/components/ShareResult";
 
@@ -82,6 +84,36 @@ export default function RetirementCalculatorClient() {
       desired_income: desiredIncome,
     });
   }, [currentAge, retirementAge, currentSuper, annualSalary, employerRate, additionalContributions, expectedReturn, inflationRate, desiredIncome, setPersistedInputs]);
+
+  // Money Profile prefill — age / target retirement age / super balance /
+  // salary, applied only while the inputs are still pristine.
+  const moneyPrefill = useMoneyProfilePrefill({
+    hydrated: persistHydrated,
+    current: persistedInputs,
+    defaults: {
+      current_age: 35,
+      retirement_age: 67,
+      current_super: 150000,
+      annual_salary: 100000,
+      employer_rate: 12,
+      additional_contributions: 0,
+      expected_return: 7,
+      inflation_rate: 3,
+      desired_income: 60000,
+    },
+    build: (p) => ({
+      current_age: p.age,
+      retirement_age: p.target_retirement_age,
+      current_super: p.super_balance,
+      annual_salary: p.annual_income,
+    }),
+    apply: (patch) => {
+      if (typeof patch.current_age === "number") setCurrentAge(patch.current_age);
+      if (typeof patch.retirement_age === "number") setRetirementAge(patch.retirement_age);
+      if (typeof patch.current_super === "number") setCurrentSuper(patch.current_super);
+      if (typeof patch.annual_salary === "number") setAnnualSalary(patch.annual_salary);
+    },
+  });
 
   // Auto-show results when the page is loaded from a shared link.
   useEffect(() => {
@@ -217,6 +249,7 @@ export default function RetirementCalculatorClient() {
       </div>
 
       <div className="container-custom max-w-3xl py-6 md:py-10">
+        <MoneyProfileChip prefill={moneyPrefill} />
         {/* Input form */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 shadow-sm mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
