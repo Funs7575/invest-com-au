@@ -10,12 +10,18 @@ import { useSearchParams } from "next/navigation";
 // so the component also surfaces those success states.
 
 type ProductKind = "savings_account" | "term_deposit";
+type AlertMode = "threshold" | "any_change";
 type Frequency = "instant" | "daily" | "weekly";
 type FormStatus = "idle" | "sending" | "done" | "error";
 
 const PRODUCT_LABELS: Record<ProductKind, string> = {
   savings_account: "Savings account",
   term_deposit: "Term deposit",
+};
+
+const MODE_LABELS: Record<AlertMode, string> = {
+  threshold: "Rate beats my target",
+  any_change: "Any rate change",
 };
 
 const FREQUENCY_LABELS: Record<Frequency, string> = {
@@ -29,6 +35,7 @@ export default function RateAlertSignupForm() {
 
   const [email, setEmail] = useState("");
   const [productKind, setProductKind] = useState<ProductKind>("savings_account");
+  const [mode, setMode] = useState<AlertMode>("threshold");
   const [thresholdPct, setThresholdPct] = useState("5.25");
   const [frequency, setFrequency] = useState<Frequency>("instant");
   // Honeypot — bots fill this, real users never see it. Submit-side checks
@@ -89,7 +96,7 @@ export default function RateAlertSignupForm() {
       setError("Please enter a valid email address.");
       return;
     }
-    if (!Number.isFinite(pct) || pct <= 0 || pct > 50) {
+    if (mode === "threshold" && (!Number.isFinite(pct) || pct <= 0 || pct > 50)) {
       setError("Enter a target rate between 0% and 50%.");
       return;
     }
@@ -102,7 +109,8 @@ export default function RateAlertSignupForm() {
         body: JSON.stringify({
           email,
           product_kind: productKind,
-          threshold_pct: pct,
+          mode,
+          ...(mode === "threshold" ? { threshold_pct: pct } : {}),
           frequency,
           website,
         }),
@@ -271,30 +279,63 @@ export default function RateAlertSignupForm() {
           </div>
         </fieldset>
 
-        <label className="block text-sm">
-          <span className="mb-1.5 block text-xs font-semibold text-slate-300">
-            Notify me when the headline rate reaches
-          </span>
-          <div className="relative">
-            <input
-              data-testid="rate-alert-threshold"
-              type="number"
-              inputMode="decimal"
-              step="0.05"
-              min="0"
-              max="50"
-              value={thresholdPct}
-              onChange={(e) => setThresholdPct(e.target.value)}
-              placeholder="5.25"
-              required
-              aria-label="Target rate in per cent per annum"
-              className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 pr-16 text-sm text-white placeholder:text-slate-500 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-            <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-slate-400">
-              % p.a.
-            </span>
+        <fieldset>
+          <legend className="mb-1.5 block text-xs font-semibold text-slate-300">
+            Alert me on
+          </legend>
+          <div className="grid grid-cols-2 gap-2">
+            {(Object.keys(MODE_LABELS) as AlertMode[]).map((m) => (
+              <button
+                key={m}
+                type="button"
+                data-testid={`rate-alert-mode-${m}`}
+                aria-pressed={mode === m}
+                onClick={() => setMode(m)}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  mode === m
+                    ? "bg-amber-500 text-white"
+                    : "bg-white/10 text-slate-300 hover:bg-white/15"
+                }`}
+              >
+                {MODE_LABELS[m]}
+              </button>
+            ))}
           </div>
-        </label>
+          {mode === "any_change" && (
+            <p className="mt-1.5 text-xs text-slate-500">
+              We&apos;ll send a factual digest whenever a tracked{" "}
+              {PRODUCT_LABELS[productKind].toLowerCase()} rate changes — batched
+              to your chosen frequency.
+            </p>
+          )}
+        </fieldset>
+
+        {mode === "threshold" && (
+          <label className="block text-sm">
+            <span className="mb-1.5 block text-xs font-semibold text-slate-300">
+              Notify me when the headline rate reaches
+            </span>
+            <div className="relative">
+              <input
+                data-testid="rate-alert-threshold"
+                type="number"
+                inputMode="decimal"
+                step="0.05"
+                min="0"
+                max="50"
+                value={thresholdPct}
+                onChange={(e) => setThresholdPct(e.target.value)}
+                placeholder="5.25"
+                required
+                aria-label="Target rate in per cent per annum"
+                className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 pr-16 text-sm text-white placeholder:text-slate-500 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
+              />
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs text-slate-500">
+                % p.a.
+              </span>
+            </div>
+          </label>
+        )}
 
         <fieldset>
           <legend className="mb-1.5 block text-xs font-semibold text-slate-300">

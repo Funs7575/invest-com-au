@@ -75,7 +75,7 @@ function VoteButtons({
         className={`w-7 h-7 flex items-center justify-center rounded transition-colors ${
           userVote === 1
             ? "bg-blue-100 text-blue-700"
-            : "text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            : "text-slate-500 hover:bg-slate-100 hover:text-slate-600"
         }`}
         aria-label={`Upvote ${targetType}`}
         title="Upvote"
@@ -105,7 +105,7 @@ function VoteButtons({
         className={`w-7 h-7 flex items-center justify-center rounded transition-colors ${
           userVote === -1
             ? "bg-red-100 text-red-600"
-            : "text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            : "text-slate-500 hover:bg-slate-100 hover:text-slate-600"
         }`}
         aria-label={`Downvote ${targetType}`}
         title="Downvote"

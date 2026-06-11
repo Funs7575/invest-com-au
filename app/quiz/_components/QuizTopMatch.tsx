@@ -2,6 +2,7 @@
 
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import { isSponsored } from "@/lib/sponsorship";
 import Icon from "@/components/Icon";
 import RiskWarningInline from "@/components/RiskWarningInline";
@@ -23,8 +24,13 @@ export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Pro
   if (!topMatch.broker) return null;
   const broker = topMatch.broker;
 
+  const ratingText = broker.rating ? `, rated ${broker.rating} out of 5` : "";
+  const cardAriaLabel = `#1 match: ${broker.name}${ratingText}`;
+
   return (
     <div
+      aria-label={cardAriaLabel}
+      role="region"
       className="border-2 rounded-xl p-4 md:p-8 mb-3 md:mb-6 relative overflow-hidden result-card-in result-card-in-delay-1 shine-effect"
       style={{
         borderColor: broker.color || '#f59e0b',
@@ -65,7 +71,10 @@ export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Pro
             <h2 className="text-xl md:text-3xl font-extrabold">{broker.name}</h2>
             {isSponsored(broker) && <SponsorBadge broker={broker} />}
           </div>
-          <div className="text-xs md:text-sm text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)} <span className="text-slate-500" aria-hidden="true">{broker.rating}/5</span><span className="sr-only">{broker.rating} out of 5 stars</span></div>
+          {/* Editorial star rating — licence-gated (lib/compliance-config). */}
+          {SHOW_RATINGS && (
+            <div className="text-xs md:text-sm text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)} <span className="text-slate-500" aria-hidden="true">{broker.rating}/5</span><span className="sr-only">{broker.rating} out of 5 stars</span></div>
+          )}
         </div>
       </div>
       <p className="text-[0.69rem] md:text-base text-slate-600 mb-3 md:mb-4 hidden md:block">{broker.tagline}</p>
@@ -136,7 +145,7 @@ export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Pro
             <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Gov. Guaranteed</span>
           </>
         )}
-        <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Rating: {broker.rating}/5</span>
+        {SHOW_RATINGS && <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Rating: {broker.rating}/5</span>}
       </div>
       <a
         href={getAffiliateLink(broker)}

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import type { TopMatch } from "@/lib/getmatched/types";
+import { SHOW_ADVISOR_RATINGS, SHOW_RATINGS } from "@/lib/compliance-config";
 import { trackClick } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
@@ -19,6 +20,12 @@ import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 interface Props {
   matches: TopMatch[];
+}
+
+/** Licence gate per match kind — broker and advisor ratings are separately
+ *  flagged in lib/compliance-config (single source). */
+function showRatingFor(match: TopMatch): boolean {
+  return match.kind === "advisor" ? SHOW_ADVISOR_RATINGS : SHOW_RATINGS;
 }
 
 export default function TopMatchCarousel({ matches }: Props) {
@@ -57,13 +64,13 @@ export default function TopMatchCarousel({ matches }: Props) {
               {hero.one_line_why}
             </p>
           </div>
-          {hero.rating !== null && (
+          {showRatingFor(hero) && hero.rating !== null && (
             <div className="hidden sm:block text-right shrink-0">
               <div className="inline-flex items-center gap-1 text-sm font-bold text-slate-900">
                 <Icon name="star" size={14} className="text-amber-500" />
                 {hero.rating.toFixed(1)}
               </div>
-              <p className="text-[10px] text-slate-400">out of 5</p>
+              <p className="text-[10px] text-slate-500">out of 5</p>
             </div>
           )}
         </div>
@@ -75,7 +82,7 @@ export default function TopMatchCarousel({ matches }: Props) {
           {hero.cta_label}
           <Icon name="arrow-right" size={14} />
         </Link>
-        <p className="mt-3 text-[11px] text-slate-400 text-center">
+        <p className="mt-3 text-[11px] text-slate-500 text-center">
           {ADVERTISER_DISCLOSURE_SHORT}
         </p>
       </div>
@@ -112,7 +119,7 @@ export default function TopMatchCarousel({ matches }: Props) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-2 mb-0.5">
                       <p className="font-bold text-sm text-slate-900 truncate">{m.name}</p>
-                      {m.rating !== null && (
+                      {showRatingFor(m) && m.rating !== null && (
                         <span className="text-[11px] text-slate-500 shrink-0">
                           {m.rating.toFixed(1)} / 5
                         </span>
@@ -134,7 +141,7 @@ export default function TopMatchCarousel({ matches }: Props) {
         </>
       )}
 
-      <p className="text-[11px] text-slate-400 mt-3 text-center">
+      <p className="text-[11px] text-slate-500 mt-3 text-center">
         Routed from your answers. General information only — not personal advice.
       </p>
       <style>{`

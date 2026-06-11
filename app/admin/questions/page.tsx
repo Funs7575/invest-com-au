@@ -280,7 +280,7 @@ export default function AdminQuestionsPage() {
                   <td className="px-4 py-3 text-sm text-slate-700 font-medium">{q.broker_slug}</td>
                   <td className="px-4 py-3">
                     <div className="text-sm text-slate-900">{q.display_name}</div>
-                    {q.email && <div className="text-xs text-slate-400">{q.email}</div>}
+                    {q.email && <div className="text-xs text-slate-500">{q.email}</div>}
                   </td>
                   <td className="px-4 py-3">
                     <button
@@ -360,13 +360,13 @@ export default function AdminQuestionsPage() {
                   <h3 className="font-bold text-slate-900">Question Detail</h3>
                   <button
                     onClick={() => setExpandedId(null)}
-                    className="text-xs text-slate-400 hover:text-slate-600"
+                    className="text-xs text-slate-500 hover:text-slate-600"
                   >
                     Close
                   </button>
                 </div>
                 <p className="text-sm text-slate-700 whitespace-pre-line mb-3 break-words">{q.question}</p>
-                <div className="text-xs text-slate-400 space-y-1 mb-4">
+                <div className="text-xs text-slate-500 space-y-1 mb-4">
                   <p>Broker: {q.broker_slug} / Page: {q.page_slug} ({q.page_type})</p>
                   <p>Asked by: {q.display_name}{q.email ? ` (${q.email})` : ""}</p>
                   <p>Submitted: {new Date(q.created_at).toLocaleString("en-AU")}</p>
@@ -394,7 +394,7 @@ export default function AdminQuestionsPage() {
                             </span>
                           </div>
                           <p className="text-sm text-slate-700">{a.answer}</p>
-                          <p className="text-xs text-slate-400 mt-1">
+                          <p className="text-xs text-slate-500 mt-1">
                             {a.display_name || "Unknown"} · {new Date(a.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                           </p>
                         </div>

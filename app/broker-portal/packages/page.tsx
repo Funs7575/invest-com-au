@@ -210,7 +210,7 @@ export default function PackagesPage() {
         {currentPkg && currentPkg.tier !== "starter" && (
           <button
             onClick={initiateCancellation}
-            className="text-xs text-slate-400 hover:text-red-600 transition-colors"
+            className="text-xs text-slate-500 hover:text-red-600 transition-colors"
           >
             Cancel subscription
           </button>

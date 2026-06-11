@@ -50,6 +50,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "south_korea",   label: "South Korea",   emoji: "🇰🇷" },
       { key: "saudi_arabia",  label: "Saudi Arabia",  emoji: "🇸🇦" },
       { key: "other",         label: "Other country", emoji: "🌍" },
+      { key: "not_sure",      label: "Not sure / prefer not to say", sub: "We'll match you with advisors experienced with international clients", emoji: "❓" },
     ],
   },
   visa_status: {
@@ -59,6 +60,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "temp_visa",       label: "Temporary visa holder",             sub: "457, 482, student, working holiday visa",         emoji: "📋" },
       { key: "new_pr",          label: "New permanent resident",            sub: "Recently got PR, not yet a citizen",              emoji: "🏡" },
       { key: "au_expat",        label: "Australian expat",                  sub: "Australian citizen or PR living abroad",          emoji: "✈️" },
+      { key: "not_sure",        label: "Not sure",                          sub: "We'll route you to the most relevant specialist", emoji: "❓" },
     ],
   },
   investor_goal_intl: {
@@ -68,6 +70,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "shares",    label: "Invest in ASX shares",    sub: "Stocks, ETFs, or managed funds",              emoji: "📈" },
       { key: "savings",   label: "Park money in AUD",       sub: "High-interest savings or term deposits",      emoji: "💰" },
       { key: "business",  label: "Set up a business",       sub: "Company registration, structuring",           emoji: "🏢" },
+      { key: "not_sure",  label: "Not sure yet",            sub: "We'll show you the most common starting points for your situation", emoji: "❓" },
     ],
   },
   goal: {
@@ -83,7 +86,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "home",       label: "Buy a home or get a loan",                sub: "First home, refinance, or investment loan",             emoji: "🔑" },
       { key: "alt-assets", label: "Alternative / collectible assets",        sub: "Whisky, wine, art, watches, classic cars, coins",       emoji: "🥃" },
       { key: "royalties",  label: "Royalties / income-producing assets",     sub: "Music, mining, IP royalties + vending / ATM income",    emoji: "📜" },
-      { key: "pre-ipo",    label: "Pre-IPO / wholesale-investor deals",      sub: "Late-stage private equity, IPO calendar, s708 deals",   emoji: "🚀" },
+      { key: "pre-ipo",    label: "Pre-IPO / wholesale-investor deals",      sub: "For wholesale investors only (typically $2.5M+ net assets)",   emoji: "🚀" },
       { key: "help",       label: "Get expert help",                         sub: "I'd like professional guidance",                        emoji: "🤝" },
       { key: "other",      label: "Something else / I'll describe it",       sub: "We'll route you to the right pro via post-a-job",       emoji: "❓" },
     ],
@@ -137,7 +140,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
     text: "What matters most to you?",
     options: [
       { key: "fees", label: "Lowest fees", sub: "Minimise brokerage and ongoing costs" },
-      { key: "safety", label: "Safety (CHESS sponsored)", sub: "Shares held directly in your name" },
+      { key: "safety", label: "Safety (CHESS sponsored)", sub: "Shares held directly in your name — protected if the broker fails" },
       { key: "tools", label: "Best tools & research", sub: "Advanced charting, analysis, screeners" },
       { key: "simple", label: "Simplicity / set & forget", sub: "Easy, automated, and stress-free" },
       { key: "not_sure", label: "No strong preference", sub: "Show me well-rounded options" },
@@ -148,15 +151,15 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
     options: [
       { key: "mortgage-broker",   label: "Mortgage broker",           sub: "Home loans, refinancing, investment loans",     emoji: "🏠" },
       { key: "buyers-agent",      label: "Buyer's agent",             sub: "Find and negotiate property purchases",         emoji: "🔍" },
-      { key: "conveyancer",       label: "Conveyancer",               sub: "Property settlement, contracts, title",         emoji: "📑" },
+      { key: "conveyancer",       label: "Conveyancer",               sub: "Handles legal settlement paperwork when buying/selling property", emoji: "📑" },
       { key: "financial-planner", label: "Financial planner",         sub: "Investment strategy, tax, retirement planning", emoji: "📊" },
-      { key: "smsf-accountant",   label: "SMSF accountant",           sub: "Set up and manage a self-managed super fund",   emoji: "🏦" },
+      { key: "smsf-accountant",   label: "SMSF accountant",           sub: "Sets up and manages self-managed super funds",  emoji: "🏦" },
       { key: "tax-agent",         label: "Tax agent",                 sub: "Tax returns, crypto CGT, deductions",           emoji: "📋" },
       { key: "insurance-broker",  label: "Insurance broker",          sub: "Life, income, and asset protection",            emoji: "🛡️" },
-      { key: "estate-planner",    label: "Estate planner",            sub: "Wills, succession, asset protection",           emoji: "📜" },
+      { key: "estate-planner",    label: "Estate planner",            sub: "Structures wills, trusts, and wealth transfer for your estate", emoji: "📜" },
       { key: "commercial-property-agent", label: "Commercial property agent", sub: "Buy or lease commercial property",      emoji: "🏢" },
-      { key: "aged-care-advisor", label: "Aged care advisor",         sub: "Aged-care costs, RADs, Centrelink planning",    emoji: "🏥" },
-      { key: "debt-counsellor",   label: "Debt counsellor",           sub: "Budgeting help and getting on top of debt",     emoji: "🧮" },
+      { key: "aged-care-advisor", label: "Aged care advisor",         sub: "Navigates aged care costs, Centrelink, and care options", emoji: "🏥" },
+      { key: "debt-counsellor",   label: "Debt counsellor",           sub: "Helps manage, consolidate, and reduce personal debt",     emoji: "🧮" },
       { key: "not-sure",          label: "I'm not sure what I need",  sub: "Help me figure out the right expert",           emoji: "🤔" },
     ],
   },
@@ -166,6 +169,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "physical", label: "Buy physical property", sub: "Direct ownership — house, apartment, or investment property" },
       { key: "property-reit", label: "Invest in REITs / fractional property", sub: "Property funds, BrickX, or listed property trusts" },
       { key: "property-super", label: "Use super for property (SMSF)", sub: "Self-managed super fund property strategy" },
+      { key: "not_sure", label: "Not sure yet", sub: "We'll show you all three options — decide after seeing the comparison" },
     ],
   },
   // ─── Wealth-stack supplementary questions (DIY track only) ───────────
@@ -178,6 +182,7 @@ export const UNIFIED_QUESTIONS: Record<QuestionId, QuizQuestionDef> = {
       { key: "conservative", label: "Conservative",   sub: "I prefer stability — lower returns are fine to avoid big swings", emoji: "🛡️" },
       { key: "balanced",     label: "Balanced",       sub: "Comfortable with some ups and downs over the medium term",        emoji: "⚖️" },
       { key: "growth",       label: "Growth",         sub: "Happy to ride volatility for higher long-term returns",           emoji: "🚀" },
+      { key: "not_sure",     label: "Not sure",        sub: "We'll suggest a balanced mix you can adjust",                    emoji: "❓" },
     ],
   },
   stack_super: {

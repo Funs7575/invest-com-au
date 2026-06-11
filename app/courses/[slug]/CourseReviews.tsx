@@ -216,7 +216,7 @@ export default function CourseReviews({
 
           <div>
             <label htmlFor="review-headline" className="block text-sm font-medium text-slate-700 mb-1">
-              Headline <span className="text-slate-400">(optional)</span>
+              Headline <span className="text-slate-500">(optional)</span>
             </label>
             <input
               id="review-headline"
@@ -231,7 +231,7 @@ export default function CourseReviews({
 
           <div>
             <label htmlFor="review-body" className="block text-sm font-medium text-slate-700 mb-1">
-              Review <span className="text-slate-400">(optional)</span>
+              Review <span className="text-slate-500">(optional)</span>
             </label>
             <textarea
               id="review-body"
@@ -242,7 +242,7 @@ export default function CourseReviews({
               placeholder="Tell other students about your experience..."
               className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400 resize-none"
             />
-            <p className="text-xs text-slate-400 mt-1 text-right">{body.length}/2000</p>
+            <p className="text-xs text-slate-500 mt-1 text-right">{body.length}/2000</p>
           </div>
 
           {formError && (
@@ -278,7 +278,7 @@ export default function CourseReviews({
         <div className="text-center py-10 border border-dashed border-slate-200 rounded-xl">
           <p className="text-slate-500 text-sm">No reviews yet. Be the first to share your experience!</p>
           {!userLoading && !user && (
-            <p className="text-xs text-slate-400 mt-2">
+            <p className="text-xs text-slate-500 mt-2">
               <a href={`/auth/login?next=/courses/${slug}`} className="underline hover:text-slate-700">
                 Sign in
               </a>{" "}
@@ -305,7 +305,7 @@ export default function CourseReviews({
                       Verified Purchase
                     </span>
                   )}
-                  <p className="text-xs text-slate-400">{relativeTime(review.created_at)}</p>
+                  <p className="text-xs text-slate-500">{relativeTime(review.created_at)}</p>
                 </div>
               </div>
               {review.body && (

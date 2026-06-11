@@ -494,7 +494,7 @@ export default function ABTestsPage() {
                         Confidence: {stats.confidence}
                       </span>
                       {stats.z !== 0 && (
-                        <span className="text-xs text-slate-400">z = {stats.z.toFixed(3)}</span>
+                        <span className="text-xs text-slate-500">z = {stats.z.toFixed(3)}</span>
                       )}
                       {stats.significant && stats.winner && !test.winner && (
                         <span className="text-xs font-medium text-emerald-700">

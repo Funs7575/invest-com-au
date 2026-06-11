@@ -6,6 +6,7 @@ import HubLeadForm from "@/components/leads/HubLeadForm";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
 import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { Broker } from "@/lib/types";
 
 const SMSF_STRATEGY_FAQS = [
@@ -19,7 +20,7 @@ const SMSF_STRATEGY_FAQS = [
   },
   {
     q: "What is Division 296 and how does it affect SMSF investments?",
-    a: "Division 296 is an additional 15% tax on earnings attributable to the portion of a member's total super balance exceeding $3 million, effective from 1 July 2026. Crucially, it includes unrealised (notional) capital gains — meaning illiquid SMSF assets such as direct property can generate a tax bill without a sale. Trustees with balances approaching the threshold should model the impact and consider rebalancing before the transition.",
+    a: "Division 296 is an additional 15% tax on earnings attributable to the portion of a member's total super balance exceeding $3 million, effective from 1 July 2026. Crucially, it includes unrealised (notional) capital gains — meaning illiquid SMSF assets such as direct property can generate a tax bill without a sale. Trustees with balances approaching the threshold should model the impact and consider rebalancing before the transition.", // dated-ok — statutory Div 296 commencement date, fixed by legislation
   },
   {
     q: "Can an SMSF invest 100% in one asset class?",
@@ -149,7 +150,7 @@ export default async function SmsfInvestmentStrategyPage() {
                     <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                       <div>
                         <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                        <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating ?? 0))}</span> <span className="font-semibold text-slate-600">{Number(b.rating ?? 0).toFixed(1)}</span></p>
+                        {SHOW_RATINGS && <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating ?? 0))}</span> <span className="font-semibold text-slate-600">{Number(b.rating ?? 0).toFixed(1)}</span></p>}
                         <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                       </div>
                       <div className="mt-auto">

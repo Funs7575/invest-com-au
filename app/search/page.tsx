@@ -109,7 +109,7 @@ export default async function SearchPage({
               <Icon
                 name="search"
                 size={20}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
               />
               <input
                 type="search" enterKeyHint="search"

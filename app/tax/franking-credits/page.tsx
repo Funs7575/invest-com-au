@@ -7,6 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
 import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { Broker } from "@/lib/types";
 
 export const revalidate = 86400;
@@ -355,7 +356,7 @@ export default async function FrankingCreditsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             The break-even point is approximately the 30% corporate rate. Investors above 30% pay a top-up;
             those below 30% receive a refund of the difference.
           </p>
@@ -407,7 +408,7 @@ export default async function FrankingCreditsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Franking percentages vary year to year. Check the company announcement or your dividend statement for the
             exact franking percentage for each dividend payment.
           </p>
@@ -529,7 +530,7 @@ export default async function FrankingCreditsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Franking ratios are approximate and vary year to year with portfolio composition and company payout
             decisions. Verify the annual tax statement from your ETF manager for precise figures.
           </p>
@@ -743,7 +744,7 @@ export default async function FrankingCreditsPage() {
                   <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                     <div>
                       <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                      <p className="text-xs"><span className="text-amber-600" aria-hidden="true">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600" aria-label={`${(Number(b.rating) || 0).toFixed(1)} out of 5 stars`}>{(Number(b.rating) || 0).toFixed(1)}</span></p>
+                      {SHOW_RATINGS && <p className="text-xs"><span className="text-amber-600" aria-hidden="true">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600" aria-label={`${(Number(b.rating) || 0).toFixed(1)} out of 5 stars`}>{(Number(b.rating) || 0).toFixed(1)}</span></p>}
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                     </div>
                     <div className="mt-auto">

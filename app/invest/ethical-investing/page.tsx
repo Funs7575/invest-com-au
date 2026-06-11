@@ -511,7 +511,7 @@ export default function EthicalInvestingPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             MERs are indicative as at {CURRENT_YEAR}. Always verify in the current PDS. Past
             performance is not a reliable indicator of future performance.
           </p>
@@ -635,7 +635,7 @@ export default function EthicalInvestingPage() {
                       {row.esg}
                     </span>
                     {row.world !== "—" && (
-                      <span className="text-xs text-slate-400 text-right">{row.world}</span>
+                      <span className="text-xs text-slate-500 text-right">{row.world}</span>
                     )}
                   </div>
                 ))}
@@ -976,7 +976,7 @@ export default function EthicalInvestingPage() {
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-emerald-700 transition-colors list-none">
                   {faq.q}
                   <svg
-                    className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform"
+                    className="w-4 h-4 text-slate-500 shrink-0 group-open:rotate-180 transition-transform"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

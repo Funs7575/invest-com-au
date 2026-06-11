@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import BrokerLogo from "@/components/BrokerLogo";
 import { CURRENT_YEAR } from "@/lib/seo";
 import {
@@ -217,13 +218,17 @@ export default function BrokerReviewClient({
   const reviewVerified = searchParams.get('review_verified') === '1';
   const storyVerified = searchParams.get('story_verified') === '1';
 
-  const stickyDetail = (b.platform_type === 'share_broker' || b.platform_type === 'cfd_forex')
-    ? `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'} · ${b.rating}/5`
+  const stickyFacts = (b.platform_type === 'share_broker' || b.platform_type === 'cfd_forex')
+    ? `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'}`
     : b.platform_type === 'savings_account'
-    ? `${b.asx_fee || 'N/A'} rate · Gov. Guaranteed · ${b.rating}/5`
+    ? `${b.asx_fee || 'N/A'} rate · Gov. Guaranteed`
     : b.platform_type === 'term_deposit'
-    ? `${b.asx_fee || 'N/A'} rate · Min ${b.min_deposit || '$1k'} · ${b.rating}/5`
-    : `${b.rating}/5`;
+    ? `${b.asx_fee || 'N/A'} rate · Min ${b.min_deposit || '$1k'}`
+    : '';
+  // Rating segment is licence-gated like every other rating display.
+  const stickyDetail = SHOW_RATINGS
+    ? (stickyFacts ? `${stickyFacts} · ${b.rating}/5` : `${b.rating}/5`)
+    : stickyFacts;
   const bestFor = getBestFor(b);
 
   // Real cost calculations
@@ -301,8 +306,12 @@ export default function BrokerReviewClient({
               <h1 className="text-xl md:text-3xl font-extrabold leading-tight text-slate-900">{b.name} Review ({CURRENT_YEAR})</h1>
               <p className="text-slate-500 mt-0.5 md:mt-1 text-xs md:text-base">{b.tagline}</p>
               <div className="flex items-center gap-2 md:gap-3 flex-wrap mt-2">
-                <span className="text-amber-600 text-sm" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
-                <span className="text-sm font-bold text-slate-700" aria-hidden="true">{b.rating}/5</span>
+                {SHOW_RATINGS && (
+                  <>
+                    <span className="text-amber-600 text-sm" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
+                    <span className="text-sm font-bold text-slate-700" aria-hidden="true">{b.rating}/5</span>
+                  </>
+                )}
                 {b.chess_sponsored && (
                   <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">CHESS</span>
                 )}
@@ -322,7 +331,7 @@ export default function BrokerReviewClient({
           >
             {getBenefitCta(b, 'review')}
           </a>
-          <p className="text-[0.68rem] text-slate-400 mt-2 leading-relaxed">
+          <p className="text-[0.68rem] text-slate-500 mt-2 leading-relaxed">
             {ADVERTISER_DISCLOSURE_SHORT}{" "}{PDS_CONSIDERATION}{" "}
             <a href="#important-info" className="text-blue-600 underline hover:text-blue-800">
               Important information →
@@ -348,7 +357,7 @@ export default function BrokerReviewClient({
               ) : (
                 <span className="font-semibold text-slate-700">{authorName}</span>
               )}
-              {authorTitle && <span className="text-slate-400">· {authorTitle}</span>}
+              {authorTitle && <span className="text-slate-500">· {authorTitle}</span>}
             </span>
           )}
           {datePublished && (
@@ -367,7 +376,7 @@ export default function BrokerReviewClient({
 
         {/* Share */}
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-[0.62rem] text-slate-400 font-medium">Share:</span>
+          <span className="text-[0.62rem] text-slate-500 font-medium">Share:</span>
           <button
             onClick={() => {
               if (navigator.share) {
@@ -386,7 +395,7 @@ export default function BrokerReviewClient({
             {reviewLinkCopied ? "Copied!" : "Copy Link"}
           </button>
           <a
-            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${b.name} Review — ${b.rating}/5 on Invest.com.au`)}&url=${encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://invest.com.au'}/broker/${b.slug}`)}`}
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(SHOW_RATINGS ? `${b.name} Review — ${b.rating}/5 on Invest.com.au` : `${b.name} Review on Invest.com.au`)}&url=${encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://invest.com.au'}/broker/${b.slug}`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[0.62rem] px-2 py-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 transition-colors"
@@ -478,10 +487,12 @@ export default function BrokerReviewClient({
               {b.chess_sponsored ? "CHESS sponsorship provides an important safety layer. " : ""}
             </p>
             <div className="flex items-center gap-4 pt-3 border-t border-white/10">
-              <div className="flex items-center gap-2">
-                <span className="text-amber-400 text-lg" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
-                <span className="text-2xl font-extrabold" aria-hidden="true">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
-              </div>
+              {SHOW_RATINGS && (
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-400 text-lg" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
+                  <span className="text-2xl font-extrabold" aria-hidden="true">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
+                </div>
+              )}
               <a
                 href={getAffiliateLink(b)}
                 target="_blank"
@@ -539,7 +550,7 @@ export default function BrokerReviewClient({
             { label: "Safety", value: b.chess_sponsored ? "CHESS" : b.platform_type === "crypto_exchange" ? "AUSTRAC" : "Custodian", accent: "border-t-violet-500" },
           ].map((stat, i) => (
             <div key={i} className={`bg-white border border-slate-200 border-t-2 ${stat.accent} rounded-xl p-3 md:p-4 text-center card-hover`}>
-              <div className="text-[0.62rem] md:text-xs font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</div>
+              <div className="text-[0.62rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wider">{stat.label}</div>
               <div className="text-base md:text-lg font-extrabold text-slate-900 mt-1">{stat.value}</div>
               {stat.sub && <div className="text-[0.56rem] md:text-[0.62rem] text-emerald-600 font-bold mt-0.5">{stat.sub}</div>}
             </div>
@@ -609,7 +620,7 @@ export default function BrokerReviewClient({
             )}
             <a
               href={`mailto:hello@invest.com.au?subject=Data correction: ${b.name}&body=Hi, I noticed incorrect data on the ${b.name} review page (${typeof window !== 'undefined' ? window.location.href : ''}).%0A%0AWhat's wrong:%0A%0AWhat it should be:`}
-              className="text-[0.56rem] text-slate-400 hover:text-red-500 transition-colors"
+              className="text-[0.56rem] text-slate-500 hover:text-red-500 transition-colors"
             >
               Report an error
             </a>
@@ -622,7 +633,7 @@ export default function BrokerReviewClient({
               <div className="mt-2 space-y-1">
                 {b.fee_changelog.map((change, i) => (
                   <div key={i} className="text-xs text-slate-500">
-                    <span className="text-slate-400">{change.date}</span>{" "}
+                    <span className="text-slate-500">{change.date}</span>{" "}
                     — {change.field}: {change.old_value} → {change.new_value}
                   </div>
                 ))}
@@ -631,7 +642,7 @@ export default function BrokerReviewClient({
           )}
           {/* Editorial independence notice */}
           <div className="mt-3 pt-3 border-t border-slate-200">
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-500 leading-relaxed">
               <strong className="text-slate-500">Editorial independence:</strong> Our ratings and rankings are determined by our editorial team using a standardised methodology. Affiliate partnerships may influence which platforms we review but never our ratings or recommendations.{" "}
               <Link href="/how-we-verify" className="text-blue-700 underline">Read our full methodology →</Link>
             </p>
@@ -651,16 +662,16 @@ export default function BrokerReviewClient({
                 <p className="text-lg md:text-2xl font-extrabold text-brand">
                   <CountUp end={s.cost} prefix="$" decimals={2} duration={1200} />
                 </p>
-                <p className="text-[0.56rem] md:text-xs text-slate-400 mt-0.5 md:mt-1">
+                <p className="text-[0.56rem] md:text-xs text-slate-500 mt-0.5 md:mt-1">
                   {isSavingsOrTD ? "per year" : `${((s.cost / s.amount) * 100).toFixed(2)}%`}
                   {!isSavingsOrTD && s.type === "us" && b.fx_rate != null && (
-                    <span className="block text-slate-400">incl. {b.fx_rate}% FX</span>
+                    <span className="block text-slate-500">incl. {b.fx_rate}% FX</span>
                   )}
                 </p>
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-3 text-center">
+          <p className="text-xs text-slate-500 mt-3 text-center">
             Estimates based on published fee schedule. Actual costs may vary.{' '}
             <Link href="/calculators" className="text-blue-700 underline">Try our full calculators →</Link>
           </p>
@@ -767,11 +778,11 @@ export default function BrokerReviewClient({
               <h3 className="font-semibold text-slate-800 mb-1">Account Closure &amp; Switching</h3>
               <ul className="space-y-1 text-xs text-slate-600">
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>You can close your {b.name} account at any time by contacting their support team.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>
                     {b.chess_sponsored
                       ? `CHESS-sponsored shares can be transferred to another broker via a HIN transfer (typically 3–5 business days). ${b.name} may charge a transfer-out fee.`
@@ -785,7 +796,7 @@ export default function BrokerReviewClient({
                   </li>
                 )}
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>
                     No cooling-off period applies to brokerage accounts in Australia. Once you open an account and place a trade, standard terms apply.{" "}
                     <Link href="/switch" className="text-blue-700 underline">Use our switch planner →</Link>
@@ -799,7 +810,7 @@ export default function BrokerReviewClient({
               <h3 className="font-semibold text-slate-800 mb-1">Regulatory Status</h3>
               <ul className="space-y-1 text-xs text-slate-600">
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>
                     {b.regulated_by
                       ? `${b.name} is regulated by ${b.regulated_by}.`
@@ -809,7 +820,7 @@ export default function BrokerReviewClient({
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>Client funds are subject to the protections outlined in their Financial Services Guide (FSG) and Product Disclosure Statement (PDS).</span>
                 </li>
               </ul>
@@ -850,11 +861,11 @@ export default function BrokerReviewClient({
               <h3 className="font-semibold text-slate-800 mb-1">Financial Services Guide &amp; Complaints</h3>
               <ul className="space-y-1 text-xs text-slate-600">
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>{FSG_NOTE}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span className="text-slate-500 mt-0.5">•</span>
                   <span>{AFCA_REFERENCE}</span>
                 </li>
               </ul>
@@ -931,13 +942,13 @@ export default function BrokerReviewClient({
                         </>
                       )}
                     </div>
-                    <span className="text-xs text-slate-400 whitespace-nowrap">
+                    <span className="text-xs text-slate-500 whitespace-nowrap">
                       {new Date(c.changed_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </span>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-slate-400 mt-3">
+              <p className="text-xs text-slate-500 mt-3">
                 Changes detected via automated fee page monitoring. <Link href="/whats-new" className="underline hover:text-slate-600">View all changes {'\u2192'}</Link>
               </p>
             </CollapsibleSection>
@@ -1009,13 +1020,13 @@ export default function BrokerReviewClient({
                       <Link href={`/broker/${d.slug}`} className="font-bold text-sm hover:text-blue-700 transition-colors">
                         {d.name}
                       </Link>
-                      <span className="text-xs text-amber">{d.rating}/5</span>
+                      {SHOW_RATINGS && <span className="text-xs text-amber">{d.rating}/5</span>}
                     </div>
                     <p className="text-sm font-semibold text-slate-800 leading-snug mb-1.5">
                       {d.deal_text}
                     </p>
                     {d.deal_expiry && (
-                      <p className="text-[0.62rem] text-slate-400 mb-2">
+                      <p className="text-[0.62rem] text-slate-500 mb-2">
                         Expires {new Date(d.deal_expiry).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                       </p>
                     )}
@@ -1067,7 +1078,9 @@ export default function BrokerReviewClient({
                     <BrokerLogo broker={s} size="md" />
                   </div>
                   <h3 className="font-bold text-xs md:text-sm">{s.name}</h3>
-                  <div className="text-[0.62rem] md:text-xs text-amber-600" aria-label={`Rated ${s.rating ?? 0} out of 5 stars`}><span aria-hidden="true">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></span></div>
+                  {SHOW_RATINGS && (
+                    <div className="text-[0.62rem] md:text-xs text-amber-600" aria-label={`Rated ${s.rating ?? 0} out of 5 stars`}><span aria-hidden="true">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></span></div>
+                  )}
                   <div className="text-[0.58rem] md:text-xs text-slate-500 mt-0.5 md:mt-1">{s.asx_fee} · {s.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
                   <span className="inline-block mt-1.5 md:mt-2 text-[0.62rem] md:text-xs px-2 py-0.5 md:px-3 md:py-1 bg-slate-900 text-white rounded-md font-semibold">vs {b.name} →</span>
                 </Link>
@@ -1099,7 +1112,7 @@ export default function BrokerReviewClient({
                     )}
                     <h3 className="text-sm font-bold line-clamp-2 flex-1">{article.title}</h3>
                     {article.read_time && (
-                      <span className="text-xs text-slate-400 mt-2">{article.read_time} min read</span>
+                      <span className="text-xs text-slate-500 mt-2">{article.read_time} min read</span>
                     )}
                   </Link>
                 );
@@ -1165,7 +1178,7 @@ export default function BrokerReviewClient({
                 </Link>
               ))}
             </div>
-            <p className="text-[0.58rem] text-slate-400 mt-2.5">Free consultation requests. No obligation.</p>
+            <p className="text-[0.58rem] text-slate-500 mt-2.5">Free consultation requests. No obligation.</p>
           </div>
         )}
 

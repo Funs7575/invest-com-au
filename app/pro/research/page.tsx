@@ -153,7 +153,7 @@ export default async function PremiumResearchPage() {
                   {report.kicker}
                 </span>
               )}
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500">
                 Published {new Date(report.published_at).toLocaleDateString("en-AU")} · ~{report.reading_time_minutes} min read
               </span>
             </div>
@@ -186,7 +186,7 @@ export default async function PremiumResearchPage() {
               <span className="inline-flex items-center rounded-full bg-violet-50 px-2 py-0.5 text-[0.65rem] font-semibold text-violet-700">
                 {report.badge}
               </span>
-              <span className="text-xs text-slate-400">{report.publishedLabel}</span>
+              <span className="text-xs text-slate-500">{report.publishedLabel}</span>
             </div>
             <h2 className="mt-2 text-lg font-semibold text-slate-900">{report.title}</h2>
             <p className="mt-2 text-sm text-slate-600">{report.summary}</p>

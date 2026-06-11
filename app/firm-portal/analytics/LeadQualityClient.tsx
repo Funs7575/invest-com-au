@@ -59,7 +59,7 @@ function StatCard({ label, value, sub, highlight }: { label: string; value: stri
     <div className={`rounded-xl border p-4 ${bg}`}>
       <p className={`text-2xl font-bold ${textColor}`}>{value}</p>
       <p className="text-xs text-slate-500 mt-0.5">{label}</p>
-      {sub && <p className="text-[0.65rem] text-slate-400 mt-0.5">{sub}</p>}
+      {sub && <p className="text-[0.65rem] text-slate-500 mt-0.5">{sub}</p>}
     </div>
   );
 }
@@ -84,13 +84,13 @@ function BenchmarkLine({
     status === "better" ? <span className="text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600">Above avg</span> :
     status === "worse"  ? <span className="text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full bg-red-50 text-red-500">Below avg</span> :
     status === "parity" ? <span className="text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">At avg</span> :
-    <span className="text-[0.6rem] text-slate-400">—</span>;
+    <span className="text-[0.6rem] text-slate-500">—</span>;
 
   return (
     <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-center py-2 border-b border-slate-100 last:border-0 text-xs">
       <span className="text-slate-700 font-medium">{label}</span>
       <span className="font-bold text-slate-900 text-right">{yours !== null ? `${yours}%` : "—"}</span>
-      <span className="text-slate-400 text-right">{median !== null ? `${median}%` : "—"}{top25 !== null ? ` / ${top25}%` : ""}</span>
+      <span className="text-slate-500 text-right">{median !== null ? `${median}%` : "—"}{top25 !== null ? ` / ${top25}%` : ""}</span>
       {chip}
     </div>
   );
@@ -173,7 +173,7 @@ export default function LeadQualityClient({ initial }: Props) {
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">
           <Icon name="inbox" size={32} className="text-slate-300 mx-auto mb-2" />
           <p className="text-sm text-slate-500">No leads recorded in the last {windowDays} days.</p>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Leads appear here once advisors receive enquiries.{" "}
             <Link href="/firm-portal/performance" className="text-violet-600 hover:underline">View team performance →</Link>
           </p>
@@ -198,7 +198,7 @@ export default function LeadQualityClient({ initial }: Props) {
                   gap={4}
                 />
               ) : (
-                <p className="text-xs text-slate-400">No pipeline data available.</p>
+                <p className="text-xs text-slate-500">No pipeline data available.</p>
               )}
             </div>
 
@@ -208,13 +208,13 @@ export default function LeadQualityClient({ initial }: Props) {
                 <Icon name="bar-chart-2" size={16} className="text-violet-600" />
                 Market Benchmarks
               </h2>
-              <p className="text-[0.65rem] text-slate-400 mb-3">Your results vs market median / top-quartile</p>
+              <p className="text-[0.65rem] text-slate-500 mb-3">Your results vs market median / top-quartile</p>
 
               {benchmarks.medianConversionRate === null ? (
-                <p className="text-xs text-slate-400">Benchmarks available once enough firms have data.</p>
+                <p className="text-xs text-slate-500">Benchmarks available once enough firms have data.</p>
               ) : (
                 <div>
-                  <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-[0.6rem] font-semibold text-slate-400 uppercase tracking-wide pb-1 border-b border-slate-100 mb-1">
+                  <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-[0.6rem] font-semibold text-slate-500 uppercase tracking-wide pb-1 border-b border-slate-100 mb-1">
                     <span>Metric</span>
                     <span className="text-right">Yours</span>
                     <span className="text-right">Med / Top 25%</span>
@@ -235,7 +235,7 @@ export default function LeadQualityClient({ initial }: Props) {
                 </div>
               )}
 
-              <p className="text-[0.6rem] text-slate-400 mt-3">
+              <p className="text-[0.6rem] text-slate-500 mt-3">
                 Benchmarks are anonymised aggregates across all active firms.
               </p>
             </div>
@@ -256,9 +256,9 @@ export default function LeadQualityClient({ initial }: Props) {
                   barHeight={26}
                 />
               ) : (
-                <p className="text-xs text-slate-400">No quality scores available yet.</p>
+                <p className="text-xs text-slate-500">No quality scores available yet.</p>
               )}
-              <p className="text-[0.65rem] text-slate-400 mt-3">
+              <p className="text-[0.65rem] text-slate-500 mt-3">
                 Quality scores are set automatically based on lead completeness and intent signals.
               </p>
             </div>
@@ -276,12 +276,12 @@ export default function LeadQualityClient({ initial }: Props) {
                     width={420}
                     barHeight={26}
                   />
-                  <p className="text-[0.65rem] text-slate-400 mt-3">
+                  <p className="text-[0.65rem] text-slate-500 mt-3">
                     Qualified and Exclusive leads carry higher intent signals and bill at 2× and 3× standard rates.
                   </p>
                 </>
               ) : (
-                <p className="text-xs text-slate-400">No tier data available yet.</p>
+                <p className="text-xs text-slate-500">No tier data available yet.</p>
               )}
             </div>
           </div>
@@ -300,7 +300,7 @@ export default function LeadQualityClient({ initial }: Props) {
                 width={600}
                 barHeight={26}
               />
-              <p className="text-[0.65rem] text-slate-400 mt-3">
+              <p className="text-[0.65rem] text-slate-500 mt-3">
                 Source derived from utm_source on inbound enquiries. &ldquo;(direct)&rdquo; = no UTM parameter.
               </p>
             </div>

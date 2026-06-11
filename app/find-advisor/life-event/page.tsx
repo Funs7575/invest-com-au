@@ -66,7 +66,7 @@ export default function LifeEventPage() {
       <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white">
         {/* Hero */}
         <div className="max-w-4xl mx-auto px-4 pt-10 pb-4">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-700 transition-colors">
               Home
             </Link>
@@ -217,7 +217,7 @@ export default function LifeEventPage() {
                   <summary className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50 transition-colors list-none">
                     <span className="text-sm font-semibold text-slate-800 pr-4">{q}</span>
                     <svg
-                      className="w-4 h-4 text-slate-400 shrink-0 transition-transform group-open:rotate-180"
+                      className="w-4 h-4 text-slate-500 shrink-0 transition-transform group-open:rotate-180"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

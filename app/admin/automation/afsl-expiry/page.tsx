@@ -42,7 +42,7 @@ export default async function AfslExpiryDrillDown() {
                 <td className="px-4 py-2 font-mono text-slate-500">#{r.id}</td>
                 <td className="px-4 py-2 text-slate-700">
                   <div className="font-semibold">{r.name}</div>
-                  <div className="text-[0.65rem] text-slate-400">{r.email}</div>
+                  <div className="text-[0.65rem] text-slate-500">{r.email}</div>
                 </td>
                 <td className="px-4 py-2 font-mono text-slate-600">{r.afsl_number}</td>
                 <td className="px-4 py-2">

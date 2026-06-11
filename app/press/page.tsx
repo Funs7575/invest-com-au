@@ -211,7 +211,7 @@ export default function PressPage() {
                     <p className="text-sm font-semibold text-slate-900 group-hover:text-primary mt-0.5">
                       {m.headline}
                     </p>
-                    <p className="text-xs text-slate-400 mt-0.5">{m.date}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{m.date}</p>
                   </a>
                 </li>
               ))}

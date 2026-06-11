@@ -142,7 +142,7 @@ export default function AdvertisePage() {
               Contact Sales
             </a>
           </div>
-          <p className="mt-4 text-sm text-slate-400">
+          <p className="mt-4 text-sm text-slate-500">
             Already a partner?{" "}
             <Link href="/broker-portal/login" className="text-white underline hover:text-amber-300 transition-colors">
               Sign in to your dashboard &rarr;
@@ -189,7 +189,7 @@ export default function AdvertisePage() {
                   </span>
                 </div>
                 <p className="text-sm text-slate-600 mb-3">{p.description}</p>
-                <p className="text-xs text-slate-400 font-medium mb-3">{p.reach}</p>
+                <p className="text-xs text-slate-500 font-medium mb-3">{p.reach}</p>
                 {/* ADV-124: Best-for guidance + estimated CTR */}
                 <div className="flex flex-wrap gap-2">
                   <span className="inline-flex items-center gap-1 text-[0.7rem] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
@@ -246,9 +246,9 @@ export default function AdvertisePage() {
                 {/* ADV-123: Pricing small-print */}
                 {tier.smallPrint && (
                   <div className="mt-4 pt-4 border-t border-slate-200/80 space-y-1">
-                    <p className="text-[0.7rem] text-slate-400 font-medium">{tier.smallPrint.minimum}</p>
-                    <p className="text-[0.7rem] text-slate-400">{tier.smallPrint.billing}</p>
-                    <p className="text-[0.7rem] text-slate-400">{tier.smallPrint.rateNote}</p>
+                    <p className="text-[0.7rem] text-slate-500 font-medium">{tier.smallPrint.minimum}</p>
+                    <p className="text-[0.7rem] text-slate-500">{tier.smallPrint.billing}</p>
+                    <p className="text-[0.7rem] text-slate-500">{tier.smallPrint.rateNote}</p>
                   </div>
                 )}
               </div>
@@ -317,7 +317,7 @@ export default function AdvertisePage() {
               partners@invest.com.au
             </a>
           </div>
-          <p className="mt-4 text-sm text-slate-400">
+          <p className="mt-4 text-sm text-slate-500">
             Existing partner?{" "}
             <Link href="/broker-portal/login" className="text-white underline hover:text-amber-300 transition-colors">
               Sign in &rarr;

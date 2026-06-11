@@ -18,7 +18,40 @@ import { browseAdvisorsHref } from "@/lib/find-advisor/browse-link";
 import { formatCountdown, secondsRemaining } from "@/lib/format-countdown";
 import EligibilityQuizSkipBanner from "@/components/EligibilityQuizSkipBanner";
 import CountryRuleAlerts from "@/components/CountryRuleAlerts";
-import { SHOW_GENERIC_VERIFIED } from "@/lib/compliance-config";
+import {
+  SHOW_GENERIC_VERIFIED,
+  SHOW_ADVISOR_RATINGS,
+  SHOW_ADVISOR_VERIFIED_BADGE,
+} from "@/lib/compliance-config";
+import { INTENT_COUNTRY_COOKIE, INTENT_COUNTRY_TTL_SECONDS } from "@/lib/intent-context";
+import {
+  type Intent,
+  INTENT_OPTIONS,
+  CONTEXT_CONFIG,
+  toggleContextSelection,
+  STATES,
+  BUDGETS,
+  budgetLabelForIntent,
+  TIMELINE_OPTIONS,
+  timelineContextId,
+  OVERSEAS_COUNTRY_OPTIONS,
+  overseasSpecialtyFor,
+  isOverseasCorridor,
+  overseasCountryName,
+  overseasCountryIso,
+  intentToNeed,
+  NEED_TO_INTENT,
+  PRIORITY_TO_NEED,
+  GOAL_TO_NEED,
+  isPlausiblePhone,
+} from "@/lib/find-advisor/quiz-config";
+import { buildMatchReasons, matchedSpecialties } from "@/lib/find-advisor/match-reasons";
+import {
+  saveQuizProgress,
+  loadQuizProgress,
+  clearQuizProgress,
+  type QuizProgress,
+} from "@/lib/find-advisor/progress-storage";
 
 // ADV-015: OTP codes are valid for 10 minutes server-side; mirror that for the
 // expiry countdown. Resend is gated for a short cooldown to discourage spamming
@@ -27,8 +60,6 @@ const OTP_TTL_MS = 10 * 60 * 1000;
 const OTP_RESEND_COOLDOWN_MS = 30 * 1000;
 
 // ─── Types ─────────────────────────────────────────────────────────────────
-
-type Intent = "buy_property" | "grow_wealth" | "protect_assets" | "business_tax";
 
 interface HandoffHolding {
   ticker: string;
@@ -56,11 +87,16 @@ interface MatchedAdvisor {
   rating: number;
   review_count: number;
   location_display: string | null;
+  /** AU state code ("NSW") the advisor is based in — used for the
+   *  local-vs-remote match reason. Present in the API match payload. */
+  location_state?: string | null;
   specialties: string[];
   fee_description: string | null;
   verified: boolean;
   /** Used by the response-time badge — null when no leads have been logged yet. */
   avg_response_minutes?: number | null;
+  /** Lowercase ISO codes of corridors the advisor serves (cross-border). */
+  available_in_countries?: string[] | null;
 }
 
 interface QuizState {
@@ -71,10 +107,32 @@ interface QuizState {
   postcode: string;
   suburb: string;
   budget: string;
+  /** Optional urgency signal — "asap" | "weeks" | "research" | "". */
+  timeline: string;
+  /** True when the user told us they live outside Australia. */
+  overseas: boolean;
+  /** Intent-country code ("uk") or "other" when overseas. */
+  country: string;
   firstName: string;
   email: string;
   phone: string;
   consent: boolean;
+}
+
+/** The PII-free slice of QuizState that may be persisted to localStorage. */
+function toProgress(quiz: QuizState): QuizProgress {
+  return {
+    step: quiz.step,
+    intent: quiz.intent,
+    context: quiz.context,
+    state: quiz.state,
+    postcode: quiz.postcode,
+    suburb: quiz.suburb,
+    budget: quiz.budget,
+    timeline: quiz.timeline,
+    overseas: quiz.overseas,
+    country: quiz.country,
+  };
 }
 
 // ─── Session persistence helpers ─────────────────────────────────────────────
@@ -86,7 +144,19 @@ interface PersistedMatch {
   excludeIds: number[];
   leadIds: number[];
   confirmedAdvisorId: number | null;
-  quizData: { intent: string; context: string[]; state: string; postcode: string; suburb: string; budget: string; firstName: string; email: string };
+  quizData: {
+    intent: string;
+    context: string[];
+    state: string;
+    postcode: string;
+    suburb: string;
+    budget: string;
+    timeline?: string;
+    overseas?: boolean;
+    country?: string;
+    firstName: string;
+    email: string;
+  };
   timestamp: number;
 }
 
@@ -112,199 +182,14 @@ function clearMatchStorage() {
   try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
 }
 
-// ─── In-progress quiz persistence (ADV-008) ──────────────────────────────────
-// Unlike the match payload above (sessionStorage, cleared on tab close), the
-// in-progress answers are saved to localStorage so a visitor who closes the
-// browser mid-quiz can resume where they left off.
-
-const PROGRESS_KEY = "quiz-progress";
-const PROGRESS_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-interface PersistedProgress {
-  quiz: QuizState;
-  timestamp: number;
-}
-
-function saveQuizProgress(quiz: QuizState) {
-  try {
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify({ quiz, timestamp: Date.now() }));
-  } catch {}
-}
-
-function loadQuizProgress(): QuizState | null {
-  try {
-    const raw = localStorage.getItem(PROGRESS_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw) as PersistedProgress;
-    if (!data?.quiz || Date.now() - data.timestamp > PROGRESS_TTL_MS) {
-      localStorage.removeItem(PROGRESS_KEY);
-      return null;
-    }
-    return data.quiz;
-  } catch {
-    return null;
-  }
-}
-
-function clearQuizProgress() {
-  try { localStorage.removeItem(PROGRESS_KEY); } catch {}
-}
-
-// ─── Step 1 data ──────────────────────────────────────────────────────────────
-
-const INTENT_OPTIONS = [
-  {
-    id: "buy_property" as Intent,
-    emoji: "\u{1F3E0}",
-    title: "Buy Property",
-    desc: "Find a mortgage broker, buyer's agent, or refinancing help",
-    baseClass: "from-rose-50 to-orange-50 border-rose-200 hover:border-rose-400 hover:shadow-rose-100",
-    selClass: "from-rose-50 to-orange-50 border-rose-500 ring-2 ring-rose-200",
-  },
-  {
-    id: "grow_wealth" as Intent,
-    emoji: "\u{1F4C8}",
-    title: "Grow Wealth",
-    desc: "Get a financial planner for investing, super, or retirement",
-    baseClass: "from-emerald-50 to-teal-50 border-emerald-200 hover:border-emerald-400 hover:shadow-emerald-100",
-    selClass: "from-emerald-50 to-teal-50 border-emerald-500 ring-2 ring-emerald-200",
-  },
-  {
-    id: "protect_assets" as Intent,
-    emoji: "\u{1F6E1}\uFE0F",
-    title: "Protect Assets",
-    desc: "Life insurance, income protection, wills & estate planning",
-    baseClass: "from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-400 hover:shadow-blue-100",
-    selClass: "from-blue-50 to-indigo-50 border-blue-500 ring-2 ring-blue-200",
-  },
-  {
-    id: "business_tax" as Intent,
-    emoji: "\u{1F4CA}",
-    title: "Tax & SMSF",
-    desc: "Self-managed super (SMSF), tax advice, or crypto tax help",
-    baseClass: "from-violet-50 to-purple-50 border-violet-200 hover:border-violet-400 hover:shadow-violet-100",
-    selClass: "from-violet-50 to-purple-50 border-violet-500 ring-2 ring-violet-200",
-  },
-];
-
-// ─── Step 2 context config ────────────────────────────────────────────────────
-
-const CONTEXT_CONFIG: Record<
-  Intent,
-  { title: string; subtitle: string; type: "checkbox" | "radio"; options: { id: string; label: string }[] }
-> = {
-  buy_property: {
-    title: "Tell us about your property plans",
-    subtitle: "Select all that apply",
-    type: "checkbox",
-    options: [
-      { id: "first_home", label: "I'm buying my first home" },
-      { id: "investment", label: "I'm buying an investment property" },
-      { id: "refinance", label: "I'm refinancing my current mortgage" },
-      { id: "buyers_agent", label: "I need a buyer's agent to find the right property" },
-      { id: "not_sure", label: "I'm not sure yet — I need general guidance" },
-    ],
-  },
-  grow_wealth: {
-    title: "Where are you at financially?",
-    subtitle: "Choose the option that best describes you",
-    type: "radio",
-    options: [
-      { id: "getting_started", label: "Just getting started (under $10k saved)" },
-      { id: "have_savings", label: "I have savings but no investing plan ($10k\u2013$100k)" },
-      { id: "optimize", label: "I have investments and want to optimise ($100k+)" },
-      { id: "retirement", label: "I'm approaching retirement and need a strategy" },
-    ],
-  },
-  protect_assets: {
-    title: "What do you need to protect?",
-    subtitle: "Select all that apply",
-    type: "checkbox",
-    options: [
-      { id: "life_insurance", label: "Life insurance (cover for my dependents)" },
-      { id: "income_protection", label: "Income protection (if I can't work)" },
-      { id: "estate_planning", label: "Estate planning (will, power of attorney)" },
-      { id: "aged_care", label: "Aged care planning" },
-      { id: "business_succession", label: "Business succession planning" },
-    ],
-  },
-  business_tax: {
-    title: "What\u2019s your situation?",
-    subtitle: "Choose the option that best describes you",
-    type: "radio",
-    options: [
-      { id: "smsf_setup", label: "I want to set up an SMSF" },
-      { id: "smsf_manage", label: "I have an SMSF and need help managing it" },
-      { id: "tax_optimization", label: "I need tax optimisation advice" },
-      { id: "debt_restructure", label: "I have business debt I want to restructure" },
-      { id: "crypto_tax", label: "I need crypto tax help" },
-    ],
-  },
-};
-
-// ─── Step 3 select options ────────────────────────────────────────────────────
-
-const STATES = [
-  { value: "", label: "Select your state or territory\u2026", disabled: true },
-  { value: "NSW", label: "New South Wales" },
-  { value: "VIC", label: "Victoria" },
-  { value: "QLD", label: "Queensland" },
-  { value: "WA", label: "Western Australia" },
-  { value: "SA", label: "South Australia" },
-  { value: "TAS", label: "Tasmania" },
-  { value: "ACT", label: "Australian Capital Territory" },
-  { value: "NT", label: "Northern Territory" },
-];
-
-const BUDGETS = [
-  { value: "", label: "Select a range (optional)\u2026" },
-  { value: "under_100k", label: "Under $100k" },
-  { value: "100k_500k", label: "$100k \u2013 $500k" },
-  { value: "500k_2m", label: "$500k \u2013 $2M" },
-  { value: "over_2m", label: "$2M+" },
-  { value: "prefer_not_say", label: "Prefer not to say" },
-];
-
-function intentToNeed(intent: Intent): string {
-  return { buy_property: "mortgage", grow_wealth: "planning", protect_assets: "insurance", business_tax: "smsf" }[intent] ?? "planning";
-}
-
-const NEED_TO_INTENT: Record<string, Intent> = {
-  mortgage: "buy_property",
-  buyers: "buy_property",
-  insurance: "protect_assets",
-  planning: "grow_wealth",
-  tax: "business_tax",
-  wealth: "grow_wealth",
-  smsf: "business_tax",
-  estate: "protect_assets",
-  agedcare: "protect_assets",
-  property: "buy_property",
-  crypto: "business_tax",
-};
+// In-progress quiz persistence (ADV-008) lives in
+// lib/find-advisor/progress-storage.ts — PII-free by construction and
+// restore-capped at step 3. Question/option config + intent maps live in
+// lib/find-advisor/quiz-config.ts.
 
 // ─── Matchmaker bridge ────────────────────────────────────────────────────────
 // Maps the /start matchmaker priority answers to find-advisor intents so users
 // arriving from the unified funnel (without a ?need= param) are pre-qualified.
-
-const PRIORITY_TO_NEED: Record<string, string> = {
-  "mortgage-broker": "mortgage",
-  "buyers-agent": "buyers",
-  "financial-planner": "planning",
-  "smsf-accountant": "smsf",
-  "tax-agent": "tax",
-  "insurance-broker": "insurance",
-  "wealth": "wealth",
-};
-
-const GOAL_TO_NEED: Record<string, string> = {
-  home: "mortgage",
-  property: "property",
-  wealth: "wealth",
-  crypto: "crypto",
-  super: "smsf",
-  income: "planning",
-};
 
 function getMatchmakerIntent(): Intent | null {
   if (typeof localStorage === "undefined") return null;
@@ -438,7 +323,7 @@ function HandoffBanner({ token }: { token: string }) {
 
 export default function FindAdvisorPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16"><div className="max-w-xl mx-auto px-4 text-center text-slate-400 text-sm">Loading quiz...</div></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16"><div className="max-w-xl mx-auto px-4 text-center text-slate-500 text-sm">Loading quiz...</div></div>}>
       <FindAdvisorQuiz />
     </Suspense>
   );
@@ -475,9 +360,19 @@ function FindAdvisorQuiz() {
 
   // ADV-008: in-progress answers persisted to localStorage. Only offer a resume
   // when there's no completed match to restore and the user actually got past
-  // the first step.
-  const _savedProgress = typeof localStorage !== "undefined" ? loadQuizProgress() : null;
-  const resumableQuiz = !savedMatch && _savedProgress && _savedProgress.step > 1 ? _savedProgress : null;
+  // the first step. Read in a mount effect (not synchronously) — the banner is
+  // additive UI, and a synchronous read makes the server- and client-rendered
+  // trees disagree, which React reports as a hydration error.
+  const [resumableQuiz, setResumableQuiz] = useState<QuizProgress | null>(null);
+  useEffect(() => {
+    if (savedMatch) return;
+    const p = loadQuizProgress();
+    if (p && p.step > 1) {
+      setResumableQuiz(p);
+      setShowResumePrompt(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only storage read
+  }, []);
 
   // If no explicit ?need= param, check whether the user just came through the
   // /start matchmaker and use that context to pre-fill their intent.
@@ -496,6 +391,9 @@ function FindAdvisorQuiz() {
         postcode: savedMatch.quizData.postcode ?? "",
         suburb: savedMatch.quizData.suburb ?? "",
         budget: savedMatch.quizData.budget ?? "",
+        timeline: savedMatch.quizData.timeline ?? "",
+        overseas: savedMatch.quizData.overseas ?? false,
+        country: savedMatch.quizData.country ?? "",
         firstName: savedMatch.quizData.firstName ?? "",
         email: savedMatch.quizData.email ?? "",
         phone: "",
@@ -513,6 +411,9 @@ function FindAdvisorQuiz() {
       postcode: postcodeParam ?? "",
       suburb: "",
       budget: budgetParam ?? "",
+      timeline: "",
+      overseas: false,
+      country: "",
       firstName: firstNameParam ?? "",
       email: "", phone: "", consent: false,
     };
@@ -561,8 +462,9 @@ function FindAdvisorQuiz() {
   const [otpStage, setOtpStage] = useState<"idle" | "sending" | "sent" | "verifying">("idle");
   const [otpCode, setOtpCode] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
-  const [otpSentAt, setOtpSentAt] = useState<number | null>(null);
-  const [savedProgress, setSavedProgress] = useState<QuizState | null>(null);
+  // Tracks whether THIS session wrote the corridor cookie (overseas path),
+  // so restart can clean it up without clobbering a cookie set elsewhere.
+  const corridorCookieSetRef = useRef(false);
   // ADV-015: OTP expiry countdown + resend cooldown. Codes are valid for 10 min
   // server-side; the resend button is gated for a short cooldown then re-enabled.
   const [otpExpiresAt, setOtpExpiresAt] = useState<number | null>(null);
@@ -599,7 +501,7 @@ function FindAdvisorQuiz() {
       const next = { ...prev, ...updates };
       // ADV-025: sync localStorage on every state update so progress is always current
       if (next.step >= 1 && next.step <= 4 && next.intent) {
-        saveQuizProgress(next);
+        saveQuizProgress(toProgress(next));
       } else if (next.step >= 5) {
         clearQuizProgress();
       }
@@ -610,7 +512,7 @@ function FindAdvisorQuiz() {
   // ADV-008: also save on mount in case quiz was initialised from URL params
   useEffect(() => {
     if (quiz.step >= 1 && quiz.step <= 4 && quiz.intent) {
-      saveQuizProgress(quiz);
+      saveQuizProgress(toProgress(quiz));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -638,44 +540,41 @@ function FindAdvisorQuiz() {
       answer: answer.slice(0, 60),
     });
 
-  // ADV-008: on mount, offer "resume" if saved progress exists and no URL pre-fill
+  // A11y: when the step changes, move focus to the step container so
+  // keyboard and screen-reader users land on the new content instead of
+  // a button that no longer exists. Skipped on first paint.
+  const stepContainerRef = useRef<HTMLDivElement | null>(null);
+  const prevStepRef = useRef(quiz.step);
   useEffect(() => {
-    if (quiz.step === 1 && !initialIntent) {
-      const p = loadQuizProgress();
-      if (p) setSavedProgress(p);
+    if (prevStepRef.current !== quiz.step) {
+      prevStepRef.current = quiz.step;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      stepContainerRef.current?.focus({ preventScroll: true });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleResume = () => {
-    if (!savedProgress) return;
-    setQuiz(prev => ({
-      ...prev,
-      step: savedProgress.step,
-      intent: savedProgress.intent,
-      context: savedProgress.context,
-      state: savedProgress.state,
-      postcode: savedProgress.postcode,
-      suburb: savedProgress.suburb,
-      budget: savedProgress.budget,
-    }));
-    setSavedProgress(null);
-  };
+  }, [quiz.step]);
 
   const restart = () => {
-    setQuiz({ step: 1, intent: null, context: [], state: "", postcode: "", suburb: "", budget: "", firstName: "", email: "", phone: "", consent: false });
+    setQuiz({ step: 1, intent: null, context: [], state: "", postcode: "", suburb: "", budget: "", timeline: "", overseas: false, country: "", firstName: "", email: "", phone: "", consent: false });
     setErrors({}); setSubmitError(null); setSubmitted(false);
     setMatchedAdvisors([]); setExcludeIds([]); setNoMoreMatches(false);
     setPendingAdvisor(null);
     setShowResumePrompt(false);
     clearMatchStorage();
     clearQuizProgress(); // ADV-008
+    // If this session set the cross-border corridor cookie, clear it too —
+    // a restarted (possibly domestic) quiz shouldn't inherit the corridor.
+    if (corridorCookieSetRef.current) {
+      document.cookie = `${INTENT_COUNTRY_COOKIE}=; path=/; max-age=0; samesite=lax`;
+      corridorCookieSetRef.current = false;
+    }
   };
 
-  // ADV-008: restore a previously-saved in-progress quiz.
+  // ADV-008: restore a previously-saved in-progress quiz. The storage module
+  // caps the restored step at 3 (the last form step) so we never resume into
+  // a stale match preview.
   const resumeQuiz = () => {
     if (!resumableQuiz) return;
-    setQuiz(resumableQuiz);
+    setQuiz((prev) => ({ ...prev, ...resumableQuiz }));
     setShowResumePrompt(false);
     setErrors({});
     trackEvent("find_advisor_resume", { step: resumableQuiz.step }, "/find-advisor");
@@ -683,6 +582,7 @@ function FindAdvisorQuiz() {
 
   const dismissResume = () => {
     setShowResumePrompt(false);
+    clearQuizProgress();
   };
 
   const handleIntent = (intent: Intent) => {
@@ -695,9 +595,9 @@ function FindAdvisorQuiz() {
   const toggleContext = (id: string, isRadio: boolean) => {
     setQuiz((prev) => ({
       ...prev,
-      context: isRadio ? [id] : prev.context.includes(id)
-        ? prev.context.filter((c) => c !== id)
-        : [...prev.context, id],
+      // Not-sure exclusivity lives in quiz-config so it's unit-tested:
+      // picking "I'm not sure" clears concrete options and vice versa.
+      context: toggleContextSelection(prev.context, id, isRadio),
     }));
   };
 
@@ -713,8 +613,20 @@ function FindAdvisorQuiz() {
   // dry-run match needs no PII (the API allows a contact-less dry run), so
   // the user sees who they'd be connected with before any wall.
   const handleStep3Next = async () => {
-    if (!quiz.state) { setErrors({ state: "Please enter a postcode or select your state or territory" }); return; }
+    if (quiz.overseas) {
+      if (!quiz.country) { setErrors({ state: "Please select where you live" }); return; }
+    } else if (!quiz.state) {
+      setErrors({ state: "Please enter a postcode or select your state or territory" });
+      return;
+    }
     setErrors({});
+    // Overseas corridor: persist the intent-country cookie so the matcher's
+    // corridor boost (and every country-aware surface) recognises the user.
+    // Same-origin fetches below carry the cookie on this very request.
+    if (quiz.overseas && isOverseasCorridor(quiz.country)) {
+      document.cookie = `${INTENT_COUNTRY_COOKIE}=${quiz.country}; path=/; max-age=${INTENT_COUNTRY_TTL_SECONDS}; samesite=lax`;
+      corridorCookieSetRef.current = true;
+    }
     setSubmitting(true);
     setSubmitError(null);
     try {
@@ -748,8 +660,13 @@ function FindAdvisorQuiz() {
         setNoMoreMatches(true);
       }
       update({ step: 4 });
-      trackEvent("find_advisor_match_previewed", { intent: quiz.intent, matched: !!data.matched }, "/find-advisor");
-      phStep(3, "location", quiz.state);
+      trackEvent("find_advisor_match_previewed", {
+        intent: quiz.intent,
+        matched: !!data.matched,
+        overseas: quiz.overseas || undefined,
+        timeline: quiz.timeline || undefined,
+      }, "/find-advisor");
+      phStep(3, "location", quiz.overseas ? `overseas:${quiz.country}` : quiz.state);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Network error. Please try again.");
     } finally {
@@ -766,50 +683,53 @@ function FindAdvisorQuiz() {
     trackEvent("find_advisor_connect_clicked", { intent: quiz.intent, advisor: advisor.slug }, "/find-advisor");
   };
 
+  // The specialty preference: an explicit ?specialty= URL param wins;
+  // otherwise the overseas path derives one from intent + country
+  // (FIRB for property buyers, pension/expat corridors where they exist).
+  const effectiveSpecialty =
+    preferredSpecialty ??
+    (quiz.overseas ? overseasSpecialtyFor(quiz.intent, quiz.country) : undefined);
+
+  /** Lead payload shared by the dry-run preview and the confirm call. */
+  const buildLeadPayload = () => ({
+    lead_type: "advisor" as const,
+    user_email: quiz.email.trim(),
+    user_name: quiz.firstName.trim(),
+    user_phone: quiz.phone.trim() || undefined,
+    // Overseas users have no AU state — the matcher's any-state fallback
+    // plus the corridor cookie route them to remote-capable advisors.
+    user_location_state: quiz.overseas ? "" : quiz.state,
+    user_postcode: (!quiz.overseas && quiz.postcode) || undefined,
+    user_suburb: (!quiz.overseas && quiz.suburb) || undefined,
+    user_intent: {
+      need: intentToNeed(quiz.intent!),
+      // timeline_* ids are lead-quality signals: ignored by the server's
+      // type resolver, surfaced to the advisor with the enquiry.
+      context: quiz.timeline
+        ? [...quiz.context, timelineContextId(quiz.timeline as "asap" | "weeks" | "research")]
+        : quiz.context,
+      budget: quiz.budget,
+    },
+    source_page: effectiveSpecialty
+      ? `/find-advisor?specialty=${effectiveSpecialty}`
+      : "/find-advisor",
+    preferred_specialty: effectiveSpecialty,
+  });
+
   /** Find a matching advisor WITHOUT creating a lead or sending any emails (dry run). */
   const findMatch = async (excludeList: number[] = []) => {
     return submitLead({
-      lead_type: "advisor",
-      user_email: quiz.email.trim(),
-      user_name: quiz.firstName.trim(),
-      user_phone: quiz.phone.trim() || undefined,
-      user_location_state: quiz.state,
-      user_postcode: quiz.postcode || undefined,
-      user_suburb: quiz.suburb || undefined,
-      user_intent: {
-        need: intentToNeed(quiz.intent!),
-        context: quiz.context,
-        budget: quiz.budget,
-      },
-      source_page: preferredSpecialty
-        ? `/find-advisor?specialty=${preferredSpecialty}`
-        : "/find-advisor",
+      ...buildLeadPayload(),
       exclude_advisor_ids: excludeList,
       dry_run: true,
-      preferred_specialty: preferredSpecialty,
     });
   };
 
   /** Confirm a previewed advisor: creates the lead and sends advisor email. */
   const confirmMatch = async (advisorId: number) => {
     return submitLead({
-      lead_type: "advisor",
-      user_email: quiz.email.trim(),
-      user_name: quiz.firstName.trim(),
-      user_phone: quiz.phone.trim() || undefined,
-      user_location_state: quiz.state,
-      user_postcode: quiz.postcode || undefined,
-      user_suburb: quiz.suburb || undefined,
-      user_intent: {
-        need: intentToNeed(quiz.intent!),
-        context: quiz.context,
-        budget: quiz.budget,
-      },
-      source_page: preferredSpecialty
-        ? `/find-advisor?specialty=${preferredSpecialty}`
-        : "/find-advisor",
+      ...buildLeadPayload(),
       confirm_advisor_id: advisorId,
-      preferred_specialty: preferredSpecialty,
     });
   };
 
@@ -817,6 +737,7 @@ function FindAdvisorQuiz() {
     const errs: Record<string, string> = {};
     if (!quiz.firstName.trim()) errs.firstName = "Please enter your first name";
     if (!quiz.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(quiz.email)) errs.email = "Please enter a valid email";
+    if (!isPlausiblePhone(quiz.phone)) errs.phone = "That phone number doesn't look right — check it or leave it blank";
     if (!quiz.consent) errs.consent = "You must agree to our Privacy Policy and Terms";
     return errs;
   };
@@ -841,7 +762,6 @@ function FindAdvisorQuiz() {
       setOtpResendAt(sentAt + OTP_RESEND_COOLDOWN_MS);
       setNowMs(sentAt);
       setOtpStage("sent");
-      setOtpSentAt(Date.now());
       phStep(4, "contact", "contact_submitted"); // no PII in analytics
     } catch {
       setOtpError("Network error. Please try again.");
@@ -1011,39 +931,24 @@ function FindAdvisorQuiz() {
     update({ step: quiz.step - 1 });
   };
 
+  /** Preview → "Edit my answers": back to the location step with every
+   *  answer intact. Changing anything re-runs a fresh match on Continue. */
+  const editAnswers = () => {
+    setErrors({});
+    setNoMoreMatches(false);
+    phTrack("funnel_step_back", { funnel: "find_advisor", step_slug: "preview_edit", step_index: 4 });
+    update({ step: 3 });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16">
-      <div className="max-w-xl mx-auto px-4">
+      <div ref={stepContainerRef} tabIndex={-1} className="max-w-xl mx-auto px-4 outline-none">
 
         {/* Handoff banner — rendered when investor shares holdings from the holdings page */}
         {handoffToken && <HandoffBanner token={handoffToken} />}
 
-        {/* ADV-008: Resume banner — shown when localStorage has saved quiz progress */}
-        {savedProgress && quiz.step === 1 && (
-          <div className="mb-5 bg-teal-50 border border-teal-200 rounded-xl p-4 flex items-center gap-3">
-            <span className="text-teal-600 text-base shrink-0">↩</span>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-900">Continue where you left off</p>
-              <p className="text-xs text-slate-500 mt-0.5">You were partway through finding an advisor.</p>
-            </div>
-            <button
-              onClick={handleResume}
-              className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg whitespace-nowrap"
-            >
-              Resume
-            </button>
-            <button
-              onClick={() => { setSavedProgress(null); clearQuizProgress(); }}
-              className="text-slate-400 hover:text-slate-600 text-lg leading-none p-0.5 shrink-0"
-              aria-label="Dismiss"
-            >
-              ×
-            </button>
-          </div>
-        )}
-
         {/* Breadcrumb */}
-        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-6">
           <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
           <span className="mx-1.5 text-slate-300">/</span>
           <Link href="/advisors" className="hover:text-slate-700 transition-colors">Advisors</Link>
@@ -1118,16 +1023,24 @@ function FindAdvisorQuiz() {
         {/* Step 3 */}
         {quiz.step === 3 && (
           <Step3
+            intent={quiz.intent}
             stateValue={quiz.state}
             postcodeValue={quiz.postcode}
             suburbValue={quiz.suburb}
             budgetValue={quiz.budget}
+            timelineValue={quiz.timeline}
+            overseas={quiz.overseas}
+            countryValue={quiz.country}
             onStateChange={(v) => update({ state: v })}
             onPostcodeChange={(postcode, state, suburb) => update({ postcode, state, suburb })}
             onBudgetChange={(v) => update({ budget: v })}
+            onTimelineChange={(v) => update({ timeline: v })}
+            onOverseasChange={(overseas) => update(overseas ? { overseas, state: "", postcode: "", suburb: "" } : { overseas, country: "" })}
+            onCountryChange={(v) => update({ country: v })}
             onNext={handleStep3Next}
             onBack={goBack}
             error={errors.state}
+            submitting={submitting}
           />
         )}
 
@@ -1139,12 +1052,16 @@ function FindAdvisorQuiz() {
             userFirstName={quiz.firstName}
             userIntent={quiz.intent}
             userState={quiz.state}
+            userContext={quiz.context}
+            overseasName={quiz.overseas ? overseasCountryName(quiz.country) : null}
+            overseasIso={quiz.overseas ? overseasCountryIso(quiz.country) : null}
             currentMatch={currentMatch}
             allMatches={matchedAdvisors}
             onRematch={handleRematch}
             rematching={rematching}
             noMoreMatches={noMoreMatches}
             onRestart={restart}
+            onEditAnswers={editAnswers}
             submitError={submitError}
             onConfirm={handleConnectClick}
             confirming={false}
@@ -1169,10 +1086,18 @@ function FindAdvisorQuiz() {
             otpStage={otpStage}
             otpCode={otpCode}
             otpError={otpError}
-            otpSentAt={otpSentAt}
             onOtpCodeChange={setOtpCode}
             onOtpVerify={handleVerifyAndSubmit}
             onOtpResend={handleSendOtp}
+            onEditContact={() => {
+              // Typo escape hatch: unlock the contact fields without losing
+              // the quiz answers or the previewed match.
+              setOtpStage("idle");
+              setOtpCode("");
+              setOtpError(null);
+              setOtpExpiresAt(null);
+              setOtpResendAt(null);
+            }}
             otpSecondsLeft={otpSecondsLeft}
             otpExpired={otpExpired}
             otpCanResend={otpCanResend}
@@ -1187,6 +1112,9 @@ function FindAdvisorQuiz() {
             userFirstName={quiz.firstName}
             userIntent={quiz.intent}
             userState={quiz.state}
+            userContext={quiz.context}
+            overseasName={quiz.overseas ? overseasCountryName(quiz.country) : null}
+            overseasIso={quiz.overseas ? overseasCountryIso(quiz.country) : null}
             currentMatch={(pendingAdvisor ?? currentMatch)}
             allMatches={matchedAdvisors}
             onRematch={handleRematch}
@@ -1202,7 +1130,7 @@ function FindAdvisorQuiz() {
 
         {/* Legal footer */}
         {quiz.step <= 5 && (
-          <p className="text-center text-xs text-slate-400 mt-8 leading-relaxed">
+          <p className="text-center text-xs text-slate-500 mt-8 leading-relaxed">
             This is not financial advice. We help you find the right type of professional — the choice is always yours.
           </p>
         )}
@@ -1307,7 +1235,12 @@ function Step2({
                 onChange={() => onToggle(opt.id, isRadio)}
                 className="w-4 h-4 shrink-0 accent-amber-500 border-slate-300 focus:ring-amber-400"
               />
-              <span className="text-sm font-medium text-slate-800 leading-relaxed">{opt.label}</span>
+              <span className="text-sm font-medium text-slate-800 leading-relaxed">
+                {opt.label}
+                {opt.hint && (
+                  <span className="block text-xs font-normal text-slate-500 mt-0.5">{opt.hint}</span>
+                )}
+              </span>
             </label>
           );
         })}
@@ -1339,14 +1272,22 @@ interface PostcodeSuggestion {
 }
 
 function Step3({
-  stateValue, postcodeValue, suburbValue, budgetValue,
-  onStateChange, onPostcodeChange, onBudgetChange, onNext, onBack, error,
+  intent, stateValue, postcodeValue, suburbValue, budgetValue, timelineValue, overseas, countryValue,
+  onStateChange, onPostcodeChange, onBudgetChange, onTimelineChange, onOverseasChange, onCountryChange,
+  onNext, onBack, error, submitting,
 }: {
+  intent: Intent | null;
   stateValue: string; postcodeValue: string; suburbValue: string; budgetValue: string;
+  timelineValue: string; overseas: boolean; countryValue: string;
   onStateChange: (v: string) => void;
   onPostcodeChange: (postcode: string, state: string, suburb: string) => void;
   onBudgetChange: (v: string) => void;
+  onTimelineChange: (v: string) => void;
+  onOverseasChange: (overseas: boolean) => void;
+  onCountryChange: (v: string) => void;
   onNext: () => void; onBack: () => void; error?: string;
+  /** True while the dry-run match request is in flight. */
+  submitting: boolean;
 }) {
   const [postcodeInput, setPostcodeInput] = useState(postcodeValue);
   const [suggestions, setSuggestions] = useState<PostcodeSuggestion[]>([]);
@@ -1401,7 +1342,7 @@ function Step3({
           // Auto-select if exact match
           const exact = results.find((r) => r.postcode === digits);
           const pick = exact ?? results[0];
-          onPostcodeChange(pick.postcode, pick.state, pick.locality);
+          if (pick) onPostcodeChange(pick.postcode, pick.state, pick.locality);
         } else {
           setSuggestions([]);
           setLookupStatus("notfound");
@@ -1421,119 +1362,157 @@ function Step3({
     onPostcodeChange(s.postcode, s.state, s.locality);
   };
 
-  const hasValidLocation = !!stateValue;
+  const hasValidLocation = overseas ? !!countryValue : !!stateValue;
 
   return (
     <Card variant="default" padding="lg">
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-tight">Where are you located?</h1>
-        <p className="text-slate-500 text-sm leading-relaxed">
-          We match you with advisors in your area — many also offer remote consultations.
+        <p className="text-slate-600 text-sm leading-relaxed">
+          {overseas
+            ? "We’ll match you with advisors experienced with international and expat clients — consultations happen remotely."
+            : "We match you with advisors in your area — many also offer remote consultations."}
         </p>
       </div>
 
       <div className="space-y-5">
-        {/* Postcode — primary input */}
-        <div>
-          <label htmlFor="postcode-input" className="block text-sm font-semibold text-slate-700 mb-1.5">
-            Postcode <span className="text-slate-400 font-normal">(recommended)</span>
-          </label>
-          <div className="relative">
-            <input
-              id="postcode-input"
-              type="text"
-              inputMode="numeric"
-              maxLength={4}
-              value={postcodeInput}
-              onChange={(e) => handlePostcodeInput(e.target.value)}
-              placeholder="e.g. 2000"
-              className={`
-                w-full px-4 py-3 border-2 rounded-xl text-slate-900 text-sm
-                focus:outline-none focus:border-amber-500 transition-colors bg-white
-                ${error && !postcodeInput ? "border-red-400" : "border-slate-200"}
-              `}
-              autoComplete="postal-code"
-            />
-            {lookupStatus === "loading" && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <svg role="status" aria-label="Looking up location" className="w-4 h-4 text-slate-400 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                </svg>
+        {!overseas && (
+          <>
+            {/* Postcode — primary input */}
+            <div>
+              <label htmlFor="postcode-input" className="block text-sm font-semibold text-slate-700 mb-1.5">
+                Postcode <span className="text-slate-500 font-normal">(recommended)</span>
+              </label>
+              <div className="relative">
+                <input
+                  id="postcode-input"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={4}
+                  value={postcodeInput}
+                  onChange={(e) => handlePostcodeInput(e.target.value)}
+                  placeholder="e.g. 2000"
+                  className={`
+                    w-full px-4 py-3 border-2 rounded-xl text-slate-900 text-sm
+                    focus:outline-none focus:border-amber-500 transition-colors bg-white
+                    ${error && !postcodeInput ? "border-red-400" : "border-slate-200"}
+                  `}
+                  autoComplete="postal-code"
+                />
+                {lookupStatus === "loading" && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <svg role="status" aria-label="Looking up location" className="w-4 h-4 text-slate-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+
+              {/* Suburb auto-fill result */}
+              {lookupStatus === "found" && suburbValue && (
+                <div className="mt-2 flex items-center gap-2">
+                  <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-sm font-medium text-slate-700">{suburbValue}, {stateValue}</span>
+                </div>
+              )}
+
+              {/* Multiple suggestions dropdown */}
+              {suggestions.length > 1 && (
+                <div className="mt-1 border border-slate-200 rounded-xl bg-white shadow-md overflow-hidden z-10">
+                  {suggestions.map((s) => (
+                    <button
+                      key={`${s.postcode}-${s.locality}`}
+                      type="button"
+                      onClick={() => handleSuggestionSelect(s)}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors border-b border-slate-100 last:border-0"
+                    >
+                      <span className="font-medium text-slate-800">{s.locality}</span>
+                      <span className="text-slate-500 ml-1.5">{s.postcode}, {s.state}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {lookupStatus === "notfound" && postcodeInput.length === 4 && (
+                <p className="mt-1.5 text-xs text-amber-700 flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  Postcode not found — please select your state below
+                </p>
+              )}
+
+              {/* "Don't know postcode" toggle */}
+              {lookupStatus === "idle" && !postcodeInput && (
+                <button
+                  type="button"
+                  onClick={() => setShowStateDropdown(true)}
+                  className="mt-1.5 text-xs text-amber-600 hover:text-amber-700 font-medium"
+                >
+                  Don&apos;t know your postcode? Select state instead
+                </button>
+              )}
+            </div>
+
+            {/* State dropdown — fallback */}
+            {(showStateDropdown || lookupStatus === "notfound" || (!postcodeInput && stateValue)) && (
+              <div className="pt-1">
+                <Select
+                  id="state-select"
+                  label="State or Territory"
+                  required={!stateValue}
+                  options={STATES}
+                  value={stateValue}
+                  onChange={(e) => {
+                    onStateChange(e.target.value);
+                    // If they select state manually, clear any partial postcode lookup
+                    if (postcodeInput && lookupStatus !== "found") {
+                      setPostcodeInput("");
+                      onPostcodeChange("", e.target.value, "");
+                    }
+                  }}
+                  error={!postcodeInput ? error : undefined}
+                />
               </div>
             )}
-          </div>
+          </>
+        )}
 
-          {/* Suburb auto-fill result */}
-          {lookupStatus === "found" && suburbValue && (
-            <div className="mt-2 flex items-center gap-2">
-              <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span className="text-sm font-medium text-slate-700">{suburbValue}, {stateValue}</span>
-            </div>
-          )}
-
-          {/* Multiple suggestions dropdown */}
-          {suggestions.length > 1 && (
-            <div className="mt-1 border border-slate-200 rounded-xl bg-white shadow-md overflow-hidden z-10">
-              {suggestions.map((s) => (
-                <button
-                  key={`${s.postcode}-${s.locality}`}
-                  type="button"
-                  onClick={() => handleSuggestionSelect(s)}
-                  className="w-full text-left px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors border-b border-slate-100 last:border-0"
-                >
-                  <span className="font-medium text-slate-800">{s.locality}</span>
-                  <span className="text-slate-500 ml-1.5">{s.postcode}, {s.state}</span>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {lookupStatus === "notfound" && postcodeInput.length === 4 && (
-            <p className="mt-1.5 text-xs text-amber-700 flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
-              Postcode not found — please select your state below
-            </p>
-          )}
-
-          {/* "Don't know postcode" toggle */}
-          {lookupStatus === "idle" && !postcodeInput && (
-            <button
-              type="button"
-              onClick={() => setShowStateDropdown(true)}
-              className="mt-1.5 text-xs text-amber-600 hover:text-amber-700 font-medium"
-            >
-              Don&apos;t know your postcode? Select state instead
-            </button>
-          )}
-        </div>
-
-        {/* State dropdown — fallback */}
-        {(showStateDropdown || lookupStatus === "notfound" || (!postcodeInput && stateValue)) && (
-          <div className="pt-1">
+        {/* Overseas country picker */}
+        {overseas && (
+          <div>
             <Select
-              id="state-select"
-              label="State or Territory"
-              required={!stateValue}
-              options={STATES}
-              value={stateValue}
-              onChange={(e) => {
-                onStateChange(e.target.value);
-                // If they select state manually, clear any partial postcode lookup
-                if (postcodeInput && lookupStatus !== "found") {
-                  setPostcodeInput("");
-                  onPostcodeChange("", e.target.value, "");
-                }
-              }}
-              error={!postcodeInput ? error : undefined}
+              id="country-select"
+              label="Where do you currently live?"
+              required
+              options={OVERSEAS_COUNTRY_OPTIONS}
+              value={countryValue}
+              onChange={(e) => onCountryChange(e.target.value)}
+              error={error}
             />
+            {intent === "buy_property" && (
+              <p className="text-xs text-slate-500 mt-1.5">
+                Buying from overseas usually involves FIRB approval — we&apos;ll prioritise
+                advisors who handle non-resident property purchases.
+              </p>
+            )}
           </div>
         )}
 
+        {/* Domestic ↔ overseas toggle */}
+        <div className="-mt-1">
+          <button
+            type="button"
+            onClick={() => onOverseasChange(!overseas)}
+            className="text-xs text-amber-600 hover:text-amber-700 font-medium"
+          >
+            {overseas ? "← I’m in Australia — use a postcode instead" : "I live outside Australia →"}
+          </button>
+        </div>
+
         {/* Combined error */}
-        {error && !stateValue && !postcodeInput && (
+        {error && !overseas && !stateValue && !postcodeInput && (
           <p className="text-xs text-red-600 flex items-center gap-1.5 -mt-3" role="alert">
             <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
             {error}
@@ -1544,21 +1523,49 @@ function Step3({
         <div>
           <Select
             id="budget-select"
-            label="Approximate investable assets or portfolio size"
+            label={budgetLabelForIntent(intent)}
             options={BUDGETS}
             value={budgetValue}
             onChange={(e) => onBudgetChange(e.target.value)}
           />
-          <p className="text-xs text-slate-400 mt-1.5">
+          <p className="text-xs text-slate-500 mt-1.5">
             Optional — helps us match you with advisors experienced at your level
           </p>
         </div>
+
+        {/* Timeline — optional urgency signal */}
+        <fieldset>
+          <legend className="block text-sm font-semibold text-slate-700 mb-1.5">
+            How soon do you want to talk to someone? <span className="text-slate-500 font-normal">(optional)</span>
+          </legend>
+          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="How soon do you want to talk to someone?">
+            {TIMELINE_OPTIONS.map((opt) => {
+              const sel = timelineValue === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={sel}
+                  onClick={() => onTimelineChange(sel ? "" : opt.id)}
+                  className={`px-3.5 py-2 rounded-xl border-2 text-xs font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1 ${
+                    sel
+                      ? "border-amber-400 bg-amber-50 text-amber-800"
+                      : "border-slate-200 bg-white text-slate-600 hover:border-amber-300 hover:bg-amber-50/50"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
       </div>
 
       <div className="flex gap-3 mt-8">
-        <Button variant="ghost" onClick={onBack}>&larr; Back</Button>
-        <Button variant="primary" onClick={onNext} disabled={!hasValidLocation} className="flex-1">
-          Continue &rarr;
+        <Button variant="ghost" onClick={onBack} disabled={submitting}>&larr; Back</Button>
+        <Button variant="primary" onClick={onNext} loading={submitting} disabled={!hasValidLocation || submitting} className="flex-1">
+          {submitting ? "Finding your match…" : "Continue →"}
         </Button>
       </div>
     </Card>
@@ -1570,8 +1577,8 @@ function Step3({
 function Step4({
   firstName, email, phone, consent, advisorName, onChange, onSubmit, onBack,
   submitting, errors, submitError,
-  otpStage, otpCode, otpError, onOtpCodeChange, onOtpVerify, onOtpResend,
-  otpSentAt, otpSecondsLeft, otpExpired, otpCanResend, otpResendInSeconds,
+  otpStage, otpCode, otpError, onOtpCodeChange, onOtpVerify, onOtpResend, onEditContact,
+  otpSecondsLeft, otpExpired, otpCanResend, otpResendInSeconds,
 }: {
   firstName: string; email: string; phone: string; consent: boolean;
   /** The previewed advisor being connected (the user has already chosen them). */
@@ -1580,27 +1587,17 @@ function Step4({
   onSubmit: (e: React.FormEvent) => void; onBack: () => void;
   submitting: boolean; errors: Record<string, string>; submitError: string | null;
   otpStage: "idle" | "sending" | "sent" | "verifying";
-  otpCode: string; otpError: string | null; otpSentAt: number | null;
+  otpCode: string; otpError: string | null;
   onOtpCodeChange: (v: string) => void;
   onOtpVerify: () => void;
   onOtpResend: (e: React.SyntheticEvent) => void;
+  /** Wrong email / typo escape hatch: back to editable fields without
+   *  losing the quiz or the previewed match. */
+  onEditContact: () => void;
   otpSecondsLeft: number; otpExpired: boolean;
   otpCanResend: boolean; otpResendInSeconds: number;
 }) {
   const otpActive = otpStage === "sent" || otpStage === "verifying";
-
-  // ADV-015: OTP countdown timer
-  const [secondsLeft, setSecondsLeft] = useState<number>(300);
-  useEffect(() => {
-    if (!otpSentAt || !otpActive) return;
-    const target = otpSentAt + 5 * 60 * 1000;
-    const tick = () => setSecondsLeft(Math.max(0, Math.round((target - Date.now()) / 1000)));
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, [otpSentAt, otpActive]);
-
-  const countdownStr = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, "0")}`;
 
   return (
     <Card variant="default" padding="lg">
@@ -1610,13 +1607,13 @@ function Step4({
             ? <>Almost there — where should {advisorName.split(" ")[0]} reach you?</>
             : <>Almost there — where should your advisor reach you?</>}
         </h1>
-        <p className="text-slate-500 text-sm leading-relaxed">
+        <p className="text-slate-600 text-sm leading-relaxed">
           Verify your email and we&apos;ll make the introduction — usually within 24 hours.
         </p>
       </div>
 
       {submitError && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-start gap-2.5">
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-start gap-2.5" role="alert">
           <svg className="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
           {submitError}
         </div>
@@ -1635,6 +1632,7 @@ function Step4({
         <Input id="phone" label="Phone number" type="tel" placeholder="04XX XXX XXX"
           value={phone} onChange={(e) => onChange("phone", e.target.value)}
           hint="Optional — advisors may call to arrange a meeting"
+          error={errors.phone}
           autoComplete="tel" disabled={otpActive} />
 
         {/* Consent */}
@@ -1666,7 +1664,7 @@ function Step4({
           <div className="flex gap-3 pt-2">
             <Button type="button" variant="ghost" onClick={onBack} disabled={otpStage === "sending"}>&larr; Back</Button>
             <Button type="submit" variant="primary" loading={otpStage === "sending"} disabled={otpStage === "sending"} className="flex-1">
-              {otpStage === "sending" ? "Sending code\u2026" : "Continue \u2192"}
+              {otpStage === "sending" ? "Sending code…" : "Continue →"}
             </Button>
           </div>
         )}
@@ -1683,14 +1681,10 @@ function Step4({
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-slate-900">Check your inbox</p>
-              <p className="text-xs text-slate-500 mt-0.5">We sent a 6-digit code to <strong>{email}</strong></p>
-              {otpActive && (
-                otpExpired
-                  ? <p className="text-xs text-red-500 font-semibold mt-1">Code expired — resend below</p>
-                  : <p className="text-xs text-slate-400 mt-1">Expires in <span className={secondsLeft < 60 ? "text-red-500 font-semibold" : ""}>{countdownStr}</span></p>
-              )}
+              <p className="text-xs text-slate-600 mt-0.5">We sent a 6-digit code to <strong>{email}</strong></p>
             </div>
-            {/* ADV-015: live expiry countdown so users know when the code dies. */}
+            {/* ADV-015: single source of truth for expiry — the 10-minute
+                server-side TTL mirrored by the parent's countdown. */}
             <div
               className={`shrink-0 text-xs font-semibold tabular-nums px-2.5 py-1 rounded-lg border ${otpExpired ? "bg-red-50 border-red-200 text-red-700" : "bg-white border-amber-200 text-amber-700"}`}
               role="timer"
@@ -1717,7 +1711,7 @@ function Step4({
                 autoFocus
               />
               {otpError && (
-                <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1.5">
+                <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1.5" role="alert">
                   <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
                   {otpError}
                 </p>
@@ -1732,7 +1726,7 @@ function Step4({
               onClick={onOtpVerify}
               className="w-full"
             >
-              {otpStage === "verifying" || submitting ? "Verifying\u2026" : "Verify & Connect \u2192"}
+              {otpStage === "verifying" || submitting ? "Verifying…" : "Verify & Connect →"}
             </Button>
 
             {/* ADV-015: when the code expires, surface an unmissable resend
@@ -1750,7 +1744,7 @@ function Step4({
               </p>
             )}
 
-            <p className="text-center text-xs text-slate-400">
+            <p className="text-center text-xs text-slate-500">
               Didn&apos;t get it?{" "}
               {otpCanResend ? (
                 <button
@@ -1761,17 +1755,17 @@ function Step4({
                   Resend code
                 </button>
               ) : (
-                <span className="text-slate-400 tabular-nums">
+                <span className="text-slate-500 tabular-nums">
                   Resend in {formatCountdown(otpResendInSeconds)}
                 </span>
               )}
               {" "}· Wrong email?{" "}
               <button
                 type="button"
-                onClick={() => { clearMatchStorage(); onOtpCodeChange(""); window.location.reload(); }}
-                className="text-slate-500 hover:text-slate-700 font-semibold"
+                onClick={onEditContact}
+                className="text-slate-600 hover:text-slate-800 font-semibold underline"
               >
-                Start over
+                Edit details
               </button>
             </p>
           </div>
@@ -1787,31 +1781,65 @@ function typeLabel(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError, onConfirm, confirming, confirmedAdvisorId, userIntent, userState }: {
+function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, onEditAnswers, submitError, onConfirm, confirming, confirmedAdvisorId, userIntent, userState, userContext, overseasName, overseasIso }: {
   userEmail: string; userFirstName: string; currentMatch: MatchedAdvisor | null; allMatches: MatchedAdvisor[];
-  onRematch: () => void; rematching: boolean; noMoreMatches: boolean; onRestart: () => void; submitError: string | null;
+  onRematch: () => void; rematching: boolean; noMoreMatches: boolean; onRestart: () => void;
+  /** Present on the preview step only — returns to step 3 with answers intact. */
+  onEditAnswers?: () => void;
+  submitError: string | null;
   onConfirm: (advisor: MatchedAdvisor) => void; confirming: boolean; confirmedAdvisorId: number | null;
-  userIntent: Intent | null; userState: string;
+  userIntent: Intent | null; userState: string; userContext: string[];
+  overseasName: string | null; overseasIso: string | null;
 }) {
   const isCurrentConfirmed = !!(currentMatch && confirmedAdvisorId === currentMatch.id);
+
+  // ADV-007: answer-driven "why we matched you" — every bullet is a fact
+  // about THIS advisor tied to THIS user's answers (lib/find-advisor/
+  // match-reasons.ts). Rating/verification bullets follow the central
+  // licence-mode gates.
+  const matchReasons = currentMatch
+    ? buildMatchReasons(
+        {
+          intent: userIntent,
+          context: userContext,
+          state: userState,
+          overseasCountryName: overseasName,
+          overseasCountryIso: overseasIso,
+        },
+        currentMatch,
+        { showRatings: SHOW_ADVISOR_RATINGS, showVerifiedBadge: SHOW_ADVISOR_VERIFIED_BADGE },
+      )
+    : [];
+  const highlightedSpecs = currentMatch
+    ? new Set(matchedSpecialties(userContext, currentMatch.specialties))
+    : new Set<string>();
+
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Success header */}
+      {/* Header — success affect only when there IS a match */}
       <div className="text-center py-3">
-        <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
-          <svg className="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
+        {currentMatch ? (
+          <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
+            <svg className="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        ) : (
+          <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-3">
+            <svg className="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+            </svg>
+          </div>
+        )}
         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">
-          {isCurrentConfirmed ? "You\u2019re connected!" : currentMatch ? "We found a match!" : "No instant match just yet"}
+          {isCurrentConfirmed ? "You’re connected!" : currentMatch ? "We found a match!" : "No instant match just yet"}
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-600">
           {isCurrentConfirmed
             ? `${currentMatch!.name} has been notified and will be in touch shortly`
             : currentMatch
             ? `${userFirstName ? `${userFirstName}, review` : "Review"} this advisor and connect if they look right`
-            : "No available advisor matched your exact criteria \u2014 try again shortly, or browse the full directory below"}
+            : "No available advisor matched your exact criteria — here’s how to keep moving"}
         </p>
         {allMatches.length > 1 && (
           <p className="text-xs text-amber-600 font-semibold mt-1">
@@ -1819,6 +1847,38 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
           </p>
         )}
       </div>
+
+      {/* Honest empty state — clear next steps instead of false promises */}
+      {!currentMatch && (
+        <div className="rounded-2xl border-2 border-amber-200 bg-amber-50/60 p-5 space-y-4">
+          <p className="text-sm text-slate-700 leading-relaxed">
+            Every advisor who fits your exact answers is either at capacity right now or
+            hasn’t joined the directory yet. Three good ways forward:
+          </p>
+          <ul className="space-y-2.5">
+            {[
+              { icon: "users", text: "Browse the closest matches — we’ve pre-filtered the directory to your goal and location" },
+              { icon: "map-pin", text: onEditAnswers ? "Widen your search — edit your answers to try a broader location or a different focus" : "Try again with a broader location or a different focus" },
+              { icon: "clock", text: "Check back soon — verified advisors join every week" },
+            ].map((item) => (
+              <li key={item.text} className="flex items-start gap-2.5 text-sm text-slate-700">
+                <Icon name={item.icon} size={15} className="text-amber-600 shrink-0 mt-0.5" />
+                {item.text}
+              </li>
+            ))}
+          </ul>
+          <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+            <Button variant="primary" href={browseAdvisorsHref(userIntent, userState)} className="flex-1 justify-center">
+              Browse closest matches
+            </Button>
+            {onEditAnswers && (
+              <Button variant="secondary" onClick={onEditAnswers} className="flex-1 justify-center">
+                Edit my answers
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Matched advisor card */}
       {currentMatch && (
@@ -1836,7 +1896,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                   <span className="text-[0.65rem] font-semibold text-white">Fast reply (&lt;1h)</span>
                 </div>
               )}
-              {currentMatch.verified && (
+              {SHOW_ADVISOR_VERIFIED_BADGE && currentMatch.verified && (
                 <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-2.5 py-0.5">
                   <Icon name="shield-check" size={12} className="text-white" />
                   <span className="text-[0.65rem] font-semibold text-white">ASIC Verified</span>
@@ -1867,7 +1927,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                   <p className="text-xs text-slate-500 mt-0.5">{currentMatch.firm_name}</p>
                 )}
                 <div className="flex items-center gap-3 mt-2">
-                  {currentMatch.rating > 0 && (
+                  {SHOW_ADVISOR_RATINGS && currentMatch.rating > 0 && (
                     <div className="flex items-center gap-1">
                       <div className="flex">
                         {Array.from({ length: 5 }).map((_, i) => (
@@ -1882,12 +1942,12 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                         ))}
                       </div>
                       <span className="text-xs font-bold text-slate-700">{currentMatch.rating}</span>
-                      <span className="text-xs text-slate-400">({currentMatch.review_count})</span>
+                      <span className="text-xs text-slate-500">({currentMatch.review_count})</span>
                     </div>
                   )}
                   {currentMatch.location_display && (
                     <span className="text-xs text-slate-500 flex items-center gap-1">
-                      <Icon name="map-pin" size={11} className="text-slate-400" />
+                      <Icon name="map-pin" size={11} className="text-slate-500" />
                       {currentMatch.location_display}
                     </span>
                   )}
@@ -1895,16 +1955,28 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
               </div>
             </div>
 
-            {/* Specialties */}
+            {/* Specialties — chips that connect to the user's answers glow */}
             {currentMatch.specialties?.length > 0 && (
               <div className="mb-4">
-                <p className="text-[0.65rem] font-semibold text-slate-400 uppercase tracking-wider mb-2">Specialties</p>
+                <p className="text-[0.65rem] font-semibold text-slate-500 uppercase tracking-wider mb-2">Specialties</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {currentMatch.specialties.slice(0, 5).map((spec) => (
-                    <span key={spec} className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-lg font-medium">
-                      {spec}
-                    </span>
-                  ))}
+                  {currentMatch.specialties.slice(0, 5).map((spec) => {
+                    const isMatch = highlightedSpecs.has(spec);
+                    return (
+                      <span
+                        key={spec}
+                        className={`text-xs px-2.5 py-1 rounded-lg font-medium border ${
+                          isMatch
+                            ? "bg-emerald-50 text-emerald-800 border-emerald-300 ring-1 ring-emerald-200"
+                            : "bg-amber-50 text-amber-700 border-amber-200"
+                        }`}
+                      >
+                        {isMatch && <span aria-hidden="true">✓ </span>}
+                        {spec}
+                        {isMatch && <span className="sr-only"> (matches your answers)</span>}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -1912,42 +1984,25 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
             {/* Fee info */}
             {currentMatch.fee_description && (
               <div className="bg-slate-50 rounded-xl p-3 mb-4 flex items-start gap-2">
-                <Icon name="coins" size={14} className="text-slate-400 shrink-0 mt-0.5" />
+                <Icon name="coins" size={14} className="text-slate-500 shrink-0 mt-0.5" />
                 <p className="text-xs text-slate-600 leading-relaxed">{currentMatch.fee_description}</p>
               </div>
             )}
 
-            {/* ADV-007: "Why we matched you" explanation */}
-            {(() => {
-              const intentLabel: Record<string, string> = {
-                buy_property: "property buying & investment",
-                grow_wealth: "wealth creation & growth",
-                protect_assets: "asset protection & insurance",
-                business_tax: "business tax & accounting",
-              };
-              const bullets: string[] = [];
-              const specialty = currentMatch.specialties?.[0];
-              if (specialty) bullets.push(`Specialises in ${specialty}`);
-              else if (userIntent) bullets.push(`Matches your goal: ${intentLabel[userIntent] ?? userIntent}`);
-              if (currentMatch.location_display) bullets.push(`Based ${currentMatch.location_display}${userState ? ` — serves ${userState}` : ""}`);
-              if (currentMatch.rating > 0 && currentMatch.review_count > 0)
-                bullets.push(`Rated ${currentMatch.rating}/5 from ${currentMatch.review_count} verified review${currentMatch.review_count !== 1 ? "s" : ""}`);
-              else if (currentMatch.verified) bullets.push("Verified AFSL / registered professional");
-              if (bullets.length === 0) return null;
-              return (
-                <div role="status" aria-live="polite" className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4">
-                  <p className="text-[0.65rem] font-bold text-emerald-700 uppercase tracking-wider mb-2">Why we matched you</p>
-                  <ul className="space-y-1">
-                    {bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-1.5 text-xs text-emerald-800">
-                        <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })()}
+            {/* ADV-007: "Why we matched you" — answer-driven, never generic */}
+            {matchReasons.length > 0 && (
+              <div role="status" aria-live="polite" className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4">
+                <p className="text-[0.65rem] font-bold text-emerald-700 uppercase tracking-wider mb-2">Why we matched you</p>
+                <ul className="space-y-1">
+                  {matchReasons.map((b) => (
+                    <li key={b} className="flex items-start gap-1.5 text-xs text-emerald-800">
+                      <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* CTA */}
             {isCurrentConfirmed ? (
@@ -1990,7 +2045,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
       {/* Previously matched advisors */}
       {allMatches.length > 1 && (
         <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Previous Matches</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Previous Matches</p>
           <div className="space-y-2">
             {allMatches.slice(0, -1).reverse().map((advisor) => (
               <Link
@@ -2007,139 +2062,148 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-slate-800 truncate">{advisor.name}</p>
-                  <p className="text-xs text-slate-500">{typeLabel(advisor.type)}{advisor.location_display ? ` \u2022 ${advisor.location_display}` : ""}</p>
+                  <p className="text-xs text-slate-500">{typeLabel(advisor.type)}{advisor.location_display ? ` • ${advisor.location_display}` : ""}</p>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-amber-500 font-semibold shrink-0">
-                  <span>{advisor.rating}</span>
-                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                </div>
+                {SHOW_ADVISOR_RATINGS && advisor.rating > 0 && (
+                  <div className="flex items-center gap-1 text-xs text-amber-500 font-semibold shrink-0">
+                    <span>{advisor.rating}</span>
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                  </div>
+                )}
               </Link>
             ))}
           </div>
         </div>
       )}
 
-      {/* Rematch button — hidden once user has confirmed an advisor */}
-      {currentMatch && !noMoreMatches && !isCurrentConfirmed && (
-        <button
-          onClick={onRematch}
-          disabled={rematching}
-          className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {rematching ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg aria-hidden="true" className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-              Finding another advisor...
-            </span>
-          ) : (
-            <span className="flex items-center justify-center gap-2">
-              <Icon name="refresh-cw" size={14} />
-              Match me with a different advisor
-            </span>
+      {/* Preview actions: rematch + edit answers — hidden once confirmed */}
+      {currentMatch && !isCurrentConfirmed && (
+        <div className="flex flex-col sm:flex-row gap-2.5">
+          {!noMoreMatches && (
+            <button
+              onClick={onRematch}
+              disabled={rematching}
+              className="flex-1 py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {rematching ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg aria-hidden="true" className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                  Finding another advisor...
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <Icon name="refresh-cw" size={14} />
+                  Match me with a different advisor
+                </span>
+              )}
+            </button>
           )}
-        </button>
+          {onEditAnswers && (
+            <button
+              onClick={onEditAnswers}
+              className="sm:w-auto px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-colors"
+            >
+              ← Edit my answers
+            </button>
+          )}
+        </div>
       )}
 
-      {noMoreMatches && (
+      {noMoreMatches && currentMatch && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
           <p className="text-sm font-semibold text-amber-800 mb-1">You&apos;ve seen all available matches</p>
-          <p className="text-xs text-amber-600">We&apos;ve matched you with every advisor available for your criteria. Browse our full directory for more options.</p>
+          <p className="text-xs text-amber-700">We&apos;ve matched you with every advisor available for your criteria. Browse our full directory for more options.</p>
         </div>
       )}
 
       {submitError && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 text-center">
+        <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 text-center" role="alert">
           {submitError}
         </div>
       )}
 
-      {/* Next steps */}
-      <Card variant="flat" padding="md">
-        <h3 className="font-bold text-slate-900 text-sm mb-3.5 flex items-center gap-2">
-          <Icon name="clock" size={14} className="text-amber-500" />
-          What happens next, {userFirstName}:
-        </h3>
-        {isCurrentConfirmed && currentMatch ? (
-          <div className="space-y-3">
-            {[
-              {
-                icon: "mail",
-                title: "Advisor notified",
-                desc: `${currentMatch.name} has received your enquiry and your contact details.`,
-                timing: "Right now",
-                done: true,
-              },
-              {
-                icon: "phone",
-                title: "Initial contact",
-                desc: `Expect a call or email at ${userEmail} to introduce themselves and discuss your needs.`,
-                timing: "Within 24 hours",
-                done: false,
-              },
-              {
-                icon: "calendar",
-                title: "Free consultation",
-                desc: "Schedule a no-obligation initial meeting to explore how they can help you.",
-                timing: "Within 1 week",
-                done: false,
-              },
-              {
-                icon: "check-circle",
-                title: "Your choice",
-                desc: "Decide if they're the right fit — no pressure, no fees for matching.",
-                timing: "Whenever you're ready",
-                done: false,
-              },
-            ].map((step, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${step.done ? "bg-emerald-100" : "bg-amber-50 border border-amber-200"}`}>
-                  <Icon name={step.icon} size={14} className={step.done ? "text-emerald-600" : "text-amber-500"} />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-slate-800">{step.title}</p>
-                    <span className={`text-[0.58rem] font-semibold px-1.5 py-0.5 rounded-full ${step.done ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{step.timing}</span>
+      {/* Next steps — only meaningful when an advisor is on screen */}
+      {currentMatch && (
+        <Card variant="flat" padding="md">
+          <h3 className="font-bold text-slate-900 text-sm mb-3.5 flex items-center gap-2">
+            <Icon name="clock" size={14} className="text-amber-500" />
+            What happens next{userFirstName ? `, ${userFirstName}` : ""}:
+          </h3>
+          {isCurrentConfirmed ? (
+            <div className="space-y-3">
+              {[
+                {
+                  icon: "mail",
+                  title: "Advisor notified",
+                  desc: `${currentMatch.name} has received your enquiry and your contact details.`,
+                  timing: "Right now",
+                  done: true,
+                },
+                {
+                  icon: "phone",
+                  title: "Initial contact",
+                  desc: `Expect a call or email at ${userEmail} to introduce themselves and discuss your needs.`,
+                  timing: "Within 24 hours",
+                  done: false,
+                },
+                {
+                  icon: "calendar",
+                  title: "Free consultation",
+                  desc: "Schedule a no-obligation initial meeting to explore how they can help you.",
+                  timing: "Within 1 week",
+                  done: false,
+                },
+                {
+                  icon: "check-circle",
+                  title: "Your choice",
+                  desc: "Decide if they're the right fit — no pressure, no fees for matching.",
+                  timing: "Whenever you're ready",
+                  done: false,
+                },
+              ].map((step, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${step.done ? "bg-emerald-100" : "bg-amber-50 border border-amber-200"}`}>
+                    <Icon name={step.icon} size={14} className={step.done ? "text-emerald-600" : "text-amber-500"} />
                   </div>
-                  <p className="text-xs text-slate-500 mt-0.5">{step.desc}</p>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-slate-800">{step.title}</p>
+                      <span className={`text-[0.58rem] font-semibold px-1.5 py-0.5 rounded-full ${step.done ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{step.timing}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">{step.desc}</p>
+                  </div>
                 </div>
+              ))}
+              <div className="pt-3 border-t border-slate-100 text-xs text-slate-500">
+                <strong className="text-slate-700">In the meantime:</strong> Review {currentMatch.name}&apos;s full profile, credentials, and client reviews to make sure they&apos;re the right fit.
               </div>
-            ))}
-            <div className="pt-3 border-t border-slate-100 text-xs text-slate-500">
-              <strong className="text-slate-700">In the meantime:</strong> Review {currentMatch.name}&apos;s full profile, credentials, and client reviews to make sure they&apos;re the right fit.
             </div>
-          </div>
-        ) : (
-          <ol className="space-y-3">
-            {/* Preview stage: NO lead exists yet (the advisor has not been
-                contacted) \u2014 the copy must promise, not claim. Contact details
-                are collected on the next step, so no email is shown here. */}
-            {(currentMatch
-              ? [
-                  `Click Connect and we'll introduce you to ${currentMatch.name}`,
-                  "They'll reach out within 24 hours of your introduction",
-                  "You'll book a free initial consultation \u2014 no obligation",
-                ]
-              : [
-                  "We'll find the best-matched advisor for your situation",
-                  "They'll reach out within 24 hours of your introduction",
-                  "You'll book a free initial consultation \u2014 no obligation",
-                ]
-            ).map((step, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-900 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
-                <span className="text-sm text-slate-700 leading-relaxed">{step}</span>
-              </li>
-            ))}
-          </ol>
-        )}
-      </Card>
+          ) : (
+            <ol className="space-y-3">
+              {/* Preview stage: NO lead exists yet (the advisor has not been
+                  contacted) — the copy must promise, not claim. Contact details
+                  are collected on the next step, so no email is shown here. */}
+              {[
+                `Click Connect and we'll introduce you to ${currentMatch.name}`,
+                "They'll reach out within 24 hours of your introduction",
+                "You'll book a free initial consultation — no obligation",
+              ].map((step, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-900 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                  <span className="text-sm text-slate-700 leading-relaxed">{step}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </Card>
+      )}
 
       {/* Trust signals */}
       <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-2 py-2">
         {[
           { icon: "shield-check", text: "Your details go to one advisor only", color: "text-emerald-500" },
-          { icon: "lock", text: "Data encrypted & secure", color: "text-slate-400" },
-          { icon: "x-circle", text: "Unsubscribe anytime", color: "text-slate-400" },
+          { icon: "lock", text: "Data encrypted & secure", color: "text-slate-500" },
+          { icon: "x-circle", text: "Unsubscribe anytime", color: "text-slate-500" },
         ].map((item) => (
           <span key={item.text} className="flex items-center gap-1.5 text-xs text-slate-500">
             <Icon name={item.icon} size={13} className={item.color} />
@@ -2150,22 +2214,27 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
 
       {/* CTAs — deep-link Browse to a /advisors filter pre-populated from
           the quiz answers, so the user sees relevant alternatives, not the
-          full unfiltered directory. */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Button variant="secondary" href={browseAdvisorsHref(userIntent, userState)} className="flex-1 justify-center">
-          Browse All Advisors
-        </Button>
-        <Button variant="secondary" href="/compare" className="flex-1 justify-center">
-          Compare Platforms
-        </Button>
-      </div>
+          full unfiltered directory. (The empty state above promotes Browse
+          to primary, so skip the duplicate here.) */}
+      {currentMatch && (
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button variant="secondary" href={browseAdvisorsHref(userIntent, userState)} className="flex-1 justify-center">
+            Browse All Advisors
+          </Button>
+          <Button variant="secondary" href="/compare" className="flex-1 justify-center">
+            Compare Platforms
+          </Button>
+        </div>
+      )}
 
-      <p className="text-center text-xs text-slate-400 leading-relaxed">
-        Confirmation sent to <strong className="text-slate-600">{userEmail}</strong>
-      </p>
+      {isCurrentConfirmed && userEmail && (
+        <p className="text-center text-xs text-slate-500 leading-relaxed">
+          Confirmation sent to <strong className="text-slate-600">{userEmail}</strong>
+        </p>
+      )}
 
       <div className="text-center">
-        <button onClick={onRestart} className="text-xs text-slate-400 hover:text-slate-600 transition-colors underline">
+        <button onClick={onRestart} className="text-xs text-slate-500 hover:text-slate-700 transition-colors underline">
           Start over with a different goal
         </button>
       </div>

@@ -148,7 +148,7 @@ export default function SettingsPage() {
             disabled
             className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-500"
           />
-          <p className="text-xs text-slate-400 mt-1">Contact support to change your email.</p>
+          <p className="text-xs text-slate-500 mt-1">Contact support to change your email.</p>
         </div>
 
         <div>
@@ -234,7 +234,7 @@ export default function SettingsPage() {
             Last login: {new Date(account.last_login_at).toLocaleDateString("en-AU")}
           </p>
         )}
-        <p className="text-xs text-slate-400 mt-2">
+        <p className="text-xs text-slate-500 mt-2">
           Need help? Contact{" "}
           <a href="mailto:partners@invest.com.au" className="text-slate-700 underline">
             partners@invest.com.au

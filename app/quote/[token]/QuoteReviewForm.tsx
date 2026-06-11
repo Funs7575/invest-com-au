@@ -134,7 +134,7 @@ export default function QuoteReviewForm(props: Props) {
             Estimated delivery: {props.deliveryDaysEstimate} days
           </p>
         )}
-        <p className="text-[10px] text-slate-400 mt-2">
+        <p className="text-[10px] text-slate-500 mt-2">
           Valid until {new Date(props.expiresAt).toLocaleDateString("en-AU", { dateStyle: "long" })}
         </p>
       </section>
@@ -152,7 +152,7 @@ export default function QuoteReviewForm(props: Props) {
                 <span className="flex-1">
                   {item.label}
                   {item.estimated_hours && (
-                    <span className="text-slate-400 ml-1.5">
+                    <span className="text-slate-500 ml-1.5">
                       (~{item.estimated_hours}h)
                     </span>
                   )}
@@ -233,7 +233,7 @@ export default function QuoteReviewForm(props: Props) {
         </section>
       )}
 
-      <p className="text-[10px] text-slate-400 text-center">
+      <p className="text-[10px] text-slate-500 text-center">
         General information only — not personal advice. The Pro Squad delivers the service under their own licence.
       </p>
     </div>

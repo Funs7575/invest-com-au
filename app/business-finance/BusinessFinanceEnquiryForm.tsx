@@ -107,7 +107,7 @@ export default function BusinessFinanceEnquiryForm() {
             maxLength={200}
             autoComplete="organization"
             placeholder="Acme Pty Ltd"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
@@ -122,7 +122,7 @@ export default function BusinessFinanceEnquiryForm() {
             maxLength={200}
             autoComplete="name"
             placeholder="Jane Smith"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
@@ -137,7 +137,7 @@ export default function BusinessFinanceEnquiryForm() {
             maxLength={254}
             autoComplete="email"
             placeholder="jane@acme.com.au"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
@@ -149,7 +149,7 @@ export default function BusinessFinanceEnquiryForm() {
             maxLength={30}
             autoComplete="tel"
             placeholder="0400 000 000"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
       </div>
@@ -185,7 +185,7 @@ export default function BusinessFinanceEnquiryForm() {
             max={50_000_000}
             step={1000}
             placeholder="e.g. 250000"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
@@ -201,7 +201,7 @@ export default function BusinessFinanceEnquiryForm() {
             max={500_000_000}
             step={10000}
             placeholder="e.g. 1200000"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
@@ -216,7 +216,7 @@ export default function BusinessFinanceEnquiryForm() {
             max={100}
             step={0.5}
             placeholder="e.g. 3"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
       </div>
@@ -231,7 +231,7 @@ export default function BusinessFinanceEnquiryForm() {
           name="purpose"
           maxLength={1000}
           placeholder="e.g. Purchase new equipment, expand to second location…"
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
         />
       </div>
 
@@ -245,7 +245,7 @@ export default function BusinessFinanceEnquiryForm() {
           rows={3}
           maxLength={2000}
           placeholder="Any other details that would help us match you with the right specialist…"
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 resize-none"
+          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 resize-none"
         />
       </div>
 
@@ -263,7 +263,7 @@ export default function BusinessFinanceEnquiryForm() {
         {status === "submitting" ? "Submitting…" : "Submit Enquiry"}
       </button>
 
-      <p className="text-center text-[0.65rem] text-slate-400">
+      <p className="text-center text-[0.65rem] text-slate-500">
         By submitting you agree to our privacy policy. General information only — not financial advice.
       </p>
     </form>

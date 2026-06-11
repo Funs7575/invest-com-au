@@ -238,7 +238,7 @@ export default function QuizWeightsPage() {
                   {simResults.slice(0, 5).map((r, i) => (
                     <div key={r.broker_slug} className="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-2">
                       <div className="flex items-center gap-3">
-                        <span className={`text-sm font-bold ${i === 0 ? "text-amber-500" : i === 1 ? "text-slate-400" : i === 2 ? "text-amber-700" : "text-slate-500"}`}>
+                        <span className={`text-sm font-bold ${i === 0 ? "text-amber-500" : i === 1 ? "text-slate-500" : i === 2 ? "text-amber-700" : "text-slate-500"}`}>
                           #{i + 1}
                         </span>
                         <span className="text-sm text-slate-900 font-medium">{r.broker_slug}</span>

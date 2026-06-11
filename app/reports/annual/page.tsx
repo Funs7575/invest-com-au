@@ -164,7 +164,7 @@ export default async function AnnualReportPage() {
               <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6 text-center">
                 <Icon name="file-text" size={48} className="text-emerald-400 mx-auto mb-3" />
                 <p className="text-sm font-bold text-white mb-1">Full PDF Report</p>
-                <p className="text-xs text-slate-400 mb-4">50+ pages of data and analysis</p>
+                <p className="text-xs text-slate-500 mb-4">50+ pages of data and analysis</p>
                 <a
                   href="#download"
                   className="block w-full px-4 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-500 transition-colors"
@@ -223,7 +223,7 @@ export default async function AnnualReportPage() {
               </div>
               <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{stat.value}</p>
               <p className="text-xs text-slate-500 mt-0.5">{stat.label}</p>
-              {stat.desc && <p className="text-[0.69rem] text-slate-400">{stat.desc}</p>}
+              {stat.desc && <p className="text-[0.69rem] text-slate-500">{stat.desc}</p>}
             </div>
           ))}
         </div>
@@ -341,7 +341,7 @@ export default async function AnnualReportPage() {
                 <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
                   {q}
                   <svg
-                    className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                    className="w-4 h-4 shrink-0 text-slate-500 group-open:rotate-180 transition-transform"
                     aria-hidden="true"
                     fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
                   >

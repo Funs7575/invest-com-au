@@ -76,3 +76,7 @@ bots/reports/visual-*.md
 bots/reports/conversion-*.md
 bots/reports/redteam-*.md
 bots/reports/screenshots/
+
+# CO stream cutover script output (generated artifacts — not committed)
+scripts/cutover/output/*.json
+scripts/cutover/output/*.htaccess

@@ -65,6 +65,8 @@ export function resolveTrack(a: UnifiedAnswers): QuizTrack {
   if (a.stage === "learning") return "diy";
   if (a.goal === "help" || a.goal === "home") return "advisor";
   if (a.mode === "help") return "advisor";
+  // "not_sure" on property_sub is a neutral signal — don't gate into advisor
+  // track. Only the explicit "physical" choice triggers the advisor flow.
   if (a.property_sub === "physical") return "advisor";
   return "diy";
 }
@@ -137,7 +139,9 @@ export function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null 
       // still learn urgency (under-contract → conveyancer tiering) and can offer
       // the "just learning" education exit. Advisor entries already set `stage`.
       if (a.property_sub === "physical") return a.stage ? null : "stage";
-      // Otherwise (REIT/super paths) offer the wealth-stack questions.
+      // "not_sure" on property_sub: neutral — don't gate into advisor flow; treat
+      // like a DIY-track REIT/super path and offer the wealth-stack questions.
+      // Otherwise (REIT/super/not_sure paths) offer the wealth-stack questions.
       if (shouldShowStackQuestions(a)) return "stack_risk";
       return null;
     case "stack_risk":
@@ -182,6 +186,9 @@ export function inferAdvisorType(a: UnifiedAnswers): string {
     if (a.investor_goal_intl === "property") return "buyers-agent";
     if (a.investor_goal_intl === "shares") return "tax-agent";
     if (a.investor_goal_intl === "savings" || a.investor_goal_intl === "business") return "financial-planner";
+    // "not_sure" on investor_goal_intl: default to financial-planner as the
+    // broadest-coverage international specialist.
+    if (a.investor_goal_intl === "not_sure") return "financial-planner";
     return "tax-agent";
   }
   // Domestic track

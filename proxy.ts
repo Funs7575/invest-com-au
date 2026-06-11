@@ -1,8 +1,9 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import type { NextFetchEvent, NextRequest } from 'next/server'
 import { verifyMfaCookieEdge, MFA_COOKIE_NAME } from '@/lib/admin-mfa-cookie-edge'
 import { LISTING_PAGE_SLUGS } from '@/lib/invest-listing-routes'
+import { captureAiTraffic } from '@/lib/geo/crawler-capture'
 
 // Admin paths where the MFA step-up page itself lives — must never be
 // gated, otherwise they redirect to themselves infinitely.
@@ -31,8 +32,31 @@ function cronTokensMatch(authHeader: string | null, secret: string): boolean {
   return diff === 0
 }
 
-export async function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest, event?: NextFetchEvent) {
   const { pathname } = request.nextUrl
+
+  // ── GEO: server-side AI crawler/referrer capture ───────────────
+  // AI vendor bots fetch pages with no JS, so the client-side
+  // `ai_referral` event never sees them. Classify the UA/Referer with
+  // the pure lib/geo/ai-referrer rules and, on the rare hit, queue a
+  // fire-and-forget analytics_events insert via event.waitUntil.
+  // Zero latency added (classification is a few regex tests; the
+  // insert is never awaited) and strictly fail-open — captureAiTraffic
+  // swallows all errors internally, and this belt-and-braces try/catch
+  // guarantees the response is unaffected even if the module breaks.
+  try {
+    captureAiTraffic(
+      {
+        method: request.method,
+        pathname,
+        userAgent: request.headers.get('user-agent'),
+        referrer: request.headers.get('referer'),
+      },
+      event ? event.waitUntil.bind(event) : undefined,
+    )
+  } catch {
+    // capture must never affect the response
+  }
 
   // ── Request ID stamping ────────────────────────────────────────
   // Every request gets a stable x-request-id so Sentry events, Vercel

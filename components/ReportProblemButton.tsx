@@ -212,7 +212,7 @@ export default function ReportProblemButton() {
                 type="button"
                 aria-label="Close"
                 onClick={closeModal}
-                className="text-slate-400 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 rounded p-1 -mr-1 -mt-1"
+                className="text-slate-500 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-400 rounded p-1 -mr-1 -mt-1"
               >
                 <svg
                   width="18"
@@ -267,7 +267,7 @@ export default function ReportProblemButton() {
                   aria-describedby={
                     validation ? "report-problem-error" : undefined
                   }
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
                   placeholder="The save button on /best/share-trading didn't work…"
                 />
                 {validation && (
@@ -295,7 +295,7 @@ export default function ReportProblemButton() {
                       onChange={(e) => setEmail(e.target.value)}
                       maxLength={320}
                       autoComplete="email"
-                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
                       placeholder="you@example.com"
                     />
                   </div>

@@ -144,7 +144,7 @@ export default function FeatureFlagsPage() {
                           {flag.description}
                         </p>
                       )}
-                      <div className="flex flex-wrap gap-4 mt-2 text-xs text-slate-400">
+                      <div className="flex flex-wrap gap-4 mt-2 text-xs text-slate-500">
                         <span>rollout {flag.rollout_pct}%</span>
                         {flag.allowlist.length > 0 && (
                           <span>allowlist: {flag.allowlist.join(", ")}</span>
@@ -199,7 +199,7 @@ export default function FeatureFlagsPage() {
                           })
                         }
                         disabled={isSaving}
-                        className="text-xs text-slate-400 hover:text-slate-700 disabled:opacity-50 transition-colors"
+                        className="text-xs text-slate-500 hover:text-slate-700 disabled:opacity-50 transition-colors"
                       >
                         {isSaving
                           ? "…"

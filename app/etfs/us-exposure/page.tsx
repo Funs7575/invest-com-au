@@ -258,15 +258,15 @@ export default function USExposureETFPage() {
 
                 <div className="grid sm:grid-cols-3 gap-3 mb-4 text-xs">
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Index</span>
+                    <span className="text-slate-500 block mb-0.5">Index</span>
                     <span className="font-semibold text-slate-700">{etf.index}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Holdings</span>
+                    <span className="text-slate-500 block mb-0.5">Holdings</span>
                     <span className="font-semibold text-slate-700">{etf.holdings.toLocaleString()} securities</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 block mb-0.5">Currency</span>
+                    <span className="text-slate-500 block mb-0.5">Currency</span>
                     <span className="font-semibold text-slate-700">{etf.currency}</span>
                   </div>
                 </div>

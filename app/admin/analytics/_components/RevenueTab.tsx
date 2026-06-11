@@ -169,19 +169,19 @@ export default function RevenueTab({
                 <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Period</th>
                 <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                   <div>Est. Clicks</div>
-                  <div className="text-[0.6rem] font-normal normal-case text-slate-400">30-day avg</div>
+                  <div className="text-[0.6rem] font-normal normal-case text-slate-500">30-day avg</div>
                 </th>
                 <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                   <div>Est. Revenue</div>
-                  <div className="text-[0.6rem] font-normal normal-case text-slate-400">30-day avg</div>
+                  <div className="text-[0.6rem] font-normal normal-case text-slate-500">30-day avg</div>
                 </th>
                 <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                   <div>Est. Clicks</div>
-                  <div className="text-[0.6rem] font-normal normal-case text-slate-400">7-day trend</div>
+                  <div className="text-[0.6rem] font-normal normal-case text-slate-500">7-day trend</div>
                 </th>
                 <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                   <div>Est. Revenue</div>
-                  <div className="text-[0.6rem] font-normal normal-case text-slate-400">7-day trend</div>
+                  <div className="text-[0.6rem] font-normal normal-case text-slate-500">7-day trend</div>
                 </th>
               </tr>
             </thead>

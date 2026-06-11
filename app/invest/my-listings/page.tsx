@@ -374,7 +374,7 @@ export default function MyListingsPage() {
                             <h3 className="font-bold text-slate-900 truncate">
                               {listing.title}
                             </h3>
-                            <p className="text-xs text-slate-400 capitalize mt-0.5">
+                            <p className="text-xs text-slate-500 capitalize mt-0.5">
                               {listing.vertical.replace(/_/g, " ")}
                             </p>
                           </div>
@@ -403,7 +403,7 @@ export default function MyListingsPage() {
                             <Icon
                               name="eye"
                               size={13}
-                              className="text-slate-400"
+                              className="text-slate-500"
                             />
                             {listing.views} views
                           </span>
@@ -411,7 +411,7 @@ export default function MyListingsPage() {
                             <Icon
                               name="mail"
                               size={13}
-                              className="text-slate-400"
+                              className="text-slate-500"
                             />
                             {listing.enquiries} enquiries
                           </span>
@@ -419,7 +419,7 @@ export default function MyListingsPage() {
                             <Icon
                               name="calendar"
                               size={13}
-                              className="text-slate-400"
+                              className="text-slate-500"
                             />
                             Listed {formatDate(listing.created_at)}
                           </span>
@@ -428,7 +428,7 @@ export default function MyListingsPage() {
                               <Icon
                                 name="clock"
                                 size={13}
-                                className="text-slate-400"
+                                className="text-slate-500"
                               />
                               Expires {formatDate(listing.expires_at)}
                             </span>
@@ -486,11 +486,11 @@ export default function MyListingsPage() {
                                     <p className="text-sm font-semibold text-slate-900">
                                       {enquiry.user_name}
                                     </p>
-                                    <p className="text-xs text-slate-400">
+                                    <p className="text-xs text-slate-500">
                                       {enquiry.user_email}
                                     </p>
                                   </div>
-                                  <span className="text-[0.65rem] text-slate-400 shrink-0">
+                                  <span className="text-[0.65rem] text-slate-500 shrink-0">
                                     {formatDate(enquiry.created_at)}
                                   </span>
                                 </div>

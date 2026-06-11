@@ -18,6 +18,10 @@ import { BCP47_TAG } from "@/lib/i18n/locales";
 import { AUSTRALIAN_STATES } from "@/lib/seo/best-pages";
 import { getEnabledIntents } from "@/lib/getmatched/intents";
 import { logger } from "@/lib/logger";
+import {
+  registerMeta as adviserRegisterMeta,
+  allRegisterAdvisers,
+} from "@/lib/adviser-register";
 
 const log = logger("sitemap");
 
@@ -325,8 +329,10 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/market-pulse", "/rates/today", "/reports/annual",
     "/methodology/invest-score", "/advisor/trust-score-methodology",
     "/brokerage-fee-index",
-    // Business finance + advisor jobs
-    "/business-finance", "/advisor-jobs",
+    // Daily data-news surfaces
+    "/today", "/fees/today", "/calendar",
+    // Business finance + advisor jobs + careers demand probe
+    "/business-finance", "/advisor-jobs", "/careers",
   ];
 
   return staticPaths.map((path) => ({
@@ -807,6 +813,26 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
   const base = baseUrl();
   const supabase = await getSupabase();
 
+  // Adviser Register Atlas — the hub plus one page per current adviser on
+  // the file-backed ASIC extract. Excluded entirely while the bundled
+  // dataset is the synthetic preview (those pages are noindex'd).
+  const registerPages: MetadataRoute.Sitemap = adviserRegisterMeta().sample
+    ? []
+    : [
+        {
+          url: `${base}/adviser-register`,
+          lastModified: new Date(adviserRegisterMeta().extractedAt),
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        },
+        ...allRegisterAdvisers().map((a) => ({
+          url: `${base}/adviser-register/${a.slug}`,
+          lastModified: new Date(adviserRegisterMeta().extractedAt),
+          changeFrequency: "weekly" as const,
+          priority: 0.5,
+        })),
+      ];
+
   // Dynamic advisor profile pages
   const { data: professionals } = supabase
     ? await supabase.from("professionals").select("slug, updated_at").eq("status", "active")
@@ -930,6 +956,7 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
     ...advisorCityPages,
     ...advisorLocationPages,
     ...firmPages,
+    ...registerPages,
   ];
 }
 

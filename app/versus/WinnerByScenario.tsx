@@ -126,7 +126,7 @@ export default function WinnerByScenario({ brokerA, brokerB }: WinnerByScenarioP
               </div>
               <div>
                 <h3 className="font-bold text-xs text-slate-900">{scenario.title}</h3>
-                <p className="text-[0.62rem] text-slate-400">{scenario.description}</p>
+                <p className="text-[0.62rem] text-slate-500">{scenario.description}</p>
               </div>
             </div>
 
@@ -148,7 +148,7 @@ export default function WinnerByScenario({ brokerA, brokerB }: WinnerByScenarioP
             ) : (
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                  <span className="text-xs font-bold text-slate-400">=</span>
+                  <span className="text-xs font-bold text-slate-500">=</span>
                 </div>
                 <p className="text-xs font-semibold text-slate-500">Tie</p>
               </div>

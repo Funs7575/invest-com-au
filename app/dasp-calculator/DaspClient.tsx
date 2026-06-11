@@ -84,7 +84,7 @@ export default function DaspClient() {
                 processing can lodge and chase the claim for you, and confirm your exact component split.
               </p>
             </div>
-            <p className="text-[0.65rem] text-slate-400 mt-4 leading-relaxed">
+            <p className="text-[0.65rem] text-slate-500 mt-4 leading-relaxed">
               This calculator is a simplified estimate using the headline DASP rates. It does not model your exact
               taxable/tax-free component split, fund fees, or insurance deductions. Confirm your component split with
               your fund and a registered tax agent before relying on these figures.

@@ -388,7 +388,7 @@ export default function FrankingCreditsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">
+          <p className="text-xs text-slate-500 mt-2">
             Excludes Medicare Levy. Verify current rates with the ATO.
           </p>
         </div>

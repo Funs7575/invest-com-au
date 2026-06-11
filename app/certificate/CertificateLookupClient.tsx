@@ -81,7 +81,7 @@ export default function CertificateLookupClient() {
                   setError(null);
                 }}
                 placeholder="INV-2026-00042"
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 font-mono placeholder:text-slate-400 placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 font-mono placeholder:text-slate-500 placeholder:font-sans focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
                 aria-describedby={error ? "cert-error" : "cert-hint"}
                 autoComplete="off"
                 autoCorrect="off"
@@ -98,7 +98,7 @@ export default function CertificateLookupClient() {
                   {error}
                 </p>
               ) : (
-                <p id="cert-hint" className="mt-2 text-xs text-slate-400">
+                <p id="cert-hint" className="mt-2 text-xs text-slate-500">
                   Format: INV-YYYY-NNNNN
                 </p>
               )}
@@ -113,7 +113,7 @@ export default function CertificateLookupClient() {
           </div>
 
           {/* Footer links */}
-          <p className="text-center text-xs text-slate-400 mt-6">
+          <p className="text-center text-xs text-slate-500 mt-6">
             <Link href="/academy" className="text-teal-600 hover:underline">
               Browse CPD courses
             </Link>

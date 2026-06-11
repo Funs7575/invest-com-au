@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getAffiliateLink, renderStars, trackClick, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
 import BrokerLogo from "@/components/BrokerLogo";
@@ -218,10 +219,12 @@ export default function CompareClient() {
                         {broker.name}
                       </span>
                     </Link>
-                    <div className="flex items-center justify-center gap-1 mt-1">
-                      <span className="text-xs text-amber-600">{renderStars(broker.rating || 0)}</span>
-                      <span className="text-[0.65rem] text-slate-500">{broker.rating}/5</span>
-                    </div>
+                    {SHOW_RATINGS && (
+                      <div className="flex items-center justify-center gap-1 mt-1">
+                        <span className="text-xs text-amber-600">{renderStars(broker.rating || 0)}</span>
+                        <span className="text-[0.65rem] text-slate-500">{broker.rating}/5</span>
+                      </div>
+                    )}
                   </th>
                 ))}
               </tr>
@@ -277,7 +280,7 @@ export default function CompareClient() {
                         ))}
                       </ul>
                     ) : (
-                      <span className="text-slate-400">---</span>
+                      <span className="text-slate-500">---</span>
                     )}
                   </td>
                 ))}
@@ -300,7 +303,7 @@ export default function CompareClient() {
                         ))}
                       </ul>
                     ) : (
-                      <span className="text-slate-400">---</span>
+                      <span className="text-slate-500">---</span>
                     )}
                   </td>
                 ))}
@@ -319,7 +322,7 @@ export default function CompareClient() {
                         <span className="text-amber-700 font-semibold">{broker.deal_text}</span>
                       </div>
                     ) : (
-                      <span className="text-slate-400">No current deal</span>
+                      <span className="text-slate-500">No current deal</span>
                     )}
                   </td>
                 ))}

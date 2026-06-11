@@ -22,7 +22,7 @@ export default function AdminRevenueForecast({ revenueStats, totalClicks, market
         <div className="text-center py-6">
           <div className="text-3xl mb-2">📉</div>
           <p className="text-sm text-slate-500">No revenue data yet</p>
-          <p className="text-xs text-slate-400 mt-1">Set EPC values in Affiliate Links to enable forecasting</p>
+          <p className="text-xs text-slate-500 mt-1">Set EPC values in Affiliate Links to enable forecasting</p>
         </div>
       </div>
     );
@@ -89,7 +89,7 @@ export default function AdminRevenueForecast({ revenueStats, totalClicks, market
         </div>
 
         <div className="pt-3 border-t border-slate-200">
-          <p className="text-[0.6rem] text-slate-400 leading-relaxed">
+          <p className="text-[0.6rem] text-slate-500 leading-relaxed">
             Based on current click rates and EPC values. Actual revenue depends on affiliate agreement terms, conversion rates, and traffic growth.
           </p>
         </div>

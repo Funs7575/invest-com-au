@@ -94,7 +94,7 @@ export default function AnnualReportClient() {
             >
               {status === "loading" ? "Sending..." : "Send Me the Report"}
             </button>
-            <p className="text-[0.69rem] text-slate-400 text-center">
+            <p className="text-[0.69rem] text-slate-500 text-center">
               No spam. Unsubscribe any time. We respect your privacy.
             </p>
           </form>

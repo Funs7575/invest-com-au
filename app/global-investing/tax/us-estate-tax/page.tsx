@@ -233,7 +233,7 @@ export default function UsEstateTaxPage() {
             than directly removes the risk completely. This guide explains what is caught, what
             isn&apos;t, why Australia gets no treaty relief, and how to structure around it.
           </p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             {UPDATED_LABEL} · General information only · Not tax, legal or estate-planning advice
           </p>
         </div>

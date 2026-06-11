@@ -145,7 +145,7 @@ export default async function DealsPage() {
             </nav>
             <a
               href="#advertiser-disclosure"
-              className="text-[0.69rem] text-slate-400 underline hover:text-slate-600 transition-colors shrink-0"
+              className="text-[0.69rem] text-slate-500 underline hover:text-slate-600 transition-colors shrink-0"
             >
               Disclosure
             </a>
@@ -216,7 +216,7 @@ export default async function DealsPage() {
                         <p className="text-[0.6rem] text-amber-600 font-medium mt-0.5">{typeLabel} &middot; {advisor.location_display}</p>
                         <div className="flex items-center gap-1.5 mt-1">
                           <span className="text-[0.62rem] text-amber-600 font-bold">{advisor.rating}/5</span>
-                          <span className="text-[0.58rem] text-slate-400">({advisor.review_count} reviews)</span>
+                          <span className="text-[0.58rem] text-slate-500">({advisor.review_count} reviews)</span>
                         </div>
                       </div>
                     </Link>
@@ -238,7 +238,7 @@ export default async function DealsPage() {
           </div>
 
           {/* E-E-A-T footer */}
-          <div className="mt-3 md:mt-6 text-[0.69rem] md:text-xs text-slate-400 text-center">
+          <div className="mt-3 md:mt-6 text-[0.69rem] md:text-xs text-slate-500 text-center">
             <p>
               Verified by{" "}
               <a href={REVIEW_AUTHOR.url} className="underline hover:text-slate-900">

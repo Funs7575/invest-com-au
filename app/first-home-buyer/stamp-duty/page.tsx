@@ -313,7 +313,7 @@ export default function StampDutyConcessionsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             All thresholds are indicative for {CURRENT_YEAR}. Verify at your state revenue office before budgeting. Rules for new vs established homes differ.
           </p>
         </div>
@@ -357,7 +357,7 @@ export default function StampDutyConcessionsPage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-4">
+          <p className="text-xs text-slate-500 mt-4">
             Verify current thresholds: Revenue NSW (nsw.gov.au), State Revenue Office VIC (sro.vic.gov.au), Queensland Revenue Office, RevenueSA, Department of Finance WA, TasRevenue, NT Treasury, ACT Revenue Office.
           </p>
         </div>
@@ -371,6 +371,7 @@ export default function StampDutyConcessionsPage() {
             <h2 className="text-2xl font-extrabold text-slate-900">NSW spotlight: the annual property tax option</h2>
           </div>
           <p className="text-slate-600 leading-relaxed mb-6">
+            {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
             From 16 January 2023, NSW first home buyers purchasing a property for $1.5 million or less can
             choose between two approaches to stamp duty:
           </p>
@@ -428,17 +429,17 @@ export default function StampDutyConcessionsPage() {
               <div className="bg-slate-50 rounded-lg p-3">
                 <p className="text-xs text-slate-500 mb-1">Stamp duty (no FHB concession)</p>
                 <p className="font-extrabold text-slate-900">~$35,835</p>
-                <p className="text-xs text-slate-400">one-off at settlement</p>
+                <p className="text-xs text-slate-500">one-off at settlement</p>
               </div>
               <div className="bg-amber-50 rounded-lg p-3 border border-amber-100">
                 <p className="text-xs text-slate-500 mb-1">Stamp duty (FHB concession)</p>
                 <p className="font-extrabold text-amber-700">~$6,335</p>
-                <p className="text-xs text-slate-400">tapered between $800K–$1M</p>
+                <p className="text-xs text-slate-500">tapered between $800K–$1M</p>
               </div>
               <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
                 <p className="text-xs text-slate-500 mb-1">Annual property tax (FHB)</p>
                 <p className="font-extrabold text-emerald-700">$400 + $1,650 = $2,050/yr</p>
-                <p className="text-xs text-slate-400">~3 years to match $6,335</p>
+                <p className="text-xs text-slate-500">~3 years to match $6,335</p>
               </div>
             </div>
             <p className="text-xs text-slate-500 mt-3">
@@ -489,7 +490,7 @@ export default function StampDutyConcessionsPage() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 mt-4">
+          <p className="text-xs text-slate-500 mt-4">
             Stamp duty figures are approximate and for illustrative purposes. Exact amounts depend on purchase price, property type, and current state thresholds. Always use your state revenue office calculator.
           </p>
         </div>
@@ -565,7 +566,7 @@ export default function StampDutyConcessionsPage() {
                 ].map((row, i) => (
                   <tr key={i} className="hover:bg-slate-50">
                     <td className="px-4 py-3 font-bold text-slate-900 whitespace-nowrap">{row.state}</td>
-                    <td className={`px-4 py-3 text-xs font-semibold whitespace-nowrap ${row.surcharge === "Nil" ? "text-slate-400" : "text-red-700"}`}>{row.surcharge}</td>
+                    <td className={`px-4 py-3 text-xs font-semibold whitespace-nowrap ${row.surcharge === "Nil" ? "text-slate-500" : "text-red-700"}`}>{row.surcharge}</td>
                     <td className="px-4 py-3 text-xs text-slate-600 leading-relaxed">{row.note}</td>
                   </tr>
                 ))}

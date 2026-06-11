@@ -19,6 +19,7 @@ import {
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -69,6 +70,9 @@ const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
 };
 
 export const revalidate = 3600; // ISR: revalidate every hour
+// Categories are a static code registry — reject unknown slugs at the router
+// with a real 404 instead of streaming a 200 shell first (DISC-20260610-B).
+export const dynamicParams = false;
 
 // ── Static params for ISR ──
 export async function generateStaticParams() {
@@ -315,7 +319,7 @@ export default async function BestBrokerPage({
                 {SPONSORED_DISCLOSURE_SHORT}
               </p>
             )}
-            <p className="text-[0.56rem] md:text-xs text-slate-400 mt-1">
+            <p className="text-[0.56rem] md:text-xs text-slate-500 mt-1">
               {showRaw ? (
                 <>
                   Showing pure rating order.{" "}
@@ -397,7 +401,7 @@ export default async function BestBrokerPage({
               <Link href="/reviewers/editorial-team" className="font-semibold text-slate-700 hover:text-slate-900 transition-colors">
                 {REVIEW_AUTHOR.name}
               </Link>
-              <span className="text-slate-400">· {REVIEW_AUTHOR.jobTitle}</span>
+              <span className="text-slate-500">· {REVIEW_AUTHOR.jobTitle}</span>
             </span>
             <span className="flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -474,13 +478,17 @@ export default async function BestBrokerPage({
                     {topPick.tagline}
                   </p>
                   <div className="flex items-center gap-3 mt-2 text-sm">
-                    <span className="text-amber-600" aria-hidden="true">{renderStars(topPick.rating || 0)}</span>
-                    <span className="text-slate-500" aria-label={`${topPick.rating} out of 5 stars`}>{topPick.rating}/5</span>
-                    <span className="text-slate-400">·</span>
+                    {SHOW_RATINGS && (
+                      <>
+                        <span className="text-amber-600" aria-hidden="true">{renderStars(topPick.rating || 0)}</span>
+                        <span className="text-slate-500" aria-label={`${topPick.rating} out of 5 stars`}>{topPick.rating}/5</span>
+                        <span className="text-slate-500">·</span>
+                      </>
+                    )}
                     <span className="text-slate-600">{topPick.asx_fee || "N/A"} ASX</span>
                     {topPick.chess_sponsored && (
                       <>
-                        <span className="text-slate-400">·</span>
+                        <span className="text-slate-500">·</span>
                         <span className="text-emerald-700 font-semibold text-xs">CHESS</span>
                       </>
                     )}
@@ -527,7 +535,7 @@ export default async function BestBrokerPage({
               <tbody className="divide-y divide-slate-200">
                 {filtered.map((broker, i) => (
                   <tr key={broker.id} className={`hover:bg-slate-50 ${i === 0 ? "bg-amber-50/40" : ""}`}>
-                    <td className="px-4 py-3 text-sm font-semibold text-slate-400">{i + 1}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-slate-500">{i + 1}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <Link href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-slate-900 transition-colors">
@@ -550,8 +558,12 @@ export default async function BestBrokerPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
-                      <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}</span>
+                      {SHOW_RATINGS && (
+                        <>
+                          <span className="text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
+                          <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}</span>
+                        </>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <a
@@ -688,7 +700,7 @@ export default async function BestBrokerPage({
                       )}
                       <h4 className="text-sm font-bold mb-2 line-clamp-2 flex-1">{ra.title}</h4>
                       {ra.read_time && (
-                        <span className="text-xs text-slate-400">{ra.read_time} min read</span>
+                        <span className="text-xs text-slate-500">{ra.read_time} min read</span>
                       )}
                     </Link>
                   );

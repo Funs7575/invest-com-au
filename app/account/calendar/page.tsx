@@ -320,7 +320,7 @@ export default async function CalendarPage() {
                   className="flex items-center justify-between text-sm text-blue-600 hover:underline"
                 >
                   {label}
-                  <span className="text-slate-400">→</span>
+                  <span className="text-slate-500">→</span>
                 </Link>
               ))}
             </div>

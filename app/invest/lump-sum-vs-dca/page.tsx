@@ -216,7 +216,7 @@ export default function LumpSumVsDcaPage() {
                     <span><strong>High-volatility periods:</strong> In choppy markets that end flat, DCA&apos;s natural buy-low effect can generate a better average cost than the starting price, beating lump sum.</span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="text-slate-400 font-bold shrink-0">&#9654;</span>
+                    <span className="text-slate-500 font-bold shrink-0">&#9654;</span>
                     <span><strong>Market peaks:</strong> If you happen to invest at a cyclical peak (e.g., early 2000, late 2007), DCA dramatically outperforms lump sum in the subsequent correction period.</span>
                   </li>
                 </ul>

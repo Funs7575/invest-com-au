@@ -218,7 +218,7 @@ export default function MortgageCalculatorClient() {
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much will your mortgage really cost?</h1>
           <p className="text-sm md:text-base text-rose-100">Enter your loan details — we&apos;ll show you monthly repayments, total interest, and how rate changes affect the cost.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
         </div>
       </div>
 
@@ -230,7 +230,7 @@ export default function MortgageCalculatorClient() {
             <div>
               <label htmlFor="mc-loan-amount" className="block text-sm font-bold text-slate-700 mb-1.5">Loan amount</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
                 <input
                   id="mc-loan-amount"
                   type="number" inputMode="decimal"
@@ -260,7 +260,7 @@ export default function MortgageCalculatorClient() {
                   onChange={e => setInterestRate(Math.max(0, Math.min(20, parseFloat(e.target.value) || 0)))}
                   className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 focus:border-rose-400 outline-none"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">%</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5.5, 6.0, 6.5, 7.0, 7.5].map(v => (
@@ -388,7 +388,7 @@ export default function MortgageCalculatorClient() {
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mb-6">
               <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                 <h2 className="text-sm font-bold text-slate-900">Rate Comparison</h2>
-                <span className="text-[0.56rem] text-slate-400">See how rate changes affect your repayments</span>
+                <span className="text-[0.56rem] text-slate-500">See how rate changes affect your repayments</span>
               </div>
               <div className="divide-y divide-slate-100">
                 {rateScenarios.map(s => (
@@ -421,7 +421,7 @@ export default function MortgageCalculatorClient() {
               <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mb-6">
                 <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                   <h2 className="text-sm font-bold text-slate-900">Amortization Schedule</h2>
-                  <span className="text-[0.56rem] text-slate-400">Year-by-year breakdown</span>
+                  <span className="text-[0.56rem] text-slate-500">Year-by-year breakdown</span>
                 </div>
 
                 {/* Show first 5 years always */}

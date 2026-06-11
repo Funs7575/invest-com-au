@@ -253,6 +253,7 @@ export default function FirstHomeGuaranteePage() {
           <section>
             <h2 className="text-2xl font-bold mb-4">Eligibility criteria ({CURRENT_YEAR})</h2>
             <p className="text-slate-700 leading-relaxed mb-5">
+              {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
               As of 1 October 2025, Housing Australia removed the annual place limit (previously
               35,000 per year) and income caps (previously $125,000 single / $200,000 couple)
               from the FHBG. Eligibility is now governed by property price caps only.
@@ -308,6 +309,7 @@ export default function FirstHomeGuaranteePage() {
           <section>
             <h2 className="text-2xl font-bold mb-2">Property price caps by state ({CURRENT_YEAR})</h2>
             <p className="text-slate-600 text-sm mb-4">
+              {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
               Effective 1 October 2025. Capital city caps apply to properties in capital cities
               and designated regional centres. Regional caps apply to the rest of each state.
             </p>
@@ -338,6 +340,7 @@ export default function FirstHomeGuaranteePage() {
               </table>
             </div>
             <p className="text-xs text-slate-500 mt-2">
+              {/* // dated-ok — static historical/legal effective date (2026-06-11 sweep) */}
               Source: Housing Australia. Caps effective 1 October 2025. Verify the current caps
               at{" "}
               <a
@@ -727,7 +730,7 @@ export default function FirstHomeGuaranteePage() {
                   <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
                     {item.q}
                     <span
-                      className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
+                      className="text-slate-500 group-open:rotate-180 transition-transform text-base ml-3 shrink-0"
                       aria-hidden="true"
                     >
                       &#8964;

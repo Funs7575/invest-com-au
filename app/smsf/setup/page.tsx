@@ -6,6 +6,7 @@ import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
 import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { Broker } from "@/lib/types";
 
 export const revalidate = 3600;
@@ -238,7 +239,7 @@ export default async function SmsfSetupPage() {
                     <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                       <div>
                         <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                        <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600">{(Number(b.rating) || 0).toFixed(1)}</span></p>
+                        {SHOW_RATINGS && <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600">{(Number(b.rating) || 0).toFixed(1)}</span></p>}
                         <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                       </div>
                       <div className="mt-auto">

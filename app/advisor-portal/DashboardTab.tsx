@@ -10,6 +10,7 @@ import type { BillingSummary } from "./billing/types";
 import PinnedBillingWidget from "./billing/PinnedBillingWidget";
 import AnnualBillingPrompt from "./billing/AnnualBillingPrompt";
 import AvailabilityWidget from "./AvailabilityWidget";
+import LeadCapBanner from "./LeadCapBanner";
 import AdvisorTrustScoreCard from "@/components/AdvisorTrustScoreCard";
 import OnboardingWizard from "./OnboardingWizard";
 import { deriveProfileCompleteness, type WizardStepId } from "@/lib/advisor-portal/profile-completeness";
@@ -67,10 +68,10 @@ function YourRankWidget() {
       </div>
       <div className="text-right shrink-0">
         <div className="flex items-baseline gap-0.5 justify-end">
-          <span className="text-[0.65rem] font-semibold text-slate-400">#</span>
+          <span className="text-[0.65rem] font-semibold text-slate-500">#</span>
           <span className="text-3xl font-extrabold text-teal-600">{data.rank}</span>
         </div>
-        <div className="text-[0.62rem] text-slate-400 font-medium">of {data.total}</div>
+        <div className="text-[0.62rem] text-slate-500 font-medium">of {data.total}</div>
       </div>
       <Link
         href="/advisors/leaderboard"
@@ -153,8 +154,8 @@ export default function DashboardTab({
         <h1 className="text-xl font-bold text-slate-900">Welcome{isPending ? "" : " back"}, {advisor?.name?.split(" ")[0]}</h1>
         {refreshLabel && onRefresh && (
           <div className="flex items-center gap-1.5">
-            <span className="text-[0.62rem] text-slate-400">Updated {refreshLabel}</span>
-            <button onClick={onRefresh} aria-label="Refresh data" className="text-slate-400 hover:text-slate-700 transition-colors">
+            <span className="text-[0.62rem] text-slate-500">Updated {refreshLabel}</span>
+            <button onClick={onRefresh} aria-label="Refresh data" className="text-slate-500 hover:text-slate-700 transition-colors">
               <Icon name="refresh-cw" size={13} />
             </button>
           </div>
@@ -198,7 +199,7 @@ export default function DashboardTab({
               <div className={`w-8 h-8 ${kpi.bg} rounded-lg flex items-center justify-center`}><Icon name={kpi.icon} size={16} className={kpi.color} /></div>
             </div>
             <div className="text-2xl font-extrabold text-slate-900">{typeof kpi.value === "number" ? kpi.value.toLocaleString() : kpi.value}</div>
-            <div className="text-[0.62rem] text-slate-400 mt-0.5">{kpi.sub}</div>
+            <div className="text-[0.62rem] text-slate-500 mt-0.5">{kpi.sub}</div>
           </div>
         ))}
       </div>
@@ -227,6 +228,10 @@ export default function DashboardTab({
           </button>
         </div>
       )}
+
+      {/* Monthly lead-cap upsell — factual usage vs tier allowance; CTA
+          reuses the existing /advisor-portal/upgrade Stripe flow. */}
+      <LeadCapBanner />
 
       {/* Annual-billing nudge for paid-tier advisors — PR-X4 */}
       <AnnualBillingPrompt advisorTier={advisor?.advisor_tier ?? null} />
@@ -367,7 +372,7 @@ export default function DashboardTab({
       {/* Enquiries Per Week chart */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
         <h3 className="text-sm font-bold text-slate-900 mb-1">Enquiries Per Week</h3>
-        <p className="text-[0.62rem] text-slate-400 mb-4">Last 8 weeks</p>
+        <p className="text-[0.62rem] text-slate-500 mb-4">Last 8 weeks</p>
         {weeklyEnquiries.length > 0 ? (
           <div className="flex items-end gap-2 h-28">
             {weeklyEnquiries.map((w, i) => {
@@ -381,13 +386,13 @@ export default function DashboardTab({
                     style={{ height: `${Math.max(pct, 4)}%`, minHeight: "3px" }}
                     title={`${w.weekLabel}: ${w.count} enquiries`}
                   />
-                  <span className="text-[0.5rem] text-slate-400 whitespace-nowrap">{w.weekLabel}</span>
+                  <span className="text-[0.5rem] text-slate-500 whitespace-nowrap">{w.weekLabel}</span>
                 </div>
               );
             })}
           </div>
         ) : (
-          <p className="text-xs text-slate-400 text-center py-6">
+          <p className="text-xs text-slate-500 text-center py-6">
             No enquiries yet — they&apos;ll appear here once investors reach out.
           </p>
         )}
@@ -397,7 +402,7 @@ export default function DashboardTab({
       {viewsByDay.length > 0 && (
         <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
           <h3 className="text-sm font-bold text-slate-900 mb-1">Profile Views</h3>
-          <p className="text-[0.62rem] text-slate-400 mb-3">Daily views over the last 30 days</p>
+          <p className="text-[0.62rem] text-slate-500 mb-3">Daily views over the last 30 days</p>
           <div className="flex items-end gap-0.5 h-20">
             {viewsByDay.map((d, i) => {
               const max = Math.max(...viewsByDay.map(v => v.view_count), 1);
@@ -456,7 +461,7 @@ export default function DashboardTab({
                       >
                         <td className="px-4 py-2.5">
                           <div className="font-semibold text-slate-900">{lead.user_name}</div>
-                          <div className="text-[0.58rem] text-slate-400">{lead.user_email}</div>
+                          <div className="text-[0.58rem] text-slate-500">{lead.user_email}</div>
                         </td>
                         <td className="px-4 py-2.5 text-slate-500 whitespace-nowrap">
                           {new Date(lead.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
@@ -482,7 +487,7 @@ export default function DashboardTab({
                         <td className="px-4 py-2.5 text-slate-500 max-w-[200px] truncate">
                           {lead.message ? lead.message.slice(0, 80) + (lead.message.length > 80 ? "..." : "") : <span className="text-slate-300">&mdash;</span>}
                         </td>
-                        <td className="px-3 py-2.5 text-slate-400 text-right">
+                        <td className="px-3 py-2.5 text-slate-500 text-right">
                           <Icon name={isExpanded ? "chevron-up" : "chevron-down"} size={13} />
                         </td>
                       </tr>
@@ -504,7 +509,7 @@ export default function DashboardTab({
                                   disabled={isResponded || lead.status !== "new"}
                                   className={`flex items-center gap-1.5 text-xs font-semibold rounded-lg px-3 py-2 transition-colors ${
                                     isResponded || lead.status !== "new"
-                                      ? "text-slate-400 bg-white border border-slate-200 cursor-default"
+                                      ? "text-slate-500 bg-white border border-slate-200 cursor-default"
                                       : "text-emerald-700 bg-white border border-emerald-200 hover:bg-emerald-50"
                                   }`}
                                 >
@@ -521,7 +526,7 @@ export default function DashboardTab({
                                   onClick={(e) => e.stopPropagation()}
                                   onChange={(e) => setNoteInput((prev) => ({ ...prev, [lead.id]: e.target.value }))}
                                   onKeyDown={(e) => { if (e.key === "Enter") saveNote(lead.id, e as unknown as React.MouseEvent); }}
-                                  className="flex-1 min-w-0 text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-violet-300 focus:border-violet-300 placeholder:text-slate-400"
+                                  className="flex-1 min-w-0 text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-violet-300 focus:border-violet-300 placeholder:text-slate-500"
                                 />
                                 <button
                                   onClick={(e) => saveNote(lead.id, e)}
@@ -556,7 +561,7 @@ export default function DashboardTab({
             <div className="flex items-center gap-1.5">
               <span className="text-amber-400 text-sm">{"★".repeat(Math.round(Number(stats?.avgRating || advisor?.rating || 0)))}</span>
               <span className="text-xs font-bold text-slate-700">{stats?.avgRating || (advisor?.rating ? Number(advisor.rating).toFixed(1) : "N/A")}</span>
-              <span className="text-[0.62rem] text-slate-400">({stats?.reviewCount || 0})</span>
+              <span className="text-[0.62rem] text-slate-500">({stats?.reviewCount || 0})</span>
             </div>
           )}
         </div>
@@ -577,7 +582,7 @@ export default function DashboardTab({
                     </div>
                     <div>
                       <span className="text-sm font-semibold text-slate-900">{r.reviewer_name}</span>
-                      <div className="text-[0.56rem] text-slate-400">{new Date(r.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</div>
+                      <div className="text-[0.56rem] text-slate-500">{new Date(r.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-0.5">
@@ -590,9 +595,9 @@ export default function DashboardTab({
                 {r.body && <p className="text-xs text-slate-600 leading-relaxed">{r.body.slice(0, 200)}{r.body.length > 200 ? "..." : ""}</p>}
                 {(r.communication_rating || r.expertise_rating || r.value_for_money_rating) && (
                   <div className="flex gap-3 mt-2">
-                    {r.communication_rating && <span className="text-[0.56rem] text-slate-400">Communication: <strong className="text-slate-600">{r.communication_rating}/5</strong></span>}
-                    {r.expertise_rating && <span className="text-[0.56rem] text-slate-400">Expertise: <strong className="text-slate-600">{r.expertise_rating}/5</strong></span>}
-                    {r.value_for_money_rating && <span className="text-[0.56rem] text-slate-400">Value: <strong className="text-slate-600">{r.value_for_money_rating}/5</strong></span>}
+                    {r.communication_rating && <span className="text-[0.56rem] text-slate-500">Communication: <strong className="text-slate-600">{r.communication_rating}/5</strong></span>}
+                    {r.expertise_rating && <span className="text-[0.56rem] text-slate-500">Expertise: <strong className="text-slate-600">{r.expertise_rating}/5</strong></span>}
+                    {r.value_for_money_rating && <span className="text-[0.56rem] text-slate-500">Value: <strong className="text-slate-600">{r.value_for_money_rating}/5</strong></span>}
                   </div>
                 )}
               </div>

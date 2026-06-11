@@ -232,7 +232,7 @@ export default function ForeignInvestmentEnergyPage() {
                   <Icon
                     name="chevron-down"
                     size={16}
-                    className="text-slate-400 shrink-0 transition-transform group-open:rotate-180"
+                    className="text-slate-500 shrink-0 transition-transform group-open:rotate-180"
                   />
                 </summary>
                 <p className="text-sm text-slate-600 mt-3 leading-relaxed whitespace-pre-line break-words">

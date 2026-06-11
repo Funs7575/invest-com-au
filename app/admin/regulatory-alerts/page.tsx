@@ -396,7 +396,7 @@ export default function RegulatoryAlertsPage() {
                   <option value="important">Important</option>
                   <option value="urgent">Urgent</option>
                 </select>
-                <p className="text-xs text-slate-400 mt-0.5">critical &gt; high &gt; medium &gt; low. Critical alerts are shown prominently to users.</p>
+                <p className="text-xs text-slate-500 mt-0.5">critical &gt; high &gt; medium &gt; low. Critical alerts are shown prominently to users.</p>
               </div>
               <div>
                 <label htmlFor="ra-status" className="block text-xs font-bold text-slate-500 uppercase mb-1">
@@ -433,7 +433,7 @@ export default function RegulatoryAlertsPage() {
                   }
                   className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 />
-                <p className="text-xs text-slate-400 mt-0.5">When the regulation takes effect.</p>
+                <p className="text-xs text-slate-500 mt-0.5">When the regulation takes effect.</p>
               </div>
               <div>
                 <label htmlFor="ra-impact-summary" className="block text-xs font-bold text-slate-500 uppercase mb-1">
@@ -575,7 +575,7 @@ export default function RegulatoryAlertsPage() {
                         <div className="text-center py-12">
                           <div className="text-3xl mb-2">📋</div>
                           <p className="text-sm font-medium text-slate-700 mb-1">No regulatory alerts yet</p>
-                          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                          <p className="text-xs text-slate-500 max-w-sm mx-auto">
                             Regulatory alerts notify users about important changes to tax rules, ASIC regulations, superannuation laws, or reporting requirements that may affect their investments.
                           </p>
                         </div>

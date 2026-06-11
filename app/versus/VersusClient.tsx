@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { PLATFORM_TYPE_LABELS } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import StickyCTABar from "@/components/StickyCTABar";
@@ -27,15 +28,19 @@ function hasShareType(platforms: Broker[]): boolean {
   return platforms.some(p => p.platform_type === 'share_broker' || p.platform_type === 'cfd_forex');
 }
 
-/** Get a short summary line for a platform (used in pros/cons header) */
+/** Get a short summary line for a platform (used in pros/cons header).
+ *  The editorial rating segment is licence-gated (lib/compliance-config);
+ *  factual fee/type facts keep the line populated when ratings are off. */
 function getPlatformSummary(br: Broker): string {
+  const parts: string[] = [];
+  if (SHOW_RATINGS) parts.push(`${br.rating}/5`);
   if (br.platform_type === 'share_broker' || br.platform_type === 'cfd_forex') {
-    return `${br.rating}/5${br.asx_fee ? ` \u00B7 ${br.asx_fee}` : ''}`;
+    if (br.asx_fee) parts.push(br.asx_fee);
+  } else if (br.platform_type === 'robo_advisor') {
+    if (br.asx_fee) parts.push(`${br.asx_fee} p.a.`);
   }
-  if (br.platform_type === 'robo_advisor') {
-    return `${br.rating}/5${br.asx_fee ? ` \u00B7 ${br.asx_fee} p.a.` : ''}`;
-  }
-  return `${br.rating}/5`;
+  if (parts.length === 0) parts.push(PLATFORM_LABELS[br.platform_type] || 'Platform');
+  return parts.join(' \u00B7 ');
 }
 
 const popularComparisons = [
@@ -125,19 +130,15 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
 
   const allSelected = selected.length >= 2;
 
-  const overallWinner = useMemo(() => {
-    if (selected.length < 2) return null;
-    return selected.reduce((best, br) =>
-      (br.rating ?? 0) > (best.rating ?? 0) ? br : best
-    );
-  }, [selected]);
 
   const featureRows = useMemo(() => {
     if (selected.length < 2) return [];
     const rows: { label: string; icon: string; key: string; values: string[]; numValues: number[]; best: "low" | "high" }[] = [];
 
-    // Always show rating
-    rows.push({ label: "Our Rating", icon: "star", key: "rating", values: selected.map(br => `${br.rating ?? "N/A"}/5`), numValues: selected.map(br => br.rating ?? 0), best: "high" });
+    // Editorial rating row — licence-gated (lib/compliance-config).
+    if (SHOW_RATINGS) {
+      rows.push({ label: "Our Rating", icon: "star", key: "rating", values: selected.map(br => `${br.rating ?? "N/A"}/5`), numValues: selected.map(br => br.rating ?? 0), best: "high" });
+    }
 
     // Show share-trading metrics only if relevant platforms are selected
     if (hasShareType(selected)) {
@@ -187,8 +188,11 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
     if (selected.length < 2) return [];
     const categories: { cat: string; icon: string; numValues: number[]; best: "low" | "high" }[] = [];
 
-    // Always compare on rating
-    categories.push({ cat: "Overall Rating", icon: "star", numValues: selected.map(br => br.rating ?? 0), best: "high" });
+    // Rating-based verdict — licence-gated so factual_only mode derives all
+    // verdicts from factual fee/feature categories only (lib/compliance-config).
+    if (SHOW_RATINGS) {
+      categories.push({ cat: "Overall Rating", icon: "star", numValues: selected.map(br => br.rating ?? 0), best: "high" });
+    }
 
     // Share-specific verdicts
     if (hasShareType(selected)) {
@@ -226,6 +230,17 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
     });
     return counts;
   }, [selected, verdicts]);
+
+  // "Our Pick": highest editorial rating when licensed; otherwise derived
+  // from factual category wins so the pick can never be keyed on a rating
+  // the page is not allowed to show (lib/compliance-config).
+  const overallWinner = useMemo(() => {
+    if (selected.length < 2) return null;
+    if (SHOW_RATINGS) {
+      return selected.reduce((best, br) => ((br.rating ?? 0) > (best.rating ?? 0) ? br : best));
+    }
+    return selected.reduce((best, br) => ((winCounts[br.slug] ?? 0) > (winCounts[best.slug] ?? 0) ? br : best));
+  }, [selected, winCounts]);
 
   const title = allSelected
     ? selected.map(br => br.name).join(" vs ")
@@ -267,7 +282,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
 
         {/* ───── SELECTORS ───── */}
         <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-xl md:rounded-2xl p-3.5 md:p-8 mb-3 md:mb-8 shadow-sm">
-          <div className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5 md:mb-4 flex items-center gap-2">
+          <div className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5 md:mb-4 flex items-center gap-2">
             <span>Select platforms to compare</span>
             <span className="h-px flex-1 bg-slate-200" />
           </div>
@@ -308,14 +323,14 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                           <BrokerLogo broker={broker} size="sm" />
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-xs md:text-sm text-slate-900 truncate">{broker.name}</div>
-                            <div className="text-[0.62rem] md:text-xs text-slate-400">
-                              {broker.rating?.toFixed(1)}/5 · {PLATFORM_LABELS[broker.platform_type] || 'Platform'}
+                            <div className="text-[0.62rem] md:text-xs text-slate-500">
+                              {SHOW_RATINGS && <>{broker.rating?.toFixed(1)}/5 · </>}{PLATFORM_LABELS[broker.platform_type] || 'Platform'}
                             </div>
                           </div>
                           {selectedSlugs.length > 2 && (
                             <button
                               onClick={() => removeSlot(index)}
-                              className="w-8 h-8 md:w-7 md:h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                              className="w-8 h-8 md:w-7 md:h-7 flex items-center justify-center text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
                               title="Remove platform"
                             >
                               <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -351,7 +366,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
             {selectedSlugs.length < MAX_BROKERS && (
               <button
                 onClick={addSlot}
-                className="w-full md:w-auto px-4 py-2.5 md:px-5 md:py-4 border-2 border-dashed border-slate-200 rounded-lg md:rounded-xl text-slate-400 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50/30 text-xs md:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 md:gap-2"
+                className="w-full md:w-auto px-4 py-2.5 md:px-5 md:py-4 border-2 border-dashed border-slate-200 rounded-lg md:rounded-xl text-slate-500 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50/30 text-xs md:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 md:gap-2"
               >
                 <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -378,7 +393,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                   <div className="text-[0.56rem] md:text-[0.69rem] uppercase font-extrabold tracking-widest text-white/70 mb-0.5">Our Pick</div>
                   <div className="text-lg md:text-3xl font-extrabold text-white">{overallWinner.name}</div>
                   <div className="text-[0.69rem] md:text-sm text-white/80 mt-0.5">
-                    {overallWinner.rating}/5 · Won {winCounts[overallWinner.slug] || 0}/{verdicts.length} categories
+                    {SHOW_RATINGS && <>{overallWinner.rating}/5 · </>}Won {winCounts[overallWinner.slug] || 0}/{verdicts.length} categories
                   </div>
                 </div>
               </div>
@@ -416,10 +431,23 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                     )}
                     <BrokerLogo broker={br} size="lg" className="mx-auto mb-1.5 md:mb-2" />
                     <div className="font-bold text-xs md:text-sm mb-0.5">{br.name}</div>
-                    <div className="text-base md:text-xl font-extrabold" style={{ color: br.color }}>{br.rating}/5</div>
-                    <div className="text-[0.62rem] md:text-[0.69rem] text-slate-400 mt-0.5 md:mt-1">
-                      {winCounts[br.slug] || 0} {(winCounts[br.slug] || 0) === 1 ? 'win' : 'wins'}
-                    </div>
+                    {/* Big stat: editorial rating when licensed, factual
+                        category-win count otherwise (no empty slot). */}
+                    {SHOW_RATINGS ? (
+                      <>
+                        <div className="text-base md:text-xl font-extrabold" style={{ color: br.color }}>{br.rating}/5</div>
+                        <div className="text-[0.62rem] md:text-[0.69rem] text-slate-500 mt-0.5 md:mt-1">
+                          {winCounts[br.slug] || 0} {(winCounts[br.slug] || 0) === 1 ? 'win' : 'wins'}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-base md:text-xl font-extrabold" style={{ color: br.color }}>{winCounts[br.slug] || 0}</div>
+                        <div className="text-[0.62rem] md:text-[0.69rem] text-slate-500 mt-0.5 md:mt-1">
+                          category {(winCounts[br.slug] || 0) === 1 ? 'win' : 'wins'}
+                        </div>
+                      </>
+                    )}
                   </div>
                 );
               })}
@@ -434,7 +462,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                     <Icon name={v.icon} size={16} className="text-slate-400 shrink-0 md:hidden" />
                     <Icon name={v.icon} size={20} className="text-slate-400 shrink-0 hidden md:block" />
                     <div className="flex-1 min-w-0">
-                      <div className="text-[0.62rem] md:text-xs font-semibold text-slate-400 uppercase tracking-wide">{v.cat}</div>
+                      <div className="text-[0.62rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wide">{v.cat}</div>
                       {v.isTie ? (
                         <div className="text-xs md:text-sm font-bold text-slate-500 mt-0.5">Tie</div>
                       ) : v.winner ? (
@@ -545,7 +573,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-[0.69rem] md:text-xs text-slate-400 italic">Review in progress.</p>
+                          <p className="text-[0.69rem] md:text-xs text-slate-500 italic">Review in progress.</p>
                         )}
                       </div>
                       {/* Cons */}
@@ -563,7 +591,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-[0.69rem] md:text-xs text-slate-400 italic">Review in progress.</p>
+                          <p className="text-[0.69rem] md:text-xs text-slate-500 italic">Review in progress.</p>
                         )}
                       </div>
                       {/* CTA */}
@@ -700,7 +728,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
               <AdvisorPrompt context="general" compact />
             </div>
 
-            <StickyCTABar broker={overallWinner} detail={`Winner: ${overallWinner.name} · ${overallWinner.rating}/5`} context="versus" />
+            <StickyCTABar broker={overallWinner} detail={SHOW_RATINGS ? `Winner: ${overallWinner.name} · ${overallWinner.rating}/5` : `Winner: ${overallWinner.name}`} context="versus" />
           </>
         )}
 
@@ -713,7 +741,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
             <p className="text-slate-500 text-[0.69rem] md:text-lg mb-1 md:mb-2">Select two platforms above to see fees, features & our verdict.</p>
 
             <div className="mt-4 md:mt-8">
-              <p className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 md:mb-3">Popular comparisons</p>
+              <p className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 md:mb-3">Popular comparisons</p>
               <div className="flex flex-wrap justify-center gap-1.5 md:gap-2">
                 {popularComparisons.map((c) => (
                   <Link

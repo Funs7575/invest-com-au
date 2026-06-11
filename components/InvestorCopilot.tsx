@@ -194,7 +194,7 @@ export default function InvestorCopilot() {
               placeholder="Ask about rates, accounts…"
               rows={1}
               disabled={loading}
-              className="flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none focus:ring-0 disabled:opacity-50"
+              className="flex-1 resize-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 placeholder:text-slate-500 focus:border-slate-400 focus:outline-none focus:ring-0 disabled:opacity-50"
               style={{ maxHeight: 80 }}
             />
             <button

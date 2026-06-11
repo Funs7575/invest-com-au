@@ -54,6 +54,12 @@ function resolveAdvisorTypes(need: string, context?: string[]): string[] {
     if (c === "tax_optimization") types.add("tax_agent");
     if (c === "crypto_tax") { types.add("crypto_advisor"); types.add("tax_agent"); }
     if (c === "retirement") types.add("financial_planner");
+    // Commercial property buyers need finance + acquisition help, same as
+    // residential investors — there is no dedicated commercial type.
+    if (c === "commercial") { types.add("mortgage_broker"); types.add("buyers_agent"); }
+    // "I'm not sure" under Tax & SMSF shouldn't lock the user to an SMSF
+    // accountant — broaden to a tax agent who can triage the situation.
+    if (c === "not_sure" && need === "smsf") types.add("tax_agent");
   }
 
   return [...types];

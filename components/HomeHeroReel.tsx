@@ -298,6 +298,7 @@ export default function HomeHeroReel({
           width: 100%;
         }
         .hero-reel-pip {
+          position: relative;
           width: 100%;
           height: 4px;
           border-radius: 99px;
@@ -306,6 +307,16 @@ export default function HomeHeroReel({
           padding: 0;
           cursor: pointer;
           transition: background-color .2s ease, transform .2s ease;
+        }
+        /* Invisible expanded hit zone: the 4px visual stays, but the tappable
+           area meets the 44px touch-target minimum (DISC-20260610-E). */
+        .hero-reel-pip::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: -20px;
+          bottom: -20px;
         }
         .hero-reel-pip:hover { background: rgba(255,255,255,.34); }
         .hero-reel-pip.is-active { transform: scaleY(1.65); }

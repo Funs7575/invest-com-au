@@ -84,7 +84,7 @@ export default function FitoPage() {
             the FITO lets you offset Australian tax dollar-for-dollar — so you don&apos;t pay
             tax twice on the same income.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only</p>
         </div>
       </section>
 

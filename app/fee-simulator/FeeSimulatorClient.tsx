@@ -190,7 +190,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 <button
                   type="button"
                   onClick={() => { setTradesPerYear(24); setAvgTradeSize(2000); setUsAllocation(30); }}
-                  className="text-xs text-slate-400 hover:text-slate-600 underline"
+                  className="text-xs text-slate-500 hover:text-slate-600 underline"
                 >
                   Reset
                 </button>
@@ -215,7 +215,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   onChange={(e) => setTradesPerYear(parseInt(e.target.value))}
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
-                <div className="flex justify-between text-[0.6rem] text-slate-400 mt-0.5">
+                <div className="flex justify-between text-[0.6rem] text-slate-500 mt-0.5">
                   <span>1</span>
                   <span className="hidden sm:inline">50</span>
                   <span className="hidden sm:inline">100</span>
@@ -243,7 +243,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   onChange={(e) => setAvgTradeSize(parseInt(e.target.value))}
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
-                <div className="flex justify-between text-[0.6rem] text-slate-400 mt-0.5">
+                <div className="flex justify-between text-[0.6rem] text-slate-500 mt-0.5">
                   <span>$100</span>
                   <span className="hidden sm:inline">$10k</span>
                   <span className="hidden sm:inline">$25k</span>
@@ -270,7 +270,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   onChange={(e) => setUsAllocation(parseInt(e.target.value))}
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
-                <div className="flex justify-between text-[0.6rem] text-slate-400 mt-0.5">
+                <div className="flex justify-between text-[0.6rem] text-slate-500 mt-0.5">
                   <span>0%<span className="hidden sm:inline"> (ASX only)</span></span>
                   <span className="hidden sm:inline">50%</span>
                   <span>100%<span className="hidden sm:inline"> (US only)</span></span>
@@ -309,7 +309,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 <h2 className="text-sm font-bold text-slate-900">
                   Annual Cost by Broker
                 </h2>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   {results.length} brokers compared
                 </span>
               </div>
@@ -423,7 +423,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
               </div>
 
               {/* Footnote */}
-              <p className="text-[0.6rem] text-slate-400 mt-4 text-center">
+              <p className="text-[0.6rem] text-slate-500 mt-4 text-center">
                 Costs include ASX brokerage, US brokerage, FX conversion fees,
                 and inactivity charges. Data sourced from official PDS documents.
               </p>
@@ -446,7 +446,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   </p>
                   <p className="text-lg font-extrabold text-emerald-700">
                     ${Math.round(results[0].cost).toLocaleString()}
-                    <span className="text-xs font-normal text-slate-400">
+                    <span className="text-xs font-normal text-slate-500">
                       /yr
                     </span>
                   </p>
@@ -468,7 +468,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                     {Math.round(
                       results[results.length - 1].cost
                     ).toLocaleString()}
-                    <span className="text-xs font-normal text-slate-400">
+                    <span className="text-xs font-normal text-slate-500">
                       /yr
                     </span>
                   </p>
@@ -492,7 +492,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                     {Math.round(
                       results[results.length - 1].cost - results[0].cost
                     ).toLocaleString()}
-                    <span className="text-xs font-normal text-slate-400">
+                    <span className="text-xs font-normal text-slate-500">
                       /yr
                     </span>
                   </p>

@@ -41,7 +41,7 @@ export default function InsightsTab({ recentClicks }: InsightsTabProps) {
               }
             });
             const pairs = Object.entries(pairCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
-            if (pairs.length === 0) return <p className="text-sm text-slate-400">Not enough data yet.</p>;
+            if (pairs.length === 0) return <p className="text-sm text-slate-500">Not enough data yet.</p>;
             return (
               <table className="w-full text-sm" aria-label="Most-compared broker pairs">
                 <thead>
@@ -83,7 +83,7 @@ export default function InsightsTab({ recentClicks }: InsightsTabProps) {
               .filter(([p]) => p && p !== "/" && !p.startsWith("/admin"))
               .sort((a, b) => b[1] - a[1])
               .slice(0, 15);
-            if (pages.length === 0) return <p className="text-sm text-slate-400">Not enough data yet.</p>;
+            if (pages.length === 0) return <p className="text-sm text-slate-500">Not enough data yet.</p>;
             const maxClicks = pages[0]?.[1] || 1;
             return (
               <div className="space-y-2">
@@ -120,7 +120,7 @@ export default function InsightsTab({ recentClicks }: InsightsTabProps) {
             });
             const sources = Object.keys(matrix).sort();
             const brokerList = Array.from(allBrokerSlugs).sort();
-            if (sources.length === 0 || brokerList.length === 0) return <p className="text-sm text-slate-400">Not enough data yet.</p>;
+            if (sources.length === 0 || brokerList.length === 0) return <p className="text-sm text-slate-500">Not enough data yet.</p>;
             return (
               <table className="text-xs w-full" aria-label="Clicks by source and broker">
                 <thead>
@@ -159,7 +159,7 @@ export default function InsightsTab({ recentClicks }: InsightsTabProps) {
           <p className="text-xs text-slate-500">Breakdown of email captures by lead magnet source.</p>
         </div>
         <div className="p-4">
-          <p className="text-xs text-slate-400">Email capture segments will populate as contextual lead magnets are used across the site.</p>
+          <p className="text-xs text-slate-500">Email capture segments will populate as contextual lead magnets are used across the site.</p>
         </div>
       </div>
     </div>

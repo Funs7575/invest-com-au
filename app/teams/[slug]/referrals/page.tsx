@@ -159,7 +159,7 @@ export default async function TeamReferralsPage({ params }: PageProps) {
                 {referral.note}
               </p>
             ) : null}
-            <p className="text-slate-400" style={{ margin: "8px 0 0 0", fontSize: 12 }}>
+            <p className="text-slate-500" style={{ margin: "8px 0 0 0", fontSize: 12 }}>
               {created}
             </p>
           </div>
@@ -196,7 +196,7 @@ export default async function TeamReferralsPage({ params }: PageProps) {
           Incoming ({incoming.length})
         </h2>
         {incoming.length === 0 ? (
-          <p className="text-slate-400" style={{ fontSize: 14 }}>
+          <p className="text-slate-500" style={{ fontSize: 14 }}>
             No incoming referrals yet.
           </p>
         ) : (
@@ -211,7 +211,7 @@ export default async function TeamReferralsPage({ params }: PageProps) {
           Outgoing ({outgoing.length})
         </h2>
         {outgoing.length === 0 ? (
-          <p className="text-slate-400" style={{ fontSize: 14 }}>
+          <p className="text-slate-500" style={{ fontSize: 14 }}>
             You haven&apos;t referred any briefs out yet.
           </p>
         ) : (

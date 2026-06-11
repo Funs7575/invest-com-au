@@ -115,7 +115,7 @@ export default function AdminBottomGrid({
           <div className="text-center py-6">
             <div className="text-3xl mb-2">🖱️</div>
             <p className="text-sm text-slate-500">No clicks recorded yet.</p>
-            <p className="text-xs text-slate-400 mt-1">Clicks will appear here once your site gets traffic.</p>
+            <p className="text-xs text-slate-500 mt-1">Clicks will appear here once your site gets traffic.</p>
           </div>
         ) : (
           <div className="space-y-1.5">
@@ -125,7 +125,7 @@ export default function AdminBottomGrid({
                   <div className="text-slate-900 font-medium truncate">{click.broker_name}</div>
                   <div className="text-xs text-slate-500 truncate">{click.source} · {click.page}</div>
                 </div>
-                <div className="text-xs text-slate-400 shrink-0 ml-2">
+                <div className="text-xs text-slate-500 shrink-0 ml-2">
                   {new Date(click.clicked_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </div>
               </div>

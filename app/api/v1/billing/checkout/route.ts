@@ -31,6 +31,7 @@ import { validateApiKey, API_CORS_HEADERS } from "@/lib/api-auth";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 import { getTierConfig } from "@/lib/api-tiers";
+import { isFeatureDisabled } from "@/lib/admin/classifier-config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -46,6 +47,17 @@ export function OPTIONS() {
 }
 
 export const POST = withValidatedBody(Body, async (request: NextRequest, body) => {
+  // Emergency kill switch (automation_kill_switches: "api_billing").
+  // Fail-open by design — no row means billing is live; flipping the switch
+  // stops NEW checkout sessions immediately without a redeploy. Existing
+  // subscriptions keep working (Stripe webhooks are unaffected).
+  if (await isFeatureDisabled("api_billing")) {
+    return NextResponse.json(
+      { error: "API billing is temporarily paused. Contact api@invest.com.au." },
+      { status: 503, headers: API_CORS_HEADERS },
+    );
+  }
+
   // ── Auth: require a valid API key ──
   const auth = await validateApiKey(request);
   if (!auth.valid || !auth.apiKey) {

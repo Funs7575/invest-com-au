@@ -328,7 +328,7 @@ export default function TPDInsurancePage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">Indicative only. Actual premiums depend on health history, smoker status, and individual underwriting. See a financial adviser for a personalised quote.</p>
+            <p className="text-xs text-slate-500 mt-2">Indicative only. Actual premiums depend on health history, smoker status, and individual underwriting. See a financial adviser for a personalised quote.</p>
           </div>
         </div>
       </section>

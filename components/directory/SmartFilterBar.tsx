@@ -57,7 +57,7 @@ export default function SmartFilterBar({
             onChange={(e) => setQuery(e.target.value)}
             placeholder={placeholder ?? PLACEHOLDERS[surface]}
             disabled={isLoading}
-            className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-white placeholder:text-slate-400 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-300 disabled:opacity-60 transition-colors"
+            className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-white placeholder:text-slate-500 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-300 disabled:opacity-60 transition-colors"
           />
         </div>
         <button

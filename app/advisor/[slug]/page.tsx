@@ -18,6 +18,7 @@ import {
 import { computeAdvisorTrustScore } from "@/lib/advisor-trust-score";
 import { computeAdvisorReputation } from "@/lib/advisor-reputation";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 import AdvisorTrustScoreSection from "./components/AdvisorTrustScoreSection";
 import AdvisorReputationSummary from "./components/AdvisorReputationSummary";
 import RecentAdvisorInsights from "./components/RecentAdvisorInsights";
@@ -364,7 +365,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     } : {}),
     ...(pro.website ? { url: pro.website } : {}),
     ...(pro.phone ? { telephone: String(pro.phone) } : {}),
-    ...(pro.rating && pro.review_count > 0 ? {
+    ...(SHOW_ADVISOR_RATINGS && pro.rating && pro.review_count > 0 ? {
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: pro.rating,
@@ -461,7 +462,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
             followerCount={pro.follower_count ?? 0}
           />
           {profileUpdatedAt && (
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500">
               Profile updated{" "}
               {(() => {
                 // eslint-disable-next-line react-hooks/purity -- server component, Date.now() is safe

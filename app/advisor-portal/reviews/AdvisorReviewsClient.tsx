@@ -84,7 +84,7 @@ function ReviewCard({
               Pending
             </span>
           )}
-          <span className="text-xs text-slate-400">{date}</span>
+          <span className="text-xs text-slate-500">{date}</span>
         </div>
       </div>
 
@@ -104,7 +104,7 @@ function ReviewCard({
               <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-line break-words">
                 {savedResponse.body}
               </p>
-              <p className="text-[10px] text-slate-400 mt-1">
+              <p className="text-[10px] text-slate-500 mt-1">
                 {new Date(savedResponse.updated_at).toLocaleDateString("en-AU", {
                   month: "short",
                   year: "numeric",
@@ -129,7 +129,7 @@ function ReviewCard({
               >
                 {savedResponse ? "Edit your response" : "Respond publicly to this review"}
               </label>
-              <p className="text-[10px] text-slate-400 mb-2">
+              <p className="text-[10px] text-slate-500 mb-2">
                 Responses are visible to anyone viewing your profile. Keep it
                 professional and helpful (10–1000 characters).
               </p>
@@ -144,7 +144,7 @@ function ReviewCard({
                 className="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none"
               />
               <div className="flex items-center justify-between mt-2 gap-2">
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[10px] text-slate-500">
                   {responseText.length}/1000
                 </span>
                 <div className="flex gap-2">
@@ -222,7 +222,7 @@ export default function AdvisorReviewsClient({ advisorName: _advisorName, review
       {reviews.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-10 text-center">
           <p className="text-sm font-semibold text-slate-600 mb-1">No reviews yet</p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Reviews appear here once clients submit them on your public profile.
           </p>
         </div>

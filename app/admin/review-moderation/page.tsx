@@ -86,7 +86,7 @@ export default function ReviewModerationPage() {
       )}
 
       {loading ? (
-        <div className="text-slate-400 text-sm py-12 text-center">Loading pending reviews...</div>
+        <div className="text-slate-500 text-sm py-12 text-center">Loading pending reviews...</div>
       ) : reviews.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center">
           <div className="text-4xl mb-3">&#10003;</div>
@@ -104,17 +104,17 @@ export default function ReviewModerationPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-bold text-slate-900">{r.reviewer_name}</span>
-                    <span className="text-slate-400 text-xs">reviewed</span>
+                    <span className="text-slate-500 text-xs">reviewed</span>
                     <span className="text-sm font-semibold text-blue-700">
                       {r.professionals?.name || `Advisor #${r.professional_id}`}
                     </span>
                     {renderStarsJsx(r.rating)}
                   </div>
                   {r.reviewer_email && (
-                    <div className="text-[0.62rem] text-slate-400 mt-0.5">{r.reviewer_email}</div>
+                    <div className="text-[0.62rem] text-slate-500 mt-0.5">{r.reviewer_email}</div>
                   )}
                 </div>
-                <span className="text-xs text-slate-400 whitespace-nowrap ml-4">
+                <span className="text-xs text-slate-500 whitespace-nowrap ml-4">
                   {new Date(r.created_at).toLocaleDateString("en-AU", {
                     day: "numeric",
                     month: "short",

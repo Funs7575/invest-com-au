@@ -92,7 +92,7 @@ export default function ContentTab({ loading, articlePerf }: ContentTabProps) {
         </div>
         <div className="p-4">
           {articlePerf.length === 0 ? (
-            <p className="text-sm text-slate-400">No articles to evaluate yet.</p>
+            <p className="text-sm text-slate-500">No articles to evaluate yet.</p>
           ) : (
             <div className="space-y-3">
               {articlePerf

@@ -120,7 +120,7 @@ export default function BDPipelinePage() {
                       Next: {deal.next_action} {deal.next_action_date && `(${new Date(deal.next_action_date).toLocaleDateString("en-AU", { day: "numeric", month: "short" })})`}
                     </p>
                   )}
-                  {deal.deal_notes && <p className="text-xs text-slate-400 mt-1 truncate">{deal.deal_notes}</p>}
+                  {deal.deal_notes && <p className="text-xs text-slate-500 mt-1 truncate">{deal.deal_notes}</p>}
                   <div className="text-[0.5rem] text-slate-300 mt-1">
                     {deal.last_contact_date && `Last contact: ${new Date(deal.last_contact_date).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}`}
                     {deal.last_contact_date && " · "}

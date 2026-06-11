@@ -110,7 +110,7 @@ export default function NPSPrompt({
           type="button"
           onClick={dismiss}
           aria-label="Dismiss feedback prompt"
-          className="text-slate-400 hover:text-slate-600 text-lg leading-none"
+          className="text-slate-500 hover:text-slate-600 text-lg leading-none"
         >
           ×
         </button>

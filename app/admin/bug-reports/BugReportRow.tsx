@@ -58,7 +58,7 @@ export default function BugReportRow({ row }: { row: BugReport }) {
             {row.user_message}
           </p>
           {row.user_agent && (
-            <p className="mt-2 truncate text-[11px] text-slate-400" title={row.user_agent}>
+            <p className="mt-2 truncate text-[11px] text-slate-500" title={row.user_agent}>
               {row.user_agent}
             </p>
           )}

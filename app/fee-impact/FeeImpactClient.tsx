@@ -72,7 +72,7 @@ function ShareResultsButton() {
         </svg>
         {copied ? "Copied!" : "Share Results"}
       </button>
-      <Link href="/methodology" className="text-slate-400 hover:text-slate-600 transition-colors">
+      <Link href="/methodology" className="text-slate-500 hover:text-slate-600 transition-colors">
         How we calculated this →
       </Link>
     </div>
@@ -157,7 +157,7 @@ function InputField({
       </label>
       <div className="relative">
         {prefix && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">
             {prefix}
           </div>
         )}
@@ -170,7 +170,7 @@ function InputField({
           className={`w-full bg-white border border-slate-200 rounded-lg py-2.5 shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium ${prefix ? "pl-7" : "pl-4"} ${suffix ? "pr-10" : "pr-4"}`}
         />
         {suffix && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">
             {suffix}
           </div>
         )}

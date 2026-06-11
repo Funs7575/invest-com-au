@@ -440,7 +440,7 @@ function ExperimentCard({
                     )}
                   </td>
                   <td className="py-2 px-3 text-xs font-mono text-slate-600">
-                    {v.broker_slug ?? <em className="text-slate-400">— control —</em>}
+                    {v.broker_slug ?? <em className="text-slate-500">— control —</em>}
                   </td>
                   <td className="py-2 px-3 text-right tabular-nums">{v.weight}</td>
                   <td className="py-2 px-3 text-right tabular-nums">

@@ -7,6 +7,7 @@ import { FIRB_DISCLAIMER, FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/comp
 import { WHO_NEEDS_FIRB } from "@/lib/firb-data";
 import Icon from "@/components/Icon";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import CrossBorderNextStep from "@/components/foreign-investment/CrossBorderNextStep";
 import FirbEligibilityWalkthrough from "./FirbEligibilityWalkthrough";
 
 export const revalidate = 86400;
@@ -18,7 +19,7 @@ const FAQS = [
   },
   {
     q: "Can foreigners buy established (existing) homes in Australia?",
-    a: "Generally no. Non-residents cannot buy established dwellings, and from 1 April 2025 to 31 March 2027 the Australian Government has also banned temporary residents from buying established dwellings, with limited exceptions. New dwellings, off-the-plan purchases and vacant land for development remain the standard routes for foreign buyers, subject to FIRB approval.",
+    a: "Generally no. Non-residents cannot buy established dwellings, and from 1 April 2025 to 31 March 2027 the Australian Government has also banned temporary residents from buying established dwellings, with limited exceptions. New dwellings, off-the-plan purchases and vacant land for development remain the standard routes for foreign buyers, subject to FIRB approval.", // dated-ok — legislated ban window (fixed dates); page-level staleness is badged on the guides hub banner
   },
   {
     q: "What can foreign buyers still purchase during the 2025–2027 ban?",
@@ -98,6 +99,16 @@ export default function FirbEligibilityPage() {
         {/* ── The walkthrough ── */}
         <section className="mb-10">
           <FirbEligibilityWalkthrough />
+        </section>
+
+        {/* ── Next step (quiz international track + advisor directory) ── */}
+        <section className="mb-10">
+          <CrossBorderNextStep
+            advisorHref="/advisors/firb-specialists"
+            advisorLabel="FIRB specialists"
+            title="Know what you can buy — now line up the right people"
+            body="Eligibility is only the first gate. Answer a few questions about your country, visa status and goal and we'll point you to the brokers, specialists or property route that fit your situation."
+          />
         </section>
 
         {/* ── Who needs FIRB (reference table) ── */}

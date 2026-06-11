@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 
 /**
  * Side-by-side comparison of up to 4 advisors.
@@ -83,7 +84,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
                     type="button"
                     onClick={() => onRemove(a.id)}
                     aria-label={`Remove ${a.name} from comparison`}
-                    className="absolute top-1 right-1 text-slate-400 hover:text-slate-600 text-lg leading-none"
+                    className="absolute top-1 right-1 text-slate-500 hover:text-slate-600 text-lg leading-none"
                   >
                     ×
                   </button>
@@ -121,25 +122,27 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
           </tr>
         </thead>
         <tbody>
-          <Row label="Rating">
-            {advisors.map((a) => (
-              <Cell key={a.id}>
-                {a.rating ? (
-                  <>
-                    <span className="font-bold text-slate-900">{a.rating.toFixed(1)}</span>
-                    <span className="text-slate-500 text-[0.65rem]"> /5</span>
-                    {a.review_count != null && (
-                      <div className="text-[0.6rem] text-slate-500">
-                        {a.review_count} review{a.review_count === 1 ? "" : "s"}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <span className="text-slate-400">—</span>
-                )}
-              </Cell>
-            ))}
-          </Row>
+          {SHOW_ADVISOR_RATINGS && (
+            <Row label="Rating">
+              {advisors.map((a) => (
+                <Cell key={a.id}>
+                  {a.rating ? (
+                    <>
+                      <span className="font-bold text-slate-900">{a.rating.toFixed(1)}</span>
+                      <span className="text-slate-500 text-[0.65rem]"> /5</span>
+                      {a.review_count != null && (
+                        <div className="text-[0.6rem] text-slate-500">
+                          {a.review_count} review{a.review_count === 1 ? "" : "s"}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <span className="text-slate-500">—</span>
+                  )}
+                </Cell>
+              ))}
+            </Row>
+          )}
 
           <Row label="Verified">
             {advisors.map((a) => (
@@ -156,7 +159,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
           <Row label="Location">
             {advisors.map((a) => (
               <Cell key={a.id}>
-                {a.location_display || <span className="text-slate-400">—</span>}
+                {a.location_display || <span className="text-slate-500">—</span>}
               </Cell>
             ))}
           </Row>
@@ -175,7 +178,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
                     </span>
                   )
                 ) : (
-                  <span className="text-slate-400">—</span>
+                  <span className="text-slate-500">—</span>
                 )}
               </Cell>
             ))}
@@ -184,7 +187,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
           <Row label="Type">
             {advisors.map((a) => (
               <Cell key={a.id}>
-                {a.type || <span className="text-slate-400">—</span>}
+                {a.type || <span className="text-slate-500">—</span>}
               </Cell>
             ))}
           </Row>
@@ -213,7 +216,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
             {advisors.map((a) => (
               <Cell key={a.id}>
                 <span className="text-[0.7rem] text-slate-600 line-clamp-4">
-                  {a.bio || <span className="text-slate-400">—</span>}
+                  {a.bio || <span className="text-slate-500">—</span>}
                 </span>
               </Cell>
             ))}

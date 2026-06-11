@@ -360,7 +360,7 @@ export default function SectorETFsPage() {
                     </div>
                     <p className="text-sm font-semibold text-slate-700">{etf.name}</p>
                     <p className="text-xs text-slate-500">{etf.provider} · {etf.index}</p>
-                    <p className="text-xs text-slate-400 mt-1">Top holdings: {etf.topHoldings}</p>
+                    <p className="text-xs text-slate-500 mt-1">Top holdings: {etf.topHoldings}</p>
                   </div>
                   <div className="grid grid-cols-3 gap-3 text-center">
                     {[

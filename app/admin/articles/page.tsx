@@ -209,7 +209,7 @@ export default function AdminArticlesPage() {
             <div>
               <label htmlFor="art-slug" className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
               <input id="art-slug" name="slug" defaultValue={formArticle.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
-              <p className="text-xs text-slate-400 mt-0.5">URL path — e.g. &quot;best-brokers-2026&quot; creates /article/best-brokers-2026</p>
+              <p className="text-xs text-slate-500 mt-0.5">URL path — e.g. &quot;best-brokers-2026&quot; creates /article/best-brokers-2026</p>
             </div>
             <div>
               <label htmlFor="art-status" className="block text-xs font-medium text-slate-500 mb-1">Status</label>
@@ -223,7 +223,7 @@ export default function AdminArticlesPage() {
           <div>
             <label htmlFor="art-excerpt" className="block text-xs font-medium text-slate-500 mb-1">Excerpt</label>
             <textarea id="art-excerpt" name="excerpt" defaultValue={formArticle.excerpt} rows={2} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
-            <p className="text-xs text-slate-400 mt-0.5">Short summary shown in article cards and social shares.</p>
+            <p className="text-xs text-slate-500 mt-0.5">Short summary shown in article cards and social shares.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -249,14 +249,14 @@ export default function AdminArticlesPage() {
           <div>
             <label htmlFor="art-sections" className="block text-xs font-medium text-slate-500 mb-1">Sections (JSON array)</label>
             <textarea id="art-sections" name="sections" defaultValue={formArticle.sections ? JSON.stringify(formArticle.sections, null, 2) : ""} rows={6} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
-            <p className="text-xs text-slate-400 mt-0.5">JSON array of content sections — use the content editor for easier editing.</p>
+            <p className="text-xs text-slate-500 mt-0.5">JSON array of content sections — use the content editor for easier editing.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="art-related-brokers" className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
               <input id="art-related-brokers" name="related_brokers" defaultValue={formArticle.related_brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
-              <p className="text-xs text-slate-400 mt-0.5">Broker slugs, comma-separated. Shows comparison widget in article.</p>
+              <p className="text-xs text-slate-500 mt-0.5">Broker slugs, comma-separated. Shows comparison widget in article.</p>
             </div>
             <div>
               <label htmlFor="art-related-calc" className="block text-xs font-medium text-slate-500 mb-1">Related Calculator</label>
@@ -313,7 +313,7 @@ export default function AdminArticlesPage() {
 
           {/* Legacy author fields */}
           <details className="border border-slate-100 rounded-lg">
-            <summary className="px-3 py-2 text-xs font-medium text-slate-400 cursor-pointer hover:text-slate-600">Legacy Author Fields (flat text — used when no team member selected)</summary>
+            <summary className="px-3 py-2 text-xs font-medium text-slate-500 cursor-pointer hover:text-slate-600">Legacy Author Fields (flat text — used when no team member selected)</summary>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3">
               <div>
                 <label htmlFor="art-author-name" className="block text-xs font-medium text-slate-500 mb-1">Author Name</label>

@@ -309,12 +309,12 @@ export default async function CronHealthPage() {
                     </td>
                     <td className="px-3 py-2.5 text-right tabular-nums">
                       <span className="text-emerald-700">{r.last24hSuccess}</span>
-                      <span className="text-slate-400"> / </span>
+                      <span className="text-slate-500"> / </span>
                       <span
                         className={
                           r.last24hErrors > 0
                             ? "text-rose-700 font-bold"
-                            : "text-slate-400"
+                            : "text-slate-500"
                         }
                       >
                         {r.last24hErrors}

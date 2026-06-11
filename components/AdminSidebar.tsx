@@ -175,7 +175,7 @@ export default function AdminSidebar() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className={`flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-lg transition-colors ${active ? "bg-white/10 text-white font-semibold" : "text-slate-400 hover:text-white hover:bg-white/5"}`}
+                    className={`flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-lg transition-colors ${active ? "bg-white/10 text-white font-semibold" : "text-slate-500 hover:text-white hover:bg-white/5"}`}
                   >
                     <Icon name={item.icon} size={14} className={active ? "text-emerald-400" : "text-slate-500"} />
                     {item.label}
@@ -201,7 +201,7 @@ export default function AdminSidebar() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className={`flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-lg transition-colors ${active ? "bg-white/10 text-white font-semibold" : "text-slate-600 hover:text-slate-400 hover:bg-white/5"}`}
+                  className={`flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-lg transition-colors ${active ? "bg-white/10 text-white font-semibold" : "text-slate-600 hover:text-slate-500 hover:bg-white/5"}`}
                 >
                   <Icon name={item.icon} size={14} className={active ? "text-amber-400" : "text-slate-700"} />
                   <span className="opacity-70">{item.label}</span>

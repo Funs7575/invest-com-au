@@ -57,7 +57,10 @@ export async function generateMetadata({
   }
 
   if (!data) {
-    return { title: "Investment Vertical" };
+    // Confirmed-unknown vertical (clean no-rows result, not a query error):
+    // 404 from metadata so the status is set before any streaming starts —
+    // the page body's notFound() alone yields a soft-404 (DISC-20260610-B).
+    notFound();
   }
 
   const title = data.hero_title
@@ -877,7 +880,7 @@ export default async function InvestVerticalPage({
                 <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
                   {q}
                   <svg
-                    className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                    className="w-4 h-4 shrink-0 text-slate-500 group-open:rotate-180 transition-transform"
                     aria-hidden="true"
                     fill="none"
                     viewBox="0 0 24 24"

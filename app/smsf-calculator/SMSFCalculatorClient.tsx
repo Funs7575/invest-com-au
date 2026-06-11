@@ -216,7 +216,7 @@ export default function SMSFCalculatorClient() {
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Is a Self-Managed Super Fund right for you?</h1>
           <p className="text-sm md:text-base text-amber-100">Enter your super details below — we&apos;ll compare your current fund against running an SMSF.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
         </div>
       </div>
 
@@ -228,7 +228,7 @@ export default function SMSFCalculatorClient() {
             <div>
               <label htmlFor="smsf-balance" className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
                 <input
                   id="smsf-balance"
                   type="number" inputMode="decimal"
@@ -250,7 +250,7 @@ export default function SMSFCalculatorClient() {
             <div>
               <label htmlFor="smsf-contribution" className="block text-sm font-bold text-slate-700 mb-1.5">Annual contribution</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
                 <input
                   id="smsf-contribution"
                   type="number" inputMode="decimal"
@@ -259,7 +259,7 @@ export default function SMSFCalculatorClient() {
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
               </div>
-              <p className="text-[0.6rem] text-slate-400 mt-1">Concessional cap $30,000/yr (2024-25)</p>
+              <p className="text-[0.6rem] text-slate-500 mt-1">Concessional cap $30,000/yr (2024-25)</p>
             </div>
 
             {/* Current fund fee */}
@@ -274,7 +274,7 @@ export default function SMSFCalculatorClient() {
                   onChange={e => setCurrentFeePercent(Math.max(0, Math.min(5, parseFloat(e.target.value) || 0)))}
                   className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">%</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[0.5, 0.8, 1.0, 1.2, 1.5, 2.0].map(v => (
@@ -297,7 +297,7 @@ export default function SMSFCalculatorClient() {
                   onChange={e => setExpectedReturn(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))}
                   className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">%</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5, 6, 7, 8, 9, 10].map(v => (
@@ -319,7 +319,7 @@ export default function SMSFCalculatorClient() {
                   onChange={e => setYearsToRetirement(Math.max(1, Math.min(50, parseInt(e.target.value) || 0)))}
                   className="w-full pl-4 pr-12 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">years</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">years</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5, 10, 15, 20, 25, 30].map(v => (
@@ -432,7 +432,7 @@ export default function SMSFCalculatorClient() {
                     <span className="text-xs text-slate-500">Est. annual running cost</span>
                     <span className="text-sm font-bold text-slate-700">{formatCurrency(smsfAnnualCostEstimate)}</span>
                   </div>
-                  <div className="text-[0.6rem] text-slate-400">
+                  <div className="text-[0.6rem] text-slate-500">
                     Includes ${smsfFixedCosts().toLocaleString()} base (audit + admin) + 0.3% investment mgmt
                   </div>
                 </div>

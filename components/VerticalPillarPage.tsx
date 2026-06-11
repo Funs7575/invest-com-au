@@ -25,6 +25,7 @@ import {
   AFCA_REFERENCE,
 } from "@/lib/compliance";
 import { isSponsored } from "@/lib/sponsorship";
+import { SHOW_RATINGS, SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 import BrokerLogo from "@/components/BrokerLogo";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
@@ -245,7 +246,7 @@ export default function VerticalPillarPage({
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
             <span className="flex items-center gap-1.5">
               <svg
-                className="w-3.5 h-3.5 text-slate-400"
+                className="w-3.5 h-3.5 text-slate-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -265,7 +266,7 @@ export default function VerticalPillarPage({
               >
                 {REVIEW_AUTHOR.name}
               </Link>
-              <span className="text-slate-400">
+              <span className="text-slate-500">
                 &middot; {REVIEW_AUTHOR.jobTitle}
               </span>
             </span>
@@ -308,14 +309,16 @@ export default function VerticalPillarPage({
                     <p className="text-sm text-slate-600 mt-0.5">
                       {topPick.tagline}
                     </p>
-                    <div className="flex items-center gap-3 mt-2 text-sm">
-                      <span className="text-amber-600">
-                        {renderStars(topPick.rating || 0)}
-                      </span>
-                      <span className="text-slate-500">
-                        {topPick.rating}/5
-                      </span>
-                    </div>
+                    {SHOW_RATINGS && (
+                      <div className="flex items-center gap-3 mt-2 text-sm">
+                        <span className="text-amber-600">
+                          {renderStars(topPick.rating || 0)}
+                        </span>
+                        <span className="text-slate-500">
+                          {topPick.rating}/5
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <a
@@ -367,7 +370,7 @@ export default function VerticalPillarPage({
                           >
                             {broker.name}
                           </Link>
-                          {broker.rating && (
+                          {SHOW_RATINGS && broker.rating && (
                             <span className="text-[0.62rem] text-slate-500">{renderStars(broker.rating)} {broker.rating}/5</span>
                           )}
                         </div>
@@ -539,8 +542,8 @@ export default function VerticalPillarPage({
                           <div className="flex items-center gap-2 mt-0.5">
                             <span className="text-[0.6rem] text-violet-600 font-medium">{typeLabel}</span>
                             <span className="text-[0.55rem] text-slate-300">&middot;</span>
-                            <span className="text-[0.6rem] text-slate-400">{advisor.location_display}</span>
-                            {advisor.rating > 0 && (
+                            <span className="text-[0.6rem] text-slate-500">{advisor.location_display}</span>
+                            {SHOW_ADVISOR_RATINGS && advisor.rating > 0 && (
                               <>
                                 <span className="text-[0.55rem] text-slate-300">&middot;</span>
                                 <span className="text-[0.6rem] text-amber-600 font-semibold">{advisor.rating}/5</span>

@@ -21,6 +21,7 @@ import {
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
 import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import BrokerLogo from "@/components/BrokerLogo";
 import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
@@ -175,7 +176,7 @@ export default async function CityInvestingPage({
               <span className="text-xs font-bold uppercase tracking-wide text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
                 {city.stateShort}
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500">
                 Pop. {city.population}
               </span>
             </div>
@@ -308,7 +309,7 @@ export default async function CityInvestingPage({
                     key={broker.id}
                     className={`hover:bg-slate-50 ${i === 0 ? "bg-amber-50/40" : ""}`}
                   >
-                    <td className="px-4 py-3 text-sm font-semibold text-slate-400">
+                    <td className="px-4 py-3 text-sm font-semibold text-slate-500">
                       {i + 1}
                     </td>
                     <td className="px-4 py-3">
@@ -352,12 +353,16 @@ export default async function CityInvestingPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-center">
-                      <span className="text-amber-600" aria-hidden="true">
-                        {renderStars(broker.rating || 0)}
-                      </span>
-                      <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>
-                        {broker.rating}
-                      </span>
+                      {SHOW_RATINGS && (
+                        <>
+                          <span className="text-amber-600" aria-hidden="true">
+                            {renderStars(broker.rating || 0)}
+                          </span>
+                          <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>
+                            {broker.rating}
+                          </span>
+                        </>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <a

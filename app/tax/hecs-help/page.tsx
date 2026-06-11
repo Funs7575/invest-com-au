@@ -176,7 +176,7 @@ export default function HecsHelpPage() {
                   {THRESHOLD_ROWS.map((row) => (
                     <tr key={row.from} className="hover:bg-slate-50">
                       <td className="px-4 py-3 text-slate-700">{row.from}</td>
-                      <td className={`px-4 py-3 text-right font-bold ${row.rate === "Nil" ? "text-slate-400" : "text-slate-900"}`}>{row.rate}</td>
+                      <td className={`px-4 py-3 text-right font-bold ${row.rate === "Nil" ? "text-slate-500" : "text-slate-900"}`}>{row.rate}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createStaticClient } from "@/lib/supabase/static";
+import {
+  evaluateEmbedGate,
+  embedAccessRequiredResponse,
+  meterEmbedLoad,
+} from "@/lib/embed-gate";
 
 export const runtime = "nodejs";
 // 1h ISR cache — advisor data refreshes infrequently.
@@ -32,8 +37,19 @@ export const revalidate = 3600;
  *   ?theme=light|dark                             — colour theme (default: light)
  *   ?ref=<partnerId>                              — partner attribution; appended to
  *                                                   all outbound invest.com.au links
+ *   ?license=wlt_xxx                              — embed partner key; required when
+ *                                                   the `embed_partner_gating` flag is
+ *                                                   on, always metered (lib/embed-gate.ts)
  */
 export async function GET(request: NextRequest) {
+  const gateStart = Date.now();
+  // Embed partner gate — flag-controlled. Unauthorised loads render a
+  // branded "get access" card (still 200 JS, never a script error).
+  const gate = await evaluateEmbedGate(request);
+  if (!gate.authorised) {
+    return embedAccessRequiredResponse("Top Financial Advisors");
+  }
+
   const params = request.nextUrl.searchParams;
   const typeFilter = params.get("type") || "";
   const stateFilter = params.get("state") || "";
@@ -230,11 +246,24 @@ export async function GET(request: NextRequest) {
 })();
 `;
 
+  // Per-partner usage metering — fire-and-forget, fail-open.
+  meterEmbedLoad({
+    license: gate.license,
+    endpoint: "/api/widget/advisors",
+    request,
+    statusCode: 200,
+    startedAt: gateStart,
+  });
+
   return new NextResponse(js.trim(), {
     status: 200,
     headers: {
       "Content-Type": "application/javascript; charset=utf-8",
-      "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      // Licensed loads cache privately so shared CDN caches never serve a
+      // domain-restricted partner's payload to another site.
+      "Cache-Control": gate.license
+        ? "private, max-age=900"
+        : "public, max-age=3600, s-maxage=3600",
       // Public-by-design: see header comment. Mirrors /api/widget CORS policy.
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, OPTIONS",

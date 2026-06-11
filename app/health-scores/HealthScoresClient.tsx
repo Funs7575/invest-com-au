@@ -80,7 +80,7 @@ function DimensionBar({ score, label, note, weight, isPro }: {
       <div className="flex justify-between items-center text-sm">
         <span className="font-medium text-slate-700">{label}</span>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400">{(weight * 100).toFixed(0)}% weight</span>
+          <span className="text-xs text-slate-500">{(weight * 100).toFixed(0)}% weight</span>
           <span className={`text-sm font-bold ${score >= 80 ? "text-emerald-600" : score >= 50 ? "text-amber-600" : "text-red-500"}`}>
             {score}
           </span>
@@ -293,7 +293,7 @@ export default function HealthScoresClient({
                         window.scrollTo({ top: 0, behavior: "smooth" });
                       }}
                     >
-                      <td className="px-4 py-3 font-bold text-slate-400">{i + 1}</td>
+                      <td className="px-4 py-3 font-bold text-slate-500">{i + 1}</td>
                       <td className="px-4 py-3 font-medium">
                         <Link
                           href={`/health-scores/${s.broker_slug}`}

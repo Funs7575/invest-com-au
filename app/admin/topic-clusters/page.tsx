@@ -121,7 +121,7 @@ export default function TopicClusterMapPage() {
                     aria-hidden="true"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-slate-500 mb-0.5">
                       Pillar · {cluster.name}
                     </p>
                     <Link
@@ -132,7 +132,7 @@ export default function TopicClusterMapPage() {
                     >
                       {cluster.pillar.title}
                     </Link>
-                    <p className="text-[0.65rem] font-mono text-slate-400 mt-0.5">
+                    <p className="text-[0.65rem] font-mono text-slate-500 mt-0.5">
                       {cluster.pillar.href}
                     </p>
                   </div>
@@ -183,7 +183,7 @@ export default function TopicClusterMapPage() {
                           <p className="text-xs font-medium text-slate-800 group-hover:text-slate-900 line-clamp-2 leading-snug">
                             {page.title}
                           </p>
-                          <p className="text-[0.6rem] font-mono text-slate-400 truncate mt-0.5">
+                          <p className="text-[0.6rem] font-mono text-slate-500 truncate mt-0.5">
                             {page.href}
                           </p>
                         </div>
@@ -228,7 +228,7 @@ export default function TopicClusterMapPage() {
             <span className="font-mono text-slate-500">getClusterLinksForArticle()</span>.
           </li>
         </ul>
-        <p className="mt-3 text-xs text-slate-400">
+        <p className="mt-3 text-xs text-slate-500">
           Source of truth:{" "}
           <span className="font-mono">lib/topic-clusters.ts</span> ·{" "}
           <span className="font-mono">lib/internal-links.ts</span>. To add a

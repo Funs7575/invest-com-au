@@ -95,7 +95,7 @@ export default function FeeImpactResults({
               </div>
               <div className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mt-1">
                 <AnimatedNumber value={cheapest?.totalAnnual ?? 0} />
-                <span className="text-xl font-bold text-slate-400">
+                <span className="text-xl font-bold text-slate-500">
                   /yr
                 </span>
               </div>
@@ -125,7 +125,7 @@ export default function FeeImpactResults({
           </h3>
 
           {/* Table header */}
-          <div className="hidden md:grid grid-cols-12 gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+          <div className="hidden md:grid grid-cols-12 gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-500">
             <div className="col-span-3">Platform</div>
             <div className="col-span-2 text-right">ASX Fees</div>
             <div className="col-span-2 text-right">US + FX</div>
@@ -155,7 +155,7 @@ export default function FeeImpactResults({
                   {/* Broker name + icon */}
                   <div className="md:col-span-3 flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-slate-400 w-5">
+                      <span className="text-xs font-bold text-slate-500 w-5">
                         #{i + 1}
                       </span>
                       <div
@@ -310,7 +310,7 @@ export default function FeeImpactResults({
                   >
                     <div className="md:col-span-3 flex items-center gap-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-400 w-5">
+                        <span className="text-xs font-bold text-slate-500 w-5">
                           #?
                         </span>
                         <div className="w-8 h-8 rounded-lg bg-slate-200" />
@@ -450,7 +450,7 @@ export default function FeeImpactResults({
         </div>
 
         {/* Disclaimer */}
-        <p className="text-xs text-slate-400 leading-relaxed">
+        <p className="text-xs text-slate-500 leading-relaxed">
           Fees are based on each broker&apos;s published standard
           rates as of our most recent audit. Actual costs may vary
           based on account type, trading volume, or promotional

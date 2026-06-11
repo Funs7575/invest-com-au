@@ -229,7 +229,7 @@ export default function PropertyYieldCalculatorClient() {
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Property Yield Calculator</h1>
           <p className="text-sm md:text-base text-emerald-100">Enter your purchase price, rent, and expenses — we&rsquo;ll calculate your gross and net rental yield instantly.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
         </div>
       </div>
 
@@ -240,7 +240,7 @@ export default function PropertyYieldCalculatorClient() {
           <div className="mb-5">
             <label htmlFor="py-purchase-price" className="block text-sm font-bold text-slate-700 mb-1.5">Purchase price</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
               <input
                 id="py-purchase-price"
                 type="number" inputMode="decimal"
@@ -268,7 +268,7 @@ export default function PropertyYieldCalculatorClient() {
           <div className="mb-5">
             <label htmlFor="py-weekly-rent" className="block text-sm font-bold text-slate-700 mb-1.5">Weekly rent</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
               <input
                 id="py-weekly-rent"
                 type="number" inputMode="decimal"
@@ -293,21 +293,21 @@ export default function PropertyYieldCalculatorClient() {
               <div>
                 <label htmlFor="py-council-rates" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Council rates</label>
                 <div className="relative">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs">$</span>
                   <input id="py-council-rates" type="number" inputMode="decimal" value={councilRates} onChange={e => setCouncilRates(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
               <div>
                 <label htmlFor="py-insurance" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Insurance</label>
                 <div className="relative">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs">$</span>
                   <input id="py-insurance" type="number" inputMode="decimal" value={insurance} onChange={e => setInsurance(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
               <div>
                 <label htmlFor="py-maintenance" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Maintenance</label>
                 <div className="relative">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs">$</span>
                   <input id="py-maintenance" type="number" inputMode="decimal" value={maintenance} onChange={e => setMaintenance(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
@@ -315,20 +315,20 @@ export default function PropertyYieldCalculatorClient() {
                 <label htmlFor="py-mgmt-pct" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Property mgmt (%)</label>
                 <div className="relative">
                   <input id="py-mgmt-pct" type="number" inputMode="decimal" step="0.5" value={managementPct} onChange={e => setManagementPct(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))} className="w-full pl-3 pr-7 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
-                  <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
+                  <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs">%</span>
                 </div>
               </div>
               <div>
                 <label htmlFor="py-strata" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Strata / body corp</label>
                 <div className="relative">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs">$</span>
                   <input id="py-strata" type="number" inputMode="decimal" value={strata} onChange={e => setStrata(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
               <div>
                 <label htmlFor="py-other" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Other expenses</label>
                 <div className="relative">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs">$</span>
                   <input id="py-other" type="number" inputMode="decimal" value={otherExpenses} onChange={e => setOtherExpenses(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                 </div>
               </div>
@@ -346,7 +346,7 @@ export default function PropertyYieldCalculatorClient() {
                 <div>
                   <label htmlFor="py-loan-amount" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Loan amount</label>
                   <div className="relative">
-                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs">$</span>
                     <input id="py-loan-amount" type="number" inputMode="decimal" value={loanAmount} onChange={e => setLoanAmount(Math.max(0, parseInt(e.target.value) || 0))} className="w-full pl-6 pr-2 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
                   </div>
                 </div>
@@ -354,7 +354,7 @@ export default function PropertyYieldCalculatorClient() {
                   <label htmlFor="py-interest-rate" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Interest rate</label>
                   <div className="relative">
                     <input id="py-interest-rate" type="number" inputMode="decimal" step="0.1" value={interestRate} onChange={e => setInterestRate(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))} className="w-full pl-3 pr-7 py-2 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 outline-none" />
-                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
+                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs">%</span>
                   </div>
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default function PropertyYieldCalculatorClient() {
             {/* Email capture gate */}
             {!emailGated && !emailSubmitted && (
               <div className="text-center mb-6">
-                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-400 hover:text-slate-600">
+                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-500 hover:text-slate-600">
                   Want to save this analysis? Get it emailed to you &rarr;
                 </button>
               </div>

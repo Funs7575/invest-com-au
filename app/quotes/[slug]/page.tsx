@@ -183,7 +183,7 @@ export default async function QuoteDetailPage({ params, searchParams }: {
         <div className="max-w-5xl mx-auto px-4 pt-4 pb-5 md:pt-5">
           <nav
             aria-label="Breadcrumb"
-            className="mb-1.5 flex flex-wrap items-center gap-1.5 text-[11px] md:text-xs text-slate-400"
+            className="mb-1.5 flex flex-wrap items-center gap-1.5 text-[11px] md:text-xs text-slate-500"
           >
             <Link href="/quotes" className="hover:text-slate-700">All quotes</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />

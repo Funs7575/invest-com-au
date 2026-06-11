@@ -1,0 +1,506 @@
+{
+ "meta": {
+  "extractedAt": "2026-06-11",
+  "source": "synthetic preview seed \u2014 run `npm run data:far` to load the real ASIC extract",
+  "sample": true,
+  "count": 40
+ },
+ "advisers": [
+  {
+   "number": "1292466",
+   "name": "Aaron Young",
+   "slug": "aaron-young-1292466",
+   "role": "Financial Adviser",
+   "licenseeName": "Harbour Lane Financial Group Pty Ltd",
+   "licenseeNumber": "523001",
+   "firstAdviceYear": 2011,
+   "qualifications": [
+    "Graduate Diploma of Financial Planning"
+   ]
+  },
+  {
+   "number": "1291233",
+   "name": "Aisha Lee",
+   "slug": "aisha-lee-1291233",
+   "role": "Financial Adviser",
+   "licenseeName": "Bluegum Private Wealth Pty Ltd",
+   "licenseeNumber": "523004",
+   "firstAdviceYear": 2014,
+   "qualifications": [
+    "Bachelor of Business (Accounting)",
+    "Master of Financial Planning"
+   ]
+  },
+  {
+   "number": "1293425",
+   "name": "Amelia Hill",
+   "slug": "amelia-hill-1293425",
+   "role": "Financial Adviser",
+   "licenseeName": "Southbank Wealth Partners Pty Ltd",
+   "licenseeNumber": "523002",
+   "firstAdviceYear": 2020,
+   "qualifications": [
+    "Advanced Diploma of Financial Services"
+   ]
+  },
+  {
+   "number": "1294521",
+   "name": "Ava Edwards",
+   "slug": "ava-edwards-1294521",
+   "role": "Financial Adviser",
+   "licenseeName": "Bluegum Private Wealth Pty Ltd",
+   "licenseeNumber": "523004",
+   "firstAdviceYear": 2014,
+   "qualifications": [
+    "Advanced Diploma of Financial Services"
+   ]
+  },
+  {
+   "number": "1293014",
+   "name": "Ben Green",
+   "slug": "ben-green-1293014",
+   "role": "Financial Adviser",
+   "licenseeName": "Stirling Park Financial Services Pty Ltd",
+   "licenseeNumber": "523005",
+   "firstAdviceYear": 2018,
+   "qualifications": [
+    "Advanced Diploma of Financial Services",
+    "Graduate Diploma of Financial Planning"
+   ]
+  },
+  {
+   "number": "1292329",
+   "name": "Chloe Clarke",
+   "slug": "chloe-clarke-1292329",
+   "role": "Financial Adviser",
+   "licenseeName": "Wattle Street Advice Group Pty Ltd",
+   "licenseeNumber": "523006",
+   "firstAdviceYear": 2008,
+   "qualifications": [
+    "Bachelor of Commerce (Financial Planning)",
+    "Master of Financial Planning"
+   ]
+  },
+  {
+   "number": "1291370",
+   "name": "Daniel Martin",
+   "slug": "daniel-martin-1291370",
+   "role": "Financial Adviser",
+   "licenseeName": "Stirling Park Financial Services Pty Ltd",
+   "licenseeNumber": "523005",
+   "firstAdviceYear": 2018,
+   "qualifications": [
+    "Bachelor of Commerce (Financial Planning)"
+   ]
+  },
+  {
+   "number": "1290685",
+   "name": "David Brown",
+   "slug": "david-brown-1290685",
+   "role": "Financial Adviser",
+   "licenseeName": "Wattle Street Advice Group Pty Ltd",
+   "licenseeNumber": "523006",
+   "firstAdviceYear": 2016,
+   "qualifications": [
+    "Graduate Certificate in SMSF",
+    "Graduate Diploma of Financial Planning"
+   ]
+  },
+  {
+   "number": "1294795",
+   "name": "Ella Morris",
+   "slug": "ella-morris-1294795",
+   "role": "Financial Adviser",
+   "licenseeName": "Wattle Street Advice Group Pty Ltd",
+   "licenseeNumber": "523006",
+   "firstAdviceYear": 2020,
+   "qualifications": [
+    "Bachelor of Business (Accounting)",
+    "Master of Financial Planning"
+   ]
+  },
+  {
+   "number": "1290548",
+   "name": "Emma Williams",
+   "slug": "emma-williams-1290548",
+   "role": "Financial Adviser",
+   "licenseeName": "Stirling Park Financial Services Pty Ltd",
+   "licenseeNumber": "523005",
+   "firstAdviceYear": 2008,
+   "qualifications": [
+    "Bachelor of Commerce (Financial Planning)"
+   ]
+  },
+  {
+   "number": "1293562",
+   "name": "Ethan Phillips",
+   "slug": "ethan-phillips-1293562",
+   "role": "Financial Adviser",
+   "licenseeName": "Coral Coast Advisory Services Pty Ltd",
+   "licenseeNumber": "523003",
+   "firstAdviceYear": 2022,
+   "qualifications": [
+    "Advanced Diploma of Financial Services"
+   ]
+  },
+  {
+   "number": "1292603",
+   "name": "Grace King",
+   "slug": "grace-king-1292603",
+   "role": "Financial Adviser",
+   "licenseeName": "Southbank Wealth Partners Pty Ltd",
+   "licenseeNumber": "523002",
+   "firstAdviceYear": 2020,
+   "qualifications": [
+    "Bachelor of Business (Accounting)"
+   ]
+  },
+  {
+   "number": "1291781",
+   "name": "Hannah Walker",
+   "slug": "hannah-walker-1291781",
+   "role": "Financial Adviser",
+   "licenseeName": "Southbank Wealth Partners Pty Ltd",
+   "licenseeNumber": "523002",
+   "firstAdviceYear": 2019,
+   "qualifications": [
+    "Master of Financial Planning",
+    "Graduate Diploma of Financial Planning"
+   ]
+  },
+  {
+   "number": "1294384",
+   "name": "Henry Collins",
+   "slug": "henry-collins-1294384",
+   "role": "Financial Adviser",
+   "licenseeName": "Coral Coast Advisory Services Pty Ltd",
+   "licenseeNumber": "523003",
+   "firstAdviceYear": 2021,
+   "qualifications": [
+    "Master of Financial Planning"
+   ]
+  },
+  {
+   "number": "1292877",
+   "name": "Isabella Scott",
+   "slug": "isabella-scott-1292877",
+   "role": "Financial Adviser",
+   "licenseeName": "Bluegum Private Wealth Pty Ltd",
+   "licenseeNumber": "523004",
+   "firstAdviceYear": 2019,
+   "qualifications": [
+    "Advanced Diploma of Financial Services"
+   ]
+  },
+  {
+   "number": "1295343",
+   "name": "Ivy Bell",
+   "slug": "ivy-bell-1295343",
+   "role": "Provisional Financial Adviser",
+   "licenseeName": "Bluegum Private Wealth Pty Ltd",
+   "licenseeNumber": "523004",
+   "firstAdviceYear": 2014,
+   "qualifications": [
+    "Bachelor of Business (Accounting)",
+    "Graduate Certificate in SMSF"
+   ]
+  },
+  {
+   "number": "1292192",
+   "name": "Jack Robinson",
+   "slug": "jack-robinson-1292192",
+   "role": "Financial Adviser",
+   "licenseeName": "Stirling Park Financial Services Pty Ltd",
+   "licenseeNumber": "523005",
+   "firstAdviceYear": 2019,
+   "qualifications": [
+    "Bachelor of Commerce (Financial Planning)",
+    "Graduate Diploma of Financial Planning"
+   ]
+  },
+  {
+   "number": "1290137",
+   "name": "James Smith",
+   "slug": "james-smith-1290137",
+   "role": "Financial Adviser",
+   "licenseeName": "Southbank Wealth Partners Pty Ltd",
+   "licenseeNumber": "523002",
+   "firstAdviceYear": 2018,
+   "qualifications": [
+    "Bachelor of Commerce (Financial Planning)"
+   ]
+  },
+  {
+   "number": "1293973",
+   "name": "Layla Carter",
+   "slug": "layla-carter-1293973",
+   "role": "Financial Adviser",
+   "licenseeName": "Wattle Street Advice Group Pty Ltd",
+   "licenseeNumber": "523006",
+   "firstAdviceYear": 2018,
+   "qualifications": [
+    "Bachelor of Commerce (Financial Planning)"
+   ]
+  },
+  {
+   "number": "1294658",
+   "name": "Leo Stewart",
+   "slug": "leo-stewart-1294658",
+   "role": "Financial Adviser",
+   "licenseeName": "Stirling Park Financial Services Pty Ltd",
+   "licenseeNumber": "523005",
+   "firstAdviceYear": 2022,
+   "qualifications": [
+    "Master of Financial Planning",
+    "Graduate Certificate in SMSF"
+   ]
+  },
+  {
+   "number": "1293288",
+   "name": "Liam Adams",
+   "slug": "liam-adams-1293288",
+   "role": "Financial Adviser",
+   "licenseeName": "Harbour Lane Financial Group Pty Ltd",
+   "licenseeNumber": "523001",
+   "firstAdviceYear": 2016,
+   "qualifications": [
+    "Bachelor of Business (Accounting)"
+   ]
+  },
+  {
+   "number": "1291918",
+   "name": "Lucas Harris",
+   "slug": "lucas-harris-1291918",
+   "role": "Financial Adviser",
+   "licenseeName": "Coral Coast Advisory Services Pty Ltd",
+   "licenseeNumber": "523003",
+   "firstAdviceYear": 2021,
+   "qualifications": [
+    "Graduate Diploma of Financial Planning",
+    "Bachelor of Business (Accounting)"
+   ]
+  },
+  {
+   "number": "1294932",
+   "name": "Max Murphy",
+   "slug": "max-murphy-1294932",
+   "role": "Provisional Financial Adviser",
+   "licenseeName": "Harbour Lane Financial Group Pty Ltd",
+   "licenseeNumber": "523001",
+   "firstAdviceYear": 2016,
+   "qualifications": [
+    "Graduate Certificate in SMSF"
+   ]
+  },
+  {
+   "number": "1294247",
+   "name": "Maya Parker",
+   "slug": "maya-parker-1294247",
+   "role": "Financial Adviser",
+   "licenseeName": "Southbank Wealth Partners Pty Ltd",
+   "licenseeNumber": "523002",
+   "firstAdviceYear": 2021,
+   "qualifications": [
+    "Advanced Diploma of Financial Services"
+   ]
+  },
+  {
+   "number": "1292055",
+   "name": "Mei Lewis",
+   "slug": "mei-lewis-1292055",
+   "role": "Financial Adviser",
+   "licenseeName": "Bluegum Private Wealth Pty Ltd",
+   "licenseeNumber": "523004",
+   "firstAdviceYear": 2011,
+   "qualifications": [
+    "Master of Financial Planning",
+    "Graduate Certificate in SMSF"
+   ]
+  },
+  {
+   "number": "1290411",
+   "name": "Michael Chen",
+   "slug": "michael-chen-1290411",
+   "role": "Financial Adviser",
+   "licenseeName": "Bluegum Private Wealth Pty Ltd",
+   "licenseeNumber": "523004",
+   "firstAdviceYear": 2011,
+   "qualifications": [
+    "Bachelor of Business (Accounting)",
+    "Graduate Diploma of Financial Planning"
+   ]
+  },
+  {
+   "number": "1292740",
+   "name": "Nathan Wright",
+   "slug": "nathan-wright-1292740",
+   "role": "Financial Adviser",
+   "licenseeName": "Coral Coast Advisory Services Pty Ltd",
+   "licenseeNumber": "523003",
+   "firstAdviceYear": 2019,
+   "qualifications": [
+    "Master of Financial Planning"
+   ]
+  },
+  {
+   "number": "1295069",
+   "name": "Nina Cook",
+   "slug": "nina-cook-1295069",
+   "role": "Provisional Financial Adviser",
+   "licenseeName": "Southbank Wealth Partners Pty Ltd",
+   "licenseeNumber": "523002",
+   "firstAdviceYear": 2021,
+   "qualifications": [
+    "Graduate Diploma of Financial Planning"
+   ]
+  },
+  {
+   "number": "1293836",
+   "name": "Noah Mitchell",
+   "slug": "noah-mitchell-1293836",
+   "role": "Financial Adviser",
+   "licenseeName": "Stirling Park Financial Services Pty Ltd",
+   "licenseeNumber": "523005",
+   "firstAdviceYear": 2008,
+   "qualifications": [
+    "Bachelor of Business (Accounting)"
+   ]
+  },
+  {
+   "number": "1290959",
+   "name": "Olivia Singh",
+   "slug": "olivia-singh-1290959",
+   "role": "Financial Adviser",
+   "licenseeName": "Southbank Wealth Partners Pty Ltd",
+   "licenseeNumber": "523002",
+   "firstAdviceYear": 2022,
+   "qualifications": [
+    "Bachelor of Commerce (Financial Planning)"
+   ]
+  },
+  {
+   "number": "1294110",
+   "name": "Oscar Turner",
+   "slug": "oscar-turner-1294110",
+   "role": "Financial Adviser",
+   "licenseeName": "Harbour Lane Financial Group Pty Ltd",
+   "licenseeNumber": "523001",
+   "firstAdviceYear": 2023,
+   "qualifications": [
+    "Master of Financial Planning",
+    "Bachelor of Commerce (Financial Planning)"
+   ]
+  },
+  {
+   "number": "1290274",
+   "name": "Priya Patel",
+   "slug": "priya-patel-1290274",
+   "role": "Financial Adviser",
+   "licenseeName": "Coral Coast Advisory Services Pty Ltd",
+   "licenseeNumber": "523003",
+   "firstAdviceYear": 2014,
+   "qualifications": [
+    "Graduate Diploma of Financial Planning",
+    "Graduate Certificate in SMSF"
+   ]
+  },
+  {
+   "number": "1291644",
+   "name": "Raj White",
+   "slug": "raj-white-1291644",
+   "role": "Financial Adviser",
+   "licenseeName": "Harbour Lane Financial Group Pty Ltd",
+   "licenseeNumber": "523001",
+   "firstAdviceYear": 2020,
+   "qualifications": [
+    "Master of Financial Planning"
+   ]
+  },
+  {
+   "number": "1293699",
+   "name": "Ruby Campbell",
+   "slug": "ruby-campbell-1293699",
+   "role": "Financial Adviser",
+   "licenseeName": "Bluegum Private Wealth Pty Ltd",
+   "licenseeNumber": "523004",
+   "firstAdviceYear": 2019,
+   "qualifications": [
+    "Bachelor of Commerce (Financial Planning)"
+   ]
+  },
+  {
+   "number": "1290000",
+   "name": "Sarah Nguyen",
+   "slug": "sarah-nguyen-1290000",
+   "role": "Financial Adviser",
+   "licenseeName": "Harbour Lane Financial Group Pty Ltd",
+   "licenseeNumber": "523001",
+   "firstAdviceYear": 2011,
+   "qualifications": [
+    "Advanced Diploma of Financial Services"
+   ]
+  },
+  {
+   "number": "1291507",
+   "name": "Sophie Thompson",
+   "slug": "sophie-thompson-1291507",
+   "role": "Financial Adviser",
+   "licenseeName": "Wattle Street Advice Group Pty Ltd",
+   "licenseeNumber": "523006",
+   "firstAdviceYear": 2019,
+   "qualifications": [
+    "Graduate Diploma of Financial Planning"
+   ]
+  },
+  {
+   "number": "1291096",
+   "name": "Thomas Johnson",
+   "slug": "thomas-johnson-1291096",
+   "role": "Financial Adviser",
+   "licenseeName": "Coral Coast Advisory Services Pty Ltd",
+   "licenseeNumber": "523003",
+   "firstAdviceYear": 2021,
+   "qualifications": [
+    "Master of Financial Planning",
+    "Graduate Diploma of Financial Planning"
+   ]
+  },
+  {
+   "number": "1295206",
+   "name": "Tom Rogers",
+   "slug": "tom-rogers-1295206",
+   "role": "Provisional Financial Adviser",
+   "licenseeName": "Coral Coast Advisory Services Pty Ltd",
+   "licenseeNumber": "523003",
+   "firstAdviceYear": 2011,
+   "qualifications": [
+    "Advanced Diploma of Financial Services"
+   ]
+  },
+  {
+   "number": "1290822",
+   "name": "Wei Taylor",
+   "slug": "wei-taylor-1290822",
+   "role": "Financial Adviser",
+   "licenseeName": "Harbour Lane Financial Group Pty Ltd",
+   "licenseeNumber": "523001",
+   "firstAdviceYear": 2022,
+   "qualifications": [
+    "Advanced Diploma of Financial Services"
+   ]
+  },
+  {
+   "number": "1293151",
+   "name": "Zara Baker",
+   "slug": "zara-baker-1293151",
+   "role": "Financial Adviser",
+   "licenseeName": "Wattle Street Advice Group Pty Ltd",
+   "licenseeNumber": "523006",
+   "firstAdviceYear": 2023,
+   "qualifications": [
+    "Bachelor of Commerce (Financial Planning)",
+    "Graduate Certificate in SMSF"
+   ]
+  }
+ ]
+}

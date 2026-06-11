@@ -677,7 +677,7 @@ export default async function ProDashboardPage() {
                       }`}
                     >
                       <svg
-                        className={`w-4 h-4 ${hasFired ? "text-amber-500" : "text-slate-400"}`}
+                        className={`w-4 h-4 ${hasFired ? "text-amber-500" : "text-slate-500"}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -713,7 +713,7 @@ export default async function ProDashboardPage() {
                           )}
                         </p>
                       ) : (
-                        <p className="mt-0.5 text-xs text-slate-400">
+                        <p className="mt-0.5 text-xs text-slate-500">
                           Monitoring — threshold not yet reached
                         </p>
                       )}

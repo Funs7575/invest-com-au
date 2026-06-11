@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 
 interface QuizResultEntry {
   slug: string;
@@ -95,7 +96,7 @@ export default function PersonalizedRecommendations() {
             setDismissed(true);
             trackEvent("personalized_recs_dismissed");
           }}
-          className="text-slate-400 hover:text-slate-600 transition-colors shrink-0"
+          className="text-slate-500 hover:text-slate-600 transition-colors shrink-0"
           aria-label="Dismiss recommendations"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,7 +128,7 @@ export default function PersonalizedRecommendations() {
                 )}
               </div>
               <p className="text-sm font-semibold text-slate-800 truncate">{result.name}</p>
-              {result.rating && (
+              {SHOW_RATINGS && result.rating && (
                 <p className="text-[0.62rem] text-slate-500">{result.rating}/5 rating</p>
               )}
             </div>

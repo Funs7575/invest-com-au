@@ -51,6 +51,12 @@ function getTypeOrFallback(type: ProfessionalType, label: string): FaqItem[] {
 }
 
 export const revalidate = 1800;
+// Unknown type/state combos must 404 cleanly, not soft-404 (HTTP 200 +
+// streamed React #419). generateStaticParams() below enumerates the full
+// valid set (every SLUG_TO_TYPE × every STATE_NAMES/CITY_MAP), and
+// resolveLocation() rejects anything outside it, so dynamicParams=false is
+// safe and gives a real 404 at the routing layer (DISC-B / DISC-20260610).
+export const dynamicParams = false;
 
 const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "smsf-accountants": "smsf_accountant",

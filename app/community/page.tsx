@@ -5,6 +5,8 @@ import Icon from "@/components/Icon";
 import DirectoryHero from "@/components/directory/DirectoryHero";
 import { faqJsonLd } from "@/lib/schema-markup";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import QuestionOfTheDay from "@/components/community/QuestionOfTheDay";
+import { Suspense } from "react";
 
 // Each category now has ≥3 seeded threads (migration
 // 20260802000000_seed_forum_threads.sql) — safe to index.
@@ -136,6 +138,12 @@ export default async function CommunityPage() {
         </div>
       </DirectoryHero>
 
+      {/* Question of the day — FLAG-GATED OFF (community_qotd, no flag
+          row exists; §11 D2/D3 pending). Renders nothing while off. */}
+      <Suspense fallback={null}>
+        <QuestionOfTheDay />
+      </Suspense>
+
       {/* Featured — confessions */}
       <div className="container-custom max-w-4xl mt-5 mb-6">
         <Link
@@ -146,7 +154,7 @@ export default async function CommunityPage() {
             <span className="text-2xl" aria-hidden="true">🤫</span>
             <div>
               <p className="font-bold text-sm">Investment Confessions</p>
-              <p className="text-xs text-slate-400">Anonymous investing wins, losses &amp; hard lessons — no judgement</p>
+              <p className="text-xs text-slate-500">Anonymous investing wins, losses &amp; hard lessons — no judgement</p>
             </div>
           </div>
           <Icon name="chevron-right" size={18} className="text-slate-500 group-hover:text-slate-300 transition-colors shrink-0" />
@@ -240,7 +248,7 @@ export default async function CommunityPage() {
                   source="community-launch"
                   className="justify-center"
                 />
-                <p className="text-[0.65rem] text-slate-400 mt-2 text-center">
+                <p className="text-[0.65rem] text-slate-500 mt-2 text-center">
                   We&apos;ll only email you about the community launch. Unsubscribe any time.
                 </p>
               </div>
@@ -270,7 +278,7 @@ export default async function CommunityPage() {
                   <p className="text-sm text-slate-600 mt-1 line-clamp-2">
                     {cat.description}
                   </p>
-                  <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
+                  <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
                     <span>
                       {(cat.thread_count ?? 0).toLocaleString()} threads
                     </span>

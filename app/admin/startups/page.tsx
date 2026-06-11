@@ -95,9 +95,9 @@ export default function AdminStartupsPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-slate-400">Loading...</p>
+        <p className="text-sm text-slate-500">Loading...</p>
       ) : rows.length === 0 ? (
-        <p className="text-sm text-slate-400">No {tab} startups.</p>
+        <p className="text-sm text-slate-500">No {tab} startups.</p>
       ) : (
         <div className="space-y-3">
           {rows.map((row) => (

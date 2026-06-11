@@ -397,11 +397,11 @@ export default function StartClient() {
           </div>
           <div className="flex items-center justify-between mt-2">
             {step > 0 || showResult ? (
-              <button onClick={goBack} className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1">
+              <button onClick={goBack} className="text-xs text-slate-500 hover:text-slate-600 flex items-center gap-1">
                 <Icon name="chevron-left" size={14} /> Back
               </button>
             ) : <span />}
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500">
               {showResult ? "Your results" : `Step ${step + 1} of 5`}
             </span>
           </div>
@@ -565,7 +565,7 @@ export default function StartClient() {
             <div className="text-center">
               <button
                 onClick={() => { setAnswers({}); setStep(0); setShowResult(false); }}
-                className="text-xs text-slate-400 hover:text-slate-600"
+                className="text-xs text-slate-500 hover:text-slate-600"
               >
                 Start over
               </button>

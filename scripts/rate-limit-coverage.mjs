@@ -133,6 +133,11 @@ const EXEMPT_PATTERNS = [
   // absorbs repeat reads. No PII, no writes, no user input beyond URL segments
   // validated against a fixed enum — per-IP throttling adds nothing.
   { match: /\/api\/verified-count\//, reason: "public read w/ 60s CDN cache; provider-pooled; no writes" },
+  // social-proof is a public aggregate (daily-cached count of analytics
+  // events, lib/social-proof.ts). Cache-Control sets public, max-age=3600,
+  // stale-while-revalidate=86400 so the CDN absorbs repeats. No PII, no
+  // writes, single ?metric= param validated against a fixed enum.
+  { match: /\/api\/social-proof(\/|$)/, reason: "public read w/ 1h CDN cache + 24h server cache; provider-pooled; no writes" },
   // market-events GET and iCal are public reads with 1h CDN cache.
   // iCal output is deterministic and fully CDN-absorbed at this traffic level.
   // No writes, no user input, no PII — per-IP throttle adds nothing.
@@ -141,6 +146,16 @@ const EXEMPT_PATTERNS = [
   // only a status enum query param validated against a fixed Set. Per-IP
   // throttle would cost CDN cache hits with no real threat model.
   { match: /\/api\/ipo-offers(\/|$)/, reason: "public read w/ 1h CDN cache; provider-pooled; no writes" },
+  // health/crons exposes a single age-in-minutes liveness number (no job
+  // names, no stats) with a 5m CDN cache — the external dead-man watchdog
+  // (.github/workflows/cron-watchdog.yml) must be able to read it without
+  // ever being throttled.
+  { match: /\/api\/health\/crons(\/|$)/, reason: "public liveness probe; single aggregate age; 5m CDN cache; no writes" },
+  // social-proof is a public aggregate count (distinct sessions, 7d window)
+  // with a 1h CDN cache + 1h unstable_cache behind it. No PII, no writes,
+  // surface param validated against a fixed enum — per-IP throttling would
+  // only cost CDN hits.
+  { match: /\/api\/social-proof(\/|$)/, reason: "public read w/ 1h CDN+data cache; fixed-enum input; no writes" },
   // office-hours public GET is a 5 min CDN-cached list of published sessions.
   // No PII, no writes. Question POST + upvote POST + RSVP POST are all
   // session-auth + per-user rate-limited inside the handler.

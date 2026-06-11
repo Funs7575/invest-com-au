@@ -94,7 +94,7 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
 
         {/* Alerts timeline */}
         {filtered.length === 0 ? (
-          <div className="text-center py-16 text-slate-400">
+          <div className="text-center py-16 text-slate-500">
             <p className="text-lg mb-1">No alerts yet</p>
             <p className="text-sm">Check back soon for regulatory and tax updates.</p>
           </div>
@@ -123,7 +123,7 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                             {alert.severity.toUpperCase()}
                           </span>
                           {alert.effective_date && (
-                            <span className="text-[0.69rem] text-slate-400">
+                            <span className="text-[0.69rem] text-slate-500">
                               Effective: {new Date(alert.effective_date).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                             </span>
                           )}
@@ -139,14 +139,14 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                             </span>
                           )}
                           {alert.affected_broker_slugs && alert.affected_broker_slugs.length > 0 && (
-                            <span className="text-[0.62rem] text-slate-400">
+                            <span className="text-[0.62rem] text-slate-500">
                               {alert.affected_broker_slugs.length} broker{alert.affected_broker_slugs.length !== 1 ? "s" : ""} affected
                             </span>
                           )}
                         </div>
                       </div>
                       <svg
-                        className={`w-4 h-4 text-slate-400 shrink-0 mt-1 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                        className={`w-4 h-4 text-slate-500 shrink-0 mt-1 transition-transform ${isExpanded ? "rotate-180" : ""}`}
                         fill="none" stroke="currentColor" viewBox="0 0 24 24"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

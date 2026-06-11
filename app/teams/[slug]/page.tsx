@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 // eslint-disable-next-line no-restricted-imports -- Member-only "Open squad inbox" CTA detection: looks up the calling professional (status pending or active, can_appear_publicly may be false) and their expert_team_members row. The anon-RLS policy on expert_team_members only exposes public members, so the admin client is required to detect non-public memberships. The page resolves the calling auth user first and reads only their own membership row.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { absoluteUrl, breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { SHOW_ADVISOR_RATINGS } from "@/lib/compliance-config";
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
 import { estimateBundledPrice } from "@/lib/expert-teams/pricing";
 import Icon from "@/components/Icon";
@@ -304,7 +305,7 @@ export default async function TeamProfilePage({ params }: PageProps) {
           })),
         }
       : {}),
-    ...(typeof completionPct === "number" && outcomesSubmitted > 0
+    ...(SHOW_ADVISOR_RATINGS && typeof completionPct === "number" && outcomesSubmitted > 0
       ? {
           aggregateRating: {
             "@type": "AggregateRating",
@@ -321,7 +322,7 @@ export default async function TeamProfilePage({ params }: PageProps) {
       ? {
           review: testimonials.slice(0, 5).map((t) => ({
             "@type": "Review",
-            ...(t.rating
+            ...(SHOW_ADVISOR_RATINGS && t.rating
               ? {
                   reviewRating: {
                     "@type": "Rating",
@@ -524,20 +525,20 @@ export default async function TeamProfilePage({ params }: PageProps) {
                         <Icon
                           name="chevron-down"
                           size={16}
-                          className="text-slate-400 shrink-0 transition-transform group-open:rotate-180"
+                          className="text-slate-500 shrink-0 transition-transform group-open:rotate-180"
                         />
                       </summary>
                       <div className="px-4 pb-4 space-y-3">
                         <div>
-                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Situation</p>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">Situation</p>
                           <p className="text-sm text-slate-600 leading-relaxed">{cs.situation}</p>
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Approach</p>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">Approach</p>
                           <p className="text-sm text-slate-600 leading-relaxed">{cs.approach}</p>
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 mb-1">Outcome</p>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">Outcome</p>
                           <p className="text-sm text-slate-600 leading-relaxed">{cs.outcome}</p>
                         </div>
                         {author && (

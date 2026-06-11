@@ -129,7 +129,7 @@ export default function BrokerDealsPage() {
               <p className="text-sm font-bold text-slate-900">{brokerName}</p>
               <p className="text-xs text-slate-700 mt-0.5">{dealText}</p>
               {dealExpiry && (
-                <p className={`text-[0.6rem] mt-1 ${isExpired ? "text-red-500" : isExpiringSoon ? "text-amber-600" : "text-slate-400"}`}>
+                <p className={`text-[0.6rem] mt-1 ${isExpired ? "text-red-500" : isExpiringSoon ? "text-amber-600" : "text-slate-500"}`}>
                   {isExpired ? "Expired" : `Expires ${new Date(dealExpiry).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}`}
                   {isExpiringSoon && ` (${daysUntilExpiry} days left)`}
                 </p>
@@ -160,7 +160,7 @@ export default function BrokerDealsPage() {
           <>
             <div>
               <label htmlFor="deal-text" className="block text-xs font-bold text-slate-700 mb-1">
-                Deal Text * <span className="font-normal text-slate-400">({dealText.length}/200)</span>
+                Deal Text * <span className="font-normal text-slate-500">({dealText.length}/200)</span>
               </label>
               <textarea
                 id="deal-text"
@@ -171,7 +171,7 @@ export default function BrokerDealsPage() {
                 placeholder="e.g. $0 brokerage on all US shares for the first 30 days. Plus a free stock when you sign up."
                 className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30 resize-none"
               />
-              <p className="text-[0.6rem] text-slate-400 mt-1">This appears on your broker listing, the deals page, and comparison tables. Keep it punchy and specific.</p>
+              <p className="text-[0.6rem] text-slate-500 mt-1">This appears on your broker listing, the deals page, and comparison tables. Keep it punchy and specific.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -185,7 +185,7 @@ export default function BrokerDealsPage() {
                   min={new Date().toISOString().split("T")[0]}
                   className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
                 />
-                <p className="text-[0.6rem] text-slate-400 mt-1">Optional. Deal auto-hides after this date.</p>
+                <p className="text-[0.6rem] text-slate-500 mt-1">Optional. Deal auto-hides after this date.</p>
               </div>
               <div>
                 <label htmlFor="deal-category" className="block text-xs font-bold text-slate-700 mb-1">Category</label>
@@ -202,7 +202,7 @@ export default function BrokerDealsPage() {
 
             <div>
               <label htmlFor="deal-terms" className="block text-xs font-bold text-slate-700 mb-1">
-                Terms &amp; Conditions <span className="font-normal text-slate-400">({dealTerms.length}/500)</span>
+                Terms &amp; Conditions <span className="font-normal text-slate-500">({dealTerms.length}/500)</span>
               </label>
               <textarea
                 id="deal-terms"
@@ -213,14 +213,14 @@ export default function BrokerDealsPage() {
                 placeholder="e.g. Available to new customers only. Must be 18+. T&Cs apply — see website for full details. Offer valid until 30/06/2026."
                 className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/30 resize-none"
               />
-              <p className="text-[0.6rem] text-slate-400 mt-1">Shown in fine print below the deal. Include eligibility and key conditions.</p>
+              <p className="text-[0.6rem] text-slate-500 mt-1">Shown in fine print below the deal. Include eligibility and key conditions.</p>
             </div>
           </>
         )}
 
         {/* Status + save */}
         <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-          <div className="text-xs text-slate-400">
+          <div className="text-xs text-slate-500">
             {lastVerified && (
               <span>Last updated: {new Date(lastVerified).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</span>
             )}
@@ -250,7 +250,7 @@ export default function BrokerDealsPage() {
           <div className="flex items-center gap-1.5"><Icon name="check-circle" size={12} className="text-emerald-500" /> Platform quiz results</div>
           <div className="flex items-center gap-1.5"><Icon name="check-circle" size={12} className="text-emerald-500" /> Versus comparison pages</div>
         </div>
-        <p className="text-[0.55rem] text-slate-400 mt-2">Deals display immediately after saving. No approval needed. Expired deals are automatically hidden.</p>
+        <p className="text-[0.55rem] text-slate-500 mt-2">Deals display immediately after saving. No approval needed. Expired deals are automatically hidden.</p>
       </div>
     </div>
   );

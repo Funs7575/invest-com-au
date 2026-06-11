@@ -221,7 +221,7 @@ export default function CaseStudiesTab({ advisor }: Props) {
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-slate-900">{editingId !== null ? "Edit Case Study" : "New Case Study"}</h3>
-            <button onClick={closeForm} aria-label="Close form" className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+            <button onClick={closeForm} aria-label="Close form" className="text-slate-500 hover:text-slate-600 text-lg leading-none">✕</button>
           </div>
 
           <div className="space-y-4">
@@ -235,7 +235,7 @@ export default function CaseStudiesTab({ advisor }: Props) {
                 className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30"
                 maxLength={150}
               />
-              <p className="text-[0.58rem] text-slate-400 mt-0.5">{form.title.length}/150</p>
+              <p className="text-[0.58rem] text-slate-500 mt-0.5">{form.title.length}/150</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -268,7 +268,7 @@ export default function CaseStudiesTab({ advisor }: Props) {
             </div>
 
             <div>
-              <label htmlFor="cs-situation" className="block text-xs font-bold text-slate-700 mb-1">Situation * <span className="font-normal text-slate-400">(client&rsquo;s starting point)</span></label>
+              <label htmlFor="cs-situation" className="block text-xs font-bold text-slate-700 mb-1">Situation * <span className="font-normal text-slate-500">(client&rsquo;s starting point)</span></label>
               <textarea
                 id="cs-situation"
                 value={form.situation}
@@ -278,11 +278,11 @@ export default function CaseStudiesTab({ advisor }: Props) {
                 maxLength={1000}
                 className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical"
               />
-              <p className="text-[0.58rem] text-slate-400 mt-0.5">{form.situation.length}/1000</p>
+              <p className="text-[0.58rem] text-slate-500 mt-0.5">{form.situation.length}/1000</p>
             </div>
 
             <div>
-              <label htmlFor="cs-approach" className="block text-xs font-bold text-slate-700 mb-1">Approach * <span className="font-normal text-slate-400">(what you did)</span></label>
+              <label htmlFor="cs-approach" className="block text-xs font-bold text-slate-700 mb-1">Approach * <span className="font-normal text-slate-500">(what you did)</span></label>
               <textarea
                 id="cs-approach"
                 value={form.approach}
@@ -292,11 +292,11 @@ export default function CaseStudiesTab({ advisor }: Props) {
                 maxLength={1000}
                 className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical"
               />
-              <p className="text-[0.58rem] text-slate-400 mt-0.5">{form.approach.length}/1000</p>
+              <p className="text-[0.58rem] text-slate-500 mt-0.5">{form.approach.length}/1000</p>
             </div>
 
             <div>
-              <label htmlFor="cs-outcome" className="block text-xs font-bold text-slate-700 mb-1">Outcome * <span className="font-normal text-slate-400">(results achieved)</span></label>
+              <label htmlFor="cs-outcome" className="block text-xs font-bold text-slate-700 mb-1">Outcome * <span className="font-normal text-slate-500">(results achieved)</span></label>
               <textarea
                 id="cs-outcome"
                 value={form.outcome}
@@ -306,7 +306,7 @@ export default function CaseStudiesTab({ advisor }: Props) {
                 maxLength={500}
                 className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical"
               />
-              <p className="text-[0.58rem] text-slate-400 mt-0.5">{form.outcome.length}/500</p>
+              <p className="text-[0.58rem] text-slate-500 mt-0.5">{form.outcome.length}/500</p>
             </div>
 
             {error && (

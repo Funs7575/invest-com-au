@@ -212,7 +212,7 @@ export default function RetirementCalculatorClient() {
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much do you need to retire?</h1>
           <p className="text-sm md:text-base text-violet-100">Project your super balance, see how long it lasts, and find out if you&apos;re on track for the retirement you want.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
         </div>
       </div>
 
@@ -248,7 +248,7 @@ export default function RetirementCalculatorClient() {
             <div>
               <label htmlFor="rc-super-balance" className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
                 <input
                   id="rc-super-balance"
                   type="number" inputMode="decimal"
@@ -263,7 +263,7 @@ export default function RetirementCalculatorClient() {
             <div>
               <label htmlFor="rc-annual-salary" className="block text-sm font-bold text-slate-700 mb-1.5">Annual salary (pre-tax)</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
                 <input
                   id="rc-annual-salary"
                   type="number" inputMode="decimal"
@@ -293,7 +293,7 @@ export default function RetirementCalculatorClient() {
                   onChange={e => setEmployerRate(Math.max(0, Math.min(25, parseFloat(e.target.value) || 0)))}
                   className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">%</span>
               </div>
             </div>
 
@@ -301,7 +301,7 @@ export default function RetirementCalculatorClient() {
             <div>
               <label htmlFor="rc-add-contrib" className="block text-sm font-bold text-slate-700 mb-1.5">Additional contributions (yearly)</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
                 <input
                   id="rc-add-contrib"
                   type="number" inputMode="decimal"
@@ -324,7 +324,7 @@ export default function RetirementCalculatorClient() {
                   onChange={e => setExpectedReturn(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))}
                   className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">%</span>
               </div>
             </div>
 
@@ -340,7 +340,7 @@ export default function RetirementCalculatorClient() {
                   onChange={e => setInflationRate(Math.max(0, Math.min(10, parseFloat(e.target.value) || 0)))}
                   className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">%</span>
               </div>
             </div>
 
@@ -348,7 +348,7 @@ export default function RetirementCalculatorClient() {
             <div className="md:col-span-2">
               <label htmlFor="rc-desired-income" className="block text-sm font-bold text-slate-700 mb-1.5">Desired retirement income (per year)</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
                 <input
                   id="rc-desired-income"
                   type="number" inputMode="decimal"
@@ -494,7 +494,7 @@ export default function RetirementCalculatorClient() {
             {/* Email capture gate */}
             {!emailGated && !emailSubmitted && (
               <div className="text-center mb-6">
-                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-400 hover:text-slate-600">
+                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-500 hover:text-slate-600">
                   Want to save this projection? Get it emailed to you →
                 </button>
               </div>

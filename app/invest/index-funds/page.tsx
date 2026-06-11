@@ -408,7 +408,7 @@ export default async function IndexFundsPage() {
                 <p className="text-xs font-bold uppercase text-red-400 mb-1">{d.period}</p>
                 <p className="text-3xl font-extrabold text-red-600 mb-1">{d.pct}</p>
                 <p className="text-xs font-semibold text-slate-700 mb-1">{d.label}</p>
-                <p className="text-xs text-slate-400">{d.note}</p>
+                <p className="text-xs text-slate-500">{d.note}</p>
               </div>
             ))}
           </div>
@@ -498,7 +498,7 @@ export default async function IndexFundsPage() {
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-slate-400 px-4 py-2">
+            <p className="text-xs text-slate-500 px-4 py-2">
               Illustrative only. Assumes 7% gross annual return before fees, no additional contributions.
               Actual returns will vary. This is not a forecast or projection.
             </p>
@@ -642,7 +642,7 @@ export default async function IndexFundsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-3">
+          <p className="text-xs text-slate-500 mt-3">
             MERs and returns are approximate as at {CURRENT_YEAR}. 5-year returns are past
             performance and are not a reliable indicator of future returns. Distribution yields
             may vary.
@@ -706,7 +706,7 @@ export default async function IndexFundsPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-slate-400 mt-3">Approximate as at {CURRENT_YEAR}</p>
+              <p className="text-xs text-slate-500 mt-3">Approximate as at {CURRENT_YEAR}</p>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl p-6">
@@ -736,7 +736,7 @@ export default async function IndexFundsPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-slate-400 mt-3">Approximate as at {CURRENT_YEAR}</p>
+              <p className="text-xs text-slate-500 mt-3">Approximate as at {CURRENT_YEAR}</p>
             </div>
           </div>
 
@@ -805,7 +805,7 @@ export default async function IndexFundsPage() {
                     { dt: "Best for", dd: "Beginning investors, smaller balances" },
                   ].map((item) => (
                     <div key={item.dt} className="bg-slate-50 rounded-lg p-2">
-                      <dt className="text-slate-400">{item.dt}</dt>
+                      <dt className="text-slate-500">{item.dt}</dt>
                       <dd className="font-semibold text-slate-800 mt-0.5">{item.dd}</dd>
                     </div>
                   ))}
@@ -854,7 +854,7 @@ export default async function IndexFundsPage() {
                     { dt: "Best for", dd: "Most investors; balances franking + global growth" },
                   ].map((item) => (
                     <div key={item.dt} className="bg-slate-50 rounded-lg p-2">
-                      <dt className="text-slate-400">{item.dt}</dt>
+                      <dt className="text-slate-500">{item.dt}</dt>
                       <dd className="font-semibold text-slate-800 mt-0.5">{item.dd}</dd>
                     </div>
                   ))}
@@ -866,7 +866,7 @@ export default async function IndexFundsPage() {
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
               <div className="bg-slate-700 px-5 py-3 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                     Template 3
                   </p>
                   <p className="font-extrabold text-white text-lg">
@@ -892,7 +892,7 @@ export default async function IndexFundsPage() {
                       <p className="text-lg font-extrabold text-slate-900">{h.ticker}</p>
                       <p className="text-sm font-bold text-amber-600">{h.pct}</p>
                       <p className="text-xs text-slate-500">{h.label}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">MER {h.mer}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">MER {h.mer}</p>
                     </div>
                   ))}
                 </div>
@@ -910,7 +910,7 @@ export default async function IndexFundsPage() {
                     { dt: "Best for", dd: "Investors within 5–10 yrs of retirement" },
                   ].map((item) => (
                     <div key={item.dt} className="bg-slate-50 rounded-lg p-2">
-                      <dt className="text-slate-400">{item.dt}</dt>
+                      <dt className="text-slate-500">{item.dt}</dt>
                       <dd className="font-semibold text-slate-800 mt-0.5">{item.dd}</dd>
                     </div>
                   ))}
@@ -1235,7 +1235,7 @@ export default async function IndexFundsPage() {
               </Link>
             </div>
             {!SHOW_EDITORIAL_BADGES && (
-              <p className="text-xs text-slate-400 mt-3">{FACTUAL_COMPARISON_DISCLAIMER}</p>
+              <p className="text-xs text-slate-500 mt-3">{FACTUAL_COMPARISON_DISCLAIMER}</p>
             )}
           </div>
         </section>
@@ -1281,7 +1281,7 @@ export default async function IndexFundsPage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-lg font-bold text-slate-400">
+                      <span className="text-lg font-bold text-slate-500">
                         {advisor.name.charAt(0)}
                       </span>
                     )}
@@ -1309,12 +1309,12 @@ export default async function IndexFundsPage() {
                       {SHOW_ADVISOR_RATINGS &&
                         advisor.review_count &&
                         advisor.review_count > 0 && (
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-slate-500">
                             ({advisor.review_count} reviews)
                           </span>
                         )}
                       {advisor.location_display && (
-                        <span className="text-xs text-slate-400">{advisor.location_display}</span>
+                        <span className="text-xs text-slate-500">{advisor.location_display}</span>
                       )}
                     </div>
                   </div>
@@ -1396,7 +1396,7 @@ export default async function IndexFundsPage() {
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
                   {faq.q}
                   <svg
-                    className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform"
+                    className="w-4 h-4 text-slate-500 shrink-0 group-open:rotate-180 transition-transform"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

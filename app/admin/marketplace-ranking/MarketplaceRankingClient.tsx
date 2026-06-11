@@ -229,7 +229,7 @@ function PreviewBlock({
                   #{i + 1}
                 </span>
                 <span className="text-slate-900">{p.name}</span>
-                <span className="text-xs text-slate-400">/{p.slug}</span>
+                <span className="text-xs text-slate-500">/{p.slug}</span>
               </span>
               <span className="font-mono text-xs text-emerald-700">
                 {p.score.toFixed(3)}
@@ -238,7 +238,7 @@ function PreviewBlock({
           ))}
         </ol>
       )}
-      <p className="text-[11px] text-slate-400 mt-3">
+      <p className="text-[11px] text-slate-500 mt-3">
         Preview reflects the weights currently saved in the DB. Reload after
         clicking Save to see updates.
       </p>

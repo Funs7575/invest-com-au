@@ -268,7 +268,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                       <summary className="flex items-center justify-between cursor-pointer p-4 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
                         {faq.q}
                         <svg
-                          className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                          className="w-4 h-4 shrink-0 text-slate-500 group-open:rotate-180 transition-transform"
                           aria-hidden="true"
                           fill="none"
                           stroke="currentColor"
@@ -307,7 +307,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
             <p className="text-xs text-slate-500">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
-            <p className="text-xs text-slate-400 mt-4">
+            <p className="text-xs text-slate-500 mt-4">
               <Link
                 href="/how-we-earn"
                 className="underline hover:text-slate-900"

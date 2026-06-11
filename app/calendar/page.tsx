@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, absoluteUrl, SITE_URL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
+import {
+  getUpcomingMarketEvents,
+  groupEventsByMonth,
+  MARKET_EVENT_TYPE_LABELS,
+} from "@/lib/market-events";
 
 export const revalidate = 3600; // 1 h ISR
 
@@ -16,18 +20,6 @@ export const metadata: Metadata = {
     },
   },
 };
-
-interface MarketEvent {
-  id: number;
-  event_date: string;
-  event_type: string;
-  title: string;
-  description: string;
-  source_url: string;
-  is_all_day: boolean;
-  start_time: string | null;
-  timezone: string;
-}
 
 const CALENDAR_FAQS = [
   {
@@ -50,16 +42,6 @@ const CALENDAR_FAQS = [
 
 const calendarFaqLd = faqJsonLd(CALENDAR_FAQS);
 
-const TYPE_LABEL: Record<string, string> = {
-  rba: "RBA",
-  asx: "ASX",
-  earnings: "Earnings",
-  economic: "Economic",
-  dividend: "Dividend",
-  ipo: "IPO",
-  other: "Other",
-};
-
 const TYPE_COLOR: Record<string, string> = {
   rba: "bg-violet-100 text-violet-700 border-violet-200",
   asx: "bg-blue-100 text-blue-700 border-blue-200",
@@ -79,17 +61,6 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function groupByMonth(events: MarketEvent[]): Map<string, MarketEvent[]> {
-  const map = new Map<string, MarketEvent[]>();
-  for (const ev of events) {
-    const key = ev.event_date.slice(0, 7); // YYYY-MM
-    const arr = map.get(key) ?? [];
-    arr.push(ev);
-    map.set(key, arr);
-  }
-  return map;
-}
-
 function monthLabel(yyyyMM: string): string {
   const [y, m] = yyyyMM.split("-");
   const d = new Date(Number(y), Number(m) - 1, 1);
@@ -97,23 +68,8 @@ function monthLabel(yyyyMM: string): string {
 }
 
 export default async function CalendarPage() {
-  const supabase = await createClient();
-  const today = new Date().toISOString().slice(0, 10);
-  const yearOutDate = new Date();
-  yearOutDate.setFullYear(yearOutDate.getFullYear() + 1);
-  const yearOut = yearOutDate.toISOString().slice(0, 10);
-
-  const { data } = await supabase
-    .from("market_events")
-    .select("id, event_date, event_type, title, description, source_url, is_all_day, start_time, timezone")
-    .eq("is_published", true)
-    .gte("event_date", today)
-    .lte("event_date", yearOut)
-    .order("event_date", { ascending: true })
-    .limit(200);
-
-  const events = (data ?? []) as MarketEvent[];
-  const grouped = groupByMonth(events);
+  const events = await getUpcomingMarketEvents();
+  const grouped = groupEventsByMonth(events);
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -160,7 +116,7 @@ export default async function CalendarPage() {
 
         {/* Type legend */}
         <div className="flex flex-wrap gap-2 mt-4">
-          {Object.entries(TYPE_LABEL).map(([type, label]) => (
+          {Object.entries(MARKET_EVENT_TYPE_LABELS).map(([type, label]) => (
             <span
               key={type}
               className={`text-xs font-medium px-2 py-0.5 rounded-full border ${TYPE_COLOR[type] ?? ""}`}
@@ -199,7 +155,7 @@ export default async function CalendarPage() {
                       <p className="text-2xl font-extrabold text-slate-900 leading-none">
                         {new Date(ev.event_date + "T00:00:00").getDate()}
                       </p>
-                      <p className="text-xs text-slate-400 uppercase tracking-wide">
+                      <p className="text-xs text-slate-500 uppercase tracking-wide">
                         {new Date(ev.event_date + "T00:00:00").toLocaleDateString("en-AU", { month: "short" })}
                       </p>
                     </div>
@@ -210,9 +166,9 @@ export default async function CalendarPage() {
                             TYPE_COLOR[ev.event_type] ?? TYPE_COLOR.other
                           }`}
                         >
-                          {TYPE_LABEL[ev.event_type] ?? "Other"}
+                          {MARKET_EVENT_TYPE_LABELS[ev.event_type] ?? "Other"}
                         </span>
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-slate-500">
                           {formatDate(ev.event_date)}
                           {ev.start_time && !ev.is_all_day && (
                             <> · {ev.start_time.slice(0, 5)} {ev.timezone.replace("Australia/", "")}</>
@@ -258,7 +214,7 @@ export default async function CalendarPage() {
       </section>
 
       <footer className="mt-8 pt-4 border-t border-slate-200">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           Dates are approximate for published economic releases. Always verify timing directly with
           the relevant authority (
           <a href="https://www.rba.gov.au" className="hover:underline" target="_blank" rel="noopener noreferrer">RBA</a>,{" "}
@@ -269,6 +225,11 @@ export default async function CalendarPage() {
             <a href={icalUrl} className="text-violet-600 hover:underline">
               Download .ics →
             </a>
+          </span>
+          <span className="ml-2">
+            <Link href="/today" className="text-violet-600 hover:underline">
+              Today&apos;s data →
+            </Link>
           </span>
         </p>
       </footer>

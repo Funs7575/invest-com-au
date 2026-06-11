@@ -242,7 +242,7 @@ export default function AdminPricingPage() {
           <p className="text-sm text-slate-500 mt-1">Set per-category lead prices, free trial leads, and featured listing fees</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-slate-400">Est. monthly revenue (2 leads/vertical)</p>
+          <p className="text-xs text-slate-500">Est. monthly revenue (2 leads/vertical)</p>
           <p className="text-lg font-bold text-emerald-600">{formatCents(totalMonthlyEstimate)}/mo</p>
         </div>
       </div>
@@ -281,14 +281,14 @@ export default function AdminPricingPage() {
                         <span className={`w-2 h-2 rounded-full ${row.price_cents >= 7000 ? "bg-rose-500" : row.price_cents >= 5000 ? "bg-amber-500" : "bg-slate-400"}`} />
                         <div>
                           <p className="font-semibold text-slate-900">{TYPE_LABELS[row.advisor_type] || row.advisor_type}</p>
-                          <p className="text-[0.65rem] text-slate-400">{row.description}</p>
+                          <p className="text-[0.65rem] text-slate-500">{row.description}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-3 py-3 text-center">
                       {isEditing ? (
                         <div className="flex items-center justify-center gap-1">
-                          <span className="text-slate-400">$</span>
+                          <span className="text-slate-500">$</span>
                           <input
                             type="number" inputMode="decimal"
                             className="w-16 px-2 py-1 border border-blue-300 rounded text-center text-sm font-bold"
@@ -303,7 +303,7 @@ export default function AdminPricingPage() {
                     <td className="px-3 py-3 text-center">
                       {isEditing ? (
                         <div className="flex items-center justify-center gap-1">
-                          <span className="text-slate-400">$</span>
+                          <span className="text-slate-500">$</span>
                           <input
                             type="number" inputMode="decimal"
                             className="w-16 px-2 py-1 border border-blue-300 rounded text-center text-sm font-bold"
@@ -318,7 +318,7 @@ export default function AdminPricingPage() {
                     <td className="px-3 py-3 text-center hidden md:table-cell">
                       {isEditing ? (
                         <div className="flex items-center justify-center gap-1">
-                          <span className="text-slate-400">$</span>
+                          <span className="text-slate-500">$</span>
                           <input
                             type="number" inputMode="decimal"
                             className="w-16 px-2 py-1 border border-violet-300 rounded text-center text-sm font-bold"
@@ -339,7 +339,7 @@ export default function AdminPricingPage() {
                           onChange={(e) => setEditValues({ ...editValues, min_price_cents: inputToCents(e.target.value) })}
                         />
                       ) : (
-                        <span className="text-slate-400">{formatCents(row.min_price_cents)}</span>
+                        <span className="text-slate-500">{formatCents(row.min_price_cents)}</span>
                       )}
                     </td>
                     <td className="px-3 py-3 text-center hidden md:table-cell">
@@ -351,7 +351,7 @@ export default function AdminPricingPage() {
                           onChange={(e) => setEditValues({ ...editValues, max_price_cents: inputToCents(e.target.value) })}
                         />
                       ) : (
-                        <span className="text-slate-400">{formatCents(row.max_price_cents)}</span>
+                        <span className="text-slate-500">{formatCents(row.max_price_cents)}</span>
                       )}
                     </td>
                     <td className="px-3 py-3 text-center">
@@ -369,7 +369,7 @@ export default function AdminPricingPage() {
                     <td className="px-3 py-3 text-center hidden md:table-cell">
                       {isEditing ? (
                         <div className="flex items-center justify-center gap-1">
-                          <span className="text-slate-400 text-xs">$</span>
+                          <span className="text-slate-500 text-xs">$</span>
                           <input
                             type="number" inputMode="decimal"
                             className="w-14 px-1 py-1 border border-slate-300 rounded text-center text-xs"
@@ -429,11 +429,11 @@ export default function AdminPricingPage() {
           <div className="space-y-2">
             {logs.map((log, i) => (
               <div key={i} className="flex items-center gap-3 text-xs text-slate-600">
-                <span className="text-slate-400 w-32 shrink-0">{new Date(log.changed_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
+                <span className="text-slate-500 w-32 shrink-0">{new Date(log.changed_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
                 <span className="font-medium text-slate-900">{TYPE_LABELS[log.advisor_type] || log.advisor_type}</span>
-                <span className="text-slate-400">{log.field_changed}:</span>
+                <span className="text-slate-500">{log.field_changed}:</span>
                 <span className="text-red-500 line-through">{formatCents(parseInt(log.old_value || "0"))}</span>
-                <span className="text-slate-400">→</span>
+                <span className="text-slate-500">→</span>
                 <span className="text-emerald-600 font-bold">{formatCents(parseInt(log.new_value || "0"))}</span>
               </div>
             ))}

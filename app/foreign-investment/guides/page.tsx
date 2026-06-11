@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import { faqJsonLd } from "@/lib/schema-markup";
+import CrossBorderNextStep from "@/components/foreign-investment/CrossBorderNextStep";
+import DatedStatBadge from "@/components/DatedStatBadge";
 
 const FI_GUIDES_FAQS = [
   {
@@ -202,7 +204,7 @@ export default function ForeignInvestmentGuidesPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
           <div>
-            <p className="font-bold text-red-800 text-sm">Foreign Buyer Property Ban: Active until 31 March 2027</p>
+            <p className="font-bold text-red-800 text-sm">Foreign Buyer Property Ban: Active until <DatedStatBadge stalesAt="2027-03-31">31 March 2027</DatedStatBadge></p>
             <p className="text-sm text-red-700 mt-0.5">
               Foreign persons cannot currently purchase established (existing) dwellings. New developments and off-the-plan properties are still available.{" "}
               <Link href="/foreign-investment/guides/property-ban-2025" className="underline font-semibold">Read the full guide &rarr;</Link>
@@ -290,6 +292,14 @@ export default function ForeignInvestmentGuidesPage() {
               </Link>
             ))}
           </div>
+        </section>
+
+        {/* ── Next step (quiz international track) ── */}
+        <section className="mb-8">
+          <CrossBorderNextStep
+            title="Not sure which guide applies to you? Take the 60-second match"
+            body="Tell us your country, visa status and goal, and we'll point you to the platforms, specialists or property route most relevant to your situation."
+          />
         </section>
 
         {/* ── Advisor CTA ── */}

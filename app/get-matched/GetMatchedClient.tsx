@@ -601,7 +601,7 @@ function QuestionScreen({
               submitting={submitting}
               onAnswer={onAnswer}
             />
-            <p className="lg:hidden text-[11px] text-slate-400 mt-3 text-center">
+            <p className="lg:hidden text-[11px] text-slate-500 mt-3 text-center">
               General information only · You stay in control
             </p>
           </main>
@@ -616,17 +616,17 @@ function QuestionScreen({
                 {budgetSummary && (<li className="text-slate-700"><strong>Budget:</strong> {humanise(budgetSummary)}</li>)}
                 {timelineSummary && (<li className="text-slate-700"><strong>Timeline:</strong> {humanise(timelineSummary)}</li>)}
                 {!intentSummary && (
-                  <li className="text-slate-400 italic text-xs">Answer the questions and your action plan appears here.</li>
+                  <li className="text-slate-500 italic text-xs">Answer the questions and your action plan appears here.</li>
                 )}
               </ul>
               {routePreview && (
                 <div className="mt-4 pt-4 border-t border-slate-100">
-                  <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-2">Based on your answers</p>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Based on your answers</p>
                   <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
                     <span className="text-xl leading-none">{routePreview.emoji}</span>
                     <span className="text-sm font-bold text-amber-900">{routePreview.label}</span>
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-2">This updates as you answer — different choices lead to a different plan.</p>
+                  <p className="text-[11px] text-slate-500 mt-2">This updates as you answer — different choices lead to a different plan.</p>
                 </div>
               )}
             </div>
@@ -805,7 +805,7 @@ function ActionPlanScreen({
                 </button>
                 <span
                   className={`text-sm ${
-                    item.done ? "text-slate-400 line-through" : "text-slate-700"
+                    item.done ? "text-slate-500 line-through" : "text-slate-700"
                   }`}
                 >
                   {item.href ? (
@@ -939,7 +939,7 @@ function ActionPlanScreen({
             <p role="alert" className="mt-2 text-xs text-red-700">{saveError}</p>
           )}
           {shareToken && !savedUrl && (
-            <p className="mt-3 text-[11px] text-slate-400">
+            <p className="mt-3 text-[11px] text-slate-500">
               Direct link:{" "}
               <Link href={`/plans/${shareToken}`} className="underline">
                 /plans/{shareToken.slice(0, 8)}…

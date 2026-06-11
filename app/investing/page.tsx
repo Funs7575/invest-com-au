@@ -130,7 +130,7 @@ export default function InvestingHubPage() {
                 <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                   {city.intro.split(".").slice(0, 1).join(".")}.
                 </p>
-                <div className="flex items-center gap-2 mt-2 text-[0.6rem] text-slate-400">
+                <div className="flex items-center gap-2 mt-2 text-[0.6rem] text-slate-500">
                   <span>Pop. {city.population}</span>
                 </div>
               </Link>

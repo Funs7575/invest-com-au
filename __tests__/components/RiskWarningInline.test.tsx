@@ -13,7 +13,7 @@ describe("RiskWarningInline", () => {
   it("default (light) variant uses slate text", () => {
     const { container } = render(<RiskWarningInline />);
     expect(container.querySelector("p")?.className).toContain(
-      "text-slate-400",
+      "text-slate-500",
     );
   });
 

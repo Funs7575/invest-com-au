@@ -837,7 +837,7 @@ export default function CompliancePage() {
           </div>
           <div className="flex items-center gap-3">
             {lastRun && (
-              <span className="text-[0.69rem] text-slate-400">Last run: {lastRun}</span>
+              <span className="text-[0.69rem] text-slate-500">Last run: {lastRun}</span>
             )}
             <button
               onClick={runComplianceChecks}
@@ -987,7 +987,7 @@ export default function CompliancePage() {
                               {/* Expandable items list */}
                               {check.items && check.items.length > 0 && (
                                 <details className="mt-1.5">
-                                  <summary className="text-[0.62rem] md:text-[0.69rem] text-slate-400 cursor-pointer hover:text-slate-600 select-none">
+                                  <summary className="text-[0.62rem] md:text-[0.69rem] text-slate-500 cursor-pointer hover:text-slate-600 select-none">
                                     {check.items.length} item{check.items.length !== 1 ? "s" : ""} — click to expand
                                   </summary>
                                   <ul className="mt-1.5 space-y-0.5 text-[0.62rem] md:text-[0.69rem] text-slate-500">

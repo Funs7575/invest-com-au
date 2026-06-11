@@ -126,7 +126,7 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
               <button
                 type="button"
                 onClick={() => removeItem(i)}
-                className="text-slate-400 hover:text-red-600 p-2"
+                className="text-slate-500 hover:text-red-600 p-2"
                 aria-label="Remove item"
               >
                 <Icon name="x" size={16} />
@@ -140,7 +140,7 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
       <section className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4">
         <label className="block">
           <span className="text-sm font-semibold text-slate-900 mb-1 block">
-            Payment terms <span className="text-xs text-slate-400">(optional)</span>
+            Payment terms <span className="text-xs text-slate-500">(optional)</span>
           </span>
           <textarea
             value={paymentTerms}
@@ -152,7 +152,7 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
         </label>
         <label className="block">
           <span className="text-sm font-semibold text-slate-900 mb-1 block">
-            Estimated delivery (days) <span className="text-xs text-slate-400">(optional)</span>
+            Estimated delivery (days) <span className="text-xs text-slate-500">(optional)</span>
           </span>
           <input
             type="number" inputMode="decimal"
@@ -179,7 +179,7 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
         <Icon name="arrow-right" size={16} />
       </button>
 
-      <p className="text-[10px] text-slate-400 text-center">
+      <p className="text-[10px] text-slate-500 text-center">
         Quote valid for 14 days. Consumer will be emailed a review link.
       </p>
     </div>

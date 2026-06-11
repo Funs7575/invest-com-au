@@ -8,6 +8,11 @@ import { itemListJsonLd } from "@/lib/schema-markup";
 import AdvisorsClient from "../AdvisorsClient";
 
 export const revalidate = 1800;
+// The valid slug set is the static SLUG_TO_TYPE registry, so unknown slugs can
+// be rejected at the router with a real 404 status. Without this, the parent
+// segment's loading.tsx streams a 200 shell before the page's notFound() runs
+// (soft-404, DISC-20260610-B).
+export const dynamicParams = false;
 
 const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "smsf-accountants": "smsf_accountant",

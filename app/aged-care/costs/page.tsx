@@ -102,7 +102,7 @@ export default function AgedCareCostsPage() {
             accommodation (RAD or DAP), and optional extras. Government subsidises care based on
             needs — but accommodation and extra service fees are yours to fund.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · 2024–25 rates · General information only</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · 2024–25 rates · General information only</p>
         </div>
       </section>
 
@@ -159,7 +159,7 @@ export default function AgedCareCostsPage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Home care packages have significant wait times (3–18 months at Level 3–4). Register with My Aged Care early.</p>
+          <p className="text-xs text-slate-500 mt-2">Home care packages have significant wait times (3–18 months at Level 3–4). Register with My Aged Care early.</p>
         </div>
       </section>
 

@@ -54,7 +54,7 @@ export default function OrgPortalLogin() {
               <p className="text-sm text-slate-500">
                 We&apos;ve sent a login link to <strong>{email}</strong>. Click the link to access your organisation dashboard.
               </p>
-              <p className="text-xs text-slate-400 mt-3">Check spam if you don&apos;t see it within a minute.</p>
+              <p className="text-xs text-slate-500 mt-3">Check spam if you don&apos;t see it within a minute.</p>
               <button
                 onClick={() => { setStatus("idle"); setError(""); }}
                 className="mt-4 text-xs text-slate-500 hover:text-slate-700"
@@ -93,7 +93,7 @@ export default function OrgPortalLogin() {
           )}
         </div>
 
-        <p className="text-center text-xs text-slate-400 mt-4">
+        <p className="text-center text-xs text-slate-500 mt-4">
           Want to list your CPD courses?{" "}
           <Link href="/for-providers" className="text-slate-600 hover:text-slate-900 font-medium">
             Learn more →

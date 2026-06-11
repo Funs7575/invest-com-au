@@ -57,7 +57,7 @@ export default async function SuccessPage({
           </Link>
         </div>
         {session_id && (
-          <p className="text-[11px] text-slate-400 mt-6 font-mono">
+          <p className="text-[11px] text-slate-500 mt-6 font-mono">
             Reference: {session_id.slice(0, 24)}…
           </p>
         )}

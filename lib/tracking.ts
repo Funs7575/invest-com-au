@@ -1,5 +1,6 @@
 import type { Broker } from './types';
 import { getSessionId } from './session';
+import { SHOW_RATINGS } from './compliance-config';
 import { logger } from "@/lib/logger";
 
 const log = logger("tracking");
@@ -144,6 +145,11 @@ export function formatPercent(n: number, decimals = 2): string {
 }
 
 export function renderStars(rating: number): string {
+  // Licence-mode floor: a factual_only (no-AFSL) build may not render star
+  // ratings anywhere (s766B carve-out). Call sites should still gate their
+  // surrounding numeric text/aria with SHOW_RATINGS — this empty return is the
+  // defence-in-depth net for surfaces the per-component sweep misses.
+  if (!SHOW_RATINGS) return '';
   // Clamp to the conventional 0–5 scale. Out-of-range or NaN input (bad data, a
   // different scale leaking in, or a null coerced to NaN) previously made
   // '☆'.repeat(negative) throw a RangeError — a hard SSR crash on any page that

@@ -79,7 +79,7 @@ export default function RadVsDapPage() {
             Payment (DAP) is a daily fee calculated at the MPIR on the RAD amount. Choosing the right
             option affects your Centrelink entitlements, estate, and cash flow significantly.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not financial advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not financial advice</p>
         </div>
       </section>
 

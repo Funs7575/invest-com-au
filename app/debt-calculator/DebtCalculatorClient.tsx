@@ -309,7 +309,7 @@ export default function DebtCalculatorClient() {
           </div>
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Could debt consolidation save you money?</h1>
           <p className="text-sm md:text-base text-amber-100">Add your debts below and we&apos;ll calculate whether consolidating into a single loan could reduce your interest, payments, and time to debt-free.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
         </div>
       </div>
 
@@ -343,7 +343,7 @@ export default function DebtCalculatorClient() {
               </button>
             )}
           </div>
-          <p className="text-[0.65rem] text-slate-400 mb-3"><span className="text-red-500 font-bold">*</span> Required</p>
+          <p className="text-[0.65rem] text-slate-500 mb-3"><span className="text-red-500 font-bold">*</span> Required</p>
 
           <div className="space-y-4">
             {debts.map((debt, index) => (
@@ -375,7 +375,7 @@ export default function DebtCalculatorClient() {
                   <div>
                     <label htmlFor={`dc-balance-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Balance <span className="text-red-500">*</span></label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">$</span>
                       <input
                         id={`dc-balance-${debt.id}`}
                         type="number" inputMode="decimal"
@@ -398,13 +398,13 @@ export default function DebtCalculatorClient() {
                         className="w-full pr-7 pl-3 py-2.5 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                         placeholder="20"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">%</span>
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">%</span>
                     </div>
                   </div>
                   <div>
-                    <label htmlFor={`dc-min-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Min Payment <span className="text-slate-400 font-normal">(optional)</span></label>
+                    <label htmlFor={`dc-min-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Min Payment <span className="text-slate-500 font-normal">(optional)</span></label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold text-sm">$</span>
                       <input
                         id={`dc-min-${debt.id}`}
                         type="number" inputMode="decimal"
@@ -442,7 +442,7 @@ export default function DebtCalculatorClient() {
                     onChange={e => setConsolidationRate(Math.max(0, Math.min(30, parseFloat(e.target.value) || 0)))}
                     className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">%</span>
                 </div>
                 <div className="flex gap-1.5 mt-2">
                   {[6, 8, 10, 12, 14].map(v => (
@@ -637,7 +637,7 @@ export default function DebtCalculatorClient() {
             {/* Email capture gate */}
             {!emailGated && !emailSubmitted && (
               <div className="text-center mb-6">
-                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-400 hover:text-slate-600">
+                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-500 hover:text-slate-600">
                   Want a detailed repayment schedule? Get it emailed to you →
                 </button>
               </div>

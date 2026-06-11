@@ -600,7 +600,7 @@ export default function ChessVsCustodialPage() {
                   "Staying with the same broker long-term",
                 ].map((item) => (
                   <li key={item} className="flex gap-2">
-                    <span className="text-slate-400 font-bold shrink-0">+</span>
+                    <span className="text-slate-500 font-bold shrink-0">+</span>
                     {item}
                   </li>
                 ))}

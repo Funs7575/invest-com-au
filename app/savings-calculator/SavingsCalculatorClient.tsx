@@ -136,7 +136,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Are you earning enough on your savings?</h1>
           <p className="text-sm md:text-base text-amber-100">Enter your balance and current rate — we&apos;ll show you exactly how much more you could earn.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
         </div>
       </div>}
 
@@ -147,7 +147,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
             <div>
               <label htmlFor="sav-balance" className="block text-sm font-bold text-slate-700 mb-1.5">Your savings balance</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">$</span>
                 <input
                   id="sav-balance"
                   type="number" inputMode="decimal"
@@ -175,7 +175,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                   onChange={e => setCurrentRate(Math.max(0, Math.min(10, parseFloat(e.target.value) || 0)))}
                   className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">%</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[0, 0.5, 1.0, 2.0, 3.0, 4.0].map(v => (
@@ -238,7 +238,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mb-6">
               <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                 <h2 className="text-sm font-bold text-slate-900">All Savings Accounts Ranked</h2>
-                <span className="text-[0.56rem] text-slate-400">{ranked.length} accounts · sorted by rate</span>
+                <span className="text-[0.56rem] text-slate-500">{ranked.length} accounts · sorted by rate</span>
               </div>
 
               {/* Your current rate row */}
@@ -305,7 +305,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
             {/* Show gate trigger */}
             {!emailGated && !emailSubmitted && ranked.length > 3 && (
               <div className="text-center mb-6">
-                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-400 hover:text-slate-600">
+                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-500 hover:text-slate-600">
                   Want to save this comparison? Get it emailed to you →
                 </button>
               </div>

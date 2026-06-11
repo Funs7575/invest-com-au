@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
 import { AFFILIATE_REL } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import { PLATFORM_TYPE_LABELS, type Broker } from "@/lib/types";
 import type {
   CountryConfig,
@@ -17,6 +18,7 @@ import CountryAudiencesSection from "@/components/foreign-investment/sections/Co
 import CountryFaqSection from "@/components/foreign-investment/sections/CountryFaqSection";
 import CountrySchemesSection from "@/components/foreign-investment/CountrySchemesSection";
 import CrossBorderPartnerPanel from "@/components/foreign-investment/CrossBorderPartnerPanel";
+import CrossBorderNextStep from "@/components/foreign-investment/CrossBorderNextStep";
 import { isoForIntentCode } from "@/lib/intent-context";
 import SectionHeading from "@/components/SectionHeading";
 import ForeignInvestmentNav from "@/app/foreign-investment/ForeignInvestmentNav";
@@ -180,7 +182,7 @@ function PlatformCardGrid({ rows, kind }: { rows: ReadonlyArray<Broker>; kind: s
             </div>
             <div>
               <p className="font-bold text-slate-800 text-sm">{p.name}</p>
-              {p.rating && <p className="text-xs text-amber-600">★ {p.rating.toFixed(1)}</p>}
+              {SHOW_RATINGS && p.rating && <p className="text-xs text-amber-600">★ {p.rating.toFixed(1)}</p>}
             </div>
           </div>
           {p.affiliate_url && (
@@ -322,6 +324,13 @@ export default async function CountryHubTemplate({ config }: Props) {
             </div>
           </div>
         )}
+
+        {/* ── Next step (quiz international track + advisor directory) ── */}
+        <CrossBorderNextStep
+          countrySlug={config.slug}
+          title={`Get matched to the right next step for ${config.adjective} investors`}
+          body="Answer a few questions about your visa status and goal and we'll point you to the platforms, specialists or property route that fit — no obligation."
+        />
 
         {/* ── Jump-to cards ── */}
         {config.jumpToCards && config.jumpToCards.length > 0 && (

@@ -148,7 +148,7 @@ export default function RetirementIncomePage() {
             longevity planning all interact. This guide covers the key strategies Australian retirees
             use to make their money last.
           </p>
-          <p className="text-xs text-slate-400">{UPDATED_LABEL} · General information only · Not financial advice</p>
+          <p className="text-xs text-slate-500">{UPDATED_LABEL} · General information only · Not financial advice</p>
         </div>
       </section>
 
@@ -220,7 +220,7 @@ export default function RetirementIncomePage() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-slate-400 mt-2">Age Pension rate as at March 2026. Subject to annual indexation. Verify current rates at servicesaustralia.gov.au.</p>
+          <p className="text-xs text-slate-500 mt-2">Age Pension rate as at March 2026. Subject to annual indexation. Verify current rates at servicesaustralia.gov.au.</p>
         </div>
       </section>
 
@@ -364,7 +364,7 @@ export default function RetirementIncomePage() {
               },
               {
                 title: "Preserve pre-2015 account-based pension grandfathering",
-                body: "Account-based pensions started before 1 January 2015 and continuously held since are assessed under the old income test (actual income received, not deemed). This grandfathered treatment can be significantly better for retirees drawing the minimum — do not close or rollover a pre-2015 ABP without understanding what you will lose.",
+                body: "Account-based pensions started before 1 January 2015 and continuously held since are assessed under the old income test (actual income received, not deemed). This grandfathered treatment can be significantly better for retirees drawing the minimum — do not close or rollover a pre-2015 ABP without understanding what you will lose.", // dated-ok — static historical/legal effective date (2026-06-11 sweep)
               },
             ].map((item, i) => (
               <div key={i} className="rounded-xl border border-slate-200 p-5 bg-white">

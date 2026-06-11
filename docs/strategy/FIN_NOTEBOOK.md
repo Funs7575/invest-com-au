@@ -14,6 +14,163 @@
 
 ## Active strategic decisions log
 
+
+### 2026-06-11 — /goal product-upgrade session: find-advisor elevated; Tasks 2–4 of the brief found already shipped
+
+The five-task product brief (quiz, advisor onboarding wizard, profile
+load-more/CTA, cross-border funnel, contrast sweep) was largely stale —
+grep-before-scope found the wizard (OnboardingWizard + shared
+profile-completeness lib), the profile reviews load-more + booking-CTA
+primacy (ADV-002/ADV-011), the FIRB eligibility walkthrough, the
+non-resident mortgage guide, and the homepage cross-border section all
+already on main. Lesson re-confirmed: any task brief older than ~a week
+must be re-grounded against the tree before scoping.
+
+**Funnel layering (worth remembering):** /quiz and bare /find-advisor 301
+to /get-matched (P8 Decision Engine); /find-advisor stays dedicated ONLY
+for ?specialty=/?country= cross-border arrivals (the 1.75x premium line).
+So quiz work splits: get-matched = volume funnel, find-advisor = premium
+corridor funnel.
+
+**Shipped this session (branch claude/modest-knuth-cchsde):**
+- find-advisor: answer-driven "why we matched you" engine
+  (lib/find-advisor/match-reasons, licence-mode-gated), overseas path
+  (country picker -> corridor cookie + derived cross-border specialty —
+  closes the quiz residency gap from the cross-border plan), optional
+  timeline lead-quality signal (timeline_* context ids), not-sure paths
+  with checkbox exclusivity, commercial-property option, PII-free resume
+  storage (localStorage now answers+position only; legacy blobs with
+  email/phone discarded on load), honest no-match state with pre-filtered
+  browse CTA, edit-answers loop, single OTP countdown, focus management.
+- resolveAdvisorTypes: commercial -> mortgage_broker+buyers_agent;
+  not_sure under smsf broadens to tax_agent.
+- Sitewide AA contrast: 1,892 text-slate-400 body-text instances -> 500
+  via context-aware codemod (scripts/codemods/slate-400-contrast.mjs);
+  icons/dark-sections/dark:/disabled: deliberately kept.
+
+**Decision:** lead-quality timeline signal rides in the context array
+(timeline_asap|weeks|research) rather than a schema change — advisors see
+it in the enquiry payload; revisit a first-class column only if reporting
+needs it.
+
+### 2026-06-11 — Mega-session: launch-clean sweep (DISC A–F) + API-billing verified live-ready + cutover guardian; P1 found: cron fleet dark 19 days
+
+Founder picked three sessions (B cutover-readiness, C polish sweep, D API
+activation) from a menu; all three shipped on one branch/PR. Grounding first
+(per the coordination lesson) found yesterday's 12-workstream wave mostly
+**evaporated with its worktrees** — no PRs existed for the licence-gate
+sweep or cutover scripts, so they were genuinely unclaimed.
+
+**P1 ops finding (needs founder, ~2 min):** the ENTIRE 139-route cron fleet
+has been dark since 2026-05-23 — zero `cron_run_log` rows in 48 h across all
+job names. The #1430 Netlify bridge is merged but never enabled. Fix: set
+`CRON_BRIDGE_ENABLED=true` + confirm `CRON_SECRET` in the Netlify env. The
+"fee-recheck stale" queue item was a symptom of this, not a check-fees bug.
+Prevention shipped: public `GET /api/health/crons` age probe + GitHub-Actions
+`cron-watchdog.yml` (external scheduler — in-platform cron monitors die with
+the fleet they monitor; that's how 19 days passed silently).
+
+**Session C (launch-clean):** licence-mode rating gates completed everywhere
+(~36 surfaces + central `renderStars` gate + JSON-LD builders — a
+factual_only deploy is now genuinely rating-free, UI and schema); soft-404s
+fixed with real 404 status on advisors/best/how-to (dynamicParams=false) and
+broker/invest (metadata-level notFound), verified live; social-proof counter
+honestly re-enabled (`/api/social-proof`, real 7-day distinct sessions,
+hidden below 25 — stays dark until launch traffic, by design); mobile tap
+targets + /compare load-more; hero stat scope-labelled. Decision: vitest now
+runs in **general_advice posture** (mirrors prod env) with factual-mode
+pinned by explicit module-mock tests. Decision: `app/quiz/page.tsx` NOT
+deleted — still the documented reference implementation.
+
+**Session D (API billing):** prod verified — the #1529 schema IS applied
+(ledger 155721/155736/155745/155755), so the line is env-vars-away from
+live. Gaps closed: monthly `requests_this_month` reset cron existed only as
+a comment (built: `reset-api-monthly-usage`, monthly-1-3); `fee.changed` was
+subscribable but never fired (wired into check-fees auto-approve + admin
+fee-queue approve); retry cron's silent-empty-stats failure mode now throws
+loudly into cron_run_log; `api_billing` kill switch added at checkout
+(fail-open, automation_kill_switches). Founder path:
+`docs/runbooks/api-billing-activation.md` + `npm run preflight:api-billing`
+(read-only). Remaining to revenue: create 2 Stripe prices, set
+`STRIPE_API_BASIC_PRICE_ID`/`STRIPE_API_PRO_PRICE_ID`, smoke checkout.
+
+**Session B (cutover guardian):** `scripts/cutover/` — sitemap fingerprinter
+(status/redirect-chain/canonical/JSON-LD/noindex per URL, deterministic
+sampling, cross-host path-keyed), fingerprint differ (exit-1 on orphans /
+status regressions / canonical-host drift), redirect-map checker reading
+`docs/cutover/legacy-redirect-map.csv` (**the CO-01 drop-in point** — harness
+live now, founder supplies the prior-host list later), plus
+`cutover-guardian.yml` (weekly + dispatch, artifact baselines). Smoke-tested
+live against the mirror: 8 shards parsed, 3,500 URLs discovered, sampled
+pages all healthy with apex canonicals.
+
+**Revisit:** 2026-06-18 — (1) did the founder flip the Netlify cron envs
+(watchdog goes green)? (2) Stripe price IDs set → first API-billing checkout
+smoke-tested? (3) consider promoting noindex-appearance to exit-1 in the
+cutover differ once a real baseline exists.
+
+### 2026-06-11 — Wave-1 mega-integration on PR #1541 (8 workstreams, quiz elevation, DISC fixes)
+
+One PR integrates the full parallel wave: quiz not_sure paths + jargon microcopy +
+attribute-driven match reasons; DISC-20260610 A/C/D/F fixes; advisor-portal
+onboarding wizard + lead-cap upsell + pro-research admin CRUD + win-back cron;
+rate-alert mailer engine + tokenised manage-prefs (no-login, possession-of-token
+auth); calculators public API v1 (5 endpoints) + embed gating; /fees/today + /today
+data-news surfaces; community Phase 1 (cross-links, QOTD, newsletter highlights);
+GEO AI-crawler capture in proxy.ts; /careers demand probe; CO-stream cutover
+guardian scripts.
+
+Strategic decisions made (this session, founder gave blanket "make the best
+long-term call" authorisation):
+
+- **DISC-A direction — corrected twice, final answer is GATE the ratings**:
+  first pass wrongly reverted the agent's `SHOW_RATINGS` gate on `BrokerCard`
+  on a "ratings are factual" theory. The REMEDIATION_QUEUE row is explicit:
+  DISC-A = wire `SHOW_RATINGS`/`SHOW_ADVISOR_RATINGS` through the surfaces
+  that REMAINED un-gated (BrokerCard, DealCard, RecentlyViewed, quiz results,
+  advisor cards, versus) — #1489 had already gated the compare table etc.
+  Editorial star ratings are opinion (implied recommendation risk in
+  factual_only mode), unlike fee/CHESS facts. Gate restored; BrokerCard test
+  now mocks the flag. Lesson: **when an agent's change contradicts your memory
+  of an audit item, re-read the audit item before "fixing" the agent.**
+- **PR #1541 merged with a MERGE COMMIT, not squash**, deliberately breaking
+  the repo's squash convention for this one PR: 19 commits across 8 independent
+  workstreams — squashing would destroy per-stream blame/revert granularity,
+  and a same-branch follow-up PR after a squash would re-show old diffs
+  (merge-base lag) or force a Tier-E force-push. Merge commit avoids both.
+  Single-stream PRs stay squash.
+- **advisor-winback cron is fully wired** (cron-groups `weekly-mon-11` →
+  existing vercel.json dispatch) — no founder action needed for scheduling;
+  it degrades gracefully until its migration lands.
+- **Bot-fleet 403 noise root-cause hypothesis**: /advisors, /articles etc.
+  403 under the bot fleet but pass perf-budget single-hits on the same
+  Netlify preview → almost certainly DB-backed rate limiting tripping on
+  fleet concurrency, not a real outage. Backlog: give bots/ a preview-only
+  bypass header so smoke reports stop drowning in false highs.
+
+**FOUNDER ACTION REQUIRED (the only items Claude cannot do):**
+
+1. **`supabase db push`** for the two new migrations
+   (`20260611100000_rate_alert_mailer_support.sql`,
+   `20260611110000_advisor_winback_sends.sql`) — plus the still-unpushed
+   api-billing/consumer-webhook set from 2026-06-10. **Pre-req:** M05 shows
+   425-table ledger drift → per DB Migration Rules this is Tier E until you
+   run `supabase migration list` and reconcile. Until pushed: loan-rate
+   alerts stay silently skipped, win-back cron falls back to
+   last_notified_at stamping, API billing stays locked.
+2. **Stripe env vars** `STRIPE_PRICE_ID_*` for the API billing tiers
+   (calculators API v1 monetisation is code-complete behind these).
+3. **CO-01/02/04** — DNS + registrar credentials for the invest.com.au
+   cutover window (Oct–Dec 2026); guardian scripts are ready in
+   `scripts/cutover/`.
+4. **Vercel account blocked** — every commit carries a failing "Vercel —
+   Account is blocked" status; previews run on Netlify. Pay/unblock or
+   formally migrate; if Vercel stays dead the vercel.json cron fleet has no
+   runner (cron-health doc 2026-06-06 flagged 13 dark days already).
+5. **RG 246 legal sign-off** — `advisor_lead_referral_bonus` flag stays OFF
+   until then (unchanged from 2026-06-10).
+
+
 ### 2026-06-10 — Advisor ecosystem social layer shipped (7 workstreams, 1 migration)
 
 Built on `claude/confident-feynman-qdq82c` (plan: `docs/plans/ADVISOR_ECOSYSTEM_BUILD.md`).

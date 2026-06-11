@@ -85,7 +85,7 @@ export default async function AlertDetailPage({ params }: { params: Promise<{ sl
               {alert.alert_type.toUpperCase()}
             </span>
             {alert.effective_date && (
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500">
                 Effective: {new Date(alert.effective_date).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}
               </span>
             )}

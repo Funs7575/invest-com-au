@@ -1,0 +1,117 @@
+# ──────────────────────────────────────────────────────────────────
+# Cutover guardian — verification suite for the Oct–Dec 2026 apex domain
+# migration (docs/cutover/README.md, docs/runbooks/cutover.md).
+#
+#   1. Fingerprints the target host's sitemap URLs (status, redirect chain,
+#      canonical, JSON-LD, noindex, title hash) on a deterministic sample.
+#   2. Checks the legacy redirect map (docs/cutover/legacy-redirect-map.csv —
+#      the CO-01 drop-in point).
+#   3. Diffs against the previous run's `cutover-fingerprint-baseline`
+#      artifact, failing on orphans / status regressions / canonical drift.
+#
+# Weekly against the Netlify mirror pre-cutover; dispatch manually with
+# target=https://invest.com.au at T=0+. Hits the mirror, never Vercel —
+# zero Vercel compute. Each run's fingerprint becomes the next baseline.
+# ──────────────────────────────────────────────────────────────────
+
+name: Cutover guardian
+
+on:
+  schedule:
+    - cron: "0 18 * * 1"   # Mondays 18:00 UTC
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Target base URL to fingerprint"
+        required: false
+        default: "https://lambent-sawine-17c3dd.netlify.app"
+      sample:
+        description: "Max URLs to fingerprint (deterministic sample)"
+        required: false
+        default: "300"
+
+permissions:
+  contents: read
+  actions: read   # list + download baseline artifacts from previous runs
+
+concurrency:
+  group: cutover-guardian
+  cancel-in-progress: false
+
+jobs:
+  guardian:
+    name: Fingerprint · redirect map · baseline diff
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TARGET: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
+      SAMPLE: ${{ github.event.inputs.sample || '300' }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with: { node-version: "20", cache: "npm" }
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Fingerprint target
+        id: fingerprint
+        run: |
+          npm run cutover:fingerprint -- --target="$TARGET" --sample="$SAMPLE"
+          file=$(ls -t docs/cutover/fingerprints/*.json | head -n 1)
+          echo "file=$file" >> "$GITHUB_OUTPUT"
+
+      - name: Redirect-map check
+        continue-on-error: false
+        run: npm run cutover:redirects -- --target="$TARGET"
+
+      # Find the newest non-expired baseline artifact from a previous run.
+      # actions/download-artifact only sees the current run unless given an
+      # explicit run-id, so look the run up via the API first.
+      - name: Find previous baseline artifact
+        id: find-baseline
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_id=$(gh api "repos/${{ github.repository }}/actions/artifacts?name=cutover-fingerprint-baseline&per_page=50" \
+            --jq "[.artifacts[] | select(.expired == false) | select(.workflow_run.id != ${{ github.run_id }})] | sort_by(.created_at) | reverse | .[0].workflow_run.id // empty")
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+          echo "Previous baseline run: ${run_id:-none}"
+
+      - name: Download baseline
+        if: always() && steps.find-baseline.outputs.run_id != ''
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: cutover-fingerprint-baseline
+          path: cutover-baseline
+          run-id: ${{ steps.find-baseline.outputs.run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Diff vs baseline
+        if: always() && steps.find-baseline.outputs.run_id != '' && steps.fingerprint.outputs.file != ''
+        run: |
+          baseline=$(ls cutover-baseline/*.json 2>/dev/null | head -n 1 || true)
+          if [ -z "$baseline" ]; then
+            echo "Baseline artifact download failed — skipping diff."
+            exit 0
+          fi
+          npm run cutover:diff -- "$baseline" "${{ steps.fingerprint.outputs.file }}"
+
+      - name: No baseline yet
+        if: always() && steps.find-baseline.outputs.run_id == ''
+        run: echo "No previous cutover-fingerprint-baseline artifact found — skipping diff. This run's fingerprint becomes the baseline."
+
+      # Always publish the fresh fingerprint — it is the baseline for the
+      # next run (and the pre-cutover baseline for the T=0 apex diff).
+      - name: Upload fingerprint as baseline artifact
+        if: always() && steps.fingerprint.outputs.file != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: cutover-fingerprint-baseline
+          path: ${{ steps.fingerprint.outputs.file }}
+          retention-days: 90
+          if-no-files-found: error
+          overwrite: true

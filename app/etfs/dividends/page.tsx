@@ -310,7 +310,7 @@ export default function DividendETFPage() {
                         )}
                       </div>
                       <div className="text-xs text-slate-500 mt-0.5">{etf.name}</div>
-                      <div className="text-[11px] text-slate-400 mt-0.5">{etf.provider}</div>
+                      <div className="text-[11px] text-slate-500 mt-0.5">{etf.provider}</div>
                     </td>
                     <td className="py-4 px-4 font-semibold text-slate-700 whitespace-nowrap">{etf.mer}</td>
                     <td className="py-4 px-4 font-semibold text-green-700 whitespace-nowrap">{etf.yield}</td>
@@ -480,13 +480,13 @@ export default function DividendETFPage() {
             </div>
             <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6">
               <h3 className="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
-                <span className="text-slate-400">✗</span> Usually a weaker fit
+                <span className="text-slate-500">✗</span> Usually a weaker fit
               </h3>
               <ul className="space-y-2 text-sm text-slate-700">
-                <li className="flex items-start gap-2"><span className="text-slate-400 shrink-0 mt-0.5">•</span> Young accumulators with decades for growth to compound</li>
-                <li className="flex items-start gap-2"><span className="text-slate-400 shrink-0 mt-0.5">•</span> High-income earners, who pay tax on income they don&apos;t need yet</li>
-                <li className="flex items-start gap-2"><span className="text-slate-400 shrink-0 mt-0.5">•</span> Investors chasing maximum total return rather than current income</li>
-                <li className="flex items-start gap-2"><span className="text-slate-400 shrink-0 mt-0.5">•</span> Anyone uncomfortable with heavy bank and resources concentration</li>
+                <li className="flex items-start gap-2"><span className="text-slate-500 shrink-0 mt-0.5">•</span> Young accumulators with decades for growth to compound</li>
+                <li className="flex items-start gap-2"><span className="text-slate-500 shrink-0 mt-0.5">•</span> High-income earners, who pay tax on income they don&apos;t need yet</li>
+                <li className="flex items-start gap-2"><span className="text-slate-500 shrink-0 mt-0.5">•</span> Investors chasing maximum total return rather than current income</li>
+                <li className="flex items-start gap-2"><span className="text-slate-500 shrink-0 mt-0.5">•</span> Anyone uncomfortable with heavy bank and resources concentration</li>
               </ul>
             </div>
           </div>
@@ -515,7 +515,7 @@ export default function DividendETFPage() {
                 <li className="flex items-start gap-2"><span className="text-green-500 shrink-0 mt-0.5">✓</span> Franking passed through automatically</li>
                 <li className="flex items-start gap-2"><span className="text-green-500 shrink-0 mt-0.5">✓</span> Low effort — the fund rebalances itself</li>
                 <li className="flex items-start gap-2"><span className="text-red-400 shrink-0 mt-0.5">✗</span> Ongoing MER; no control over individual holdings</li>
-                <li className="flex items-start gap-2"><span className="text-slate-400 shrink-0 mt-0.5">•</span> DRP available</li>
+                <li className="flex items-start gap-2"><span className="text-slate-500 shrink-0 mt-0.5">•</span> DRP available</li>
               </ul>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-6">
@@ -525,7 +525,7 @@ export default function DividendETFPage() {
                 <li className="flex items-start gap-2"><span className="text-green-500 shrink-0 mt-0.5">✓</span> Can concentrate franking (e.g. overweight the banks)</li>
                 <li className="flex items-start gap-2"><span className="text-green-500 shrink-0 mt-0.5">✓</span> No MER once purchased; per-security CGT management</li>
                 <li className="flex items-start gap-2"><span className="text-red-400 shrink-0 mt-0.5">✗</span> Single-company risk and ongoing research effort</li>
-                <li className="flex items-start gap-2"><span className="text-slate-400 shrink-0 mt-0.5">•</span> DRP available</li>
+                <li className="flex items-start gap-2"><span className="text-slate-500 shrink-0 mt-0.5">•</span> DRP available</li>
               </ul>
             </div>
           </div>

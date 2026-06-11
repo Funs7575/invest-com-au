@@ -236,7 +236,7 @@ export default async function RbaPollPage() {
                           )}
                         </p>
                       </div>
-                      <div className="text-xs text-slate-400 flex gap-3">
+                      <div className="text-xs text-slate-500 flex gap-3">
                         <span>📈 {Math.round(total > 0 ? (hike / total) * 100 : 0)}%</span>
                         <span>⏸️ {Math.round(total > 0 ? (hold / total) * 100 : 0)}%</span>
                         <span>📉 {Math.round(total > 0 ? (cut / total) * 100 : 0)}%</span>
@@ -255,7 +255,7 @@ export default async function RbaPollPage() {
           <div className="bg-white border border-slate-200 rounded-xl p-4">
             <h2 className="text-base font-semibold text-slate-900 mb-3">🏆 Accuracy leaderboard</h2>
             {leaderboard.length === 0 ? (
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-500">
                 Leaderboard appears after at least 2 revealed polls — and each predictor needs 2+
                 entries to qualify.
               </p>
@@ -268,10 +268,10 @@ export default async function RbaPollPage() {
                         row.rank === 1
                           ? "text-amber-500"
                           : row.rank === 2
-                            ? "text-slate-400"
+                            ? "text-slate-500"
                             : row.rank === 3
                               ? "text-amber-700"
-                              : "text-slate-400"
+                              : "text-slate-500"
                       }`}
                     >
                       {row.rank}
@@ -285,7 +285,7 @@ export default async function RbaPollPage() {
                     <span className="shrink-0 font-semibold text-emerald-700">
                       {row.accuracy_pct.toFixed(0)}%
                     </span>
-                    <span className="shrink-0 text-slate-400 text-xs">
+                    <span className="shrink-0 text-slate-500 text-xs">
                       {row.correct_predictions}/{row.polls_participated}
                     </span>
                   </li>
@@ -293,7 +293,7 @@ export default async function RbaPollPage() {
               </ol>
             )}
             {!userId && (
-              <p className="text-xs text-slate-400 mt-4 border-t border-slate-100 pt-3">
+              <p className="text-xs text-slate-500 mt-4 border-t border-slate-100 pt-3">
                 <Link href="/auth/login" className="text-violet-600 font-semibold hover:underline">
                   Sign in
                 </Link>{" "}
@@ -321,7 +321,7 @@ export default async function RbaPollPage() {
 
       <footer className="mt-8 pt-4 border-t border-slate-200">
         <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           RBA meeting dates are indicative and subject to change. Community predictions are for
           entertainment and educational purposes only.
         </p>

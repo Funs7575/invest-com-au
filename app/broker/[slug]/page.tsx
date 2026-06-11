@@ -24,6 +24,7 @@ import {
 import { scoreBrokerSimilarity } from "@/lib/internal-links";
 import { getRelatedForBroker } from "@/lib/related-content";
 import { itemListJsonLd, faqJsonLd } from "@/lib/schema-markup";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import RelatedRail from "@/components/RelatedRail";
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
@@ -51,9 +52,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // (transient outage, or CI's placeholder creds) escalates to a bare
   // 500 with no <html lang>/<title>. Degrade to fallback metadata and
   // let the page body's error.tsx render the friendly retry surface.
-  const broker = await getBrokerBySlug(slug).catch(() => null);
+  let fetchFailed = false;
+  const broker = await getBrokerBySlug(slug).catch(() => {
+    fetchFailed = true;
+    return null;
+  });
 
-  if (!broker) return { title: 'Broker Not Found' };
+  if (!broker) {
+    // Transient fetch failure → fall back, let the page error boundary run.
+    if (fetchFailed) return { title: 'Broker Not Found' };
+    // Confirmed-unknown slug → 404 HERE, before the segment's loading.tsx
+    // streams a 200 shell. The page body's notFound() can't set the HTTP
+    // status once streaming has begun (soft-404, DISC-20260610-B).
+    notFound();
+  }
 
   const title = `${broker.name} Review (${CURRENT_YEAR})`;
   const description = broker.tagline || `Honest review of ${broker.name}. Fees, pros, cons, and our verdict.`;
@@ -262,7 +274,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   // We nest the top 5 most-recent approved reviews as individual
   // Review items so rich snippets can display review excerpts.
   const topUserReviews = ((userReviews ?? []) as UserReview[]).slice(0, 5);
-  const aggregateRatingLd = reviewStats && reviewStats.review_count > 0 && reviewStats.average_rating != null ? {
+  const aggregateRatingLd = SHOW_RATINGS && reviewStats && reviewStats.review_count > 0 && reviewStats.average_rating != null ? {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: `${b.name}`,

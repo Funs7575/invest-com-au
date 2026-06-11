@@ -406,7 +406,7 @@ export default function OrgEventsTab({ org: _org }: Props) {
                     {event.description && (
                       <p className="text-xs text-slate-500 truncate mb-1">{event.description}</p>
                     )}
-                    <div className="flex items-center gap-3 text-[0.62rem] text-slate-400 flex-wrap">
+                    <div className="flex items-center gap-3 text-[0.62rem] text-slate-500 flex-wrap">
                       <span className="flex items-center gap-0.5">
                         <Icon name="calendar" size={11} />
                         {formatDateLocal(event.starts_at)}

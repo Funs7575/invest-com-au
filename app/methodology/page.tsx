@@ -345,7 +345,7 @@ export default function MethodologyPage() {
                     className="border border-slate-200 rounded-xl p-4 bg-white"
                   >
                     <div className="flex items-center gap-3 mb-1">
-                      <span className="font-mono text-xs text-slate-400 shrink-0">
+                      <span className="font-mono text-xs text-slate-500 shrink-0">
                         {entry.date}
                       </span>
                       <h3 className="font-semibold text-slate-900 text-sm">

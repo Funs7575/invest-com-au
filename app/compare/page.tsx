@@ -205,14 +205,17 @@ export default async function ComparePage() {
         href={dealBroker.affiliate_url ? `/go/${dealBroker.slug}` : `/broker/${dealBroker.slug}`}
         target="_blank"
         rel="noopener noreferrer nofollow sponsored"
-        className="shrink-0 rounded-lg bg-coral-500 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-coral-400"
+        className="inline-flex min-h-11 shrink-0 items-center rounded-lg bg-coral-500 px-4 py-1 text-xs font-bold text-white transition-colors hover:bg-coral-400"
       >
         Claim &rarr;
       </a>
     </div>
   ) : null;
+  // Scope the count label honestly: the table below defaults to one category
+  // (share trading), so a bare "tracked" count reads as a mismatch against the
+  // visible row count (115 vs ~83 — DISC-20260610-F).
   const heroStats = [
-    { v: platformLabel, l: "Platforms tracked" },
+    { v: platformLabel, l: "Platforms · all categories" },
     { v: "9", l: "Categories" },
     feesCheckedWeekly
       ? { v: "Weekly", l: "Fees rechecked" }
@@ -296,7 +299,9 @@ export default async function ComparePage() {
           {SPECIALISED_COMPARES.map((item, i) => (
             <span key={item.href} className="inline-flex items-center gap-x-3">
               {i > 0 && <span aria-hidden className="text-slate-300">·</span>}
-              <Link href={item.href} className="hover:text-amber-700 hover:underline">
+              {/* min-h keeps each text link at a 44px touch target without
+                  changing the quiet single-row visual (DISC-20260610-E). */}
+              <Link href={item.href} className="inline-flex min-h-11 items-center hover:text-amber-700 hover:underline">
                 {item.label}
               </Link>
             </span>

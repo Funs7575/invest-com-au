@@ -7,6 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
 import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import { SHOW_RATINGS } from "@/lib/compliance-config";
 import type { Broker } from "@/lib/types";
 
 export const revalidate = 86400;
@@ -421,7 +422,7 @@ export default async function CapitalGainsTaxPage() {
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-slate-400 mt-2">Excludes 2% Medicare Levy. FY2025–26 rates. Verify current rates at ato.gov.au.</p>
+            <p className="text-xs text-slate-500 mt-2">Excludes 2% Medicare Levy. FY2025–26 rates. Verify current rates at ato.gov.au.</p>
           </div>
         </div>
       </section>
@@ -587,7 +588,7 @@ export default async function CapitalGainsTaxPage() {
                   <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                     <div>
                       <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                      <p className="text-xs"><span className="text-amber-600" aria-hidden="true">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600" aria-label={`${(Number(b.rating) || 0).toFixed(1)} out of 5 stars`}>{(Number(b.rating) || 0).toFixed(1)}</span></p>
+                      {SHOW_RATINGS && <p className="text-xs"><span className="text-amber-600" aria-hidden="true">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600" aria-label={`${(Number(b.rating) || 0).toFixed(1)} out of 5 stars`}>{(Number(b.rating) || 0).toFixed(1)}</span></p>}
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                     </div>
                     <div className="mt-auto">

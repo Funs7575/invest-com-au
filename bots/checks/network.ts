@@ -35,17 +35,27 @@ export function attachNetwork(
     if (status < 400) return;
     const req = res.request();
     const resourceType = req.resourceType();
-    const severity =
-      status >= 500 ? "critical" : resourceType === "document" ? "high" : "medium";
+    // 403/429/503 are proxy-transient (sandbox proxy flake / fleet-concurrency
+    // rate limiting). This passive listener can't retry, so it downgrades them
+    // to medium; session.visit() retries documents and stays the authoritative
+    // high/critical signal for failures that persist.
+    const transientProne = status === 403 || status === 429 || status === 503;
+    const severity = transientProne
+      ? "medium"
+      : status >= 500
+        ? "critical"
+        : resourceType === "document"
+          ? "high"
+          : "medium";
     store.add({
       severity,
       category: "http-error",
       title: `${status} ${req.method()} ${url.pathname}`,
-      detail: `${req.method()} ${url.pathname} returned HTTP ${status} (${resourceType}).`,
+      detail: `${req.method()} ${url.pathname} returned HTTP ${status} (${resourceType}).${transientProne ? " Status is proxy-transient-prone; see the visit-level finding for the retried verdict." : ""}`,
       url: page.url(),
       persona,
       signatureKey: `${status}:${req.method()}:${normalizeUrl(url.pathname)}`,
-      evidence: { status, method: req.method(), resourceType, path: url.pathname },
+      evidence: { status, method: req.method(), resourceType, path: url.pathname, transientProne },
     });
   });
 

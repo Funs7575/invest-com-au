@@ -43,7 +43,7 @@ export default function CourseDetailError({
           </Link>
         </div>
         {error.digest && (
-          <p className="mt-6 text-xs text-slate-400">Error ID: {error.digest}</p>
+          <p className="mt-6 text-xs text-slate-500">Error ID: {error.digest}</p>
         )}
       </div>
     </div>

@@ -26,7 +26,7 @@ export default function FeeAlertsLayout({ children }: { children: React.ReactNod
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading...</div>}>{children}</Suspense>
+      <Suspense fallback={<div className="py-12 text-center text-slate-500">Loading...</div>}>{children}</Suspense>
     </>
   );
 }

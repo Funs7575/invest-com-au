@@ -113,7 +113,7 @@ export default function TeamTab({ advisor }: Props) {
           <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div className="h-full bg-violet-500 rounded-full" style={{ width: `${Math.min((firmMemberCount / (firmDetails?.max_seats || 10)) * 100, 100)}%` }} />
           </div>
-          <span className="text-[0.62rem] text-slate-400">{firmMemberCount}/{firmDetails?.max_seats || 10}</span>
+          <span className="text-[0.62rem] text-slate-500">{firmMemberCount}/{firmDetails?.max_seats || 10}</span>
         </div>
       </div>
 
@@ -154,7 +154,7 @@ export default function TeamTab({ advisor }: Props) {
             <h3 className="text-sm font-bold text-slate-900 mb-3">Team Members ({firmMembers.length})</h3>
             {memberRemoveError && <p role="alert" className="text-xs text-red-600 mb-2">{memberRemoveError}</p>}
             {firmMembers.length === 0 ? (
-              <p className="text-sm text-slate-400">No team members yet. Invite your first advisor above.</p>
+              <p className="text-sm text-slate-500">No team members yet. Invite your first advisor above.</p>
             ) : (
               <div className="divide-y divide-slate-100">
                 {firmMembers.map((m) => (
@@ -252,7 +252,7 @@ export default function TeamTab({ advisor }: Props) {
                     <div className="min-w-0">
                       <div className="text-sm font-medium text-slate-900">{inv.name || inv.email}</div>
                       {inv.name && <div className="text-[0.62rem] text-slate-500">{inv.email}</div>}
-                      <div className="text-[0.56rem] text-slate-400 mt-0.5">
+                      <div className="text-[0.56rem] text-slate-500 mt-0.5">
                         Sent {new Date(inv.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })} ·{" "}
                         {inv.status === "pending" ? `Expires ${new Date(inv.expires_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}` : `Status: ${inv.status}`}
                       </div>
@@ -395,14 +395,14 @@ export default function TeamTab({ advisor }: Props) {
                               )}
                               <div>
                                 <div className="font-semibold text-slate-900 text-xs">{m.name}</div>
-                                <div className="text-[0.56rem] text-slate-400">{m.role || "member"}</div>
+                                <div className="text-[0.56rem] text-slate-500">{m.role || "member"}</div>
                               </div>
                             </div>
                           </td>
                           <td className="px-4 py-2.5 text-right font-medium text-slate-700">{m.views30d}</td>
                           <td className="px-4 py-2.5 text-right font-medium text-slate-700">{m.leads30d}</td>
                           <td className="px-4 py-2.5 text-right">
-                            <span className={`text-[0.56rem] font-semibold ${m.convertedLeads > 0 ? "text-emerald-600" : "text-slate-400"}`}>{m.convertedLeads} ({m.conversionRate})</span>
+                            <span className={`text-[0.56rem] font-semibold ${m.convertedLeads > 0 ? "text-emerald-600" : "text-slate-500"}`}>{m.convertedLeads} ({m.conversionRate})</span>
                           </td>
                           <td className="px-4 py-2.5 text-right text-slate-600">${((m.credit_balance_cents || 0) / 100).toFixed(0)}</td>
                           <td className="px-4 py-2.5 text-right text-slate-600">${((m.totalBilledCents || 0) / 100).toFixed(0)}</td>
@@ -598,7 +598,7 @@ export default function TeamTab({ advisor }: Props) {
                   {seatRequestStatus === "sending" ? "Sending..." : "Request More Seats"}
                 </button>
                 {seatRequestError && <p role="alert" className="text-xs text-red-600">{seatRequestError}</p>}
-                <p className="text-[0.6rem] text-slate-400">Our team will review your request and update your seat limit within 1 business day. There&apos;s no charge for seat upgrades.</p>
+                <p className="text-[0.6rem] text-slate-500">Our team will review your request and update your seat limit within 1 business day. There&apos;s no charge for seat upgrades.</p>
               </div>
             )}
           </div>

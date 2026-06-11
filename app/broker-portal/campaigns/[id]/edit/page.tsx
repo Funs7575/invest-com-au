@@ -357,7 +357,7 @@ export default function EditCampaignPage() {
 
   // ADV-085: shared classes for disabled read-only fields on live campaigns
   const lockedFieldCls =
-    "w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed";
+    "w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-500 disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -468,7 +468,7 @@ export default function EditCampaignPage() {
             {modifiedFields.has("rateCents") && <ModifiedPill />}
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+            <span className="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
             <input
               id="camp-rate"
               type="number" inputMode="decimal"
@@ -481,7 +481,7 @@ export default function EditCampaignPage() {
             />
           </div>
           {placement?.base_rate_cents && (
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Minimum: ${(placement.base_rate_cents / 100).toFixed(2)}
               {campaign?.inventory_type === "cpc" ? "/click" : "/mo"}
             </p>
@@ -493,12 +493,12 @@ export default function EditCampaignPage() {
           <div>
             <label htmlFor="camp-daily-budget" className="block text-sm font-medium text-slate-700 mb-1">
               Daily Budget (AUD)
-              <span className="text-xs text-slate-400 ml-1">optional</span>
+              <span className="text-xs text-slate-500 ml-1">optional</span>
               <InfoTip text="Maximum amount charged per day. Prevents unexpected high-spend days. Leave blank for unlimited." />
               {modifiedFields.has("dailyBudget") && <ModifiedPill />}
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+              <span className="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
               <input
                 id="camp-daily-budget"
                 type="number" inputMode="decimal"
@@ -514,12 +514,12 @@ export default function EditCampaignPage() {
           <div>
             <label htmlFor="camp-total-budget" className="block text-sm font-medium text-slate-700 mb-1">
               Total Budget (AUD)
-              <span className="text-xs text-slate-400 ml-1">optional</span>
+              <span className="text-xs text-slate-500 ml-1">optional</span>
               <InfoTip text="Maximum cumulative spend for the entire campaign. Campaign automatically pauses when reached." />
               {modifiedFields.has("totalBudget") && <ModifiedPill />}
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
+              <span className="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
               <input
                 id="camp-total-budget"
                 type="number" inputMode="decimal"
@@ -532,7 +532,7 @@ export default function EditCampaignPage() {
               />
             </div>
             {campaign?.total_budget_cents && campaign.total_spent_cents > 0 && (
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 ${(campaign.total_spent_cents / 100).toFixed(2)} spent of $
                 {(campaign.total_budget_cents / 100).toFixed(0)} budget (
                 {Math.round((campaign.total_spent_cents / campaign.total_budget_cents) * 100)}%)
@@ -545,7 +545,7 @@ export default function EditCampaignPage() {
         <div>
           <label htmlFor="camp-end-date" className="block text-sm font-medium text-slate-700 mb-1">
             End Date
-            <span className="text-xs text-slate-400 ml-1">optional</span>
+            <span className="text-xs text-slate-500 ml-1">optional</span>
             {modifiedFields.has("endDate") && <ModifiedPill />}
           </label>
           <input
@@ -557,7 +557,7 @@ export default function EditCampaignPage() {
           />
           {campaign?.start_date && (
             <div className="mt-1 space-y-0.5">
-              <p className="text-xs text-slate-400 flex items-center gap-1">
+              <p className="text-xs text-slate-500 flex items-center gap-1">
                 <Icon name="lock" size={10} className={isLive ? "text-amber-500" : ""} />
                 {isLive ? "Start date locked (campaign is live):" : "Started:"}{" "}
                 {campaign.start_date.slice(0, 10)}
@@ -594,7 +594,7 @@ export default function EditCampaignPage() {
           <div>
             <label htmlFor="camp-hours-start" className="block text-sm font-medium text-slate-700 mb-1">
               Active Hours Start
-              <span className="text-xs text-slate-400 ml-1">optional</span>
+              <span className="text-xs text-slate-500 ml-1">optional</span>
               {modifiedFields.has("activeHoursStart") && <ModifiedPill />}
             </label>
             <select
@@ -623,7 +623,7 @@ export default function EditCampaignPage() {
           <div>
             <label htmlFor="camp-hours-end" className="block text-sm font-medium text-slate-700 mb-1">
               Active Hours End
-              <span className="text-xs text-slate-400 ml-1">optional</span>
+              <span className="text-xs text-slate-500 ml-1">optional</span>
               {modifiedFields.has("activeHoursEnd") && <ModifiedPill />}
             </label>
             <select
@@ -707,7 +707,7 @@ export default function EditCampaignPage() {
             </p>
           )}
           {activeDays.length === 7 && (
-            <p className="text-xs text-slate-400 mt-2">Running every day of the week</p>
+            <p className="text-xs text-slate-500 mt-2">Running every day of the week</p>
           )}
         </div>
       </div>
@@ -781,13 +781,13 @@ export default function EditCampaignPage() {
 
       {/* Campaign metadata */}
       <div className="bg-slate-50 rounded-xl p-4 space-y-1">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           Campaign ID: {campaign?.id} &middot; Status:{" "}
           <span className="font-medium text-slate-600">
             {campaign?.status?.replace(/_/g, " ")}
           </span>
         </p>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           Created: {campaign?.created_at ? new Date(campaign.created_at).toLocaleDateString("en-AU") : "---"}{" "}
           &middot; Last updated:{" "}
           {campaign?.updated_at ? new Date(campaign.updated_at).toLocaleDateString("en-AU") : "---"}

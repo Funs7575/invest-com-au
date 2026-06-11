@@ -134,7 +134,7 @@ export default function AuthorByline({
                 className={`transition-colors ${
                   isDark
                     ? "text-white/40 hover:text-blue-400"
-                    : "text-slate-400 hover:text-blue-700"
+                    : "text-slate-500 hover:text-blue-700"
                 }`}
               >
                 <Linkedin className="w-4 h-4" />
@@ -149,7 +149,7 @@ export default function AuthorByline({
                 className={`transition-colors ${
                   isDark
                     ? "text-white/40 hover:text-sky-400"
-                    : "text-slate-400 hover:text-sky-600"
+                    : "text-slate-500 hover:text-sky-600"
                 }`}
               >
                 <Twitter className="w-4 h-4" />

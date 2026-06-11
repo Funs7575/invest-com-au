@@ -58,7 +58,7 @@ function statusBadge(status: string) {
 
 function priorityBadge(priority: string) {
   const colors: Record<string, string> = {
-    low: "text-slate-400",
+    low: "text-slate-500",
     normal: "text-slate-600",
     high: "text-amber-600 font-semibold",
     urgent: "text-red-600 font-bold",
@@ -535,9 +535,9 @@ export default function ContentCalendarPage() {
           {/* Table */}
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
             {loading ? (
-              <div className="p-8 text-center text-slate-400 text-sm">Loading...</div>
+              <div className="p-8 text-center text-slate-500 text-sm">Loading...</div>
             ) : filteredItems.length === 0 ? (
-              <div className="p-8 text-center text-slate-400 text-sm">
+              <div className="p-8 text-center text-slate-500 text-sm">
                 No content items{statusFilter !== "all" ? ` with status "${statusFilter}"` : ""}. Click &quot;+ New Content&quot; to start.
               </div>
             ) : (
@@ -567,13 +567,13 @@ export default function ContentCalendarPage() {
                       <td className="px-4 py-3">
                         {statusBadge(item.status)}
                         {item.ai_draft_generated_at && (
-                          <div className="text-[10px] text-slate-400 mt-1">AI draft {new Date(item.ai_draft_generated_at).toLocaleDateString()}</div>
+                          <div className="text-[10px] text-slate-500 mt-1">AI draft {new Date(item.ai_draft_generated_at).toLocaleDateString()}</div>
                         )}
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         <div className="text-sm text-slate-600">{item.author?.full_name || "Unassigned"}</div>
                         {item.reviewer && (
-                          <div className="text-xs text-slate-400">Reviewer: {item.reviewer.full_name}</div>
+                          <div className="text-xs text-slate-500">Reviewer: {item.reviewer.full_name}</div>
                         )}
                       </td>
                       <td className="px-4 py-3 hidden lg:table-cell">

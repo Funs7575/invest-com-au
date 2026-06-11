@@ -487,6 +487,13 @@ export function weeklyDigestEmail(data: {
   feeChanges: { broker: string; field: string; oldValue: string; newValue: string }[];
   newArticles: { title: string; slug: string; category?: string; readTime?: number }[];
   activeDeals: { broker: string; slug: string; dealText: string; expiry?: string }[];
+  /**
+   * "From the community" block (top threads this week). Optional — when
+   * absent or empty, the section is omitted from the email entirely (no
+   * placeholder row): an empty community block would only advertise an
+   * empty room.
+   */
+  communityThreads?: { title: string; path: string; replies: number; votes: number; category?: string | null }[];
 }): string {
   const dateStr = new Date().toLocaleDateString("en-AU", {
     day: "numeric",
@@ -538,6 +545,28 @@ export function weeklyDigestEmail(data: {
           .join("")
       : `<tr><td colspan="3" style="padding:16px;text-align:center;color:${TEXT_LIGHT};font-size:13px;">No active deals right now.</td></tr>`;
 
+  // "From the community" — rendered only when qualifying threads exist.
+  const communityThreads = data.communityThreads ?? [];
+  const communityHtml =
+    communityThreads.length > 0
+      ? `
+    <!-- From the Community -->
+    <h2 style="font-size:15px;color:${BRAND_DARK};margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid ${BRAND_EMERALD};">From the Community</h2>
+    <ul style="margin:0 0 8px;padding-left:20px;line-height:1.8;">${communityThreads
+      .map(
+        (t) => `
+      <li style="margin-bottom:8px;">
+        <a href="${BASE_URL}${t.path}" style="color:${BRAND_DARK};text-decoration:none;font-weight:600;font-size:14px;">${escapeHtml(t.title)}</a>
+        <span style="color:${TEXT_LIGHT};font-size:12px;margin-left:6px;">${t.category ? `${escapeHtml(t.category)} &middot; ` : ""}${t.replies} ${t.replies === 1 ? "reply" : "replies"}</span>
+      </li>`,
+      )
+      .join("")}</ul>
+    <p style="margin:0 0 24px;font-size:12px;color:${TEXT_LIGHT};">
+      Community posts are general information, not financial advice.
+      <a href="${BASE_URL}/community" style="color:${BRAND_BLUE};text-decoration:underline;">Join the discussion &rarr;</a>
+    </p>`
+      : "";
+
   const content = `
     <p style="margin:0 0 4px;font-size:12px;color:${TEXT_LIGHT};text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Weekly Digest</p>
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">What Changed This Week</h1>
@@ -564,7 +593,7 @@ export function weeklyDigestEmail(data: {
     <!-- New Articles -->
     <h2 style="font-size:15px;color:${BRAND_DARK};margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid ${BRAND_EMERALD};">New This Week</h2>
     <ul style="margin:0 0 24px;padding-left:20px;line-height:1.8;">${articlesHtml}</ul>
-
+${communityHtml}
     <!-- Deals -->
     <h2 style="font-size:15px;color:${BRAND_DARK};margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid ${BRAND_EMERALD};">Active Deals</h2>
     <div style="overflow-x:auto;margin-bottom:24px;">

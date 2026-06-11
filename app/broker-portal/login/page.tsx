@@ -116,7 +116,7 @@ export default function BrokerLoginPage() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword
@@ -136,7 +136,7 @@ export default function BrokerLoginPage() {
         {loading ? "Signing in..." : "Sign In"}
       </button>
 
-      <p className="text-xs text-slate-400 text-center">
+      <p className="text-xs text-slate-500 text-center">
         Don&apos;t have an account?{" "}
         <a href="/broker-portal/register" className="text-slate-700 underline font-medium">
           Apply to advertise →

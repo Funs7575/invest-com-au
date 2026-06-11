@@ -101,7 +101,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
     <div className="bg-white border border-slate-200 rounded-2xl p-6">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <h2 className="text-base font-bold text-slate-900">
-          Quotes received <span className="text-slate-400 font-normal">({bids.length})</span>
+          Quotes received <span className="text-slate-500 font-normal">({bids.length})</span>
         </h2>
         <div className="flex items-center gap-2">
           {compareIds.length > 0 && !isAwarded && (
@@ -284,7 +284,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-xl font-extrabold text-slate-900">{formatBid(bid.bid_amount)}</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wide">Bid</p>
+                      <p className="text-[10px] text-slate-500 uppercase tracking-wide">Bid</p>
                     </div>
                   </div>
 
@@ -311,9 +311,9 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                         Accepted — advisor will be in touch
                       </span>
                     ) : isLost ? (
-                      <span className="text-xs text-slate-400">Not selected</span>
+                      <span className="text-xs text-slate-500">Not selected</span>
                     ) : isExpired ? (
-                      <span className="text-xs text-slate-400">Quote period closed</span>
+                      <span className="text-xs text-slate-500">Quote period closed</span>
                     ) : (
                       <button
                         type="button"

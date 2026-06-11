@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { weeklyDigestEmail } from "@/lib/email-templates";
+import { fetchCommunityHighlights } from "@/lib/community/newsletter-highlights";
 import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { checkAutopilotGate } from "@/lib/autopilot";
@@ -73,6 +74,11 @@ export async function GET(req: NextRequest) {
     .order("rating", { ascending: false })
     .limit(5);
 
+  // ── 4. Community highlights (top threads this week) ──
+  // Fail-soft by contract: returns [] on any error, and the template
+  // omits the "From the Community" section entirely when empty.
+  const communityThreads = await fetchCommunityHighlights(supabase, now);
+
   // ── Build email HTML using shared template ──
   const templateFeeChanges = (feeChanges || []).map((c) => ({
     broker: brokerNameMap.get(c.broker_slug) || c.broker_slug,
@@ -101,6 +107,7 @@ export async function GET(req: NextRequest) {
     feeChanges: templateFeeChanges,
     newArticles: templateArticles,
     activeDeals: templateDeals,
+    communityThreads,
   });
 
   // ── Store edition in newsletter_editions ──
@@ -227,6 +234,7 @@ export async function GET(req: NextRequest) {
     feeChanges: (feeChanges || []).length,
     newArticles: (newArticles || []).length,
     activeDeals: (deals || []).length,
+    communityThreads: communityThreads.length,
     editionDate,
   });
 }

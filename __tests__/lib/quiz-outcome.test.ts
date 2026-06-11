@@ -131,7 +131,42 @@ describe("resolveBestOutcome", () => {
     });
   });
 
-  describe("education-first outcome", () => {
+  describe("education-first outcome (stage=learning)", () => {
+    it("routes stage=learning to education-first regardless of goal/mode", () => {
+      const cases: Parameters<typeof resolveBestOutcome>[0][] = [
+        { location: "australia", stage: "learning", goal: "property", mode: "help" },
+        { location: "australia", stage: "learning", goal: "grow", mode: "diy" },
+        { location: "australia", stage: "learning", goal: "home" },
+        { location: "australia", stage: "learning" },
+      ];
+      for (const c of cases) {
+        const outcome = resolveBestOutcome(c);
+        expect(outcome.kind, `learning+goal=${c.goal ?? "none"}`).toBe("education-first");
+        expect(outcome.ctaHref).toBe("/learn");
+        expect(outcome.suppressRunnerUps).toBe(true);
+      }
+    });
+
+    it("stage=learning + goal=grow includes compound-interest calc secondary", () => {
+      const outcome = resolveBestOutcome({ location: "australia", stage: "learning", goal: "grow" });
+      expect(outcome.kind).toBe("education-first");
+      expect(outcome.secondaryActions.some(s => s.href.includes("compound-interest"))).toBe(true);
+    });
+
+    it("stage=learning + goal=home includes mortgage calc secondary", () => {
+      const outcome = resolveBestOutcome({ location: "australia", stage: "learning", goal: "home" });
+      expect(outcome.secondaryActions.some(s => s.href.includes("mortgage-calculator"))).toBe(true);
+    });
+
+    it("stage=learning fires before goal-specific outcomes (property, super, home)", () => {
+      // property + learning → education-first, not advisor-match
+      expect(resolveBestOutcome({ location: "australia", stage: "learning", goal: "property", property_sub: "physical" }).kind).toBe("education-first");
+      // super + learning → education-first, not advisor-match
+      expect(resolveBestOutcome({ location: "australia", stage: "learning", goal: "super" }).kind).toBe("education-first");
+    });
+  });
+
+  describe("education-first outcome (unsure+beginner fallback)", () => {
     it("routes unsure beginners to education-first", () => {
       const outcome = resolveBestOutcome({
         location: "australia",
