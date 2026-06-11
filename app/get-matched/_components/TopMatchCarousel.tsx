@@ -7,6 +7,7 @@ import type { TopMatch } from "@/lib/getmatched/types";
 import { SHOW_ADVISOR_RATINGS, SHOW_RATINGS } from "@/lib/compliance-config";
 import { trackClick } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { formatAnnualFee } from "@/lib/getmatched/fee-projection";
 
 /**
  * Top-3 carousel — first card is the affiliate-aware hero (existing
@@ -33,6 +34,37 @@ export default function TopMatchCarousel({ matches }: Props) {
 
   const hero = matches[0]!;
   const runners = matches.slice(1, 3);
+
+  // Showcase G3 — factual fee projections. The hero shows its own annual
+  // estimate (with the trade-frequency assumption disclosed inline). When the
+  // hero and a runner-up both have projections, surface a strictly factual
+  // delta on whichever is cheaper — calculator output, never a quality claim.
+  const heroFee = hero.kind === "broker" ? hero.fee_projection : undefined;
+  const cheapestRunner = runners
+    .filter((m) => m.kind === "broker" && m.fee_projection)
+    .sort(
+      (a, b) =>
+        a.fee_projection!.annualCostAud - b.fee_projection!.annualCostAud,
+    )[0];
+
+  // Compare hero vs cheapest runner-up; the saving line shows on the cheaper.
+  let savingOnHero: number | null = null;
+  let savingRunnerSlug: string | null = null;
+  let savingRunnerAmount: number | null = null;
+  let savingRunnerVsName: string | null = null;
+  if (heroFee && cheapestRunner?.fee_projection) {
+    const runnerCost = cheapestRunner.fee_projection.annualCostAud;
+    const gap = Math.abs(heroFee.annualCostAud - runnerCost);
+    if (gap > 0) {
+      if (heroFee.annualCostAud < runnerCost) {
+        savingOnHero = gap; // hero is cheaper than the runner-up
+      } else {
+        savingRunnerSlug = cheapestRunner.slug;
+        savingRunnerAmount = gap; // runner-up is cheaper than the hero
+        savingRunnerVsName = hero.name;
+      }
+    }
+  }
 
   return (
     <section className="mb-6" style={{ animation: "iv-reveal 400ms ease-out" }}>
@@ -63,6 +95,19 @@ export default function TopMatchCarousel({ matches }: Props) {
             <p className="text-xs sm:text-sm text-slate-600">
               {hero.one_line_why}
             </p>
+            {heroFee && (
+              <p className="mt-1.5 text-xs sm:text-sm font-semibold text-slate-900">
+                ≈ {formatAnnualFee(heroFee)} on your stated amount
+                <span className="font-normal text-slate-500">
+                  {" "}· {heroFee.assumptionLabel}
+                </span>
+              </p>
+            )}
+            {savingOnHero !== null && cheapestRunner && (
+              <p className="mt-0.5 text-xs font-semibold text-emerald-700">
+                ≈ ${savingOnHero.toLocaleString("en-AU")}/yr less than {cheapestRunner.name}
+              </p>
+            )}
           </div>
           {showRatingFor(hero) && hero.rating !== null && (
             <div className="hidden sm:block text-right shrink-0">
@@ -128,6 +173,21 @@ export default function TopMatchCarousel({ matches }: Props) {
                     <p className="text-xs text-slate-500 leading-snug">
                       {m.one_line_why}
                     </p>
+                    {m.kind === "broker" && m.fee_projection && (
+                      <p className="mt-1 text-xs font-semibold text-slate-700">
+                        ≈ {formatAnnualFee(m.fee_projection)}
+                        <span className="font-normal text-slate-500">
+                          {" "}· {m.fee_projection.assumptionLabel}
+                        </span>
+                      </p>
+                    )}
+                    {savingRunnerSlug === m.slug &&
+                      savingRunnerAmount !== null &&
+                      savingRunnerVsName && (
+                        <p className="mt-0.5 text-xs font-semibold text-emerald-700">
+                          ≈ ${savingRunnerAmount.toLocaleString("en-AU")}/yr less than {savingRunnerVsName}
+                        </p>
+                      )}
                   </div>
                   <Icon
                     name="arrow-right"
