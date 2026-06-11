@@ -458,6 +458,37 @@ describe("formatListingPrice", () => {
     expect(res).toEqual({ label: "Asking", value: "$2.5M" });
   });
 
+  it("falls back to key_metrics.min_investment_cents for franchise/business rows", () => {
+    const res = formatListingPrice(
+      priceRow({
+        listing_kind: "for_sale_business",
+        key_metrics: { min_investment_cents: 4_500_000 },
+      }),
+    );
+    expect(res).toEqual({ label: "Total investment from", value: "$45k" });
+  });
+
+  it("tolerates a drifted string min_investment_cents on franchise rows", () => {
+    const res = formatListingPrice(
+      priceRow({
+        listing_kind: "for_sale_business",
+        key_metrics: { min_investment_cents: "25000000" },
+      }),
+    );
+    expect(res).toEqual({ label: "Total investment from", value: "$250k" });
+  });
+
+  it("prefers asking_price_cents over the franchise min-investment fallback", () => {
+    const res = formatListingPrice(
+      priceRow({
+        listing_kind: "for_sale_business",
+        asking_price_cents: 9_900_000,
+        key_metrics: { min_investment_cents: 4_500_000 },
+      }),
+    );
+    expect(res).toEqual({ label: "Asking", value: "$99k" });
+  });
+
   it("returns null when nothing priceable", () => {
     expect(formatListingPrice(priceRow({ listing_kind: "for_sale_business" }))).toBeNull();
   });

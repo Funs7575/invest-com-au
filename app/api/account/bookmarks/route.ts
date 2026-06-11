@@ -6,6 +6,7 @@ import {
   addBookmark,
   removeBookmark,
   addAnonymousSave,
+  removeAnonymousSave,
 } from "@/lib/bookmarks";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
@@ -20,7 +21,9 @@ export const runtime = "nodejs";
  *   GET    — authenticated user's bookmark list
  *   POST   — add a bookmark; works for anonymous users too
  *            (writes to anonymous_saves when no session user)
- *   DELETE — remove a bookmark (authenticated only)
+ *   DELETE — remove a bookmark; anonymous users pass session_id so the
+ *            anonymous_saves row is removed too (otherwise the claim-on-
+ *            signup flow would resurrect an unsaved item)
  */
 const BOOKMARK_TYPES = [
   "article",
@@ -42,6 +45,7 @@ const AddBookmarkBody = z.object({
 const RemoveBookmarkBody = z.object({
   type: z.enum(BOOKMARK_TYPES),
   ref: z.string().min(1),
+  session_id: z.string().max(100).nullish(),
 });
 
 async function getUser() {
@@ -95,14 +99,32 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const user = await getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const parsed = RemoveBookmarkBody.safeParse(await request.json().catch(() => ({})));
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid type or ref" }, { status: 400 });
   }
-  const { type, ref } = parsed.data;
-  const ok = await removeBookmark({ userId: user.id, type, ref });
-  return NextResponse.json({ ok });
+  const { type, ref, session_id: sessionId = null } = parsed.data;
+
+  const user = await getUser();
+  if (user) {
+    const ok = await removeBookmark({ userId: user.id, type, ref });
+    return NextResponse.json({ ok });
+  }
+
+  if (!sessionId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Anonymous unsave — same rate-limit bucket as anonymous saves.
+  if (
+    !(await isAllowed("bookmarks_write", ipKey(request), {
+      max: 30,
+      refillPerSec: 30 / 60,
+    }))
+  ) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+  const ok = await removeAnonymousSave({ sessionId, type, ref });
+  if (!ok) log.warn("anonymous unsave failed", { sessionId, type, ref });
+  return NextResponse.json({ ok, anonymous: true });
 }

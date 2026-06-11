@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useUser } from "@/lib/hooks/useUser";
 import { getSessionId } from "@/lib/session";
 import { trackEvent } from "@/lib/tracking";
@@ -22,6 +22,20 @@ import { trackEvent } from "@/lib/tracking";
 
 const ANON_CACHE_KEY = "inv_anon_saves";
 const FIRST_SAVE_KEY = "inv_lot_first_save_seen";
+
+/**
+ * Two LotSaveButtons can render for the same slug at once (header pill +
+ * mobile sticky bar). Each toggle broadcasts on this window event so the
+ * sibling stays in sync — otherwise the stale button mislabels itself and
+ * re-saves instead of unsaving.
+ */
+const SYNC_EVENT = "inv:lot-save-sync";
+
+interface LotSaveSyncDetail {
+  ref: string;
+  saved: boolean;
+  source: string;
+}
 
 interface AnonSave {
   type: string;
@@ -61,11 +75,33 @@ export default function LotSaveButton({
   variant = "pill",
 }: LotSaveButtonProps) {
   const { user } = useUser();
+  const instanceId = useId();
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
   const [pulse, setPulse] = useState(false);
   const [hint, setHint] = useState<string | null>(null);
   const hintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Keep sibling instances for the same slug in sync (header pill +
+  // sticky bar both mount on mobile).
+  useEffect(() => {
+    const onSync = (e: Event) => {
+      const detail = (e as CustomEvent<LotSaveSyncDetail>).detail;
+      if (detail?.ref === slug && detail.source !== instanceId) {
+        setSaved(detail.saved);
+      }
+    };
+    window.addEventListener(SYNC_EVENT, onSync);
+    return () => window.removeEventListener(SYNC_EVENT, onSync);
+  }, [slug, instanceId]);
+
+  const broadcast = (nextSaved: boolean) => {
+    window.dispatchEvent(
+      new CustomEvent<LotSaveSyncDetail>(SYNC_EVENT, {
+        detail: { ref: slug, saved: nextSaved, source: instanceId },
+      }),
+    );
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -113,6 +149,7 @@ export default function LotSaveButton({
     setBusy(true);
     const next = !saved;
     setSaved(next);
+    broadcast(next);
 
     if (next) {
       setPulse(true);
@@ -136,6 +173,23 @@ export default function LotSaveButton({
       trackEvent("listing_unsave", { vertical, ref: slug, authed: Boolean(user) });
     }
 
+    // Anonymous state lives in localStorage first — the mirror is written
+    // BEFORE the network call so an offline/failed POST can't strand a
+    // pressed button whose save evaporates on reload.
+    if (!user) {
+      if (next) {
+        const list = readAnonCache();
+        if (!list.some((i) => i.type === "listing" && i.ref === slug)) {
+          list.push({ type: "listing", ref: slug });
+          writeAnonCache(list);
+        }
+      } else {
+        writeAnonCache(
+          readAnonCache().filter((i) => !(i.type === "listing" && i.ref === slug)),
+        );
+      }
+    }
+
     try {
       if (next) {
         const body: Record<string, unknown> = {
@@ -149,28 +203,24 @@ export default function LotSaveButton({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        if (!user) {
-          const list = readAnonCache();
-          if (!list.some((i) => i.type === "listing" && i.ref === slug)) {
-            list.push({ type: "listing", ref: slug });
-            writeAnonCache(list);
-          }
-        }
-      } else if (user) {
+      } else {
+        // Authed: user_bookmarks row. Anonymous: the anonymous_saves row —
+        // without the server delete, claim-on-signup resurrects the save.
+        const body: Record<string, unknown> = { type: "listing", ref: slug };
+        if (!user) body.session_id = getSessionId();
         await fetch("/api/account/bookmarks", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type: "listing", ref: slug }),
+          body: JSON.stringify(body),
         });
-      } else {
-        writeAnonCache(
-          readAnonCache().filter((i) => !(i.type === "listing" && i.ref === slug)),
-        );
       }
     } catch {
       // Anonymous saves live in localStorage regardless; only revert when
       // the server is the source of truth.
-      if (user) setSaved(!next);
+      if (user) {
+        setSaved(!next);
+        broadcast(!next);
+      }
     } finally {
       setBusy(false);
     }

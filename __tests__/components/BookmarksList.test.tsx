@@ -56,6 +56,31 @@ describe("BookmarksList", () => {
     });
   });
 
+  describe("listing bookmarks", () => {
+    it("groups saved listings under 'Listings' and links via the slug resolver", () => {
+      render(
+        <BookmarksList
+          initialItems={[
+            {
+              id: 7,
+              bookmark_type: "listing",
+              ref: "riverina-aggregation-412ha",
+              label: "Riverina Aggregation",
+              note: null,
+              created_at: "2026-06-01T00:00:00Z",
+            },
+          ]}
+        />,
+      );
+      expect(screen.getByText("Listings")).toBeInTheDocument();
+      const link = screen.getByRole("link", { name: "Riverina Aggregation" });
+      expect(link).toHaveAttribute(
+        "href",
+        "/invest/listings/riverina-aggregation-412ha",
+      );
+    });
+  });
+
   describe("with items", () => {
     it("renders item labels as links", () => {
       render(<BookmarksList initialItems={SAMPLE_ITEMS} />);

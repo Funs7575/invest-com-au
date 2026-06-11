@@ -120,6 +120,9 @@ export default function ListingDetailView({
             {l.listing_type === "featured" && (
               <span className="bg-amber-500 text-slate-900 text-xs font-bold px-2.5 py-0.5 rounded-full">Featured</span>
             )}
+            {l.listing_type === "premium" && (
+              <span className="bg-yellow-400 text-slate-900 text-xs font-bold px-2.5 py-0.5 rounded-full">Premium</span>
+            )}
             <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${kindMeta.accent.badgeSubtle}`}>
               {kindMeta.label}
             </span>

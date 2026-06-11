@@ -136,6 +136,31 @@ export async function addAnonymousSave(input: {
   }
 }
 
+/**
+ * Remove an anonymous save (the unsave half of `addAnonymousSave`).
+ * Without this, an anonymous save that the visitor later unsaves
+ * lingers server-side and `claimAnonymousSaves` resurrects it into
+ * `user_bookmarks` when they sign in.
+ */
+export async function removeAnonymousSave(input: {
+  sessionId: string;
+  type: BookmarkType;
+  ref: string;
+}): Promise<boolean> {
+  try {
+    const supabase = createAdminClient();
+    const { error } = await supabase
+      .from("anonymous_saves")
+      .delete()
+      .eq("session_id", input.sessionId)
+      .eq("bookmark_type", input.type)
+      .eq("ref", input.ref);
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 export async function listAnonymousSaves(
   sessionId: string,
 ): Promise<Array<Pick<BookmarkRow, "bookmark_type" | "ref" | "label" | "created_at">>> {

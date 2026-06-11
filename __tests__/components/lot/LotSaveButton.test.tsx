@@ -82,6 +82,78 @@ describe("LotSaveButton", () => {
     expect(button).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("writes the localStorage mirror BEFORE the network call so a failed save survives reload", async () => {
+    mockFetch(async () => {
+      throw new Error("offline");
+    });
+    render(<LotSaveButton {...PROPS} />);
+
+    await userEvent.click(screen.getByRole("button", { name: /save/i }));
+    await waitFor(() =>
+      expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "false"),
+    );
+
+    // The pressed button's promise ("saved on this device") must hold even
+    // though the POST never landed.
+    const cached = JSON.parse(localStorage.getItem("inv_anon_saves") ?? "[]");
+    expect(cached).toContainEqual({ type: "listing", ref: PROPS.slug });
+  });
+
+  it("deletes the anonymous server row on unsave (claim-on-signup must not resurrect it)", async () => {
+    localStorage.setItem(
+      "inv_anon_saves",
+      JSON.stringify([{ type: "listing", ref: PROPS.slug }]),
+    );
+    const fetchFn = mockFetch();
+    render(<LotSaveButton {...PROPS} />);
+
+    const button = screen.getByRole("button");
+    expect(button).toHaveAttribute("aria-pressed", "true");
+
+    await userEvent.click(button);
+    await waitFor(() => expect(button).toHaveAttribute("aria-busy", "false"));
+
+    expect(button).toHaveAttribute("aria-pressed", "false");
+    const del = fetchFn.mock.calls.find(([, init]) => init?.method === "DELETE");
+    expect(del).toBeTruthy();
+    const body = JSON.parse(String(del?.[1]?.body));
+    expect(body).toMatchObject({ type: "listing", ref: PROPS.slug, session_id: "sess-123" });
+
+    const cached = JSON.parse(localStorage.getItem("inv_anon_saves") ?? "[]");
+    expect(cached).not.toContainEqual({ type: "listing", ref: PROPS.slug });
+  });
+
+  it("keeps sibling instances for the same slug in sync (header pill + sticky bar)", async () => {
+    const fetchFn = mockFetch();
+    render(
+      <>
+        <LotSaveButton {...PROPS} />
+        <LotSaveButton {...PROPS} variant="bar" />
+      </>,
+    );
+
+    const [pill, bar] = screen.getAllByRole("button");
+    expect(pill).toHaveAttribute("aria-pressed", "false");
+    expect(bar).toHaveAttribute("aria-pressed", "false");
+
+    await userEvent.click(pill!);
+    await waitFor(() => expect(pill).toHaveAttribute("aria-busy", "false"));
+
+    // The sibling reflects the save without its own interaction…
+    expect(pill).toHaveAttribute("aria-pressed", "true");
+    expect(bar).toHaveAttribute("aria-pressed", "true");
+
+    // …and toggling from the sibling unsaves (DELETE) instead of re-saving.
+    await userEvent.click(bar!);
+    await waitFor(() => expect(bar).toHaveAttribute("aria-busy", "false"));
+    expect(pill).toHaveAttribute("aria-pressed", "false");
+    expect(bar).toHaveAttribute("aria-pressed", "false");
+
+    const methods = fetchFn.mock.calls.map(([, init]) => init?.method);
+    expect(methods.filter((m) => m === "POST")).toHaveLength(1);
+    expect(methods.filter((m) => m === "DELETE")).toHaveLength(1);
+  });
+
   it("shows the first-save hint once, and not on later mounts", async () => {
     mockFetch();
     const first = render(<LotSaveButton {...PROPS} />);

@@ -383,10 +383,23 @@ export function formatListingPrice(l: DerivableListing & { price_display?: strin
     return { label: meta.priceLabel, value: l.price_display };
   }
 
+  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+
+  // Franchise / business rows often state only a minimum entry cost
+  // (key_metrics.min_investment_cents — already in cents). The bespoke
+  // franchise page rendered it as "Total Investment From"; without this
+  // branch those rows regress to "Price on application".
+  if (kind === "for_sale_business" && !l.asking_price_cents) {
+    const rawMinCents = km["min_investment_cents"];
+    const minCents = typeof rawMinCents === "number" ? rawMinCents : Number(rawMinCents);
+    if (Number.isFinite(minCents) && minCents > 0) {
+      return { label: "Total investment from", value: formatAudCompact(minCents) };
+    }
+  }
+
   // Fund / project equity: prefer min_investment from key_metrics when
   // it's set and no asking_price was; this is the case for most fund
   // and project rows whose "price" is really a min-commitment.
-  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
   const minInvest = km["min_investment_aud"] ?? km["min_commit_aud"] ?? km["min_investment"];
   if ((kind === "fund" || kind === "project_equity") && minInvest != null && !l.asking_price_cents) {
     return { label: meta.priceLabel, value: typeof minInvest === "number" ? formatAudCompact(minInvest * 100) : String(minInvest) };

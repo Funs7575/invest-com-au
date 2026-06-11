@@ -72,16 +72,9 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
     setSaved(next);
     try {
       if (next) {
-        const body: Record<string, unknown> = { type, ref, label };
-        if (!user) body.session_id = getSessionId();
-        await fetch("/api/account/bookmarks", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
         if (!user) {
-          // Mirror into localStorage so the star persists between
-          // page loads even before the user signs in.
+          // Mirror into localStorage BEFORE the network call so the star
+          // persists between page loads even if the server write fails.
           try {
             const cached = localStorage.getItem("inv_anon_saves");
             const list = cached
@@ -95,27 +88,42 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
             /* ignore */
           }
         }
-      } else if (user) {
+        const body: Record<string, unknown> = { type, ref, label };
+        if (!user) body.session_id = getSessionId();
+        await fetch("/api/account/bookmarks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+      } else {
+        if (!user) {
+          // Drop the localStorage mirror first so the unsave survives a
+          // failed network call, then delete the server row — otherwise
+          // claim-on-signup resurrects the unsaved item.
+          try {
+            const cached = localStorage.getItem("inv_anon_saves");
+            if (cached) {
+              const list = (
+                JSON.parse(cached) as Array<{ type: string; ref: string }>
+              ).filter((i) => !(i.type === type && i.ref === ref));
+              localStorage.setItem("inv_anon_saves", JSON.stringify(list));
+            }
+          } catch {
+            /* ignore */
+          }
+        }
+        const body: Record<string, unknown> = { type, ref };
+        if (!user) body.session_id = getSessionId();
         await fetch("/api/account/bookmarks", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type, ref }),
+          body: JSON.stringify(body),
         });
-      } else {
-        try {
-          const cached = localStorage.getItem("inv_anon_saves");
-          if (cached) {
-            const list = (
-              JSON.parse(cached) as Array<{ type: string; ref: string }>
-            ).filter((i) => !(i.type === type && i.ref === ref));
-            localStorage.setItem("inv_anon_saves", JSON.stringify(list));
-          }
-        } catch {
-          /* ignore */
-        }
       }
     } catch {
-      setSaved(!next);
+      // Anonymous state lives in localStorage (already written above);
+      // only revert when the server is the source of truth.
+      if (user) setSaved(!next);
     } finally {
       setBusy(false);
     }
