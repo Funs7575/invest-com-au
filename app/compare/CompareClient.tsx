@@ -18,6 +18,8 @@ import CompareSelectionBar from "./_components/CompareSelectionBar";
 import CompareFooter from "./_components/CompareFooter";
 import CompareCrossSellBanner from "@/components/CompareCrossSellBanner";
 import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
+import AnimatedNumber from "@/components/ui/AnimatedNumber";
+import { celebrateMilestone } from "@/lib/celebrate";
 import SearchInput from "@/components/directory/SearchInput";
 import FilterChips, { type FilterChip } from "@/components/directory/FilterChips";
 import EmptyState from "@/components/directory/EmptyState";
@@ -29,6 +31,7 @@ import {
   CATEGORY_ALIASES,
   CATEGORY_SCHEMAS,
   DEFAULT_COST_INPUTS,
+  describeCostInputs,
   SCENARIOS,
   applyComplianceGates,
   filterBrokers,
@@ -200,6 +203,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [scenario, setScenario] = useState<ScenarioMode | "none">((searchParams.get("scenario") as ScenarioMode) || "none");
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
   const [costInputs, setCostInputs] = useState<CostInputs>(DEFAULT_COST_INPUTS);
+  const scenarioPanelRef = useRef<HTMLDetailsElement>(null);
 
   // Sync URL when filter, search or sort changes (for sharing/bookmarking).
   // Using replaceState (not push) so the back button doesn't get polluted
@@ -344,6 +348,12 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       setSortDir(col === 'rating' ? -1 : 1);
     }
   }
+
+  // First genuine comparison act (2+ platforms pinned) = the first_compare
+  // milestone (Northstar D7). celebrateMilestone is once-ever internally.
+  useEffect(() => {
+    if (selected.size >= 2) celebrateMilestone("first_compare");
+  }, [selected.size]);
 
   const effectiveCategory = scenarioCategory(scenario, activeFilter);
   const schema = applyComplianceGates(CATEGORY_SCHEMAS[effectiveCategory]);
@@ -512,7 +522,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             dealPromo + <DirectoryHero promo=…>) so it's part of the header rather
             than an extra band above the table. */}
 
-        <details className="group mb-2.5">
+        <details ref={scenarioPanelRef} className="group mb-2.5">
           <summary className="flex items-center justify-between gap-2 cursor-pointer list-none rounded-xl border border-slate-200 bg-white px-4 py-2 shadow-sm hover:border-slate-300">
             <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
               <Icon name="sliders" size={15} className="text-blue-700" />
@@ -866,6 +876,27 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           )}
         />
 
+        {/* D9: the cost engine's inputs, visible without opening the power
+            tools — tapping opens the scenario panel. */}
+        <button
+          type="button"
+          onClick={() => {
+            const panel = scenarioPanelRef.current;
+            if (panel) {
+              panel.open = true;
+              panel.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }}
+          aria-label="Edit the inputs behind the estimated annual cost column"
+          className="mb-2.5 inline-flex max-w-full flex-wrap items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-left text-xs text-blue-900 transition-colors hover:bg-blue-100"
+        >
+          <Icon name="sliders" size={12} className="shrink-0" />
+          <span>
+            Costs shown for: <strong className="font-bold">{describeCostInputs(costInputs, scenario !== "none" ? SCENARIOS.find((item) => item.key === scenario)?.label : null)}</strong>
+          </span>
+          <span className="font-semibold underline">Change</span>
+        </button>
+
         {/* Desktop Table */}
         <div ref={resultsRef} className="scroll-mt-16">
         <CompareDesktopTable
@@ -922,8 +953,20 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {mobileColumns.map((column) => (
                   <div key={column.key} className="rounded-xl bg-slate-50 p-2">
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{column.label}</p>
-                    <p className="text-sm font-semibold text-slate-800">{column.value(broker, row)}</p>
+                    <p className="flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-slate-500">
+                      {column.label}
+                      {column.tooltip ? <InfoTip text={column.tooltip} /> : null}
+                    </p>
+                    <p className="text-sm font-semibold text-slate-800">
+                      {column.key === "estimatedAnnualCost" && row.hasCostInputs ? (
+                        <AnimatedNumber
+                          value={row.estimatedAnnualCost}
+                          format={(n) => `$${Math.round(n).toLocaleString("en-AU")}/yr`}
+                        />
+                      ) : (
+                        column.value(broker, row)
+                      )}
+                    </p>
                   </div>
                 ))}
               </div>

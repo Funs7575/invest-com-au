@@ -7,10 +7,23 @@ interface BottomSheetProps {
   onClose: () => void;
   title?: string;
   children: ReactNode;
+  /** Optional pinned footer (primary/secondary actions). */
+  footer?: ReactNode;
 }
 
-export default function BottomSheet({ open, onClose, title, children }: BottomSheetProps) {
+export default function BottomSheet({ open, onClose, title, children, footer }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
+  const restoreFocusTo = useRef<HTMLElement | null>(null);
+
+  // Restore focus to the opener when the sheet closes (a11y).
+  useEffect(() => {
+    if (open) {
+      restoreFocusTo.current = document.activeElement as HTMLElement | null;
+      return () => {
+        restoreFocusTo.current?.focus?.();
+      };
+    }
+  }, [open]);
 
   // Lock body scroll when open
   useEffect(() => {
@@ -71,7 +84,7 @@ export default function BottomSheet({ open, onClose, title, children }: BottomSh
         role="dialog"
         aria-modal="true"
         aria-label={title || "Filter options"}
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-xl max-h-[85vh] flex flex-col safe-area-inset-bottom animate-sheet-up"
+        className="fixed bottom-0 left-0 right-0 md:bottom-6 md:left-1/2 md:right-auto md:w-full md:max-w-md md:-translate-x-1/2 z-50 bg-white dark:bg-slate-800 rounded-t-2xl md:rounded-2xl shadow-xl max-h-[85vh] flex flex-col safe-area-inset-bottom animate-sheet-up"
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-2">
@@ -96,6 +109,11 @@ export default function BottomSheet({ open, onClose, title, children }: BottomSh
         <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
           {children}
         </div>
+        {footer && (
+          <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-700 flex flex-col gap-2">
+            {footer}
+          </div>
+        )}
       </div>
     </>
   );

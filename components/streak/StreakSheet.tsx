@@ -1,6 +1,6 @@
 "use client";
 
-import Sheet from "@/components/ui/Sheet";
+import BottomSheet from "@/components/BottomSheet";
 import { trackEvent } from "@/lib/tracking";
 
 const MUTE_KEY = "iv_streak_quiet";
@@ -36,7 +36,7 @@ const COUNTS = [
  */
 export default function StreakSheet({ open, streak, onClose, onMuted }: StreakSheetProps) {
   return (
-    <Sheet open={open} onClose={onClose} title={`${streak}-day curiosity streak`}>
+    <BottomSheet open={open} onClose={onClose} title={`${streak}-day curiosity streak`}>
       <p className="text-sm text-slate-600 dark:text-slate-300">
         {streak === 1
           ? "You learned something about your money today."
@@ -83,6 +83,6 @@ export default function StreakSheet({ open, streak, onClose, onMuted }: StreakSh
       >
         Mute streaks (hide the badge and daily notes)
       </button>
-    </Sheet>
+    </BottomSheet>
   );
 }

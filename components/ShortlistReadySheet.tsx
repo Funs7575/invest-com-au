@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Sheet from "@/components/ui/Sheet";
+import BottomSheet from "@/components/BottomSheet";
 import { SHORTLIST_READY_EVENT } from "@/components/ShortlistButton";
 import { useUser } from "@/lib/hooks/useUser";
 import { trackEvent } from "@/lib/tracking";
@@ -35,7 +35,7 @@ export default function ShortlistReadySheet() {
   const compareHref = `/shortlist/compare?brokers=${slugs.slice(0, 4).join(",")}`;
 
   return (
-    <Sheet open onClose={() => setSlugs(null)} title="Three's a shortlist">
+    <BottomSheet open onClose={() => setSlugs(null)} title="Three's a shortlist">
       <p className="text-sm text-slate-600 dark:text-slate-300">
         You&apos;ve saved three platforms — that&apos;s enough to put them side by side and
         see how the numbers actually compare.
@@ -64,6 +64,6 @@ export default function ShortlistReadySheet() {
           </p>
         ) : null}
       </div>
-    </Sheet>
+    </BottomSheet>
   );
 }

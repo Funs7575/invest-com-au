@@ -1,5 +1,6 @@
 "use client";
 
+import AnimatedNumber from "@/components/ui/AnimatedNumber";
 import { getAffiliateLink, renderStars } from "@/lib/tracking";
 import ScrollReveal from "@/components/ScrollReveal";
 import PromoBadge from "@/components/PromoBadge";
@@ -113,7 +114,16 @@ export default function CompareDesktopTable({
                   <p className="mt-1 text-[0.68rem] uppercase tracking-wide text-slate-500">{row.commercialDisclosure}</p>
                 </td>
                 {schema.columns.map((column) => (
-                  <td key={column.key} className={`px-4 py-3 text-sm align-top ${column.align === 'center' ? 'text-center' : ''}`}>{column.value(broker, row)}</td>
+                  <td key={column.key} className={`px-4 py-3 text-sm align-top ${column.align === 'center' ? 'text-center' : ''}`}>
+                    {column.key === "estimatedAnnualCost" && row.hasCostInputs ? (
+                      <AnimatedNumber
+                        value={row.estimatedAnnualCost}
+                        format={(n) => `$${Math.round(n).toLocaleString("en-AU")}/yr`}
+                      />
+                    ) : (
+                      column.value(broker, row)
+                    )}
+                  </td>
                 ))}
                 <td className="px-4 py-3 text-xs text-slate-600 align-top min-w-64">
                   <details>
