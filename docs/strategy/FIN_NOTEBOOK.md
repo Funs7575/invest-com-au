@@ -14,6 +14,23 @@
 
 ## Active strategic decisions log
 
+### 2026-06-11 — Get Matched "showcase" upgrade greenlit (founder); root cause of "looks the same" found and fixed
+
+The P1–P9 Decision Engine was invisible in prod for two DB reasons (PR #1543):
+`get_matched_result_templates` had the legacy schema so every template lookup
+fell back to generic copy, and `intent_taxonomy` was missing all 13 retail
+slugs so mainstream resolves threw FK errors. Both fixed via gm06/gm07
+(applied to prod + ledger-synced). Third gap: `topMatchesForRoute` only
+returned brokers on route=compare, so info-only crypto/trade/grow users got a
+card-less result — now lane-aware (platforms lane ⇒ broker carousel).
+
+Founder verdict after seeing it live: engine is smart but the *intelligence is
+invisible*. Greenlit the showcase roadmap — `docs/plans/GET_MATCHED_SHOWCASE.md`
+(G1–G9): real analyzing moment, Investor Profile hero, dollar figures on cards
+(fee projections), what-if live re-ranking, supply narrowing, roadmap-style
+plan, confidence loop, AI free-text intake, stack+alerts endgame. Wave 1 =
+G1+G2+G3 (result page: identity + numbers + visible reasoning, no schema).
+
 
 ### 2026-06-11 — /goal product-upgrade session: find-advisor elevated; Tasks 2–4 of the brief found already shipped
 
