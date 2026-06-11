@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { invalidateMoneyProfileCache } from "@/hooks/use-money-profile";
+import ConfettiBurst from "@/components/delight/ConfettiBurst";
 import {
   MONEY_STATES,
   type MoneyCoverage,
@@ -26,6 +27,10 @@ export default function MoneyDetailsForm({ initial, initialCoverage }: Props) {
   const [saved, setSaved] = useState(false);
   const [coverage, setCoverage] = useState(initialCoverage);
   const [derived, setDerived] = useState(initial);
+  // Completion moment: confetti + headline the save that takes the
+  // profile to 100% — finishing setup should feel like an event.
+  const [justCompleted, setJustCompleted] = useState(false);
+  const [coverageDelta, setCoverageDelta] = useState(0);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,7 +59,13 @@ export default function MoneyDetailsForm({ initial, initialCoverage }: Props) {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error ?? "Could not save");
-      if (json.coverage) setCoverage(json.coverage as MoneyCoverage);
+      const prevPct = coverage.pct;
+      if (json.coverage) {
+        const next = json.coverage as MoneyCoverage;
+        setCoverage(next);
+        setCoverageDelta(Math.max(0, next.pct - prevPct));
+        setJustCompleted(next.pct === 100 && prevPct < 100);
+      }
       if (json.profile) setDerived(json.profile as MoneyProfile);
       invalidateMoneyProfileCache();
       setSaved(true);
@@ -75,18 +86,36 @@ export default function MoneyDetailsForm({ initial, initialCoverage }: Props) {
         }).format(n);
 
   return (
-    <section className="mt-8 bg-white border border-slate-200 rounded-2xl p-5 sm:p-6">
+    <section className="relative mt-8 bg-white border border-slate-200 rounded-2xl p-5 sm:p-6">
+      {justCompleted && <ConfettiBurst />}
       <div className="flex items-start justify-between gap-3 mb-1">
         <h2 className="text-base font-bold text-slate-900">Money details</h2>
-        <span className="shrink-0 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700">
-          {coverage.pct}% complete
+        <span
+          className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+            coverage.pct === 100
+              ? "bg-emerald-600 text-white border border-emerald-600"
+              : "bg-emerald-50 border border-emerald-200 text-emerald-700"
+          }${justCompleted ? " badge-pulse" : ""}`}
+        >
+          {coverage.pct === 100 ? "Complete ✓" : `${coverage.pct}% complete`}
         </span>
       </div>
-      <p className="text-xs text-slate-500 mb-5">
-        Saved once, used everywhere: calculators across the site pre-fill from
-        these numbers so you stop re-typing them. Your own data, only visible
-        to you.
-      </p>
+      {justCompleted ? (
+        <p className="text-xs font-semibold text-emerald-700 mb-5">
+          That&apos;s everything — every calculator on the site now starts with
+          your numbers. Try the{" "}
+          <Link href="/fire-calculator" className="underline underline-offset-2">
+            FIRE calculator
+          </Link>{" "}
+          and watch it fill itself.
+        </p>
+      ) : (
+        <p className="text-xs text-slate-500 mb-5">
+          Saved once, used everywhere: calculators across the site pre-fill from
+          these numbers so you stop re-typing them. Your own data, only visible
+          to you.
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -161,7 +190,13 @@ export default function MoneyDetailsForm({ initial, initialCoverage }: Props) {
           >
             {submitting ? "Saving…" : "Save money details"}
           </button>
-          {saved && <span className="text-xs font-semibold text-emerald-600">Saved ✓</span>}
+          {saved && (
+            <span className="text-xs font-semibold text-emerald-600">
+              {coverageDelta > 0 && coverage.pct < 100
+                ? `Saved ✓ +${coverageDelta}% — calculators just got smarter for you`
+                : "Saved ✓"}
+            </span>
+          )}
           {error && (
             <span role="alert" className="text-xs text-red-600">
               {error}

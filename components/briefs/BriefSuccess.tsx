@@ -19,7 +19,7 @@ const NEXT_STEPS = [
   {
     icon: "eye",
     title: "Pros review your brief",
-    desc: "Matching verified pros are notified now and see your masked brief.",
+    desc: "Matching verified pros are notified now — your tracker shows how many it reaches and how many open the details.",
   },
   {
     icon: "bell",
@@ -92,7 +92,7 @@ export default function BriefSuccess({
           variant="primary"
           icon={<Icon name="arrow-right" size={16} />}
         >
-          {heldForReview ? "View your brief status" : "Track responses"}
+          {heldForReview ? "View your brief status" : "Watch it live"}
         </Button>
         <Button href="/advisors" variant="secondary">
           Browse verified pros

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@/lib/hooks/useUser";
 import { getSessionId } from "@/lib/session";
+import { useFirstTime } from "@/hooks/use-first-time";
+import { useToast } from "@/components/Toast";
 
 interface Props {
   type: "article" | "broker" | "advisor" | "scenario" | "calculator";
@@ -27,6 +29,11 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
   const { user } = useUser();
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
+  // First-save moment: one warm beat the first time this person saves
+  // anything, anywhere on the site — then never again on this device.
+  const firstSave = useFirstTime("save");
+  const { toast } = useToast();
 
   // When the user becomes logged in, re-check whether they already
   // have this item bookmarked so the star renders filled.
@@ -79,6 +86,20 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
+        // Delight beat: pop the icon, and make the very first save feel
+        // like the start of something — not a silent state change.
+        setJustSaved(true);
+        setTimeout(() => setJustSaved(false), 700);
+        if (firstSave.isFirst) {
+          firstSave.markDone();
+          toast(
+            user
+              ? "First save ✦ it's in My Saves — we'll keep it handy"
+              : "First save ✦ kept on this device — create a free account to keep it everywhere",
+            "success",
+            4000,
+          );
+        }
         if (!user) {
           // Mirror into localStorage so the star persists between
           // page loads even before the user signs in.
@@ -135,7 +156,7 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
       }
     >
       <svg
-        className="w-4 h-4"
+        className={`w-4 h-4${justSaved ? " celebrate-emoji" : ""}`}
         fill={saved ? "currentColor" : "none"}
         stroke="currentColor"
         strokeWidth={2}
