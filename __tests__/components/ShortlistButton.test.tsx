@@ -1,11 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, userEvent, mockToggle, mockHas } from "./setup";
 
-// useToast isn't mocked by setup.tsx — provide a spyable toast fn.
-const { toastMock } = vi.hoisted(() => ({ toastMock: vi.fn() }));
-vi.mock("@/components/Toast", () => ({
-  useToast: () => ({ toast: toastMock }),
-}));
+// Save feedback now routes through the unified celebration helper (D1).
+const { mockCelebrateSave } = vi.hoisted(() => ({ mockCelebrateSave: vi.fn() }));
+vi.mock("@/lib/celebrate", () => ({ celebrateSave: mockCelebrateSave }));
 
 import ShortlistButton from "@/components/ShortlistButton";
 
@@ -13,7 +11,7 @@ beforeEach(() => {
   mockToggle.mockClear();
   mockHas.mockReset();
   mockHas.mockReturnValue(false);
-  toastMock.mockClear();
+  mockCelebrateSave.mockClear();
 });
 
 describe("ShortlistButton — unsaved state", () => {
@@ -31,15 +29,12 @@ describe("ShortlistButton — unsaved state", () => {
     ).toHaveAttribute("title", "Save to My Platforms");
   });
 
-  it("clicking toggles the slug and shows the 'Added' toast", async () => {
+  it("clicking toggles the slug and celebrates the save", async () => {
     const user = userEvent.setup();
     render(<ShortlistButton slug="acme" name="Acme" />);
     await user.click(screen.getByRole("button"));
     expect(mockToggle).toHaveBeenCalledWith("acme");
-    expect(toastMock).toHaveBeenCalledWith(
-      "Added Acme to shortlist",
-      "success",
-    );
+    expect(mockCelebrateSave).toHaveBeenCalledWith({ saved: true, label: "Acme" });
   });
 
   it("svg is unfilled (fill='none') when unsaved", () => {
@@ -60,15 +55,12 @@ describe("ShortlistButton — saved state", () => {
     ).toBeInTheDocument();
   });
 
-  it("clicking shows the 'Removed' toast", async () => {
+  it("clicking acknowledges the removal", async () => {
     const user = userEvent.setup();
     render(<ShortlistButton slug="acme" name="Acme" />);
     await user.click(screen.getByRole("button"));
     expect(mockToggle).toHaveBeenCalledWith("acme");
-    expect(toastMock).toHaveBeenCalledWith(
-      "Removed Acme from shortlist",
-      "success",
-    );
+    expect(mockCelebrateSave).toHaveBeenCalledWith({ saved: false, label: "Acme" });
   });
 
   it("svg is filled (fill='currentColor') when saved", () => {

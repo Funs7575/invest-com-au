@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@/lib/hooks/useUser";
 import { getSessionId } from "@/lib/session";
+import { celebrateSave } from "@/lib/celebrate";
 
 interface Props {
   type: "article" | "broker" | "advisor" | "scenario" | "calculator";
@@ -114,6 +115,7 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
           /* ignore */
         }
       }
+      celebrateSave({ saved: next, label });
     } catch {
       setSaved(!next);
     } finally {

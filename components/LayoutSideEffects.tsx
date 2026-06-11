@@ -39,6 +39,13 @@ const SpeedInsights = dynamic(
   { ssr: false },
 );
 
+// "Three's a shortlist" moment (D2) — listens for the once-ever event from
+// ShortlistButton; renders nothing until it fires.
+const ShortlistReadySheet = dynamic(
+  () => import("@/components/ShortlistReadySheet"),
+  { ssr: false },
+);
+
 export default function LayoutSideEffects() {
   return (
     <>
@@ -46,6 +53,7 @@ export default function LayoutSideEffects() {
       <RouteChangeFocus />
       <ServiceWorkerRegistrar />
       <ClaimAnonymousOnAuth />
+      <ShortlistReadySheet />
       <WebVitals />
       {/* Vercel-only: the injected /_vercel/speed-insights/script.js 404s on the
           Netlify mirror (it only exists on Vercel). NEXT_PUBLIC_VERCEL_ENV is
