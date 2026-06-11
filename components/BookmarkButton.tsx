@@ -5,7 +5,7 @@ import { useUser } from "@/lib/hooks/useUser";
 import { getSessionId } from "@/lib/session";
 
 interface Props {
-  type: "article" | "broker" | "advisor" | "scenario" | "calculator";
+  type: "article" | "broker" | "advisor" | "scenario" | "calculator" | "listing";
   ref: string;
   label?: string;
   className?: string;

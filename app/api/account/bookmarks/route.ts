@@ -22,7 +22,14 @@ export const runtime = "nodejs";
  *            (writes to anonymous_saves when no session user)
  *   DELETE — remove a bookmark (authenticated only)
  */
-const BOOKMARK_TYPES = ["article", "broker", "advisor", "scenario", "calculator"] as const;
+const BOOKMARK_TYPES = [
+  "article",
+  "broker",
+  "advisor",
+  "scenario",
+  "calculator",
+  "listing",
+] as const;
 
 const AddBookmarkBody = z.object({
   type: z.enum(BOOKMARK_TYPES),
