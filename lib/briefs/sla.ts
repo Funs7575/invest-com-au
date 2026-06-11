@@ -230,14 +230,17 @@ async function processBrief(
 
   if (chargedAtAccept) {
     // Idempotent on (kind, reference) — a crash after this but before the
-    // release below re-runs safely next sweep.
+    // release below re-runs safely next sweep. The reference is scoped to
+    // brief + provider: a re-accepted brief that breaches again under a
+    // different provider must produce a fresh refund, not dedupe against
+    // the first offender's.
     await recordLedgerEntry({
       professionalId,
       amountCents: credits * CENTS_PER_CREDIT,
       kind: "sla_refund",
       description: `Brief #${brief.id} released — no response within ${RESPONSE_SLA_HOURS}h`,
       referenceType: "brief_sla_refund",
-      referenceId: String(brief.id),
+      referenceId: `${brief.id}:${professionalId}`,
       metadata: { team_id: brief.accepted_by_team_id ?? null, credits },
     });
     refunded = credits;

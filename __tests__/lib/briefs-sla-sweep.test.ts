@@ -167,7 +167,9 @@ describe("sweepBriefSla", () => {
         amountCents: 300,
         kind: "sla_refund",
         referenceType: "brief_sla_refund",
-        referenceId: "77",
+        // Scoped to brief + provider so a different provider breaching on a
+        // re-accepted brief gets a fresh refund, not a dedupe.
+        referenceId: "77:42",
       }),
     );
     expect(mockNotifyEligible).toHaveBeenCalledWith(
