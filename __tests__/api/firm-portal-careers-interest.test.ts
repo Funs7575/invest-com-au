@@ -108,7 +108,7 @@ describe("POST /api/firm-portal/careers/interest", () => {
         ),
       },
       from: mockServerFrom,
-    } as unknown as ReturnType<typeof createClient>);
+    } as unknown as Awaited<ReturnType<typeof createClient>>);
 
     const res = await POST(makePost(VALID_BODY));
     expect(res.status).toBe(401);
