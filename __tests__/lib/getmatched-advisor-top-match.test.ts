@@ -71,6 +71,35 @@ describe("topMatchesForRoute (Decision Engine P2)", () => {
     expect(mockFrom).not.toHaveBeenCalled();
   });
 
+  it("non-advisor route with a platforms hero lane returns broker matches", async () => {
+    mockComputeTopMatches.mockResolvedValue([{ kind: "broker", slug: "b" }]);
+    const out = await topMatchesForRoute({}, resolved("guide"), 3, {
+      hero: "platforms",
+      secondary: [],
+    });
+    expect(mockComputeTopMatches).toHaveBeenCalled();
+    expect(out[0]).toMatchObject({ kind: "broker" });
+  });
+
+  it("non-advisor route with platforms as a secondary lane returns broker matches", async () => {
+    mockComputeTopMatches.mockResolvedValue([{ kind: "broker", slug: "b" }]);
+    const out = await topMatchesForRoute({}, resolved("browse"), 3, {
+      hero: "listings",
+      secondary: ["platforms"],
+    });
+    expect(mockComputeTopMatches).toHaveBeenCalled();
+    expect(out[0]).toMatchObject({ kind: "broker" });
+  });
+
+  it("non-advisor route with lanes but no platforms lane still returns []", async () => {
+    const out = await topMatchesForRoute({}, resolved("guide"), 3, {
+      hero: "education",
+      secondary: ["brief"],
+    });
+    expect(out).toEqual([]);
+    expect(mockComputeTopMatches).not.toHaveBeenCalled();
+  });
+
   it("advisor route with flag OFF returns [] (dark launch — zero live change)", async () => {
     mockFlag.mockResolvedValue(false);
     expect(await topMatchesForRoute({ intent: "help" }, resolved("individual"))).toEqual([]);
