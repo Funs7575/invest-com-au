@@ -11,7 +11,7 @@ const baseHero: HubHeroConfig = {
   subhead: "Find ASIC-approved SMSF auditors and specialist advisers.",
   primaryCta: {
     label: "Find an SMSF Specialist",
-    href: "/quiz?vertical=smsf",
+    href: "/get-matched?vertical=smsf",
     lever: "lead_routing",
   },
 };
@@ -39,7 +39,7 @@ describe("HubHero", () => {
     it("renders the primary CTA as a link with the configured href", () => {
       render(<HubHero hero={baseHero} breadcrumbs={baseCrumbs} />);
       const cta = screen.getByTestId("hub-hero-primary-cta");
-      expect(cta).toHaveAttribute("href", "/quiz?vertical=smsf");
+      expect(cta).toHaveAttribute("href", "/get-matched?vertical=smsf");
       expect(cta).toHaveTextContent("Find an SMSF Specialist");
     });
 

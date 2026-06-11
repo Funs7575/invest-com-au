@@ -44,7 +44,7 @@ export const smsfHubConfig: HubConfig = {
     ],
     primaryCta: {
       label: "Find an SMSF Specialist",
-      href: "/quiz?vertical=smsf",
+      href: "/get-matched?vertical=smsf",
       lever: "lead_routing",
     },
   },

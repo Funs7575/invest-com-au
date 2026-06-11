@@ -3,7 +3,7 @@
  *
  * Centralises the URL construction logic so every CTA — hub pages, calculators,
  * onboarding results, email links — produces consistent, canonical URLs with
- * the same param names that /find-advisor and /quiz read.
+ * the same param names that /find-advisor and /get-matched read.
  *
  * LX-04 — UX conversion stream (REMEDIATION_QUEUE.md).
  */
@@ -56,16 +56,16 @@ export interface QuizPrefillOptions {
 }
 
 /**
- * Build a pre-filled /quiz URL.
+ * Build a pre-filled /get-matched URL.
  *
- * The quiz reads the `vertical` param to set the initial scoring weights
- * (smsf_weight, crypto_weight, etc.) so the first result screen is already
- * tuned to the user's context.
+ * The canonical funnel reads the `vertical` param to bias the first result
+ * screen toward the user's context. (`/quiz` is a permanent 308 alias of
+ * `/get-matched`, so the URL is emitted against the live route directly.)
  */
 export function buildQuizUrl(options: QuizPrefillOptions): string {
   const params = new URLSearchParams({ vertical: options.vertical });
   if (options.state) params.set("state", options.state);
-  return `/quiz?${params.toString()}`;
+  return `/get-matched?${params.toString()}`;
 }
 
 export interface CrossBorderMatchOptions {
