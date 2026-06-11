@@ -298,6 +298,7 @@ export default function HomeHeroReel({
           width: 100%;
         }
         .hero-reel-pip {
+          position: relative;
           width: 100%;
           height: 4px;
           border-radius: 99px;
@@ -306,6 +307,22 @@ export default function HomeHeroReel({
           padding: 0;
           cursor: pointer;
           transition: background-color .2s ease, transform .2s ease;
+        }
+        /* Expand the vertical tap target to the 44px Apple-HIG minimum without
+           growing the 4px visual bar: a transparent overlay centred on the pip
+           captures touches but is removed from layout so the chrome row stays
+           compact. Width stays the pip's own width (left/right:0) so adjacent
+           pips never overlap — the 8 pips are contiguous, so horizontal
+           precision is not the issue; vertical reach (4px → 44px) is
+           (DISC-E mobile tap targets). */
+        .hero-reel-pip::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          height: 44px;
         }
         .hero-reel-pip:hover { background: rgba(255,255,255,.34); }
         .hero-reel-pip.is-active { transform: scaleY(1.65); }

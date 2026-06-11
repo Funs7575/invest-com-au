@@ -5,8 +5,9 @@
  *   1. The component renders its nav tabs after mount.
  *   2. Hidden on HIDDEN_PREFIXES routes (/admin, /auth, /quiz, /get-matched, /broker-portal).
  *   3. Active tab highlighted when pathname matches a tab prefix.
- *   4. Double-mount guard — verifies app/page.tsx no longer imports
- *      MobileBottomNav directly, so the nav is only mounted once via LayoutShell.
+ *   4. Double-mount guard — verifies the home page (app/(home)/page.tsx) no
+ *      longer imports MobileBottomNav directly, so the nav is only mounted once
+ *      via LayoutShell.
  */
 
 import { describe, it, expect, vi } from "vitest";
@@ -136,14 +137,16 @@ describe("MobileBottomNav — active tab", () => {
 });
 
 describe("MobileBottomNav — double-mount guard", () => {
-  it("app/page.tsx does not import MobileBottomNav directly", async () => {
-    // Read the source of app/page.tsx and assert MobileBottomNav is not imported.
-    // This is a static analysis guard — if someone adds it back to page.tsx the
+  it("the home page does not import MobileBottomNav directly", async () => {
+    // Read the source of the home page and assert MobileBottomNav is not
+    // imported. This is a static analysis guard — if someone adds it back the
     // test will fail and remind them to remove it (nav is now in LayoutShell).
+    // The homepage lives in the (home) route group so its loading skeleton is
+    // scoped to "/" and does not soft-404 sibling dynamic routes (DISC-B).
     const fs = await import("fs");
     const path = await import("path");
     const pageSource = fs.readFileSync(
-      path.resolve(process.cwd(), "app/page.tsx"),
+      path.resolve(process.cwd(), "app/(home)/page.tsx"),
       "utf8",
     );
     expect(pageSource).not.toContain("MobileBottomNav");

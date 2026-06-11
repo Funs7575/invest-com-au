@@ -37,8 +37,10 @@ import {
   sortRankedBrokers,
   updateShortlist,
   type CompareCategory,
+  type CompareColumn,
   type CostInputs,
   type FeatureFilter,
+  type RankedBroker,
   type ScenarioMode,
   type SortCol,
 } from "@/lib/compare-engine";
@@ -82,6 +84,92 @@ const featureFilterMeta: Record<FeatureFilter, { label: string; icon: string }> 
   'low-fx': { label: 'Low FX (<0.5%)', icon: 'dollar-sign' },
   'has-deal': { label: 'Has Deal', icon: 'tag' },
 };
+
+// Mobile windowing (DISC-E): the mobile card list previously rendered every
+// matching platform in one ~35,000px scroll. We render an initial window and
+// reveal more on tap. State lives in this child so remounting it (via a key
+// keyed on the active filter + search) resets the window to the top on any
+// filter/search change — no set-state-in-effect needed.
+const MOBILE_INITIAL_CARDS = 12;
+const MOBILE_CARDS_STEP = 12;
+
+function MobileBrokerCards({
+  rows,
+  columns,
+  showAllColumns,
+  selected,
+  selectionFull,
+  onToggleSelected,
+  editorPicks,
+  isSponsoredFn,
+}: {
+  rows: RankedBroker[];
+  columns: CompareColumn[];
+  showAllColumns: boolean;
+  selected: Set<string>;
+  selectionFull: boolean;
+  onToggleSelected: (slug: string) => void;
+  editorPicks: Record<string, string>;
+  isSponsoredFn: (broker: Broker) => boolean;
+}) {
+  const [visibleCount, setVisibleCount] = useState(MOBILE_INITIAL_CARDS);
+  const visibleRows = rows.slice(0, visibleCount);
+  const remaining = rows.length - visibleRows.length;
+
+  return (
+    <>
+      {visibleRows.map((row) => {
+        const broker = row.broker;
+        const mobileColumns = showAllColumns ? columns : columns.slice(0, 4);
+        return (
+          <article key={broker.id} data-testid="compare-mobile-card" className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                checked={selected.has(broker.slug)}
+                disabled={!selected.has(broker.slug) && selectionFull}
+                onChange={() => onToggleSelected(broker.slug)}
+                className="mt-1 h-5 w-5 accent-slate-900"
+                aria-label={`Pin ${broker.name} to shortlist`}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <Link href={`/broker/${broker.slug}`} className="font-bold text-slate-900 truncate">{broker.name}</Link>
+                  <span className="rounded-full bg-slate-100 px-2 py-1 text-[0.62rem] font-bold uppercase text-slate-500">{row.commercialDisclosure}</span>
+                </div>
+                {editorPicks[broker.slug] && !isSponsoredFn(broker) && <p className="text-[0.68rem] font-semibold text-emerald-700">{editorPicks[broker.slug]}</p>}
+              </div>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {mobileColumns.map((column) => (
+                <div key={column.key} className="rounded-xl bg-slate-50 p-2">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{column.label}</p>
+                  <p className="text-sm font-semibold text-slate-800">{column.value(broker, row)}</p>
+                </div>
+              ))}
+            </div>
+            <details className="mt-3 rounded-xl border border-slate-100 bg-white p-2 text-xs text-slate-600">
+              <summary className="cursor-pointer font-bold text-slate-800">Why this result?</summary>
+              <ul className="mt-2 list-disc pl-4 space-y-1">
+                {row.why.map((why) => <li key={why}>{why}</li>)}
+              </ul>
+            </details>
+          </article>
+        );
+      })}
+      {remaining > 0 && (
+        <button
+          type="button"
+          onClick={() => setVisibleCount((c) => c + MOBILE_CARDS_STEP)}
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+        >
+          Show {Math.min(remaining, MOBILE_CARDS_STEP)} more
+          <span aria-hidden className="text-slate-400">({remaining} left)</span>
+        </button>
+      )}
+    </>
+  );
+}
 
 function InfoTip({ text }: { text: string }) {
   const [open, setOpen] = useState(false);
@@ -882,45 +970,16 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               Tap ○ to select 2–4 for side-by-side comparison
             </div>
           )}
-          {sortedRows.map(row => {
-            const broker = row.broker;
-            const mobileColumns = showAllMobileColumns ? schema.columns : schema.columns.slice(0, 4);
-            return (
-            <article key={broker.id} data-testid="compare-mobile-card" className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  checked={selected.has(broker.slug)}
-                  disabled={!selected.has(broker.slug) && selected.size >= 4}
-                  onChange={() => toggleSelected(broker.slug)}
-                  className="mt-1 h-5 w-5 accent-slate-900"
-                  aria-label={`Pin ${broker.name} to shortlist`}
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <Link href={`/broker/${broker.slug}`} className="font-bold text-slate-900 truncate">{broker.name}</Link>
-                    <span className="rounded-full bg-slate-100 px-2 py-1 text-[0.62rem] font-bold uppercase text-slate-500">{row.commercialDisclosure}</span>
-                  </div>
-                  {editorPicks[broker.slug] && !isSponsored(broker) && <p className="text-[0.68rem] font-semibold text-emerald-700">{editorPicks[broker.slug]}</p>}
-                </div>
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {mobileColumns.map((column) => (
-                  <div key={column.key} className="rounded-xl bg-slate-50 p-2">
-                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">{column.label}</p>
-                    <p className="text-sm font-semibold text-slate-800">{column.value(broker, row)}</p>
-                  </div>
-                ))}
-              </div>
-              <details className="mt-3 rounded-xl border border-slate-100 bg-white p-2 text-xs text-slate-600">
-                <summary className="cursor-pointer font-bold text-slate-800">Why this result?</summary>
-                <ul className="mt-2 list-disc pl-4 space-y-1">
-                  {row.why.map((why) => <li key={why}>{why}</li>)}
-                </ul>
-              </details>
-            </article>
-            );
-          })}
+          <MobileBrokerCards
+            rows={sortedRows}
+            columns={schema.columns}
+            showAllColumns={showAllMobileColumns}
+            selected={selected}
+            selectionFull={selected.size >= 4}
+            onToggleSelected={toggleSelected}
+            editorPicks={editorPicks}
+            isSponsoredFn={isSponsored}
+          />
         </div>
         </div>{/* close scroll ref */}
 

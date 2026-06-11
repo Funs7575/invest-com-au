@@ -69,6 +69,12 @@ const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
 };
 
 export const revalidate = 3600; // ISR: revalidate every hour
+// Unknown "best-of" slugs must return a real HTTP 404, not a soft-404
+// (HTTP 200 + streamed React #419 — DISC-B / DISC-20260610). The valid set is
+// the static category config enumerated by generateStaticParams() below, so
+// dynamicParams=false rejects anything else at the routing layer before the
+// loading.tsx boundary can commit a 200.
+export const dynamicParams = false;
 
 // ── Static params for ISR ──
 export async function generateStaticParams() {

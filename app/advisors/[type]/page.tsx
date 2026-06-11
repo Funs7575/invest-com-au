@@ -8,6 +8,13 @@ import { itemListJsonLd } from "@/lib/schema-markup";
 import AdvisorsClient from "../AdvisorsClient";
 
 export const revalidate = 1800;
+// Unknown advisor-type slugs must return a real HTTP 404, not a soft-404
+// (HTTP 200 + streamed React #419). The valid set is fully enumerated by
+// generateStaticParams() from SLUG_TO_TYPE, so dynamicParams=false makes the
+// router reject any other slug before render — closing the case where a
+// loading/layout Suspense boundary commits a 200 before the page's
+// notFound() runs (DISC-B / audit DISC-20260610).
+export const dynamicParams = false;
 
 const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "smsf-accountants": "smsf_accountant",

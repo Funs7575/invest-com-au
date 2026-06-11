@@ -219,7 +219,7 @@ export default async function ComparePage() {
         href={dealBroker.affiliate_url ? `/go/${dealBroker.slug}` : `/broker/${dealBroker.slug}`}
         target="_blank"
         rel="noopener noreferrer nofollow sponsored"
-        className="shrink-0 rounded-lg bg-coral-500 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-coral-400"
+        className="inline-flex min-h-11 shrink-0 items-center rounded-lg bg-coral-500 px-3.5 text-xs font-bold text-white transition-colors hover:bg-coral-400"
       >
         Claim &rarr;
       </a>
@@ -312,7 +312,12 @@ export default async function ComparePage() {
           {SPECIALISED_COMPARES.map((item, i) => (
             <span key={item.href} className="inline-flex items-center gap-x-3">
               {i > 0 && <span aria-hidden className="text-slate-300">·</span>}
-              <Link href={item.href} className="hover:text-amber-700 hover:underline">
+              {/* min-h-11 gives a 44px tap target (DISC-E) while keeping the
+                  quiet text-link look — no pill, no background. */}
+              <Link
+                href={item.href}
+                className="inline-flex min-h-11 items-center hover:text-amber-700 hover:underline"
+              >
                 {item.label}
               </Link>
             </span>

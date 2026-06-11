@@ -12,6 +12,11 @@ import {
 } from "@/lib/compliance";
 
 export const revalidate = 3600;
+// Unknown switch-type slugs must 404 cleanly, not soft-404 (HTTP 200 +
+// streamed React #419 — DISC-B / DISC-20260610). SWITCH_TYPES is the static
+// source of truth enumerated by generateStaticParams() below, so
+// dynamicParams=false rejects any other slug at the routing layer.
+export const dynamicParams = false;
 
 // ─── Static params ────────────────────────────────────────────────────────────
 
