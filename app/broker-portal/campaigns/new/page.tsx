@@ -132,7 +132,7 @@ function BrokerIcon({ name, logoUrl, size = "w-5 h-5", textSize = "text-[0.45rem
 function CompareMockup({ brokerName, isHighlighted, logoUrl }: { brokerName: string; isHighlighted: boolean; logoUrl?: string }) {
   return (
     <MockupShell title="Compare Brokers" url="invest.com.au/compare">
-      <p className="text-[0.6rem] text-slate-400 mb-2 font-medium">Compare Australian Share Trading Platforms</p>
+      <p className="text-[0.6rem] text-slate-500 mb-2 font-medium">Compare Australian Share Trading Platforms</p>
       {/* Table header */}
       <div className="grid grid-cols-5 gap-1 text-[0.5rem] font-bold text-slate-500 uppercase tracking-wider px-2 py-1 border-b border-slate-100">
         <span className="col-span-2">Broker</span><span>ASX Fee</span><span>Rating</span><span />
@@ -210,7 +210,7 @@ function HomepageMockup({ brokerName, isHighlighted, logoUrl }: { brokerName: st
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-3 mb-2">
         <p className="text-[0.65rem] font-bold text-white">Compare Australia&apos;s Best Brokers</p>
-        <p className="text-[0.45rem] text-slate-400 mt-0.5">Find the right platform for your investing style</p>
+        <p className="text-[0.45rem] text-slate-500 mt-0.5">Find the right platform for your investing style</p>
       </div>
       {/* Table */}
       <p className="text-[0.5rem] font-bold text-slate-500 uppercase tracking-wider mb-1">Top Brokers</p>
@@ -731,7 +731,7 @@ export default function NewCampaignPage() {
                       </div>
                     ) : (
                       <div className="shrink-0 w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center">
-                        <Icon name="layout" size={18} className="text-slate-400" />
+                        <Icon name="layout" size={18} className="text-slate-500" />
                       </div>
                     )}
                     <div className="flex-1">
@@ -875,7 +875,7 @@ export default function NewCampaignPage() {
           {/* Dayparting / Scheduling */}
           <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3">
             <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
-              <Icon name="clock" size={14} className="text-slate-400" />
+              <Icon name="clock" size={14} className="text-slate-500" />
               Scheduling &amp; Dayparting
               <span className="text-xs text-slate-500 italic font-normal ml-1">(optional)</span>
               <InfoTip text="Control when your ads are shown. Only serve ads during specific hours or days of the week to optimize spend." />
@@ -1108,7 +1108,7 @@ export default function NewCampaignPage() {
       <div className="w-full lg:w-[380px] xl:w-[420px] shrink-0">
         <div className="lg:sticky lg:top-4 space-y-4">
           <div className="flex items-center gap-2 mb-1">
-            <Icon name="eye" size={14} className="text-slate-400" />
+            <Icon name="eye" size={14} className="text-slate-500" />
             <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Live Preview</h3>
           </div>
 

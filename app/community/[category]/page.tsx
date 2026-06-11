@@ -230,7 +230,7 @@ export default async function CategoryPage({
               </Link>
             </li>
             <li>
-              <Icon name="chevron-right" size={14} className="text-slate-400" />
+              <Icon name="chevron-right" size={14} className="text-slate-500" />
             </li>
             <li>
               <Link href="/community" className="hover:text-slate-700">
@@ -238,7 +238,7 @@ export default async function CategoryPage({
               </Link>
             </li>
             <li>
-              <Icon name="chevron-right" size={14} className="text-slate-400" />
+              <Icon name="chevron-right" size={14} className="text-slate-500" />
             </li>
             <li className="text-slate-900 font-medium">{category.name}</li>
           </ol>
@@ -334,7 +334,7 @@ export default async function CategoryPage({
                     href={`/community/new?category=${slug}&title=${encodeURIComponent(topic)}`}
                     className="flex items-start gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group"
                   >
-                    <Icon name="message-circle" size={14} className="text-slate-400 group-hover:text-emerald-600 shrink-0 mt-0.5" />
+                    <Icon name="message-circle" size={14} className="text-slate-500 group-hover:text-emerald-600 shrink-0 mt-0.5" />
                     <span className="text-xs font-medium text-slate-600 group-hover:text-slate-900">
                       {topic}
                     </span>

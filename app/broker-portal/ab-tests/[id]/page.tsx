@@ -211,7 +211,7 @@ export default function ABTestDetailPage() {
   if (!test) {
     return (
       <div className="text-center py-16">
-        <Icon name="alert-circle" size={32} className="text-slate-400 mx-auto mb-3" />
+        <Icon name="alert-circle" size={32} className="text-slate-500 mx-auto mb-3" />
         <p className="text-sm text-slate-600 font-medium mb-2">Test not found</p>
         <Link href="/broker-portal/ab-tests" className="text-sm text-slate-500 hover:text-slate-700 underline">
           Back to all tests
@@ -267,18 +267,18 @@ export default function ABTestDetailPage() {
             </div>
             <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
               <span className="flex items-center gap-1.5">
-                <Icon name="git-branch" size={14} className="text-slate-400" />
+                <Icon name="git-branch" size={14} className="text-slate-500" />
                 {TEST_TYPES[test.type] || test.type}
               </span>
               {test.start_date && (
                 <span className="flex items-center gap-1.5">
-                  <Icon name="calendar" size={14} className="text-slate-400" />
+                  <Icon name="calendar" size={14} className="text-slate-500" />
                   {new Date(test.start_date).toLocaleDateString("en-AU")}
                   {test.end_date && ` - ${new Date(test.end_date).toLocaleDateString("en-AU")}`}
                 </span>
               )}
               <span className="flex items-center gap-1.5">
-                <Icon name="eye" size={14} className="text-slate-400" />
+                <Icon name="eye" size={14} className="text-slate-500" />
                 {totalImpressions.toLocaleString()} total impressions
               </span>
             </div>

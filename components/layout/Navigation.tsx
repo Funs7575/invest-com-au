@@ -240,7 +240,7 @@ function MegaMenuDropdown({
       >
         {label}
         <svg
-          className={`w-3 h-3 text-slate-500 dark:text-slate-400 transition-transform duration-200 shrink-0 ${open ? "rotate-180" : ""}`}
+          className={`w-3 h-3 text-slate-500 dark:text-slate-500 transition-transform duration-200 shrink-0 ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -776,7 +776,7 @@ export function Navigation() {
             <ThemeToggle />
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              className="p-2.5 rounded-xl text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               aria-label="Search"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -800,7 +800,7 @@ export function Navigation() {
             <ThemeToggle />
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-500 dark:text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-500 dark:text-slate-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               aria-label="Search"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -844,7 +844,7 @@ export function Navigation() {
           <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-0.5">
             {currentMobileSections.map((section, si) => (
               <div key={section.title} className={si > 0 ? "border-t border-slate-100 dark:border-slate-700 pt-3 mt-1" : ""}>
-                <p className="px-3 pb-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                <p className="px-3 pb-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-500">
                   {section.title}
                 </p>
                 {section.items.map((item) => {

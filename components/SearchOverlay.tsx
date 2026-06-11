@@ -326,7 +326,7 @@ export default function SearchOverlay({
                 />
               </svg>
             ) : (
-              <Icon name="search" size={20} className="text-slate-400 shrink-0" />
+              <Icon name="search" size={20} className="text-slate-500 shrink-0" />
             )}
             <input
               ref={inputRef}

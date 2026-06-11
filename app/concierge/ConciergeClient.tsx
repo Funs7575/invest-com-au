@@ -383,7 +383,7 @@ export default function ConciergeClient() {
       <section className="bg-slate-900 text-white py-6 md:py-8">
         <div className="container-custom max-w-4xl">
           <nav
-            className="flex items-center gap-1.5 text-xs text-slate-400 mb-3"
+            className="flex items-center gap-1.5 text-xs text-slate-500 mb-3"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="hover:text-white">Home</Link>
@@ -395,7 +395,7 @@ export default function ConciergeClient() {
               <h1 className="text-2xl md:text-3xl font-extrabold mb-1">
                 Investment concierge
               </h1>
-              <p className="text-xs md:text-sm text-slate-400 max-w-2xl">
+              <p className="text-xs md:text-sm text-slate-500 max-w-2xl">
                 Ask anything about Australian investing — platforms, funds,
                 advisors, SMSF, FIRB, foreign investor rules. Educational
                 only, not personal financial advice.

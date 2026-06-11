@@ -85,7 +85,7 @@ export default function ValueInvestingPage() {
       {/* Hero — dark slate */}
       <section className="relative bg-slate-900 overflow-hidden py-10 md:py-16">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span className="text-slate-600">/</span>
             <Link href="/invest" className="hover:text-white transition-colors">Invest</Link>
@@ -124,7 +124,7 @@ export default function ValueInvestingPage() {
             ).map((s) => (
               <div key={s.label} className="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
                 <p className="text-2xl font-extrabold text-amber-400">{s.value}</p>
-                <p className="text-xs text-slate-400 mt-1">{s.label}</p>
+                <p className="text-xs text-slate-500 mt-1">{s.label}</p>
               </div>
             ))}
           </div>

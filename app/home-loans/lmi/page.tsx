@@ -161,7 +161,7 @@ export default function LMIPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-900 to-slate-700 text-white py-14">
         <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>
@@ -177,14 +177,14 @@ export default function LMIPage() {
           <p className="text-lg text-slate-300 max-w-2xl mb-3">
             LMI protects the <strong>lender</strong>, not you, if you default. It is generally required when you borrow more than 80% of a property&apos;s value — and as a one-off cost it can run into tens of thousands of dollars. Here&apos;s what it is, what it costs, and how to avoid it.
           </p>
-          <p className="text-xs text-slate-400 mb-8">{UPDATED_LABEL}</p>
+          <p className="text-xs text-slate-500 mb-8">{UPDATED_LABEL}</p>
           {/* Key facts */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {HERO_STATS.map((stat) => (
               <div key={stat.label} className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                <p className="text-xs text-slate-400 mb-1">{stat.label}</p>
+                <p className="text-xs text-slate-500 mb-1">{stat.label}</p>
                 <p className="text-lg font-bold text-white">{stat.value}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{stat.sub}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{stat.sub}</p>
               </div>
             ))}
           </div>
@@ -537,7 +537,7 @@ export default function LMIPage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-50">
                   {faq.q}
-                  <span className="ml-3 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
+                  <span className="ml-3 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.a}</div>
               </details>

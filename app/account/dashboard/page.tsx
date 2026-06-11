@@ -617,7 +617,7 @@ export default async function PersonalDashboardPage() {
               className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 transition-colors group"
             >
               <span className="text-sm text-slate-700 group-hover:text-violet-700 transition-colors">{a.label}</span>
-              <svg className="w-4 h-4 text-slate-400 group-hover:text-violet-600 shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-slate-500 group-hover:text-violet-600 shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>

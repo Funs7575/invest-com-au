@@ -83,7 +83,7 @@ export default async function SmsfAuditorsPage() {
         <section className="bg-slate-900 text-white py-10 md:py-12">
           <div className="container-custom">
             <nav
-              className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
+              className="flex items-center gap-1.5 text-xs text-slate-500 mb-5"
               aria-label="Breadcrumb"
             >
               <Link href="/" className="hover:text-white">
@@ -105,7 +105,7 @@ export default async function SmsfAuditorsPage() {
               Number (SAN) issued by ASIC. Compare auditors by state, fees,
               and specialty below.
             </p>
-            <p className="text-xs text-slate-400 mt-3 max-w-2xl">
+            <p className="text-xs text-slate-500 mt-3 max-w-2xl">
               Auditor independence is mandatory — your accountant preparing
               financial statements cannot also audit your fund.
             </p>
@@ -122,7 +122,7 @@ export default async function SmsfAuditorsPage() {
                 <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
                   <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
                     {faq.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                    <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                   </summary>
                   <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
                 </details>

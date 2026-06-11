@@ -81,7 +81,7 @@ export default async function SmsfCryptoPage() {
         {/* ── Hero ── */}
         <section className="bg-slate-900 text-white py-10 md:py-16">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/smsf" className="hover:text-white transition-colors">SMSF</Link>

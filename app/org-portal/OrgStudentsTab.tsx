@@ -69,7 +69,7 @@ export default function OrgStudentsTab({ org: _org }: Props) {
 
       {/* Search */}
       <div className="relative mb-4">
-        <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
         <input
           type="search" enterKeyHint="search"
           aria-label="Search students by name or email"

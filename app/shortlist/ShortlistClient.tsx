@@ -370,7 +370,7 @@ export default function ShortlistClient() {
 
         {/* Popular broker chips */}
         <div className="border-t border-slate-100 pt-4">
-          <p className="text-[0.65rem] md:text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2.5">
+          <p className="text-[0.65rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2.5">
             Popular with Aussies
           </p>
           <div className="flex flex-wrap justify-center gap-2">

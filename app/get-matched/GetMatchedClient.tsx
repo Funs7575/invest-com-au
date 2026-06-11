@@ -958,7 +958,7 @@ function ActionPlanScreen({
                       key={`${s.name}:${s.value}`}
                       className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs"
                     >
-                      <span className="text-slate-400">{s.name}:</span>
+                      <span className="text-slate-500">{s.name}:</span>
                       <span className="font-semibold text-white">{s.value}</span>
                     </li>
                   ))}
@@ -974,7 +974,7 @@ function ActionPlanScreen({
           <p className="text-slate-300 max-w-2xl leading-relaxed mt-6">
             {template.why_text}
           </p>
-          <p className="text-[11px] text-slate-400 mt-2 max-w-2xl">
+          <p className="text-[11px] text-slate-500 mt-2 max-w-2xl">
             Based on your answers. General information only — not personal advice.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-[11px]">

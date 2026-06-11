@@ -215,7 +215,7 @@ function AdvisorMatchCTA({ needKey, label }: { needKey: string; label: string })
           Get matched with a verified professional
         </p>
       </div>
-      <Icon name="chevron-right" size={18} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
+      <Icon name="chevron-right" size={18} className="text-slate-500 group-hover:text-blue-500 transition-colors" />
     </Link>
   );
 }

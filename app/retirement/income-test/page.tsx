@@ -143,7 +143,7 @@ export default function IncomTestPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">
               Home
             </Link>
@@ -175,9 +175,9 @@ export default function IncomTestPage() {
               { label: "Cut-off (single)", value: "~$2,318", sub: "Per fortnight income" },
             ].map((stat) => (
               <div key={stat.label} className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                <p className="text-xs text-slate-400 mb-1">{stat.label}</p>
+                <p className="text-xs text-slate-500 mb-1">{stat.label}</p>
                 <p className="text-2xl font-extrabold text-white">{stat.value}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{stat.sub}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{stat.sub}</p>
               </div>
             ))}
           </div>
@@ -799,7 +799,7 @@ export default function IncomTestPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4 bg-white">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">
+                  <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">
                     &#9662;
                   </span>
                 </summary>

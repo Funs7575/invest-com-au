@@ -258,7 +258,7 @@ export default function QuickAuditTool({ brokers }: QuickAuditToolProps) {
           {!emailSubmitted && !showBreakdown && (
             <div className="p-4 border-t border-slate-200">
               <p className="text-xs font-bold text-slate-700 mb-2">
-                <Icon name="mail" size={12} className="inline mr-1 -mt-0.5 text-slate-400" />
+                <Icon name="mail" size={12} className="inline mr-1 -mt-0.5 text-slate-500" />
                 Enter email for full breakdown across all {brokers.length} brokers
               </p>
               <div className="flex gap-2">

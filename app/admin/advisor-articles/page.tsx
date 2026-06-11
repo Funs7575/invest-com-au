@@ -167,7 +167,7 @@ export default function AdminAdvisorArticlesPage() {
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-slate-100">
                 <h2 className="text-base font-bold text-slate-900 truncate">{selected.title}</h2>
-                <button onClick={() => setSelected(null)} aria-label="Close" className="text-slate-400 hover:text-slate-600"><Icon name="x" size={18} /></button>
+                <button onClick={() => setSelected(null)} aria-label="Close" className="text-slate-500 hover:text-slate-600"><Icon name="x" size={18} /></button>
               </div>
 
               {/* Tabs */}

@@ -91,7 +91,7 @@ export default function PensionPhasePage() {
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/super" className="hover:text-white">Super</Link>
@@ -617,7 +617,7 @@ export default function PensionPhasePage() {
           <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
             <div>
               <h2 className="text-lg font-extrabold text-white mb-1">Plan your pension phase with professional advice</h2>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-500 text-sm">
                 A licensed financial adviser can model your transfer balance cap, drawdown strategy,
                 and age pension interactions — and structure death benefit nominations to minimise estate tax.
               </p>

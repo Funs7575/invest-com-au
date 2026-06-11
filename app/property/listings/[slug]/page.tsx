@@ -369,7 +369,7 @@ export default async function PropertyListingPage({ params }: { params: Promise<
             {/* Completion */}
             {listing.completion_date && (
               <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Icon name="calendar" size={16} className="text-slate-400" />
+                <Icon name="calendar" size={16} className="text-slate-500" />
                 <span>Expected completion: <strong className="text-slate-900">{listing.completion_date}</strong></span>
               </div>
             )}

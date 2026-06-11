@@ -53,7 +53,7 @@ export default async function HelpCategoryPage(
         {/* Header */}
         <div className="bg-slate-900 text-white py-8 md:py-12 px-4">
           <div className="container-custom max-w-3xl">
-            <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3">
+            <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="mx-1.5">/</span>
               <Link href="/help" className="hover:text-white">Help Centre</Link>

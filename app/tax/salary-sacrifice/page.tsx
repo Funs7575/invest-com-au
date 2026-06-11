@@ -290,7 +290,7 @@ export default function SalarySacrificePage() {
       {/* Hero */}
       <section className="relative bg-slate-900 text-white overflow-hidden py-10 md:py-14">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5 flex-wrap" aria-label="Breadcrumb">
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5 flex-wrap" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-white">Home</Link>
             <span className="text-slate-600">/</span>
             <Link href="/tax" className="hover:text-white">Tax</Link>
@@ -623,7 +623,7 @@ export default function SalarySacrificePage() {
               <details key={item.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {item.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{item.a}</p>
               </details>
