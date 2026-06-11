@@ -1309,6 +1309,24 @@ block, Founding-Experts BD motion.
 
 ---
 
+### 2026-06-11 — The 25 mega-sessions: pure-code compounding-value backlog
+
+Brainstormed list of self-contained builds (each one Claude session, no founder input, no new licences, no schema): the agreed execution order is **top-down**. Status tags maintained here as sessions complete.
+
+1. **Adviser Register Atlas** (`/adviser-register`) — ✅ SHIPPED #1545. Claim-CTA loop into /advisor-apply; awaiting real FAR extract (`npm run data:far` wherever egress is open; bundled data is noindex'd synthetic preview until then).
+2. **Super Fund Performance Explorer** (`/super/funds`) — ✅ SHIPPED #1546. Same file-backed pattern; awaiting APRA extract (`npm run data:apra -- --file <csv> --period "..."`).
+3. **ASX Ghost Tickers** — programmatic pages for every delisted/renamed ASX code ("what happened to X?"); high-intent orphaned searches, links into broker comparison.
+4. **Postcode Wealth Atlas** — ABS/ATO open data per postcode (median income, super balances, property): 2,600 pages feeding suburb guides + advisor directory by location.
+5. **Franking-credit encyclopedia** — per-ASX-200-stock dividend/franking history pages off announcements data.
+6. **ETF overlap matrix** — pairwise holdings-overlap pages for the ~40 most-held ASX ETFs ("VAS vs IOZ: 96% overlap — don't hold both").
+7. **Fee-drag calculator pages** — programmatic "cost of 1% over 30 years at $X" pages per balance band; internal links from every fund/broker page.
+8. **Glossary cross-language expansion** — the 8 locales × glossary terms as indexable pages (the i18n registry exists).
+9. **Historical broker-fee tracker** — date-stamped fee snapshots (the data already accrues in git history of site-data) rendered as per-broker fee-history pages.
+10. **"Is X regulated?" checker pages** — AFSL/ACL/unlicensed status pages for every entity in the AFSL register cache.
+11–25. (lower-confidence ideas — regenerate from this list's spirit when reached: state-by-state stamp duty matrices, visa-by-visa investment right pages, SMSF cost benchmarks by balance, dividend calendar pages, broker outage log, term-deposit ladder builders, CGT scenario library, currency-corridor remittance pages, super contribution deadline pages, advisor fee benchmarks by region, FIRB application timeline tracker, bond yield explainers, IPO archive, LIC NTA discount tracker, robo-advisor comparison matrix.)
+
+**Pattern established (#1, #2):** file-backed JSON in `data/` + typed lib loader + alias-driven CSV ingest script + hub/detail ISR routes + synthetic preview with `meta.sample` → banner + noindex until real extract lands → one-command hydration, ships as PR diff. Egress from build sandboxes is blocked for AU data portals — run ingests locally.
+
 ## Open commitments / revisit-by dates
 
 Time-bound items that need a check-in at a specific date. Don't delete — strike through and timestamp when resolved so we keep the trail.

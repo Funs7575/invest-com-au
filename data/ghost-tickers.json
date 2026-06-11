@@ -1,0 +1,240 @@
+{
+ "meta": {
+  "extractedAt": "2026-06-11",
+  "source": "synthetic preview seed \u2014 run `npm run data:asx-removed` with an ASX removed-companies CSV",
+  "sample": true,
+  "count": 28
+ },
+ "tickers": [
+  {
+   "code": "FWN",
+   "name": "Fairy-Wren Robotics Limited",
+   "slug": "fwn-fairy-wren-robotics-limited",
+   "event": "delisted",
+   "eventDate": "2025-03-07",
+   "detail": "Delisted at the request of the entity under Listing Rule 17.11."
+  },
+  {
+   "code": "MUL",
+   "name": "Mulga Copper Limited",
+   "slug": "mul-mulga-copper-limited",
+   "event": "acquired",
+   "eventDate": "2024-07-11",
+   "detail": "Removed following compulsory acquisition by Sample Resources plc."
+  },
+  {
+   "code": "GLH",
+   "name": "Galah Retail Group Limited",
+   "slug": "glh-galah-retail-group-limited",
+   "event": "delisted",
+   "eventDate": "2024-01-19",
+   "detail": "Delisted at the entity's request under Listing Rule 17.11."
+  },
+  {
+   "code": "KKB",
+   "name": "Kookaburra Software Limited",
+   "slug": "kkb-kookaburra-software-limited",
+   "event": "acquired",
+   "eventDate": "2023-05-26",
+   "detail": "Removed following scheme of arrangement with Sample Tech Corp."
+  },
+  {
+   "code": "BKT",
+   "name": "Banksia Therapeutics Limited",
+   "slug": "bkt-banksia-therapeutics-limited",
+   "event": "failed",
+   "eventDate": "2023-02-10",
+   "detail": "Removed following appointment of voluntary administrators."
+  },
+  {
+   "code": "EUC",
+   "name": "Eucalypt Infrastructure Limited",
+   "slug": "euc-eucalypt-infrastructure-limited",
+   "event": "acquired",
+   "eventDate": "2022-11-04",
+   "detail": "Removed following scheme of arrangement with Sample Infra Partners."
+  },
+  {
+   "code": "GRV",
+   "name": "Grevillea Agriculture Limited",
+   "slug": "grv-grevillea-agriculture-limited",
+   "event": "acquired",
+   "eventDate": "2022-06-24",
+   "detail": "Removed following compulsory acquisition by Sample Agri Pty Ltd."
+  },
+  {
+   "code": "QKK",
+   "name": "Quokka Energy Limited",
+   "slug": "qkk-quokka-energy-limited",
+   "event": "delisted",
+   "eventDate": "2021-11-15",
+   "detail": "Delisted at the request of the company under Listing Rule 17.11."
+  },
+  {
+   "code": "HUO",
+   "name": "Huon Aquaculture Holdings NL",
+   "slug": "huo-huon-aquaculture-holdings-nl",
+   "event": "acquired",
+   "eventDate": "2021-09-30",
+   "detail": "Removed following compulsory acquisition by Sample Foods International."
+  },
+  {
+   "code": "MEL",
+   "name": "Melaleuca Health Limited",
+   "slug": "mel-melaleuca-health-limited",
+   "event": "delisted",
+   "eventDate": "2020-10-05",
+   "detail": "Delisted at the request of the company."
+  },
+  {
+   "code": "CUR",
+   "name": "Currawong Media Limited",
+   "slug": "cur-currawong-media-limited",
+   "event": "acquired",
+   "eventDate": "2020-04-17",
+   "detail": "Removed following successful takeover offer by Sample Media Group."
+  },
+  {
+   "code": "QDG",
+   "name": "Quandong Foods Limited",
+   "slug": "qdg-quandong-foods-limited",
+   "event": "acquired",
+   "eventDate": "2019-12-20",
+   "detail": "Removed following compulsory acquisition by Sample FMCG Limited."
+  },
+  {
+   "code": "TLP",
+   "name": "Telopea Resources Limited",
+   "slug": "tlp-telopea-resources-limited",
+   "event": "acquired",
+   "eventDate": "2019-08-02",
+   "detail": "Removed following compulsory acquisition by Sample Holdings Limited."
+  },
+  {
+   "code": "IRB",
+   "name": "Ironbark Infrastructure Limited",
+   "slug": "irb-ironbark-infrastructure-limited",
+   "event": "renamed",
+   "eventDate": "2019-03-14",
+   "detail": "Change of name \u2014 now known as Eucalypt Infrastructure Limited (EUC).",
+   "successorName": "Eucalypt Infrastructure Limited",
+   "successorCode": "EUC"
+  },
+  {
+   "code": "JCD",
+   "name": "Jacaranda Property Group",
+   "slug": "jcd-jacaranda-property-group",
+   "event": "merged",
+   "eventDate": "2018-08-08",
+   "detail": "Removed following stapling restructure by scheme of arrangement."
+  },
+  {
+   "code": "WRT",
+   "name": "Waratah Biotech Limited",
+   "slug": "wrt-waratah-biotech-limited",
+   "event": "renamed",
+   "eventDate": "2018-05-30",
+   "detail": "Name change \u2014 renamed to Banksia Therapeutics Limited (BKT).",
+   "successorName": "Banksia Therapeutics Limited",
+   "successorCode": "BKT"
+  },
+  {
+   "code": "BNY",
+   "name": "Bunya Infrastructure Trust",
+   "slug": "bny-bunya-infrastructure-trust",
+   "event": "merged",
+   "eventDate": "2017-12-01",
+   "detail": "Removed following merger by scheme of arrangement with Ironbark Infrastructure (IRB)."
+  },
+  {
+   "code": "SPX",
+   "name": "Spinifex Logistics Limited",
+   "slug": "spx-spinifex-logistics-limited",
+   "event": "acquired",
+   "eventDate": "2017-06-16",
+   "detail": "Removed following successful off-market takeover by Sample Freight Group."
+  },
+  {
+   "code": "LYR",
+   "name": "Lyrebird Communications Limited",
+   "slug": "lyr-lyrebird-communications-limited",
+   "event": "merged",
+   "eventDate": "2016-09-12",
+   "detail": "Removed following implementation of scheme of arrangement with Currawong Media Limited."
+  },
+  {
+   "code": "PND",
+   "name": "Pandani Minerals NL",
+   "slug": "pnd-pandani-minerals-nl",
+   "event": "delisted",
+   "eventDate": "2016-02-09",
+   "detail": "Delisted for failure to comply with Listing Rule 12.1 (level of operations)."
+  },
+  {
+   "code": "NUM",
+   "name": "Numbat Gold NL",
+   "slug": "num-numbat-gold-nl",
+   "event": "delisted",
+   "eventDate": "2015-07-08",
+   "detail": "Delisted for failure to pay annual listing fees."
+  },
+  {
+   "code": "CAS",
+   "name": "Casuarina Telecom Limited",
+   "slug": "cas-casuarina-telecom-limited",
+   "event": "merged",
+   "eventDate": "2015-05-19",
+   "detail": "Removed following merger with Sample Telco via scheme of arrangement."
+  },
+  {
+   "code": "NLB",
+   "name": "Nullarbor Transport Limited",
+   "slug": "nlb-nullarbor-transport-limited",
+   "event": "renamed",
+   "eventDate": "2014-11-28",
+   "detail": "Name change \u2014 renamed to Spinifex Logistics Limited (SPX).",
+   "successorName": "Spinifex Logistics Limited",
+   "successorCode": "SPX"
+  },
+  {
+   "code": "BOB",
+   "name": "Boab Mining NL",
+   "slug": "bob-boab-mining-nl",
+   "event": "failed",
+   "eventDate": "2014-03-21",
+   "detail": "Securities suspended; company wound up following appointment of liquidators."
+  },
+  {
+   "code": "DGO",
+   "name": "Dingo Exploration Limited",
+   "slug": "dgo-dingo-exploration-limited",
+   "event": "failed",
+   "eventDate": "2013-10-22",
+   "detail": "Deregistered by ASIC; securities removed from official list."
+  },
+  {
+   "code": "LLP",
+   "name": "Lilly Pilly Wines Limited",
+   "slug": "llp-lilly-pilly-wines-limited",
+   "event": "failed",
+   "eventDate": "2012-04-13",
+   "detail": "Receivers and managers appointed; subsequently removed from the official list."
+  },
+  {
+   "code": "RSL",
+   "name": "Rosella Financial Group",
+   "slug": "rsl-rosella-financial-group",
+   "event": "failed",
+   "eventDate": "2011-08-03",
+   "detail": "Securities suspended; company placed into liquidation."
+  },
+  {
+   "code": "BIL",
+   "name": "Bilby Pharmaceuticals NL",
+   "slug": "bil-bilby-pharmaceuticals-nl",
+   "event": "failed",
+   "eventDate": "2010-09-27",
+   "detail": "Wound up by order of the court; removed from official list."
+  }
+ ]
+}
