@@ -182,6 +182,14 @@ export class BotSession {
     brokenImages?: boolean;
     visual?: boolean;
   } = {}): Promise<void> {
+    // Never audit an error page: a failed navigation leaves chrome-error://
+    // (or about:blank) on screen, and content checks would then report the
+    // page's disclosures / JSON-LD / links as "missing" — false findings
+    // attributed to the route that failed to load.
+    const currentUrl = this.page.url();
+    if (currentUrl.startsWith("chrome-error://") || currentUrl === "about:blank") {
+      return;
+    }
     await runAxe(this.page, this.store, this.persona);
     await checkSchemaMarkup(this.page, this.store, this.persona);
     if (opts.links) {
