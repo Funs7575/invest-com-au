@@ -46,6 +46,12 @@ const ShortlistReadySheet = dynamic(
   { ssr: false },
 );
 
+// Send-off acknowledgment on /go/ clicks + "how did it go?" return prompt (D3).
+const SendOffReturnLoop = dynamic(
+  () => import("@/components/SendOffReturnLoop"),
+  { ssr: false },
+);
+
 export default function LayoutSideEffects() {
   return (
     <>
@@ -54,6 +60,7 @@ export default function LayoutSideEffects() {
       <ServiceWorkerRegistrar />
       <ClaimAnonymousOnAuth />
       <ShortlistReadySheet />
+      <SendOffReturnLoop />
       <WebVitals />
       {/* Vercel-only: the injected /_vercel/speed-insights/script.js 404s on the
           Netlify mirror (it only exists on Vercel). NEXT_PUBLIC_VERCEL_ENV is
