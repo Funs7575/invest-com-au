@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import ThreadClient from "./ThreadClient";
+import ThreadRelatedArticles from "@/components/community/ThreadRelatedArticles";
 import VerifiedAdvisorBadge from "@/components/VerifiedAdvisorBadge";
 import type { Metadata } from "next";
 import { Suspense } from "react";
@@ -499,6 +500,14 @@ export default async function ThreadPage({
           posts={posts}
           categorySlug={categorySlug}
           isModerator={isViewerModerator}
+        />
+      </Suspense>
+      {/* Article cross-link — honest-empty: renders nothing when no
+          genuinely related guide exists (zero layout shift). */}
+      <Suspense fallback={null}>
+        <ThreadRelatedArticles
+          threadTitle={thread.title}
+          categorySlug={categorySlug}
         />
       </Suspense>
       <div className="container-custom max-w-4xl pb-8">
