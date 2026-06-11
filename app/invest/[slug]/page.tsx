@@ -57,7 +57,10 @@ export async function generateMetadata({
   }
 
   if (!data) {
-    return { title: "Investment Vertical" };
+    // Confirmed-unknown vertical (clean no-rows result, not a query error):
+    // 404 from metadata so the status is set before any streaming starts —
+    // the page body's notFound() alone yields a soft-404 (DISC-20260610-B).
+    notFound();
   }
 
   const title = data.hero_title
