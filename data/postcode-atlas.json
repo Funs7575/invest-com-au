@@ -1,0 +1,320 @@
+{
+ "meta": {
+  "extractedAt": "2026-06-11",
+  "source": "synthetic preview seed \u2014 run `npm run data:postcodes` with an ATO postcode CSV",
+  "incomeYear": "preview year (synthetic)",
+  "sample": true,
+  "count": 28,
+  "nationalMedianTaxableIncome": 86500
+ },
+ "postcodes": [
+  {
+   "postcode": "9901",
+   "state": "NSW",
+   "suburbs": [
+    "Boabville"
+   ],
+   "individualsCount": 22807,
+   "medianTaxableIncome": 128000,
+   "meanTaxableIncome": 180500,
+   "medianSuperContribution": 14700
+  },
+  {
+   "postcode": "9902",
+   "state": "VIC",
+   "suburbs": [
+    "Telopea Heights"
+   ],
+   "individualsCount": 14535,
+   "medianTaxableIncome": 55000,
+   "meanTaxableIncome": 68500,
+   "medianSuperContribution": 6300
+  },
+  {
+   "postcode": "9903",
+   "state": "QLD",
+   "suburbs": [
+    "Quokka Bay"
+   ],
+   "individualsCount": 3823,
+   "medianTaxableIncome": 94000,
+   "meanTaxableIncome": 109500,
+   "medianSuperContribution": 10800
+  },
+  {
+   "postcode": "9904",
+   "state": "SA",
+   "suburbs": [
+    "Waratah Park"
+   ],
+   "individualsCount": 5928,
+   "medianTaxableIncome": 86500,
+   "meanTaxableIncome": 108500,
+   "medianSuperContribution": 9900
+  },
+  {
+   "postcode": "9905",
+   "state": "WA",
+   "suburbs": [
+    "Bilby Creek"
+   ],
+   "individualsCount": 2789,
+   "medianTaxableIncome": 50000,
+   "meanTaxableIncome": 67000,
+   "medianSuperContribution": 5750
+  },
+  {
+   "postcode": "9906",
+   "state": "TAS",
+   "suburbs": [
+    "Casuarina Flats"
+   ],
+   "individualsCount": 12693,
+   "medianTaxableIncome": 84500,
+   "meanTaxableIncome": 114500,
+   "medianSuperContribution": 9700
+  },
+  {
+   "postcode": "9907",
+   "state": "NT",
+   "suburbs": [
+    "Lyrebird Gully"
+   ],
+   "individualsCount": 2135,
+   "medianTaxableIncome": 79000,
+   "meanTaxableIncome": 108500,
+   "medianSuperContribution": 9050
+  },
+  {
+   "postcode": "9908",
+   "state": "ACT",
+   "suburbs": [
+    "Mulga Plains"
+   ],
+   "individualsCount": 16063,
+   "medianTaxableIncome": 99000,
+   "meanTaxableIncome": 130000,
+   "medianSuperContribution": 11350
+  },
+  {
+   "postcode": "9909",
+   "state": "NSW",
+   "suburbs": [
+    "Numbat Ridge"
+   ],
+   "individualsCount": 9216,
+   "medianTaxableIncome": 132000,
+   "meanTaxableIncome": 180000,
+   "medianSuperContribution": 15150
+  },
+  {
+   "postcode": "9910",
+   "state": "VIC",
+   "suburbs": [
+    "Grevillea Grove"
+   ],
+   "individualsCount": 14071,
+   "medianTaxableIncome": 80000,
+   "meanTaxableIncome": 106000,
+   "medianSuperContribution": 9200
+  },
+  {
+   "postcode": "9911",
+   "state": "QLD",
+   "suburbs": [
+    "Bunya Downs"
+   ],
+   "individualsCount": 2789,
+   "medianTaxableIncome": 75000,
+   "meanTaxableIncome": 94500,
+   "medianSuperContribution": 8600
+  },
+  {
+   "postcode": "9912",
+   "state": "SA",
+   "suburbs": [
+    "Currawong Point"
+   ],
+   "individualsCount": 14502,
+   "medianTaxableIncome": 110000,
+   "meanTaxableIncome": 138000,
+   "medianSuperContribution": 12650
+  },
+  {
+   "postcode": "9913",
+   "state": "WA",
+   "suburbs": [
+    "Dingo Springs"
+   ],
+   "individualsCount": 5023,
+   "medianTaxableIncome": 103500,
+   "meanTaxableIncome": 120000,
+   "medianSuperContribution": 11900
+  },
+  {
+   "postcode": "9914",
+   "state": "TAS",
+   "suburbs": [
+    "Eucalypt Vale"
+   ],
+   "individualsCount": 19728,
+   "medianTaxableIncome": 76000,
+   "meanTaxableIncome": 88500,
+   "medianSuperContribution": 8700
+  },
+  {
+   "postcode": "9915",
+   "state": "NT",
+   "suburbs": [
+    "Fairy-Wren Cove"
+   ],
+   "individualsCount": 3087,
+   "medianTaxableIncome": 57500,
+   "meanTaxableIncome": 64000,
+   "medianSuperContribution": 6600
+  },
+  {
+   "postcode": "9916",
+   "state": "ACT",
+   "suburbs": [
+    "Galah Junction"
+   ],
+   "individualsCount": 14089,
+   "medianTaxableIncome": 71500,
+   "meanTaxableIncome": 99000,
+   "medianSuperContribution": 8200
+  },
+  {
+   "postcode": "9917",
+   "state": "NSW",
+   "suburbs": [
+    "Huon Bend"
+   ],
+   "individualsCount": 9375,
+   "medianTaxableIncome": 76500,
+   "meanTaxableIncome": 91500,
+   "medianSuperContribution": 8750
+  },
+  {
+   "postcode": "9918",
+   "state": "VIC",
+   "suburbs": [
+    "Ironbark Crossing"
+   ],
+   "individualsCount": 18839,
+   "medianTaxableIncome": 74500,
+   "meanTaxableIncome": 96000,
+   "medianSuperContribution": 8550
+  },
+  {
+   "postcode": "9919",
+   "state": "QLD",
+   "suburbs": [
+    "Jacaranda Rise"
+   ],
+   "individualsCount": 3285,
+   "medianTaxableIncome": 70000,
+   "meanTaxableIncome": 96000,
+   "medianSuperContribution": 8050
+  },
+  {
+   "postcode": "9920",
+   "state": "SA",
+   "suburbs": [
+    "Kookaburra Hollow"
+   ],
+   "individualsCount": 20022,
+   "medianTaxableIncome": 109500,
+   "meanTaxableIncome": 129500,
+   "medianSuperContribution": 12550
+  },
+  {
+   "postcode": "9921",
+   "state": "WA",
+   "suburbs": [
+    "Lilly Pilly Glen"
+   ],
+   "individualsCount": 22114,
+   "medianTaxableIncome": 95000,
+   "meanTaxableIncome": 124000,
+   "medianSuperContribution": 10900
+  },
+  {
+   "postcode": "9922",
+   "state": "TAS",
+   "suburbs": [
+    "Melaleuca Waters"
+   ],
+   "individualsCount": 4680,
+   "medianTaxableIncome": 130000,
+   "meanTaxableIncome": 187000,
+   "medianSuperContribution": 14950
+  },
+  {
+   "postcode": "9923",
+   "state": "NT",
+   "suburbs": [
+    "Nullarbor Edge"
+   ],
+   "individualsCount": 10456,
+   "medianTaxableIncome": 52500,
+   "meanTaxableIncome": 58000,
+   "medianSuperContribution": 6000
+  },
+  {
+   "postcode": "9924",
+   "state": "ACT",
+   "suburbs": [
+    "Pandani Falls"
+   ],
+   "individualsCount": 16743,
+   "medianTaxableIncome": 118000,
+   "meanTaxableIncome": 170000,
+   "medianSuperContribution": 13550
+  },
+  {
+   "postcode": "9925",
+   "state": "NSW",
+   "suburbs": [
+    "Quandong Corner"
+   ],
+   "individualsCount": 22812,
+   "medianTaxableIncome": 118000,
+   "meanTaxableIncome": 152000,
+   "medianSuperContribution": 13550
+  },
+  {
+   "postcode": "9926",
+   "state": "VIC",
+   "suburbs": [
+    "Rosella Fields"
+   ],
+   "individualsCount": 18177,
+   "medianTaxableIncome": 133500,
+   "meanTaxableIncome": 163000,
+   "medianSuperContribution": 15350
+  },
+  {
+   "postcode": "9927",
+   "state": "QLD",
+   "suburbs": [
+    "Spinifex Outlook"
+   ],
+   "individualsCount": 9546,
+   "medianTaxableIncome": 132500,
+   "meanTaxableIncome": 154500,
+   "medianSuperContribution": 15200
+  },
+  {
+   "postcode": "9928",
+   "state": "SA",
+   "suburbs": [
+    "Banksia Terrace"
+   ],
+   "individualsCount": 11610,
+   "medianTaxableIncome": 54500,
+   "meanTaxableIncome": 63500,
+   "medianSuperContribution": 6250
+  }
+ ]
+}

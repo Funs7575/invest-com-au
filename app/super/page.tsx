@@ -15,7 +15,8 @@ import Link from "next/link";
 const SUPER_FAQS = [
   {
     q: "What is the superannuation guarantee rate in 2025–26?",
-    a: "The Superannuation Guarantee (SG) rate is 11.5% for FY2025–26, rising to 12% from 1 July 2026. Your employer must contribute this percentage of your ordinary time earnings to your nominated super fund. If you earn more than $450 per month (the income threshold was removed in 2022), contributions are required regardless of whether you work part-time or casually.",
+    // dated-ok — evergreen phrasing: 12% is the legislated final SG step, true indefinitely
+    a: "The Superannuation Guarantee (SG) rate is 11.5% for FY2025–26 and 12% from 1 July 2026 — the final legislated step. Your employer must contribute this percentage of your ordinary time earnings to your nominated super fund. If you earn more than $450 per month (the income threshold was removed in 2022), contributions are required regardless of whether you work part-time or casually.",
   },
   {
     q: "Can I access my super early?",
@@ -96,6 +97,8 @@ export default async function SuperPage() {
             <h2 className="text-xl font-bold text-slate-900 mb-4">Explore super topics</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {[
+                { label: "Fund Performance Explorer", href: "/super/funds", badge: "APRA returns & fees" },
+                { label: "Fee Drag Calculator", href: "/super/fee-drag", badge: "What 1% really costs" },
                 { label: "SMSF Hub", href: "/smsf", badge: "Self-managed" },
                 { label: "Contributions", href: "/super/contributions", badge: "Salary sacrifice" },
                 { label: "Transition to Retirement", href: "/super/transition-to-retirement", badge: "TTR strategy" },

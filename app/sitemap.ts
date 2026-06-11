@@ -22,6 +22,11 @@ import {
   registerMeta as adviserRegisterMeta,
   allRegisterAdvisers,
 } from "@/lib/adviser-register";
+import { superFundsMeta, allSuperFunds } from "@/lib/super-funds";
+import { ghostTickersMeta, allGhostTickers } from "@/lib/ghost-tickers";
+import { postcodeAtlasMeta, allPostcodes } from "@/lib/postcode-atlas";
+import { FEE_DRAG_SCENARIOS } from "@/lib/fee-drag";
+import { CGT_SCENARIOS } from "@/lib/cgt-scenarios";
 
 const log = logger("sitemap");
 
@@ -281,7 +286,7 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/global-investing/etfs", "/global-investing/etfs/us", "/global-investing/etfs/global",
     "/global-investing/shares/us",
     "/global-investing/calculators/direct-vs-asx-cost",
-    "/super/death-benefit", "/super/compare-guide", "/super/division-296",
+    "/super/death-benefit", "/super/compare-guide", "/super/division-296", "/super/funds", "/asx/delisted", "/postcodes", "/super/fee-drag",
     "/super/catch-up-contributions",
     "/super/co-contribution", "/super/spouse-contributions",
     "/super/transition-to-retirement", "/super/insurance",
@@ -816,6 +821,55 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
   // Adviser Register Atlas — the hub plus one page per current adviser on
   // the file-backed ASIC extract. Excluded entirely while the bundled
   // dataset is the synthetic preview (those pages are noindex'd).
+  // Super Fund Performance Explorer — per-fund pages over the APRA
+  // extract; excluded while the bundled dataset is the synthetic preview.
+  // ASX Ghost Tickers — per-company pages over the removed-companies
+  // extract; excluded while the bundled dataset is the synthetic preview.
+  // Postcode Wealth Atlas — per-postcode pages over the ATO extract;
+  // excluded while the bundled dataset is the synthetic preview.
+  // CGT scenario pages — pure-math static pages, always included.
+  const cgtScenarioPages: MetadataRoute.Sitemap = CGT_SCENARIOS.map((s) => ({
+    url: `${base}/cgt-calculator/${s.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "yearly" as const,
+    priority: 0.55,
+  }));
+
+  // Fee-drag scenario pages — pure-math static pages, always included.
+  const feeDragPages: MetadataRoute.Sitemap = FEE_DRAG_SCENARIOS.map((s) => ({
+    url: `${base}/super/fee-drag/${s.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "yearly" as const,
+    priority: 0.55,
+  }));
+
+  const postcodePages: MetadataRoute.Sitemap = postcodeAtlasMeta().sample
+    ? []
+    : allPostcodes().map((p) => ({
+        url: `${base}/postcodes/${p.postcode}`,
+        lastModified: new Date(postcodeAtlasMeta().extractedAt),
+        changeFrequency: "yearly" as const,
+        priority: 0.5,
+      }));
+
+  const ghostTickerPages: MetadataRoute.Sitemap = ghostTickersMeta().sample
+    ? []
+    : allGhostTickers().map((t) => ({
+        url: `${base}/asx/delisted/${t.slug}`,
+        lastModified: new Date(ghostTickersMeta().extractedAt),
+        changeFrequency: "yearly" as const,
+        priority: 0.5,
+      }));
+
+  const superFundPages: MetadataRoute.Sitemap = superFundsMeta().sample
+    ? []
+    : allSuperFunds().map((f) => ({
+        url: `${base}/super/funds/${f.slug}`,
+        lastModified: new Date(superFundsMeta().extractedAt),
+        changeFrequency: "monthly" as const,
+        priority: 0.55,
+      }));
+
   const registerPages: MetadataRoute.Sitemap = adviserRegisterMeta().sample
     ? []
     : [
@@ -957,6 +1011,11 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
     ...advisorLocationPages,
     ...firmPages,
     ...registerPages,
+    ...superFundPages,
+    ...ghostTickerPages,
+    ...postcodePages,
+    ...feeDragPages,
+    ...cgtScenarioPages,
   ];
 }
 
