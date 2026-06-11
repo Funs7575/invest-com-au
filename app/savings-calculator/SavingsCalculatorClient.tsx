@@ -136,7 +136,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Are you earning enough on your savings?</h1>
           <p className="text-sm md:text-base text-amber-100">Enter your balance and current rate — we&apos;ll show you exactly how much more you could earn.</p>
-          <div className="mt-3"><SocialProofCounter variant="badge" /></div>
+          <div className="mt-3"><SocialProofCounter variant="badge" surface="calculator" /></div>
         </div>
       </div>}
 
