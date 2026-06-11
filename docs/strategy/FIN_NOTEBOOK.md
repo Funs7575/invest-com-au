@@ -14,6 +14,62 @@
 
 ## Active strategic decisions log
 
+### 2026-06-11 — Mega-session: launch-clean sweep (DISC A–F) + API-billing verified live-ready + cutover guardian; P1 found: cron fleet dark 19 days
+
+Founder picked three sessions (B cutover-readiness, C polish sweep, D API
+activation) from a menu; all three shipped on one branch/PR. Grounding first
+(per the coordination lesson) found yesterday's 12-workstream wave mostly
+**evaporated with its worktrees** — no PRs existed for the licence-gate
+sweep or cutover scripts, so they were genuinely unclaimed.
+
+**P1 ops finding (needs founder, ~2 min):** the ENTIRE 139-route cron fleet
+has been dark since 2026-05-23 — zero `cron_run_log` rows in 48 h across all
+job names. The #1430 Netlify bridge is merged but never enabled. Fix: set
+`CRON_BRIDGE_ENABLED=true` + confirm `CRON_SECRET` in the Netlify env. The
+"fee-recheck stale" queue item was a symptom of this, not a check-fees bug.
+Prevention shipped: public `GET /api/health/crons` age probe + GitHub-Actions
+`cron-watchdog.yml` (external scheduler — in-platform cron monitors die with
+the fleet they monitor; that's how 19 days passed silently).
+
+**Session C (launch-clean):** licence-mode rating gates completed everywhere
+(~36 surfaces + central `renderStars` gate + JSON-LD builders — a
+factual_only deploy is now genuinely rating-free, UI and schema); soft-404s
+fixed with real 404 status on advisors/best/how-to (dynamicParams=false) and
+broker/invest (metadata-level notFound), verified live; social-proof counter
+honestly re-enabled (`/api/social-proof`, real 7-day distinct sessions,
+hidden below 25 — stays dark until launch traffic, by design); mobile tap
+targets + /compare load-more; hero stat scope-labelled. Decision: vitest now
+runs in **general_advice posture** (mirrors prod env) with factual-mode
+pinned by explicit module-mock tests. Decision: `app/quiz/page.tsx` NOT
+deleted — still the documented reference implementation.
+
+**Session D (API billing):** prod verified — the #1529 schema IS applied
+(ledger 155721/155736/155745/155755), so the line is env-vars-away from
+live. Gaps closed: monthly `requests_this_month` reset cron existed only as
+a comment (built: `reset-api-monthly-usage`, monthly-1-3); `fee.changed` was
+subscribable but never fired (wired into check-fees auto-approve + admin
+fee-queue approve); retry cron's silent-empty-stats failure mode now throws
+loudly into cron_run_log; `api_billing` kill switch added at checkout
+(fail-open, automation_kill_switches). Founder path:
+`docs/runbooks/api-billing-activation.md` + `npm run preflight:api-billing`
+(read-only). Remaining to revenue: create 2 Stripe prices, set
+`STRIPE_API_BASIC_PRICE_ID`/`STRIPE_API_PRO_PRICE_ID`, smoke checkout.
+
+**Session B (cutover guardian):** `scripts/cutover/` — sitemap fingerprinter
+(status/redirect-chain/canonical/JSON-LD/noindex per URL, deterministic
+sampling, cross-host path-keyed), fingerprint differ (exit-1 on orphans /
+status regressions / canonical-host drift), redirect-map checker reading
+`docs/cutover/legacy-redirect-map.csv` (**the CO-01 drop-in point** — harness
+live now, founder supplies the prior-host list later), plus
+`cutover-guardian.yml` (weekly + dispatch, artifact baselines). Smoke-tested
+live against the mirror: 8 shards parsed, 3,500 URLs discovered, sampled
+pages all healthy with apex canonicals.
+
+**Revisit:** 2026-06-18 — (1) did the founder flip the Netlify cron envs
+(watchdog goes green)? (2) Stripe price IDs set → first API-billing checkout
+smoke-tested? (3) consider promoting noindex-appearance to exit-1 in the
+cutover differ once a real baseline exists.
+
 ### 2026-06-10 — Advisor ecosystem social layer shipped (7 workstreams, 1 migration)
 
 Built on `claude/confident-feynman-qdq82c` (plan: `docs/plans/ADVISOR_ECOSYSTEM_BUILD.md`).
