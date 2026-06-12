@@ -93,24 +93,31 @@ export async function GET(request: NextRequest) {
     // benchmarks rather than failing the portal.
     const ownerVerticals = Array.from(new Set(listings.map((l) => l.vertical)));
     const benchmarks: Record<string, { median_views: number; median_enquiries: number; sample: number }> = {};
-    for (const vertical of ownerVerticals.slice(0, 6)) {
-      const { data: peers } = await supabase
-        .from("investment_listings")
-        .select("views, enquiries")
-        .eq("vertical", vertical)
-        .eq("status", "active")
-        .limit(200);
-      if (peers && peers.length >= 3) {
-        const median = (xs: number[]) => {
-          const sorted = [...xs].sort((a, b) => a - b);
-          return sorted[Math.floor(sorted.length / 2)] ?? 0;
-        };
-        benchmarks[vertical] = {
-          median_views: median(peers.map((p) => p.views ?? 0)),
-          median_enquiries: median(peers.map((p) => p.enquiries ?? 0)),
-          sample: peers.length,
-        };
+    try {
+      for (const vertical of ownerVerticals.slice(0, 6)) {
+        const { data: peers } = await supabase
+          .from("investment_listings")
+          .select("views, enquiries")
+          .eq("vertical", vertical)
+          .eq("status", "active")
+          .limit(200);
+        if (peers && peers.length >= 3) {
+          const median = (xs: number[]) => {
+            const sorted = [...xs].sort((a, b) => a - b);
+            return sorted[Math.floor(sorted.length / 2)] ?? 0;
+          };
+          benchmarks[vertical] = {
+            median_views: median(peers.map((p) => p.views ?? 0)),
+            median_enquiries: median(peers.map((p) => p.enquiries ?? 0)),
+            sample: peers.length,
+          };
+        }
       }
+    } catch (err) {
+      // Benchmarks are garnish — never let them fail the portal.
+      log.warn("[my-listings] benchmarks skipped", {
+        err: err instanceof Error ? err.message : String(err),
+      });
     }
 
     // Fetch enquiries for all listing IDs.
