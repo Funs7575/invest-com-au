@@ -16,6 +16,7 @@
  * empty result so the bookmark star never breaks the page.
  */
 
+// eslint-disable-next-line no-restricted-imports -- anonymous paths (anonymous_saves has deny-all-anon RLS, no JWT available) + cross-user claim replay (claimAnonymousSaves); both documented exceptions in CLAUDE.md § "Two Supabase clients"
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
@@ -26,7 +27,12 @@ export type BookmarkType =
   | "broker"
   | "advisor"
   | "scenario"
-  | "calculator";
+  | "calculator"
+  // Marketplace listings (lot pages). NOTE: `anonymous_saves` carries a
+  // CHECK constraint on bookmark_type — anonymous listing-saves fail soft
+  // (localStorage only) until 20260611140000_anonymous_saves_listing_type
+  // is applied. `user_bookmarks` has no CHECK, so authed saves work now.
+  | "listing";
 
 export interface BookmarkRow {
   id: number;
@@ -125,6 +131,31 @@ export async function addAnonymousSave(input: {
     );
     if (error) return false;
     return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Remove an anonymous save (the unsave half of `addAnonymousSave`).
+ * Without this, an anonymous save that the visitor later unsaves
+ * lingers server-side and `claimAnonymousSaves` resurrects it into
+ * `user_bookmarks` when they sign in.
+ */
+export async function removeAnonymousSave(input: {
+  sessionId: string;
+  type: BookmarkType;
+  ref: string;
+}): Promise<boolean> {
+  try {
+    const supabase = createAdminClient();
+    const { error } = await supabase
+      .from("anonymous_saves")
+      .delete()
+      .eq("session_id", input.sessionId)
+      .eq("bookmark_type", input.type)
+      .eq("ref", input.ref);
+    return !error;
   } catch {
     return false;
   }
