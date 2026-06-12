@@ -3,9 +3,8 @@ import Image from "next/image";
 import Icon from "@/components/Icon";
 import { getListingHeroImage } from "@/lib/listing-vertical-images";
 import { normaliseVertical } from "@/lib/listing-url";
-import { buildLotProfile } from "@/lib/listings/lot-profile";
 import { pricePerUnit } from "@/lib/listings/vertical-metrics";
-import { assessLotTransparency, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
+import { assessLotTransparencyLite, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
 
 /**
  * Loose, tolerant type for ListingCard — accepts both the strict
@@ -239,10 +238,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
   // well-documented lots stand out in browse — sellers chase the badge,
   // buyers learn to look for it. Essentials-only lots show nothing
   // (incentive, not shaming).
-  const transparency = assessLotTransparency(
-    listing,
-    buildLotProfile(listing.key_metrics ?? {}),
-  );
+  const transparency = assessLotTransparencyLite(listing);
   const showTransparencyBadge = transparency.level !== "essential";
   // $/unit — the number serious buyers actually rank on ($/ha, $/m², $/ML).
   const perUnit = pricePerUnit(listing);

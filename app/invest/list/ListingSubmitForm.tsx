@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { buildLotProfile } from "@/lib/listings/lot-profile";
-import { assessLotTransparency, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
+import { assessLotTransparencyLite, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
 import { metricsForCategory } from "@/lib/listings/vertical-metrics";
 import { categoryForListing } from "@/lib/listing-url";
 import Link from "next/link";
@@ -120,17 +119,15 @@ const INITIAL_FORM: FormData = {
  */
 function LiveQualityMeter({ form }: { form: FormData }) {
   if (!form.vertical) return null;
-  const assessment = assessLotTransparency(
-    {
-      asking_price_cents: null,
-      price_display: form.asking_price_display || null,
-      description: form.description || null,
-      images: [],
-      location_state: form.location_state || null,
-      location_city: form.location_city || null,
-    },
-    buildLotProfile({}),
-  );
+  const assessment = assessLotTransparencyLite({
+    asking_price_cents: null,
+    price_display: form.asking_price_display || null,
+    description: form.description || null,
+    images: [],
+    location_state: form.location_state || null,
+    location_city: form.location_city || null,
+    key_metrics: {},
+  });
   const category = categoryForListing({ vertical: form.vertical });
   const signals = metricsForCategory(category).filter((m) => m.qualitySignal);
   const pct = Math.round((assessment.metCount / assessment.total) * 100);

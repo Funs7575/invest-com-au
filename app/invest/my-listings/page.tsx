@@ -4,8 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { formatDate } from "@/lib/utils";
-import { buildLotProfile } from "@/lib/listings/lot-profile";
-import { assessLotTransparency, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
+import { assessLotTransparencyLite, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
 
 interface Listing {
   id: number;
@@ -456,10 +455,7 @@ export default function MyListingsPage() {
                         {/* Performance vs category + transparency nudge (idea #20) */}
                         {(() => {
                           const bench = benchmarks[listing.vertical];
-                          const transparency = assessLotTransparency(
-                            listing,
-                            buildLotProfile(listing.key_metrics ?? {}),
-                          );
+                          const transparency = assessLotTransparencyLite(listing);
                           const unmet = transparency.checks.filter((c) => !c.met);
                           const viewsDelta =
                             bench && bench.median_views > 0
