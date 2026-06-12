@@ -143,6 +143,19 @@ interface BriefFormProps {
    * renders (fail-closed dormancy) and the brief never joins a pool.
    */
   poolOptInEnabled?: boolean;
+  /**
+   * Household block (idea #6) — non-null only when the `households` flag is on
+   * AND the signed-in user is in a household with an accepted partner. Drives
+   * the isolated "post as household" checkbox in the contact step. When absent,
+   * the block does not render at all (flag-off / no-household = fully dormant).
+   *
+   * DUAL-NOTIFY DECISION: the brief model (advisor_auctions) has no field for
+   * extra notification recipients and the consumer notification path is
+   * single-email, so we do NOT dual-notify the partner. Checking the box badges
+   * the brief copy (a household line prepended to the description that pros see)
+   * — nothing more. See the submit() transform below.
+   */
+  householdContext?: { partnerLabel: string; ownLabel: string } | null;
 }
 
 export default function BriefForm({
@@ -152,7 +165,10 @@ export default function BriefForm({
   proSubscriber = false,
   proSupply = null,
   poolOptInEnabled = false,
+  householdContext = null,
 }: BriefFormProps) {
+  // Household block state (idea #6) — isolated, self-contained. See prop docs.
+  const [postAsHousehold, setPostAsHousehold] = useState(false);
   const searchParams = useSearchParams();
   const presetTeam = searchParams?.get("team") ?? "";
   const presetTemplate = searchParams?.get("template") ?? "";
@@ -442,6 +458,15 @@ export default function BriefForm({
     try {
       const fromPlan = !!planId && planPrefilled;
       const url = fromPlan ? `/api/get-matched/plans/${planId}/to-brief` : "/api/briefs";
+      // Household badge (idea #6): when "post as household" is on we prepend a
+      // single household line to the description pros see. We do NOT dual-notify
+      // the partner — the brief model has no extra-recipient field (decision
+      // documented on the householdContext prop). This transform is the block's
+      // only effect on the submitted body.
+      const jobDescription =
+        householdContext && postAsHousehold
+          ? `[Posting as a household: ${householdContext.ownLabel} & ${householdContext.partnerLabel}]\n\n${form.job_description}`
+          : form.job_description;
       const body = fromPlan
         ? {
             contact_name: form.contact_name,
@@ -455,7 +480,7 @@ export default function BriefForm({
             brief_template: form.brief_template,
             brief_payload: form.payload,
             job_title: form.job_title,
-            job_description: form.job_description,
+            job_description: jobDescription,
             budget_band: form.budget_band,
             location_state: form.location_state,
             provider_preference: form.provider_preference,
@@ -863,6 +888,25 @@ export default function BriefForm({
                     a group offer (a package and availability) to everyone with a
                     similar request this month — you decide individually whether to
                     accept. Your details stay private until you accept an offer.
+                  </span>
+                </label>
+              )}
+
+              {/* Household block (idea #6) — isolated, flag-gated. Renders only
+                  when householdContext is non-null (flag on + accepted partner).
+                  Badges the brief as a household post; does not dual-notify. */}
+              {householdContext && (
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-violet-200 bg-violet-50 p-3">
+                  <input
+                    type="checkbox"
+                    checked={postAsHousehold}
+                    onChange={(e) => setPostAsHousehold(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 accent-violet-600"
+                  />
+                  <span className="text-xs leading-relaxed text-violet-900">
+                    <strong>Post as a household</strong> ({householdContext.ownLabel} &amp;{" "}
+                    {householdContext.partnerLabel}). We&apos;ll note on the brief that
+                    you&apos;re looking together, so pros know it&apos;s a joint decision.
                   </span>
                 </label>
               )}

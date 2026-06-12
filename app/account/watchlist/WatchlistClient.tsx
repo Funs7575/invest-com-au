@@ -16,6 +16,8 @@ export interface WatchlistItem {
    * watchlist page from savings_rate_snapshots; null otherwise.
    */
   current_rate_bps?: number | null;
+  /** Whether this item is shared with the user's household (household_id set). */
+  shared?: boolean;
 }
 
 function formatRatePct(bps: number): string {
@@ -45,12 +47,32 @@ function itemHref(type: string, slug: string): string {
 
 interface Props {
   initialItems: WatchlistItem[];
+  /** households flag on AND an accepted partner → show share toggles. */
+  householdEnabled?: boolean;
 }
 
-export default function WatchlistClient({ initialItems }: Props) {
+export default function WatchlistClient({ initialItems, householdEnabled = false }: Props) {
   const [items, setItems] = useState(initialItems);
   const [removingIds, setRemovingIds] = useState<Set<number>>(new Set());
   const [error, setError] = useState<string | null>(null);
+
+  // Optimistically flip an item's shared state via the share API. Owner-only
+  // write — enforced server-side. Rolls back on failure.
+  const toggleShare = async (id: number, shared: boolean) => {
+    const snapshot = items;
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, shared } : i)));
+    try {
+      const res = await fetch("/api/account/household/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "watchlist", item_id: id, shared }),
+      });
+      if (!res.ok) throw new Error("share failed");
+    } catch {
+      setItems(snapshot);
+      setError("Couldn't update sharing. Please try again.");
+    }
+  };
 
   const removeItem = async (id: number) => {
     const snapshot = items;
@@ -144,6 +166,20 @@ export default function WatchlistClient({ initialItems }: Props) {
                   <span className="shrink-0 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[0.65rem] font-semibold text-emerald-800">
                     {formatRatePct(item.current_rate_bps)}
                   </span>
+                )}
+                {householdEnabled && (
+                  <label
+                    className="flex shrink-0 cursor-pointer items-center gap-1 text-[0.65rem] text-slate-500"
+                    title="Share this with your household"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={item.shared ?? false}
+                      onChange={(e) => void toggleShare(item.id, e.target.checked)}
+                      className="h-3 w-3 accent-violet-600"
+                    />
+                    <span className="hidden sm:inline">Share</span>
+                  </label>
                 )}
                 <button
                   onClick={() => removeItem(item.id)}

@@ -4,6 +4,16 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentPricesBatch } from "@/lib/holdings/value";
+import { isFlagEnabled } from "@/lib/feature-flags";
+import {
+  HOUSEHOLDS_FLAG,
+  getHouseholdContextForUser,
+  getPartnerSharedRows,
+  partnerLabel as buildPartnerLabel,
+} from "@/lib/households";
+import { getInvestorProfile } from "@/lib/investor-profiles";
+import HouseholdViewToggle from "@/components/household/HouseholdViewToggle";
+import AttributionChip from "@/components/household/AttributionChip";
 import ManualBalancesPanel, { type ManualBalance } from "./ManualBalancesPanel";
 
 export const dynamic = "force-dynamic";
@@ -53,12 +63,46 @@ const CATEGORY_LABELS: Record<string, string> = {
   other: "Other",
 };
 
-export default async function NetWorthPage() {
+export default async function NetWorthPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login?next=/account/net-worth");
+
+  const sp = (await searchParams) ?? {};
+
+  // Household mode is dormant unless the flag is on AND the user is in a
+  // household with an accepted partner. Reads stay fail-soft.
+  const householdFlag = await isFlagEnabled(HOUSEHOLDS_FLAG, {
+    userKey: user.email ?? null,
+    segment: "user",
+  });
+  const householdCtx = householdFlag
+    ? await getHouseholdContextForUser(user.id)
+    : null;
+  const hasPartner = !!householdCtx?.partner;
+  const wantHousehold = sp.view === "household";
+  const householdMode = hasPartner && wantHousehold;
+
+  // Resolve a friendly partner label for attribution chips.
+  let partnerName: string | null = null;
+  if (hasPartner && householdCtx?.partner?.user_id) {
+    try {
+      const profile = await getInvestorProfile(householdCtx.partner.user_id);
+      partnerName = profile?.displayName ?? null;
+    } catch {
+      partnerName = null;
+    }
+  }
+  const partnerLabel = buildPartnerLabel({
+    displayName: partnerName,
+    email: householdCtx?.partner?.invited_email ?? null,
+  });
 
   const [holdingsRes, goalsRes, manualBalancesRes] = await Promise.all([
     supabase
@@ -72,13 +116,59 @@ export default async function NetWorthPage() {
       .order("target_date", { ascending: true }),
     supabase
       .from("manual_balances")
-      .select("id, label, amount_cents, category, updated_at")
+      .select(
+        householdFlag
+          ? "id, label, amount_cents, category, updated_at, household_id"
+          : "id, label, amount_cents, category, updated_at",
+      )
+      .eq("user_id", user.id)
       .order("updated_at", { ascending: false }),
   ]);
 
   const holdings = (holdingsRes.data ?? []) as HoldingRow[];
-  const goals = (goalsRes.data ?? []) as GoalRow[];
-  const manualBalances = (manualBalancesRes.data ?? []) as ManualBalanceRow[];
+  const ownGoals = (goalsRes.data ?? []) as GoalRow[];
+  const ownManualBalances = ((manualBalancesRes.data ?? []) as unknown as Record<string, unknown>[]).map(
+    (r) =>
+      ({
+        id: r.id as string,
+        label: r.label as string,
+        amount_cents: Number(r.amount_cents),
+        category: r.category as ManualBalanceRow["category"],
+        updated_at: r.updated_at as string,
+        shared: householdFlag ? r.household_id != null : false,
+      }) as ManualBalanceRow & { shared: boolean },
+  );
+
+  // In household mode, merge the partner's SHARED goals + balances (read via
+  // RLS). Each row is tagged so the UI can show a "yours" / partner chip.
+  const partnerGoals = householdMode
+    ? await getPartnerSharedRows<GoalRow & Record<string, unknown>>({
+        userId: user.id,
+        kind: "goal",
+        columns:
+          "id, label, goal_type, target_cents, current_balance_cents, target_date",
+      })
+    : [];
+  const partnerBalances = householdMode
+    ? await getPartnerSharedRows<ManualBalanceRow & Record<string, unknown>>({
+        userId: user.id,
+        kind: "balance",
+        columns: "id, label, amount_cents, category, updated_at",
+      })
+    : [];
+
+  // Attributed lists drive both the totals and the per-row chips below.
+  const goalsAttr = [
+    ...ownGoals.map((row) => ({ row, mine: true })),
+    ...partnerGoals.map((p) => ({ row: p.row, mine: false })),
+  ];
+  const manualAttr = [
+    ...ownManualBalances.map((row) => ({ row, mine: true })),
+    ...partnerBalances.map((p) => ({ row: p.row, mine: false })),
+  ];
+
+  const goals = goalsAttr.map((g) => g.row);
+  const manualBalances = manualAttr.map((m) => m.row);
 
   // Fetch current prices for every (ticker, exchange) pair in one batch.
   const pricePairs = holdings
@@ -149,10 +239,28 @@ export default async function NetWorthPage() {
       </nav>
 
       <header className="mb-6">
-        <h1 className="text-2xl font-extrabold text-slate-900">Net worth</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Pulled from your holdings, goals, and manual balances.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900">Net worth</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              {householdMode
+                ? `Your holdings, plus the goals and balances ${partnerLabel} shares with your household.`
+                : "Pulled from your holdings, goals, and manual balances."}
+            </p>
+          </div>
+          {hasPartner && (
+            <HouseholdViewToggle
+              active={householdMode ? "household" : "mine"}
+              partnerLabel={partnerLabel}
+            />
+          )}
+        </div>
+        {householdMode && (
+          <p className="mt-2 text-xs text-violet-700">
+            Holdings stay private to each person — only goals and balances your
+            partner shares appear here.
+          </p>
+        )}
       </header>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-5">
@@ -225,16 +333,19 @@ export default async function NetWorthPage() {
         )}
       </section>
 
-      {goals.length > 0 && (
+      {goalsAttr.length > 0 && (
         <section className="mt-6">
           <h2 className="text-sm font-semibold text-slate-900">Goal progress</h2>
           <ul className="mt-3 space-y-2">
-            {goals.map((g) => {
+            {goalsAttr.map(({ row: g, mine }) => {
               const pct = g.target_cents > 0 ? Math.min(100, (g.current_balance_cents / g.target_cents) * 100) : 0;
               return (
-                <li key={g.id} className="rounded-lg border border-slate-200 bg-white p-4">
+                <li key={`${mine ? "me" : "p"}-${g.id}`} className="rounded-lg border border-slate-200 bg-white p-4">
                   <div className="flex items-baseline justify-between gap-3">
-                    <p className="text-sm font-semibold text-slate-900">{g.label}</p>
+                    <p className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                      {g.label}
+                      {householdMode && <AttributionChip mine={mine} partnerLabel={partnerLabel} />}
+                    </p>
                     <p className="text-xs text-slate-500">
                       {fmt(g.current_balance_cents)} of {fmt(g.target_cents)}
                     </p>
@@ -259,9 +370,24 @@ export default async function NetWorthPage() {
         </section>
       )}
 
-      {/* Manual balances panel — client component for inline CRUD */}
+      {/* Manual balances panel — client component for inline CRUD. Only the
+          user's OWN balances are editable here; partner balances appear above
+          in the household total but never in this CRUD list. */}
       <ManualBalancesPanel
-        initialBalances={manualBalances as ManualBalance[]}
+        initialBalances={ownManualBalances as ManualBalance[]}
+        householdEnabled={householdFlag && hasPartner}
+        partnerLabel={partnerLabel}
+        partnerBalances={
+          householdMode
+            ? partnerBalances.map((p) => ({
+                id: String(p.row.id),
+                label: p.row.label,
+                amount_cents: Number(p.row.amount_cents),
+                category: p.row.category,
+                updated_at: p.row.updated_at,
+              }))
+            : []
+        }
       />
 
       <p className="mt-10 text-xs text-slate-500">

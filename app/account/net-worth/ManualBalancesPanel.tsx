@@ -18,6 +18,8 @@ export interface ManualBalance {
   amount_cents: number;
   category: "savings" | "super" | "property" | "other";
   updated_at: string;
+  /** Whether this balance is shared with the user's household. */
+  shared?: boolean;
 }
 
 const CATEGORIES: { value: ManualBalance["category"]; label: string }[] = [
@@ -58,8 +60,16 @@ const EMPTY_FORM: AddFormState = { label: "", amount: "", category: "savings" };
 
 export default function ManualBalancesPanel({
   initialBalances,
+  householdEnabled = false,
+  partnerLabel = "your partner",
+  partnerBalances = [],
 }: {
   initialBalances: ManualBalance[];
+  /** households flag on AND an accepted partner → show share toggles. */
+  householdEnabled?: boolean;
+  partnerLabel?: string;
+  /** Partner's shared balances (read-only) shown when in household view. */
+  partnerBalances?: ManualBalance[];
 }) {
   const router = useRouter();
   const [balances, setBalances] = useState<ManualBalance[]>(initialBalances);
@@ -68,6 +78,24 @@ export default function ManualBalancesPanel({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+
+  // Optimistically flip a balance's shared state via the share API. Owner-only
+  // write — enforced server-side. Rolls back on failure.
+  const handleToggleShare = async (id: string, shared: boolean) => {
+    const snapshot = balances;
+    setBalances((prev) => prev.map((b) => (b.id === id ? { ...b, shared } : b)));
+    try {
+      const res = await fetch("/api/account/household/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "balance", item_id: id, shared }),
+      });
+      if (!res.ok) throw new Error("share_failed");
+    } catch {
+      setBalances(snapshot);
+      setError("Could not update sharing. Try again.");
+    }
+  };
 
   const handleAdd = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -228,40 +256,81 @@ export default function ManualBalancesPanel({
           {balances.map((b) => (
             <li
               key={b.id}
-              className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 px-3 py-2.5"
+              className="rounded-lg border border-slate-100 px-3 py-2.5"
             >
-              <div className="flex items-center gap-2 min-w-0">
-                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase ${CATEGORY_COLOURS[b.category]}`}>
-                  {b.category}
-                </span>
-                <span className="text-sm text-slate-800 truncate">{b.label}</span>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase ${CATEGORY_COLOURS[b.category]}`}>
+                    {b.category}
+                  </span>
+                  <span className="text-sm text-slate-800 truncate">{b.label}</span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-sm font-semibold text-slate-900">{fmt(b.amount_cents)}</span>
+                  <button
+                    type="button"
+                    onClick={() => void handleDelete(b.id)}
+                    disabled={deletingId === b.id}
+                    aria-label={`Delete ${b.label}`}
+                    className="text-slate-500 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {deletingId === b.id ? (
+                      <svg aria-hidden="true" className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-sm font-semibold text-slate-900">{fmt(b.amount_cents)}</span>
-                <button
-                  type="button"
-                  onClick={() => void handleDelete(b.id)}
-                  disabled={deletingId === b.id}
-                  aria-label={`Delete ${b.label}`}
-                  className="text-slate-500 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  {deletingId === b.id ? (
-                    <svg aria-hidden="true" className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  )}
-                </button>
-              </div>
+              {householdEnabled && (
+                <label className="mt-1.5 flex cursor-pointer items-center gap-2 text-xs text-slate-500">
+                  <input
+                    type="checkbox"
+                    checked={b.shared ?? false}
+                    onChange={(e) => void handleToggleShare(b.id, e.target.checked)}
+                    className="h-3.5 w-3.5 accent-violet-600"
+                  />
+                  <span>Share with household</span>
+                </label>
+              )}
             </li>
           ))}
         </ul>
+      )}
+
+      {/* Partner's shared balances — read-only. Shown only in household view. */}
+      {partnerBalances.length > 0 && (
+        <div className="mt-4">
+          <p className="mb-2 text-xs font-semibold text-violet-700">
+            Shared with you by {partnerLabel}
+          </p>
+          <ul className="space-y-2">
+            {partnerBalances.map((b) => (
+              <li
+                key={`p-${b.id}`}
+                className="flex items-center justify-between gap-3 rounded-lg border border-violet-100 bg-violet-50/40 px-3 py-2.5"
+              >
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase ${CATEGORY_COLOURS[b.category]}`}>
+                    {b.category}
+                  </span>
+                  <span className="truncate text-sm text-slate-800">{b.label}</span>
+                  <span className="shrink-0 rounded-full bg-violet-100 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase text-violet-700">
+                    {partnerLabel}
+                  </span>
+                </div>
+                <span className="shrink-0 text-sm font-semibold text-slate-900">{fmt(b.amount_cents)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {error && !showForm && (

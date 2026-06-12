@@ -9,6 +9,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getActiveKind, type WorkspaceKind } from "@/lib/account-kinds";
 import { getInvestorProfile } from "@/lib/investor-profiles";
 import { parseMoneyMeta } from "@/lib/money-profile";
+import {
+  HOUSEHOLDS_FLAG,
+  getHouseholdContextForUser,
+  partnerLabel as householdPartnerLabel,
+} from "@/lib/households";
 import DirectoryHero from "@/components/directory/DirectoryHero";
 import BriefForm from "./BriefForm";
 
@@ -153,6 +158,57 @@ async function loadProviderSupply(): Promise<number | null> {
   }
 }
 
+/**
+ * Household block context (idea #6). Non-null only when the `households` flag is
+ * on AND the signed-in user is in a household with an accepted partner. Drives
+ * the isolated "post as household" checkbox. Fully dormant otherwise.
+ */
+async function loadHouseholdContext(): Promise<{
+  partnerLabel: string;
+  ownLabel: string;
+} | null> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
+    const flagOn = await isFlagEnabled(HOUSEHOLDS_FLAG, {
+      userKey: user.email ?? null,
+      segment: "user",
+    });
+    if (!flagOn) return null;
+    const ctx = await getHouseholdContextForUser(user.id);
+    if (!ctx?.partner) return null;
+
+    let partnerName: string | null = null;
+    if (ctx.partner.user_id) {
+      try {
+        const profile = await getInvestorProfile(ctx.partner.user_id);
+        partnerName = profile?.displayName ?? null;
+      } catch {
+        partnerName = null;
+      }
+    }
+    let ownName: string | null = null;
+    try {
+      const own = await getInvestorProfile(user.id);
+      ownName = own?.displayName ?? null;
+    } catch {
+      ownName = null;
+    }
+    return {
+      partnerLabel: householdPartnerLabel({
+        displayName: partnerName,
+        email: ctx.partner.invited_email,
+      }),
+      ownLabel: householdPartnerLabel({ displayName: ownName, email: user.email }),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -187,12 +243,14 @@ export default async function NewBriefPage({
   // (fail-closed dormancy — flag off ⇒ no checkbox, brief never joins a pool).
   const poolOptInEnabled = await isFlagEnabled("demand_pools", { segment: "user" });
 
-  const [workspace, investorPrefill, proSubscriber, proSupply] = await Promise.all([
-    loadWorkspaceContext(),
-    loadInvestorPrefill(),
-    isProSubscriber(),
-    loadProviderSupply(),
-  ]);
+  const [workspace, investorPrefill, proSubscriber, proSupply, householdContext] =
+    await Promise.all([
+      loadWorkspaceContext(),
+      loadInvestorPrefill(),
+      isProSubscriber(),
+      loadProviderSupply(),
+      loadHouseholdContext(),
+    ]);
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -260,6 +318,7 @@ export default async function NewBriefPage({
           proSubscriber={proSubscriber}
           proSupply={proSupply}
           poolOptInEnabled={poolOptInEnabled}
+          householdContext={householdContext}
         />
       </div>
     </>
