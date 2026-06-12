@@ -18,6 +18,13 @@ export interface CalculatorShellProps {
   emailGate?: EmailGateConfig;
   className?: string;
   children: React.ReactNode;
+  /**
+   * Optional Scenario Workspace affordance (e.g. `<ScenarioBar … />`). Rendered
+   * below the calculator body. Omitted by default ⇒ zero behaviour change for
+   * every calculator that doesn't opt in. ScenarioBar self-gates on the
+   * `scenario_workspace` flag and sign-in state, so passing it is always safe.
+   */
+  scenario?: React.ReactNode;
 }
 
 export default function CalculatorShell({
@@ -29,6 +36,7 @@ export default function CalculatorShell({
   emailGate,
   className,
   children,
+  scenario,
 }: CalculatorShellProps) {
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
@@ -65,6 +73,8 @@ export default function CalculatorShell({
 
       <div className="p-6 md:p-8 space-y-7">
         {children}
+
+        {scenario}
 
         {shareResults && (
           <button

@@ -8,6 +8,7 @@ import { useCalculatorState } from "@/hooks/use-calculator-state";
 import { useUrlSync } from "@/app/calculators/_components/CalcShared";
 import ShareResult from "@/components/ShareResult";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
+import ScenarioBar from "@/components/scenarios/ScenarioBar";
 
 /* ── constants (FY2026) ── */
 
@@ -518,6 +519,41 @@ export default function SuperContributionsClient() {
               unused_carry_forward: unusedCarryForward,
             }}
             showDisclaimer
+          />
+        </div>
+
+        {/* Scenario Workspace — self-gates on the `scenario_workspace` flag and
+            sign-in state, so this is a no-op when the flag is off or signed out. */}
+        <div className="mt-4">
+          <ScenarioBar
+            calculatorKey="super_contributions_calculator"
+            inputs={{
+              income,
+              current_concessional: currentConcessional,
+              extra_concessional: extraConcessional,
+              non_concessional: nonConcessional,
+              super_balance: superBalance,
+              unused_carry_forward: unusedCarryForward,
+            }}
+            resultsSnapshot={{
+              total_going_into_super: Math.round(result.totalGoingIntoSuper),
+              total_super_tax: Math.round(result.totalSuperTax),
+              tax_saving_on_extra: Math.round(result.taxSavingOnExtra),
+              concessional_excess: Math.round(result.concessionalExcess),
+            }}
+            onLoad={(inp) => {
+              if (typeof inp.income === "number") setIncome(inp.income);
+              if (typeof inp.current_concessional === "number")
+                setCurrentConcessional(inp.current_concessional);
+              if (typeof inp.extra_concessional === "number")
+                setExtraConcessional(inp.extra_concessional);
+              if (typeof inp.non_concessional === "number")
+                setNonConcessional(inp.non_concessional);
+              if (typeof inp.super_balance === "number")
+                setSuperBalance(inp.super_balance);
+              if (typeof inp.unused_carry_forward === "number")
+                setUnusedCarryForward(inp.unused_carry_forward);
+            }}
           />
         </div>
 
