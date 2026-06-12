@@ -17,8 +17,21 @@
 
 import { sendEmail } from "@/lib/resend";
 import { SITE_URL } from "@/lib/seo";
+import { buildBriefReplyAddress } from "@/lib/briefs/reply-address";
 
 const FROM = "Invest.com.au <hello@invest.com.au>";
+
+/**
+ * Reply-by-Email Bridge: emails that point a party at the brief chat set
+ * Reply-To to the brief's HMAC reply address, so answering the email
+ * lands the reply in `brief_messages` (see /api/inbound/brief-reply).
+ * Returns undefined when briefId is absent or BRIEF_REPLY_SECRET is not
+ * configured — the header is simply omitted.
+ */
+function briefReplyTo(briefId: number | undefined): string | undefined {
+  if (!briefId) return undefined;
+  return buildBriefReplyAddress(briefId) ?? undefined;
+}
 
 function wrap(title: string, body: string): string {
   return `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#334155"><div style="background:#0f172a;padding:20px 24px;border-radius:12px 12px 0 0"><h1 style="color:white;margin:0;font-size:18px">${title}</h1></div><div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">${body}</div></div>`;
@@ -91,6 +104,8 @@ export async function sendProviderStandingOrderAccepted(input: {
   creditsSpent: number;
   briefBudgetBand: string | null;
   briefLocation: string | null;
+  /** Enables reply-by-email into the brief chat when provided. */
+  briefId?: number;
 }): Promise<boolean> {
   const inboxUrl = `${SITE_URL}/advisor-portal/briefs`;
   const budgetLine = input.briefBudgetBand
@@ -106,6 +121,7 @@ export async function sendProviderStandingOrderAccepted(input: {
   const { ok } = await sendEmail({
     from: FROM,
     to: input.providerEmail,
+    replyTo: briefReplyTo(input.briefId),
     subject: `Standing order matched — ${input.briefTitle}`,
     html: wrap(
       "Your standing order claimed a Match Request",
@@ -136,11 +152,14 @@ export async function sendProviderSlaWarning(input: {
   briefTitle: string;
   briefSlug: string;
   hoursLeft: number;
+  /** Enables reply-by-email into the brief chat when provided. */
+  briefId?: number;
 }): Promise<boolean> {
   const inboxUrl = `${SITE_URL}/advisor-portal/briefs`;
   const { ok } = await sendEmail({
     from: FROM,
     to: input.providerEmail,
+    replyTo: briefReplyTo(input.briefId),
     subject: `${input.hoursLeft}h left to respond — ${input.briefTitle}`,
     html: wrap(
       "A brief you accepted is waiting on you",
@@ -339,6 +358,8 @@ export async function sendConsumerProviderAccepted(input: {
   briefSlug: string;
   providerName: string;
   providerKind: "individual" | "firm" | "expert_team";
+  /** Enables reply-by-email into the brief chat when provided. */
+  briefId?: number;
 }): Promise<boolean> {
   const trackerUrl = `${SITE_URL}/briefs/${input.briefSlug}`;
   const kindLabel =
@@ -350,6 +371,7 @@ export async function sendConsumerProviderAccepted(input: {
   const { ok } = await sendEmail({
     from: FROM,
     to: input.consumerEmail,
+    replyTo: briefReplyTo(input.briefId),
     subject: `${input.providerName} accepted your Match Request`,
     html: wrap(
       "You have a match",

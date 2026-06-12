@@ -19,6 +19,10 @@ interface SendEmailOptions {
    *  and lets the recipient's client pick — good practice for
    *  deliverability and accessibility. */
   text?: string;
+  /** Optional Reply-To header — used by the Reply-by-Email Bridge to
+   *  route replies to brief notification emails into the brief chat
+   *  (see lib/briefs/reply-address.ts). */
+  replyTo?: string;
   /**
    * Set to true for transactional sends that legally MUST reach the
    * recipient even if their address is on the suppression list — e.g.
@@ -88,6 +92,7 @@ export async function sendEmail(
         subject: opts.subject,
         html: opts.html,
         ...(opts.text ? { text: opts.text } : {}),
+        ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
       }),
       signal: AbortSignal.timeout(RESEND_TIMEOUT_MS),
     });

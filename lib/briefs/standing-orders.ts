@@ -292,6 +292,7 @@ export async function runStandingOrdersForBrief(
           consumerName: brief.contact_name ?? "",
           briefTitle: brief.job_title || "Your Match Request",
           briefSlug: brief.slug,
+          briefId,
           professionalId: order.professional_id,
           teamId: null,
         }).catch((err) => {
@@ -363,6 +364,7 @@ async function notifyAdvisorOfAutoAccept(
     providerName: (pro.name as string) || "Pro",
     briefTitle: brief.job_title || "Match Request",
     briefSlug: brief.slug,
+    briefId: brief.id,
     creditsSpent,
     briefBudgetBand: brief.budget_band,
     briefLocation: brief.location,

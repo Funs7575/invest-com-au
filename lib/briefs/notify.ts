@@ -107,6 +107,8 @@ export async function notifyConsumerOfAcceptance(input: {
   consumerName: string;
   briefTitle: string;
   briefSlug: string;
+  /** Enables reply-by-email into the brief chat on the consumer email. */
+  briefId?: number;
   professionalId: number;
   teamId: number | null;
 }): Promise<void> {
@@ -140,6 +142,7 @@ export async function notifyConsumerOfAcceptance(input: {
     consumerName: input.consumerName,
     briefTitle: input.briefTitle,
     briefSlug: input.briefSlug,
+    briefId: input.briefId,
     providerName,
     providerKind,
   });

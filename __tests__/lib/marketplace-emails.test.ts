@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, afterAll } from "vitest";
 
 // ─── Mocks ───────────────────────────────────────────────────────────
 
@@ -20,6 +20,8 @@ vi.mock("@/lib/seo", () => ({
 import {
   sendProviderNewMatchRequest,
   sendProviderDailyDigest,
+  sendProviderSlaWarning,
+  sendProviderStandingOrderAccepted,
   sendConsumerProviderAccepted,
   sendConsumerStaleBriefNudge,
   sendProConsultationBooked,
@@ -369,6 +371,76 @@ describe("marketplace-emails", () => {
     it('falls back to "there" when consumerName is empty', async () => {
       await sendConsumerConsultationConfirmed({ ...base, consumerName: "" });
       expect(lastHtml()).toContain("Hi there");
+    });
+  });
+
+  // ─── Reply-by-Email Bridge: Reply-To wiring ───────────────────────
+
+  describe("brief chat Reply-To header", () => {
+    const REPLY_DOMAIN = "reply.test.invest.com.au";
+    const replyToOf = () =>
+      (lastCall() as { replyTo?: string }).replyTo;
+    const replyAddressRe = (briefId: number) =>
+      new RegExp(`^brief\\+${briefId}\\.[a-f0-9]{24}@${REPLY_DOMAIN.replace(/\./g, "\\.")}$`);
+
+    beforeEach(() => {
+      vi.stubEnv("BRIEF_REPLY_SECRET", "marketplace-emails-test-secret");
+      vi.stubEnv("BRIEF_REPLY_DOMAIN", REPLY_DOMAIN);
+    });
+
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    const consumerAcceptedBase = {
+      consumerEmail: "user@example.com",
+      consumerName: "Chris",
+      briefTitle: "Super Review",
+      briefSlug: "super-review",
+      providerName: "Alpha Advisers",
+      providerKind: "firm" as const,
+    };
+
+    it("sendConsumerProviderAccepted sets the brief reply address when briefId is given", async () => {
+      await sendConsumerProviderAccepted({ ...consumerAcceptedBase, briefId: 42 });
+      expect(replyToOf()).toMatch(replyAddressRe(42));
+    });
+
+    it("sendProviderSlaWarning sets the brief reply address when briefId is given", async () => {
+      await sendProviderSlaWarning({
+        providerEmail: "pro@firm.com",
+        providerName: "Pro",
+        briefTitle: "T",
+        briefSlug: "t",
+        hoursLeft: 6,
+        briefId: 43,
+      });
+      expect(replyToOf()).toMatch(replyAddressRe(43));
+    });
+
+    it("sendProviderStandingOrderAccepted sets the brief reply address when briefId is given", async () => {
+      await sendProviderStandingOrderAccepted({
+        providerEmail: "pro@firm.com",
+        providerName: "Pro",
+        briefTitle: "T",
+        briefSlug: "t",
+        creditsSpent: 2,
+        briefBudgetBand: null,
+        briefLocation: null,
+        briefId: 44,
+      });
+      expect(replyToOf()).toMatch(replyAddressRe(44));
+    });
+
+    it("omits Reply-To when briefId is not provided", async () => {
+      await sendConsumerProviderAccepted(consumerAcceptedBase);
+      expect(replyToOf()).toBeUndefined();
+    });
+
+    it("omits Reply-To when BRIEF_REPLY_SECRET is unset (bridge not configured)", async () => {
+      vi.stubEnv("BRIEF_REPLY_SECRET", "");
+      await sendConsumerProviderAccepted({ ...consumerAcceptedBase, briefId: 42 });
+      expect(replyToOf()).toBeUndefined();
     });
   });
 

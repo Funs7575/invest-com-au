@@ -207,6 +207,7 @@ async function processBrief(
         providerName: name,
         briefTitle: brief.job_title || "Match Request",
         briefSlug: brief.slug,
+        briefId: brief.id,
         hoursLeft: Math.max(
           1,
           Math.round(
