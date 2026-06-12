@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { awardIfEligible } from "@/lib/quests-server";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:account:watchlist");
@@ -78,6 +79,8 @@ export const POST = withValidatedBody(AddItemBody, async (_req, body) => {
     return NextResponse.json({ error: "Failed to add item" }, { status: 500 });
   }
 
+  // Quest: first-watchlist-item. Fire-and-forget — flag-gated + fail-soft.
+  void awardIfEligible(user.id, "first-watchlist-item");
   return NextResponse.json({ item: data }, { status: 201 });
 });
 

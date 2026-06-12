@@ -5,6 +5,7 @@ import { isAllowed, ipKey } from '@/lib/rate-limit-db';
 import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
 import { recordQuizSubmission } from '@/lib/quiz-history';
+import { awardIfEligible } from '@/lib/quests-server';
 import { setQuizSessionCookie } from '@/lib/quiz-profile';
 import { syncQuizToInvestorProfile } from '@/lib/investor-profiles';
 import { createClient } from '@/lib/supabase/server';
@@ -400,6 +401,11 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           sessionId: safeSessionId,
         });
+        // Quest: first-quiz-complete. Authenticated completions only.
+        // Fire-and-forget — flag-gated + fail-soft inside; never affects
+        // the quiz submission response (already wrapped by the outer
+        // non-blocking try/catch).
+        void awardIfEligible(user.id, "first-quiz-complete");
       }
     }
   } catch (err) {

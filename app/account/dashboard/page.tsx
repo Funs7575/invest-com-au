@@ -13,6 +13,7 @@ import {
 import { getInvestorAccountType, type InvestorAccountType } from "@/lib/account-types";
 import SmartRecommendationsStrip from "@/components/SmartRecommendationsStrip";
 import { isFlagEnabled } from "@/lib/feature-flags";
+import QuestShelf from "@/app/account/_components/QuestShelf";
 
 export const dynamic = "force-dynamic";
 
@@ -558,6 +559,12 @@ export default async function PersonalDashboardPage() {
           </Link>
         </section>
       )}
+
+      {/* Setup milestones (Consumer Quests, idea #19). Self-gating server
+          component: renders nothing when the `consumer_quests` flag is off
+          or the table is absent. Isolated single block — do not merge other
+          dashboard tiles into this one. */}
+      <QuestShelf userId={user.id} />
 
       {/* Benchmarking strip — "how you compare" against anonymised
           aggregate community stats. Hidden when no signal (new

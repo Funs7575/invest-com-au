@@ -13,6 +13,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import { upsertInvestorProfile, getInvestorProfile } from "@/lib/investor-profiles";
+import { awardIfEligible } from "@/lib/quests-server";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:account:investor-profile");
@@ -71,5 +72,8 @@ export const PATCH = withValidatedBody(Body, async (req, body) => {
     return NextResponse.json({ error: "update_failed" }, { status: 500 });
   }
   const fresh = await getInvestorProfile(user.id);
+  // Quest: complete-your-profile. Fire-and-forget — flag-gated + fail-soft
+  // inside; an award failure must never affect the profile save.
+  void awardIfEligible(user.id, "complete-your-profile");
   return NextResponse.json({ profile: fresh });
 });

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { awardIfEligible } from "@/lib/quests-server";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:account:holdings");
@@ -82,6 +83,22 @@ export const POST = withValidatedBody(AddHoldingBody, async (req, body) => {
     log.warn("holdings insert failed", { error: error.message });
     return NextResponse.json({ error: "insert_failed", detail: error.message }, { status: 500 });
   }
+
+  // Quests: first-holding (always) + three-holdings (threshold). Both
+  // fire-and-forget; flag-gated + fail-soft inside awardIfEligible, so a
+  // failed award never affects the holding insert response.
+  void (async () => {
+    void awardIfEligible(user.id, "first-holding");
+    const { count } = await supabase
+      .from("investor_holdings")
+      .select("id", { count: "exact", head: true });
+    if (typeof count === "number") {
+      void awardIfEligible(user.id, "three-holdings", { count, meta: { holdings_count: count } });
+    }
+  })().catch(() => {
+    /* fail-soft: award bookkeeping must never break the host action */
+  });
+
   return NextResponse.json({ item: data }, { status: 201 });
 });
 

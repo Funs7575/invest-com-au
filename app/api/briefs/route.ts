@@ -10,6 +10,7 @@ import { getAcceptCost } from "@/lib/briefs/credits";
 import { notifyEligibleProviders } from "@/lib/briefs/notify";
 import { runStandingOrdersForBrief } from "@/lib/briefs/standing-orders";
 import { attributeBriefCreated } from "@/lib/pro-affiliate/track";
+import { awardByEmail } from "@/lib/quests-server";
 import {
   BRIEF_TEMPLATE_SCHEMAS,
   isBriefTemplate,
@@ -232,6 +233,19 @@ export async function POST(request: NextRequest) {
       briefId: brief.id as number,
     }).catch((err) => {
       log.warn("attributeBriefCreated failed", {
+        briefId: brief.id,
+        err: err instanceof Error ? err.message : String(err),
+      });
+    });
+
+    // ── Quest: first-brief-posted (email-keyed) ──
+    // Resolves the contact email to a registered user and awards if one
+    // exists. Anonymous posters are a clean no-op. Flag-gated + fail-soft
+    // inside; failures must never block the brief response.
+    void awardByEmail(body.contact_email.toLowerCase().trim(), "first-brief-posted", {
+      meta: { brief_id: brief.id },
+    }).catch((err) => {
+      log.warn("brief quest award failed", {
         briefId: brief.id,
         err: err instanceof Error ? err.message : String(err),
       });

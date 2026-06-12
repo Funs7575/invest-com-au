@@ -11,6 +11,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { awardIfEligible } from "@/lib/quests-server";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:account:goals");
@@ -68,6 +69,8 @@ export const POST = withValidatedBody(AddBody, async (req, body) => {
     log.warn("goals POST failed", { userId: user.id, error: error.message });
     return NextResponse.json({ error: "insert_failed", detail: error.message }, { status: 500 });
   }
+  // Quest: first-goal. Fire-and-forget — flag-gated + fail-soft inside.
+  void awardIfEligible(user.id, "first-goal");
   return NextResponse.json({ item: data }, { status: 201 });
 });
 

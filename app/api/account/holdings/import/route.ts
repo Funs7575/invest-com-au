@@ -6,6 +6,7 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { getCurrentPricesBatch } from "@/lib/holdings/value";
 import { MAX_IMPORT_ROWS } from "@/lib/holdings/import";
+import { awardIfEligible } from "@/lib/quests-server";
 
 const log = logger("api:account:holdings:import");
 
@@ -219,6 +220,25 @@ export const POST = withValidatedBody(ImportBody, async (_req, body) => {
     } catch (err) {
       log.warn("post-import price warm failed", err);
     }
+
+    // Quests: first-csv-import, plus first-holding / three-holdings since
+    // an import is the most common way a portfolio crosses these. All
+    // fire-and-forget — flag-gated + fail-soft inside awardIfEligible, so
+    // award bookkeeping never affects the committed import response.
+    void (async () => {
+      if (inserted > 0) {
+        void awardIfEligible(user.id, "first-csv-import", { meta: { inserted } });
+        void awardIfEligible(user.id, "first-holding");
+      }
+      const { count } = await supabase
+        .from("investor_holdings")
+        .select("id", { count: "exact", head: true });
+      if (typeof count === "number" && count >= 3) {
+        void awardIfEligible(user.id, "three-holdings", { count, meta: { holdings_count: count } });
+      }
+    })().catch(() => {
+      /* fail-soft */
+    });
 
     log.info("csv import committed", {
       inserted,
