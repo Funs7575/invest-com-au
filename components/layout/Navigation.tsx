@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import AccountButton from "@/components/layout/AccountButton";
 import { useUser } from "@/lib/hooks/useUser";
 import ThemeToggle from "@/components/ThemeToggle";
+import JourneyChip from "@/components/journey/JourneyChip";
 
 const SearchOverlay = dynamic(() => import("@/components/SearchOverlay"), { ssr: false });
 const LocationFlagButton = dynamic(() => import("@/components/layout/LocationFlagButton"), { ssr: false });
@@ -772,6 +773,7 @@ export function Navigation() {
 
           {/* Desktop CTA area */}
           <div className="hidden lg:flex items-center gap-2">
+            <JourneyChip />
             <LocationFlagButton />
             <ThemeToggle />
             <button

@@ -9,6 +9,7 @@ import { CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import NotificationBell from "@/components/notifications/NotificationBell";
 import ThemeToggle from "@/components/ThemeToggle";
+import JourneyChip from "@/components/journey/JourneyChip";
 import WorkspaceSwitcher from "@/components/WorkspaceSwitcher";
 import { MegaMenu } from "@/components/MegaMenu";
 import type { MegaMenuSidebar } from "@/components/MegaMenu";
@@ -503,6 +504,7 @@ export default function Header() {
 
           {/* Desktop CTA + Theme */}
           <div className="hidden lg:flex items-center gap-3">
+            <JourneyChip />
             <WorkspaceSwitcher />
             <ThemeToggle />
             <NotificationBell />
