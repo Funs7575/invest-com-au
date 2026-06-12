@@ -247,6 +247,34 @@ export default function InvestListingsClient({
   }, [router, searchParams]);
 
   // ── Derived sub-categories for the active category ──
+  // "New since your last visit" (idea #6): a personal lens, so it lives in
+  // localStorage + local state rather than the sharable URL params. A visit
+  // older than 30 minutes rolls the previous timestamp into the comparison
+  // point; quick reloads keep the same baseline.
+  const [lastVisit, setLastVisit] = useState<string | null>(null);
+  const [showNewOnly, setShowNewOnly] = useState(false);
+  useEffect(() => {
+    try {
+      const now = Date.now();
+      const lastSeenRaw = localStorage.getItem("inv_invest_last_seen");
+      const prevRaw = localStorage.getItem("inv_invest_prev_visit");
+      const lastSeen = lastSeenRaw ? Number(lastSeenRaw) : null;
+      if (lastSeen && now - lastSeen > 30 * 60 * 1000) {
+        localStorage.setItem("inv_invest_prev_visit", String(lastSeen));
+        setLastVisit(new Date(lastSeen).toISOString());
+      } else if (prevRaw) {
+        setLastVisit(new Date(Number(prevRaw)).toISOString());
+      }
+      localStorage.setItem("inv_invest_last_seen", String(now));
+    } catch {
+      /* storage unavailable — the lens just doesn't appear */
+    }
+  }, []);
+  const newSinceVisitCount = useMemo(() => {
+    if (!lastVisit) return 0;
+    return listings.filter((l) => l.created_at > lastVisit).length;
+  }, [listings, lastVisit]);
+
   const subCategories = useMemo(() => {
     if (activeCategory === "all") return [];
     const subs = new Set<string>();
@@ -338,6 +366,9 @@ export default function InvestListingsClient({
 
     if (activeFirbOnly) result = result.filter((l) => l.firb_eligible === true);
     if (activeSivOnly) result = result.filter((l) => l.siv_complying === true);
+    if (showNewOnly && lastVisit) {
+      result = result.filter((l) => l.created_at > lastVisit);
+    }
 
     if (activeWholesaleOnly) {
       result = result.filter((l) => {
@@ -477,7 +508,7 @@ export default function InvestListingsClient({
     activeTicket, activeQuery, activeFirbOnly, activeSivOnly, activeWholesaleOnly,
     activeInvestorType, activeFreshness, activeFeaturedOnly, activeMinYield,
     activeMaxYield, activeStages, activeAsxSector, activeAsxMcap, activeDivYieldMin,
-    activeEsicOnly, activeSort, skipCategoryFilter,
+    activeEsicOnly, activeSort, skipCategoryFilter, showNewOnly, lastVisit,
   ]);
 
   // ── Live per-facet counts for the compliance facet (Session 5.5) ──
@@ -666,6 +697,22 @@ export default function InvestListingsClient({
                 </button>
               ))}
             </div>
+
+            {lastVisit && newSinceVisitCount > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowNewOnly((v) => !v)}
+                aria-pressed={showNewOnly}
+                className={`inline-flex items-center gap-1.5 text-xs font-semibold rounded-full border px-3 py-1.5 transition-colors ${
+                  showNewOnly
+                    ? "bg-sky-600 border-sky-600 text-white"
+                    : "bg-sky-50 border-sky-200 text-sky-800 hover:border-sky-400"
+                }`}
+              >
+                <Icon name="clock" size={12} />
+                New since your last visit ({newSinceVisitCount})
+              </button>
+            )}
 
             {/* Save current filter set as a named saved-search */}
             <SaveSearchButton
