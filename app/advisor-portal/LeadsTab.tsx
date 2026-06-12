@@ -8,6 +8,8 @@ import type { Advisor, Stats, Lead, CategoryPricing, DisputeModal, FirmMemberOpt
 import { ReferLeadButton, IncomingReferralsBanner } from "./ReferralPanel";
 import { logger } from "@/lib/logger";
 import { deriveProfileCompleteness } from "@/lib/advisor-portal/profile-completeness";
+import FollowUpPanel from "./follow-up/FollowUpPanel";
+import type { KanbanStage } from "./follow-up/types";
 
 const log = logger("advisor-portal-leads");
 
@@ -149,7 +151,15 @@ export default function LeadsTab({
     URL.revokeObjectURL(url);
   };
 
-  return (
+  // Persist a kanban stage move via the same endpoint the list dropdown uses.
+  const moveStage = (leadId: number, stage: KanbanStage) =>
+    updatePipeline(leadId, { pipeline_stage: stage });
+
+  // The existing list view, kept exactly as-is. When the `lead_sequences` flag
+  // is off, FollowUpPanel renders this verbatim (byte-identical to before the
+  // Follow-Up Autopilot feature). Only when the flag is on does the kanban /
+  // sequence UI appear, with this list still available via the List toggle.
+  const renderClassic = () => (
     <>
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-3">
@@ -589,5 +599,14 @@ export default function LeadsTab({
         </div>
       )}
     </>
+  );
+
+  return (
+    <FollowUpPanel
+      leads={leads}
+      advisor={advisor}
+      renderList={renderClassic}
+      onMoveStage={moveStage}
+    />
   );
 }
