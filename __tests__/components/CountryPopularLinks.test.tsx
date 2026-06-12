@@ -28,7 +28,7 @@ const HK_FILTERS_WITH_LINKS = {
   platforms: null,
   tools: [],
   popularLinks: [
-    { emoji: "🤝", label: "Get matched for HK investors", sublabel: "60s quiz", href: "/quiz?country=hong-kong" },
+    { emoji: "🤝", label: "Get matched for HK investors", sublabel: "60s quiz", href: "/get-matched?country=hong-kong" },
     { emoji: "🇭🇰", label: "Investing from Hong Kong", sublabel: "Full guide", href: "/foreign-investment/hong-kong" },
     { emoji: "📈", label: "Brokers that accept HK residents", sublabel: "IBKR + Saxo", href: "/compare/non-residents" },
     { emoji: "🏠", label: "FIRB-eligible properties", sublabel: "Sydney/Melbourne CBD", href: "/invest?firb=eligible" },
@@ -84,6 +84,6 @@ describe("CountryPopularLinks", () => {
     const ui = await CountryPopularLinks();
     render(<>{ui}</>);
     const getMatched = screen.getByRole("link", { name: /Get matched for HK investors/i });
-    expect(getMatched).toHaveAttribute("href", "/quiz?country=hong-kong");
+    expect(getMatched).toHaveAttribute("href", "/get-matched?country=hong-kong");
   });
 });

@@ -24,9 +24,16 @@ import AnalyzingScreen from "./_components/AnalyzingScreen";
 import TopMatchCarousel from "./_components/TopMatchCarousel";
 import MatchExplainerCard from "./_components/MatchExplainerCard";
 import LaneResults from "./_components/LaneResults";
+import OptionsBoard from "./_components/OptionsBoard";
 import WhatIfPanel, { type WhatIfControl } from "./_components/WhatIfPanel";
 import PlanRoadmap from "./_components/PlanRoadmap";
 import SharpenCard from "./_components/SharpenCard";
+import SupplyNarrowing from "./_components/SupplyNarrowing";
+import FreeTextIntake from "./_components/FreeTextIntake";
+import WealthStackSection, {
+  type StackSlotView,
+} from "./_components/WealthStackSection";
+import MatchAlertCapture from "./_components/MatchAlertCapture";
 import type { LaneResolution } from "@/lib/getmatched/resolve-lanes";
 import { clearPartialPlan, setPartialPlan } from "@/lib/getmatched/recall";
 import { trackEvent as phTrack } from "@/lib/posthog/events";
@@ -78,6 +85,8 @@ interface ResolveResponse {
   vertical?: Vertical | null;
   advisor_type?: string | null;
   match_explainer?: { score: number; bullets: string[] };
+  /** Showcase G9 — server-computed wealth stack for platform-shaped results. */
+  stack?: StackSlotView[];
   ephemeral?: boolean;
 }
 
@@ -99,6 +108,13 @@ interface Props {
   initialContext: string | null;
   initialPlanId: number | null;
   initialMode: "fast" | "guided" | "both";
+  /**
+   * Extra answers to seed the start payload, computed server-side from
+   * deep-link params (e.g. ?specialty= / ?country= forwarded by the
+   * find-advisor redirect). Lower precedence than the explicit
+   * goal/intent props above so a direct ?goal= always wins.
+   */
+  initialPrefill?: ActionPlanAnswers | null;
 }
 
 const SESSION_STORAGE_KEY = "iv_gm_session";
@@ -184,12 +200,14 @@ export default function GetMatchedClient(props: Props) {
   }
 
   // Build the "start" payload based on context + goal hints from query.
+  // Deep-link prefill (specialty/country) seeds the base; an explicit
+  // ?goal= / ?intent= still overrides the intent on top.
   const startPrefill = useMemo(() => {
-    const prefill: ActionPlanAnswers = {};
+    const prefill: ActionPlanAnswers = { ...(props.initialPrefill ?? {}) };
     if (props.initialGoal) prefill.intent = props.initialGoal;
     if (props.initialIntent && !prefill.intent) prefill.intent = props.initialIntent;
     return prefill;
-  }, [props.initialGoal, props.initialIntent]);
+  }, [props.initialGoal, props.initialIntent, props.initialPrefill]);
 
   const start = useCallback(async () => {
     setLoading(true);
@@ -622,6 +640,10 @@ function QuestionScreen({
                 <li className="flex items-start gap-2"><Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" /> You stay in control</li>
                 <li className="flex items-start gap-2"><Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" /> Providers deliver under their own licence</li>
               </ul>
+              {/* G5 — live supply narrowing (factual counts, fail-soft). */}
+              <div className="mt-4">
+                <SupplyNarrowing answers={answers} />
+              </div>
             </div>
           </aside>
 
@@ -636,12 +658,18 @@ function QuestionScreen({
                 <Icon name="arrow-left" size={14} /> Back
               </button>
             )}
-            <QuestionCard
-              question={question}
-              answers={answers}
-              submitting={submitting}
-              onAnswer={onAnswer}
-            />
+            {/* G8 — free-text intake, FIRST screen only (nothing answered). */}
+            {currentStep === 1 && !intentSummary && (
+              <FreeTextIntake onIntent={(intent) => onAnswer(intent)} />
+            )}
+            <div id="gm-question-card">
+              <QuestionCard
+                question={question}
+                answers={answers}
+                submitting={submitting}
+                onAnswer={onAnswer}
+              />
+            </div>
             <p className="lg:hidden text-[11px] text-slate-500 mt-3 text-center">
               General information only · You stay in control
             </p>
@@ -1042,6 +1070,14 @@ function ActionPlanScreen({
             advisorType={result.advisor_type ?? null}
           />
         )}
+        {/* Cross-lane options board (§4) — advisor vs listings vs DIY
+            platform on one screen. Hides itself under 2 content kinds. */}
+        <OptionsBoard
+          advisors={(result.top_matches ?? []).filter((m) => m.kind === "advisor")}
+          listings={result.listing_matches ?? []}
+          platforms={(result.top_matches ?? []).filter((m) => m.kind === "broker")}
+          saved={result.plan?.saved_items ?? []}
+        />
         {result.top_matches && result.top_matches.length > 0 && (
           <TopMatchCarousel matches={result.top_matches} />
         )}
@@ -1131,6 +1167,22 @@ function ActionPlanScreen({
             </div>
           </section>
         )}
+
+        {/* G9 — "Your full wealth stack" for platform-shaped results. */}
+        {result.stack && result.stack.length > 0 && (
+          <WealthStackSection stack={result.stack} />
+        )}
+
+        {/* G9 — match-change alerts (rides the existing fee-alert infra).
+            Hidden in ephemeral mode where the subscribe path is unavailable. */}
+        {!ephemeral &&
+          result.top_matches &&
+          result.top_matches.length > 0 && (
+            <MatchAlertCapture
+              matchSlugs={result.top_matches.map((m) => m.slug)}
+              shareToken={shareToken}
+            />
+          )}
 
         {/* Save your plan strip — hidden in ephemeral mode because the
             save endpoints depend on a DB-backed plan row. */}

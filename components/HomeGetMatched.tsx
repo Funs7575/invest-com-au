@@ -23,7 +23,7 @@ import { SHOW_MATCH_LANGUAGE } from "@/lib/compliance-config";
 // active country explicitly, so repeating it here would clash.
 export default async function HomeGetMatched() {
   const code = await getIntentCountry();
-  const quizHref = code ? `/quiz?country=${intentCountryMeta(code).slug}` : "/quiz";
+  const quizHref = code ? `/get-matched?country=${intentCountryMeta(code).slug}` : "/get-matched";
 
   const steps = [
     ["1", "Answer a few prompts", "What you're trying to do, your situation, your timeframe."],

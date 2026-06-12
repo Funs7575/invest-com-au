@@ -446,7 +446,7 @@ export default function Header() {
     setMenuOpen(false);
   }, [pathname]);
 
-  const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/reviews", "/quiz"].some(
+  const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/reviews", "/get-matched"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
   const isPropertyActive = ["/property", "/advisors/mortgage-brokers", "/advisors/buyers-agents", "/advisors/real-estate-agents", "/find-advisor"].some(
