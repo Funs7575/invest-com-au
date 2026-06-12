@@ -79,6 +79,14 @@
   --font-display: var(--font-inter), "Inter Display", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
   --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+
+  /* Motion tokens (RETAIL_UX_NORTHSTAR §7.2) — new animation/transition
+     code references these; legacy hardcoded values migrate opportunistically. */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-celebrate: 350ms;
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.4, 1);
 }
 
 html {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useId } from "react";
+import { useState, useEffect, useId } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -44,6 +44,21 @@ function EyeOffIcon() {
 }
 
 export default function SignupClient() {
+  // Northstar F6.1 — anonymous research waiting to be claimed on signup.
+  const [pendingSaves, setPendingSaves] = useState(0);
+  useEffect(() => {
+    try {
+      const bookmarks = JSON.parse(localStorage.getItem("inv_anon_saves") ?? "[]");
+      const shortlist = JSON.parse(localStorage.getItem("invest_shortlist") ?? "[]");
+      const count =
+        (Array.isArray(bookmarks) ? bookmarks.length : 0) +
+        (Array.isArray(shortlist) ? shortlist.length : 0);
+      if (count > 0) setPendingSaves(count);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/onboarding";
 
@@ -186,11 +201,32 @@ export default function SignupClient() {
       <div className="container-custom max-w-md">
         <div className="bg-white border border-slate-200 rounded-2xl p-8">
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-extrabold text-slate-900 mb-1">Create your account</h1>
+            <h1 className="text-2xl font-extrabold text-slate-900 mb-1">
+              {pendingSaves > 0 ? "Keep what you've built" : "Create your account"}
+            </h1>
             <p className="text-slate-500 text-sm">
-              Get started with Invest.com.au
+              {pendingSaves > 0
+                ? "Your research is waiting to move in with you."
+                : "Get started with Invest.com.au"}
             </p>
           </div>
+
+          {/* Anonymous research waiting to be claimed (Northstar F6.1) — the
+              claim itself already happens automatically via
+              ClaimAnonymousOnAuth; this just finally SAYS so at the moment
+              of maximum intent. */}
+          {pendingSaves > 0 && (
+            <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+              <p className="text-sm font-semibold text-amber-900">
+                {pendingSaves === 1
+                  ? "1 saved item moves to your account the moment you sign up"
+                  : `${pendingSaves} saved items move to your account the moment you sign up`}
+              </p>
+              <p className="mt-0.5 text-xs text-amber-800">
+                Your shortlist and saves sync to every device — nothing gets lost.
+              </p>
+            </div>
+          )}
 
           {/* Tabs */}
           <div role="group" aria-label="Sign-up method" className="flex gap-1 bg-slate-100 rounded-lg p-1 mb-6">

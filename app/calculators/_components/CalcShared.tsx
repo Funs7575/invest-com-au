@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useId } from "react";
+import { celebrateMilestone } from "@/lib/celebrate";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { MARGINAL_RATE_OPTIONS } from "@/lib/tax/brackets";
@@ -125,6 +126,9 @@ export function CalcSection({ id, iconName, title, desc, children }: {
   );
 }
 
+// Session guard so the milestone check doesn't hit localStorage per keystroke.
+let calculatorMilestoneChecked = false;
+
 export function InputField({ label, value, onChange, placeholder, prefix, suffix }: {
   label: string; value: string; onChange: (v: string) => void; placeholder?: string; prefix?: string; suffix?: string;
 }) {
@@ -138,7 +142,15 @@ export function InputField({ label, value, onChange, placeholder, prefix, suffix
           id={id}
           type="number" inputMode="decimal"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            onChange(e.target.value);
+            // First genuine calculator use ever (Northstar D7) — keyed to a
+            // real input change, not a page view. Registry-deduped.
+            if (!calculatorMilestoneChecked) {
+              calculatorMilestoneChecked = true;
+              celebrateMilestone("first_calculator");
+            }
+          }}
           placeholder={placeholder}
           className={`w-full bg-white border border-slate-200 rounded-lg py-2 min-h-11 text-sm shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium ${prefix ? "pl-7" : "pl-3 md:pl-4"} ${suffix ? "pr-10" : "pr-3 md:pr-4"}`}
         />

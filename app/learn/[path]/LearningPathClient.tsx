@@ -2,6 +2,10 @@
 
 import Link from "next/link";
 import { useLearningPathProgress } from "@/hooks/use-learning-path-progress";
+import { useState } from "react";
+import Confetti from "@/components/ui/Confetti";
+import { celebrateMilestone } from "@/lib/celebrate";
+import { LEARNING_PATHS } from "@/lib/learning-paths";
 import type { LearningPath, LearningPathStep } from "@/lib/learning-paths";
 import { resolvePath } from "@/lib/learning-paths";
 
@@ -201,15 +205,28 @@ export default function LearningPathClient({
   const { completedCount, isComplete, markComplete, markIncomplete, isHydrated, resetProgress } =
     useLearningPathProgress(path.slug, path.steps.length);
 
+  // True only when the final step was ticked in THIS session — an already-
+  // finished path re-opened later stays calm (no confetti on page load).
+  const [completedNow, setCompletedNow] = useState(false);
+
   function handleToggle(idx: number) {
     if (isComplete(idx)) {
       markIncomplete(idx);
     } else {
       markComplete(idx);
+      celebrateMilestone("first_path_step");
+      if (completedCount + 1 === path.steps.length) {
+        setCompletedNow(true);
+        celebrateMilestone("path_complete", {
+          title: `${path.title} — complete`,
+          body: `Every step done. That's real groundwork.`,
+        });
+      }
     }
   }
 
   const allDone = isHydrated && completedCount === path.steps.length;
+  const nextPath = LEARNING_PATHS.find((p) => p.slug !== path.slug && p.slug !== "");
 
   return (
     <div>
@@ -240,7 +257,7 @@ export default function LearningPathClient({
         )}
 
         {allDone && (
-          <div className="mt-4 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 flex items-center gap-2">
+          <div className="relative mt-4 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 flex items-center gap-2 overflow-hidden">
             <svg
               width="16"
               height="16"
@@ -252,9 +269,21 @@ export default function LearningPathClient({
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
             </svg>
-            <p className="text-sm font-semibold text-emerald-800">
-              Path complete — great work!
-            </p>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-emerald-800">
+                Path complete — every step done. That&apos;s real groundwork.
+              </p>
+              {nextPath && (
+                <p className="mt-0.5 text-xs text-emerald-700">
+                  Keep the momentum:{" "}
+                  <Link href={`/learn/${nextPath.slug}`} className="font-semibold underline underline-offset-2">
+                    {nextPath.title}
+                  </Link>{" "}
+                  is a natural next step.
+                </p>
+              )}
+            </div>
+            {completedNow && <Confetti count={18} />}
           </div>
         )}
       </div>

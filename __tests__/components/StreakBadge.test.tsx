@@ -20,9 +20,9 @@ describe("StreakBadge", () => {
 
     const { findByLabelText } = render(<StreakBadge />);
 
-    const el = await findByLabelText("5-day investing streak");
+    const el = await findByLabelText("5-day curiosity streak — open streak details");
     expect(el).toHaveTextContent("🔥5");
-    expect(el).toHaveAttribute("title", "5-day streak");
+    expect(el).toHaveAttribute("title", "5-day curiosity streak");
     expect(fetchMock).toHaveBeenCalledWith("/api/checkin");
   });
 
@@ -37,7 +37,7 @@ describe("StreakBadge", () => {
 
     // Give the effect + promise chain a chance to resolve.
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    expect(queryByLabelText(/investing streak$/)).toBeNull();
+    expect(queryByLabelText(/curiosity streak/)).toBeNull();
   });
 
   it("renders nothing when the response is not ok (early return before json)", async () => {
@@ -49,7 +49,7 @@ describe("StreakBadge", () => {
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
     expect(json).not.toHaveBeenCalled();
-    expect(queryByLabelText(/investing streak$/)).toBeNull();
+    expect(queryByLabelText(/curiosity streak/)).toBeNull();
   });
 
   it("swallows a rejected fetch and renders nothing without throwing", async () => {
@@ -59,6 +59,6 @@ describe("StreakBadge", () => {
     const { queryByLabelText } = render(<StreakBadge />);
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    expect(queryByLabelText(/investing streak$/)).toBeNull();
+    expect(queryByLabelText(/curiosity streak/)).toBeNull();
   });
 });

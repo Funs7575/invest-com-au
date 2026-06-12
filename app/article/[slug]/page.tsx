@@ -32,6 +32,7 @@ import LinkifiedText from "@/components/LinkifiedText";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
 import ArticleShareRow from "@/components/ArticleShareRow";
 import ArticleBookmarkButton from "@/components/ArticleBookmarkButton";
+import ArticleJourneyPing from "@/components/journey/ArticleJourneyPing";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { pillarPathForCategory, linkDensityForCategory } from "@/lib/keyword-linking";
 import NextActions from "@/components/NextActions";
@@ -425,6 +426,7 @@ export default async function ArticlePage({
               <div className="flex-1 min-w-0">
                 <ArticleShareRow title={a.title} url={absoluteUrl(pagePath)} />
               </div>
+              <ArticleJourneyPing />
               <ArticleBookmarkButton slug={a.slug} title={a.title} />
             </div>
 

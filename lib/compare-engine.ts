@@ -447,3 +447,25 @@ export function updateShortlist(current: string[], slug: string, max = 4): strin
 export function getMobileCardFields(schema: CategorySchema): string[] {
   return schema.columns.slice(0, 4).map((c) => c.label);
 }
+
+/**
+ * Human-readable summary of the cost-calculator inputs driving the
+ * "Est. annual cost" column (Northstar D9) — surfaced as a persistent chip
+ * so first-timers can see the numbers are personalisable without opening
+ * the power-tools panel. Pure; unit-tested.
+ */
+export function describeCostInputs(inputs: CostInputs, scenarioLabel?: string | null): string {
+  if (scenarioLabel) return scenarioLabel;
+  const dollars = (n: number) =>
+    n >= 1000 && n % 1000 === 0 ? `$${n / 1000}k` : `$${n.toLocaleString("en-AU")}`;
+  const parts: string[] = [
+    `${inputs.tradesPerMonth} ASX trade${inputs.tradesPerMonth === 1 ? "" : "s"}/mo at ${dollars(inputs.averageTradeSize)}`,
+  ];
+  if (inputs.usTradesPerMonth > 0) {
+    parts.push(
+      `${inputs.usTradesPerMonth} US trade${inputs.usTradesPerMonth === 1 ? "" : "s"}/mo at ${dollars(inputs.averageUsTradeSize)}`,
+    );
+  }
+  parts.push(`${dollars(inputs.portfolioBalance)} balance`);
+  return parts.join(" · ");
+}

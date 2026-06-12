@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { fireJourneyMoment } from "@/components/journey/journeyMoment";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { SHOW_RATINGS } from "@/lib/compliance-config";
@@ -21,6 +23,11 @@ interface Props {
 }
 
 export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Props) {
+  // Reaching a personalised result is a journey milestone (first time only).
+  useEffect(() => {
+    fireJourneyMoment("quiz_complete");
+  }, []);
+
   if (!topMatch.broker) return null;
   const broker = topMatch.broker;
 
