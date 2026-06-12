@@ -3,6 +3,8 @@ import Image from "next/image";
 import Icon from "@/components/Icon";
 import { getListingHeroImage } from "@/lib/listing-vertical-images";
 import { normaliseVertical } from "@/lib/listing-url";
+import { buildLotProfile } from "@/lib/listings/lot-profile";
+import { assessLotTransparency, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
 
 /**
  * Loose, tolerant type for ListingCard — accepts both the strict
@@ -232,6 +234,15 @@ export default function ListingCard({ listing }: ListingCardProps) {
   const location = [listing.location_city, listing.location_state].filter(Boolean).join(", ");
   const isFeatured = listing.listing_type === "featured";
   const isPremium = listing.listing_type === "premium";
+  // Paper-trail signal: surface the transparency tier on the card so
+  // well-documented lots stand out in browse — sellers chase the badge,
+  // buyers learn to look for it. Essentials-only lots show nothing
+  // (incentive, not shaming).
+  const transparency = assessLotTransparency(
+    listing,
+    buildLotProfile(listing.key_metrics ?? {}),
+  );
+  const showTransparencyBadge = transparency.level !== "essential";
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
@@ -277,6 +288,15 @@ export default function ListingCard({ listing }: ListingCardProps) {
           {isPremium && (
             <span className="bg-yellow-400 text-slate-900 text-xs font-bold px-2 py-0.5 rounded-full">
               Premium
+            </span>
+          )}
+          {showTransparencyBadge && (
+            <span
+              className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold px-2 py-0.5 rounded-full"
+              title={`${transparency.metCount} of ${transparency.total} transparency checks met`}
+            >
+              <Icon name="shield-check" size={11} />
+              {transparencyLevelLabel(transparency.level)}
             </span>
           )}
           {listing.firb_eligible && (
