@@ -360,6 +360,13 @@ export default function AdvisorPortalPage() {
             Marketplace
           </Link>
           <Link
+            href="/advisor-portal/prospects"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+          >
+            <Icon name="inbox" size={16} />
+            Prospects
+          </Link>
+          <Link
             href="/advisor-portal/teams"
             className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
@@ -403,6 +410,7 @@ export default function AdvisorPortalPage() {
                   { href: "/advisor-portal/briefs", icon: "briefcase", label: "Briefs" },
                   { href: "/advisor-portal/auctions", icon: "activity", label: "Auctions" },
                   { href: "/advisor-portal/marketplace", icon: "store", label: "Marketplace" },
+                  { href: "/advisor-portal/prospects", icon: "inbox", label: "Prospects" },
                   { href: "/advisor-portal/teams", icon: "users", label: "Expert Teams" },
                 ].map(link => (
                   <Link

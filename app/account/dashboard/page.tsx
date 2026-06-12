@@ -14,6 +14,7 @@ import { getInvestorAccountType, type InvestorAccountType } from "@/lib/account-
 import SmartRecommendationsStrip from "@/components/SmartRecommendationsStrip";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import QuestShelf from "@/app/account/_components/QuestShelf";
+import OptInBlock from "@/components/open-to-offers/OptInBlock";
 
 export const dynamic = "force-dynamic";
 
@@ -402,6 +403,13 @@ export default async function PersonalDashboardPage() {
     segment: "user",
   });
 
+  // Open to Offers block — flag-gated; OptInBlock self-fetches status and
+  // renders nothing until the flag is on AND a status resolves.
+  const openToOffersOn = await isFlagEnabled("open_to_offers", {
+    userKey: user.email ?? user.id,
+    segment: "user",
+  });
+
   // Nearest goal with a real target date
   const nearestGoal = goals.find((g) => daysUntil(g.target_date) > 0) ?? goals[0] ?? null;
 
@@ -527,6 +535,15 @@ export default async function PersonalDashboardPage() {
           </div>
         )}
       </section>
+
+      {/* Open to Offers (flag: open_to_offers). Small isolated block; the
+          client component self-hides until the flag-gated API resolves a
+          status. */}
+      {openToOffersOn && (
+        <section aria-label="Open to offers" className="mb-8">
+          <OptInBlock variant="dashboard" />
+        </section>
+      )}
 
       {/* Monthly Money Review tile (flag: monthly_review). Self-contained,
           rendered only when the flag is on. */}
