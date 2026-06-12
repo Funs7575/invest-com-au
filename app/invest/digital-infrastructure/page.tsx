@@ -337,7 +337,7 @@ export default async function DigitalInfrastructurePage() {
               <details key={i} className="border border-slate-200 rounded-xl bg-white p-5 group">
                 <summary className="text-sm md:text-base font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between">
                   <span>{q.name}</span>
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <p className="text-sm text-slate-600 leading-relaxed mt-3">{q.acceptedAnswer.text}</p>
               </details>

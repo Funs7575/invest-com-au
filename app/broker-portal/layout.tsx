@@ -92,7 +92,7 @@ function SidebarContent({
                   : "text-slate-500 hover:bg-white/5 hover:text-white font-medium"
               }`}
             >
-              <Icon name={item.icon} size={16} className={isActive ? "text-amber-500" : "text-slate-400"} />
+              <Icon name={item.icon} size={16} className={isActive ? "text-amber-500" : "text-slate-500"} />
               {item.label}
               {item.label === "Notifications" && unreadCount > 0 && (
                 <span className="ml-auto relative flex items-center justify-center">

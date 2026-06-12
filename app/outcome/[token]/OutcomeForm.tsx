@@ -170,7 +170,7 @@ export default function OutcomeForm({
         type="button"
         onClick={() => void submit()}
         disabled={submitting}
-        className="w-full inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 text-slate-900 font-bold text-base px-6 py-3 rounded-xl"
+        className="w-full inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-500 text-slate-900 font-bold text-base px-6 py-3 rounded-xl"
       >
         {submitting ? "Submitting…" : "Submit"}
       </button>

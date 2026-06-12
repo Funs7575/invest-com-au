@@ -333,7 +333,7 @@ export default function JobPostForm() {
               type="button"
               disabled={!canDetails}
               onClick={() => setStep("advisors")}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
             >
               Continue <Icon name="arrow-right" size={16} />
             </button>
@@ -368,7 +368,7 @@ export default function JobPostForm() {
               type="button"
               disabled={!canAdvisors}
               onClick={() => setStep("contact")}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
             >
               Continue <Icon name="arrow-right" size={16} />
             </button>

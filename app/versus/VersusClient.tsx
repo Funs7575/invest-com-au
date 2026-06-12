@@ -459,8 +459,8 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
               <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-2 sm:grid-cols-2 gap-2 md:gap-3">
                 {verdicts.map((v, i) => (
                   <div key={i} className="bg-white border border-slate-200 rounded-lg md:rounded-xl p-2.5 md:p-4 flex items-center gap-2 md:gap-3 hover:shadow-sm transition-shadow">
-                    <Icon name={v.icon} size={16} className="text-slate-400 shrink-0 md:hidden" />
-                    <Icon name={v.icon} size={20} className="text-slate-400 shrink-0 hidden md:block" />
+                    <Icon name={v.icon} size={16} className="text-slate-500 shrink-0 md:hidden" />
+                    <Icon name={v.icon} size={20} className="text-slate-500 shrink-0 hidden md:block" />
                     <div className="flex-1 min-w-0">
                       <div className="text-[0.62rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wide">{v.cat}</div>
                       {v.isTie ? (
@@ -511,8 +511,8 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                         style={{ gridTemplateColumns: `110px repeat(${selected.length}, 1fr)`, animationDelay: `${0.1 + i * 0.06}s` }}
                       >
                         <div className="px-2.5 py-2.5 md:px-4 md:py-3.5 flex items-center gap-1.5 md:gap-2">
-                          <Icon name={row.icon} size={14} className="text-slate-400 shrink-0 md:hidden" />
-                          <Icon name={row.icon} size={16} className="text-slate-400 shrink-0 hidden md:block" />
+                          <Icon name={row.icon} size={14} className="text-slate-500 shrink-0 md:hidden" />
+                          <Icon name={row.icon} size={16} className="text-slate-500 shrink-0 hidden md:block" />
                           <span className="text-[0.69rem] md:text-sm font-medium text-slate-600">{row.label}</span>
                         </div>
                         {row.values.map((val, j) => (

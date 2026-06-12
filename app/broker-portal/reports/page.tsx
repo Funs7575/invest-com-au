@@ -209,7 +209,7 @@ export default function ReportsPage() {
       {drillCampaign && (
         <div className="bg-slate-900 text-white rounded-xl px-4 py-3 flex items-center justify-between bounce-in-up">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400">Drill-down:</span>
+            <span className="text-xs text-slate-500">Drill-down:</span>
             <span className="text-sm font-bold">{drillCampaign.name}</span>
             <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
               drillCampaign.inventory_type === "featured" ? "bg-purple-500/20 text-purple-300" : "bg-blue-500/20 text-blue-300"
@@ -217,7 +217,7 @@ export default function ReportsPage() {
           </div>
           <button
             onClick={() => setDrillCampaignId(null)}
-            className="text-xs text-slate-400 hover:text-white transition-colors"
+            className="text-xs text-slate-500 hover:text-white transition-colors"
           >
             Clear filter ×
           </button>

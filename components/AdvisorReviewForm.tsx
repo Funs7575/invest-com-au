@@ -53,7 +53,7 @@ function StarRatingInput({
           </button>
         ))}
         {value > 0 && (
-          <span aria-hidden="true" className="text-[0.6rem] text-slate-400 ml-1 self-center">
+          <span aria-hidden="true" className="text-[0.6rem] text-slate-500 ml-1 self-center">
             {value}/5
           </span>
         )}

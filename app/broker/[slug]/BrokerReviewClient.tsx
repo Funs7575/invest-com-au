@@ -347,7 +347,7 @@ export default function BrokerReviewClient({
               {authorAvatarUrl ? (
                 <Image src={authorAvatarUrl} alt={authorName} width={24} height={24} className="rounded-full object-cover" />
               ) : (
-                <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               )}
               Reviewed by{" "}
               {authorUrl ? (
@@ -362,13 +362,13 @@ export default function BrokerReviewClient({
           )}
           {datePublished && (
             <span className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
               Published: <span className="font-medium text-slate-600">{datePublished}</span>
             </span>
           )}
           {dateModified && dateModified !== datePublished && (
             <span className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
               Updated: <span className="font-medium text-slate-600">{dateModified}</span>
             </span>
           )}
@@ -463,7 +463,7 @@ export default function BrokerReviewClient({
               </div>
               <div>
                 <h2 className="text-base md:text-lg font-extrabold">The Bottom Line</h2>
-                <p className="text-[0.6rem] md:text-xs text-slate-400">Our editorial verdict</p>
+                <p className="text-[0.6rem] md:text-xs text-slate-500">Our editorial verdict</p>
               </div>
             </div>
             <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-4">
@@ -490,7 +490,7 @@ export default function BrokerReviewClient({
               {SHOW_RATINGS && (
                 <div className="flex items-center gap-2">
                   <span className="text-amber-400 text-lg" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
-                  <span className="text-2xl font-extrabold" aria-hidden="true">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
+                  <span className="text-2xl font-extrabold" aria-hidden="true">{b.rating}<span className="text-sm text-slate-500">/5</span></span>
                 </div>
               )}
               <a
@@ -907,7 +907,7 @@ export default function BrokerReviewClient({
         {feeHistory.length > 0 && (
           <section id="fee-history" className="mb-10 scroll-mt-20">
             <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <Icon name="clock" size={20} className="text-slate-400" />
+              <Icon name="clock" size={20} className="text-slate-500" />
               Fee Change History
             </h2>
             <p className="text-sm text-slate-500 mb-4">

@@ -456,7 +456,7 @@ export default async function CountryForeignInvestmentPage({
           <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
             <div>
               <h2 className="text-lg font-extrabold text-white mb-1">Find an advisor for {dtaCountry.country} investors</h2>
-              <p className="text-slate-400 text-sm">International tax specialists who understand both Australian rules and {dtaCountry.country} obligations.</p>
+              <p className="text-slate-500 text-sm">International tax specialists who understand both Australian rules and {dtaCountry.country} obligations.</p>
             </div>
             <div className="flex gap-3 shrink-0">
               <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors whitespace-nowrap">

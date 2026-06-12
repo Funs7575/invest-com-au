@@ -139,7 +139,7 @@ export default async function JobDetailPage({ params }: PageProps) {
         {/* Header */}
         <div className="bg-slate-900 text-white py-10 md:py-14 px-4">
           <div className="container-custom max-w-4xl">
-            <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3">
+            <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
               <Link href="/" className="hover:text-white">
                 Home
               </Link>
@@ -162,7 +162,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                 {JOB_TYPE_LABELS[job.type] ?? job.type}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-2">Posted {postedDate}</p>
+            <p className="text-xs text-slate-500 mt-2">Posted {postedDate}</p>
           </div>
         </div>
 

@@ -170,7 +170,7 @@ export default function GlobalInvestingEtfsPage() {
         <section className="bg-gradient-to-br from-slate-900 to-blue-950 text-white py-12 md:py-18">
           <div className="container-custom max-w-5xl">
             <nav
-              className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
+              className="flex items-center gap-1.5 text-xs text-slate-500 mb-5"
               aria-label="Breadcrumb"
             >
               <Link href="/" className="hover:text-white">

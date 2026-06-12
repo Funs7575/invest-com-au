@@ -412,7 +412,7 @@ function DesktopDropdown({
         }`}
       >
         {label}
-        <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        <Icon name="chevron-down" size={14} className={`text-slate-500 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">

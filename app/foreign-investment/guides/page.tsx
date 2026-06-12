@@ -260,7 +260,7 @@ export default function ForeignInvestmentGuidesPage() {
                   </h3>
                   <p className="text-xs text-slate-500 leading-relaxed">{guide.desc}</p>
                 </div>
-                <svg className="w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-slate-500 group-hover:text-emerald-500 transition-colors shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
@@ -286,7 +286,7 @@ export default function ForeignInvestmentGuidesPage() {
                   <h3 className="font-bold text-slate-800 text-base mb-1.5 group-hover:text-amber-700 transition-colors">{guide.title}</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">{guide.desc}</p>
                 </div>
-                <svg className="w-5 h-5 text-slate-400 group-hover:text-amber-500 transition-colors shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-slate-500 group-hover:text-amber-500 transition-colors shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
@@ -332,7 +332,7 @@ export default function ForeignInvestmentGuidesPage() {
               <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <div className="px-5 pb-4">
                   <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>

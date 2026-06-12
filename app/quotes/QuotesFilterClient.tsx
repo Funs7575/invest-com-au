@@ -221,7 +221,7 @@ export default function QuotesFilterClient({ initialJobs }: Props) {
 
           {jobs.length === 0 && !isPending ? (
             <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center">
-              <Icon name="inbox" size={28} className="text-slate-400 mx-auto mb-3" />
+              <Icon name="inbox" size={28} className="text-slate-500 mx-auto mb-3" />
               {hasFilters ? (
                 <>
                   <h2 className="text-lg font-bold text-slate-900 mb-1">No requests match your filters</h2>

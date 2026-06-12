@@ -403,7 +403,7 @@ export default function BrokerDashboard() {
           <div id="roi-widget" className={`rounded-xl border p-5 hover-lift ${isProfitable ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200"}`}>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-                <Icon name="trending-up" size={14} className={isProfitable ? "text-emerald-600" : "text-slate-400"} />
+                <Icon name="trending-up" size={14} className={isProfitable ? "text-emerald-600" : "text-slate-500"} />
                 30-Day ROI
               </h2>
               <Link href="/broker-portal/analytics" className="text-xs text-slate-500 hover:text-slate-700 hover:underline">
@@ -658,7 +658,7 @@ export default function BrokerDashboard() {
         <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-              <Icon name="activity" size={14} className="text-slate-400" />
+              <Icon name="activity" size={14} className="text-slate-500" />
               Recent Activity
             </h2>
             <span className="text-[0.62rem] text-slate-500">{activityLog.length} events</span>

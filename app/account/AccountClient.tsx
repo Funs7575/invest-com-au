@@ -356,7 +356,7 @@ export default function AccountClient() {
           <div className="mb-4 bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="bg-gradient-to-r from-slate-900 to-slate-700 px-5 py-4">
               <h2 className="text-base font-bold text-white">Get the most out of Invest.com.au</h2>
-              <p className="text-xs text-slate-400 mt-0.5">Three things worth doing first</p>
+              <p className="text-xs text-slate-500 mt-0.5">Three things worth doing first</p>
             </div>
             <div className="divide-y divide-slate-100">
               <div className="flex items-start gap-4 px-5 py-4">

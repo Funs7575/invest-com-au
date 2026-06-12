@@ -283,8 +283,8 @@ export default function FinanceDashboardPage() {
                 {t.type === "income" ? "+" : "-"}{fmt(t.amount_cents)}
               </span>
               <div className="flex gap-1 shrink-0">
-                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} aria-label="Edit transaction" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="pencil" size={14} /></button>
-                <button onClick={() => handleDelete(t.id)} aria-label="Delete transaction" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
+                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} aria-label="Edit transaction" className="p-1.5 text-slate-500 hover:text-slate-700"><Icon name="pencil" size={14} /></button>
+                <button onClick={() => handleDelete(t.id)} aria-label="Delete transaction" className="p-1.5 text-slate-500 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
               </div>
             </div>
           ))}
@@ -320,7 +320,7 @@ export default function FinanceDashboardPage() {
                 <span className={`text-sm font-bold ${t.type === "income" ? "text-emerald-600" : "text-red-600"}`}>
                   {t.type === "income" ? "+" : "-"}{fmt(t.amount_cents)}/{t.recurring_interval === "yearly" ? "yr" : "mo"}
                 </span>
-                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} aria-label="Edit transaction" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="pencil" size={14} aria-hidden /></button>
+                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} aria-label="Edit transaction" className="p-1.5 text-slate-500 hover:text-slate-700"><Icon name="pencil" size={14} aria-hidden /></button>
               </div>
             ))}
             {recurringTxns.length === 0 && <div className="text-center py-8 text-slate-500 text-sm">No recurring transactions. Add expenses like hosting, domains, and software.</div>}

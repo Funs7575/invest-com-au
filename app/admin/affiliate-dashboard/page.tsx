@@ -155,7 +155,7 @@ export default function AffiliateDashboardPage() {
         ].map(card => (
           <div key={card.label} className="bg-white rounded-xl border border-slate-200 p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Icon name={card.icon} size={16} className="text-slate-400" />
+              <Icon name={card.icon} size={16} className="text-slate-500" />
               <span className="text-xs font-medium text-slate-500">{card.label}</span>
             </div>
             <p className="text-xl font-extrabold text-slate-900">{loading ? "—" : card.value}</p>

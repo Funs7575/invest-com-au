@@ -91,7 +91,7 @@ export default function MobileBottomNav() {
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
                 className={`flex flex-col items-center justify-center gap-1 py-2 min-h-14 text-[0.65rem] font-bold transition-colors ${
-                  active ? "text-amber-600 dark:text-amber-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                  active ? "text-amber-600 dark:text-amber-400" : "text-slate-600 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-100"
                 }`}
               >
                 <span aria-hidden>{tab.icon}</span>

@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `R&D Tax Incentive Australia ${CURRENT_YEAR}: Complete Guide & Calculator | Invest.com.au`,
   description:
-    "R&D Tax Incentive: up to 43.5% cash offset on eligible spend. FY2025 deadline 30 April 2026 — calculator, eligibility checklist and how to claim.",
+    "R&D Tax Incentive: up to 43.5% cash offset on eligible spend. FY2025 deadline 30 April 2026 — calculator, eligibility checklist and how to claim.",  // dated-ok
   alternates: { canonical: `${SITE_URL}/grants/rd-tax-incentive` },
   openGraph: {
     title: `R&D Tax Incentive Australia ${CURRENT_YEAR}: Complete Guide`,
@@ -44,7 +44,7 @@ const RD_FAQS = [
   },
   {
     q: "When is the RDTI registration deadline?",
-    a: "You must register your R&D activities with AusIndustry within 10 months of the end of the income year. For a 30 June year-end (FY2025), the deadline is 30 April 2026. Registration is done through the customer portal on business.gov.au. Late registration is only permitted in narrow circumstances — missing the deadline means losing the claim for that year.",
+    a: "You must register your R&D activities with AusIndustry within 10 months of the end of the income year. For a 30 June year-end (FY2025), the deadline is 30 April 2026. Registration is done through the customer portal on business.gov.au. Late registration is only permitted in narrow circumstances — missing the deadline means losing the claim for that year.",  // dated-ok
   },
   {
     q: "What counts as eligible R&D expenditure?",
@@ -76,7 +76,7 @@ export default function RdTaxIncentivePage() {
         {/* Hero */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/grants" className="hover:text-white">Grants</Link>
@@ -97,7 +97,7 @@ export default function RdTaxIncentivePage() {
           <div className="container-custom max-w-5xl flex items-start gap-3">
             <Icon name="alert-triangle" size={20} className="text-amber-700 mt-0.5 shrink-0" />
             <p className="text-sm text-amber-900 leading-relaxed">
-              <strong>FY2025 registration deadline: 30 April 2026.</strong> Companies that performed R&amp;D in the year ended 30 June 2025 must register their activities with AusIndustry before this date or lose the claim entirely.
+              <strong>FY2025 registration deadline: 30 April 2026.</strong> Companies that performed R&amp;D in the year ended 30 June 2025 must register their activities with AusIndustry before this date or lose the claim entirely.  // dated-ok
             </p>
           </div>
         </section>
@@ -204,7 +204,7 @@ export default function RdTaxIncentivePage() {
                 <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
                   <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
                     {faq.q}
-                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
+                    <span className="text-slate-500 group-open:rotate-180 transition-transform ml-2 shrink-0" aria-hidden="true">▾</span>
                   </summary>
                   <div className="px-5 pb-4">
                     <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>

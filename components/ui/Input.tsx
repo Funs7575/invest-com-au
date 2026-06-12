@@ -33,7 +33,7 @@ export function Input({
           w-full px-4 py-3 text-sm text-slate-900 bg-white border rounded-xl
           placeholder:text-slate-500 transition-all duration-150
           focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400
-          disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed
+          disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed
           ${error
             ? "border-red-400 bg-red-50 focus:ring-red-400 focus:border-red-400"
             : "border-slate-200 hover:border-slate-300"

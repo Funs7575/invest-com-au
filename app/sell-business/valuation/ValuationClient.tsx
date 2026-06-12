@@ -142,7 +142,7 @@ export default function ValuationClient() {
           <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Low</p>
+                <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Low</p>
                 <p className="text-xl md:text-2xl font-extrabold mt-1">{formatAUD(active.low)}</p>
               </div>
               <div>
@@ -150,7 +150,7 @@ export default function ValuationClient() {
                 <p className="text-2xl md:text-3xl font-extrabold mt-1" style={{ color: "#EAB308" }}>{formatAUD(active.mid)}</p>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">High</p>
+                <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">High</p>
                 <p className="text-xl md:text-2xl font-extrabold mt-1">{formatAUD(active.high)}</p>
               </div>
             </div>

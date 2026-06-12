@@ -796,7 +796,7 @@ export default function PropertyFinancePage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-50 bg-white">
                   {faq.q}
-                  <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
+                  <span className="ml-3 flex-shrink-0 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#9660;
                   </span>
                 </summary>

@@ -64,7 +64,7 @@ export default function EtfsPage() {
         {/* Hero */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/invest" className="hover:text-white">Invest</Link>
@@ -600,7 +600,7 @@ export default function EtfsPage() {
                 ].map((item) => (
                   <div key={item.label} className="text-center">
                     <div className={`text-2xl font-extrabold ${item.color}`}>{item.value}</div>
-                    <div className="text-xs text-slate-400 mt-1">{item.label}</div>
+                    <div className="text-xs text-slate-500 mt-1">{item.label}</div>
                   </div>
                 ))}
               </div>
@@ -619,7 +619,7 @@ export default function EtfsPage() {
                 <details key={item.q} className="rounded-xl border border-slate-200 bg-white overflow-hidden">
                   <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-bold text-slate-900 hover:bg-slate-50 text-sm">
                     {item.q}
-                    <svg className="w-4 h-4 text-slate-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg className="w-4 h-4 text-slate-500 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </summary>

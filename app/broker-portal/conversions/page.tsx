@@ -245,7 +245,7 @@ export default function ConversionsPage() {
                   <div key={stage.key} className="w-full">
                     {conversionRate !== null && (
                       <div className="flex items-center justify-center gap-1 py-1">
-                        <Icon name="trending-up" size={11} className="text-slate-400" />
+                        <Icon name="trending-up" size={11} className="text-slate-500" />
                         <span className="text-[0.62rem] font-bold text-slate-500">{conversionRate}% conversion</span>
                       </div>
                     )}

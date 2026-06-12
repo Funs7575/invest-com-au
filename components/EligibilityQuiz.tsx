@@ -138,7 +138,7 @@ export default function EligibilityQuiz({
             data-testid={`eligibility-quiz-option-${option.value}`}
           >
             <span className="text-sm font-bold text-slate-900">{option.label}</span>
-            <Icon name="arrow-right" size={14} className="text-slate-400 shrink-0" />
+            <Icon name="arrow-right" size={14} className="text-slate-500 shrink-0" />
           </button>
         ))}
       </div>
