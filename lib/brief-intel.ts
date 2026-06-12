@@ -65,15 +65,11 @@ export const INTEL_WINDOW_DAYS = 180;
 
 const FETCH_LIMIT = 500;
 
-/** Display labels for the canonical budget bands (order = QUOTE_BUDGET_BANDS). */
-export const BUDGET_BAND_LABELS: Record<string, string> = {
-  under_500: "Under $500",
-  "500_2k": "$500–$2k",
-  "2k_5k": "$2k–$5k",
-  "5k_10k": "$5k–$10k",
-  "10k_plus": "$10k+",
-  not_sure: "Budget TBD",
-};
+// Display labels live in brief-intel-shared.ts (client-safe — the dossier
+// panel renders them in the browser; importing this module there would pull
+// the server Supabase clients into the client bundle). Re-exported so server
+// callers and tests keep a single import surface.
+export { BUDGET_BAND_LABELS } from "./brief-intel-shared";
 
 // ─── Types ───────────────────────────────────────────────────────────────
 

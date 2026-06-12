@@ -10,7 +10,7 @@
 
 import Icon from "@/components/Icon";
 import type { BriefDossier } from "@/lib/brief-intel";
-import { BUDGET_BAND_LABELS } from "@/lib/brief-intel";
+import { BUDGET_BAND_LABELS } from "@/lib/brief-intel-shared";
 
 const aud = new Intl.NumberFormat("en-AU", {
   style: "currency",
