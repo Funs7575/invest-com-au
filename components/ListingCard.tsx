@@ -4,6 +4,7 @@ import Icon from "@/components/Icon";
 import { getListingHeroImage } from "@/lib/listing-vertical-images";
 import { normaliseVertical } from "@/lib/listing-url";
 import { buildLotProfile } from "@/lib/listings/lot-profile";
+import { pricePerUnit } from "@/lib/listings/vertical-metrics";
 import { assessLotTransparency, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
 
 /**
@@ -243,6 +244,8 @@ export default function ListingCard({ listing }: ListingCardProps) {
     buildLotProfile(listing.key_metrics ?? {}),
   );
   const showTransparencyBadge = transparency.level !== "essential";
+  // $/unit — the number serious buyers actually rank on ($/ha, $/m², $/ML).
+  const perUnit = pricePerUnit(listing);
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
@@ -333,6 +336,11 @@ export default function ListingCard({ listing }: ListingCardProps) {
         {listing.price_display && (
           <p className="text-base font-extrabold text-slate-900">
             {listing.price_display}
+          </p>
+        )}
+        {perUnit && (
+          <p className="text-xs font-semibold text-emerald-800" title={`Asking price per ${perUnit.label.slice(2)}`}>
+            ≈ {perUnit.value}
           </p>
         )}
 

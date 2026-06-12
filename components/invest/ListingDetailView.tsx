@@ -17,6 +17,7 @@ import LotComparables from "@/components/invest/lot/LotComparables";
 import LotListerCard from "@/components/invest/lot/LotListerCard";
 import { buildLotProfile } from "@/lib/listings/lot-profile";
 import { fetchSoldComparables, mergeComparables } from "@/lib/listings/sold-archive";
+import { pricePerUnit } from "@/lib/listings/vertical-metrics";
 import { intelForCategory } from "@/lib/listings/vertical-intel";
 import { assessLotTransparency } from "@/lib/listings/lot-transparency";
 import {
@@ -86,6 +87,7 @@ export default async function ListingDetailView({
   const kind = deriveListingKind(l);
   const kindMeta = listingKindMeta(kind);
   const price = formatListingPrice(l);
+  const perUnit = pricePerUnit(l);
   const fresh = freshnessSignal({
     created_at: l.created_at ?? "",
     expires_at: (l as { expires_at?: string }).expires_at,
@@ -205,6 +207,11 @@ export default async function ListingDetailView({
                     <p className="text-3xl font-extrabold text-slate-900">
                       {price?.value ?? "Price on application"}
                     </p>
+                    {perUnit && (
+                      <p className="text-sm font-semibold text-emerald-800 mt-0.5">
+                        ≈ {perUnit.value}
+                      </p>
+                    )}
                   </div>
                   {highlight && (
                     <div className="text-right">
