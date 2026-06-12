@@ -18,6 +18,7 @@ import LotListerCard from "@/components/invest/lot/LotListerCard";
 import { buildLotProfile } from "@/lib/listings/lot-profile";
 import LotRecentlySold from "@/components/invest/lot/LotRecentlySold";
 import LotMedia from "@/components/invest/lot/LotMedia";
+import LotDueDiligence from "@/components/invest/lot/LotDueDiligence";
 import { fetchSoldComparables, mergeComparables, fetchRecentlySold } from "@/lib/listings/sold-archive";
 import { pricePerUnit } from "@/lib/listings/vertical-metrics";
 import { intelForCategory } from "@/lib/listings/vertical-intel";
@@ -262,6 +263,7 @@ export default async function ListingDetailView({
               <LotTransparency assessment={transparency} />
               <LotHoldingCosts profile={profile} intel={intel} />
               <LotLiquidityExit profile={profile} intel={intel} />
+              <LotDueDiligence categorySlug={categorySlug} slug={l.slug} />
               <LotComparables profile={profileWithComps} />
               <LotRecentlySold rows={recentlySold} categoryLabel={categoryLabel} />
 
