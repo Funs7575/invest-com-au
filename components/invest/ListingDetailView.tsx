@@ -17,6 +17,7 @@ import LotComparables from "@/components/invest/lot/LotComparables";
 import LotListerCard from "@/components/invest/lot/LotListerCard";
 import { buildLotProfile } from "@/lib/listings/lot-profile";
 import LotRecentlySold from "@/components/invest/lot/LotRecentlySold";
+import LotMedia from "@/components/invest/lot/LotMedia";
 import { fetchSoldComparables, mergeComparables, fetchRecentlySold } from "@/lib/listings/sold-archive";
 import { pricePerUnit } from "@/lib/listings/vertical-metrics";
 import { intelForCategory } from "@/lib/listings/vertical-intel";
@@ -201,6 +202,8 @@ export default async function ListingDetailView({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-8">
             <div className="lg:col-span-2 space-y-5">
               <ListingImageGallery images={l.images} alt={l.title} vertical={l.vertical} listingId={l.id} subCategory={l.sub_category} />
+
+              <LotMedia km={km} />
 
               <div className="bg-white border border-slate-200 rounded-xl p-5">
                 <div className="flex flex-wrap items-center justify-between gap-4">
