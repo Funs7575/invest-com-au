@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { useUser } from "@/lib/hooks/useUser";
 import { getSessionId } from "@/lib/session";
-import { useToast } from "@/components/Toast";
 
 /**
  * Global trigger that fires /api/account/claim-anonymous once
@@ -25,7 +24,6 @@ import { useToast } from "@/components/Toast";
  */
 export default function ClaimAnonymousOnAuth() {
   const { user, loading } = useUser();
-  const { toast } = useToast();
   const fired = useRef(false);
 
   useEffect(() => {
@@ -56,17 +54,7 @@ export default function ClaimAnonymousOnAuth() {
         if (!res.ok) return;
         try {
           sessionStorage.setItem(`inv_claimed_${user.id}`, "1");
-          // Sync moment: tell the user their pre-auth saves made it home.
-          const cached = localStorage.getItem("inv_anon_saves");
-          const count = cached ? (JSON.parse(cached) as unknown[]).length : 0;
           localStorage.removeItem("inv_anon_saves");
-          if (count > 0) {
-            toast(
-              count === 1 ? "Your saved item is now in your account" : `Your ${count} saves are now in your account`,
-              "success",
-              3000,
-            );
-          }
         } catch {
           /* ignore */
         }
@@ -75,7 +63,7 @@ export default function ClaimAnonymousOnAuth() {
         // Non-blocking — the user can still use the site
         // without their pre-auth state migrated.
       });
-  }, [user, loading, toast]);
+  }, [user, loading]);
 
   return null;
 }
