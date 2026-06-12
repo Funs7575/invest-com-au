@@ -135,6 +135,21 @@ describe("POST /api/unsubscribe", () => {
     expect(updateArgs.unsubscribed).toBe(true);
   });
 
+  it("marks demand-alert prospects unsubscribed, scoped to the demand-alert prefix", async () => {
+    const supabaseCalls = setupTables({ captureIds: [{ id: "cap-1" }] });
+    await POST(makePost({ email: "user@example.com" }));
+
+    const calls = supabaseCalls["prospects"] ?? [];
+    const updateCall = calls.find((c) => c.method === "update");
+    expect((updateCall?.args[0] as Record<string, unknown>).status).toBe("unsubscribed");
+    // Scoping filters protect BD-agent-owned prospects rows.
+    const likeCall = calls.find((c) => c.method === "like");
+    expect(likeCall?.args).toEqual(["external_id", "demand-alert:%"]);
+    const eqCalls = calls.filter((c) => c.method === "eq");
+    expect(eqCalls.map((c) => c.args)).toContainEqual(["source", "other"]);
+    expect(eqCalls.map((c) => c.args)).toContainEqual(["contact_email", "user@example.com"]);
+  });
+
   it("updates profiles email preferences when account exists", async () => {
     const supabaseCalls = setupTables({
       captureIds: [{ id: "cap-1" }],

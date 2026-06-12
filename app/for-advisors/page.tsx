@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { faqJsonLd } from "@/lib/schema-markup";
+import { countOpenDemand } from "@/lib/demand-board";
 
 export const revalidate = 3600; // 1 hour
 import Icon from "@/components/Icon";
@@ -37,6 +38,7 @@ export default async function ForAdvisorsPage() {
   // eslint-disable-next-line react-hooks/purity -- server component, Date.now() is safe here
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const { count: joinedThisWeek } = await supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active").gte("created_at", weekAgo);
+  const openBriefCount = await countOpenDemand();
 
   const faqSchema = faqJsonLd(FOR_ADVISORS_FAQS);
 
@@ -90,6 +92,24 @@ export default async function ForAdvisorsPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Live demand teaser → /for-advisors/demand */}
+      <section className="px-4 py-6 bg-slate-900">
+        <Link
+          href="/for-advisors/demand"
+          className="max-w-3xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 group"
+        >
+          <span className="text-sm md:text-base text-white font-semibold flex items-center gap-2">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" aria-hidden="true" />
+            {openBriefCount > 0
+              ? `${openBriefCount} open advice brief${openBriefCount === 1 ? "" : "s"} on the marketplace right now`
+              : "See live demand for advice on the marketplace"}
+          </span>
+          <span className="text-sm font-bold text-amber-400 group-hover:text-amber-300">
+            View the live demand board →
+          </span>
+        </Link>
       </section>
 
       {/* How it works */}
