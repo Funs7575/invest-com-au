@@ -698,6 +698,13 @@ export default function InvestListingsClient({
               ))}
             </div>
 
+            <Link
+              href="/invest/sold"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold rounded-full border border-slate-300 bg-white text-slate-700 hover:border-emerald-400 hover:text-emerald-800 px-3 py-1.5 transition-colors"
+            >
+              <Icon name="check-circle" size={12} />
+              Recently sold
+            </Link>
             {lastVisit && newSinceVisitCount > 0 && (
               <button
                 type="button"

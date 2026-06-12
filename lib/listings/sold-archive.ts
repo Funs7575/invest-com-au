@@ -19,7 +19,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
-import { rawVerticalVariants } from "@/lib/listing-url";
+import { rawVerticalVariants, VERTICAL_TO_CATEGORY } from "@/lib/listing-url";
 import { formatAudCompact } from "@/lib/listing-kind";
 import type { ComparableSale } from "@/lib/listings/lot-profile";
 import { logger } from "@/lib/logger";
@@ -186,6 +186,55 @@ export async function fetchRecentlySold(
   } catch (err) {
     log.warn("fetchRecentlySold threw", {
       vertical,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return [];
+  }
+}
+
+/**
+ * Page-level sold-archive query (idea #5 — the browsable "Sold" surface).
+ * Optional category narrows via the canonical slug's vertical variants;
+ * newest sales first. Fails soft to [] pre-migration.
+ */
+export async function fetchSoldArchive(opts: {
+  category?: string;
+  limit?: number;
+} = {}): Promise<RecentlySoldRow[]> {
+  const limit = opts.limit ?? 48;
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from("investment_listings")
+      .select(
+        "id, slug, title, location_state, location_city, images, vertical, sub_category, listing_kind, key_metrics, asking_price_cents, sold_price_cents, sold_at",
+      )
+      .eq("status", "sold")
+      .order("sold_at", { ascending: false, nullsFirst: false })
+      .limit(limit);
+    if (opts.category) {
+      // Inverse of VERTICAL_TO_CATEGORY: every canonical vertical whose
+      // category matches, expanded to its drifted raw variants.
+      const verticals = Object.entries(VERTICAL_TO_CATEGORY)
+        .filter(([, cat]) => cat === opts.category)
+        .map(([vertical]) => vertical);
+      if (verticals.length > 0) {
+        query = query.in(
+          "vertical",
+          verticals.flatMap((v) => rawVerticalVariants(v)),
+        );
+      }
+    }
+    const { data, error } = await query;
+    if (error) {
+      if (!isMissingSoldColumnsError(error.message)) {
+        log.warn("fetchSoldArchive failed", { error: error.message });
+      }
+      return [];
+    }
+    return (data ?? []) as RecentlySoldRow[];
+  } catch (err) {
+    log.warn("fetchSoldArchive threw", {
       err: err instanceof Error ? err.message : String(err),
     });
     return [];
