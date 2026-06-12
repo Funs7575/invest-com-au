@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { formatDate } from "@/lib/utils";
+import { buildLotProfile } from "@/lib/listings/lot-profile";
+import { assessLotTransparency, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
 
 interface Listing {
   id: number;
@@ -18,6 +20,17 @@ interface Listing {
   enquiries: number;
   created_at: string;
   expires_at: string | null;
+  images?: string[] | null;
+  description?: string | null;
+  location_state?: string | null;
+  location_city?: string | null;
+  key_metrics?: Record<string, unknown> | null;
+}
+
+interface CategoryBenchmark {
+  median_views: number;
+  median_enquiries: number;
+  sample: number;
 }
 
 interface Enquiry {
@@ -73,6 +86,7 @@ export default function MyListingsPage() {
   const [error, setError] = useState<string | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [enquiries, setEnquiries] = useState<Record<number, Enquiry[]>>({});
+  const [benchmarks, setBenchmarks] = useState<Record<string, CategoryBenchmark>>({});
   const [expandedListing, setExpandedListing] = useState<number | null>(null);
   const [soldFormListing, setSoldFormListing] = useState<number | null>(null);
   const [soldPriceInput, setSoldPriceInput] = useState("");
@@ -113,6 +127,7 @@ export default function MyListingsPage() {
 
       setListings(data.listings || []);
       setEnquiries(data.enquiries || {});
+      setBenchmarks(data.benchmarks || {});
       setStage("results");
     } catch {
       setError("Failed to load listings. Please try again.");
@@ -437,6 +452,44 @@ export default function MyListingsPage() {
                             </span>
                           )}
                         </div>
+
+                        {/* Performance vs category + transparency nudge (idea #20) */}
+                        {(() => {
+                          const bench = benchmarks[listing.vertical];
+                          const transparency = assessLotTransparency(
+                            listing,
+                            buildLotProfile(listing.key_metrics ?? {}),
+                          );
+                          const unmet = transparency.checks.filter((c) => !c.met);
+                          const viewsDelta =
+                            bench && bench.median_views > 0
+                              ? Math.round(((listing.views - bench.median_views) / bench.median_views) * 100)
+                              : null;
+                          return (
+                            <div className="mt-3 rounded-lg bg-slate-50 border border-slate-100 px-3 py-2 text-xs text-slate-600 space-y-1">
+                              {bench && (
+                                <p>
+                                  <span className="font-semibold text-slate-800">Performance:</span>{" "}
+                                  {listing.views} views vs. {bench.median_views} category median
+                                  {viewsDelta !== null && viewsDelta !== 0 && (
+                                    <span className={viewsDelta > 0 ? "text-emerald-700 font-semibold" : "text-amber-700 font-semibold"}>
+                                      {" "}({viewsDelta > 0 ? "+" : ""}{viewsDelta}%)
+                                    </span>
+                                  )}
+                                  {" · "}
+                                  {listing.enquiries} enquiries vs. {bench.median_enquiries} median
+                                </p>
+                              )}
+                              <p>
+                                <span className="font-semibold text-slate-800">Transparency:</span>{" "}
+                                {transparencyLevelLabel(transparency.level)} ({transparency.metCount}/{transparency.total})
+                                {unmet.length > 0 && transparency.level !== "comprehensive" && (
+                                  <span className="text-slate-500"> — next: {unmet[0]?.label.toLowerCase()}</span>
+                                )}
+                              </p>
+                            </div>
+                          );
+                        })()}
 
                         {/* Action buttons */}
                         <div className="flex items-center gap-3 mt-4 pt-3 border-t border-slate-100">
