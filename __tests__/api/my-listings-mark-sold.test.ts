@@ -17,7 +17,7 @@ vi.mock("@/lib/require-listing-owner-session", () => ({
 
 const maybeSingleMock = vi.fn();
 const updateEqMock = vi.fn();
-const updateMock = vi.fn(() => ({ eq: updateEqMock }));
+const updateMock = vi.fn((_payload: Record<string, unknown>) => ({ eq: updateEqMock }));
 const selectChain = {
   select: vi.fn(() => selectChain),
   eq: vi.fn(() => selectChain),
@@ -83,7 +83,7 @@ describe("POST /api/listings/my-listings/mark-sold", () => {
     const res = await POST(request({ listing_id: 12, sold_price_cents: 45_000_00 }));
     expect(res.status).toBe(200);
     expect((await res.json()).ok).toBe(true);
-    const payload = updateMock.mock.calls[0]?.[0] as Record<string, unknown>;
+    const payload = updateMock.mock.calls[0]![0];
     expect(payload.status).toBe("sold");
     expect(payload.sold_price_cents).toBe(45_000_00);
     expect(typeof payload.sold_at).toBe("string");
