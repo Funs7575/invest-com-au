@@ -52,6 +52,7 @@ export interface InvestListingsClientProps {
   /** Pre-computed smart-match scores per listing id (Wave 3). Cards render
    *  a green "X% match" pill when present. */
   matchScores?: Record<number, number>;
+  matchReasons?: Record<number, string[]>;
   /** Pre-computed advisor opt-in counts per listing id (Wave 3). Cards
    *  render an emerald "X advisors can assess this" pill when > 0. */
   advisorOptInCounts?: Record<number, number>;
@@ -135,6 +136,7 @@ export default function InvestListingsClient({
   pageSubtitle,
   intentCountry,
   matchScores,
+  matchReasons,
   advisorOptInCounts,
   claimedSlugs,
   showActionPlanCta,
@@ -831,6 +833,7 @@ export default function InvestListingsClient({
                               variant="list"
                               showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
                               matchScore={matchScores?.[l.id] ?? null}
+                              matchReasons={matchReasons?.[l.id] ?? null}
                               advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
                               showClaimBadge={false}
                             />
@@ -849,6 +852,7 @@ export default function InvestListingsClient({
                                 variant="list"
                                 showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
                                 matchScore={matchScores?.[l.id] ?? null}
+                              matchReasons={matchReasons?.[l.id] ?? null}
                                 advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
                                 showClaimBadge={false}
                               />
@@ -870,6 +874,7 @@ export default function InvestListingsClient({
                     variant="list"
                     showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
                     matchScore={matchScores?.[l.id] ?? null}
+                              matchReasons={matchReasons?.[l.id] ?? null}
                     advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
                     showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
                   />
@@ -883,6 +888,7 @@ export default function InvestListingsClient({
                     listing={l}
                     showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
                     matchScore={matchScores?.[l.id] ?? null}
+                              matchReasons={matchReasons?.[l.id] ?? null}
                     advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
                     showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
                   />
