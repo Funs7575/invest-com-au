@@ -183,6 +183,9 @@ export default async function NewBriefPage({
   const responseGuaranteeEnabled = await isFlagEnabled("response_guarantee", {
     segment: "advisor",
   });
+  // Group Briefs opt-in checkbox only renders when the demand_pools flag is on
+  // (fail-closed dormancy — flag off ⇒ no checkbox, brief never joins a pool).
+  const poolOptInEnabled = await isFlagEnabled("demand_pools", { segment: "user" });
 
   const [workspace, investorPrefill, proSubscriber, proSupply] = await Promise.all([
     loadWorkspaceContext(),
@@ -256,6 +259,7 @@ export default async function NewBriefPage({
           investorPrefill={investorPrefill}
           proSubscriber={proSubscriber}
           proSupply={proSupply}
+          poolOptInEnabled={poolOptInEnabled}
         />
       </div>
     </>

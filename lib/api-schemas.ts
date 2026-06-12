@@ -237,6 +237,10 @@ export const CreateBriefRequest = z.object({
   consent_share: z.boolean().refine((v) => v === true, {
     message: "Please confirm consent to share the brief with verified providers.",
   }),
+  // Group Briefs opt-in (idea #17). When true, the brief joins a demand pool
+  // (template × state × month) so advisers can make a group offer. Optional —
+  // a no-op unless the `demand_pools` flag is on. Defaults false.
+  join_demand_pool: z.boolean().optional().default(false),
   // Honeypots — silently accept, ignore.
   website: z.string().optional(),
   fax: z.string().optional(),

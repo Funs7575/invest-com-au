@@ -33,12 +33,15 @@ import Icon from "@/components/Icon";
 import DecisionKit from "@/components/decision-kit/DecisionKit";
 import { loadDecisionKit } from "@/lib/decision-kit/load";
 
+import { getMemberPoolView } from "@/lib/briefs/demand-pools-actions";
+
 import BookConsultationPanel from "./BookConsultationPanel";
 import BriefChatPanel from "./BriefChatPanel";
 import WithdrawBriefButton from "./WithdrawBriefButton";
 import MarkCompleteButton from "./MarkCompleteButton";
 import DisputePanel from "./DisputePanel";
 import { isBookingV2Enabled } from "@/lib/booking-v2";
+import PoolOffersPanel from "./PoolOffersPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -351,6 +354,12 @@ export default async function BriefTrackerPage({
     ? await isBookingV2Enabled(accepted.professional?.email ?? null)
     : false;
 
+  // ── Group Briefs (idea #17) — pool status for the verified owner ────
+  // Flag-gated + fail-soft inside getMemberPoolView; returns null when the
+  // demand_pools flag is off, the brief isn't pooled, or on any error, so the
+  // section simply doesn't render. Only the verified owner sees it.
+  const poolView = emailMatches ? await getMemberPoolView(brief.id) : null;
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Match Requests", url: `${SITE_URL}/briefs` },
@@ -523,6 +532,13 @@ export default async function BriefTrackerPage({
 
             {/* ── Main column ── */}
             <div className="space-y-4 lg:order-1">
+              {/* Group Briefs (idea #17) — pool status + group offers for the
+                  verified owner. Rendered only when the brief is in a pool and
+                  the demand_pools flag is on (poolView is null otherwise). */}
+              {poolView && (
+                <PoolOffersPanel slug={slug} email={email} data={poolView} />
+              )}
+
               {/* Intake-question prompt — surfaces unanswered required questions
                   that the accepting provider published. Skipped silently when
                   questions are zero or all answered. */}

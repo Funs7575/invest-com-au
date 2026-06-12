@@ -535,3 +535,77 @@ export async function sendConsumerConsultationConfirmed(input: {
   });
   return ok;
 }
+
+// ─── Group Briefs (demand pools, idea #17) ───────────────────────────────
+
+/**
+ * A member of a demand pool is told a verified pro posted a GROUP OFFER on
+ * their pool. Each member individually accepts or declines on their tracker —
+ * the email is purely a routing nudge to the brief's Quote Status page (which
+ * already gates by email-as-key). Group "rates" are the pro's own quoted
+ * package pricing; the platform never intermediates the money.
+ */
+export async function sendPoolOfferReceived(input: {
+  consumerEmail: string;
+  briefSlug: string;
+  advisorName: string;
+  templateKey: string;
+  memberCount: number;
+}): Promise<boolean> {
+  const trackerUrl = `${SITE_URL}/briefs/${input.briefSlug}`;
+  const need = input.templateKey.replace(/_/g, " ");
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.consumerEmail,
+    subject: `A group offer arrived on your Match Request`,
+    html: wrap(
+      "A verified pro made a group offer",
+      `<p style="font-size:15px">Hi there,</p>
+      <p style="font-size:14px;color:#475569">You joined a group of <strong>${input.memberCount}</strong> ${input.memberCount === 1 ? "person" : "people"} with a similar ${need} need this month. <strong>${input.advisorName}</strong> has posted a group offer — a package and availability you can take up or pass on. Each person decides individually; nothing is shared until you accept.</p>
+      ${btn(trackerUrl, "View the offer →")}
+      <p style="font-size:12px;color:#64748b">The package rate shown is the pro's own quoted pricing. Invest.com.au provides marketplace introductions only — the service is delivered by the professional under their own licence.</p>
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}
+
+/**
+ * A pro is told a pool member accepted their group offer — their contact
+ * details are unlocked and the brief chat is open. Reply-by-email lands in the
+ * brief chat when BRIEF_REPLY_SECRET is configured.
+ */
+export async function sendProviderPoolOfferAccepted(input: {
+  providerEmail: string;
+  providerName: string;
+  briefTitle: string;
+  briefSlug: string;
+  creditsSpent: number;
+  /** Enables reply-by-email into the brief chat when provided. */
+  briefId?: number;
+}): Promise<boolean> {
+  const inboxUrl = `${SITE_URL}/advisor-portal/briefs`;
+  const chargeLine =
+    input.creditsSpent > 0
+      ? `<p style="font-size:13px;color:#475569;margin:8px 0 0 0"><strong>Charged:</strong> ${input.creditsSpent} credits (group rate — volume discount applied)</p>`
+      : "";
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.providerEmail,
+    replyTo: briefReplyTo(input.briefId),
+    subject: `Group offer accepted — ${input.briefTitle}`,
+    html: wrap(
+      "A member accepted your group offer",
+      `<p style="font-size:15px">Hi ${input.providerName},</p>
+      <p style="font-size:14px;color:#475569">A member of your demand pool accepted your group offer. Their contact details are unlocked in your inbox and the chat is open — they've been told you accepted, so a fast first response matters.</p>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:16px 0">
+        <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0">${input.briefTitle}</p>
+        ${chargeLine}
+      </div>
+      ${btn(inboxUrl, "Open the brief →")}
+      <p style="font-size:12px;color:#64748b">Other members may still accept your offer separately — each acceptance is its own engagement.</p>
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}

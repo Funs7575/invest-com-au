@@ -142,6 +142,15 @@ export interface AcceptBriefInput {
   briefId: number;
   professionalId: number;
   teamId?: number | null;
+  /**
+   * Override the credits charged for this accept, replacing the brief's
+   * `accept_credits_cost`. Used by Group Briefs to charge a volume-discounted
+   * cost while reusing this exact money path (same affordability gate, same
+   * `recordLedgerEntry` debit, same rollback, same tracker event). When
+   * omitted, the brief's own cost is used — every existing caller is
+   * unaffected. Clamped to >= 0.
+   */
+  costOverride?: number | null;
 }
 
 export type AcceptBriefResult =
@@ -166,6 +175,7 @@ export async function acceptBrief({
   briefId,
   professionalId,
   teamId,
+  costOverride,
 }: AcceptBriefInput): Promise<AcceptBriefResult> {
   const admin = createAdminClient();
 
@@ -195,7 +205,13 @@ export async function acceptBrief({
     return { accepted: false, reason: "already_accepted" };
   }
 
-  const credits = row.accept_credits_cost ?? 2;
+  // Credits charged: an explicit override (Group Briefs volume discount) wins
+  // over the brief's own cost. Clamped to >= 0 so a bad override can never
+  // produce a positive (crediting) ledger entry.
+  const credits =
+    costOverride !== undefined && costOverride !== null
+      ? Math.max(0, Math.round(costOverride))
+      : row.accept_credits_cost ?? 2;
   const cents = credits * CENTS_PER_CREDIT;
 
   // ── 2. Pre-charge gate: resolve pricing tier (success_only pros skip the
