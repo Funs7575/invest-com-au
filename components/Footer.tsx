@@ -187,6 +187,7 @@ export default function Footer() {
               <li><Link href="/invest/royalties" className="hover:text-white transition-colors inline-block py-0.5">Royalties</Link></li>
               <li><Link href="/invest/income-assets" className="hover:text-white transition-colors inline-block py-0.5">Income-Asset Businesses</Link></li>
               <li><Link href="/invest/list" className="hover:text-white transition-colors inline-block py-0.5">List an Opportunity</Link></li>
+              <li><Link href="/raise" className="hover:text-white transition-colors inline-block py-0.5">Raise Capital</Link></li>
               <li><Link href="/sell-business" className="hover:text-white transition-colors inline-block py-0.5">Sell a Business</Link></li>
             </FooterLinkSection>
 
