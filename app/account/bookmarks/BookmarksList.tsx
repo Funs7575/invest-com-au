@@ -21,11 +21,12 @@ const TYPE_LABEL: Record<string, string> = {
   article: "Articles",
   broker: "Brokers",
   advisor: "Advisors",
+  listing: "Listings",
   scenario: "Scenarios",
   calculator: "Calculators",
 };
 
-const TYPE_ORDER = ["broker", "advisor", "article", "scenario", "calculator"];
+const TYPE_ORDER = ["broker", "advisor", "listing", "article", "scenario", "calculator"];
 
 function linkFor(type: string, ref: string): string {
   switch (type) {
@@ -35,6 +36,10 @@ function linkFor(type: string, ref: string): string {
       return `/broker/${ref}`;
     case "advisor":
       return `/advisor/${ref}`;
+    case "listing":
+      // Slug-only resolver — bookmarks store the listing slug, the route
+      // looks up the vertical and 307s to the canonical lot URL.
+      return `/invest/listings/${ref}`;
     case "scenario":
       return `/scenario/${ref}`;
     case "calculator":

@@ -1,20 +1,15 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import Icon from "@/components/Icon";
-import ListingImageGallery from "@/components/ListingImageGallery";
-import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
-import ListingEnquiryForm from "@/components/ListingEnquiryForm";
-import ListingDecisionTools from "@/components/invest/ListingDecisionTools";
+import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import ListingDetailView from "@/components/invest/ListingDetailView";
 import ListingsEmptyState from "@/components/ListingsEmptyState";
 import SubCategoryListingsView from "@/components/SubCategoryListingsView";
+import { type InvestmentListing } from "@/components/ListingCard";
 import {
   fetchListingBySlug,
   fetchListingsBySubCategory,
   fetchRelatedListings,
 } from "@/lib/investment-listings-query";
 import { getSubcategoryBySlug } from "@/lib/invest-categories";
-import ListingSchemaScripts from "@/components/ListingSchemaScripts";
 
 export const revalidate = 300;
 
@@ -67,12 +62,6 @@ export async function generateMetadata({
   };
 }
 
-function formatCents(cents: number): string {
-  if (cents >= 1_000_000_00) return `$${(cents / 1_000_000_00).toFixed(1)}M`;
-  if (cents >= 1_000_00) return `$${(cents / 1_000_00).toFixed(0)}K`;
-  return `$${(cents / 100).toLocaleString("en-AU")}`;
-}
-
 export default async function FranchiseListingDetailPage({
   params,
 }: {
@@ -102,173 +91,15 @@ export default async function FranchiseListingDetailPage({
       />
     );
   }
-  const l = listing as InvestmentListing;
 
   const relatedListings = await fetchRelatedListings(VERTICAL, slug, null, 3);
-  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
-  const location = [l.location_city, l.location_state].filter(Boolean).join(", ");
-
-  const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${SITE_URL}/` },
-    { name: "Invest", url: `${SITE_URL}/invest` },
-    { name: "Franchise", url: `${SITE_URL}/invest/franchise` },
-    { name: "Listings", url: `${SITE_URL}/invest/franchise/listings` },
-    { name: l.title },
-  ]);
 
   return (
-    <div>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
-      <ListingSchemaScripts listing={l} vertical={CATEGORY_SLUG} />
-
-      {/* Compact header (E1) — breadcrumb + badges + title + location only,
-          so the gallery and metrics sit near the fold. */}
-      <section className="bg-white border-b border-slate-100 py-3 md:py-4">
-        <div className="container-custom">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest/franchise/listings" className="hover:text-slate-900 transition-colors">Franchise Listings</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <span className="text-slate-900 font-medium truncate max-w-40">{l.title}</span>
-          </nav>
-
-          <div className="flex flex-wrap gap-2 mb-2">
-            {l.listing_type === "featured" && (
-              <span className="bg-amber-500 text-slate-900 text-xs font-bold px-2.5 py-0.5 rounded-full">Featured</span>
-            )}
-            {l.industry && (
-              <span className="bg-purple-800 text-purple-100 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize">
-                {l.industry.replace(/_/g, " ")}
-              </span>
-            )}
-            {!!km.brand && (
-              <span className="bg-slate-700 text-slate-200 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                {String(km.brand)}
-              </span>
-            )}
-          </div>
-
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-2 text-slate-900">{l.title}</h1>
-          {location && (
-            <div className="flex items-center gap-1.5 text-slate-600 text-sm">
-              <Icon name="map-pin" size={14} />
-              {location}
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="py-6 md:py-8 bg-slate-50">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div className="lg:col-span-2 space-y-6">
-              <ListingImageGallery images={l.images} alt={l.title} vertical={l.vertical} listingId={l.id} subCategory={l.sub_category} />
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Total Investment From</p>
-                    <p className="text-3xl font-extrabold text-slate-900">
-                      {l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : (km.min_investment_cents ? formatCents(km.min_investment_cents as number) : "Price on application"))}
-                    </p>
-                  </div>
-                  {!!km.royalty_percent && (
-                    <div className="text-right">
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Ongoing Royalty</p>
-                      <p className="text-xl font-bold text-slate-700">{String(km.royalty_percent)}%</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {Object.keys(km).length > 0 && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6">
-                  <h2 className="text-base font-bold text-slate-900 mb-4">Franchise Details</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {Object.entries(km).map(([key, value]) => (
-                      <div key={key} className="bg-slate-50 rounded-lg p-3">
-                        <p className="text-xs text-slate-500 capitalize mb-1">{key.replace(/_/g, " ")}</p>
-                        <p className="text-sm font-bold text-slate-900">
-                          {typeof value === "number" && key.includes("cents") ? formatCents(value) : String(value)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {l.description && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6">
-                  <h2 className="text-base font-bold text-slate-900 mb-3">About This Opportunity</h2>
-                  <div className="prose prose-slate prose-sm max-w-none">
-                    {l.description.split("\n").map((para, i) => (
-                      <p key={i}>{para}</p>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Franchise Code note */}
-              <div className="bg-purple-50 border border-purple-200 rounded-xl p-5 flex gap-4">
-                <Icon name="star" size={20} className="text-purple-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-bold text-purple-900 text-sm mb-1">Australian Franchise Code of Conduct</p>
-                  <p className="text-sm text-purple-700">
-                    All Australian franchise agreements are governed by the mandatory Franchising Code of Conduct (ACCC). You are entitled to a 14-day review period and a cooling-off period of 7 days after signing.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-5">
-              <div className="bg-white border border-slate-200 rounded-xl p-6 sticky top-20">
-                <h2 className="text-base font-bold text-slate-900 mb-1">Request Franchise Information</h2>
-                <p className="text-xs text-slate-500 mb-4">Get a Franchise Disclosure Document and speak with the franchisor.</p>
-                <ListingEnquiryForm listingId={l.id} listingTitle={l.title} vertical="franchise" />
-              </div>
-              {/* Wave 5 — structure-aware after-tax return + FIRB estimate */}
-              <ListingDecisionTools listing={l} />
-
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-6">
-                <div className="text-center">
-                  <p className="text-lg font-bold text-slate-900">{l.views ?? 0}</p>
-                  <p className="text-xs text-slate-500">Views</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-lg font-bold text-slate-900">{l.enquiries ?? 0}</p>
-                  <p className="text-xs text-slate-500">Enquiries</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {relatedListings.length > 0 && (
-            <div className="mt-12">
-              <h2 className="text-xl font-extrabold text-slate-900 mb-6">Other Franchise Opportunities</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {relatedListings.map((rel) => (
-                  <ListingCard key={rel.id} listing={rel} vertical="franchise" />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="py-10 bg-white border-t border-slate-100">
-        <div className="container-custom text-center">
-          <Link
-            href="/invest/franchise/listings"
-            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
-          >
-            Browse All Franchise Opportunities
-            <Icon name="arrow-right" size={16} />
-          </Link>
-        </div>
-      </section>
-    </div>
+    <ListingDetailView
+      listing={listing as InvestmentListing}
+      relatedListings={relatedListings as InvestmentListing[]}
+      categorySlug={CATEGORY_SLUG}
+      categoryLabel={CATEGORY_LABEL}
+    />
   );
 }

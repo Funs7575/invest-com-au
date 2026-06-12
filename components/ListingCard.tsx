@@ -33,6 +33,7 @@ export type InvestmentListing = {
   listing_type?: string | null;
   firb_eligible?: boolean | null;
   siv_complying?: boolean | null;
+  external_url?: string | null;
   status?: string | null;
   views?: number | null;
   enquiries?: number | null;

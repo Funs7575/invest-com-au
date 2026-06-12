@@ -14,6 +14,23 @@
 
 ## Active strategic decisions log
 
+### 2026-06-11 — Get Matched "showcase" upgrade greenlit (founder); root cause of "looks the same" found and fixed
+
+The P1–P9 Decision Engine was invisible in prod for two DB reasons (PR #1543):
+`get_matched_result_templates` had the legacy schema so every template lookup
+fell back to generic copy, and `intent_taxonomy` was missing all 13 retail
+slugs so mainstream resolves threw FK errors. Both fixed via gm06/gm07
+(applied to prod + ledger-synced). Third gap: `topMatchesForRoute` only
+returned brokers on route=compare, so info-only crypto/trade/grow users got a
+card-less result — now lane-aware (platforms lane ⇒ broker carousel).
+
+Founder verdict after seeing it live: engine is smart but the *intelligence is
+invisible*. Greenlit the showcase roadmap — `docs/plans/GET_MATCHED_SHOWCASE.md`
+(G1–G9): real analyzing moment, Investor Profile hero, dollar figures on cards
+(fee projections), what-if live re-ranking, supply narrowing, roadmap-style
+plan, confidence loop, AI free-text intake, stack+alerts endgame. Wave 1 =
+G1+G2+G3 (result page: identity + numbers + visible reasoning, no schema).
+
 
 ### 2026-06-11 — /goal product-upgrade session: find-advisor elevated; Tasks 2–4 of the brief found already shipped
 
@@ -1291,6 +1308,31 @@ confession banner). Remaining genuinely-unbuilt Phase 1: QotD + 24h SLA
 block, Founding-Experts BD motion.
 
 ---
+
+### 2026-06-11 — The 25 mega-sessions: pure-code compounding-value backlog
+
+Brainstormed list of self-contained builds (each one Claude session, no founder input, no new licences, no schema): the agreed execution order is **top-down**. Status tags maintained here as sessions complete.
+
+1. **Adviser Register Atlas** (`/adviser-register`) — ✅ SHIPPED #1545. Claim-CTA loop into /advisor-apply; awaiting real FAR extract (`npm run data:far` wherever egress is open; bundled data is noindex'd synthetic preview until then).
+2. **Super Fund Performance Explorer** (`/super/funds`) — ✅ SHIPPED #1546. Same file-backed pattern; awaiting APRA extract (`npm run data:apra -- --file <csv> --period "..."`).
+3. **ASX Ghost Tickers** — programmatic pages for every delisted/renamed ASX code ("what happened to X?"); high-intent orphaned searches, links into broker comparison.
+4. **Postcode Wealth Atlas** — ABS/ATO open data per postcode (median income, super balances, property): 2,600 pages feeding suburb guides + advisor directory by location.
+5. **Franking-credit encyclopedia** — per-ASX-200-stock dividend/franking history pages off announcements data.
+6. **ETF overlap matrix** — pairwise holdings-overlap pages for the ~40 most-held ASX ETFs ("VAS vs IOZ: 96% overlap — don't hold both").
+7. **Fee-drag calculator pages** — programmatic "cost of 1% over 30 years at $X" pages per balance band; internal links from every fund/broker page.
+8. **Glossary cross-language expansion** — the 8 locales × glossary terms as indexable pages (the i18n registry exists).
+9. **Historical broker-fee tracker** — date-stamped fee snapshots (the data already accrues in git history of site-data) rendered as per-broker fee-history pages.
+10. **"Is X regulated?" checker pages** — AFSL/ACL/unlicensed status pages for every entity in the AFSL register cache.
+11–25. (lower-confidence ideas — regenerate from this list's spirit when reached: state-by-state stamp duty matrices, visa-by-visa investment right pages, SMSF cost benchmarks by balance, dividend calendar pages, broker outage log, term-deposit ladder builders, CGT scenario library, currency-corridor remittance pages, super contribution deadline pages, advisor fee benchmarks by region, FIRB application timeline tracker, bond yield explainers, IPO archive, LIC NTA discount tracker, robo-advisor comparison matrix.)
+
+**Loop status (2026-06-11 PM session):**
+- #6-as-attempted (AFSL permalinks): already existed (parallel session) — shipped the Atlas↔AFSL adviser cross-link instead (#1551, merged).
+- #9 (broker fee-history): already exists — `broker/[slug]/changelog` + `broker_data_changes` + market-pulse cover it. Marked done.
+- #8 (glossary i18n): deferred — 195 terms × 3 locales of hand-authored translations; needs founder sign-off on translation approach before it's worth building.
+- CGT scenario library (from the 11–25 tail): ✅ SHIPPED — 18 prerendered worked-example pages at `/cgt-calculator/[scenario]` over the existing `computeCgt` engine; pure math, live immediately, same posture as fee-drag.
+- Remaining buildable-without-data items are thinning; most of the tail now waits on founder-run ingests (the four `data:*` commands) or founder decisions.
+
+**Pattern established (#1, #2):** file-backed JSON in `data/` + typed lib loader + alias-driven CSV ingest script + hub/detail ISR routes + synthetic preview with `meta.sample` → banner + noindex until real extract lands → one-command hydration, ships as PR diff. Egress from build sandboxes is blocked for AU data portals — run ingests locally.
 
 ## Open commitments / revisit-by dates
 

@@ -66,8 +66,22 @@ vi.mock("next/link", () => ({
 
 // Mock useUser hook (used by BookmarkButton and other auth-aware components).
 // Returns unauthenticated state to keep component tests Supabase-free.
+// Overridable per test for authed scenarios (vitest isolates module state
+// per test file, so overrides never leak across files):
+//   import { mockUseUser } from "../setup";
+//   mockUseUser.mockReturnValue({ user: { id: "u1" }, loading: false });
+// vi.hoisted so the vi.mock factory never sees a TDZ binding (see
+// CLAUDE.md § vi.mock hoisting); vitest disallows exporting the hoisted
+// binding itself, so the export is a separate reference.
+const hoistedUseUser = vi.hoisted(() => ({
+  mockUseUser: vi.fn((): { user: { id: string } | null; loading: boolean } => ({
+    user: null,
+    loading: false,
+  })),
+}));
+export const mockUseUser = hoistedUseUser.mockUseUser;
 vi.mock("@/lib/hooks/useUser", () => ({
-  useUser: () => ({ user: null, loading: false }),
+  useUser: () => hoistedUseUser.mockUseUser(),
 }));
 
 // Mock useShortlist hook (used by ShortlistButton and QuizPromptBar)

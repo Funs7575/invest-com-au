@@ -11,15 +11,21 @@ import type {
   ListingMatch,
   QuestionDef,
   ResultTemplate,
+  RouteType,
   TopMatch,
   Vertical,
 } from "@/lib/getmatched/types";
+import { inferRoute } from "@/lib/getmatched/inference";
+import { buildInvestorProfile } from "@/lib/getmatched/investor-profile";
 import QuestionCard from "./_components/QuestionCard";
 import ProgressDots from "./_components/ProgressDots";
 import AnalyzingScreen from "./_components/AnalyzingScreen";
 import TopMatchCarousel from "./_components/TopMatchCarousel";
 import MatchExplainerCard from "./_components/MatchExplainerCard";
 import LaneResults from "./_components/LaneResults";
+import WhatIfPanel, { type WhatIfControl } from "./_components/WhatIfPanel";
+import PlanRoadmap from "./_components/PlanRoadmap";
+import SharpenCard from "./_components/SharpenCard";
 import type { LaneResolution } from "@/lib/getmatched/resolve-lanes";
 import { clearPartialPlan, setPartialPlan } from "@/lib/getmatched/recall";
 import { trackEvent as phTrack } from "@/lib/posthog/events";
@@ -391,7 +397,12 @@ export default function GetMatchedClient(props: Props) {
   }
 
   if (analyzing && !result) {
-    return <AnalyzingScreen onComplete={() => setAnalyzingTimerDone(true)} />;
+    return (
+      <AnalyzingScreen
+        onComplete={() => setAnalyzingTimerDone(true)}
+        result={pendingResolveResult}
+      />
+    );
   }
 
   if (error) {
@@ -441,6 +452,23 @@ export default function GetMatchedClient(props: Props) {
         result={result}
         shareToken={shareToken}
         ephemeral={ephemeral}
+        planId={planId}
+        onResolve={async (resolvePlanId, resolveAnswers) => {
+          // Stateless re-resolve used by what-if (G4, always plan_id 0) and
+          // sharpen (G7, real plan_id when persistent). The resolve route
+          // does NOT mutate the plan row when plan_id is 0.
+          const res = await fetch("/api/get-matched/resolve", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ plan_id: resolvePlanId, answers: resolveAnswers }),
+          });
+          const data = (await res.json()) as ResolveResponse | ErrorResponse;
+          if (!res.ok || !("plan" in data)) {
+            const errData = data as ErrorResponse;
+            throw new Error(errData.error ?? "Failed to recalculate.");
+          }
+          return data;
+        }}
         onChecklistToggle={async (index) => {
           // Skip the DB write when we're in ephemeral mode — checklist
           // toggles are still visually applied via local state in the
@@ -507,6 +535,17 @@ export default function GetMatchedClient(props: Props) {
 
 // ─── Question screen ──────────────────────────────────────────────────────
 
+const ROUTE_PREVIEW: Record<RouteType, { emoji: string; label: string }> = {
+  compare:        { emoji: "🏆", label: "Compare platforms" },
+  browse:         { emoji: "👀", label: "Browse opportunities" },
+  individual:     { emoji: "👤", label: "Talk to a verified expert" },
+  firm:           { emoji: "🏢", label: "Talk to a verified firm" },
+  expert_team:    { emoji: "👥", label: "Get a Pro Squad" },
+  investor_brief: { emoji: "📋", label: "Get quotes from pros" },
+  listing_brief:  { emoji: "🏷️", label: "List your opportunity" },
+  second_opinion: { emoji: "🔍", label: "Get a second opinion" },
+  guide:          { emoji: "📖", label: "Start with guides" },
+};
 
 // ─── Question screen wrapper (3-pane desktop / single-column mobile) ───
 
@@ -534,8 +573,12 @@ function QuestionScreen({
   const budgetSummary = (answers.budget_band as string | undefined) ?? null;
   const timelineSummary = (answers.timeline as string | undefined) ?? null;
 
+  // Live route prediction — pure computation, updates on every answer change
+  const predictedRoute = intentSummary ? inferRoute(answers).route : null;
+  const routePreview = predictedRoute ? ROUTE_PREVIEW[predictedRoute] : null;
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {/* Mobile progress strip */}
         <div className="lg:hidden mb-4">
@@ -591,17 +634,27 @@ function QuestionScreen({
 
           {/* RIGHT — live plan preview */}
           <aside className="hidden lg:block">
-            <div className="sticky top-6 rounded-2xl border border-slate-200 p-5 bg-gradient-to-br from-slate-50 to-white" aria-live="polite">
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Your plan so far</p>
-              <ul className="text-sm space-y-1.5">
+            <div className="sticky top-6 rounded-2xl border border-slate-200 p-5 bg-white shadow-sm" aria-live="polite">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-3">Your plan so far</p>
+              <ul className="text-sm space-y-2">
                 {intentSummary && (<li className="text-slate-900"><strong>Goal:</strong> {humanise(intentSummary)}</li>)}
                 {helpSummary && (<li className="text-slate-700"><strong>Help:</strong> {humanise(helpSummary)}</li>)}
                 {budgetSummary && (<li className="text-slate-700"><strong>Budget:</strong> {humanise(budgetSummary)}</li>)}
                 {timelineSummary && (<li className="text-slate-700"><strong>Timeline:</strong> {humanise(timelineSummary)}</li>)}
                 {!intentSummary && (
-                  <li className="text-slate-500 italic">Answer the questions and your action plan appears here.</li>
+                  <li className="text-slate-500 italic text-xs">Answer the questions and your action plan appears here.</li>
                 )}
               </ul>
+              {routePreview && (
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Based on your answers</p>
+                  <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
+                    <span className="text-xl leading-none">{routePreview.emoji}</span>
+                    <span className="text-sm font-bold text-amber-900">{routePreview.label}</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-2">This updates as you answer — different choices lead to a different plan.</p>
+                </div>
+              )}
             </div>
           </aside>
         </div>
@@ -618,10 +671,48 @@ function humanise(s: string): string {
 
 // ─── Action plan result screen ────────────────────────────────────────────
 
+/** Match-score dial in the profile hero — counts up from 0 on mount.
+ *  prefers-reduced-motion: shows the final value immediately. */
+function ScoreDial({ score }: { score: number }) {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    const reduce =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setDisplay(score);
+      return;
+    }
+    const steps = 24;
+    let frame = 0;
+    const iv = setInterval(() => {
+      frame++;
+      setDisplay(Math.round((score * frame) / steps));
+      if (frame >= steps) clearInterval(iv);
+    }, 30);
+    return () => clearInterval(iv);
+  }, [score]);
+
+  return (
+    <div className="shrink-0 text-center" aria-label={`Match score ${score} out of 100`}>
+      <div className="w-20 h-20 rounded-full bg-white/10 border-2 border-amber-400/60 ring-2 ring-amber-400/20 flex items-center justify-center mx-auto">
+        <span className="text-3xl font-extrabold text-amber-400">{display}</span>
+      </div>
+      <p className="text-[10px] uppercase tracking-widest font-bold text-amber-400 mt-2">
+        Match score
+      </p>
+    </div>
+  );
+}
+
 function ActionPlanScreen({
-  result,
+  result: originalResult,
   shareToken,
   ephemeral,
+  planId,
+  onResolve,
   onChecklistToggle,
   onSaveByEmail,
   onCreateBrief,
@@ -630,20 +721,133 @@ function ActionPlanScreen({
   result: ResolveResponse;
   shareToken: string | null;
   ephemeral: boolean;
+  planId: number | null;
+  onResolve: (
+    planId: number,
+    answers: ActionPlanAnswers,
+  ) => Promise<ResolveResponse>;
   onChecklistToggle: (index: number) => Promise<void>;
   onSaveByEmail: (email: string) => Promise<string | null>;
   onCreateBrief: () => void;
   onRestart: () => void;
 }) {
+  // The displayed result. Starts as the original resolve; G4 what-ifs and G7
+  // sharpening swap a recomputed result in here. Resetting restores
+  // `originalResult` from memory (no refetch).
+  const [displayResult, setDisplayResult] = useState<ResolveResponse>(
+    originalResult,
+  );
+  // True when the current display is a what-if recalculation (G4) — drives the
+  // compliance label and the Reset link. Sharpening (G7) is a genuine
+  // refinement and does NOT set this.
+  const [isWhatIf, setIsWhatIf] = useState(false);
+  const [whatIfBusy, setWhatIfBusy] = useState(false);
+  const [whatIfError, setWhatIfError] = useState<string | null>(null);
+  const [sharpenBusy, setSharpenBusy] = useState(false);
+  const [sharpenError, setSharpenError] = useState<string | null>(null);
+  // Card fade-stagger trigger — incremented on each recompute so the cards
+  // re-key and animate in. Respect prefers-reduced-motion via CSS.
+  const [revealKey, setRevealKey] = useState(0);
+
+  const result = displayResult;
   const { plan, template, accept_credits_cost } = result;
+  // Showcase G2 — factual investor profile composed from the user's own
+  // answers (never advice; "based on what you told us"). See investor-profile.ts.
+  const profile = buildInvestorProfile(plan.answers ?? {});
+  const matchScore = result.match_explainer?.score ?? null;
   const [checklist, setChecklist] = useState(plan.checklist);
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
   const [savedUrl, setSavedUrl] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  // Keep the checklist in sync when the displayed result changes (what-if /
+  // sharpen produce a fresh checklist).
+  useEffect(() => {
+    setChecklist(displayResult.plan.checklist);
+  }, [displayResult]);
+
   const isRiskHeld =
     plan.risk_severity === "review" || plan.risk_severity === "block";
+
+  // Current effective answer bands for the what-if controls.
+  const currentBudget = (plan.answers?.budget_band as string | undefined) ?? null;
+  const currentTimeline = (plan.answers?.timeline as string | undefined) ?? null;
+  const currentHelp =
+    (plan.answers?.help_preference as string | undefined) ?? null;
+
+  // ── G4: what-if recompute (always plan_id 0 — never mutate the saved row) ──
+  async function runWhatIf(
+    control: WhatIfControl,
+    from: string | null,
+    to: string,
+  ) {
+    const answerKey =
+      control === "budget"
+        ? "budget_band"
+        : control === "timeline"
+          ? "timeline"
+          : "help_preference";
+    const merged: ActionPlanAnswers = {
+      ...(plan.answers ?? {}),
+      [answerKey]: to,
+    };
+    setWhatIfBusy(true);
+    setWhatIfError(null);
+    try {
+      const next = await onResolve(0, merged);
+      setDisplayResult(next);
+      setIsWhatIf(true);
+      setRevealKey((k) => k + 1);
+      phTrack("whatif_used", { control, from, to });
+    } catch (err) {
+      // Keep the current result; surface a small inline note.
+      setWhatIfError(
+        err instanceof Error ? err.message : "Could not recalculate.",
+      );
+    } finally {
+      setWhatIfBusy(false);
+    }
+  }
+
+  function resetWhatIf() {
+    setDisplayResult(originalResult);
+    setIsWhatIf(false);
+    setWhatIfError(null);
+    setRevealKey((k) => k + 1);
+  }
+
+  // ── G7: sharpen — a genuine refinement of the user's own answers ──
+  async function runSharpen(questionSlug: string, value: string) {
+    // The question slug's canonical answer key (maps_to). All sharpen
+    // questions map their slug→answer key 1:1 except `budget` → `budget_band`.
+    const answerKey = questionSlug === "budget" ? "budget_band" : questionSlug;
+    const merged: ActionPlanAnswers = {
+      ...(plan.answers ?? {}),
+      [questionSlug]: value,
+      [answerKey]: value,
+    };
+    // Use the real plan_id when one exists and we're not ephemeral / mid
+    // what-if — sharpening should persist. Otherwise resolve statelessly.
+    const useRealPlan = planId !== null && planId > 0 && !ephemeral && !isWhatIf;
+    setSharpenBusy(true);
+    setSharpenError(null);
+    try {
+      const next = await onResolve(useRealPlan ? planId : 0, merged);
+      setDisplayResult(next);
+      setRevealKey((k) => k + 1);
+      phTrack("sharpen_answered", {
+        question_slug: questionSlug,
+        new_score: next.match_explainer?.score ?? null,
+      });
+    } catch (err) {
+      setSharpenError(
+        err instanceof Error ? err.message : "Could not sharpen.",
+      );
+    } finally {
+      setSharpenBusy(false);
+    }
+  }
 
   async function toggle(idx: number) {
     const next = checklist.map((c, i) =>
@@ -684,17 +888,48 @@ function ActionPlanScreen({
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* HEADLINE STRIP */}
+      {/* HEADLINE STRIP — Investor Profile hero (G2). Identity card composed
+          purely from the user's stated answers. */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <p className="text-amber-400 text-[11px] font-semibold uppercase tracking-widest mb-2">
-            Your Investment Action Plan
-          </p>
-          <h1 className="text-3xl sm:text-4xl font-extrabold mb-3">
-            {plan.goal ?? template.headline}
-          </h1>
-          <p className="text-slate-300 max-w-2xl leading-relaxed">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+            <div className="flex-1 min-w-0">
+              <p className="text-amber-400 text-[11px] font-semibold uppercase tracking-widest mb-2">
+                Your stated profile
+              </p>
+              <h1 className="text-3xl sm:text-4xl font-extrabold mb-2">
+                {profile.label}
+              </h1>
+              {plan.goal && (
+                <p className="text-slate-300 text-sm sm:text-base mb-3">
+                  {plan.goal}
+                </p>
+              )}
+              {profile.signals.length > 0 && (
+                <ul className="flex flex-wrap gap-2 mb-1" aria-label="What you told us">
+                  {profile.signals.map((s) => (
+                    <li
+                      key={`${s.name}:${s.value}`}
+                      className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-xs"
+                    >
+                      <span className="text-slate-400">{s.name}:</span>
+                      <span className="font-semibold text-white">{s.value}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {matchScore !== null && (
+              <ScoreDial score={matchScore} />
+            )}
+          </div>
+
+          <p className="text-slate-300 max-w-2xl leading-relaxed mt-6">
             {template.why_text}
+          </p>
+          <p className="text-[11px] text-slate-400 mt-2 max-w-2xl">
+            Based on your answers. General information only — not personal advice.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-[11px]">
             {["Verified providers", "Masked previews", "Credit-based accept", "You stay in control"].map((s) => (
@@ -720,6 +955,31 @@ function ActionPlanScreen({
           </div>
         )}
 
+        {/* G4 — "Play with your plan" what-if controls. Re-ranks via a
+            stateless resolve (plan_id 0); never mutates the saved plan. */}
+        <WhatIfPanel
+          budget={currentBudget}
+          timeline={currentTimeline}
+          help={currentHelp}
+          busy={whatIfBusy}
+          isWhatIf={isWhatIf}
+          error={whatIfError}
+          onChange={(control, from, to) => void runWhatIf(control, from, to)}
+          onReset={resetWhatIf}
+        />
+
+        {/* Compliance: make clear a what-if view is a recalculation of the
+            user's ADJUSTED answers, not their saved plan. */}
+        {isWhatIf && (
+          <p
+            className="flex items-center gap-1.5 text-[11px] font-semibold text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 mb-6"
+            aria-live="polite"
+          >
+            <Icon name="sliders" size={12} className="text-amber-700" />
+            What-if view — based on adjusted answers, not your saved plan.
+          </p>
+        )}
+
         {/* Match-score badge + "why we matched you here" transparency strip */}
         {result.match_explainer && (
           <MatchExplainerCard
@@ -727,6 +987,27 @@ function ActionPlanScreen({
             bullets={result.match_explainer.bullets}
           />
         )}
+
+        {/* G7 — "Sharpen my match" confidence loop. Only when a sub-80 score
+            exists and there are unanswered high-information questions. */}
+        {result.match_explainer && result.match_explainer.score < 80 && (
+          <SharpenCard
+            score={result.match_explainer.score}
+            answers={plan.answers ?? {}}
+            busy={sharpenBusy}
+            error={sharpenError}
+            onAnswer={(slug, value) => void runSharpen(slug, value)}
+          />
+        )}
+
+        {/* Card stack re-keys on each recompute so the updated result
+            fade-staggers in. prefers-reduced-motion disables the animation.
+            While a recompute is in flight the stack dims + shimmers. */}
+        <div
+          key={revealKey}
+          className={`iv-whatif-reveal ${whatIfBusy || sharpenBusy ? "iv-whatif-busy" : ""}`}
+          aria-busy={whatIfBusy || sharpenBusy}
+        >
 
         {/* Top-3 match carousel — only present for `compare` route */}
         {/* Decision Engine P5: composite lane surface (hero + secondaries +
@@ -747,51 +1028,19 @@ function ActionPlanScreen({
           <TopMatchCarousel matches={result.top_matches} />
         )}
 
+        {/* G6 — plan as a Today / This week / This month roadmap. Toggles
+            persist by ORIGINAL checklist index (display-only grouping). */}
+        <PlanRoadmap
+          checklist={checklist}
+          timeline={currentTimeline}
+          onToggle={(idx) => void toggle(idx)}
+        />
+
         <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 mb-6">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1 mb-3">
             <Icon name="check-circle" size={12} />
             Recommended route · {humanise(plan.route ?? "guide")}
           </span>
-
-          <h2 className="text-xl font-extrabold text-slate-900 mb-2">
-            Your checklist
-          </h2>
-          <p className="text-sm text-slate-500 mb-4">
-            Educational steps based on your answers — Invest.com.au never gives personal advice.
-          </p>
-          <ul className="space-y-2 mb-6">
-            {checklist.map((item, idx) => (
-              <li key={idx} className="flex items-start gap-3">
-                <button
-                  type="button"
-                  onClick={() => void toggle(idx)}
-                  aria-pressed={!!item.done}
-                  className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                    item.done
-                      ? "border-emerald-500 bg-emerald-500"
-                      : "border-slate-300 hover:border-slate-400"
-                  }`}
-                >
-                  {item.done && (
-                    <Icon name="check" size={12} className="text-white" />
-                  )}
-                </button>
-                <span
-                  className={`text-sm ${
-                    item.done ? "text-slate-500 line-through" : "text-slate-700"
-                  }`}
-                >
-                  {item.href ? (
-                    <Link href={item.href} className="hover:underline">
-                      {item.label}
-                    </Link>
-                  ) : (
-                    item.label
-                  )}
-                </span>
-              </li>
-            ))}
-          </ul>
 
           {ephemeral && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 text-sm text-amber-900">
@@ -841,6 +1090,7 @@ function ActionPlanScreen({
             )}
           </div>
         </div>
+        </div>{/* /iv-whatif-reveal */}
 
         {template.cross_sells?.length > 0 && (
           <section className="mb-6">
@@ -932,6 +1182,29 @@ function ActionPlanScreen({
           </button>
         </div>
       </section>
+
+      <style>{`
+        .iv-whatif-reveal {
+          animation: iv-whatif-in 320ms ease-out;
+        }
+        @keyframes iv-whatif-in {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .iv-whatif-busy {
+          opacity: 0.55;
+          transition: opacity 150ms ease-out;
+          animation: iv-whatif-pulse 1.1s ease-in-out infinite;
+        }
+        @keyframes iv-whatif-pulse {
+          0%, 100% { opacity: 0.55; }
+          50%      { opacity: 0.78; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .iv-whatif-reveal { animation: none !important; }
+          .iv-whatif-busy { animation: none !important; opacity: 0.6; }
+        }
+      `}</style>
     </div>
   );
 }

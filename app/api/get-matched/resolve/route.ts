@@ -162,9 +162,10 @@ export async function POST(request: NextRequest) {
             budgetBand: resolved.budgetBand,
             locationState: resolved.locationState,
           }),
-          // Lane-aware top matches: brokers for `compare`, real ranked
-          // advisors for advisor-shaped routes (flag-gated), [] otherwise.
-          topMatchesForRoute(answers, resolved, 3),
+          // Lane-aware top matches: brokers for `compare` or when the
+          // platforms lane surfaces, real ranked advisors for advisor-shaped
+          // routes (flag-gated), [] otherwise.
+          topMatchesForRoute(answers, resolved, 3, lanes),
           fetchAdvisorOutcomeStats(createAdminClient(), ctx),
           // Specific scored listings — only when the lanes surface them.
           listingMatchesForLanes(answers, lanes, 3),
@@ -225,7 +226,7 @@ export async function POST(request: NextRequest) {
               budgetBand: resolved.budgetBand,
               locationState: resolved.locationState,
             }),
-            topMatchesForRoute(answers, resolved, 3),
+            topMatchesForRoute(answers, resolved, 3, lanes2),
             fetchAdvisorOutcomeStats(createAdminClient(), ctx2),
             listingMatchesForLanes(answers, lanes2, 3),
           ]);
@@ -288,7 +289,7 @@ export async function POST(request: NextRequest) {
           budgetBand: resolved.budgetBand,
           locationState: resolved.locationState,
         }),
-        topMatchesForRoute(plan.answers, resolved, 3),
+        topMatchesForRoute(plan.answers, resolved, 3, lanes3),
         fetchAdvisorOutcomeStats(createAdminClient(), ctx3),
         listingMatchesForLanes(plan.answers, lanes3, 3),
       ]);

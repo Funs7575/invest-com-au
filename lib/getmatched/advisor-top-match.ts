@@ -153,25 +153,37 @@ export async function computeTopAdvisors(
 
 /**
  * The single top-match decision for resolve: compare → brokers (unchanged);
- * advisor-shaped routes → real advisors when the flag is on; else [].
+ * advisor-shaped routes → real advisors when the flag is on; otherwise,
+ * if the lane resolution surfaces the platforms lane (hero or secondary),
+ * brokers again — so a guide-routed crypto/trade/grow user still sees real
+ * scored platform cards instead of an empty lane shell.
  */
 export async function topMatchesForRoute(
   answers: ActionPlanAnswers,
   resolved: { route: RouteType; vertical: Vertical | null },
   limit = 3,
+  lanes?: { hero: string; secondary: string[] },
 ): Promise<TopMatch[]> {
   if (resolved.route === "compare") {
     return computeTopMatches(answers, resolved.vertical, limit);
   }
-  if (!ADVISOR_ROUTES.has(resolved.route)) return [];
-  try {
-    const enabled = await isFlagEnabled(ADVISOR_MATCH_V2_FLAG, {});
-    if (!enabled) return [];
-    return await computeTopAdvisors(answers, limit);
-  } catch (err) {
-    log.warn("advisor lane failed — falling back to empty", {
-      err: err instanceof Error ? err.message : String(err),
-    });
-    return [];
+  if (ADVISOR_ROUTES.has(resolved.route)) {
+    try {
+      const enabled = await isFlagEnabled(ADVISOR_MATCH_V2_FLAG, {});
+      if (!enabled) return [];
+      return await computeTopAdvisors(answers, limit);
+    } catch (err) {
+      log.warn("advisor lane failed — falling back to empty", {
+        err: err instanceof Error ? err.message : String(err),
+      });
+      return [];
+    }
   }
+  if (
+    lanes &&
+    (lanes.hero === "platforms" || lanes.secondary.includes("platforms"))
+  ) {
+    return computeTopMatches(answers, resolved.vertical, limit);
+  }
+  return [];
 }
