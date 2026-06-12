@@ -281,7 +281,7 @@ export default function CatchUpContributionsPage() {
                   </div>
                 ))}
               </div>
-              <p className="mt-4 text-xs text-slate-500">Illustrative only. Assumes Alex has TSB below $500K at 30 June 2025. Exact SG base and carry-forward amounts will vary.</p>  // dated-ok
+              <p className="mt-4 text-xs text-slate-500">Illustrative only. Assumes Alex has TSB below $500K at 30 June 2025. Exact SG base and carry-forward amounts will vary.</p>  {/* // dated-ok */}
             </div>
           </div>
         </section>

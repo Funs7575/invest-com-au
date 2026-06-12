@@ -271,7 +271,7 @@ export default function DeemingRatesPage() {
           </h2>
           <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
             <p className="text-sm text-slate-700 leading-relaxed">
-              The <strong className="text-slate-900">1 January 2015 rule change</strong> is one of the most  // dated-ok
+              The <strong className="text-slate-900">1 January 2015 rule change</strong> is one of the most  {/* // dated-ok */}
               important deeming considerations for retirees. Account-based pensions (ABPs) started on or
               after that date are subject to deeming — the full account balance is treated as a financial
               asset and deemed income is calculated on it.
@@ -282,7 +282,7 @@ export default function DeemingRatesPage() {
                   Pre-2015 ABPs (grandfathered)
                 </p>
                 <p className="text-sm text-emerald-900 leading-relaxed">
-                  Account-based pensions commenced before 1 January 2015 retain their grandfathered status.  // dated-ok
+                  Account-based pensions commenced before 1 January 2015 retain their grandfathered status.  {/* // dated-ok */}
                   Income is assessed on <strong>actual payment amounts received</strong>, not on the
                   account balance. This is typically more favourable, particularly for larger balances
                   making minimum drawdowns.

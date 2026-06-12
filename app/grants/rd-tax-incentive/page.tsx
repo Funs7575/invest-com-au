@@ -97,7 +97,7 @@ export default function RdTaxIncentivePage() {
           <div className="container-custom max-w-5xl flex items-start gap-3">
             <Icon name="alert-triangle" size={20} className="text-amber-700 mt-0.5 shrink-0" />
             <p className="text-sm text-amber-900 leading-relaxed">
-              <strong>FY2025 registration deadline: 30 April 2026.</strong> Companies that performed R&amp;D in the year ended 30 June 2025 must register their activities with AusIndustry before this date or lose the claim entirely.  // dated-ok
+              <strong>FY2025 registration deadline: 30 April 2026.</strong> Companies that performed R&amp;D in the year ended 30 June 2025 must register their activities with AusIndustry before this date or lose the claim entirely.  {/* // dated-ok */}
             </p>
           </div>
         </section>

@@ -197,7 +197,7 @@ From 9 May 2017 (2017 Budget), Division 40 claims were restricted for residentia
 1. That you purchased new (never previously used), OR
 2. That you personally installed or acquired new after purchasing the property
 
-If you purchased an established residential property after 9 May 2017, you generally CANNOT claim Division 40 depreciation on the pre-existing fittings and fixtures. The assets are notionally "excluded" from your depreciation schedule for those items. Note: new builds purchased off-the-plan are not affected — all plant and equipment in a new property qualifies.  // dated-ok
+If you purchased an established residential property after 9 May 2017, you generally CANNOT claim Division 40 depreciation on the pre-existing fittings and fixtures. The assets are notionally "excluded" from your depreciation schedule for those items. Note: new builds purchased off-the-plan are not affected — all plant and equipment in a new property qualifies.  {/* // dated-ok */}
 
 **Effective life schedules:**
 The ATO publishes effective life tables for every type of plant and equipment. Some common examples:

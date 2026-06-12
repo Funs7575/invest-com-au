@@ -203,10 +203,10 @@ The ATO does not have to accept estimates — it is a concession they may extend
   },
   {
     heading: "Pre-CGT assets — acquired before 20 September 1985",  // dated-ok
-    body: `Assets acquired before 20 September 1985 are generally exempt from Capital Gains Tax. When you sell a pre-CGT asset, any gain is not assessable income. However, the record keeping obligations are real.  // dated-ok
+    body: `Assets acquired before 20 September 1985 are generally exempt from Capital Gains Tax. When you sell a pre-CGT asset, any gain is not assessable income. However, the record keeping obligations are real.  {/* // dated-ok */}
 
 **Why you still need records for pre-CGT assets:**
-1. You need to prove the acquisition date was before 20 September 1985. If you cannot demonstrate the pre-CGT date, the ATO may treat the asset as post-CGT and assess the gain in full.  // dated-ok
+1. You need to prove the acquisition date was before 20 September 1985. If you cannot demonstrate the pre-CGT date, the ATO may treat the asset as post-CGT and assess the gain in full.  {/* // dated-ok */}
 2. If a pre-CGT asset is later improved or rebuilt, the improvement element becomes a post-CGT asset — the original pre-CGT portion retains its exemption, but the improvement does not.
 3. Inheritances: when you inherit a pre-CGT asset, you inherit the deceased's cost base — and the pre-CGT status is generally preserved if the deceased acquired the asset before 20 September 1985.  // dated-ok
 
@@ -241,7 +241,7 @@ If the fund has members in both accumulation and pension phase in the same year,
     body: `For investment property, depreciation deductions are some of the most valuable on your tax return — and they require specific documentation that you cannot reconstruct later.
 
 **Division 43 — building allowance:**
-Investment properties built after 15 September 1987 are eligible for a 2.5% per year depreciation deduction on the construction cost of the building (not the land). To claim this, you need either the original builder's invoices and construction contracts, or a depreciation schedule prepared by a Quantity Surveyor (QS) who estimates the construction cost based on current replacement values.  // dated-ok
+Investment properties built after 15 September 1987 are eligible for a 2.5% per year depreciation deduction on the construction cost of the building (not the land). To claim this, you need either the original builder's invoices and construction contracts, or a depreciation schedule prepared by a Quantity Surveyor (QS) who estimates the construction cost based on current replacement values.  {/* // dated-ok */}
 
 **Division 40 — plant and equipment:**
 Fixtures and fittings (carpets, blinds, hot water systems, air conditioners, appliances) depreciate under Division 40 at effective life rates set by the ATO. Each item depreciates separately over its effective life.

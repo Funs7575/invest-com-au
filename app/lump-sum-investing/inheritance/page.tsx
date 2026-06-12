@@ -100,10 +100,10 @@ export default function InheritancePage() {
           <div className="container-custom max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-3">The CGT trap with inherited property</h2>
             <p className="text-sm text-slate-700 leading-relaxed mb-3">
-              Inherited residential property is the highest-friction asset in most estates. If the deceased acquired the property before 20 September 1985, your cost base is market value at date of death — and you have a two-year main-residence exemption window if the deceased lived in it as their main residence.  // dated-ok
+              Inherited residential property is the highest-friction asset in most estates. If the deceased acquired the property before 20 September 1985, your cost base is market value at date of death — and you have a two-year main-residence exemption window if the deceased lived in it as their main residence.  {/* // dated-ok */}
             </p>
             <p className="text-sm text-slate-700 leading-relaxed">
-              If the deceased acquired it after 20 September 1985, your cost base is the deceased&rsquo;s original cost base plus capital improvements. Selling outside the two-year window often triggers significant CGT. A tax agent should run the numbers before any sale decision — the difference between selling in month 23 versus month 25 can be tens of thousands of dollars.  // dated-ok
+              If the deceased acquired it after 20 September 1985, your cost base is the deceased&rsquo;s original cost base plus capital improvements. Selling outside the two-year window often triggers significant CGT. A tax agent should run the numbers before any sale decision — the difference between selling in month 23 versus month 25 can be tens of thousands of dollars.  {/* // dated-ok */}
             </p>
           </div>
         </section>
