@@ -11,7 +11,7 @@ const FAQS = [
   },
   {
     q: "What cost base do I use for inherited shares?",
-    a: "It depends when the deceased acquired the shares. (1) Pre-CGT assets (acquired before 20 September 1985): your cost base is the market value at date of death. (2) Post-CGT assets (acquired on or after 20 September 1985): you inherit the deceased's original cost base, including capital improvements and indexation up to 1999. This means you may inherit a large unrealised gain. Get the transaction records from the estate executor before any sale decision.",
+    a: "It depends when the deceased acquired the shares. (1) Pre-CGT assets (acquired before 20 September 1985): your cost base is the market value at date of death. (2) Post-CGT assets (acquired on or after 20 September 1985): you inherit the deceased's original cost base, including capital improvements and indexation up to 1999. This means you may inherit a large unrealised gain. Get the transaction records from the estate executor before any sale decision.",  // dated-ok
   },
   {
     q: "How is inherited superannuation taxed?",
@@ -53,7 +53,7 @@ export default function InheritancePage() {
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/lump-sum-investing" className="hover:text-white">Lump-Sum Investing</Link>
@@ -100,10 +100,10 @@ export default function InheritancePage() {
           <div className="container-custom max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-3">The CGT trap with inherited property</h2>
             <p className="text-sm text-slate-700 leading-relaxed mb-3">
-              Inherited residential property is the highest-friction asset in most estates. If the deceased acquired the property before 20 September 1985, your cost base is market value at date of death — and you have a two-year main-residence exemption window if the deceased lived in it as their main residence.
+              Inherited residential property is the highest-friction asset in most estates. If the deceased acquired the property before 20 September 1985, your cost base is market value at date of death — and you have a two-year main-residence exemption window if the deceased lived in it as their main residence.  // dated-ok
             </p>
             <p className="text-sm text-slate-700 leading-relaxed">
-              If the deceased acquired it after 20 September 1985, your cost base is the deceased&rsquo;s original cost base plus capital improvements. Selling outside the two-year window often triggers significant CGT. A tax agent should run the numbers before any sale decision — the difference between selling in month 23 versus month 25 can be tens of thousands of dollars.
+              If the deceased acquired it after 20 September 1985, your cost base is the deceased&rsquo;s original cost base plus capital improvements. Selling outside the two-year window often triggers significant CGT. A tax agent should run the numbers before any sale decision — the difference between selling in month 23 versus month 25 can be tens of thousands of dollars.  // dated-ok
             </p>
           </div>
         </section>

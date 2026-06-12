@@ -570,7 +570,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 </span>
               )}
             </span>
-            <Icon name="chevron-down" size={16} className="text-slate-400 transition-transform group-open:rotate-180" />
+            <Icon name="chevron-down" size={16} className="text-slate-500 transition-transform group-open:rotate-180" />
           </summary>
           <div className="mt-3 grid gap-3 lg:grid-cols-[1.1fr_0.9fr]" aria-label="Scenario and true-cost calculator">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -687,7 +687,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                         aria-pressed={on}
                         onClick={() => setActiveFeatures((prev) => { const next = new Set(prev); if (next.has(key)) next.delete(key); else next.add(key); return next; })}
                         className={`flex items-center gap-2 px-2.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${on ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
-                        <Icon name={f.icon} size={13} className={on ? "text-amber-600" : "text-slate-400"} />
+                        <Icon name={f.icon} size={13} className={on ? "text-amber-600" : "text-slate-500"} />
                         <span className="flex-1 text-left">{f.label}</span>
                         {on && <Icon name="check" size={13} className="text-amber-600" />}
                       </button>

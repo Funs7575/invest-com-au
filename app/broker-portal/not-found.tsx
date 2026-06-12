@@ -6,7 +6,7 @@ export default function BrokerPortalNotFound() {
     <div className="min-h-[50vh] flex items-center justify-center px-4">
       <div className="text-center max-w-md">
         <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
-          <Icon name="search" size={28} className="text-slate-400" />
+          <Icon name="search" size={28} className="text-slate-500" />
         </div>
         <h1 className="text-xl font-extrabold text-slate-900 mb-2">
           Page not found

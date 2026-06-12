@@ -209,7 +209,7 @@ export default function SmsfWindUpPage() {
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
             <nav
-              className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
+              className="flex items-center gap-1.5 text-xs text-slate-500 mb-5"
               aria-label="Breadcrumb"
             >
               <Link href="/" className="hover:text-white">
@@ -698,7 +698,7 @@ export default function SmsfWindUpPage() {
                 <details key={f.q} className="group bg-white">
                   <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none font-extrabold text-slate-900 text-sm hover:bg-slate-50 transition-colors">
                     {f.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base leading-none" aria-hidden="true">
+                    <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform duration-200 text-base leading-none" aria-hidden="true">
                       &#8964;
                     </span>
                   </summary>

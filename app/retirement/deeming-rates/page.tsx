@@ -42,7 +42,7 @@ const DEEMED_ASSETS = [
   { asset: "Term deposits", notes: "Full balance at reporting date; actual interest earned is irrelevant for deeming purposes" },
   { asset: "Shares & ETFs", notes: "ASX-listed and international equities; market value is deemed at the applicable rate" },
   { asset: "Managed funds", notes: "Includes index funds, active funds, and unlisted managed investments" },
-  { asset: "Account-based pensions (post-2015)", notes: "ABPs commenced on or after 1 January 2015 — full balance is deemed" },
+  { asset: "Account-based pensions (post-2015)", notes: "ABPs commenced on or after 1 January 2015 — full balance is deemed" },  // dated-ok
   { asset: "Cash holdings", notes: "Physical cash above reasonable day-to-day amounts" },
   { asset: "Bonds & debentures", notes: "Face value of bonds, debentures, and similar fixed-income instruments" },
   { asset: "Loans to others", notes: "Money lent to family members or third parties is a financial asset subject to deeming" },
@@ -72,7 +72,7 @@ const FAQS = [
   },
   {
     q: "Are account-based pensions subject to deeming?",
-    a: "Account-based pensions started on or after 1 January 2015 are subject to deeming. The balance is treated as a financial asset and deemed income is calculated on it. Pre-2015 ABPs are grandfathered and assessed on actual payment amounts received. You permanently lose grandfathering if you switch funds or change the ABP structure.",
+    a: "Account-based pensions started on or after 1 January 2015 are subject to deeming. The balance is treated as a financial asset and deemed income is calculated on it. Pre-2015 ABPs are grandfathered and assessed on actual payment amounts received. You permanently lose grandfathering if you switch funds or change the ABP structure.",  // dated-ok
   },
   {
     q: "What happens if my financial assets generate more than the deeming rate?",
@@ -100,7 +100,7 @@ export default function DeemingRatesPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link><span>/</span>
             <Link href="/retirement" className="hover:text-white">Retirement</Link><span>/</span>
             <Link href="/retirement/age-pension" className="hover:text-white">Age Pension</Link><span>/</span>
@@ -123,9 +123,9 @@ export default function DeemingRatesPage() {
               { label: "Couples threshold", value: "$103,800", sub: "Combined, lower rate below this" },
             ].map((stat) => (
               <div key={stat.label} className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                <p className="text-xs text-slate-400 mb-1">{stat.label}</p>
+                <p className="text-xs text-slate-500 mb-1">{stat.label}</p>
                 <p className="text-2xl font-extrabold text-white">{stat.value}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{stat.sub}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{stat.sub}</p>
               </div>
             ))}
           </div>
@@ -271,7 +271,7 @@ export default function DeemingRatesPage() {
           </h2>
           <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
             <p className="text-sm text-slate-700 leading-relaxed">
-              The <strong className="text-slate-900">1 January 2015 rule change</strong> is one of the most
+              The <strong className="text-slate-900">1 January 2015 rule change</strong> is one of the most  // dated-ok
               important deeming considerations for retirees. Account-based pensions (ABPs) started on or
               after that date are subject to deeming — the full account balance is treated as a financial
               asset and deemed income is calculated on it.
@@ -282,7 +282,7 @@ export default function DeemingRatesPage() {
                   Pre-2015 ABPs (grandfathered)
                 </p>
                 <p className="text-sm text-emerald-900 leading-relaxed">
-                  Account-based pensions commenced before 1 January 2015 retain their grandfathered status.
+                  Account-based pensions commenced before 1 January 2015 retain their grandfathered status.  // dated-ok
                   Income is assessed on <strong>actual payment amounts received</strong>, not on the
                   account balance. This is typically more favourable, particularly for larger balances
                   making minimum drawdowns.
@@ -293,7 +293,7 @@ export default function DeemingRatesPage() {
                   Post-2015 ABPs (deemed)
                 </p>
                 <p className="text-sm text-slate-700 leading-relaxed">
-                  Pensions commenced on or after 1 January 2015 are fully subject to deeming. Centrelink
+                  Pensions commenced on or after 1 January 2015 are fully subject to deeming. Centrelink  // dated-ok
                   assesses deemed income on the full account balance regardless of how much you draw down
                   each year.
                 </p>
@@ -380,7 +380,7 @@ export default function DeemingRatesPage() {
               <details key={i} className="group border border-slate-200 rounded-xl p-4">
                 <summary className="cursor-pointer list-none font-bold text-slate-900 flex items-start justify-between gap-3">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
+                  <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

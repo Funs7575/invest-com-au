@@ -227,7 +227,7 @@ export default function InvestListingCard({
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
             {location && (
               <span className="inline-flex items-center gap-0.5">
-                <Icon name="map-pin" size={11} className="text-slate-400" />
+                <Icon name="map-pin" size={11} className="text-slate-500" />
                 {location}
               </span>
             )}

@@ -422,7 +422,7 @@ export default function ForeignInvestmentPage() {
                 <h3 className="text-lg md:text-xl font-extrabold text-white mb-2">
                   Browse FIRB-eligible developments
                 </h3>
-                <p className="text-sm text-slate-400 mb-5">
+                <p className="text-sm text-slate-500 mb-5">
                   All listings are new or off-the-plan developments. Use the FIRB filter to see
                   projects where the developer has already obtained project-level FIRB approval.
                 </p>

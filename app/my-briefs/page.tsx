@@ -213,7 +213,7 @@ export default async function MyBriefsPage() {
                         <>
                           <span aria-hidden>·</span>
                           <span className="inline-flex items-center gap-1">
-                            <Icon name="map-pin" size={11} className="text-slate-400" />
+                            <Icon name="map-pin" size={11} className="text-slate-500" />
                             {brief.location}
                           </span>
                         </>

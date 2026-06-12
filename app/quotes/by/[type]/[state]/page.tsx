@@ -130,7 +130,7 @@ export default async function QuotesByTypeStatePage({ params }: PageProps) {
 
       <section className="bg-gradient-to-b from-slate-900 to-slate-800 text-white">
         <div className="max-w-5xl mx-auto px-4 py-12">
-          <div className="text-xs text-slate-400 mb-3">
+          <div className="text-xs text-slate-500 mb-3">
             <Link href="/quotes" className="hover:text-white">Quotes</Link>
             <span className="mx-2">·</span>
             {state}
@@ -199,7 +199,7 @@ export default async function QuotesByTypeStatePage({ params }: PageProps) {
                     <Image src={a.photo_url} alt={a.name} width={40} height={40} className="rounded-full object-cover border border-slate-200" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                      <Icon name="user" size={16} className="text-slate-400" />
+                      <Icon name="user" size={16} className="text-slate-500" />
                     </div>
                   )}
                   <div className="min-w-0 flex-1">

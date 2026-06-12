@@ -307,7 +307,7 @@ export default async function ForAdvisorsPage() {
               <details key={i} className="bg-white border border-slate-200 rounded-xl overflow-hidden group">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-50 flex items-center justify-between">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <div className="px-5 pb-4">
                   <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>

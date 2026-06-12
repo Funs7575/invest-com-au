@@ -82,7 +82,7 @@ export default function EnergyPriceWidget({ snapshots }: Props) {
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-amber-400">
             <Icon name="activity" size={14} />
             Energy benchmark snapshot
-            <span className="hidden sm:inline text-slate-400 font-normal normal-case">
+            <span className="hidden sm:inline text-slate-500 font-normal normal-case">
               · editorial, as at {formatCapturedAt(oldest)}
             </span>
           </div>
@@ -91,13 +91,13 @@ export default function EnergyPriceWidget({ snapshots }: Props) {
               const s = snapshots[b.ref]!;
               return (
                 <div key={b.ref} className="text-sm">
-                  <span className="text-slate-400 text-[11px] uppercase tracking-wide mr-2">
+                  <span className="text-slate-500 text-[11px] uppercase tracking-wide mr-2">
                     {b.name}
                   </span>
                   <span className="font-extrabold text-white">
                     {formatPrice(s, b.unit)}
                   </span>
-                  <span className="text-slate-400 text-[11px] ml-1">
+                  <span className="text-slate-500 text-[11px] ml-1">
                     {b.unit}
                   </span>
                 </div>

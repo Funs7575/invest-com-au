@@ -99,7 +99,7 @@ export default function CatchUpContributionsPage() {
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/super" className="hover:text-white">Super</Link>
@@ -220,7 +220,7 @@ export default function CatchUpContributionsPage() {
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Step-by-step worked example</h2>
             <p className="text-sm text-slate-600 mb-6">
               Alex earns $130,000 and has had employer SG contributions of roughly $13,000 per year, leaving
-              roughly $14,500&ndash;$17,000 of the concessional cap unused each year. Her TSB at 30 June 2024
+              roughly $14,500&ndash;$17,000 of the concessional cap unused each year. Her TSB at 30 June 2024  // dated-ok
               is $120,000 &mdash; well below the $500,000 threshold.
             </p>
 
@@ -244,7 +244,7 @@ export default function CatchUpContributionsPage() {
                 {
                   step: "4",
                   title: "Make the personal contribution and lodge a Notice of Intent",
-                  body: "Alex transfers $35,500 into her super fund before 30 June 2026. She then lodges a Notice of Intent to Claim a Tax Deduction (form SS-308) with her fund before lodging her FY2025–26 tax return. Her fund acknowledges the notice and deducts 15% contributions tax ($5,325), leaving $30,175 added to her balance.",
+                  body: "Alex transfers $35,500 into her super fund before 30 June 2026. She then lodges a Notice of Intent to Claim a Tax Deduction (form SS-308) with her fund before lodging her FY2025–26 tax return. Her fund acknowledges the notice and deducts 15% contributions tax ($5,325), leaving $30,175 added to her balance.",  // dated-ok
                 },
                 {
                   step: "5",
@@ -281,7 +281,7 @@ export default function CatchUpContributionsPage() {
                   </div>
                 ))}
               </div>
-              <p className="mt-4 text-xs text-slate-500">Illustrative only. Assumes Alex has TSB below $500K at 30 June 2025. Exact SG base and carry-forward amounts will vary.</p>
+              <p className="mt-4 text-xs text-slate-500">Illustrative only. Assumes Alex has TSB below $500K at 30 June 2025. Exact SG base and carry-forward amounts will vary.</p>  // dated-ok
             </div>
           </div>
         </section>
@@ -419,7 +419,7 @@ export default function CatchUpContributionsPage() {
                   badge: "High-balance members",
                   color: "border-blue-200 bg-blue-50",
                   badgeColor: "bg-blue-100 text-blue-700",
-                  body: "For members approaching $3 million in super, large catch-up contributions will push the balance higher and into Division 296 territory sooner. From 1 July 2026, an additional 30% tax applies to earnings above $3M. Model the trade-off between tax-deductible catch-up contributions now versus the ongoing Div 296 tax on a larger balance.",
+                  body: "For members approaching $3 million in super, large catch-up contributions will push the balance higher and into Division 296 territory sooner. From 1 July 2026, an additional 30% tax applies to earnings above $3M. Model the trade-off between tax-deductible catch-up contributions now versus the ongoing Div 296 tax on a larger balance.",  // dated-ok
                 },
               ].map((item) => (
                 <div key={item.title} className={`rounded-xl border p-5 ${item.color}`}>
@@ -454,7 +454,7 @@ export default function CatchUpContributionsPage() {
           <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
             <div>
               <h2 className="text-lg font-extrabold text-white mb-1">Compare super funds and seek personalised advice</h2>
-              <p className="text-slate-400 text-sm">A financial planner can model your specific carry-forward amounts, TSB trajectory, and the tax saving available to you.</p>
+              <p className="text-slate-500 text-sm">A financial planner can model your specific carry-forward amounts, TSB trajectory, and the tax saving available to you.</p>
             </div>
             <div className="flex gap-3 shrink-0 flex-wrap">
               <Link

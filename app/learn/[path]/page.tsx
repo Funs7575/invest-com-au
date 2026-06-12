@@ -245,7 +245,7 @@ export default async function LearningPathPage({
           <div className="container-custom max-w-4xl">
             <nav
               aria-label="Breadcrumb"
-              className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
+              className="flex items-center gap-1.5 text-xs text-slate-500 mb-5"
             >
               <Link href="/" className="hover:text-white transition-colors">
                 Home

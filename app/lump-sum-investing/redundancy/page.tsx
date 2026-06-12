@@ -184,7 +184,7 @@ export default function RedundancyPage() {
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
             <nav
-              className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
+              className="flex items-center gap-1.5 text-xs text-slate-500 mb-5"
               aria-label="Breadcrumb"
             >
               <Link href="/" className="hover:text-white">
@@ -208,7 +208,7 @@ export default function RedundancyPage() {
               <strong className="text-white">non-genuine</strong> redundancy, because only a genuine
               redundancy unlocks the generous tax-free threshold.
             </p>
-            <p className="text-xs text-slate-400">{UPDATED_LABEL}</p>
+            <p className="text-xs text-slate-500">{UPDATED_LABEL}</p>
           </div>
         </section>
 

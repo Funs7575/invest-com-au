@@ -126,7 +126,7 @@ function AccordionList({ entries }: { entries: ReadonlyArray<AccordionEntry> }) 
         <details key={e.summary} className="group bg-white border border-slate-200 rounded-2xl">
           <summary className="cursor-pointer px-5 py-4 text-sm font-bold text-slate-900 flex items-center justify-between gap-3 hover:bg-slate-50 rounded-2xl">
             {e.summary}
-            <span aria-hidden className="text-slate-400 group-open:rotate-180 transition-transform">↓</span>
+            <span aria-hidden className="text-slate-500 group-open:rotate-180 transition-transform">↓</span>
           </summary>
           <ul className="space-y-2 text-sm text-slate-700 px-5 pb-5">
             {e.bullets.map((b, i) => (
@@ -440,7 +440,7 @@ export default async function CountryHubTemplate({ config }: Props) {
             <details className="group bg-slate-50 rounded-2xl border border-slate-200">
               <summary className="cursor-pointer px-5 py-3 text-sm font-bold text-slate-900 flex items-center justify-between gap-3 hover:bg-slate-100 rounded-2xl">
                 {config.property.countrySideRemindersHeading}
-                <span aria-hidden className="text-slate-400 group-open:rotate-180 transition-transform">↓</span>
+                <span aria-hidden className="text-slate-500 group-open:rotate-180 transition-transform">↓</span>
               </summary>
               <ul className="text-sm text-slate-700 space-y-1.5 px-5 pb-5">
                 {config.property.countrySideReminders.map((r, i) => (
@@ -669,7 +669,7 @@ export default async function CountryHubTemplate({ config }: Props) {
             <details className="group bg-slate-50 rounded-2xl border border-slate-200">
               <summary className="cursor-pointer px-5 py-3 text-sm font-bold text-slate-900 flex items-center justify-between gap-3 hover:bg-slate-100 rounded-2xl">
                 {config.dta.countryReportingHeading}
-                <span aria-hidden className="text-slate-400 group-open:rotate-180 transition-transform">↓</span>
+                <span aria-hidden className="text-slate-500 group-open:rotate-180 transition-transform">↓</span>
               </summary>
               <ul className="text-sm text-slate-700 space-y-1.5 px-5 pb-5">
                 {config.dta.countryReporting.map((r, i) => (

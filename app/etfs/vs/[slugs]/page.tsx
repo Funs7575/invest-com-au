@@ -531,28 +531,28 @@ export default async function ETFVsPage({
             <details className="py-4 group">
               <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                 Is {etfA.ticker} or {etfB.ticker} the better ETF?
-                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
+                <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
               </summary>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">{comparison.verdict}</p>
             </details>
             <details className="py-4 group">
               <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                 What is the fee difference between {etfA.ticker} and {etfB.ticker}?
-                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
+                <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
               </summary>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">{comparison.analysis} Over 20 years compounded, this difference becomes significant — use the table above to see the annual cost at your portfolio size.</p>
             </details>
             <details className="py-4 group">
               <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                 Should I switch from {etfA.ticker} to {etfB.ticker} (or vice versa)?
-                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
+                <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
               </summary>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">Generally, no &mdash; not if you&apos;re already invested. Switching between similar ETFs triggers CGT on any unrealised gains, and transaction costs apply. The fee saving over future years rarely justifies the immediate tax cost of switching. If you&apos;re starting fresh with new money, choose the cheapest option.</p>
             </details>
             <details className="py-4 group">
               <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                 Can I hold both {etfA.ticker} and {etfB.ticker} at the same time?
-                <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
+                <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
               </summary>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">Technically yes, but if they track similar indices (e.g. both ASX 200 ETFs), you&apos;re adding complexity without meaningful diversification benefit. There&apos;s no reason to hold two ETFs tracking the same market &mdash; you&apos;d just be doubling your brokerage and complicating your tax reporting. Pick one and stick with it.</p>
             </details>

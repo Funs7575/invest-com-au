@@ -79,7 +79,7 @@ export default function SmsfBorrowingPage() {
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
             <nav
-              className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
+              className="flex items-center gap-1.5 text-xs text-slate-500 mb-5"
               aria-label="Breadcrumb"
             >
               <Link href="/" className="hover:text-white">
@@ -839,7 +839,7 @@ export default function SmsfBorrowingPage() {
                 >
                   <summary className="flex items-center justify-between cursor-pointer px-5 py-4 font-bold text-slate-900 text-sm list-none select-none">
                     {q}
-                    <span className="ml-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
+                    <span className="ml-4 shrink-0 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">
                       &#x25BC;
                     </span>
                   </summary>

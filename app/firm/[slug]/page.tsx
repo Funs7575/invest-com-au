@@ -190,19 +190,19 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-slate-500">
                     {typedFirm.location_display && (
                       <span className="flex items-center gap-1">
-                        <Icon name="map-pin" size={14} className="text-slate-400" />
+                        <Icon name="map-pin" size={14} className="text-slate-500" />
                         {typedFirm.location_display}
                       </span>
                     )}
                     {typedFirm.abn && (
                       <span className="flex items-center gap-1">
-                        <Icon name="file-text" size={14} className="text-slate-400" />
+                        <Icon name="file-text" size={14} className="text-slate-500" />
                         ABN {typedFirm.abn}
                       </span>
                     )}
                     {typedFirm.afsl_number && (
                       <span className="flex items-center gap-1">
-                        <Icon name="shield" size={14} className="text-slate-400" />
+                        <Icon name="shield" size={14} className="text-slate-500" />
                         AFSL {typedFirm.afsl_number}
                       </span>
                     )}
@@ -381,7 +381,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm text-violet-600 hover:text-violet-700 transition-colors"
                   >
-                    <Icon name="globe" size={14} className="text-slate-400" />
+                    <Icon name="globe" size={14} className="text-slate-500" />
                     <span className="truncate">{typedFirm.website.replace(/^https?:\/\//, "")}</span>
                   </a>
                 )}
@@ -390,7 +390,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                     href={`tel:${typedFirm.phone}`}
                     className="flex items-center gap-2 text-sm text-slate-600 hover:text-violet-600 transition-colors"
                   >
-                    <Icon name="phone" size={14} className="text-slate-400" />
+                    <Icon name="phone" size={14} className="text-slate-500" />
                     {typedFirm.phone}
                   </a>
                 )}
@@ -399,7 +399,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                     href={`mailto:${typedFirm.email}`}
                     className="flex items-center gap-2 text-sm text-slate-600 hover:text-violet-600 transition-colors"
                   >
-                    <Icon name="mail" size={14} className="text-slate-400" />
+                    <Icon name="mail" size={14} className="text-slate-500" />
                     <span className="truncate">{typedFirm.email}</span>
                   </a>
                 )}
@@ -499,7 +499,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                       {/* Fee */}
                       {fee && (
                         <div className="mt-2 flex items-center gap-1 text-xs text-slate-500">
-                          <Icon name="coins" size={12} className="text-slate-400" />
+                          <Icon name="coins" size={12} className="text-slate-500" />
                           {fee}
                           {member.initial_consultation_free && (
                             <span className="ml-1 text-[0.6rem] bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full font-medium">

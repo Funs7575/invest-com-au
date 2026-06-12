@@ -161,7 +161,7 @@ export default function AdminSidebar() {
       <aside className={`fixed top-0 left-0 h-full w-56 bg-slate-900 text-white z-40 overflow-y-auto transition-transform duration-200 ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
         <div className="p-4 border-b border-slate-800">
           <Link href="/admin" className="text-sm font-bold text-white">invest.com.au</Link>
-          <p className="text-[0.5rem] text-slate-400 mt-0.5">Admin Panel</p>
+          <p className="text-[0.5rem] text-slate-500 mt-0.5">Admin Panel</p>
         </div>
 
         <nav className="p-2 space-y-3">
@@ -192,7 +192,7 @@ export default function AdminSidebar() {
               className="flex items-center justify-between w-full px-2 mb-1 group"
             >
               <p className="text-[0.5rem] font-bold text-amber-500/70 uppercase tracking-wider">Launching Soon</p>
-              <Icon name={showComingSoon ? "chevron-up" : "chevron-down"} size={12} className="text-slate-600 group-hover:text-slate-400" />
+              <Icon name={showComingSoon ? "chevron-up" : "chevron-down"} size={12} className="text-slate-600 group-hover:text-slate-500" />
             </button>
             {showComingSoon && COMING_SOON_ITEMS.map(item => {
               const active = pathname === item.href || pathname.startsWith(item.href);

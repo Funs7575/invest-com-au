@@ -176,7 +176,7 @@ export default function FeeAlertsPage() {
                   <Icon name="bell" size={20} className="text-amber-400" />
                   <h2 className="text-lg font-bold text-white">Subscribe to Fee Alerts</h2>
                 </div>
-                <p className="text-sm text-slate-400 mb-4">Free. Instant notifications. Unsubscribe anytime.</p>
+                <p className="text-sm text-slate-500 mb-4">Free. Instant notifications. Unsubscribe anytime.</p>
 
                 {/* Email input */}
                 <div className="flex gap-2 mb-4">
@@ -207,7 +207,7 @@ export default function FeeAlertsPage() {
                           ? `${selectedBrokers.length} broker${selectedBrokers.length === 1 ? "" : "s"} selected`
                           : "All brokers"}
                       </span>
-                      <Icon name="chevron-down" size={16} className="text-slate-400" />
+                      <Icon name="chevron-down" size={16} className="text-slate-500" />
                     </button>
                     {showBrokerDropdown && (
                       <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-slate-800 border border-slate-600 rounded-lg max-h-48 overflow-y-auto shadow-lg">

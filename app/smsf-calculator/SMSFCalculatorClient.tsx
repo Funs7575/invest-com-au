@@ -486,7 +486,7 @@ export default function SMSFCalculatorClient() {
             {/* Show gate trigger */}
             {!emailGated && !emailSubmitted && (
               <div className="text-center mb-6">
-                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-400 hover:text-slate-600">
+                <button onClick={() => setEmailGated(true)} className="text-xs text-slate-500 hover:text-slate-600">
                   Want to save this comparison? Get it emailed to you →
                 </button>
               </div>

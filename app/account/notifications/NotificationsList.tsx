@@ -117,7 +117,7 @@ export default function NotificationsList({ initialItems }: Props) {
           type="button"
           onClick={markAll}
           disabled={isPending || unreadCount === 0}
-          className="text-xs font-medium text-primary hover:underline disabled:text-slate-400 disabled:no-underline"
+          className="text-xs font-medium text-primary hover:underline disabled:text-slate-500 disabled:no-underline"
         >
           Mark all as read
         </button>

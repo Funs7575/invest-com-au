@@ -77,7 +77,7 @@ export default function SmsfPropertyPage() {
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
             <nav
-              className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
+              className="flex items-center gap-1.5 text-xs text-slate-500 mb-5"
               aria-label="Breadcrumb"
             >
               <Link href="/" className="hover:text-white">Home</Link>
@@ -767,7 +767,7 @@ export default function SmsfPropertyPage() {
                 >
                   <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer select-none list-none font-bold text-slate-900 text-sm hover:bg-slate-50 transition-colors">
                     <span>{faq.q}</span>
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform duration-200 text-base" aria-hidden="true">&#8964;</span>
+                    <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform duration-200 text-base" aria-hidden="true">&#8964;</span>
                   </summary>
                   <div className="px-5 pb-5 pt-1">
                     <p className="text-sm text-slate-700 leading-relaxed">{faq.a}</p>
