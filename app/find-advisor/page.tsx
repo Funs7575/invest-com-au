@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { fireJourneyMoment } from "@/components/journey/journeyMoment";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -331,10 +330,7 @@ export default function FindAdvisorPage() {
 }
 
 function FindAdvisorQuiz() {
-  // Journey milestone: completing the matching flow = investor profile done.
-  // (Declared early so hook order is stable; fires once when step 6 confirms.)
-
-  const searchParams = useSearchParams();
+    const searchParams = useSearchParams();
   const needParam = searchParams.get("need");
   const handoffToken = searchParams.get("handoff");
   const prefilledIntent = needParam ? NEED_TO_INTENT[needParam] || null : null;
@@ -450,9 +446,6 @@ function FindAdvisorQuiz() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(!!savedMatch);
-  useEffect(() => {
-    if (quiz.step === 6 && submitted) fireJourneyMoment("profile_complete");
-  }, [quiz.step, submitted]);
   // ADV-008: whether the "Resume your quiz" banner should still show. Hidden
   // once the user resumes or dismisses it.
   const [showResumePrompt, setShowResumePrompt] = useState(!!resumableQuiz);
