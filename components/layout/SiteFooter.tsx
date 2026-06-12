@@ -55,6 +55,7 @@ export function SiteFooter() {
             { label: "Mining", href: "/invest/mining" },
             { label: "Farmland", href: "/invest/farmland" },
             { label: "Buy a Business", href: "/invest/buy-business" },
+            { label: "Raise Capital", href: "/raise" },
             { label: "Commercial Property", href: "/invest/commercial-property" },
             { label: "Alternatives", href: "/invest/alternatives" },
             { label: "Private Credit", href: "/invest/private-credit" },

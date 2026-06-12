@@ -180,7 +180,7 @@ export default function CookieBanner() {
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowPrefs(false)}
-                className="px-4 py-2.5 min-h-11 text-sm font-medium text-slate-500 hover:text-white transition-colors"
+                className="px-4 py-2.5 min-h-11 text-sm font-medium text-slate-400 hover:text-white transition-colors"
               >
                 Back
               </button>
