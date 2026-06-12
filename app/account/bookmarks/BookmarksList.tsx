@@ -66,7 +66,7 @@ export default function BookmarksList({ initialItems }: Props) {
     return (
       <EmptyState
         icon="file-text"
-        title="Your reading list is empty"
+        title="Nothing saved yet"
         body="Tap the bookmark icon on any article, broker or advisor page to save it here for later."
         ctas={[
           { label: "Browse brokers", href: "/compare" },

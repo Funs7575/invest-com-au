@@ -100,7 +100,7 @@ export default function SuburbsClient() {
       <section className="bg-slate-50 border-b border-slate-200 sticky top-16 lg:top-20 z-30">
         <div className="container-custom py-3">
           <div className="relative max-w-md">
-            <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
             <input
               type="text"
               placeholder="Search suburb name..."

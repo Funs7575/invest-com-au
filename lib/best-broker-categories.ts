@@ -75,7 +75,7 @@ const categories: BestBrokerCategory[] = [
     ],
     relatedLinks: [
       { label: "Compare All Platforms", href: "/compare" },
-      { label: "Take the Platform Quiz", href: "/quiz" },
+      { label: "Take the Platform Quiz", href: "/get-matched" },
       { label: "How We Verify Fees", href: "/how-we-verify" },
       { label: "Best for US Shares", href: "/best/us-shares" },
     ],
@@ -100,7 +100,7 @@ const categories: BestBrokerCategory[] = [
       {
         label: "Take the Platform Quiz",
         sub: "Two minutes — get a shortlist matched to your goals and budget",
-        href: "/quiz",
+        href: "/get-matched",
       },
       {
         label: "Find a Financial Planner",
@@ -253,7 +253,7 @@ const categories: BestBrokerCategory[] = [
       {
         label: "Take the Platform Quiz",
         sub: "Lowest fee for your specific trading pattern — depends on volume and assets",
-        href: "/quiz",
+        href: "/get-matched",
       },
     ],
     editorialNote:
@@ -412,7 +412,7 @@ const categories: BestBrokerCategory[] = [
     relatedLinks: [
       { label: "Compare All Platforms", href: "/compare?filter=crypto" },
       { label: "Compare Share Brokers", href: "/compare" },
-      { label: "Take the Quiz", href: "/quiz" },
+      { label: "Take the Quiz", href: "/get-matched" },
     ],
     faqs: [
       {
@@ -902,7 +902,7 @@ const categories: BestBrokerCategory[] = [
       {
         label: "Take the Platform Quiz",
         sub: "Match your DCA cadence and ETF mix to the right brokerage tier",
-        href: "/quiz",
+        href: "/get-matched",
       },
       {
         label: "Find a Financial Planner",
@@ -944,7 +944,7 @@ const categories: BestBrokerCategory[] = [
     relatedLinks: [
       { label: "Best for Beginners", href: "/best/beginners" },
       { label: "Compare All Platforms", href: "/compare" },
-      { label: "Take the Platform Quiz", href: "/quiz" },
+      { label: "Take the Platform Quiz", href: "/get-matched" },
       { label: "Best for ETF Investing", href: "/best/etf-investing" },
     ],
     faqs: [
@@ -1048,7 +1048,7 @@ const categories: BestBrokerCategory[] = [
       { label: "Best for CHESS", href: "/best/chess-sponsored" },
       { label: "Best for Trust Accounts", href: "/best/trust-accounts" },
       { label: "Compare All Platforms", href: "/compare" },
-      { label: "Take the Platform Quiz", href: "/quiz" },
+      { label: "Take the Platform Quiz", href: "/get-matched" },
     ],
     faqs: [
       {

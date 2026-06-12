@@ -184,7 +184,7 @@ export default function NewThreadClient() {
             </Link>
           </li>
           <li>
-            <Icon name="chevron-right" size={14} className="text-slate-400" />
+            <Icon name="chevron-right" size={14} className="text-slate-500" />
           </li>
           <li>
             <Link href="/community" className="hover:text-slate-700">
@@ -192,7 +192,7 @@ export default function NewThreadClient() {
             </Link>
           </li>
           <li>
-            <Icon name="chevron-right" size={14} className="text-slate-400" />
+            <Icon name="chevron-right" size={14} className="text-slate-500" />
           </li>
           <li className="text-slate-900 font-medium">New Thread</li>
         </ol>

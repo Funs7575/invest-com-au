@@ -122,10 +122,35 @@ function coreLabel(a: ActionPlanAnswers): string {
   const intent = (str(a.intent) ?? "") as IntentSlug | "";
 
   switch (intent) {
-    case "grow":
-      return "long-term growth investor";
-    case "income":
-      return "income & dividend investor";
+    case "grow": {
+      switch (str(a.grow_sub)) {
+        case "just_starting":
+          return "first-step investor";
+        case "etfs_longterm":
+          return "long-term ETF investor";
+        case "pick_shares":
+          return "share-picking investor";
+        case "guide_me":
+          return "investor seeking guidance";
+        default:
+          return "long-term growth investor";
+      }
+    }
+
+    case "income": {
+      switch (str(a.income_sub)) {
+        case "dividend_shares":
+          return "dividend-share investor";
+        case "income_etfs":
+          return "income-ETF / LIC investor";
+        case "property_income":
+          return "REIT income investor";
+        case "royalty_income":
+          return "royalty-income investor";
+        default:
+          return "income & dividend investor";
+      }
+    }
 
     case "crypto": {
       switch (str(a.crypto_sub)) {
@@ -142,11 +167,35 @@ function coreLabel(a: ActionPlanAnswers): string {
       }
     }
 
-    case "trade":
-      return "active trader";
+    case "trade": {
+      switch (str(a.trade_sub)) {
+        case "shares_etfs":
+          return "shares & ETF trader";
+        case "cfds_forex":
+          return "CFD & forex trader";
+        case "options":
+          return "options trader";
+        case "crypto_trading":
+          return "crypto trader";
+        default:
+          return "active trader";
+      }
+    }
 
-    case "automate":
-      return "hands-off / robo investor";
+    case "automate": {
+      switch (str(a.automate_sub)) {
+        case "full_robo":
+          return "full robo-advice investor";
+        case "round_ups":
+          return "round-ups / micro-investor";
+        case "managed_portfolio":
+          return "managed-portfolio investor";
+        case "compare_robo":
+          return "robo-advisor comparer";
+        default:
+          return "hands-off / robo investor";
+      }
+    }
 
     case "super": {
       switch (str(a.super_sub)) {
@@ -194,8 +243,18 @@ function coreLabel(a: ActionPlanAnswers): string {
       return "alternative-assets investor";
     }
 
-    case "royalties":
-      return "royalties / income-asset investor";
+    case "royalties": {
+      switch (str(a.royalties_sub)) {
+        case "music_ip":
+          return "music / IP royalties investor";
+        case "mining":
+          return "mining-royalties investor";
+        case "vending_atm":
+          return "vending / ATM income investor";
+        default:
+          return "royalties / income-asset investor";
+      }
+    }
 
     case "pre_ipo": {
       switch (str(a.pre_ipo_sub)) {

@@ -318,11 +318,11 @@ export default function PropertiesClient() {
                 {/* Bed / Bath */}
                 <div className="flex items-center gap-3 text-xs md:text-sm text-slate-600 mb-3">
                   <span className="flex items-center gap-1">
-                    <Icon name="layout-dashboard" size={14} className="text-slate-400" />
+                    <Icon name="layout-dashboard" size={14} className="text-slate-500" />
                     {property.bedrooms} bed
                   </span>
                   <span className="flex items-center gap-1">
-                    <Icon name="dollar-sign" size={14} className="text-slate-400" />
+                    <Icon name="dollar-sign" size={14} className="text-slate-500" />
                     {property.bathrooms} bath
                   </span>
                 </div>

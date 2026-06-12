@@ -77,7 +77,7 @@ export default async function BuyerAgentProfilePage({ params }: { params: Promis
             {/* Profile Header */}
             <div className="flex items-start gap-4">
               <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-100 rounded-full flex items-center justify-center shrink-0">
-                <Icon name="user" size={28} className="text-slate-400" />
+                <Icon name="user" size={28} className="text-slate-500" />
               </div>
               <div>
                 <div className="flex items-center gap-2">

@@ -85,6 +85,8 @@ export function inferVertical(answers: ActionPlanAnswers): Vertical | null {
   const goal = (answers.intent as string | undefined) ?? null;
   const browseSub = (answers.browse_sub as string | undefined) ?? null;
   const propertySub = (answers.property_sub as string | undefined) ?? null;
+  const incomeSub = (answers.income_sub as string | undefined) ?? null;
+  const tradeSub = (answers.trade_sub as string | undefined) ?? null;
 
   if (browseSub === "shares") return "shares";
   if (browseSub === "property") return "property";
@@ -92,6 +94,14 @@ export function inferVertical(answers: ActionPlanAnswers): Vertical | null {
 
   if (propertySub === "reit") return "property";
   if (propertySub === "browse") return "property";
+
+  // income → REIT income lands on the property vertical; royalty-style income
+  // is a royalties play.
+  if (incomeSub === "property_income") return "property";
+  if (incomeSub === "royalty_income") return "royalties";
+
+  // trade → crypto trading narrows to the crypto vertical.
+  if (tradeSub === "crypto_trading") return "crypto";
 
   switch (goal) {
     case "grow":      return "shares";
@@ -179,6 +189,8 @@ export function inferRoute(answers: ActionPlanAnswers): ResolvedHref {
   const helpSub = (answers.help_sub as string | undefined) ?? null;
   const superSub = (answers.super_sub as string | undefined) ?? null;
   const preIpoSub = (answers.pre_ipo_sub as string | undefined) ?? null;
+  const growSub = (answers.grow_sub as string | undefined) ?? null;
+  const incomeSub = (answers.income_sub as string | undefined) ?? null;
   const startingPoint = (answers.starting_point as string | undefined) ?? null;
   const listingSub = (answers.listing_sub as string | undefined) ?? null;
 
@@ -262,6 +274,14 @@ export function inferRoute(answers: ActionPlanAnswers): ResolvedHref {
   }
   if (preIpoSub === "browse_calendar" || preIpoSub === "invest_now") {
     return { route: "browse", href: BROWSE_HREFS_BY_VERTICAL.pre_ipo, vertical: "pre_ipo", advisor_type: advisorType };
+  }
+  // grow → "not sure, guide me" routes to the guide lane rather than compare.
+  if (growSub === "guide_me") {
+    return { route: "guide", href: "/articles", vertical, advisor_type: advisorType };
+  }
+  // income → royalty-style income is a browse play on the royalties vertical.
+  if (incomeSub === "royalty_income") {
+    return { route: "browse", href: BROWSE_HREFS_BY_VERTICAL.royalties, vertical: "royalties", advisor_type: advisorType };
   }
   if (browseSub === "advisors") {
     return { route: "individual", href: ADVISORS_HREFS_BY_TYPE[advisorType], vertical: null, advisor_type: advisorType };

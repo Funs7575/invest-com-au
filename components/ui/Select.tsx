@@ -42,7 +42,7 @@ export function Select({
             w-full pl-4 pr-10 py-3 text-sm text-slate-900 bg-white border rounded-xl
             appearance-none transition-all duration-150 cursor-pointer
             focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400
-            disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed
+            disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed
             ${error
               ? "border-red-400 bg-red-50 focus:ring-red-400 focus:border-red-400"
               : "border-slate-200 hover:border-slate-300"
@@ -62,7 +62,7 @@ export function Select({
           ))}
         </select>
         <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>

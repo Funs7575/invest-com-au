@@ -250,7 +250,7 @@ export default function JobsClient() {
                     <span className="font-medium">{job.company}</span>
                     <span className="text-slate-300">|</span>
                     <span className="flex items-center gap-1">
-                      <Icon name="map-pin" size={12} className="text-slate-400" />
+                      <Icon name="map-pin" size={12} className="text-slate-500" />
                       {job.location}
                     </span>
                     <span

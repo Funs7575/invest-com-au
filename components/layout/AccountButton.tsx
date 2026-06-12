@@ -218,7 +218,7 @@ function MenuLink({
       onClick={onClick}
       className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-amber-50 hover:text-amber-900 transition-colors"
     >
-      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         {icons[icon]}
       </svg>
       {children}

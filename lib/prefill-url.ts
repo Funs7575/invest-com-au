@@ -3,7 +3,7 @@
  *
  * Centralises the URL construction logic so every CTA — hub pages, calculators,
  * onboarding results, email links — produces consistent, canonical URLs with
- * the same param names that /find-advisor and /quiz read.
+ * the same param names that /find-advisor and /get-matched read.
  *
  * LX-04 — UX conversion stream (REMEDIATION_QUEUE.md).
  */
@@ -56,16 +56,16 @@ export interface QuizPrefillOptions {
 }
 
 /**
- * Build a pre-filled /quiz URL.
+ * Build a pre-filled /get-matched URL.
  *
- * The quiz reads the `vertical` param to set the initial scoring weights
- * (smsf_weight, crypto_weight, etc.) so the first result screen is already
- * tuned to the user's context.
+ * The canonical funnel reads the `vertical` param to bias the first result
+ * screen toward the user's context. (`/quiz` is a permanent 308 alias of
+ * `/get-matched`, so the URL is emitted against the live route directly.)
  */
 export function buildQuizUrl(options: QuizPrefillOptions): string {
   const params = new URLSearchParams({ vertical: options.vertical });
   if (options.state) params.set("state", options.state);
-  return `/quiz?${params.toString()}`;
+  return `/get-matched?${params.toString()}`;
 }
 
 export interface CrossBorderMatchOptions {
@@ -77,9 +77,9 @@ export interface CrossBorderMatchOptions {
   track?: "international" | "expat";
   /**
    * Intent-country slug (e.g. "united-kingdom", "hong-kong") — the
-   * folder name under app/foreign-investment/. Emitted as `?country=` so
-   * the /find-advisor → /get-matched redirect carve-out keeps the
-   * dedicated cross-border flow alive (next.config.ts `missing` rule).
+   * folder name under app/foreign-investment/. Emitted as `?country=`;
+   * the /find-advisor → /get-matched redirect preserves it and
+   * lib/getmatched/deep-link-prefill maps it into the start prefill.
    */
   countrySlug?: string;
   /**
@@ -94,17 +94,19 @@ export interface CrossBorderMatchOptions {
  * Build the cross-border advisor-match URL for a non-resident / expat
  * visitor.
  *
- * Targets `/find-advisor` — per next.config.ts, cross-border deep-links
- * (`?specialty=` / `?country=`) keep the dedicated find-advisor flow (the
- * 1.75× premium line) until /get-matched consumes those params. The old
- * /quiz entry is a permanent redirect to /get-matched with no
- * international handling on the other side, so quiz-targeted links would
- * silently drop the visitor onto the domestic funnel.
+ * Targets `/find-advisor?specialty=…&country=…`. That route now 308s to
+ * `/get-matched` (the `missing` carve-out was removed once the funnel
+ * unified) and the redirect preserves the query string, so the visitor
+ * lands on `/get-matched?specialty=…&country=…` where
+ * lib/getmatched/deep-link-prefill seeds the advisor lane + overseas
+ * starting point. The `/find-advisor` URL shape is kept so existing
+ * deep-links, lead-attribution and the cross-border specialty vocabulary
+ * stay stable through the redirect.
  *
  * Specialty mapping (values from CROSS_BORDER_SPECIALTIES in
- * lib/advisor-specialties.ts; /find-advisor validates with
- * isCrossBorderSpecialty, so an out-of-sync value degrades to "no
- * pre-filter", never an error):
+ * lib/advisor-specialties.ts; deep-link-prefill maps each to a help_sub,
+ * and an out-of-sync value degrades to "advisor lane, no sub", never an
+ * error):
  *   - intent "property"            → "FIRB Property (Non-Resident)"
  *   - country united-kingdom / uk  → "UK Pension Transfer"
  *   - country united-states / us   → "FATCA-Aware US Expat Planning"

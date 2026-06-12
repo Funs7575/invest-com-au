@@ -412,7 +412,7 @@ export default function AdvisorProfileClient({
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-500 mb-4">
                   {pro.location_display && (
                     <span className="flex items-center gap-1.5">
-                      <Icon name="map-pin" size={14} className="text-slate-400" />
+                      <Icon name="map-pin" size={14} className="text-slate-500" />
                       {pro.location_display}
                     </span>
                   )}
@@ -425,7 +425,7 @@ export default function AdvisorProfileClient({
                   )}
                   {pro.years_experience ? (
                     <span className="flex items-center gap-1.5">
-                      <Icon name="clock" size={14} className="text-slate-400" />
+                      <Icon name="clock" size={14} className="text-slate-500" />
                       {pro.years_experience}+ yrs experience
                     </span>
                   ) : null}
@@ -884,7 +884,7 @@ export default function AdvisorProfileClient({
                   {vLinks.map((link, i) => (
                     <a key={i} href={link.url} target="_blank" rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all">
-                      <Icon name="external-link" size={12} className="text-slate-400" />
+                      <Icon name="external-link" size={12} className="text-slate-500" />
                       {link.label}
                     </a>
                   ))}
@@ -1014,7 +1014,7 @@ export default function AdvisorProfileClient({
                     <details key={i} className="group">
                       <summary className="flex items-center justify-between cursor-pointer py-3.5 px-4 bg-slate-50 rounded-xl text-sm font-semibold text-slate-800 hover:bg-slate-100 transition-colors list-none">
                         <span>{faq.q}</span>
-                        <Icon name="chevron-down" size={16} className="text-slate-400 group-open:rotate-180 transition-transform shrink-0 ml-3" />
+                        <Icon name="chevron-down" size={16} className="text-slate-500 group-open:rotate-180 transition-transform shrink-0 ml-3" />
                       </summary>
                       <div className="px-4 py-3 text-sm text-slate-600 leading-relaxed">{faq.a}</div>
                     </details>
@@ -1216,7 +1216,7 @@ export default function AdvisorProfileClient({
                     <a key={article.id} href={`/expert/${article.slug}`}
                       className="flex items-start gap-4 p-4 bg-slate-50 border border-transparent rounded-xl hover:bg-amber-50 hover:border-amber-200 transition-all group">
                       <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 group-hover:border-amber-200 transition-colors">
-                        <Icon name="file-text" size={17} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
+                        <Icon name="file-text" size={17} className="text-slate-500 group-hover:text-amber-500 transition-colors" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-bold text-slate-900 group-hover:text-amber-800 transition-colors line-clamp-2 mb-1">
@@ -1549,7 +1549,7 @@ export default function AdvisorProfileClient({
                       className="flex items-center gap-3 py-2 text-sm text-slate-700 hover:text-amber-700 transition-colors group"
                     >
                       <div className="w-9 h-9 rounded-xl bg-slate-100 group-hover:bg-amber-50 flex items-center justify-center shrink-0 transition-colors">
-                        <Icon name="globe" size={15} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
+                        <Icon name="globe" size={15} className="text-slate-500 group-hover:text-amber-500 transition-colors" />
                       </div>
                       <span className="font-semibold">Visit website</span>
                     </a>
@@ -1558,7 +1558,7 @@ export default function AdvisorProfileClient({
                     <a href={pro.linkedin_url!} target="_blank" rel="noopener noreferrer"
                       className="flex items-center gap-3 py-2 text-sm text-slate-700 hover:text-blue-700 transition-colors group">
                       <div className="w-9 h-9 rounded-xl bg-slate-100 group-hover:bg-blue-50 flex items-center justify-center shrink-0 transition-colors">
-                        <Icon name="linkedin" size={15} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
+                        <Icon name="linkedin" size={15} className="text-slate-500 group-hover:text-blue-500 transition-colors" />
                       </div>
                       <span className="font-semibold">LinkedIn Profile</span>
                     </a>

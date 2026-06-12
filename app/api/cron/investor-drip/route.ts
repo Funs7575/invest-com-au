@@ -81,11 +81,11 @@ function personalRecEmail(name: string, hasQuizResult: boolean): string {
       ${hasQuizResult 
         ? `<p style="font-size:14px;line-height:1.6;color:#64748b">You took our platform quiz — your personalised results are still available. Have you had a chance to check out the top match?</p>
            <div style="text-align:center;margin:20px 0">
-             <a href="${SITE_URL}/quiz" style="display:inline-block;padding:12px 32px;background:#f59e0b;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:700">View My Results →</a>
+             <a href="${SITE_URL}/get-matched" style="display:inline-block;padding:12px 32px;background:#f59e0b;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:700">View My Results →</a>
            </div>`
         : `<p style="font-size:14px;line-height:1.6;color:#64748b">We've built a 60-second quiz that matches you with the best platform based on your investing style, budget, and goals.</p>
            <div style="text-align:center;margin:20px 0">
-             <a href="${SITE_URL}/quiz" style="display:inline-block;padding:12px 32px;background:#f59e0b;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:700">Take the Quiz →</a>
+             <a href="${SITE_URL}/get-matched" style="display:inline-block;padding:12px 32px;background:#f59e0b;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:700">Take the Quiz →</a>
            </div>`
       }
       <div style="background:#f8fafc;border-radius:8px;padding:16px;margin-top:16px;border:1px solid #e2e8f0">

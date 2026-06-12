@@ -70,7 +70,7 @@ export default function CalculatorShell({
           <button
             onClick={handleShare}
             data-testid="share-button"
-            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
           >
             <Icon name="share-2" size={12} />
             {copied ? "Copied!" : "Share Results"}

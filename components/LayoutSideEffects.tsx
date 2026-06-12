@@ -39,16 +39,11 @@ const SpeedInsights = dynamic(
   { ssr: false },
 );
 
-// "Three's a shortlist" moment (D2) — listens for the once-ever event from
-// ShortlistButton; renders nothing until it fires.
-const ShortlistReadySheet = dynamic(
-  () => import("@/components/ShortlistReadySheet"),
-  { ssr: false },
-);
-
-// Send-off acknowledgment on /go/ clicks + "how did it go?" return prompt (D3).
-const SendOffReturnLoop = dynamic(
-  () => import("@/components/SendOffReturnLoop"),
+// Engagement moments (D2 shortlist-ready + D3 send-off/return) — one
+// dynamic chunk so their shared deps (BottomSheet, Toast, celebrate,
+// tracking) aren't duplicated across two chunks.
+const EngagementMoments = dynamic(
+  () => import("@/components/EngagementMoments"),
   { ssr: false },
 );
 
@@ -59,8 +54,7 @@ export default function LayoutSideEffects() {
       <RouteChangeFocus />
       <ServiceWorkerRegistrar />
       <ClaimAnonymousOnAuth />
-      <ShortlistReadySheet />
-      <SendOffReturnLoop />
+      <EngagementMoments />
       <WebVitals />
       {/* Vercel-only: the injected /_vercel/speed-insights/script.js 404s on the
           Netlify mirror (it only exists on Vercel). NEXT_PUBLIC_VERCEL_ENV is

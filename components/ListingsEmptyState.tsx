@@ -66,7 +66,7 @@ export default function ListingsEmptyState({
           className="w-16 h-16 mx-auto mb-5 rounded-full bg-slate-100 flex items-center justify-center"
           aria-hidden="true"
         >
-          <Icon name={icon} size={28} className="text-slate-400" />
+          <Icon name={icon} size={28} className="text-slate-500" />
         </div>
         <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2">
           {heading}

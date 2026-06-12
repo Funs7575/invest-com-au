@@ -96,7 +96,7 @@ const NON_DEDUCTIBLE_ITEMS = [
   {
     label: "Travel to inspect property",
     detail:
-      "Abolished from 1 July 2017. You can no longer deduct travel to inspect, collect rent, or carry out maintenance at a residential rental property.",
+      "Abolished from 1 July 2017. You can no longer deduct travel to inspect, collect rent, or carry out maintenance at a residential rental property.",  // dated-ok
   },
   {
     label: "Borrowing costs (immediate)",
@@ -166,7 +166,7 @@ All of these are deductible in the year incurred.`,
 
 **Capital improvements vs repairs:** The distinction between a repair (deductible) and a capital improvement (not immediately deductible) is one of the most litigated areas of rental tax. A repair restores something to its original working condition — fixing a leaking roof, replacing broken tiles, repainting. A capital improvement makes the property better than it was — adding a deck, installing a dishwasher where there wasn't one, converting a carport to a garage. Capital improvements must be either added to cost base or depreciated under Division 43 (building works) over 25–40 years.
 
-**Travel to inspect:** From 1 July 2017, travel expenses for residential rental property are no longer deductible. This includes travel to collect rent, carry out repairs, or inspect the property. The exception is if property management and inspection is your main income-producing activity (i.e., you're a property manager as a business).
+**Travel to inspect:** From 1 July 2017, travel expenses for residential rental property are no longer deductible. This includes travel to collect rent, carry out repairs, or inspect the property. The exception is if property management and inspection is your main income-producing activity (i.e., you're a property manager as a business).  // dated-ok
 
 **Private-use apportionment:** Expenses during periods the property was used privately — including a holiday home you use for some of the year — must be apportioned. Only the rental-available proportion is deductible.
 
@@ -179,8 +179,8 @@ All of these are deductible in the year incurred.`,
 
 **Division 43 — Building Allowance:**
 Division 43 allows a deduction for the decline in value of the building structure itself (not the land). Key rules:
-- Rate: 2.5% of the original construction cost per year (or 4% for buildings built between 18 July 1985 and 26 February 1992)
-- Only applies to residential buildings originally constructed after 17 September 1987
+- Rate: 2.5% of the original construction cost per year (or 4% for buildings built between 18 July 1985 and 26 February 1992)  // dated-ok
+- Only applies to residential buildings originally constructed after 17 September 1987  // dated-ok
 - Applies to commercial buildings regardless of construction date (different rules)
 - You claim on the original construction cost — not the price you paid for the property
 - If you do not know the original construction cost, a quantity surveyor estimate is required
@@ -193,11 +193,11 @@ If the original construction cost was $200,000, you claim $200,000 × 2.5% = $5,
 Division 40 covers the depreciable "plant and equipment" items within a property — things that can be removed: hot water systems, air conditioners, carpets, blinds, ceiling fans, dishwashers, ovens, smoke alarms.
 
 **The 2017 Budget rule — critical for used properties:**
-From 9 May 2017 (2017 Budget), Division 40 claims were restricted for residential investment properties. You can only claim Div 40 depreciation on plant and equipment items:
+From 9 May 2017 (2017 Budget), Division 40 claims were restricted for residential investment properties. You can only claim Div 40 depreciation on plant and equipment items:  // dated-ok
 1. That you purchased new (never previously used), OR
 2. That you personally installed or acquired new after purchasing the property
 
-If you purchased an established residential property after 9 May 2017, you generally CANNOT claim Division 40 depreciation on the pre-existing fittings and fixtures. The assets are notionally "excluded" from your depreciation schedule for those items. Note: new builds purchased off-the-plan are not affected — all plant and equipment in a new property qualifies.
+If you purchased an established residential property after 9 May 2017, you generally CANNOT claim Division 40 depreciation on the pre-existing fittings and fixtures. The assets are notionally "excluded" from your depreciation schedule for those items. Note: new builds purchased off-the-plan are not affected — all plant and equipment in a new property qualifies.  // dated-ok
 
 **Effective life schedules:**
 The ATO publishes effective life tables for every type of plant and equipment. Some common examples:
@@ -461,7 +461,7 @@ const FAQS = [
   },
   {
     q: "Can I claim depreciation on a property built before 1987?",
-    a: "Not for Division 43 (building allowance) — that only applies to residential buildings originally constructed after 17 September 1987. However, Division 40 (plant and equipment) depreciation may still be available for eligible items you installed yourself new after the 2017 Budget date. A quantity surveyor can assess whether any Div 40 claims are available for your pre-1987 property.",
+    a: "Not for Division 43 (building allowance) — that only applies to residential buildings originally constructed after 17 September 1987. However, Division 40 (plant and equipment) depreciation may still be available for eligible items you installed yourself new after the 2017 Budget date. A quantity surveyor can assess whether any Div 40 claims are available for your pre-1987 property.",  // dated-ok
   },
   {
     q: "How does negative gearing interact with my PAYG salary withholding?",
@@ -627,7 +627,7 @@ export default function RentalPropertyTaxPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

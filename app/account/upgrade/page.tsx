@@ -212,7 +212,7 @@ export default async function AccountUpgradeHubPage() {
                   <ul className="text-xs text-slate-600 space-y-1 mb-4">
                     {p.bullets.map((b) => (
                       <li key={b} className="flex items-start gap-1.5">
-                        <span aria-hidden className="text-slate-400 mt-0.5">
+                        <span aria-hidden className="text-slate-500 mt-0.5">
                           •
                         </span>
                         <span>{b}</span>

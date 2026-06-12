@@ -212,7 +212,7 @@ export default function IntentPicker({
             return (
               <section key={g.id} aria-label={g.label}>
                 <h3 className="mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  <Icon name={g.icon} size={12} className="text-slate-400" />
+                  <Icon name={g.icon} size={12} className="text-slate-500" />
                   {g.label}
                 </h3>
                 <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -268,7 +268,7 @@ function GroupChip({
           : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50",
       )}
     >
-      <Icon name={icon} size={12} className={active ? "text-amber-400" : "text-slate-400"} />
+      <Icon name={icon} size={12} className={active ? "text-amber-400" : "text-slate-500"} />
       {label}
     </button>
   );

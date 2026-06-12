@@ -62,11 +62,30 @@ function ticketRangeForBudget(band?: string | null): [number, number] | null {
   }
 }
 
+export interface MatchBreakdown {
+  score: number;
+  /** Factual matched-criteria lines, strongest first ("your stated X"
+   *  framing only — never advice). Capped at 4. */
+  reasons: string[];
+}
+
 /** Returns a 0..100 match score, or null if there isn't enough signal. */
 export function computeMatchScore(
   listing: InvestmentListing,
   profile: InvestorProfileSnapshot | null | undefined,
 ): number | null {
+  return computeMatchBreakdown(listing, profile)?.score ?? null;
+}
+
+/**
+ * Score + the factual reasons behind it (Northstar D11 — every score
+ * explains itself). Same weights as ever; reasons collect only the
+ * profile-specific positive signals, not the neutral passes.
+ */
+export function computeMatchBreakdown(
+  listing: InvestmentListing,
+  profile: InvestorProfileSnapshot | null | undefined,
+): MatchBreakdown | null {
   if (!profile) return null;
 
   // Need at least one signal field set to bother scoring.
@@ -83,6 +102,7 @@ export function computeMatchScore(
 
   let score = 0;
   let denominator = 0;
+  const reasons: string[] = [];
 
   // Each weight slot is denominator++ + (matched ? weight : 0)
   // Total weights sum to 100 so the raw score is naturally a percent.
@@ -103,8 +123,10 @@ export function computeMatchScore(
   denominator += weights.vertical;
   if (profile.primary_vertical && listing.vertical === profile.primary_vertical) {
     score += weights.vertical;
+    reasons.push("Sector matches your stated focus");
   } else if (profile.primary_vertical && relatedVertical(profile.primary_vertical, listing.vertical)) {
     score += Math.round(weights.vertical * 0.6);
+    reasons.push("Sector neighbours your stated focus");
   }
 
   // 2) Budget / ticket match
@@ -117,9 +139,11 @@ export function computeMatchScore(
     if (ticket != null) {
       if (ticket >= range[0] && ticket < range[1]) {
         score += weights.budget;
+        reasons.push("Ticket size sits inside your stated budget band");
       } else if (ticket < range[1] * 2 && ticket > range[0] / 2) {
         // Adjacent bucket — partial credit
         score += Math.round(weights.budget * 0.5);
+        reasons.push("Ticket size is close to your stated budget band");
       }
     }
   }
@@ -128,8 +152,13 @@ export function computeMatchScore(
   denominator += weights.cross_border_alignment;
   const wholesaleOnly = km["wholesale_only"] === true || km["s708_required"] === true || km["accredited_only"] === true;
   if (profile.is_cross_border) {
-    if (listing.firb_eligible) score += weights.cross_border_alignment;
-    else if (km["accepts_international"] === true) score += Math.round(weights.cross_border_alignment * 0.7);
+    if (listing.firb_eligible) {
+      score += weights.cross_border_alignment;
+      reasons.push("FIRB-eligible — relevant to your cross-border profile");
+    } else if (km["accepts_international"] === true) {
+      score += Math.round(weights.cross_border_alignment * 0.7);
+      reasons.push("Accepts international investors");
+    }
   } else {
     // Domestic visitor — neutral on FIRB, but penalise wholesale-only
     // unless they're HNW (they qualify for s708 self-attest).
@@ -147,16 +176,23 @@ export function computeMatchScore(
   const hnwFavoured: typeof kind[] = ["project_equity", "royalty", "equity_raise"];
   if (profile.is_hnw && hnwFavoured.includes(kind)) {
     score += weights.hnw_alignment;
+    reasons.push("Wholesale-style structure — aligns with your stated wholesale eligibility");
   } else if (!profile.is_hnw && (kind === "for_sale_business" || kind === "physical_asset" || kind === "listed_security")) {
     score += weights.hnw_alignment;
+    reasons.push("Retail-accessible structure (no wholesale gate)");
   } else {
     score += Math.round(weights.hnw_alignment * 0.5);
   }
 
   // 5) Profile archetype — match obvious affinities.
   denominator += weights.profile_archetype;
-  if (profile.is_business_owner && kind === "for_sale_business") score += weights.profile_archetype;
-  else if (profile.is_pre_retiree && (kind === "fund" || kind === "for_sale_asset")) score += weights.profile_archetype;
+  if (profile.is_business_owner && kind === "for_sale_business") {
+    score += weights.profile_archetype;
+    reasons.push("A business for sale — matches your business-owner profile");
+  } else if (profile.is_pre_retiree && (kind === "fund" || kind === "for_sale_asset")) {
+    score += weights.profile_archetype;
+    reasons.push("Fund structure — matches your stated pre-retirement profile");
+  }
   else if (profile.is_fhb && (listing.vertical as string) === "commercial-property") score += weights.profile_archetype;
   else score += Math.round(weights.profile_archetype * 0.5);
 
@@ -165,8 +201,12 @@ export function computeMatchScore(
   denominator += weights.siv_alignment;
   if (profile.intent_country_snapshot && listing.siv_complying) {
     score += weights.siv_alignment;
+    reasons.push("SIV-complying — relevant to your investor-visa interest");
   } else if (profile.intent_country_snapshot && listing.firb_eligible) {
     score += Math.round(weights.siv_alignment * 0.6);
+    if (!reasons.some((r) => r.startsWith("FIRB-eligible"))) {
+      reasons.push("FIRB-eligible — relevant to your foreign-investor interest");
+    }
   } else if (!profile.intent_country_snapshot) {
     // Domestic visitor — neutral pass
     score += Math.round(weights.siv_alignment * 0.7);
@@ -178,15 +218,17 @@ export function computeMatchScore(
   denominator += weights.experience_alignment;
   if (profile.experience_level === "beginner" && !wholesaleOnly) {
     score += weights.experience_alignment;
+    reasons.push("No wholesale gate — open at your stated experience level");
   } else if ((profile.experience_level === "advanced" || profile.is_hnw) && wholesaleOnly) {
     score += weights.experience_alignment;
+    reasons.push("Wholesale offer — matches your stated experience");
   } else {
     score += Math.round(weights.experience_alignment * 0.5);
   }
 
   const pct = Math.round((score / denominator) * 100);
   if (pct < SCORE_FLOOR) return null; // hide weak matches
-  return Math.min(SCORE_CEILING, pct);
+  return { score: Math.min(SCORE_CEILING, pct), reasons: reasons.slice(0, 4) };
 }
 
 /** Relaxed vertical comparison — captures obvious sector neighbours. */

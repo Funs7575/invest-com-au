@@ -214,7 +214,7 @@ export default function SuperCompareGuidePage() {
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/super" className="hover:text-white">Super</Link>
@@ -620,7 +620,7 @@ export default function SuperCompareGuidePage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-white overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 hover:bg-slate-50">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden>&#9662;</span>
+                    <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform text-lg leading-none" aria-hidden>&#9662;</span>
                   </summary>
                   <div className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</div>
                 </details>
@@ -634,7 +634,7 @@ export default function SuperCompareGuidePage() {
           <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
             <div>
               <h2 className="text-lg font-extrabold text-white mb-1">Compare super funds side by side</h2>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-500 text-sm">
                 Put the factors from this guide to work &mdash; compare net returns, fees, and features
                 across funds, then read the contributions and consolidation guides to make the most of the
                 fund you choose.

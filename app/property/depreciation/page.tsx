@@ -13,7 +13,7 @@ const FAQS = [
   },
   {
     q: "Can I claim depreciation on a property built before 1987?",
-    a: "For Division 43 (building structure), no. The building must have been constructed on or after 20 September 1987 to be eligible for the 2.5% annual building allowance. Properties built before that date have no Div 43 entitlement. However, if you install new plant and equipment yourself after purchasing the property — for example, a new air conditioner or hot water system — those new items are still claimable under Division 40 regardless of the building's age, provided you are the first owner/installer of those items.",
+    a: "For Division 43 (building structure), no. The building must have been constructed on or after 20 September 1987 to be eligible for the 2.5% annual building allowance. Properties built before that date have no Div 43 entitlement. However, if you install new plant and equipment yourself after purchasing the property — for example, a new air conditioner or hot water system — those new items are still claimable under Division 40 regardless of the building's age, provided you are the first owner/installer of those items.",  // dated-ok
   },
   {
     q: "What is the difference between Division 40 and Division 43?",
@@ -25,7 +25,7 @@ const FAQS = [
   },
   {
     q: "How does the 2017 budget change affect second-hand property depreciation?",
-    a: "From 7:30pm on 9 May 2017, investors who purchase existing (second-hand) residential properties can no longer claim Division 40 depreciation on plant and equipment that was already installed in the property when they bought it. Only the original owner who first installs an item can claim the Div 40 deduction. This means if you buy an existing house with carpet, a hot water system, and an air conditioner already in place, you get no Div 40 deduction on those items. Division 43 (the building allowance) was not affected by this change — you can still claim 2.5% on the construction cost for post-1987 buildings regardless of whether the property is new or second-hand.",
+    a: "From 7:30pm on 9 May 2017, investors who purchase existing (second-hand) residential properties can no longer claim Division 40 depreciation on plant and equipment that was already installed in the property when they bought it. Only the original owner who first installs an item can claim the Div 40 deduction. This means if you buy an existing house with carpet, a hot water system, and an air conditioner already in place, you get no Div 40 deduction on those items. Division 43 (the building allowance) was not affected by this change — you can still claim 2.5% on the construction cost for post-1987 buildings regardless of whether the property is new or second-hand.",  // dated-ok
   },
   {
     q: "Does depreciation reduce my CGT cost base when I sell?",
@@ -76,7 +76,7 @@ export default function PropertyDepreciationPage() {
         {/* Hero */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/property" className="hover:text-white">Property</Link>
@@ -130,7 +130,7 @@ export default function PropertyDepreciationPage() {
               <div className="rounded-xl border border-blue-200 bg-blue-50 p-5">
                 <span className="inline-block text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded mb-2">Division 43</span>
                 <h3 className="font-extrabold text-blue-900 mb-2">Building Allowance (Capital Works)</h3>
-                <p className="text-sm text-blue-800 leading-relaxed">The building structure — walls, floors, roof, windows, doors, fixed plumbing. Claimed at 2.5% per year on the original construction cost. Available for buildings built on or after 20 September 1987.</p>
+                <p className="text-sm text-blue-800 leading-relaxed">The building structure — walls, floors, roof, windows, doors, fixed plumbing. Claimed at 2.5% per year on the original construction cost. Available for buildings built on or after 20 September 1987.</p>{/* // dated-ok */}
               </div>
               <div className="rounded-xl border border-violet-200 bg-violet-50 p-5">
                 <span className="inline-block text-xs font-bold bg-violet-600 text-white px-2 py-0.5 rounded mb-2">Division 40</span>
@@ -174,7 +174,7 @@ export default function PropertyDepreciationPage() {
               <div className="rounded-xl border border-slate-200 bg-white p-5">
                 <h3 className="font-extrabold text-slate-900 mb-2">Eligibility: the 1987 date rule</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  The building must have been constructed on or after <strong className="text-slate-800">20 September 1987</strong> to be eligible for Division 43 deductions. Properties built before this date have no entitlement to the building allowance — no matter when you purchased the property. If you are unsure of the construction date, a quantity surveyor can determine it from council records and other sources.
+                  The building must have been constructed on or after <strong className="text-slate-800">20 September 1987</strong> to be eligible for Division 43 deductions. Properties built before this date have no entitlement to the building allowance — no matter when you purchased the property. If you are unsure of the construction date, a quantity surveyor can determine it from council records and other sources.  // dated-ok
                 </p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-white p-5">
@@ -240,7 +240,7 @@ export default function PropertyDepreciationPage() {
                 <div>
                   <h3 className="font-extrabold text-red-900 mb-2">2017 Budget Rule Change — Second-Hand Properties</h3>
                   <p className="text-sm text-red-800 leading-relaxed mb-3">
-                    From <strong>7:30pm on 9 May 2017</strong> (Federal Budget night), investors who purchase existing residential properties can no longer claim Division 40 depreciation on plant and equipment that was already installed in the property at the time of purchase.
+                    From <strong>7:30pm on 9 May 2017</strong> (Federal Budget night), investors who purchase existing residential properties can no longer claim Division 40 depreciation on plant and equipment that was already installed in the property at the time of purchase.  // dated-ok
                   </p>
                   <ul className="space-y-1.5 text-sm text-red-800">
                     <li className="flex gap-2"><span className="shrink-0 font-bold text-red-600">&#x2717;</span>You buy an existing house with carpet, hot water system, and dishwasher already installed — <strong>no Div 40 on those items</strong></li>

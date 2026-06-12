@@ -61,7 +61,7 @@ function MiniBar({ data, maxVal }: { data: { label: string; value: number }[]; m
 }
 
 function SparkChart({ data, color = "#8b5cf6" }: { data: { day: string; count: number }[]; color?: string }) {
-  if (!data.length) return <div className="h-20 flex flex-col items-center justify-center gap-1 text-xs text-slate-400"><Icon name="trending-up" size={16} className="opacity-40" /><span>No data yet</span></div>;
+  if (!data.length) return <div className="h-20 flex flex-col items-center justify-center gap-1 text-xs text-slate-500"><Icon name="trending-up" size={16} className="opacity-40" /><span>No data yet</span></div>;
   const max = Math.max(...data.map((d) => d.count), 1);
   const width = 100 / data.length;
 
@@ -216,7 +216,7 @@ export default function DashboardClient() {
                 maxVal={Number(data.top_pages[0]?.count || 1)}
               />
             ) : (
-              <div className="flex flex-col items-center gap-1 py-4"><Icon name="file-text" size={18} className="text-slate-300" /><p className="text-xs text-slate-400">No page views yet</p></div>
+              <div className="flex flex-col items-center gap-1 py-4"><Icon name="file-text" size={18} className="text-slate-300" /><p className="text-xs text-slate-500">No page views yet</p></div>
             )}
           </div>
 
@@ -229,7 +229,7 @@ export default function DashboardClient() {
                 maxVal={Number(data.top_broker_clicks[0]?.count || 1)}
               />
             ) : (
-              <div className="flex flex-col items-center gap-1 py-4"><Icon name="mouse-pointer" size={18} className="text-slate-300" /><p className="text-xs text-slate-400">No broker clicks yet</p></div>
+              <div className="flex flex-col items-center gap-1 py-4"><Icon name="mouse-pointer" size={18} className="text-slate-300" /><p className="text-xs text-slate-500">No broker clicks yet</p></div>
             )}
           </div>
         </div>
@@ -265,7 +265,7 @@ export default function DashboardClient() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-1 py-4"><Icon name="layout" size={18} className="text-slate-300" /><p className="text-xs text-slate-400">No placement data yet</p></div>
+              <div className="flex flex-col items-center gap-1 py-4"><Icon name="layout" size={18} className="text-slate-300" /><p className="text-xs text-slate-500">No placement data yet</p></div>
             )}
           </div>
 
@@ -279,7 +279,7 @@ export default function DashboardClient() {
                   const pct = total > 0 ? ((Number(d.count) / total) * 100).toFixed(0) : "0";
                   return (
                     <div key={d.device_type} className="flex items-center gap-2">
-                      <Icon name={d.device_type === "mobile" ? "smartphone" : d.device_type === "tablet" ? "tablet" : "monitor"} size={14} className="text-slate-400" />
+                      <Icon name={d.device_type === "mobile" ? "smartphone" : d.device_type === "tablet" ? "tablet" : "monitor"} size={14} className="text-slate-500" />
                       <span className="text-[0.62rem] text-slate-600 flex-1">{d.device_type}</span>
                       <span className="text-[0.62rem] font-bold text-slate-800">{pct}%</span>
                     </div>
@@ -287,7 +287,7 @@ export default function DashboardClient() {
                 })}
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-1 py-4"><Icon name="monitor" size={18} className="text-slate-300" /><p className="text-xs text-slate-400">No device data yet</p></div>
+              <div className="flex flex-col items-center gap-1 py-4"><Icon name="monitor" size={18} className="text-slate-300" /><p className="text-xs text-slate-500">No device data yet</p></div>
             )}
           </div>
         </div>

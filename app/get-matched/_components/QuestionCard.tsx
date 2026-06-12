@@ -159,7 +159,7 @@ export default function QuestionCard({
               type="button"
               onClick={() => onAnswer(selectedMulti)}
               disabled={submitting || selectedMulti.length === 0}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-6 py-2.5 rounded-xl"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-900 font-bold px-6 py-2.5 rounded-xl"
             >
               Continue <Icon name="arrow-right" size={14} />
             </button>
@@ -215,7 +215,7 @@ function TextInput({
         type="button"
         onClick={() => onSubmit(value.trim())}
         disabled={disabled || value.trim().length === 0}
-        className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-5 py-2.5 rounded-xl"
+        className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-900 font-bold px-5 py-2.5 rounded-xl"
       >
         Continue <Icon name="arrow-right" size={14} />
       </button>
@@ -248,7 +248,7 @@ function NumberInput({
           if (Number.isFinite(num)) onSubmit(num);
         }}
         disabled={disabled || value.length === 0}
-        className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-5 py-2.5 rounded-xl"
+        className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-900 font-bold px-5 py-2.5 rounded-xl"
       >
         Continue <Icon name="arrow-right" size={14} />
       </button>

@@ -20,7 +20,7 @@ export default function GlossarySearch({ entries }: { entries: GlossaryEntry[] }
   return (
     <div className="mb-6">
       <div className="relative mb-3">
-        <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+        <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" aria-hidden="true" />
         <input
           type="search"
           value={query}

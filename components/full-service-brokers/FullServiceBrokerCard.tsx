@@ -45,7 +45,7 @@ export default function FullServiceBrokerCard({ firm }: Props) {
                 sizes="56px"
               />
             ) : (
-              <Icon name="briefcase" size={24} className="text-slate-400" />
+              <Icon name="briefcase" size={24} className="text-slate-500" />
             )}
           </div>
           <div className="flex-1 min-w-0">

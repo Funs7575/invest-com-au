@@ -51,7 +51,7 @@ export default function CrossBorderAdvisorCTA({
       <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
         <div>
           <h2 className="text-lg font-extrabold text-white mb-1">{cta.ctaLabel}</h2>
-          <p className="text-slate-400 text-sm leading-relaxed max-w-2xl">{cta.ctaSub}</p>
+          <p className="text-slate-500 text-sm leading-relaxed max-w-2xl">{cta.ctaSub}</p>
         </div>
         <div className="flex gap-3 shrink-0">
           <Link
