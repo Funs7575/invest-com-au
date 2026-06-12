@@ -577,6 +577,26 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // ── Firm Lead-Ops auto-assignment (mega-session #13) ──
+    // If the target advisor belongs to a firm running a non-manual routing
+    // policy AND the `firm_routing` flag is on, redistribute the lead to the
+    // best firm member and write a lead_assignments audit row. NO-OP when the
+    // flag is off, the advisor isn't in a firm, or the policy is "manual"
+    // (today's behaviour). Best-effort — never blocks lead delivery.
+    try {
+      const { autoAssignLead } = await import("@/lib/firm-routing-runtime");
+      await autoAssignLead({
+        leadId: lead.id,
+        targetProfessionalId: professional_id,
+        leadType: pro.type,
+      });
+    } catch (err) {
+      log.warn("firm auto-assignment failed", {
+        err: err instanceof Error ? err.message : String(err),
+        leadId: lead.id,
+      });
+    }
+
     return NextResponse.json({ success: true, lead_id: lead.id });
   } catch (error) {
     log.error("Advisor enquiry handler error", { error: error instanceof Error ? error.message : String(error) });

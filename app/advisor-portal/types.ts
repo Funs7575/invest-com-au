@@ -91,6 +91,47 @@ export type Lead = {
 
 export type FirmMemberOption = { id: number; name: string; slug: string };
 
+// ── Firm Lead-Ops routing (mega-session #13) ──
+export type RoutingMode = "manual" | "round_robin" | "load_balanced" | "specialty";
+
+export type RoutingPolicy = {
+  mode: RoutingMode;
+  specialty_map?: Record<string, number>;
+};
+
+export type RoutingMember = {
+  id: number;
+  name: string;
+  slug: string;
+  type: string | null;
+  availabilityStatus: "open" | "waitlist" | "closed";
+  enquiries30d: number | null;
+  views30d: number | null;
+  responseScore: number | null;
+  avgRating: number | null;
+  reviewCount: number | null;
+};
+
+export type RoutingAssignment = {
+  id: number;
+  leadRef: string;
+  professionalId: number;
+  professionalName: string;
+  assignedBy: string;
+  assignedAt: string;
+  reassignedFrom: number | null;
+  reassignedFromName: string | null;
+};
+
+export type FirmRoutingData = {
+  flagEnabled: boolean;
+  modes: RoutingMode[];
+  policy: RoutingPolicy;
+  members: RoutingMember[];
+  unavailableCount: number;
+  assignments: RoutingAssignment[];
+};
+
 export type BillingRecord = {
   id: number; amount_cents: number; description: string; status: string;
   invoice_number?: string; created_at: string;

@@ -32,9 +32,21 @@ import {
   handleApiKeySubscriptionUpdated,
   handleApiKeySubscriptionDeleted,
 } from "./api-key-subscription";
+import {
+  handleFirmSeatSubscriptionCreated,
+  handleFirmSeatSubscriptionUpdated,
+  handleFirmSeatSubscriptionDeleted,
+} from "./firm-seat-subscription";
 
 export const handleCustomerSubscriptionCreated: WebhookHandler = async (event, ctx) => {
   const newSub = event.data.object as Stripe.Subscription;
+
+  // Firm per-seat billing: short-circuit for firm-seat subscriptions
+  // (mega-session #13). Different flow — syncs seats onto advisor_firms and
+  // has no `profiles`/`subscriptions` row, so it must run before the
+  // consumer-subscription upsert below.
+  const firmHandled = await handleFirmSeatSubscriptionCreated(event, ctx);
+  if (firmHandled.handled) return { status: "done" };
 
   // API key billing: short-circuit for API key subscriptions (different flow)
   const apiHandled = await handleApiKeySubscriptionCreated(event, ctx);
@@ -129,6 +141,10 @@ export const handleCustomerSubscriptionTrialWillEnd: WebhookHandler = async (eve
 };
 
 export const handleCustomerSubscriptionUpdated: WebhookHandler = async (event, ctx) => {
+  // Firm per-seat billing: short-circuit for firm-seat subscriptions (#13).
+  const firmHandled = await handleFirmSeatSubscriptionUpdated(event, ctx);
+  if (firmHandled.handled) return { status: "done" };
+
   // API key billing: short-circuit for API key subscriptions
   const apiHandled = await handleApiKeySubscriptionUpdated(event, ctx);
   if (apiHandled.handled) return { status: "done" };
@@ -150,6 +166,10 @@ export const handleCustomerSubscriptionUpdated: WebhookHandler = async (event, c
 
 export const handleCustomerSubscriptionDeleted: WebhookHandler = async (event, ctx) => {
   const subscription = event.data.object as Stripe.Subscription;
+
+  // Firm per-seat billing: short-circuit for firm-seat subscriptions (#13).
+  const firmHandled = await handleFirmSeatSubscriptionDeleted(event, ctx);
+  if (firmHandled.handled) return { status: "done" };
 
   // API key billing: short-circuit for API key subscriptions
   const apiHandled = await handleApiKeySubscriptionDeleted(event, ctx);

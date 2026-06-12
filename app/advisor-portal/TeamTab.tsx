@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Icon from "@/components/Icon";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import FirmRoutingPanel from "./FirmRoutingPanel";
 import type {
   Advisor, FirmDetails, FirmMember, FirmInvite,
   FirmAnalyticsMember, FirmAnalyticsSummary,
@@ -21,7 +22,7 @@ export default function TeamTab({ advisor }: Props) {
   const [firmDetails, setFirmDetails] = useState<FirmDetails | null>(null);
   const [firmMemberCount, setFirmMemberCount] = useState(0);
   const [firmAnalytics, setFirmAnalytics] = useState<FirmAnalytics | null>(null);
-  const [firmTab, setFirmTab] = useState<"members" | "analytics" | "settings">("members");
+  const [firmTab, setFirmTab] = useState<"members" | "analytics" | "routing" | "settings">("members");
   const [editingFirm, setEditingFirm] = useState<Partial<FirmDetails> | null>(null);
   const [savingFirm, setSavingFirm] = useState(false);
   const [firmSaved, setFirmSaved] = useState(false);
@@ -40,6 +41,10 @@ export default function TeamTab({ advisor }: Props) {
   const [inviteActionErrors, setInviteActionErrors] = useState<Record<number, string>>({});
   const [firmSaveError, setFirmSaveError] = useState<string | null>(null);
   const [seatRequestError, setSeatRequestError] = useState<string | null>(null);
+  // Self-serve per-seat billing availability (Lead-Ops #13). When true, the
+  // seat upgrade goes through Stripe Checkout; when false it falls back to the
+  // existing manual ops-review request below.
+  const [seatBillingAvailable, setSeatBillingAvailable] = useState(false);
 
   const loadFirmData = useCallback(async () => {
     try {
@@ -59,7 +64,18 @@ export default function TeamTab({ advisor }: Props) {
         setEditingFirm(data.firm || null);
       }
     } catch { /* ignore */ }
-  }, []);
+    // Best-effort: probe whether self-serve seat billing is live (firm admins
+    // only; the route 403s otherwise). Failure → manual fallback (default).
+    if (advisor?.is_firm_admin) {
+      try {
+        const seatRes = await fetch("/api/advisor-portal/firm-seats");
+        if (seatRes.ok) {
+          const d = (await seatRes.json()) as { available?: boolean };
+          setSeatBillingAvailable(!!d.available);
+        }
+      } catch { /* ignore — manual fallback */ }
+    }
+  }, [advisor?.is_firm_admin]);
 
   const loadFirmAnalytics = useCallback(async () => {
     try {
@@ -117,15 +133,20 @@ export default function TeamTab({ advisor }: Props) {
         </div>
       </div>
 
-      {/* Sub-tabs */}
-      <div className="flex gap-1 mb-5 bg-slate-100 p-1 rounded-lg w-fit">
-        {(["members", "analytics", "settings"] as const).map((t) => (
+      {/* Sub-tabs. Lead Routing is firm-admin-only. */}
+      <div className="flex gap-1 mb-5 bg-slate-100 p-1 rounded-lg w-fit flex-wrap">
+        {(["members", "analytics", ...(advisor?.is_firm_admin ? (["routing"] as const) : []), "settings"] as const).map((t) => (
           <button key={t} onClick={() => { setFirmTab(t); if (t === "analytics" && !firmAnalytics) loadFirmAnalytics(); }}
             className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${firmTab === t ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
-            {t === "members" ? "Members & Invites" : t === "analytics" ? "Analytics" : "Firm Settings"}
+            {t === "members" ? "Members & Invites" : t === "analytics" ? "Analytics" : t === "routing" ? "Lead Routing" : "Firm Settings"}
           </button>
         ))}
       </div>
+
+      {/* ── LEAD ROUTING TAB (firm admins only) ── */}
+      {firmTab === "routing" && advisor?.is_firm_admin && (
+        <FirmRoutingPanel />
+      )}
 
       {/* ── MEMBERS TAB ── */}
       {firmTab === "members" && (
@@ -578,11 +599,42 @@ export default function TeamTab({ advisor }: Props) {
                 <button
                   disabled={seatRequestStatus === "sending" || !seatRequestSeats}
                   onClick={async () => {
+                    const requestedSeats = parseInt(seatRequestSeats);
                     setSeatRequestStatus("sending");
+                    setSeatRequestError(null);
+
+                    // Self-serve path: when per-seat billing is live, take the
+                    // admin to Stripe Checkout for a quantity-based seat sub.
+                    if (seatBillingAvailable) {
+                      try {
+                        const checkoutRes = await fetch("/api/advisor-portal/firm-seats", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ seats: requestedSeats }),
+                        });
+                        if (checkoutRes.ok) {
+                          const { url } = (await checkoutRes.json()) as { url?: string };
+                          if (url) { window.location.href = url; return; }
+                        }
+                        const j = (await checkoutRes.json()) as { fallback?: string };
+                        // Anything other than an explicit manual fallback is a
+                        // hard error; only fall through to manual when told to.
+                        if (j.fallback !== "manual") {
+                          setSeatRequestError("Could not start seat checkout. Please try again.");
+                          setSeatRequestStatus("error");
+                          return;
+                        }
+                        // else: fall through to the manual request below.
+                      } catch {
+                        // Network error → fall through to manual request.
+                      }
+                    }
+
+                    // Manual fallback: ops-reviewed seat-upgrade request.
                     const res = await fetch("/api/advisor-auth/firm/seat-request", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ requestedSeats: parseInt(seatRequestSeats), reason: seatRequestReason }),
+                      body: JSON.stringify({ requestedSeats, reason: seatRequestReason }),
                     });
                     if (res.ok) {
                       setSeatRequestError(null);
@@ -595,10 +647,14 @@ export default function TeamTab({ advisor }: Props) {
                   }}
                   className="px-4 py-2 bg-violet-600 text-white font-semibold rounded-lg text-sm hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {seatRequestStatus === "sending" ? "Sending..." : "Request More Seats"}
+                  {seatRequestStatus === "sending" ? (seatBillingAvailable ? "Redirecting…" : "Sending...") : seatBillingAvailable ? "Add Seats" : "Request More Seats"}
                 </button>
                 {seatRequestError && <p role="alert" className="text-xs text-red-600">{seatRequestError}</p>}
-                <p className="text-[0.6rem] text-slate-500">Our team will review your request and update your seat limit within 1 business day. There&apos;s no charge for seat upgrades.</p>
+                <p className="text-[0.6rem] text-slate-500">
+                  {seatBillingAvailable
+                    ? "Seats are billed monthly per advisor. You'll be taken to secure checkout to confirm."
+                    : "Our team will review your request and update your seat limit within 1 business day. There's no charge for seat upgrades."}
+                </p>
               </div>
             )}
           </div>
