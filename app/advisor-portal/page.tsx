@@ -26,6 +26,7 @@ const BillingTab = dynamic(() => import("./BillingTab"));
 const SettingsTab = dynamic(() => import("./SettingsTab"));
 const TeamTab = dynamic(() => import("./TeamTab"));
 const WidgetBuilderTab = dynamic(() => import("./WidgetBuilderTab"));
+const EmbedKitTab = dynamic(() => import("./EmbedKitTab"));
 const CourseBuilderTab = dynamic(() => import("./CourseBuilderTab"));
 const EventsTab = dynamic(() => import("./EventsTab"));
 const BadgesTab = dynamic(() => import("./BadgesTab"));
@@ -292,6 +293,7 @@ export default function AdvisorPortalPage() {
     { key: "earn", label: "Earn", icon: "gift" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
     { key: "widgets", label: "Widgets", icon: "code-2" },
+    { key: "embed-kit", label: "Embed Kit", icon: "link" },
     { key: "settings", label: "Settings", icon: "settings" },
   ];
 
@@ -656,6 +658,11 @@ export default function AdvisorPortalPage() {
         {/* ─── WIDGETS ─── */}
         {view === "widgets" && (
           <WidgetBuilderTab />
+        )}
+
+        {/* ─── EMBED KIT ─── */}
+        {view === "embed-kit" && (
+          <EmbedKitTab />
         )}
 
       </div>
