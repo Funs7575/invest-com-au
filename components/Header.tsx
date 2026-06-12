@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import YourPlanChip from "@/components/YourPlanChip";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
@@ -8,6 +9,7 @@ import { CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import NotificationBell from "@/components/notifications/NotificationBell";
 import ThemeToggle from "@/components/ThemeToggle";
+import JourneyChip from "@/components/journey/JourneyChip";
 import WorkspaceSwitcher from "@/components/WorkspaceSwitcher";
 import { MegaMenu } from "@/components/MegaMenu";
 import type { MegaMenuSidebar } from "@/components/MegaMenu";
@@ -179,7 +181,7 @@ const platformsDropdown = [
   { label: "Broker vs Broker", href: "/versus", desc: "Head-to-head matchups" },
   { label: "Deals & Offers", href: "/deals", desc: "Current promotions" },
   { label: "Platform Reviews", href: "/reviews", desc: "User ratings & reviews" },
-  { label: "Platform Quiz", href: "/quiz", desc: "Get a platform match" },
+  { label: "Platform Quiz", href: "/get-matched", desc: "Get a platform match" },
   { label: "Best Broker For…", href: "/best-for", desc: "Ranked picks for 50+ scenarios" },
 ];
 
@@ -502,16 +504,22 @@ export default function Header() {
 
           {/* Desktop CTA + Theme */}
           <div className="hidden lg:flex items-center gap-3">
+            <JourneyChip />
             <WorkspaceSwitcher />
             <ThemeToggle />
             <NotificationBell />
-            <Link
-              href="/get-matched"
-              className="bg-amber-500 hover:bg-amber-600 text-slate-900 px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
-            >
-              {SHOW_MATCH_LANGUAGE ? "Get Matched" : "Take the quiz"}
-              <Icon name="arrow-right" size={16} />
-            </Link>
+            <YourPlanChip />
+            {/* Inside the funnel the header stops shouting "Take the quiz" —
+                the page owns its own progress UI (Northstar F1.4). */}
+            {!pathname?.startsWith("/get-matched") && (
+              <Link
+                href="/get-matched"
+                className="bg-amber-500 hover:bg-amber-600 text-slate-900 px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
+              >
+                {SHOW_MATCH_LANGUAGE ? "Get Matched" : "Take the quiz"}
+                <Icon name="arrow-right" size={16} />
+              </Link>
+            )}
           </div>
 
           {/* Mobile: Theme + Hamburger */}
@@ -571,6 +579,7 @@ export default function Header() {
               >
                 {SHOW_MATCH_LANGUAGE ? "Get Matched" : "Take the quiz"}
               </Link>
+              <YourPlanChip variant="menu-row" />
               <div className="flex gap-2">
                 <Link
                   href="/advisors"

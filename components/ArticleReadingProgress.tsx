@@ -3,10 +3,12 @@
 // ADV-170: Reading progress indicator — thin fixed bar that fills as user scrolls.
 // Attaches to an element via articleId (defaults to the main article column).
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { celebrateMilestone } from "@/lib/celebrate";
 
 export default function ArticleReadingProgress({ articleId = "article-body" }: { articleId?: string }) {
   const [progress, setProgress] = useState(0);
+  const firedRef = useRef(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +26,12 @@ export default function ArticleReadingProgress({ articleId = "article-body" }: {
       const scrolled = window.scrollY - elTop + window.innerHeight * 0.1;
       const pct = Math.min(100, Math.max(0, Math.round((scrolled / elH) * 100)));
       setProgress(pct);
+      // First guide genuinely read to the end (Northstar D7) — fires once
+      // ever via the milestone registry; scroll-to-90% is the signal.
+      if (pct >= 90 && !firedRef.current) {
+        firedRef.current = true;
+        celebrateMilestone("first_article");
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });

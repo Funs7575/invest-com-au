@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@/lib/hooks/useUser";
+import { useToast } from "@/components/Toast";
+import { fireJourneyMoment } from "@/components/journey/journeyMoment";
 import { getSessionId } from "@/lib/session";
+import { celebrateSave } from "@/lib/celebrate";
 
 interface Props {
   type: "article" | "broker" | "advisor" | "scenario" | "calculator" | "listing";
@@ -33,6 +36,7 @@ async function responseOk(res: Response): Promise<boolean> {
  */
 export default function BookmarkButton({ type, ref, label, className }: Props) {
   const { user, loading: userLoading } = useUser();
+  const { toast } = useToast();
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -107,6 +111,10 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
         });
         if (user && !(await responseOk(res))) {
           setSaved(!next);
+        } else {
+          // Journey moment on the first-ever save; quiet toast thereafter.
+          const moment = fireJourneyMoment("first_save");
+          if (!moment.isNew) toast(label ? `Saved ${label}` : "Saved to your shortlist", "success");
         }
       } else {
         if (!user) {
@@ -136,6 +144,7 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
           setSaved(!next);
         }
       }
+      celebrateSave({ saved: next, label });
     } catch {
       // Anonymous state lives in localStorage (already written above);
       // only revert when the server is the source of truth.
