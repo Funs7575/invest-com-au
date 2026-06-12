@@ -86,7 +86,7 @@ export function SiteFooter() {
             { label: "Annual Report", href: "/reports/annual" },
             { label: "Write a Review", href: "/reviews/write" },
             { label: "Foreign Investors", href: "/foreign-investment" },
-            { label: "Get Matched", href: "/quiz" },
+            { label: "Get Matched", href: "/get-matched" },
             { label: "Post a Request", href: "/quotes/post" },
           ]} />
 

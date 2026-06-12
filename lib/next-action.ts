@@ -179,7 +179,7 @@ export function buildNextActions(signals: NextActionSignals): NextAction[] {
       title: "Find the right platform in 60 seconds",
       description:
         "Answer a few questions about your goals and we'll show you the platforms that fit.",
-      href: "/quiz",
+      href: "/get-matched",
       cta: "Take the quiz",
       showAdviceWarning: false,
     });

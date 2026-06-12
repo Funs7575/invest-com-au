@@ -405,7 +405,7 @@ export default async function PersonalDashboardPage() {
   if (investorProfile?.isBusinessOwner) actions.push({ label: "Business investor tools", href: "/account/upgrade/business" });
   if (investorProfile?.isCrossBorder) actions.push({ label: "Cross-border investing hub", href: "/foreign-investment" });
   if (investorProfile?.isHnw) actions.push({ label: "Wholesale & private markets", href: "/wholesale" });
-  if (actions.length === 0) actions.push({ label: "Take our platform quiz to get personalised picks", href: "/quiz" });
+  if (actions.length === 0) actions.push({ label: "Take our platform quiz to get personalised picks", href: "/get-matched" });
   actions.push({ label: "Find a financial advisor near you", href: "/find-advisor" });
 
   // AT-02..04: account-type-specific resource hub

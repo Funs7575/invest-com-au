@@ -111,7 +111,7 @@ export default function HomeRouteCards({
       subtitle: "4 quick questions. We route you to the platform, opportunity, expert or guide that fits.",
       categories: [],
       cta: "Start the 4-question quiz",
-      href: "/quiz",
+      href: "/get-matched",
       icon: "sparkles",
       accent: "#f25822",
       badge: "60 seconds · Free · No email",

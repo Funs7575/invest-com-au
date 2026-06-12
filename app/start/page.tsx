@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function StartPage() {
-  redirect("/quiz");
+  redirect("/get-matched");
 }
