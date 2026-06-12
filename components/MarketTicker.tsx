@@ -49,7 +49,7 @@ export default function MarketTicker() {
         </div>
       </div>
       {/* Compliance disclaimer */}
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 text-[0.6rem] text-slate-500 hidden lg:block bg-slate-900 pl-4">
+      <div className="absolute right-2 top-1/2 -translate-y-1/2 text-[0.6rem] text-slate-400 hidden lg:block bg-slate-900 pl-4">
         Indicative only. Not financial advice.
       </div>
     </div>
