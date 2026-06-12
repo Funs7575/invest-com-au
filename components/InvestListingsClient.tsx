@@ -14,6 +14,7 @@ import {
   deriveListingKind,
   listingKindMeta,
   filterSpecForKind,
+  formatAudCompact,
   formatListingPrice,
   freshnessSignal,
 } from "@/lib/listing-kind";
@@ -28,7 +29,10 @@ import SortDropdown from "@/components/directory/SortDropdown";
 import FilterPanel from "@/components/directory/FilterPanel";
 import FacetGroup from "@/components/directory/FacetGroup";
 import {
+  canonicalEnumValue,
   filterableMetrics,
+  metricNumberByDef,
+  normaliseEnumToken,
   type VerticalMetricDef,
 } from "@/lib/listings/vertical-metrics";
 import RangeSlider from "@/components/directory/RangeSlider";
@@ -200,9 +204,11 @@ export default function InvestListingsClient({
     const rows = listings.filter((l) => categoryForListing(l) === activeCategory);
     for (const def of categoryMetricDefs) {
       if (def.filter !== "range") continue;
+      // Def-aware parse — legacy rows store display strings ("$680,000"),
+      // and a raw Number() would NaN them out of the facet's bounds.
       const vals = rows
-        .map((l) => Number(((l.key_metrics ?? {}) as Record<string, unknown>)[def.key]))
-        .filter((n) => Number.isFinite(n));
+        .map((l) => metricNumberByDef(def, ((l.key_metrics ?? {}) as Record<string, unknown>)[def.key]))
+        .filter((n): n is number => n != null);
       if (vals.length >= 2) {
         bounds[def.key] = { min: Math.floor(Math.min(...vals)), max: Math.ceil(Math.max(...vals)) };
       }
@@ -422,13 +428,16 @@ export default function InvestListingsClient({
           const [loS, hiS] = raw.split("-");
           const lo = Number(loS) || 0;
           const hi = hiS ? Number(hiS) || Infinity : Infinity;
-          const n = typeof v === "number" ? v : Number(v);
-          return Number.isFinite(n) && n >= lo && n <= hi;
+          const n = metricNumberByDef(def, v);
+          return n != null && n >= lo && n <= hi;
         }
         if (def.filter === "multi" || def.filter === "select") {
-          const norm = (x: string) => x.trim().toLowerCase().replace(/[\s_-]+/g, " ");
-          const wanted = new Set(raw.split(",").map(norm));
-          return wanted.has(norm(String(v ?? "")));
+          // Canonicalise both sides through the registry aliases so
+          // synonym rows ("producer" vs "production") stay in the facet.
+          const canonical = (token: string) =>
+            canonicalEnumValue(def, token) ?? normaliseEnumToken(token);
+          const wanted = new Set(raw.split(",").map(canonical));
+          return wanted.has(canonical(String(v ?? "")));
         }
         if (def.filter === "toggle") return v === true || v === "true";
         return true;
@@ -1339,7 +1348,9 @@ function InvestFilterFields({
                       onChangeHigh={(v) =>
                         setParams({ [param]: lo <= b.min && v >= b.max ? "" : `${lo}-${v}` })
                       }
-                      formatValue={(v) => v.toLocaleString("en-AU")}
+                      formatValue={(v) =>
+                        def.kind === "currency_cents" ? formatAudCompact(v) : v.toLocaleString("en-AU")
+                      }
                     />
                   );
                 }

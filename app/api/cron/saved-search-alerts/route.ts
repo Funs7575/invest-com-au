@@ -38,12 +38,11 @@ import {
   type SavedSearchKind,
   type SavedSearchRow,
 } from "@/lib/saved-searches";
-import { rawVerticalVariants, VERTICAL_TO_CATEGORY } from "@/lib/listing-url";
+import { categoryScope, listingUrl } from "@/lib/listing-url";
 import {
   parseInvestFilters,
   matchesInvestFilters,
 } from "@/lib/listings/saved-searches";
-import { listingUrl } from "@/lib/listing-url";
 
 const log = logger("cron:saved-search-alerts");
 
@@ -159,13 +158,19 @@ async function matchInvest(filters: Record<string, unknown>): Promise<MatchedPro
     .limit(500);
   if (parsed.state) q = q.ilike("location_state", parsed.state);
   // Scope category-bound searches server-side so the recency cap can't
-  // starve a less-active category out of its matches.
+  // starve a less-active category out of its matches. categoryScope
+  // covers derived categories too (alternatives/private-credit narrow on
+  // fund sub_categories, listed-securities on listing_kind) — without it
+  // those searches would scan the newest 500 rows across every sector and
+  // could stamp last_alerted_at having never seen their own matches. The
+  // scope over-fetches by design; matchesInvestFilters stays the arbiter.
   if (parsed.category && parsed.category !== "all") {
-    const verticals = Object.entries(VERTICAL_TO_CATEGORY)
-      .filter(([, cat]) => cat === parsed.category)
-      .map(([vertical]) => vertical)
-      .flatMap((v) => rawVerticalVariants(v));
-    if (verticals.length > 0) q = q.in("vertical", verticals);
+    const scope = categoryScope(parsed.category);
+    if (scope) {
+      if (scope.verticals.length > 0) q = q.in("vertical", scope.verticals);
+      if (scope.subCategories) q = q.in("sub_category", scope.subCategories);
+      if (scope.listingKind) q = q.eq("listing_kind", scope.listingKind);
+    }
   }
 
   const { data, error } = await q;

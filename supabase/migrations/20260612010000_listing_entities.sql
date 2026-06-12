@@ -31,8 +31,10 @@ CREATE TABLE IF NOT EXISTS public.listing_entities (
   highlight_stats jsonb NOT NULL DEFAULT '[]'::jsonb,
   verification_status text NOT NULL DEFAULT 'unverified',
   tier text NOT NULL DEFAULT 'free',
-  notification_email text,
-  notification_webhook_url text,
+  -- NOTE: no notification/contact columns here by design — every column on
+  -- this table is anon-readable via the public SELECT policy below, so
+  -- private operational fields (notification email, webhook URLs) must live
+  -- in a separate RLS-private table when the notifications wave ships.
   principal_id uuid REFERENCES public.principals(id) ON DELETE SET NULL,
   status text NOT NULL DEFAULT 'active',
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -87,22 +89,14 @@ CREATE POLICY "anon reads active entities" ON public.listing_entities
   FOR SELECT TO anon, authenticated
   USING (status = 'active');
 
--- Members manage their own entity rows; verification/tier stay service-role.
+-- No authenticated write policies — deliberately. A row-level UPDATE
+-- policy cannot stop an entity admin from setting service-controlled
+-- columns (verification_status='verified', tier='vetted'), because RLS is
+-- row-scoped, not column-scoped. Entity self-management ships in the UI
+-- wave as service-role API routes with explicit field allow-lists (the
+-- pattern every other mutation in this codebase uses); until then the
+-- only writer is service_role.
 DROP POLICY IF EXISTS "admin members update their entity" ON public.listing_entities;
-CREATE POLICY "admin members update their entity" ON public.listing_entities
-  FOR UPDATE TO authenticated
-  USING (EXISTS (
-    SELECT 1 FROM public.listing_entity_members m
-    WHERE m.entity_id = listing_entities.id
-      AND m.auth_user_id = (SELECT auth.uid())
-      AND m.role = 'admin' AND m.status = 'active'
-  ))
-  WITH CHECK (EXISTS (
-    SELECT 1 FROM public.listing_entity_members m
-    WHERE m.entity_id = listing_entities.id
-      AND m.auth_user_id = (SELECT auth.uid())
-      AND m.role = 'admin' AND m.status = 'active'
-  ));
 
 DROP POLICY IF EXISTS "service_role full access listing_entities" ON public.listing_entities;
 CREATE POLICY "service_role full access listing_entities" ON public.listing_entities

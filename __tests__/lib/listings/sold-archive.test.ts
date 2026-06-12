@@ -10,10 +10,14 @@ vi.mock("@/lib/logger", () => ({
 }));
 
 const limitMock = vi.fn();
+const inMock = vi.fn();
+const eqMock = vi.fn();
 const chain: Record<string, unknown> = {};
-for (const m of ["select", "eq", "in", "not", "order", "neq"]) {
+for (const m of ["select", "not", "order", "neq"]) {
   chain[m] = vi.fn(() => chain);
 }
+chain.in = inMock.mockImplementation(() => chain);
+chain.eq = eqMock.mockImplementation(() => chain);
 chain.limit = limitMock.mockImplementation(() => chain);
 // The awaited terminal — the chain itself is thenable.
 let chainResult: { data: unknown; error: { message: string } | null } = {
@@ -33,6 +37,7 @@ import {
   isMissingSoldColumnsError,
   mergeComparables,
   fetchSoldComparables,
+  fetchSoldArchive,
 } from "@/lib/listings/sold-archive";
 
 describe("buildSoldUpdates", () => {
@@ -116,5 +121,73 @@ describe("fetchSoldComparables", () => {
     const { createClient } = await import("@/lib/supabase/server");
     vi.mocked(createClient).mockRejectedValueOnce(new Error("network"));
     expect(await fetchSoldComparables("mining")).toEqual([]);
+  });
+});
+
+describe("fetchSoldArchive category scoping", () => {
+  beforeEach(() => {
+    chainResult = { data: [], error: null };
+    vi.clearAllMocks();
+  });
+
+  const soldRow = (over: Record<string, unknown>) => ({
+    id: 1,
+    slug: "x",
+    title: "X",
+    location_state: null,
+    location_city: null,
+    images: null,
+    vertical: "fund",
+    sub_category: null,
+    listing_kind: null,
+    key_metrics: null,
+    asking_price_cents: null,
+    sold_price_cents: null,
+    sold_at: null,
+    ...over,
+  });
+
+  it("scopes derived fund categories server-side (sub_category, not just vertical)", async () => {
+    chainResult = {
+      data: [
+        soldRow({ id: 1, sub_category: "private_credit" }),
+        // An art fund is the "alternatives" category — the post-filter
+        // must drop it even though the vertical scope admitted it.
+        soldRow({ id: 2, sub_category: "art" }),
+      ],
+      error: null,
+    };
+    const rows = await fetchSoldArchive({ category: "private-credit" });
+    expect(rows.map((r) => r.id)).toEqual([1]);
+    expect(inMock).toHaveBeenCalledWith("vertical", expect.arrayContaining(["fund"]));
+    expect(inMock).toHaveBeenCalledWith("sub_category", ["private_credit"]);
+    // Scoped queries over-fetch 2× then trim — the cap can't starve the
+    // category out of older matches the way a global newest-48 could.
+    expect(limitMock).toHaveBeenCalledWith(96);
+  });
+
+  it("scopes listed-securities by listing_kind alone", async () => {
+    chainResult = { data: [soldRow({ vertical: "uranium", listing_kind: "listed_security" })], error: null };
+    const rows = await fetchSoldArchive({ category: "listed-securities" });
+    expect(rows).toHaveLength(1);
+    expect(eqMock).toHaveBeenCalledWith("listing_kind", "listed_security");
+  });
+
+  it("keeps direct categories exact (a stray listed security filters out)", async () => {
+    chainResult = {
+      data: [
+        soldRow({ id: 1, vertical: "mining" }),
+        soldRow({ id: 2, vertical: "mining", listing_kind: "listed_security" }),
+      ],
+      error: null,
+    };
+    const rows = await fetchSoldArchive({ category: "mining" });
+    expect(rows.map((r) => r.id)).toEqual([1]);
+    expect(inMock).toHaveBeenCalledWith("vertical", ["mining"]);
+  });
+
+  it("fails soft pre-migration", async () => {
+    chainResult = { data: null, error: { message: 'column "sold_at" does not exist' } };
+    expect(await fetchSoldArchive({})).toEqual([]);
   });
 });

@@ -120,6 +120,45 @@ describe("matchesInvestFilters", () => {
     expect(matchesInvestFilters(lot, { metrics: { territory_exclusive: "1" } })).toBe(true);
   });
 
+  it("matches enum facets through registry aliases when the category is saved", () => {
+    const mine = {
+      ...farm,
+      vertical: "mining",
+      key_metrics: { stage: "producer", commodity: "gold" },
+    };
+    // The stored row says "producer"; a filter saved as the human noun
+    // ("production") must still match — and vice versa.
+    expect(
+      matchesInvestFilters(mine, { category: "mining", metrics: { stage: "production" } }),
+    ).toBe(true);
+    expect(
+      matchesInvestFilters(mine, { category: "mining", metrics: { stage: "producer" } }),
+    ).toBe(true);
+    expect(
+      matchesInvestFilters(mine, { category: "mining", metrics: { stage: "explorer" } }),
+    ).toBe(false);
+  });
+
+  it("parses legacy currency-string metrics for range facets", () => {
+    const biz = {
+      ...farm,
+      vertical: "business",
+      key_metrics: { annual_ebitda: "$680,000" }, // dollars → 68M cents
+    };
+    expect(
+      matchesInvestFilters(biz, {
+        category: "buy-business",
+        metrics: { annual_ebitda: "50000000-100000000" },
+      }),
+    ).toBe(true);
+    expect(
+      matchesInvestFilters(biz, {
+        category: "buy-business",
+        metrics: { annual_ebitda: "100000000-200000000" },
+      }),
+    ).toBe(false);
+  });
+
   it("parses m_<key> params out of raw saved filters", () => {
     expect(
       parseInvestFilters({ category: "farmland", m_hectares: "100-500", m_tenancy: "leased" }),

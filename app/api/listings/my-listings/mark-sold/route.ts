@@ -77,6 +77,13 @@ export async function POST(request: NextRequest) {
   if (listing.status === "sold") {
     return NextResponse.json({ ok: true, already_sold: true });
   }
+  if (listing.status !== "active") {
+    // Sold rows publish to the public archive — only live listings may
+    // transition. Letting a pending/expired/removed row through would
+    // bypass the moderation lifecycle. Same generic shape as not-found
+    // (the owner already sees their status in the portal).
+    return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+  }
 
   const updates = buildSoldUpdates(soldPriceCents);
   let { error: updateError } = await admin

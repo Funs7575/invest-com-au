@@ -19,7 +19,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
-import { categoryForListing, rawVerticalVariants, VERTICAL_TO_CATEGORY } from "@/lib/listing-url";
+import { categoryForListing, categoryScope, rawVerticalVariants } from "@/lib/listing-url";
 import { formatAudCompact } from "@/lib/listing-kind";
 import type { ComparableSale } from "@/lib/listings/lot-profile";
 import { logger } from "@/lib/logger";
@@ -216,6 +216,13 @@ export async function fetchSoldArchive(opts: {
   const limit = opts.limit ?? 48;
   try {
     const supabase = await createClient();
+    // categoryScope narrows the candidate set server-side (verticals for
+    // direct categories, fund-vertical + sub_category for derived ones,
+    // listing_kind for listed securities) so the recency cap can't starve
+    // a category of its own sales. The scope deliberately over-fetches —
+    // categoryForListing post-filters to exactness below — so scoped
+    // queries pull 2× and trim after.
+    const scope = opts.category ? categoryScope(opts.category) : null;
     let query = supabase
       .from("investment_listings")
       .select(
@@ -223,25 +230,11 @@ export async function fetchSoldArchive(opts: {
       )
       .eq("status", "sold")
       .order("sold_at", { ascending: false, nullsFirst: false })
-      .limit(limit);
-    let derivedCategory: string | null = null;
-    if (opts.category) {
-      // Inverse of VERTICAL_TO_CATEGORY: every canonical vertical whose
-      // category matches, expanded to its drifted raw variants. Derived
-      // categories (fund subcategories, listed-securities) have no inverse
-      // rows — those filter post-query via categoryForListing instead of
-      // silently showing everything.
-      const verticals = Object.entries(VERTICAL_TO_CATEGORY)
-        .filter(([, cat]) => cat === opts.category)
-        .map(([vertical]) => vertical);
-      if (verticals.length > 0) {
-        query = query.in(
-          "vertical",
-          verticals.flatMap((v) => rawVerticalVariants(v)),
-        );
-      } else {
-        derivedCategory = opts.category;
-      }
+      .limit(opts.category ? limit * 2 : limit);
+    if (scope) {
+      if (scope.verticals.length > 0) query = query.in("vertical", scope.verticals);
+      if (scope.subCategories) query = query.in("sub_category", scope.subCategories);
+      if (scope.listingKind) query = query.eq("listing_kind", scope.listingKind);
     }
     const { data, error } = await query;
     if (error) {
@@ -251,8 +244,8 @@ export async function fetchSoldArchive(opts: {
       return [];
     }
     const rows = (data ?? []) as RecentlySoldRow[];
-    return derivedCategory
-      ? rows.filter((row) => categoryForListing(row) === derivedCategory).slice(0, limit)
+    return opts.category
+      ? rows.filter((row) => categoryForListing(row) === opts.category).slice(0, limit)
       : rows;
   } catch (err) {
     log.warn("fetchSoldArchive threw", {

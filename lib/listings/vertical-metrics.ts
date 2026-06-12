@@ -39,8 +39,15 @@ export interface VerticalMetricDef {
   unit?: string;
   /** Render as a browse filter — and which control. Omit = spec-only. */
   filter?: MetricFilter;
-  /** Options for enum metrics (select/multi filters). */
-  enumValues?: ReadonlyArray<{ value: string; label: string }>;
+  /**
+   * Options for enum metrics (select/multi filters). `value` is the
+   * canonical stored vocabulary (what production rows actually contain);
+   * `aliases` are other stored/param spellings that count as the same
+   * option — matching always canonicalises through
+   * {@link canonicalEnumValue}, so synonym rows are never silently
+   * excluded from a facet.
+   */
+  enumValues?: ReadonlyArray<{ value: string; label: string; aliases?: readonly string[] }>;
   /** This metric is the denominator for the category's $/unit figure. */
   perUnitDenominator?: boolean;
   /** Wizard placement (#15); undefined = details step. */
@@ -100,10 +107,12 @@ const MINING: readonly VerticalMetricDef[] = [
     { value: "iron_ore", label: "Iron ore" },
     { value: "rare_earths", label: "Rare earths" },
   ] },
+  // Values match the stored vocabulary ("explorer"/"developer"/"producer"
+  // — census 2026-06-12); aliases keep the human-noun spellings matching.
   { key: "stage", label: "Stage", kind: "enum", filter: "multi", wizardStep: "core", qualitySignal: true, enumValues: [
-    { value: "exploration", label: "Exploration" },
-    { value: "development", label: "Development" },
-    { value: "production", label: "Production" },
+    { value: "explorer", label: "Exploration", aliases: ["exploration"] },
+    { value: "developer", label: "Development", aliases: ["development"] },
+    { value: "producer", label: "Production", aliases: ["production"] },
   ] },
   { key: "jorc_stage", label: "JORC classification", kind: "enum", filter: "select", wizardStep: "details", forward: true, enumValues: [
     { value: "inferred", label: "Inferred" },
@@ -114,10 +123,13 @@ const MINING: readonly VerticalMetricDef[] = [
 
 const RENEWABLE_ENERGY: readonly VerticalMetricDef[] = [
   { key: "capacity_mw", label: "Capacity", kind: "number", unit: "MW", filter: "range", perUnitDenominator: true, wizardStep: "core", qualitySignal: true },
+  // Stored vocabulary is "operational"/"planning" (census 2026-06-12);
+  // "operating" drifts in from the digital-infrastructure seeds and
+  // "construction" is collected forward by the wizard.
   { key: "stage", label: "Stage", kind: "enum", filter: "multi", wizardStep: "core", enumValues: [
-    { value: "development", label: "Development" },
-    { value: "construction", label: "Construction" },
-    { value: "operating", label: "Operating" },
+    { value: "planning", label: "In planning", aliases: ["development"] },
+    { value: "construction", label: "Under construction" },
+    { value: "operational", label: "Operating", aliases: ["operating"] },
   ] },
 ];
 
@@ -153,27 +165,92 @@ export function filterableMetrics(categorySlug: string): readonly VerticalMetric
   return metricsForCategory(categorySlug).filter((m) => m.filter);
 }
 
+// ─── Tolerant value parsing ───────────────────────────────────────────────
+//
+// key_metrics is seller-entered jsonb: numeric metrics arrive as numbers
+// in new rows but as display strings in legacy rows ("$680,000", "9.2%",
+// "1,234"). Everything that ranks, bounds, filters or formats a metric
+// must go through these parsers — a raw `Number(...)` turns those rows
+// into NaN and silently drops them from facets and compare tables.
+
+/** Lenient numeric parse: numbers pass through; strings shed currency
+ *  symbols, thousands separators and a trailing %. Null when unparseable
+ *  — callers must treat null as "absent", never as 0. */
+export function metricNumber(raw: unknown): number | null {
+  if (typeof raw === "number") return Number.isFinite(raw) ? raw : null;
+  if (typeof raw !== "string") return null;
+  const cleaned = raw.trim().replace(/^(au[d$]?|a\$)\s*/i, "").replace(/[$,\s]/g, "").replace(/%$/, "");
+  if (cleaned === "" || !/^-?\d+(\.\d+)?$/.test(cleaned)) return null;
+  const n = Number(cleaned);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Cents for a currency metric. Numbers are already cents (the stored
+ *  vocabulary: annual_ebitda / min_investment_cents numeric rows are
+ *  cents — see ListingCard's formatCents precedent). Display strings are
+ *  dollars ("$680,000" → 68_000_000¢): the $ sign, separators or a
+ *  decimal point mark the dollars spelling; a bare integer string
+ *  mirrors numeric storage and stays cents. */
+export function metricCents(raw: unknown): number | null {
+  if (typeof raw === "number") return Number.isFinite(raw) ? raw : null;
+  if (typeof raw !== "string") return null;
+  const isDollars = /[$,.]|^au/i.test(raw.trim());
+  const n = metricNumber(raw);
+  if (n == null) return null;
+  return isDollars ? Math.round(n * 100) : n;
+}
+
+/** Dispatch on the def's kind: currency metrics parse to cents, the rest
+ *  to plain numbers. */
+export function metricNumberByDef(def: VerticalMetricDef, raw: unknown): number | null {
+  return def.kind === "currency_cents" ? metricCents(raw) : metricNumber(raw);
+}
+
+/** Shared token normalisation for enum matching — case/separator
+ *  insensitive ("multi_tenant" ≡ "Multi Tenant" ≡ "multi-tenant"). */
+export function normaliseEnumToken(x: string): string {
+  return x.trim().toLowerCase().replace(/[\s_-]+/g, " ");
+}
+
+/**
+ * Canonical option value for a raw stored value or filter token, matching
+ * against each option's value AND aliases (normalised). Null when the def
+ * has no enum vocabulary or nothing matches — callers fall back to plain
+ * normalised comparison so unknown values still match themselves.
+ */
+export function canonicalEnumValue(def: VerticalMetricDef, raw: unknown): string | null {
+  if (!def.enumValues || raw == null) return null;
+  const token = normaliseEnumToken(String(raw));
+  if (token === "") return null;
+  for (const option of def.enumValues) {
+    if (normaliseEnumToken(option.value) === token) return option.value;
+    if (option.aliases?.some((a) => normaliseEnumToken(a) === token)) return option.value;
+  }
+  return null;
+}
+
 /** Format a raw key_metrics value per its definition (spec tables, cards). */
 export function formatMetricByDef(def: VerticalMetricDef, raw: unknown): string | null {
   if (raw == null || raw === "") return null;
   switch (def.kind) {
     case "percent": {
-      const n = typeof raw === "number" ? raw : Number(raw);
-      return Number.isFinite(n) ? `${n.toFixed(n < 10 ? 1 : 0)}%` : null;
+      const n = metricNumber(raw);
+      return n != null ? `${n.toFixed(n < 10 ? 1 : 0)}%` : null;
     }
     case "currency_cents": {
-      const n = typeof raw === "number" ? raw : Number(raw);
-      return Number.isFinite(n) && n > 0 ? formatAudCompact(n) : null;
+      const n = metricCents(raw);
+      return n != null && n > 0 ? formatAudCompact(n) : null;
     }
     case "number": {
-      const n = typeof raw === "number" ? raw : Number(raw);
-      if (!Number.isFinite(n)) return null;
+      const n = metricNumber(raw);
+      if (n == null) return null;
       return `${n.toLocaleString("en-AU")}${def.unit ? ` ${def.unit}` : ""}`;
     }
     case "boolean":
       return raw === true || raw === "true" ? "Yes" : "No";
     case "enum": {
-      const match = def.enumValues?.find((e) => e.value === String(raw));
+      const canonical = canonicalEnumValue(def, raw);
+      const match = def.enumValues?.find((e) => e.value === canonical);
       return match?.label ?? String(raw);
     }
     default:
@@ -214,9 +291,8 @@ export function pricePerUnit(listing: PerUnitInput): PricePerUnit | null {
   const def = metricsForCategory(category).find((m) => m.perUnitDenominator);
   if (!def) return null;
 
-  const raw = (listing.key_metrics ?? {})[def.key];
-  const denom = typeof raw === "number" ? raw : Number(raw);
-  if (!Number.isFinite(denom) || denom <= 0) return null;
+  const denom = metricNumber((listing.key_metrics ?? {})[def.key]);
+  if (denom == null || denom <= 0) return null;
 
   const centsPerUnit = price / denom;
   const unit = def.unit ?? "unit";

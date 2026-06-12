@@ -16,6 +16,14 @@
 
 import { categoryForListing } from "@/lib/listing-url";
 import { deriveListingKind, ticketBucketByKey } from "@/lib/listing-kind";
+import {
+  canonicalEnumValue,
+  metricNumber,
+  metricNumberByDef,
+  metricsForCategory,
+  normaliseEnumToken,
+  type VerticalMetricDef,
+} from "@/lib/listings/vertical-metrics";
 
 /** Raw saved filters — URL-param strings, all optional. `metrics` carries
  *  any registry facet params (`m_<key>`), interpreted by value shape. */
@@ -81,18 +89,28 @@ function isWholesaleOnly(km: Record<string, unknown>): boolean {
 }
 
 /** Interpret one saved `m_<key>` facet by value shape: "lo-hi" numeric
- *  range, "1" toggle, otherwise CSV membership. */
-function matchesMetricParam(km: Record<string, unknown>, key: string, raw: string): boolean {
+ *  range, "1" toggle, otherwise CSV membership. The registry def (when the
+ *  category resolves one) makes the comparison vocabulary-aware: currency
+ *  metrics parse legacy "$680,000" strings to cents, and enum membership
+ *  canonicalises both sides through the option aliases so synonym rows
+ *  ("producer" vs "production") still match. */
+function matchesMetricParam(
+  km: Record<string, unknown>,
+  key: string,
+  raw: string,
+  def?: VerticalMetricDef,
+): boolean {
   const v = km[key];
   const range = raw.match(/^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)$/);
   if (range) {
-    const n = typeof v === "number" ? v : Number(v);
-    return Number.isFinite(n) && n >= Number(range[1]) && n <= Number(range[2]);
+    const n = def ? metricNumberByDef(def, v) : metricNumber(v);
+    return n != null && n >= Number(range[1]) && n <= Number(range[2]);
   }
   if (raw === "1") return v === true || v === "true";
-  const norm = (x: string) => x.trim().toLowerCase().replace(/[\s_-]+/g, " ");
-  const wanted = new Set(raw.split(",").map(norm).filter(Boolean));
-  return wanted.has(norm(String(v ?? "")));
+  const canonicalToken = (token: string): string =>
+    (def ? canonicalEnumValue(def, token) : null) ?? normaliseEnumToken(token);
+  const wanted = new Set(raw.split(",").map(canonicalToken).filter(Boolean));
+  return wanted.has(canonicalToken(String(v ?? "")));
 }
 
 export function matchesInvestFilters(
@@ -136,8 +154,15 @@ export function matchesInvestFilters(
     if (isWholesaleOnly(km) && km["open_to_retail"] !== true) return false;
   }
   if (filters.metrics) {
+    // Metric facets only render on category-locked browse pages, so the
+    // saved category resolves the registry defs; a def-less key (stale
+    // param, "all" category) falls back to shape-based matching.
+    const defs =
+      filters.category && filters.category !== "all"
+        ? metricsForCategory(filters.category)
+        : [];
     for (const [key, raw] of Object.entries(filters.metrics)) {
-      if (!matchesMetricParam(km, key, raw)) return false;
+      if (!matchesMetricParam(km, key, raw, defs.find((d) => d.key === key))) return false;
     }
   }
   if (filters.q) {

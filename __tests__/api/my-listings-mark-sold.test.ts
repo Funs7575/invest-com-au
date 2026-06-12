@@ -111,6 +111,22 @@ describe("POST /api/listings/my-listings/mark-sold", () => {
     expect(updateMock).not.toHaveBeenCalled();
   });
 
+  it("refuses to publish non-active listings into the sold archive", async () => {
+    // pending/expired/removed rows haven't passed (or have left) the
+    // moderation lifecycle — mark-sold must not be a side door to the
+    // public archive surfaces.
+    for (const status of ["pending", "expired", "removed", "draft"]) {
+      sessionMock.mockResolvedValueOnce({ kind: "otp", email: "owner@example.com" });
+      maybeSingleMock.mockResolvedValueOnce({
+        data: { id: 12, contact_email: "owner@example.com", status },
+        error: null,
+      });
+      const res = await POST(request({ listing_id: 12 }));
+      expect(res.status, status).toBe(404);
+    }
+    expect(updateMock).not.toHaveBeenCalled();
+  });
+
   it("retries status-only when the archive columns are missing (pre-migration)", async () => {
     sessionMock.mockResolvedValueOnce({ kind: "otp", email: "owner@example.com" });
     maybeSingleMock.mockResolvedValueOnce({
