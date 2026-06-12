@@ -137,8 +137,8 @@ export default async function WrappedPage() {
   }
 
   const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", item: absoluteUrl("/") },
-    { name: "Money Wrapped", item: absoluteUrl("/wrapped") },
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Money Wrapped", url: absoluteUrl("/wrapped") },
   ]);
 
   return (
