@@ -3,6 +3,8 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useMoneyProfilePrefill } from "@/hooks/use-money-profile";
+import MoneyProfileChip from "@/components/MoneyProfileChip";
 import { useCalculatorHistory } from "@/hooks/use-calculator-history";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import CalculatorShareButton from "@/components/CalculatorShareButton";
@@ -50,6 +52,22 @@ export default function CompoundInterestClient() {
   useEffect(() => {
     setPersistedInputs({ principal, rate, years, monthly, freq });
   }, [principal, rate, years, monthly, freq, setPersistedInputs]);
+
+  // Money Profile prefill — starting balance from savings, monthly amount
+  // from saved monthly savings; only while the inputs are pristine.
+  const moneyPrefill = useMoneyProfilePrefill({
+    hydrated: persistHydrated,
+    current: persistedInputs,
+    defaults: { principal: 10_000, rate: 7, years: 20, monthly: 200, freq: 12 },
+    build: (p) => ({
+      principal: p.savings_balance,
+      monthly: p.monthly_savings,
+    }),
+    apply: (patch) => {
+      if (typeof patch.principal === "number") setPrincipal(patch.principal);
+      if (typeof patch.monthly === "number") setMonthly(patch.monthly);
+    },
+  });
 
   type CompoundInputs = { principal: number; rate: number; years: number; monthly: number; freq: number };
   const {
@@ -106,6 +124,8 @@ export default function CompoundInterestClient() {
             rate and time period to model different scenarios.
           </p>
         </div>
+
+        <MoneyProfileChip prefill={moneyPrefill} />
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
           {/* Inputs */}

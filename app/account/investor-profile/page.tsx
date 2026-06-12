@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getInvestorProfile } from "@/lib/investor-profiles";
+import {
+  loadMoneyProfileForUser,
+  moneyProfileCoverage,
+  type MoneyProfileQueryClient,
+} from "@/lib/money-profile";
 import InvestorProfileForm from "./InvestorProfileForm";
+import MoneyDetailsForm from "./MoneyDetailsForm";
 import ShareProfileButton from "@/components/ShareProfileButton";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +25,7 @@ export default async function InvestorProfilePage() {
     redirect("/auth/login?next=/account/investor-profile");
   }
 
-  const [profile, tokensRes] = await Promise.all([
+  const [profile, tokensRes, moneyProfile] = await Promise.all([
     getInvestorProfile(user.id),
     supabase
       .from("profile_share_tokens")
@@ -27,6 +33,7 @@ export default async function InvestorProfilePage() {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(10),
+    loadMoneyProfileForUser(user.id, supabase as unknown as MoneyProfileQueryClient),
   ]);
 
   const initialTokens = (tokensRes.data ?? []) as Array<{
@@ -52,6 +59,10 @@ export default async function InvestorProfilePage() {
           </p>
         </header>
         <InvestorProfileForm initial={profile} />
+        <MoneyDetailsForm
+          initial={moneyProfile}
+          initialCoverage={moneyProfileCoverage(moneyProfile)}
+        />
         <div className="mt-8">
           <ShareProfileButton initialTokens={initialTokens} />
         </div>

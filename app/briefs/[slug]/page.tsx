@@ -22,6 +22,11 @@ import {
 } from "@/lib/disputes";
 
 import { listMessagesForBrief, type BriefMessageRow } from "@/lib/brief-messages";
+import {
+  getBriefActivity,
+  getMedianAcceptHours,
+  type BriefActivity,
+} from "@/lib/briefs/activity";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import DirectoryHero from "@/components/directory/DirectoryHero";
 import Icon from "@/components/Icon";
@@ -250,6 +255,29 @@ export default async function BriefTrackerPage({
 
   const stepIndex = STATUS_ORDER.indexOf(brief.tracker_status);
 
+  // ── Trust Centre activity (owner-only, pre-acceptance) ──────────────
+  // Aggregate counts only — adviser identities are never shown before
+  // acceptance. Median accept time is suppressed below a minimum sample.
+  let activity: BriefActivity | null = null;
+  let medianHours: number | null = null;
+  if (
+    emailMatches &&
+    !brief.accepted_at &&
+    brief.status !== "closed" &&
+    brief.status !== "withdrawn"
+  ) {
+    [activity, medianHours] = await Promise.all([
+      getBriefActivity(brief.id),
+      getMedianAcceptHours(brief.brief_template ?? null),
+    ]);
+  }
+  const medianLabel =
+    medianHours === null
+      ? null
+      : medianHours < 48
+        ? `${medianHours} hour${medianHours === 1 ? "" : "s"}`
+        : `${Math.round(medianHours / 24)} days`;
+
   // Load chat messages when the brief is accepted and the viewer is one
   // of the two parties: the consumer (emailMatches) or the accepted pro.
   // We determine "is accepted pro" server-side by checking whether the
@@ -369,13 +397,35 @@ export default async function BriefTrackerPage({
                   !accepted.professional &&
                   brief.status !== "closed" &&
                   brief.status !== "withdrawn" && (
-                    <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs leading-relaxed text-slate-600">
-                      <span className="font-semibold text-slate-700">What happens next:</span>{" "}
-                      Verified providers who match your request are reviewing it now. You&apos;ll
-                      get an email the moment one accepts — their contact details then appear
-                      here and you can message them or book a call. Most requests see a
-                      response within a couple of business days.
-                    </div>
+                    <>
+                      {activity && activity.reached > 0 && (
+                        <div className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs leading-relaxed text-emerald-900">
+                          <span className="font-semibold">Activity:</span> Your
+                          request has reached{" "}
+                          <strong>
+                            {activity.reached} adviser
+                            {activity.reached === 1 ? "" : "s"}
+                          </strong>
+                          {activity.viewed > 0 && (
+                            <>
+                              {" "}
+                              — <strong>{activity.viewed}</strong> opened the full
+                              details
+                            </>
+                          )}
+                          .
+                        </div>
+                      )}
+                      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs leading-relaxed text-slate-600">
+                        <span className="font-semibold text-slate-700">What happens next:</span>{" "}
+                        Verified providers who match your request are reviewing it now. You&apos;ll
+                        get an email the moment one accepts — their contact details then appear
+                        here and you can message them or book a call.{" "}
+                        {medianLabel
+                          ? `Similar requests are typically accepted within about ${medianLabel}.`
+                          : "Most requests see a response within a couple of business days."}
+                      </div>
+                    </>
                   )}
 
                 {/* Accepted-but-no-booking nudge (B6) — once a provider accepts,

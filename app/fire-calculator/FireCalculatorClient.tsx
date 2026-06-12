@@ -3,6 +3,8 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useMoneyProfilePrefill } from "@/hooks/use-money-profile";
+import MoneyProfileChip from "@/components/MoneyProfileChip";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 function fmt(n: number) {
@@ -60,6 +62,31 @@ export default function FireCalculatorClient() {
     });
   }, [currentAge, currentSavings, annualSavings, annualExpenses, returnRate, withdrawalRate, setPersistedInputs]);
 
+  // Money Profile prefill — age / investable assets / savings rate, applied
+  // only while the inputs are still pristine (never clobbers saved state).
+  const moneyPrefill = useMoneyProfilePrefill({
+    hydrated: persistHydrated,
+    current: persistedInputs,
+    defaults: {
+      current_age: 30,
+      current_savings: 50_000,
+      annual_savings: 30_000,
+      annual_expenses: 60_000,
+      return_rate: 7,
+      withdrawal_rate: 4,
+    },
+    build: (p) => ({
+      current_age: p.age,
+      current_savings: p.investable_assets,
+      annual_savings: p.monthly_savings !== null ? p.monthly_savings * 12 : null,
+    }),
+    apply: (patch) => {
+      if (typeof patch.current_age === "number") setCurrentAge(patch.current_age);
+      if (typeof patch.current_savings === "number") setCurrentSavings(patch.current_savings);
+      if (typeof patch.annual_savings === "number") setAnnualSavings(patch.annual_savings);
+    },
+  });
+
   const result = useMemo(() => {
     const r = returnRate / 100;
     const wr = withdrawalRate / 100;
@@ -116,6 +143,8 @@ export default function FireCalculatorClient() {
             Uses the 4% safe withdrawal rule — adjust to 3.5% for a more conservative Australian approach.
           </p>
         </div>
+
+        <MoneyProfileChip prefill={moneyPrefill} />
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
           {/* Inputs */}

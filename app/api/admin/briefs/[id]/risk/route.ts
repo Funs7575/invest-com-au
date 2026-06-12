@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { resolveEligibleProviders } from "@/lib/briefs/routing";
+import { runStandingOrdersForBrief } from "@/lib/briefs/standing-orders";
 import { sendProviderNewMatchRequest } from "@/lib/marketplace-emails";
 import { sendEmail } from "@/lib/resend";
 import { SITE_URL } from "@/lib/seo";
@@ -89,6 +90,14 @@ export async function POST(
       // Now that the brief is cleared, fan-out to eligible providers and
       // tell the consumer their request is live.
       void notifyOnApproval(brief as BriefRow);
+      // Standing orders may instant-accept the newly approved brief.
+      // Flag-gated + capped inside the engine; never blocks the response.
+      void runStandingOrdersForBrief(briefId).catch((err) => {
+        log.warn("runStandingOrdersForBrief failed", {
+          briefId,
+          err: err instanceof Error ? err.message : String(err),
+        });
+      });
     } else {
       void notifyOnRejection(brief as BriefRow, parsed.data.note ?? null);
     }

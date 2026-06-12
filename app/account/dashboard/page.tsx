@@ -4,6 +4,11 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { enforcePortalKind } from "@/lib/portal-gate";
 import { getInvestorProfile, type InvestorProfile } from "@/lib/investor-profiles";
+import {
+  loadMoneyProfileForUser,
+  moneyProfileCoverage,
+  type MoneyProfileQueryClient,
+} from "@/lib/money-profile";
 import { getInvestorAccountType, type InvestorAccountType } from "@/lib/account-types";
 import SmartRecommendationsStrip from "@/components/SmartRecommendationsStrip";
 
@@ -269,6 +274,7 @@ export default async function PersonalDashboardPage() {
     watchlistRes,
     investorProfile,
     briefsRes,
+    moneyProfile,
   ] = await Promise.all([
     supabase.from("user_profiles").select("display_name, investing_experience, investment_goals, portfolio_size, interested_in, state, onboarding_completed").eq("id", user.id).maybeSingle(),
     supabase.from("investor_goals").select("id, label, goal_type, target_cents, current_balance_cents, target_date").order("target_date", { ascending: true }),
@@ -285,7 +291,9 @@ export default async function PersonalDashboardPage() {
           .select("id, tracker_status", { count: "exact" })
           .eq("contact_email", user.email)
       : Promise.resolve({ data: [], count: 0 }),
+    loadMoneyProfileForUser(user.id, supabase as unknown as MoneyProfileQueryClient),
   ]);
+  const moneyCoverage = moneyProfileCoverage(moneyProfile);
 
   const profile = profileRes.data as UserProfile | null;
   const goals = (goalsRes.data ?? []) as GoalRow[];
@@ -473,6 +481,31 @@ export default async function PersonalDashboardPage() {
             emptyHint="File your first brief"
           />
         </div>
+
+        {/* Money Profile coverage — the data that powers calculator prefill.
+            Hidden once complete; each missing chip deep-links to the single
+            place that field is maintained. */}
+        {moneyCoverage.missing.length > 0 && (
+          <div className="mt-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <p className="text-xs text-slate-600">
+                <span className="font-semibold text-slate-800">
+                  Money Profile {moneyCoverage.pct}% complete.
+                </span>{" "}
+                Calculators across the site pre-fill from it — add the rest:
+              </p>
+              {moneyCoverage.missing.slice(0, 5).map((m) => (
+                <Link
+                  key={m.label}
+                  href={m.href}
+                  className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-100"
+                >
+                  + {m.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Benchmarking strip — "how you compare" against anonymised
@@ -708,6 +741,7 @@ export default async function PersonalDashboardPage() {
           <NavCard href="/account/watchlist" emoji="📈" label="Watchlist" desc="Stocks, ETFs, funds on your radar" />
           <NavCard href="/account/alerts" emoji="📉" label="Alerts" desc="Rate & fee alerts you've set" />
           <NavCard href="/account/bookmarks" emoji="🔖" label="Reading List" desc="Saved articles and guides" />
+          <NavCard href="/account/advisers" emoji="🤝" label="My Advisers" desc="Relationships from your Match Requests" />
           <NavCard href="/account/quizzes" emoji="📝" label="Quiz History" desc="Platform quiz results" />
           <NavCard href="/account/notifications" emoji="🔔" label="Notifications" desc="Email preferences and alerts" />
           <NavCard href="/account/referrals" emoji="🎁" label="Referrals" desc="Invite friends, earn rewards" />
