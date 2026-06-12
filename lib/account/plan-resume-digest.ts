@@ -12,6 +12,8 @@
  * tests can pin the copy without mocking the DB.
  */
 
+import type { DripVariant } from "@/lib/getmatched/drip-lane";
+
 export interface DigestCandidate {
   plan_id: number;
   auth_user_id: string;
@@ -27,6 +29,8 @@ export function renderDigestEmail(candidate: {
   intent_slug: string | null;
   share_token: string;
   baseUrl: string;
+  /** Lane-aware variant (§3). Omit for the default copy. */
+  variant?: DripVariant;
 }): { subject: string; html: string } {
   const goalLine = candidate.goal
     ? candidate.goal
@@ -34,13 +38,18 @@ export function renderDigestEmail(candidate: {
       ? candidate.intent_slug.replace(/_/g, " ")
       : "your action plan";
   const url = `${candidate.baseUrl.replace(/\/$/, "")}/plans/${candidate.share_token}`;
-  const subject = `Pick up where you left off — ${goalLine}`;
+  const variant = candidate.variant;
+  const subjectLead = variant?.subjectLead ?? "Pick up where you left off";
+  const subject = `${subjectLead} — ${goalLine}`;
+  const intro = variant?.intro
+    ? escapeHtml(variant.intro)
+    : `You started building an investment action plan for <strong>${escapeHtml(goalLine)}</strong> but didn't finish.`;
   const html = `
     <p>Hi,</p>
-    <p>You started building an investment action plan for <strong>${escapeHtml(goalLine)}</strong> but didn't finish.</p>
+    <p>${intro}</p>
     <p>It takes under a minute to wrap up, and you'll see your matched route + recommended next steps straight after.</p>
     <p><a href="${url}" style="display:inline-block;background:#f59e0b;color:#0f172a;padding:12px 24px;border-radius:12px;text-decoration:none;font-weight:700;">Resume my plan</a></p>
-    <p style="color:#64748b;font-size:12px;margin-top:24px;">You're getting this because you saved a plan on Invest.com.au. Reply to opt out.</p>
+    <p style="color:#64748b;font-size:12px;margin-top:24px;">General information only — not financial advice. You're getting this because you saved a plan on Invest.com.au. Reply to opt out.</p>
   `.trim();
   return { subject, html };
 }
