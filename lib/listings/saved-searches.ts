@@ -83,11 +83,6 @@ export function matchesInvestFilters(
   return true;
 }
 
-/** Stable signature of a matched-id set — `last_match_signature` dedupe. */
-export function matchSignature(ids: number[]): string {
-  return [...ids].sort((a, b) => a - b).join(",");
-}
-
 /** Human summary for the email subject when the row has no label. */
 export function describeInvestFilters(filters: InvestSearchFilters): string {
   const parts: string[] = [];

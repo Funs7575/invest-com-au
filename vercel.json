@@ -33,10 +33,6 @@
       "schedule": "30 * * * *"
     },
     {
-      "path": "/api/cron/dispatch/hourly-40",
-      "schedule": "40 * * * *"
-    },
-    {
       "path": "/api/cron/dispatch/daily-0",
       "schedule": "0 0 * * *"
     },

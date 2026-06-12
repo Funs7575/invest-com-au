@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   parseInvestFilters,
   matchesInvestFilters,
-  matchSignature,
   describeInvestFilters,
 } from "@/lib/listings/saved-searches";
 
@@ -81,13 +80,6 @@ describe("matchesInvestFilters", () => {
 
   it("ignores an unknown ticket-bucket key (defaults to any)", () => {
     expect(matchesInvestFilters(farm, { price: "not-a-bucket" })).toBe(true);
-  });
-});
-
-describe("matchSignature", () => {
-  it("is order-independent and stable", () => {
-    expect(matchSignature([3, 1, 2])).toBe("1,2,3");
-    expect(matchSignature([1, 2, 3])).toBe(matchSignature([3, 2, 1]));
   });
 });
 
