@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import SinceYouWereHere from "@/components/SinceYouWereHere";
 import { getActiveBrokersListing } from "@/lib/cached-data";
 import HomeHero from "@/components/HomeHero";
 import HomeRouteCards from "@/components/HomeRouteCards";
@@ -212,6 +213,9 @@ export default async function HomePage() {
           static content below. The single welcome-back surface — saved
           items, quiz resume and recommendations all live here. */}
       <HomepagePersonalisedStrip />
+      {/* D10: factual fee changes on brokers this visitor actually viewed
+          (anonymous, localStorage-diffed). Renders nothing without a change. */}
+      <SinceYouWereHere />
 
       <HomeHero
         topBrokers={topBrokersForHero}

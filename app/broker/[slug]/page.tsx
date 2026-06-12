@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import FeeMemoryTrigger from "@/components/FeeMemoryTrigger";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
@@ -346,6 +347,9 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
 
   return (
     <>
+      {/* D10: remember the fee the visitor saw, so the homepage can
+          factually report changes on their next visit. */}
+      <FeeMemoryTrigger slug={b.slug} name={b.name} asxFee={b.asx_fee_value ?? null} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(financialProductLd) }}

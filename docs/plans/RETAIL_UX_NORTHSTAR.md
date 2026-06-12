@@ -442,7 +442,9 @@ Founder greenlit "build this end to end". Shipped on `claude/fervent-shannon-qxh
 | 1.8 compare recovery: zero-result nearest-alternative with real counts + "Why this order?" sheet (live sort state + canonical disclosure copy) | ✅ shipped | session 3 |
 | D11 listings slice: `computeMatchBreakdown` emits factual reasons; match pill opens a why-this-score sheet with the profile-sharpening link (BottomSheet now portals to body so in-card sheets can't trigger card navigation) | ✅ shipped | session 3 |
 | 1.9 mobile fade-stall (F2.6) | ✅ verified NOT a bug — live probe: cards at opacity 1, animations complete, 4s post-load unscrolled; original capture was a mid-animation screenshot artifact | — |
-| D10 delta strip · account IA (2.5/2.6) · Wave-3 crons (drips, morning brief — Tier C, announce first) · D12 Wrapped (gated on milestone data) | ⏳ next session(s) | — |
+| D10 anonymous slice: FeeMemoryTrigger on broker pages + `/api/brokers/fees` (Zod, rate-limited, shared-cache) + homepage "Since you were here" strip — factual diffs only, renders nothing without a change, dismiss re-baselines | ✅ shipped | session 4 |
+| Main-breakage repair: PR #1561 merged consumers of `lib/journey` / `journeyMoment` whose modules never landed — reconstructed both on the pinned contract (Stage 1: Curious …) over the milestone registry | ✅ shipped | session 4 |
+| D10 signed-in slice (watchlist-wide deltas via `user_rate_memory` — ⚠ schema) · account IA (2.5/2.6) · Wave-3 crons (drips, morning brief — Tier C, announce first) · D12 Wrapped (gated on milestone data) | ⏳ next session(s) | — |
 | 1.9 verify F2.6 mobile fade-stall via bot fleet | ⏳ open | — |
 
 ---
