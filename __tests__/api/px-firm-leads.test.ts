@@ -171,9 +171,20 @@ describe("PATCH /api/advisor-portal/firm-leads", () => {
     mockFromFn.mockReturnValueOnce(
       makeChain(null, { data: { id: 2, firm_id: 5 }, error: null }),
     );
+    // capture-read: lead's current assignee (audit trail, #13)
+    mockFromFn.mockReturnValueOnce(
+      makeChain(null, { data: { professional_id: 7 }, error: null }),
+    );
+    // previous owner is in the caller's firm
+    mockFromFn.mockReturnValueOnce(
+      makeChain(null, { data: { id: 7 }, error: null }),
+    );
     // leads update → success
     const updateChain = makeChain({ data: null, error: null });
     mockFromFn.mockReturnValueOnce(updateChain);
+    // lead_assignments audit insert (best-effort inside try/catch) — give it
+    // a generic chain so the fail-soft path isn't exercised by accident.
+    mockFromFn.mockReturnValueOnce(makeChain({ data: null, error: null }));
 
     const res = await PATCH(patchReq({ lead_id: 1, professional_id: 2 }));
     expect(res.status).toBe(200);
