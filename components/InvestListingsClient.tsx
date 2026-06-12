@@ -27,6 +27,10 @@ import SearchInput from "@/components/directory/SearchInput";
 import SortDropdown from "@/components/directory/SortDropdown";
 import FilterPanel from "@/components/directory/FilterPanel";
 import FacetGroup from "@/components/directory/FacetGroup";
+import {
+  filterableMetrics,
+  type VerticalMetricDef,
+} from "@/lib/listings/vertical-metrics";
 import RangeSlider from "@/components/directory/RangeSlider";
 import DualRangeSlider from "@/components/directory/DualRangeSlider";
 import SubCategoryChips from "@/components/directory/SubCategoryChips";
@@ -168,6 +172,43 @@ export default function InvestListingsClient({
   // Universal advanced filters
   const activeInvestorType = (searchParams.get("investor") ?? "") as InvestorType;
   const activeFirbOnly = searchParams.get("firb") === "eligible";
+
+  // Registry-driven category facets (idea #1): one URL param per metric,
+  // `m_<key>` — ranges as "lo-hi", enums as CSV, toggles as "1".
+  const categoryMetricDefs = useMemo(
+    () => filterableMetrics(activeCategory).filter((d) => d.key !== "yield_percent"),
+    [activeCategory],
+  );
+  const activeMetricFilters = useMemo(() => {
+    const out: Array<{ def: VerticalMetricDef; raw: string }> = [];
+    for (const def of categoryMetricDefs) {
+      const raw = searchParams.get(`m_${def.key}`);
+      if (raw) out.push({ def, raw });
+    }
+    return out;
+  }, [categoryMetricDefs, searchParams]);
+  const metricValues = useMemo(() => {
+    const out: Record<string, string> = {};
+    for (const def of categoryMetricDefs) {
+      out[def.key] = searchParams.get(`m_${def.key}`) ?? "";
+    }
+    return out;
+  }, [categoryMetricDefs, searchParams]);
+  const metricBounds = useMemo(() => {
+    const bounds: Record<string, { min: number; max: number }> = {};
+    if (categoryMetricDefs.length === 0) return bounds;
+    const rows = listings.filter((l) => categoryForListing(l) === activeCategory);
+    for (const def of categoryMetricDefs) {
+      if (def.filter !== "range") continue;
+      const vals = rows
+        .map((l) => Number(((l.key_metrics ?? {}) as Record<string, unknown>)[def.key]))
+        .filter((n) => Number.isFinite(n));
+      if (vals.length >= 2) {
+        bounds[def.key] = { min: Math.floor(Math.min(...vals)), max: Math.ceil(Math.max(...vals)) };
+      }
+    }
+    return bounds;
+  }, [categoryMetricDefs, listings, activeCategory]);
   const activeSivOnly = searchParams.get("siv") === "complying";
   const activeWholesaleOnly = searchParams.get("wholesale") === "true";
   const activeFreshness = searchParams.get("fresh") ?? ""; // 'new_this_week' | 'closing_soon'
@@ -370,6 +411,25 @@ export default function InvestListingsClient({
       result = result.filter((l) => l.created_at > lastVisit);
     }
 
+    for (const { def, raw } of activeMetricFilters) {
+      result = result.filter((l) => {
+        const v = ((l.key_metrics ?? {}) as Record<string, unknown>)[def.key];
+        if (def.filter === "range") {
+          const [loS, hiS] = raw.split("-");
+          const lo = Number(loS) || 0;
+          const hi = hiS ? Number(hiS) || Infinity : Infinity;
+          const n = typeof v === "number" ? v : Number(v);
+          return Number.isFinite(n) && n >= lo && n <= hi;
+        }
+        if (def.filter === "multi" || def.filter === "select") {
+          const wanted = new Set(raw.split(","));
+          return wanted.has(String(v ?? ""));
+        }
+        if (def.filter === "toggle") return v === true || v === "true";
+        return true;
+      });
+    }
+
     if (activeWholesaleOnly) {
       result = result.filter((l) => {
         const km = (l.key_metrics ?? {}) as Record<string, unknown>;
@@ -508,7 +568,7 @@ export default function InvestListingsClient({
     activeTicket, activeQuery, activeFirbOnly, activeSivOnly, activeWholesaleOnly,
     activeInvestorType, activeFreshness, activeFeaturedOnly, activeMinYield,
     activeMaxYield, activeStages, activeAsxSector, activeAsxMcap, activeDivYieldMin,
-    activeEsicOnly, activeSort, skipCategoryFilter, showNewOnly, lastVisit,
+    activeEsicOnly, activeSort, skipCategoryFilter, showNewOnly, lastVisit, activeMetricFilters,
   ]);
 
   // ── Live per-facet counts for the compliance facet (Session 5.5) ──
@@ -584,6 +644,21 @@ export default function InvestListingsClient({
     });
   }
   if (activeFeaturedOnly) activeChips.push({ label: "Featured only", onClear: () => setParams({ featured: "" }) });
+  for (const { def, raw } of activeMetricFilters) {
+    const pretty =
+      def.filter === "range"
+        ? raw.replace("-", "–")
+        : def.filter === "toggle"
+          ? "Yes"
+          : raw
+              .split(",")
+              .map((v) => def.enumValues?.find((e) => e.value === v)?.label ?? v)
+              .join(", ");
+    activeChips.push({
+      label: `${def.label}: ${pretty}`,
+      onClear: () => setParams({ [`m_${def.key}`]: "" }),
+    });
+  }
   if (activeMinYield && activeMaxYield) {
     activeChips.push({ label: `Yield ${activeMinYield}%–${activeMaxYield}%`, onClear: () => setParams({ min_yield: "", max_yield: "" }) });
   } else if (activeMinYield) {
@@ -793,6 +868,9 @@ export default function InvestListingsClient({
                 intentCountry={intentCountry ?? null}
                 complianceCounts={complianceCounts}
                 setParams={setParams}
+                categoryMetricDefs={categoryMetricDefs}
+                metricBounds={metricBounds}
+                metricValues={metricValues}
               />
         </FilterPanel>
 
@@ -1077,6 +1155,9 @@ interface InvestFilterFieldsProps {
   intentCountry: string | null;
   complianceCounts: Record<string, number>;
   setParams: (updates: Record<string, string>) => void;
+  categoryMetricDefs: ReadonlyArray<VerticalMetricDef>;
+  metricBounds: Record<string, { min: number; max: number }>;
+  metricValues: Record<string, string>;
 }
 
 const YIELD_PRESETS = [
@@ -1114,6 +1195,7 @@ function InvestFilterFields({
   activeFreshness, activeFeaturedOnly, activeMinYield, activeMaxYield,
   activeStages, activeAsxSector, activeAsxMcap, activeDivYieldMin, activeEsicOnly,
   kindSpec, intentCountry, complianceCounts, setParams,
+  categoryMetricDefs, metricBounds, metricValues,
 }: InvestFilterFieldsProps) {
   const complianceOptions = [
     { value: "firb", label: "FIRB-eligible" },
@@ -1219,7 +1301,69 @@ function InvestFilterFields({
             </div>
           )}
 
-          {kindSpec.showProjectMetrics && (
+          {categoryMetricDefs.length > 0 && (
+            <div className="space-y-4">
+              {categoryMetricDefs.map((def) => {
+                const param = `m_${def.key}`;
+                const raw = metricValues[def.key] ?? "";
+                if (def.filter === "range") {
+                  const b = metricBounds[def.key];
+                  if (!b || b.min === b.max) return null;
+                  const [loS, hiS] = raw.split("-");
+                  const lo = raw ? Number(loS) || b.min : b.min;
+                  const hi = raw && hiS ? Number(hiS) || b.max : b.max;
+                  const step = Math.max(1, Math.round((b.max - b.min) / 20));
+                  return (
+                    <DualRangeSlider
+                      key={def.key}
+                      label={def.unit ? `${def.label} (${def.unit})` : def.label}
+                      min={b.min}
+                      max={b.max}
+                      step={step}
+                      valueLow={lo}
+                      valueHigh={hi}
+                      onChangeLow={(v) =>
+                        setParams({ [param]: v <= b.min && hi >= b.max ? "" : `${v}-${hi}` })
+                      }
+                      onChangeHigh={(v) =>
+                        setParams({ [param]: lo <= b.min && v >= b.max ? "" : `${lo}-${v}` })
+                      }
+                      formatValue={(v) => v.toLocaleString("en-AU")}
+                    />
+                  );
+                }
+                if ((def.filter === "multi" || def.filter === "select") && def.enumValues) {
+                  return (
+                    <FacetGroup
+                      key={def.key}
+                      label={def.label}
+                      options={def.enumValues}
+                      selected={new Set(raw ? raw.split(",") : [])}
+                      onChange={(next) => setParams({ [param]: Array.from(next).join(",") })}
+                      layout="grid"
+                    />
+                  );
+                }
+                if (def.filter === "toggle") {
+                  const on = raw === "1";
+                  return (
+                    <label key={def.key} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={on}
+                        onChange={() => setParams({ [param]: on ? "" : "1" })}
+                        className="h-4 w-4 rounded border-slate-300 text-amber-500 focus:ring-amber-400"
+                      />
+                      <span className="text-sm text-slate-700">{def.label}</span>
+                    </label>
+                  );
+                }
+                return null;
+              })}
+            </div>
+          )}
+
+                    {kindSpec.showProjectMetrics && (
             <div>
               <FacetGroup
                 label="Raise stage"
