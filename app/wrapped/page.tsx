@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { absoluteUrl, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import { buildWrappedCards, wrappedFyForDate, wrappedShareSummary } from "@/lib/wrapped";
 import { loadWrappedData } from "@/lib/wrapped-server";
 import WrappedDeck from "./WrappedDeck";
@@ -136,8 +136,17 @@ export default async function WrappedPage() {
     );
   }
 
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", item: absoluteUrl("/") },
+    { name: "Money Wrapped", item: absoluteUrl("/wrapped") },
+  ]);
+
   return (
     <main className="min-h-screen bg-slate-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       <div className="mx-auto max-w-xl px-4 py-10 sm:py-14">
         {content}
 
