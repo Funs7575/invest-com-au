@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import GetMatchedClient from "./GetMatchedClient";
 import { CURRENT_YEAR, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
+import { deepLinkPrefill } from "@/lib/getmatched/deep-link-prefill";
 
 export const metadata: Metadata = {
   title: `Get Matched — Build your Investment Action Plan (${CURRENT_YEAR})`,
@@ -40,6 +41,9 @@ interface SearchParams {
   team?: string;
   plan_id?: string;
   mode?: string;
+  /** Cross-border deep-link from country pages / the /find-advisor fold-in. */
+  specialty?: string;
+  country?: string;
 }
 
 export default async function GetMatchedPage({
@@ -48,6 +52,7 @@ export default async function GetMatchedPage({
   searchParams?: Promise<SearchParams>;
 }) {
   const sp = (await searchParams) ?? {};
+  const linkPrefill = deepLinkPrefill({ specialty: sp.specialty, country: sp.country });
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Get Matched" },
@@ -72,6 +77,7 @@ export default async function GetMatchedPage({
         initialContext={sp.context ?? null}
         initialPlanId={sp.plan_id ? Number(sp.plan_id) : null}
         initialMode={sp.mode === "fast" || sp.mode === "guided" ? sp.mode : "both"}
+        initialPrefill={Object.keys(linkPrefill).length > 0 ? linkPrefill : null}
       />
 
       <div className="border-t border-slate-200 bg-white">
@@ -82,7 +88,7 @@ export default async function GetMatchedPage({
               <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

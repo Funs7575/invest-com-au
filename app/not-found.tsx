@@ -46,19 +46,19 @@ export default function NotFound() {
           <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-4">Popular Pages</p>
           <div className="grid grid-cols-2 gap-2 text-left max-w-sm mx-auto">
             <Link href="/get-matched" className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group">
-              <Icon name="target" size={16} className="text-slate-400 group-hover:text-amber-500 transition-colors shrink-0" />
+              <Icon name="target" size={16} className="text-slate-500 group-hover:text-amber-500 transition-colors shrink-0" />
               <span className="text-xs font-medium text-slate-600">Platform Match Quiz</span>
             </Link>
             <Link href="/calculators" className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group">
-              <Icon name="calculator" size={16} className="text-slate-400 group-hover:text-amber-500 transition-colors shrink-0" />
+              <Icon name="calculator" size={16} className="text-slate-500 group-hover:text-amber-500 transition-colors shrink-0" />
               <span className="text-xs font-medium text-slate-600">Fee Calculators</span>
             </Link>
             <Link href="/articles" className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group">
-              <Icon name="lightbulb" size={16} className="text-slate-400 group-hover:text-amber-500 transition-colors shrink-0" />
+              <Icon name="lightbulb" size={16} className="text-slate-500 group-hover:text-amber-500 transition-colors shrink-0" />
               <span className="text-xs font-medium text-slate-600">Investing Guides</span>
             </Link>
             <Link href="/shortlist" className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group">
-              <Icon name="star" size={16} className="text-slate-400 group-hover:text-amber-500 transition-colors shrink-0" />
+              <Icon name="star" size={16} className="text-slate-500 group-hover:text-amber-500 transition-colors shrink-0" />
               <span className="text-xs font-medium text-slate-600">My Shortlist</span>
             </Link>
           </div>

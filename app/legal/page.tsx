@@ -120,7 +120,7 @@ export default function LegalPage() {
                     Last updated: {doc.updated}{doc.version ? ` · ${doc.version}` : ""}
                   </p>
                 </div>
-                <svg className="w-4 h-4 text-slate-400 group-hover:text-blue-700 shrink-0 mt-1 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-slate-500 group-hover:text-blue-700 shrink-0 mt-1 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
@@ -146,7 +146,7 @@ export default function LegalPage() {
                     Last updated: {doc.updated}{doc.version ? ` · ${doc.version}` : ""}
                   </p>
                 </div>
-                <svg className="w-4 h-4 text-slate-400 group-hover:text-blue-700 shrink-0 mt-1 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-slate-500 group-hover:text-blue-700 shrink-0 mt-1 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>

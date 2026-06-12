@@ -375,13 +375,13 @@ export default function ForProvidersPage() {
 
             {/* Featured */}
             <div className="border border-slate-200 rounded-xl p-6 bg-slate-900 text-white">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
                 Featured
               </p>
               <p className="text-3xl font-extrabold text-white mb-1">
-                $799<span className="text-base text-slate-400 font-normal">/mo</span>
+                $799<span className="text-base text-slate-500 font-normal">/mo</span>
               </p>
-              <p className="text-xs text-slate-400 mb-5">Homepage placement</p>
+              <p className="text-xs text-slate-500 mb-5">Homepage placement</p>
               <ul className="space-y-2 mb-6">
                 {[
                   "Everything in Growth",
@@ -455,7 +455,7 @@ export default function ForProvidersPage() {
               >
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-50 flex items-center justify-between">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#9660;
                   </span>
                 </summary>

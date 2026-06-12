@@ -126,7 +126,7 @@ export default async function ArticleBrokerTable({
                     className="max-w-full max-h-full"
                   />
                 ) : (
-                  <Icon name="briefcase" size={18} className="text-slate-400" />
+                  <Icon name="briefcase" size={18} className="text-slate-500" />
                 )}
               </div>
               <div className="flex-1 min-w-0">

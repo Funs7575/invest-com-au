@@ -60,7 +60,7 @@ export default function HomeHeroReel({
         question: "I’m new to investing — where should I start?",
         suggestedStep: "Answer 4 questions and get a clear starting point",
         proof: "60 seconds · no email",
-        href: "/quiz",
+        href: "/get-matched",
         ctaLabel: "Get matched",
         accent: "var(--color-coral-400)",
         ariaLabel: "Get matched if you are new to investing",

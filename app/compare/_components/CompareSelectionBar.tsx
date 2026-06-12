@@ -146,7 +146,7 @@ export default function CompareSelectionBar({
           {onClearAll && (
             <button
               onClick={onClearAll}
-              className="text-[0.62rem] font-semibold text-slate-400 hover:text-slate-200 transition-colors shrink-0"
+              className="text-[0.62rem] font-semibold text-slate-500 hover:text-slate-200 transition-colors shrink-0"
               aria-label="Clear all selected platforms"
             >
               Clear

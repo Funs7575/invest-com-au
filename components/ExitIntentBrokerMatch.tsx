@@ -148,7 +148,7 @@ export default function ExitIntentBrokerMatch() {
         <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-5 text-center relative">
           <button
             onClick={dismiss}
-            className="absolute top-3 right-3 text-slate-400 hover:text-white transition-colors"
+            className="absolute top-3 right-3 text-slate-500 hover:text-white transition-colors"
             aria-label="Close"
           >
             <Icon name="x" size={20} />

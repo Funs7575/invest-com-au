@@ -21,7 +21,7 @@ import { listingUrl, categoryForListing, rawVerticalVariants } from "@/lib/listi
 import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { loadInvestPageContext } from "@/lib/listing-page-context";
-import { computeMatchScore } from "@/lib/listing-match";
+import { computeMatchBreakdown } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
@@ -185,10 +185,14 @@ export default async function InvestMarketplacePage() {
   // per-card. Sparse map — only listings that beat the score floor
   // (50) end up keyed.
   const matchScores: Record<number, number> = {};
+  const matchReasons: Record<number, string[]> = {};
   if (ctx.investorProfile) {
     for (const l of listings) {
-      const score = computeMatchScore(l, ctx.investorProfile);
-      if (score != null) matchScores[l.id] = score;
+      const breakdown = computeMatchBreakdown(l, ctx.investorProfile);
+      if (breakdown != null) {
+        matchScores[l.id] = breakdown.score;
+        if (breakdown.reasons.length > 0) matchReasons[l.id] = breakdown.reasons;
+      }
     }
   }
 
@@ -333,6 +337,7 @@ export default async function InvestMarketplacePage() {
           listings={listings}
           categories={categoryTabs}
           matchScores={matchScores}
+          matchReasons={matchReasons}
           advisorOptInCounts={ctx.advisorOptInCounts}
           claimedSlugs={ctx.claimedSlugs}
           showActionPlanCta
@@ -455,7 +460,7 @@ export default async function InvestMarketplacePage() {
               <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

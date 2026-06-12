@@ -96,7 +96,7 @@ const COMMON_MISTAKES = [
   },
   {
     mistake: "Assuming foreign shares have no Australian tax",
-    fix: "Australian residents are taxed on worldwide income and capital gains. There is no exemption for foreign-listed shares. The only exception is assets acquired before 20 September 1985 (pre-CGT).",
+    fix: "Australian residents are taxed on worldwide income and capital gains. There is no exemption for foreign-listed shares. The only exception is assets acquired before 20 September 1985 (pre-CGT).",  // dated-ok
   },
   {
     mistake: "Not keeping exchange rate records",
@@ -645,9 +645,9 @@ export default function CgtOnForeignSharesPage() {
               </p>
               <p className="text-xs text-slate-600 leading-relaxed">
                 Measured from the buy trade date to the sell trade date. If you
-                bought on 15 March 2024 and sell on 16 March 2025, you have
+                bought on 15 March 2024 and sell on 16 March 2025, you have  // dated-ok
                 held for more than 12 months and qualify for the CGT discount.
-                If you sell on 14 March 2025, you have held for exactly 364
+                If you sell on 14 March 2025, you have held for exactly 364  // dated-ok
                 days — the discount does not apply.
               </p>
             </div>
@@ -657,8 +657,8 @@ export default function CgtOnForeignSharesPage() {
               </p>
               <p className="text-xs text-slate-600 leading-relaxed">
                 The gain is assessed in the financial year the trade date falls
-                in. A sale executed on 29 June 2025 is a 2024&ndash;25 event,
-                even though it settles on 1 July 2025. Use the trade date for
+                in. A sale executed on 29 June 2025 is a 2024&ndash;25 event,  // dated-ok
+                even though it settles on 1 July 2025. Use the trade date for  // dated-ok
                 the exchange rate conversion and for determining which tax year
                 to report in.
               </p>
@@ -749,10 +749,10 @@ export default function CgtOnForeignSharesPage() {
           <div className="space-y-5">
             <div>
               <h3 className="text-sm font-bold text-slate-900 mb-2">
-                Pre-CGT shares (before 20 September 1985)
+                Pre-CGT shares (before 20 September 1985)  // dated-ok
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Foreign shares acquired before 20 September 1985 are exempt from
+                Foreign shares acquired before 20 September 1985 are exempt from  // dated-ok
                 CGT — the same rule as for Australian shares. This applies
                 regardless of whether the shares were listed on an overseas
                 exchange. In practice, very few retail investors hold shares from
@@ -868,7 +868,7 @@ export default function CgtOnForeignSharesPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
                     &#9662;
                   </span>
                 </summary>

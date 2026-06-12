@@ -412,7 +412,7 @@ export default async function BrokerSafetyPage({
             {/* Regulatory Status */}
             <div className="bg-white rounded-xl border border-slate-200 p-5">
               <h2 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Icon name="shield" size={18} className="text-slate-400" />
+                <Icon name="shield" size={18} className="text-slate-500" />
                 Regulatory Status
               </h2>
               <div className="space-y-3">
@@ -446,7 +446,7 @@ export default async function BrokerSafetyPage({
             {/* Financial Indicators */}
             <div className="bg-white rounded-xl border border-slate-200 p-5">
               <h2 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Icon name="bar-chart-2" size={18} className="text-slate-400" />
+                <Icon name="bar-chart-2" size={18} className="text-slate-500" />
                 Financial Indicators
               </h2>
               <div className="grid sm:grid-cols-2 gap-4">
@@ -487,7 +487,7 @@ export default async function BrokerSafetyPage({
             {/* Client Protection */}
             <div className="bg-white rounded-xl border border-slate-200 p-5">
               <h2 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Icon name="lock" size={18} className="text-slate-400" />
+                <Icon name="lock" size={18} className="text-slate-500" />
                 Client Protection
               </h2>
               <div className="space-y-3">
@@ -682,7 +682,7 @@ export default async function BrokerSafetyPage({
               <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

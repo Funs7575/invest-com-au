@@ -875,7 +875,7 @@ export default function SuperContributionsPage() {
               >
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">
                     ⌄
                   </span>
                 </summary>
@@ -895,7 +895,7 @@ export default function SuperContributionsPage() {
             <h2 className="text-lg font-extrabold text-white mb-1">
               Compare super funds and find an adviser
             </h2>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-500 text-sm">
               Find a fund with low fees and strong long-term performance, or speak with a
               financial planner about your personal contributions strategy.
             </p>

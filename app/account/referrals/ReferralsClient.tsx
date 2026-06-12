@@ -302,7 +302,7 @@ export default function ReferralsClient() {
           {history.length === 0 ? (
             <div className="text-center py-8">
               <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Icon name="users" size={20} className="text-slate-400" />
+                <Icon name="users" size={20} className="text-slate-500" />
               </div>
               <p className="text-sm text-slate-500 mb-3">No referrals yet. Share your link to get started!</p>
               <button

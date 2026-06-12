@@ -93,8 +93,8 @@ describe("buildAdvisorUrl", () => {
 // ── buildQuizUrl ──────────────────────────────────────────────────────────────
 
 describe("buildQuizUrl", () => {
-  it("starts with /quiz?", () => {
-    expect(buildQuizUrl({ vertical: "smsf" })).toMatch(/^\/quiz\?/);
+  it("starts with /get-matched?", () => {
+    expect(buildQuizUrl({ vertical: "smsf" })).toMatch(/^\/get-matched\?/);
   });
 
   it("always includes the vertical param", () => {

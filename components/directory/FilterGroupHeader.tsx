@@ -48,7 +48,7 @@ export default function FilterGroupHeader({
         className="flex w-full items-center justify-between gap-2 py-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50 rounded"
       >
         <div className="flex items-center gap-2">
-          {icon && <Icon name={icon} size={13} className="text-slate-400 shrink-0" />}
+          {icon && <Icon name={icon} size={13} className="text-slate-500 shrink-0" />}
           <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
             {label}
           </span>

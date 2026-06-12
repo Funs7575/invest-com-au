@@ -270,7 +270,7 @@ export default function EligibilityQuizClient() {
             className="w-full text-left px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 transition-colors flex items-center justify-between gap-2"
           >
             <span className="text-sm font-bold text-slate-900">{o.label}</span>
-            <Icon name="arrow-right" size={14} className="text-slate-400" />
+            <Icon name="arrow-right" size={14} className="text-slate-500" />
           </button>
         ))}
       </div>

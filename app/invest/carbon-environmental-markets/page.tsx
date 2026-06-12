@@ -55,7 +55,7 @@ export default function CarbonEnvironmentalMarketsPage() {
         {/* Hero */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/invest" className="hover:text-white">Invest</Link>

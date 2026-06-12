@@ -209,7 +209,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
             { label: "Search Appearances", value: stats?.searchImpressions || 0, icon: "search" },
           ].map((m, i) => (
             <div key={i} className="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50">
-              <Icon name={m.icon} size={16} className="text-slate-400 shrink-0" />
+              <Icon name={m.icon} size={16} className="text-slate-500 shrink-0" />
               <div>
                 <p className="text-sm font-bold text-slate-900">{m.value.toLocaleString()}</p>
                 <p className="text-[0.55rem] text-slate-500">{m.label}</p>

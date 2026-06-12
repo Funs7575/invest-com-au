@@ -93,7 +93,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
   if (bids.length === 0) {
     return (
       <div className="bg-white border border-dashed border-slate-300 rounded-2xl p-8 text-center">
-        <Icon name="clock" size={24} className="text-slate-400 mx-auto mb-2" />
+        <Icon name="clock" size={24} className="text-slate-500 mx-auto mb-2" />
         <p className="font-bold text-slate-900 mb-1">No quotes yet</p>
         <p className="text-sm text-slate-500 leading-relaxed max-w-sm mx-auto">
           Verified advisors are being notified now. Most requests get their first quote within a few hours — check back soon.
@@ -183,7 +183,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                     {b.advisor?.photo_url ? (
                       <Image src={b.advisor.photo_url} alt={b.advisor.name} width={40} height={40} className="rounded-full object-cover border border-slate-200" />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center"><Icon name="user" size={16} className="text-slate-400" /></div>
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center"><Icon name="user" size={16} className="text-slate-500" /></div>
                     )}
                     <div className="min-w-0">
                       <p className="font-bold text-sm text-slate-900 truncate">{b.advisor?.name ?? "Advisor"}</p>
@@ -249,7 +249,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                     />
                   ) : (
                     <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center">
-                      <Icon name="user" size={20} className="text-slate-400" />
+                      <Icon name="user" size={20} className="text-slate-500" />
                     </div>
                   )}
                 </div>

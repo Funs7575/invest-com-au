@@ -432,14 +432,14 @@ function AdvisorApplyInner() {
                 <div className="grid grid-cols-2 gap-3">
                   <button type="button" onClick={() => setAccountType("individual")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "individual" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
                     <div className="flex items-center gap-2 mb-1">
-                      <Icon name="user" size={16} className={accountType === "individual" ? "text-slate-900" : "text-slate-400"} />
+                      <Icon name="user" size={16} className={accountType === "individual" ? "text-slate-900" : "text-slate-500"} />
                       <span className="text-sm font-bold text-slate-900">Individual Advisor</span>
                     </div>
                     <p className="text-[0.62rem] text-slate-500">Solo practitioner or authorised rep</p>
                   </button>
                   <button type="button" onClick={() => setAccountType("firm")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "firm" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
                     <div className="flex items-center gap-2 mb-1">
-                      <Icon name="building" size={16} className={accountType === "firm" ? "text-slate-900" : "text-slate-400"} />
+                      <Icon name="building" size={16} className={accountType === "firm" ? "text-slate-900" : "text-slate-500"} />
                       <span className="text-sm font-bold text-slate-900">Firm / Brokerage</span>
                     </div>
                     <p className="text-[0.62rem] text-slate-500">Register your firm & invite team members</p>

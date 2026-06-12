@@ -76,7 +76,7 @@ export default function AdvisorShortlistClient() {
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-10 text-center">
         <div className="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Icon name="bookmark" size={28} className="text-slate-400" />
+          <Icon name="bookmark" size={28} className="text-slate-500" />
         </div>
         <h2 className="text-lg font-bold text-slate-900 mb-1">No advisors saved yet</h2>
         <p className="text-sm text-slate-500 mb-5 max-w-xs mx-auto">
@@ -140,7 +140,7 @@ export default function AdvisorShortlistClient() {
                 />
               ) : (
                 <div className="w-14 h-14 rounded-full bg-slate-200 flex items-center justify-center">
-                  <Icon name="user" size={24} className="text-slate-400" />
+                  <Icon name="user" size={24} className="text-slate-500" />
                 </div>
               )}
             </div>

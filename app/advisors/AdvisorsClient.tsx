@@ -153,7 +153,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
   return (
     <div ref={ref} className="relative">
       <div className="relative">
-        <Icon name="map-pin" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+        <Icon name="map-pin" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500" />
         <input
           type="text"
           value={query}
@@ -1212,7 +1212,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         </span>
                         {firm.location_display && (
                           <span className="flex items-center gap-0.5">
-                            <Icon name="map-pin" size={10} className="text-slate-400" />
+                            <Icon name="map-pin" size={10} className="text-slate-500" />
                             {firm.location_display}
                           </span>
                         )}
@@ -1414,7 +1414,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         <span className="shrink-0 text-[0.58rem] font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-full">Independent</span>
                       ) : (
                         <span className="shrink-0 text-[0.58rem] font-semibold text-slate-600 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 max-w-[10rem]">
-                          <Icon name="building" size={9} className="text-slate-400 shrink-0" />
+                          <Icon name="building" size={9} className="text-slate-500 shrink-0" />
                           <span className="truncate">{pro.firm_name}</span>
                         </span>
                       )}

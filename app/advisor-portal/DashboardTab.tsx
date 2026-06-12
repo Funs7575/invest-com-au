@@ -39,7 +39,7 @@ function YourRankWidget() {
       <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-8 h-8 bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center shrink-0">
-            <Icon name="award" size={15} className="text-slate-400" />
+            <Icon name="award" size={15} className="text-slate-500" />
           </div>
           <h3 className="text-sm font-semibold text-slate-600">Your Leaderboard Rank</h3>
         </div>

@@ -385,7 +385,7 @@ export default function ListingSubmitForm() {
               type="button"
               disabled={!canProceedFromPlan}
               onClick={() => setStep("details")}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl transition-colors"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl transition-colors"
             >
               Continue
               <Icon name="arrow-right" size={16} />
@@ -557,7 +557,7 @@ export default function ListingSubmitForm() {
               type="button"
               disabled={!canProceedFromDetails}
               onClick={() => setStep("contact")}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl transition-colors"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl transition-colors"
             >
               Continue
               <Icon name="arrow-right" size={16} />
@@ -647,7 +647,7 @@ export default function ListingSubmitForm() {
               type="button"
               disabled={!canProceedFromContact}
               onClick={() => setStep("review")}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl transition-colors"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl transition-colors"
             >
               Review Listing
               <Icon name="arrow-right" size={16} />

@@ -27,7 +27,7 @@ const FAQS = [
   },
   {
     q: "What is the FBT exemption for electric vehicles?",
-    a: "From 1 July 2022, eligible zero or low-emission vehicles are exempt from FBT when provided as a car fringe benefit. To qualify: the car must be a zero or low-emission vehicle (battery electric, hydrogen fuel cell, or plug-in hybrid); the value at first retail sale must not exceed the luxury car tax threshold for fuel-efficient vehicles ($89,332 for 2024-25); and the car must be provided to a current employee. This exemption does not apply to plug-in hybrids from 1 April 2025 onwards (they are no longer eligible). The exempt benefit is still reportable — it counts toward the $2,000 RFBA threshold, so it can affect adjusted taxable income calculations even though no FBT is payable.",
+    a: "From 1 July 2022, eligible zero or low-emission vehicles are exempt from FBT when provided as a car fringe benefit. To qualify: the car must be a zero or low-emission vehicle (battery electric, hydrogen fuel cell, or plug-in hybrid); the value at first retail sale must not exceed the luxury car tax threshold for fuel-efficient vehicles ($89,332 for 2024-25); and the car must be provided to a current employee. This exemption does not apply to plug-in hybrids from 1 April 2025 onwards (they are no longer eligible). The exempt benefit is still reportable — it counts toward the $2,000 RFBA threshold, so it can affect adjusted taxable income calculations even though no FBT is payable.",  // dated-ok
   },
 ];
 
@@ -120,7 +120,7 @@ export default function FringeBenefitsPage() {
         {/* Hero */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom max-w-5xl">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/tax" className="hover:text-white">Tax</Link>
@@ -251,7 +251,7 @@ export default function FringeBenefitsPage() {
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Minor benefits under $300 per occasion (infrequent and irregular — e.g., a Christmas gift)</span></li>
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Laptop or portable device provided primarily for work (one per function per year)</span></li>
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Briefcases, tools of trade</span></li>
-                  <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Eligible electric vehicles under $89,332 LMCT (from 1 July 2022)</span></li>
+                  <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Eligible electric vehicles under $89,332 LMCT (from 1 July 2022)</span></li>  // dated-ok
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Work-related protective clothing and uniforms</span></li>
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Emergency assistance (first aid, emergency accommodation)</span></li>
                 </ul>
@@ -327,9 +327,9 @@ export default function FringeBenefitsPage() {
               <div className="flex items-start gap-3">
                 <span className="text-xl shrink-0">&#9889;</span>
                 <div>
-                  <h3 className="font-extrabold text-blue-900 mb-1">Electric vehicle FBT exemption (from 1 July 2022)</h3>
+                  <h3 className="font-extrabold text-blue-900 mb-1">Electric vehicle FBT exemption (from 1 July 2022)</h3>  // dated-ok
                   <p className="text-sm text-blue-900 leading-relaxed">
-                    Battery electric vehicles (BEVs) and hydrogen fuel cell vehicles with a first retail sale price at or below the luxury car tax threshold for fuel-efficient vehicles (<strong>$89,332 for 2024-25</strong>) are fully exempt from FBT when provided to employees. This makes EVs one of the most tax-effective salary packaging options available. Note: plug-in hybrid electric vehicles (PHEVs) were eligible until 31 March 2025, but are no longer exempt from 1 April 2025. The exempt benefit is still reportable — it counts toward the $2,000 RFBA threshold.
+                    Battery electric vehicles (BEVs) and hydrogen fuel cell vehicles with a first retail sale price at or below the luxury car tax threshold for fuel-efficient vehicles (<strong>$89,332 for 2024-25</strong>) are fully exempt from FBT when provided to employees. This makes EVs one of the most tax-effective salary packaging options available. Note: plug-in hybrid electric vehicles (PHEVs) were eligible until 31 March 2025, but are no longer exempt from 1 April 2025. The exempt benefit is still reportable — it counts toward the $2,000 RFBA threshold.  // dated-ok
                   </p>
                 </div>
               </div>
@@ -397,7 +397,7 @@ export default function FringeBenefitsPage() {
                 <details key={item.q} className="group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
                   <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
+                    <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">&#9660;</span>
                   </summary>
                   <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
                 </details>

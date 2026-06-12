@@ -158,7 +158,7 @@ export default function SuperCoContributionPage() {
         {/* Hero */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="text-slate-600">/</span>
               <Link href="/super" className="hover:text-white">Super</Link>
@@ -518,7 +518,7 @@ export default function SuperCoContributionPage() {
               <h2 className="text-lg font-extrabold text-white mb-1">
                 Make your co-contribution work harder
               </h2>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-500 text-sm">
                 Low fees compound your government bonus faster. Compare Australia&apos;s top super funds.
               </p>
             </div>

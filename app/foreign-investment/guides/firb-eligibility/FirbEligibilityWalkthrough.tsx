@@ -122,7 +122,7 @@ export default function FirbEligibilityWalkthrough() {
               <ul className="mt-3 space-y-1.5">
                 {readout.points.map((p) => (
                   <li key={p} className="flex items-start gap-2 text-xs text-slate-600 leading-relaxed">
-                    <Icon name="check" size={13} className="mt-0.5 shrink-0 text-slate-400" />
+                    <Icon name="check" size={13} className="mt-0.5 shrink-0 text-slate-500" />
                     {p}
                   </li>
                 ))}

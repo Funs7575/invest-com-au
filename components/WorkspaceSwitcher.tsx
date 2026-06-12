@@ -126,7 +126,7 @@ export default function WorkspaceSwitcher() {
       >
         <span aria-hidden>{icon}</span>
         <span>{label ?? "Workspace"}</span>
-        <span aria-hidden className="text-slate-400">
+        <span aria-hidden className="text-slate-500">
           ▾
         </span>
       </button>

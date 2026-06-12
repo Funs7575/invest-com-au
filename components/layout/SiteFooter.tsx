@@ -86,7 +86,7 @@ export function SiteFooter() {
             { label: "Annual Report", href: "/reports/annual" },
             { label: "Write a Review", href: "/reviews/write" },
             { label: "Foreign Investors", href: "/foreign-investment" },
-            { label: "Get Matched", href: "/quiz" },
+            { label: "Get Matched", href: "/get-matched" },
             { label: "Post a Request", href: "/quotes/post" },
           ]} />
 
@@ -106,7 +106,7 @@ export function SiteFooter() {
 
         {/* Compliance Section */}
         <div className="border-t border-slate-800 pt-5 mb-6 space-y-3">
-          <h4 className="text-slate-400 font-medium text-[0.65rem] uppercase tracking-wider">Important Information</h4>
+          <h4 className="text-slate-500 font-medium text-[0.65rem] uppercase tracking-wider">Important Information</h4>
 
           {/* General Information Disclaimer — always visible */}
           <div className="p-3 bg-slate-800/40 border border-amber-100/10 rounded-xl">
@@ -116,8 +116,8 @@ export function SiteFooter() {
               </svg>
               <div>
                 <p className="text-[0.7rem] font-bold text-amber-400 mb-1">General Information Only</p>
-                <p className="text-[0.7rem] text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
-                <p className="text-[0.7rem] text-slate-400 leading-relaxed mt-1.5">
+                <p className="text-[0.7rem] text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+                <p className="text-[0.7rem] text-slate-500 leading-relaxed mt-1.5">
                   Invest.com.au is a factual comparison and directory service. We do not assess suitability.
                   We do not provide personal financial advice. We do not recommend one provider as suitable
                   for a particular user. Users should review provider documents (PDS, TMD, FSG) and seek
@@ -135,13 +135,13 @@ export function SiteFooter() {
               { title: "AFSL Status", content: AFSL_STATUS_DISCLOSURE },
             ].map((item) => (
               <details key={item.title} className="group py-2">
-                <summary className="text-xs font-semibold text-slate-400 cursor-pointer hover:text-slate-200 transition-colors list-none flex items-center justify-between py-1.5">
+                <summary className="text-xs font-semibold text-slate-500 cursor-pointer hover:text-slate-200 transition-colors list-none flex items-center justify-between py-1.5">
                   {item.title}
                   <svg className="w-3.5 h-3.5 text-slate-600 group-open:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </summary>
-                <p className="text-[0.7rem] text-slate-400 leading-relaxed pt-2 pb-1">{item.content}</p>
+                <p className="text-[0.7rem] text-slate-500 leading-relaxed pt-2 pb-1">{item.content}</p>
               </details>
             ))}
           </div>
@@ -151,15 +151,15 @@ export function SiteFooter() {
         <div className="border-t border-slate-800 pt-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1">
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-500">
                 © {CURRENT_YEAR} Invest.com.au Pty Ltd. All rights reserved.
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 ACN {COMPANY_ACN} · ABN {COMPANY_ABN}
               </p>
             </div>
 
-            <nav className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-400" aria-label="Legal links">
+            <nav className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500" aria-label="Legal links">
               {[
                 { label: "Privacy", href: "/privacy" },
                 { label: "Terms", href: "/terms" },
@@ -181,7 +181,7 @@ export function SiteFooter() {
             </nav>
           </div>
 
-          <p className="text-xs text-slate-400 mt-4">
+          <p className="text-xs text-slate-500 mt-4">
             100+ platforms · licensed professionals · Updated {CURRENT_MONTH_YEAR}
           </p>
 

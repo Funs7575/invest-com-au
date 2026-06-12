@@ -72,7 +72,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
               <span className="text-sm font-medium text-slate-900 flex-1">
                 {selectedA.name}
               </span>
-              <Icon name="x" size={14} className="text-slate-400" />
+              <Icon name="x" size={14} className="text-slate-500" />
             </button>
           ) : (
             <>
@@ -134,7 +134,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
               <span className="text-sm font-medium text-slate-900 flex-1">
                 {selectedB.name}
               </span>
-              <Icon name="x" size={14} className="text-slate-400" />
+              <Icon name="x" size={14} className="text-slate-500" />
             </button>
           ) : (
             <>
@@ -185,7 +185,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
           ) : (
             <button
               disabled
-              className="w-full md:w-auto px-5 py-2.5 md:py-3 bg-slate-200 text-slate-400 text-sm font-semibold rounded-lg cursor-not-allowed text-center whitespace-nowrap"
+              className="w-full md:w-auto px-5 py-2.5 md:py-3 bg-slate-200 text-slate-500 text-sm font-semibold rounded-lg cursor-not-allowed text-center whitespace-nowrap"
             >
               Compare
             </button>

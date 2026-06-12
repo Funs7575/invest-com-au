@@ -225,7 +225,7 @@ export default function LocationFlagButton() {
           </>
         )}
         {/* Always-on chevron — telegraphs that the trigger is a menu, not a label. */}
-        <span aria-hidden className="text-[0.6rem] text-slate-400 leading-none">
+        <span aria-hidden className="text-[0.6rem] text-slate-500 leading-none">
           ▾
         </span>
       </button>
@@ -313,7 +313,7 @@ export default function LocationFlagButton() {
                                 {a.sublabel}
                               </span>
                             </span>
-                            <span aria-hidden className="text-slate-400 group-hover:text-amber-600 text-sm shrink-0 mt-0.5">
+                            <span aria-hidden className="text-slate-500 group-hover:text-amber-600 text-sm shrink-0 mt-0.5">
                               →
                             </span>
                           </Link>

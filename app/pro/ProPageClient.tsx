@@ -404,7 +404,7 @@ export default function ProPageClient() {
               ))}
               {features.filter((f) => !f.free).map((f) => (
                 <li key={f.name} className="flex items-start gap-1.5 md:gap-2 opacity-40">
-                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                   <span className="text-[0.69rem] md:text-sm text-slate-500">{f.name}</span>

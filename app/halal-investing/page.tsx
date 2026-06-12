@@ -638,7 +638,7 @@ export default function HalalInvestingPage() {
                 >
                   <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-semibold text-slate-800 list-none select-none">
                     <span>{faq.q}</span>
-                    <span className="ml-4 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform text-lg" aria-hidden="true">&#8964;</span>
+                    <span className="ml-4 flex-shrink-0 text-slate-500 group-open:rotate-180 transition-transform text-lg" aria-hidden="true">&#8964;</span>
                   </summary>
                   <div className="px-5 pb-5 text-slate-700 leading-relaxed text-sm border-t border-slate-100 pt-4">
                     {faq.a}

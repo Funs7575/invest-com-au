@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fireJourneyMoment } from "@/components/journey/journeyMoment";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -97,11 +96,6 @@ const METRICS: ComparisonMetric[] = [
 ];
 
 export default function CompareClient() {
-  // First side-by-side comparison is a journey milestone.
-  useEffect(() => {
-    fireJourneyMoment("first_compare");
-  }, []);
-
   const searchParams = useSearchParams();
   const [brokers, setBrokers] = useState<Broker[]>([]);
   const [loading, setLoading] = useState(true);

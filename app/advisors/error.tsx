@@ -9,7 +9,7 @@ export default function AdvisorsError({ reset }: { error: Error; reset: () => vo
       <div className="text-center max-w-md">
         <div className="flex items-center justify-center mb-4">
           <div className="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center">
-            <Icon name="user" size={32} className="text-slate-400" />
+            <Icon name="user" size={32} className="text-slate-500" />
           </div>
         </div>
         <h1 className="text-xl font-bold text-slate-900 mb-2">Directory temporarily unavailable</h1>

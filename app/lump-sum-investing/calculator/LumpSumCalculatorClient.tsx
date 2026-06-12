@@ -141,11 +141,11 @@ export default function LumpSumCalculatorClient() {
           <p className="text-4xl md:text-5xl font-extrabold mt-1" style={{ color: "#EAB308" }}>{formatAUD(main.final)}</p>
           <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-white/10">
             <div>
-              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Total contributed</p>
+              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Total contributed</p>
               <p className="text-lg font-extrabold mt-1">{formatAUD(main.contributed)}</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Total growth</p>
+              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Total growth</p>
               <p className="text-lg font-extrabold mt-1 text-emerald-400">{formatAUD(main.growth)}</p>
             </div>
           </div>
