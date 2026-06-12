@@ -51,6 +51,12 @@ const ISOLATION_EXEMPT = [
   { table: "retention_rules", reason: "service-role config; no per-user rows" },
   // startup_sessions (SP-02): service-role-only, no authenticated policy (mirrors advisor_sessions)
   { table: "startup_sessions", reason: "service-role-only; no authenticated policy / no user-readable rows" },
+  // challenges: public-read marketing/landing table (anon+authenticated SELECT),
+  // service-role-only writes; has NO user_id/owner_id column of its own — it is
+  // only flagged because the file-level scan sees challenge_enrolments.user_id in
+  // the same migration. Per-user isolation lives on challenge_enrolments and
+  // challenge_task_completions (each has its own .rls.test.ts).
+  { table: "challenges", reason: "public-read marketing table; service-role-only writes; no user-owned rows (no user_id column)" },
 ];
 
 const EXEMPT_NAMES = new Set(ISOLATION_EXEMPT.map((e) => e.table));

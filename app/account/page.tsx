@@ -8,6 +8,7 @@ import SwitchingTracker from "@/components/SwitchingTracker";
 import AccountActionPlansTiles from "./AccountActionPlansTiles";
 import AccountHero from "./_components/AccountHero";
 import AccountActivityFeed from "./_components/AccountActivityFeed";
+import ChallengesAccountTile from "./_components/ChallengesAccountTile";
 import AccountCohortWidget from "./_components/AccountCohortWidget";
 import PersonaCard from "@/components/persona/PersonaCard";
 import { createClient } from "@/lib/supabase/server";
@@ -172,6 +173,11 @@ export default async function AccountPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8">
         <SwitchingTracker />
       </div>
+      {/* Cohort Challenges — self-contained, flag-gated (renders null when the
+          cohort_challenges flag is off). Isolated single block. */}
+      <Suspense fallback={null}>
+        <ChallengesAccountTile />
+      </Suspense>
       <Suspense fallback={<div className="py-16 text-center animate-pulse"><div className="h-8 w-48 bg-slate-200 rounded mx-auto" /></div>}>
         <AccountClient />
       </Suspense>
