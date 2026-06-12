@@ -91,7 +91,7 @@ export default function NewsletterExitIntentModal({
       "/auth/signup",
       "/onboarding",
       "/checkout",
-      "/get-matched",
+      "/quiz",
       "/find-advisor",
     ];
     if (DENY_PREFIXES.some((p) => path.startsWith(p))) return false;

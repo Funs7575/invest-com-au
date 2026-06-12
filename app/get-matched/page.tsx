@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import GetMatchedClient from "./GetMatchedClient";
 import { CURRENT_YEAR, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
-import { deepLinkPrefill } from "@/lib/getmatched/deep-link-prefill";
 
 export const metadata: Metadata = {
   title: `Get Matched — Build your Investment Action Plan (${CURRENT_YEAR})`,
@@ -41,9 +40,6 @@ interface SearchParams {
   team?: string;
   plan_id?: string;
   mode?: string;
-  /** Cross-border deep-link from country pages / the /find-advisor fold-in. */
-  specialty?: string;
-  country?: string;
 }
 
 export default async function GetMatchedPage({
@@ -52,7 +48,6 @@ export default async function GetMatchedPage({
   searchParams?: Promise<SearchParams>;
 }) {
   const sp = (await searchParams) ?? {};
-  const linkPrefill = deepLinkPrefill({ specialty: sp.specialty, country: sp.country });
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Get Matched" },
@@ -77,7 +72,6 @@ export default async function GetMatchedPage({
         initialContext={sp.context ?? null}
         initialPlanId={sp.plan_id ? Number(sp.plan_id) : null}
         initialMode={sp.mode === "fast" || sp.mode === "guided" ? sp.mode : "both"}
-        initialPrefill={Object.keys(linkPrefill).length > 0 ? linkPrefill : null}
       />
 
       <div className="border-t border-slate-200 bg-white">

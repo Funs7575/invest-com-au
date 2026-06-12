@@ -347,20 +347,19 @@ const nextConfig: NextConfig = {
         destination: "/get-matched",
         permanent: true,
       },
-      // P8 (Decision Engine): /find-advisor folds fully into the one funnel.
-      // get-matched captures advisor leads at parity AND now consumes the
-      // cross-border deep-link params (?specialty= / ?country= from country
-      // pages — the 1.75× premium line) via lib/getmatched/deep-link-prefill,
-      // so the old `missing` carve-out is gone and the bare redirect always
-      // fires. Next preserves the query string, so /find-advisor?specialty=X
-      // lands on /get-matched?specialty=X and the page maps it into the start
-      // prefill. Exact-match source — /find-advisor/life-event and the
-      // /find-advisor/[location] directory pages are subpaths and are NOT
-      // caught here, so they stay live.
+      // P8 (Decision Engine): /find-advisor folds into the one funnel now that
+      // get-matched captures advisor leads at parity. Cross-border deep-links
+      // (?specialty= / ?country= from country pages — the 1.75× premium line)
+      // keep the dedicated flow until get-matched consumes those params.
+      // `missing` entries AND together: redirect fires only when BOTH absent.
       {
         source: "/find-advisor",
         destination: "/get-matched",
         permanent: true,
+        missing: [
+          { type: "query", key: "specialty" },
+          { type: "query", key: "country" },
+        ],
       },
       {
         source: "/course",

@@ -60,9 +60,9 @@ export const SMSF_ONBOARDING_CONFIG: HubOnboardingConfig = {
         headline: "You are an experienced trustee — let us help you optimise.",
         summary:
           "Since you already have an SMSF, the next step is making sure it is performing. A specialist adviser can review your investment strategy, pension-phase planning, and compliance obligations.",
-        primaryCta: { label: "Find an SMSF Specialist", href: "/get-matched?vertical=smsf" },
+        primaryCta: { label: "Find an SMSF Specialist", href: "/quiz?vertical=smsf" },
         secondaryCta: { label: "SMSF Audit Checklist", href: "/smsf/checklist" },
-        advisorCta: { href: "/get-matched?vertical=smsf", specialty: "SMSF specialist" },
+        advisorCta: { href: "/quiz?vertical=smsf", specialty: "SMSF specialist" },
       };
     }
 
@@ -73,7 +73,7 @@ export const SMSF_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "SMSFs are generally cost-effective above $200k–$250k. Below that, annual administration fees ($1,500–$5,000) erode returns. A low-fee industry or retail super fund is usually better at this stage.",
         primaryCta: { label: "Compare Super Funds", href: "/super" },
         secondaryCta: { label: "When Does an SMSF Make Sense?", href: "/article/when-smsf-makes-sense" },
-        advisorCta: { href: "/get-matched?vertical=super", specialty: "super specialist" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super specialist" },
       };
     }
 
@@ -82,9 +82,9 @@ export const SMSF_ONBOARDING_CONFIG: HubOnboardingConfig = {
         headline: "Property in super is achievable — with the right structure.",
         summary:
           "Buying property via a Limited Recourse Borrowing Arrangement (LRBA) requires a corporate trustee, bare trust, and a lender willing to finance SMSF loans. Costs are higher, but the tax treatment in pension phase is very powerful.",
-        primaryCta: { label: "Find an SMSF Property Specialist", href: "/get-matched?vertical=smsf" },
+        primaryCta: { label: "Find an SMSF Property Specialist", href: "/quiz?vertical=smsf" },
         secondaryCta: { label: "Property in SMSF Guide", href: "/smsf/property" },
-        advisorCta: { href: "/get-matched?vertical=smsf", specialty: "SMSF property specialist" },
+        advisorCta: { href: "/quiz?vertical=smsf", specialty: "SMSF property specialist" },
       };
     }
 
@@ -94,8 +94,8 @@ export const SMSF_ONBOARDING_CONFIG: HubOnboardingConfig = {
         summary:
           "With a solid balance and some prior research, the economics of an SMSF work in your favour. Setup costs ($1,000–$3,000) and annual admin ($1,500–$5,000) are manageable at your balance level.",
         primaryCta: { label: "Start SMSF Setup", href: "/smsf/setup" },
-        secondaryCta: { label: "Find an SMSF Specialist", href: "/get-matched?vertical=smsf" },
-        advisorCta: { href: "/get-matched?vertical=smsf", specialty: "SMSF adviser" },
+        secondaryCta: { label: "Find an SMSF Specialist", href: "/quiz?vertical=smsf" },
+        advisorCta: { href: "/quiz?vertical=smsf", specialty: "SMSF adviser" },
       };
     }
 
@@ -103,9 +103,9 @@ export const SMSF_ONBOARDING_CONFIG: HubOnboardingConfig = {
       headline: "An SMSF could work — let us check the numbers.",
       summary:
         "Whether an SMSF makes sense depends on your balance, goals, and how much time you are willing to commit as a trustee. A free initial consultation with an SMSF specialist will give you a clear picture.",
-      primaryCta: { label: "Talk to an SMSF Specialist", href: "/get-matched?vertical=smsf" },
+      primaryCta: { label: "Talk to an SMSF Specialist", href: "/quiz?vertical=smsf" },
       secondaryCta: { label: "Read the SMSF Guide", href: "/invest/smsf" },
-      advisorCta: { href: "/get-matched?vertical=smsf", specialty: "SMSF specialist" },
+      advisorCta: { href: "/quiz?vertical=smsf", specialty: "SMSF specialist" },
     };
   },
 };
@@ -159,7 +159,7 @@ export const DIVIDENDS_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "In pension phase, your SMSF can claim the full 30% corporate tax credit as a cash refund — meaning a 4.2% ASX dividend yield effectively becomes ~6% after-tax. Focus on fully-franked payers and consider Dividend Reinvestment Plans (DRPs).",
         primaryCta: { label: "SMSF Dividend Strategy", href: "/invest/smsf" },
         secondaryCta: { label: "Franking Calculator", href: "/dividends/calculator" },
-        advisorCta: { href: "/get-matched?vertical=smsf", specialty: "SMSF and tax adviser" },
+        advisorCta: { href: "/quiz?vertical=smsf", specialty: "SMSF and tax adviser" },
       };
     }
 
@@ -170,7 +170,7 @@ export const DIVIDENDS_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Target 4–5% gross yield with full franking on WDS, the Big 4 banks, and BHP. At $500k invested, that is roughly $25k/year — or ~$35k after franking credits in pension phase. ETFs like VHY diversify automatically.",
         primaryCta: { label: "High-Yield ASX Stocks", href: "/article/high-dividend-asx-stocks-2026" },
         secondaryCta: { label: "Compare Dividend ETFs", href: "/article/best-dividend-etfs-australia" },
-        advisorCta: { href: "/get-matched", specialty: "income-focused adviser" },
+        advisorCta: { href: "/quiz", specialty: "income-focused adviser" },
       };
     }
 
@@ -181,7 +181,7 @@ export const DIVIDENDS_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "A $200k portfolio at 4.2% yield, reinvested annually, grows to roughly $330k in 10 years with no new contributions — before capital growth. Dividend Reinvestment Plans at most ASX top-50 payers automate this entirely.",
         primaryCta: { label: "Best Dividend ETFs Guide", href: "/article/best-dividend-etfs-australia" },
         secondaryCta: { label: "Franking Credits Explained", href: "/dividends/franking-credits" },
-        advisorCta: { href: "/get-matched", specialty: "investment adviser" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
       };
     }
 
@@ -191,7 +191,7 @@ export const DIVIDENDS_ONBOARDING_CONFIG: HubOnboardingConfig = {
         "Australia's imputation system is unique — you do not just earn dividends, you receive a credit for the tax the company already paid. Start with a diversified dividend ETF (VHY, A200) before picking individual stocks.",
       primaryCta: { label: "Compare Share Platforms", href: "/compare" },
       secondaryCta: { label: "Franking Credits Guide", href: "/dividends/franking-credits" },
-      advisorCta: { href: "/get-matched", specialty: "financial adviser" },
+      advisorCta: { href: "/quiz", specialty: "financial adviser" },
     };
   },
 };
@@ -256,7 +256,7 @@ export const WHOLESALE_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "The s708 test requires net assets over $2.5M or $250k annual income (both tests sustained over 2 years). A financial adviser can help you structure assets and document eligibility when you cross the threshold.",
         primaryCta: { label: "Wholesale Investor Guide", href: "/invest/wholesale" },
         secondaryCta: { label: "Find a Financial Adviser", href: "/find-advisor" },
-        advisorCta: { href: "/get-matched", specialty: "financial adviser" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
       };
     }
 
@@ -270,7 +270,7 @@ export const WHOLESALE_ONBOARDING_CONFIG: HubOnboardingConfig = {
           label: "Private Equity Opportunities",
           href: "/invest/private-equity/listings",
         },
-        advisorCta: { href: "/get-matched?vertical=wholesale", specialty: "wholesale investment specialist" },
+        advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
       };
     }
 
@@ -284,7 +284,7 @@ export const WHOLESALE_ONBOARDING_CONFIG: HubOnboardingConfig = {
           href: "/invest/private-equity/listings",
         },
         secondaryCta: { label: "Litigation Funding Explained", href: "/invest/alternatives" },
-        advisorCta: { href: "/get-matched?vertical=wholesale", specialty: "wholesale investment specialist" },
+        advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
       };
     }
 
@@ -294,8 +294,8 @@ export const WHOLESALE_ONBOARDING_CONFIG: HubOnboardingConfig = {
         summary:
           "Australian-domiciled wholesale hedge funds typically require $50k–$500k minimums and a 12-month lock-up. Absolute-return mandates seek positive returns in both bull and bear markets — useful as a portfolio diversifier.",
         primaryCta: { label: "Alternative Investments", href: "/invest/alternatives" },
-        secondaryCta: { label: "Find a Wholesale Adviser", href: "/get-matched?vertical=wholesale" },
-        advisorCta: { href: "/get-matched?vertical=wholesale", specialty: "wholesale investment specialist" },
+        secondaryCta: { label: "Find a Wholesale Adviser", href: "/quiz?vertical=wholesale" },
+        advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
       };
     }
 
@@ -305,8 +305,8 @@ export const WHOLESALE_ONBOARDING_CONFIG: HubOnboardingConfig = {
         summary:
           "Wholesale commercial property syndicates and infrastructure funds target 7–9% p.a. distributions with capital appreciation over 5–10 year horizons. Low correlation to ASX makes them attractive portfolio diversifiers for HNW investors.",
         primaryCta: { label: "Property Investment Hub", href: "/property" },
-        secondaryCta: { label: "Find a Wholesale Adviser", href: "/get-matched?vertical=wholesale" },
-        advisorCta: { href: "/get-matched?vertical=wholesale", specialty: "wholesale investment specialist" },
+        secondaryCta: { label: "Find a Wholesale Adviser", href: "/quiz?vertical=wholesale" },
+        advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
       };
     }
 
@@ -315,8 +315,8 @@ export const WHOLESALE_ONBOARDING_CONFIG: HubOnboardingConfig = {
       summary:
         "Wholesale investors access a wider product universe: unlisted funds, PE, VC, hedge funds, and private credit — without the retail disclosure requirements of listed products. A specialist adviser can match your risk tolerance to the right allocations.",
       primaryCta: { label: "Explore Wholesale Products", href: "/invest/wholesale" },
-      secondaryCta: { label: "Find a Wholesale Adviser", href: "/get-matched?vertical=wholesale" },
-      advisorCta: { href: "/get-matched?vertical=wholesale", specialty: "wholesale investment specialist" },
+      secondaryCta: { label: "Find a Wholesale Adviser", href: "/quiz?vertical=wholesale" },
+      advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
     };
   },
 };
@@ -371,7 +371,7 @@ export const PROPERTY_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Property suits investors who want leverage, tax benefits (negative gearing, depreciation), and long-term capital appreciation. But it comes with illiquidity and concentration risk. A buyer's agent or financial adviser can model the numbers for your situation.",
         primaryCta: { label: "Property vs Shares Calculator", href: "/property-vs-shares-calculator" },
         secondaryCta: { label: "Find a Financial Adviser", href: "/find-advisor" },
-        advisorCta: { href: "/get-matched?vertical=property", specialty: "property investment adviser" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
       };
     }
 
@@ -382,7 +382,7 @@ export const PROPERTY_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "With under $100k available, the goal now is building a deposit. The First Home Super Saver Scheme (FHSS) lets you save inside super at 15% tax, then withdraw up to $50k for a home deposit. Stamp-duty exemptions for first-home buyers also reduce your required savings.",
         primaryCta: { label: "First Home Buyer Hub", href: "/first-home-buyer" },
         secondaryCta: { label: "FHSS Calculator", href: "/tools/fhss-calculator" },
-        advisorCta: { href: "/get-matched?vertical=mortgage", specialty: "mortgage broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "mortgage broker" },
       };
     }
 
@@ -392,8 +392,8 @@ export const PROPERTY_ONBOARDING_CONFIG: HubOnboardingConfig = {
         summary:
           "Experienced investors typically focus next on equity release from existing properties (via refinance or line of credit), cross-collateralisation risks, and portfolio diversification. A buyer's agent who specialises in investor clients can source off-market deals.",
         primaryCta: { label: "Browse New Developments", href: "/property/listings" },
-        secondaryCta: { label: "Find a Buyer's Agent", href: "/get-matched?vertical=property" },
-        advisorCta: { href: "/get-matched?vertical=property", specialty: "property investment adviser" },
+        secondaryCta: { label: "Find a Buyer's Agent", href: "/quiz?vertical=property" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
       };
     }
 
@@ -403,8 +403,8 @@ export const PROPERTY_ONBOARDING_CONFIG: HubOnboardingConfig = {
         summary:
           "High-yield markets (regional QLD, parts of WA) can hit 6–8% gross yield but trade capital growth for income. Dual-income properties and house-and-land packages in high-demand rental corridors often outperform on a total-return basis. Use our yield calculator to stress-test the numbers.",
         primaryCta: { label: "Property Yield Calculator", href: "/property-yield-calculator" },
-        secondaryCta: { label: "Find a Buyer's Agent", href: "/get-matched?vertical=property" },
-        advisorCta: { href: "/get-matched?vertical=property", specialty: "property buyer's agent" },
+        secondaryCta: { label: "Find a Buyer's Agent", href: "/quiz?vertical=property" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property buyer's agent" },
       };
     }
 
@@ -414,8 +414,8 @@ export const PROPERTY_ONBOARDING_CONFIG: HubOnboardingConfig = {
         summary:
           "Historically, well-located metro land within 20km of a CBD doubles every 10–12 years. New estates on urban fringes are cheaper but grow slower. A buyer's agent with local data can identify growth corridors before they peak — saving both time and money.",
         primaryCta: { label: "Browse New Developments", href: "/property/listings" },
-        secondaryCta: { label: "Find a Buyer's Agent", href: "/get-matched?vertical=property" },
-        advisorCta: { href: "/get-matched?vertical=property", specialty: "property buyer's agent" },
+        secondaryCta: { label: "Find a Buyer's Agent", href: "/quiz?vertical=property" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property buyer's agent" },
       };
     }
 
@@ -424,8 +424,8 @@ export const PROPERTY_ONBOARDING_CONFIG: HubOnboardingConfig = {
       summary:
         "Start with a clear budget (deposit + stamp duty + buying costs), define your goal (yield vs growth), and choose the right structure (personal, joint, or trust). A mortgage broker can confirm your borrowing power before you make any offers.",
       primaryCta: { label: "Property Investment Guides", href: "/property" },
-      secondaryCta: { label: "Find a Mortgage Broker", href: "/get-matched?vertical=mortgage" },
-      advisorCta: { href: "/get-matched?vertical=property", specialty: "property investment adviser" },
+      secondaryCta: { label: "Find a Mortgage Broker", href: "/quiz?vertical=mortgage" },
+      advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
     };
   },
 };
@@ -480,7 +480,7 @@ export const ETF_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "VHY (Vanguard Australian Shares High Yield) yields ~4.5–5.5% with full franking credits — in a pension-phase SMSF that becomes ~6.5–7%. For global income, consider VDHG (multi-asset, income tilt) or HBRD (hybrid-securities ETF). Compare MER fees before buying — they compound negatively just like returns.",
         primaryCta: { label: "Compare Dividend ETFs", href: "/article/best-dividend-etfs-australia" },
         secondaryCta: { label: "Franking Credits Calculator", href: "/franking-credits-calculator" },
-        advisorCta: { href: "/get-matched", specialty: "investment adviser" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
       };
     }
 
@@ -491,7 +491,7 @@ export const ETF_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "VGS (Vanguard MSCI Index International Shares) gives you ~1,500 global stocks at 0.18% MER. IVV (iShares S&P 500) is pure US at 0.04% — the cheapest way to own America. NDQ (BetaShares Nasdaq 100) is higher growth, higher volatility. All available on ASX.",
         primaryCta: { label: "Best Global ETFs Guide", href: "/article/best-global-etfs-australia" },
         secondaryCta: { label: "Compare ETFs on ASX", href: "/etfs" },
-        advisorCta: { href: "/get-matched", specialty: "investment adviser" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
       };
     }
 
@@ -502,7 +502,7 @@ export const ETF_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "If you already hold Australian stocks, a single international equity ETF (VGS or BGBL) adds geographic diversification without overlap. VDHG and DHHF are pre-mixed multi-asset ETFs that automatically hold 4–7 underlying ETFs — one holding simplifies your tax return and rebalancing.",
         primaryCta: { label: "Best ETFs Australia", href: "/etfs" },
         secondaryCta: { label: "Portfolio X-Ray", href: "/portfolio-xray" },
-        advisorCta: { href: "/get-matched", specialty: "investment adviser" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
       };
     }
 
@@ -513,7 +513,7 @@ export const ETF_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "A move from 15 individual ASX stocks to A200 (ASX 200 ETF) typically halves brokerage, eliminates individual company risk, and removes the cognitive load of tracking earnings. CGT timing matters when selling shares — consider doing it across two financial years to spread the capital gain.",
         primaryCta: { label: "Best ASX ETFs", href: "/etfs" },
         secondaryCta: { label: "CGT Calculator", href: "/cgt-calculator" },
-        advisorCta: { href: "/get-matched", specialty: "investment adviser" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
       };
     }
 
@@ -524,7 +524,7 @@ export const ETF_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "IAF (iShares Core Composite Bond) or BOND (BetaShares Composite Bond) give exposure to Australian government and corporate bonds. For mixed defensive/growth under 3 years, VDHG (70% equities / 30% bonds) or cash ETFs like MONY smooth short-term volatility.",
         primaryCta: { label: "Defensive ETF Guide", href: "/etfs" },
         secondaryCta: { label: "Compare ETFs", href: "/compare/etfs" },
-        advisorCta: { href: "/get-matched", specialty: "financial adviser" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
       };
     }
 
@@ -534,7 +534,7 @@ export const ETF_ONBOARDING_CONFIG: HubOnboardingConfig = {
         "The classic approach: VAS (or A200) for Australian equities + VGS for international equities. Allocate 30–40% to Australia, 60–70% to international. Rebalance annually. Total ongoing cost: ~0.10–0.18% MER. This beats the median active fund over 15+ years after tax.",
       primaryCta: { label: "ETF Comparison Hub", href: "/etfs" },
       secondaryCta: { label: "Compare ETFs on ASX", href: "/compare/etfs" },
-      advisorCta: { href: "/get-matched", specialty: "investment adviser" },
+      advisorCta: { href: "/quiz", specialty: "investment adviser" },
     };
   },
 };
@@ -591,7 +591,7 @@ export const INSURANCE_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "You have no employer sick leave or workers compensation fallback. Income protection outside super (not inside) gives you the broadest 'own occupation' definition, is fully tax-deductible, and can be structured to match your drawings — not just a salary figure. A specialist insurance broker will help you structure agreed-value cover correctly.",
         primaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
         secondaryCta: { label: "Income Protection Guide", href: "/insurance/income-protection" },
-        advisorCta: { href: "/get-matched", specialty: "insurance broker" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
       };
     }
 
@@ -603,7 +603,7 @@ export const INSURANCE_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "With dependants, a gap in either life or income cover creates serious financial risk. A rule of thumb: 10× your annual income in life cover, income protection to age 65. If you hold insurance inside super, check the policy's disability definition — income protection inside super defaults to 'any occupation' for the first 2 years, which is far more restrictive.",
         primaryCta: { label: "Life Insurance Guide", href: "/insurance/life" },
         secondaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
-        advisorCta: { href: "/get-matched", specialty: "insurance broker" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
       };
     }
 
@@ -615,7 +615,7 @@ export const INSURANCE_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Singles earning above $93,000 (families above $186,000) pay a Medicare Levy Surcharge without private hospital cover. A basic hospital policy from ~$100/month often costs less than the MLS. Compare bronze, silver, and gold tiers — hospital cover is what removes the MLS; extras (dental/optical) are optional.",
         primaryCta: { label: "Health Insurance Guide", href: "/insurance/health" },
         secondaryCta: { label: "MLS Explained", href: "/insurance" },
-        advisorCta: { href: "/get-matched", specialty: "financial adviser" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
       };
     }
 
@@ -627,7 +627,7 @@ export const INSURANCE_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "The most common mistake is insuring for market value instead of rebuild cost. Use a building cost estimator (check your insurer's website) to calculate the cost of rebuilding from scratch, not what you paid for the house. Contents cover should include all furniture, appliances, and personal items at replacement value.",
         primaryCta: { label: "Home & Contents Guide", href: "/insurance/home-contents" },
         secondaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
-        advisorCta: { href: "/get-matched", specialty: "insurance broker" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
       };
     }
 
@@ -639,7 +639,7 @@ export const INSURANCE_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "As your mortgage reduces and children become financially independent, your life insurance need decreases. However, income protection remains valuable while you're still working. Consider whether existing TPD and trauma cover is sized correctly, and review whether stepped premiums are now costing significantly more than when you first took out cover.",
         primaryCta: { label: "Insurance Review Guide", href: "/insurance" },
         secondaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
-        advisorCta: { href: "/get-matched", specialty: "insurance broker" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
       };
     }
 
@@ -651,7 +651,7 @@ export const INSURANCE_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Default super fund insurance is group cover with no underwriting. It often lapses if your balance runs low, and the disability definition is more restrictive than individual cover. A 30-minute conversation with an insurance broker (typically no cost to you) can identify gaps and structure cover tax-efficiently.",
         primaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
         secondaryCta: { label: "Insurance Hub", href: "/insurance" },
-        advisorCta: { href: "/get-matched", specialty: "insurance broker" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
       };
     }
 
@@ -662,7 +662,7 @@ export const INSURANCE_ONBOARDING_CONFIG: HubOnboardingConfig = {
         "If you can't work for 3+ months, no income protection means drawing down savings, redrawing on the mortgage, or relying on the disability support pension. Cover to age 65, 90-day waiting period, and 'own occupation' definition is the standard professional recommendation for employed Australians.",
       primaryCta: { label: "Income Protection Guide", href: "/insurance/income-protection" },
       secondaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
-      advisorCta: { href: "/get-matched", specialty: "insurance broker" },
+      advisorCta: { href: "/quiz", specialty: "insurance broker" },
     };
   },
 };
@@ -719,7 +719,7 @@ export const NEGATIVE_GEARING_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Negative gearing offsets losses at your marginal rate. At 19%, a $10,000 annual loss saves only $1,900 in tax — barely enough to cover a rate rise. A positively-geared (cash-flow-positive) property strategy is typically better below $45k, where the cash you keep matters more than the tax you save.",
         primaryCta: { label: "Property Investment Guide", href: "/property" },
         secondaryCta: { label: "Negative Gearing Calculator", href: "/negative-gearing/calculator" },
-        advisorCta: { href: "/get-matched?vertical=property", specialty: "property investment adviser" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
       };
     }
 
@@ -729,9 +729,9 @@ export const NEGATIVE_GEARING_ONBOARDING_CONFIG: HubOnboardingConfig = {
         headline: "You are already negatively geared — the opportunity is in optimisation.",
         summary:
           "Most investors leave money on the table by under-claiming depreciation. A quantity surveyor's depreciation schedule ($500–$800) typically finds $5,000–$15,000 per year in additional deductions on properties built after 1985 — a 10× return on the survey cost in year one alone. A tax accountant specialising in investment property can also review your ownership structure and loan type.",
-        primaryCta: { label: "Find a Property Tax Accountant", href: "/get-matched?vertical=tax" },
+        primaryCta: { label: "Find a Property Tax Accountant", href: "/quiz?vertical=tax" },
         secondaryCta: { label: "Depreciation Guide", href: "/negative-gearing" },
-        advisorCta: { href: "/get-matched?vertical=tax", specialty: "property tax accountant" },
+        advisorCta: { href: "/quiz?vertical=tax", specialty: "property tax accountant" },
       };
     }
 
@@ -742,8 +742,8 @@ export const NEGATIVE_GEARING_ONBOARDING_CONFIG: HubOnboardingConfig = {
         summary:
           "Every dollar of net rental loss reduces your taxable income at 37–45 cents. On a $600k investment property losing $15k per year, that is $5,550–$6,750 in annual tax savings. Combined with capital growth, depreciation, and eventual CGT discount on sale, property negative gearing at your income level has a strong risk-adjusted return profile.",
         primaryCta: { label: "Negative Gearing Calculator", href: "/negative-gearing/calculator" },
-        secondaryCta: { label: "Find a Property Adviser", href: "/get-matched?vertical=property" },
-        advisorCta: { href: "/get-matched?vertical=property", specialty: "property investment adviser" },
+        secondaryCta: { label: "Find a Property Adviser", href: "/quiz?vertical=property" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
       };
     }
 
@@ -755,7 +755,7 @@ export const NEGATIVE_GEARING_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Borrowing to invest in shares or managed funds (margin lending) creates deductible interest and fees, reducing taxable income at 37–45%. A $200k loan at 7% interest = $14,000 in deductions per year. Unlike property, share portfolios are liquid — but margin calls require cash buffers. A financial adviser can structure the right loan-to-value ratio for your risk appetite.",
         primaryCta: { label: "Find a Financial Adviser", href: "/find-advisor" },
         secondaryCta: { label: "Negative Gearing on Shares", href: "/negative-gearing" },
-        advisorCta: { href: "/get-matched", specialty: "investment adviser" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
       };
     }
 
@@ -767,7 +767,7 @@ export const NEGATIVE_GEARING_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "If your property is positively geared (rental income exceeds expenses), the tax benefits of negative gearing don't apply — but depreciation deductions may still reduce your net taxable position. Some investors restructure by refinancing to interest-only loans, accessing equity for a new (negatively geared) investment while keeping the existing cash-flow-positive property.",
         primaryCta: { label: "Find a Financial Adviser", href: "/find-advisor" },
         secondaryCta: { label: "Property Investment Guide", href: "/property" },
-        advisorCta: { href: "/get-matched?vertical=property", specialty: "property investment adviser" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
       };
     }
 
@@ -777,8 +777,8 @@ export const NEGATIVE_GEARING_ONBOARDING_CONFIG: HubOnboardingConfig = {
       summary:
         "The core test: does the annual tax saving (loss × marginal rate) come close to covering the monthly cash shortfall (mortgage – rent)? If you need to top up more than $800–$1,000 per month, the tax benefit rarely offsets the cash pressure. Run your numbers in the calculator, then speak to a tax accountant before committing.",
       primaryCta: { label: "Negative Gearing Calculator", href: "/negative-gearing/calculator" },
-      secondaryCta: { label: "Find a Property Tax Accountant", href: "/get-matched?vertical=tax" },
-      advisorCta: { href: "/get-matched?vertical=tax", specialty: "property tax accountant" },
+      secondaryCta: { label: "Find a Property Tax Accountant", href: "/quiz?vertical=tax" },
+      advisorCta: { href: "/quiz?vertical=tax", specialty: "property tax accountant" },
     };
   },
 };
@@ -831,9 +831,9 @@ export const SUPER_ONBOARDING_CONFIG: HubOnboardingConfig = {
         headline: "Transition to retirement planning is the highest-impact move you can make.",
         summary:
           "A Transition to Retirement (TTR) income stream lets you draw from super at a reduced tax rate while still working. At 60+, super drawdowns are completely tax-free in pension phase. The right time to start a TTR or account-based pension depends on your balance, income, and age pension eligibility — a super specialist can model both.",
-        primaryCta: { label: "Find a Super Specialist", href: "/get-matched?vertical=super" },
+        primaryCta: { label: "Find a Super Specialist", href: "/quiz?vertical=super" },
         secondaryCta: { label: "Super Contributions Guide", href: "/super/contributions" },
-        advisorCta: { href: "/get-matched?vertical=super", specialty: "super specialist" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super specialist" },
       };
     }
 
@@ -844,7 +844,7 @@ export const SUPER_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Australian Retirement Trust, Aware Super, and Hostplus charge 0.10–0.15% for members above $500k — well below the industry average of 0.85%. An SMSF also becomes cost-competitive above $250k if you are comfortable running it. Compare fund options using APRA's published fee data before switching.",
         primaryCta: { label: "Compare Super Funds", href: "/compare/super" },
         secondaryCta: { label: "SMSF vs Industry Fund", href: "/invest/smsf" },
-        advisorCta: { href: "/get-matched?vertical=super", specialty: "super adviser" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super adviser" },
       };
     }
 
@@ -853,9 +853,9 @@ export const SUPER_ONBOARDING_CONFIG: HubOnboardingConfig = {
         headline: "Your balance is large enough to benefit from personalised super advice.",
         summary:
           "Above $200k, the difference between a 0.3% and 0.8% fee fund is $1,000–$4,000 per year in compounding lost. Investment-option switching (e.g., balanced → high growth) can add significant long-term returns if your timeline allows. A super specialist can run a full fee + performance comparison across top funds.",
-        primaryCta: { label: "Find a Super Specialist", href: "/get-matched?vertical=super" },
+        primaryCta: { label: "Find a Super Specialist", href: "/quiz?vertical=super" },
         secondaryCta: { label: "Compare Super Funds", href: "/compare/super" },
-        advisorCta: { href: "/get-matched?vertical=super", specialty: "super adviser" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super adviser" },
       };
     }
 
@@ -866,7 +866,7 @@ export const SUPER_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "The concessional (pre-tax) contributions cap is $30,000 per year from 2024–25, taxed at 15% inside super. If your marginal rate is 32.5–45%, that is a 17.5–30% instant tax saving per dollar contributed. Salary sacrifice through your employer is the simplest mechanism — no out-of-pocket cash required.",
         primaryCta: { label: "Super Contributions Guide", href: "/super/contributions" },
         secondaryCta: { label: "Super Contributions Calculator", href: "/super-contributions-calculator" },
-        advisorCta: { href: "/get-matched?vertical=super", specialty: "super specialist" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super specialist" },
       };
     }
 
@@ -877,7 +877,7 @@ export const SUPER_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Each super account charges a fixed annual administration fee ($50–$120) plus a percentage fee. Two accounts on a $150k balance could cost $400–$700 extra per year for no benefit. Use myGov to find lost or inactive accounts, then roll them into your chosen fund — the process takes under 10 minutes online.",
         primaryCta: { label: "Super Consolidation Guide", href: "/super/consolidation" },
         secondaryCta: { label: "Compare Super Funds", href: "/compare/super" },
-        advisorCta: { href: "/get-matched?vertical=super", specialty: "super specialist" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super specialist" },
       };
     }
 
@@ -887,7 +887,7 @@ export const SUPER_ONBOARDING_CONFIG: HubOnboardingConfig = {
         "The difference between a 0.5% and 1.3% fee fund on a $100k balance is $800 per year — $40,000+ over a career. Performance follows fees over long periods: low-cost indexed options in top-tier funds (AustralianSuper, Hostplus, UniSuper) have outperformed most active alternatives over 10 years. Your employer must pay into any registered fund you nominate.",
       primaryCta: { label: "Compare Super Funds", href: "/compare/super" },
       secondaryCta: { label: "Super Contributions Calculator", href: "/super-contributions-calculator" },
-      advisorCta: { href: "/get-matched?vertical=super", specialty: "super specialist" },
+      advisorCta: { href: "/quiz?vertical=super", specialty: "super specialist" },
     };
   },
 };
@@ -943,7 +943,7 @@ export const CRYPTO_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "For first-time crypto investors, the safest entry point is a regulated Australian exchange (Coinbase, Swyftx, or CoinSpot). Buy Bitcoin or Ethereum — they are the most liquid, most researched, and least likely to go to zero of any digital asset. Keep your first purchase to under 5% of investable assets. Never invest more than you can afford to lose entirely.",
         primaryCta: { label: "Compare Crypto Exchanges", href: "/crypto" },
         secondaryCta: { label: "Crypto Beginner Guide", href: "/crypto" },
-        advisorCta: { href: "/get-matched", specialty: "financial adviser" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
       };
     }
 
@@ -955,7 +955,7 @@ export const CRYPTO_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Bitcoin has fallen 80%+ from peak in three separate cycles (2014, 2018, 2022). A 40% crypto position could drop your total portfolio by 32%+ in a bear market. Most regulated financial advisers cap crypto at 5–10% for retail clients. If you proceed, consider dollar-cost averaging (weekly/monthly buys) rather than a lump sum, and use a hardware wallet for self-custody.",
         primaryCta: { label: "Crypto Risk Guide", href: "/crypto" },
         secondaryCta: { label: "Compare Exchanges", href: "/crypto" },
-        advisorCta: { href: "/get-matched", specialty: "financial adviser" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
       };
     }
 
@@ -967,7 +967,7 @@ export const CRYPTO_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Staking on Ethereum (3–4% APY), ADA, or Solana is relatively low-risk — you are securing the network and earning native rewards. Centralised lending platforms (like the collapsed Celsius) are higher risk. DeFi lending (Aave, Compound) exposes you to smart-contract exploits. For Australian tax, staking rewards are income at receipt and CGT on disposal.",
         primaryCta: { label: "Crypto Tax Guide", href: "/crypto" },
         secondaryCta: { label: "Compare Exchanges", href: "/crypto" },
-        advisorCta: { href: "/get-matched", specialty: "crypto tax adviser" },
+        advisorCta: { href: "/quiz", specialty: "crypto tax adviser" },
       };
     }
 
@@ -979,7 +979,7 @@ export const CRYPTO_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Every DeFi interaction (swap, LP deposit, staking reward) is a taxable event in Australia. CoinTracker, Koinly, or CryptoTaxCalculator can ingest your on-chain history via wallet address. Keep records of cost bases for all positions — the ATO now receives data directly from Australian exchanges under the mandatory data-sharing regime.",
         primaryCta: { label: "Crypto Tax Guide", href: "/crypto" },
         secondaryCta: { label: "Compare Exchanges", href: "/crypto" },
-        advisorCta: { href: "/get-matched", specialty: "crypto tax adviser" },
+        advisorCta: { href: "/quiz", specialty: "crypto tax adviser" },
       };
     }
 
@@ -991,7 +991,7 @@ export const CRYPTO_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Research by Fidelity, BlackRock, and MSCI suggests 1–5% Bitcoin in a diversified portfolio improves risk-adjusted returns over a 10-year horizon due to low correlation with equities (especially pre-ETF era). Rebalance annually — crypto's volatility means it will drift quickly from a target allocation. Australian crypto ETFs (e.g., VanEck Bitcoin ETF) on ASX remove self-custody risk.",
         primaryCta: { label: "Compare Crypto Exchanges", href: "/crypto" },
         secondaryCta: { label: "Crypto on ASX (ETFs)", href: "/crypto" },
-        advisorCta: { href: "/get-matched", specialty: "financial adviser" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
       };
     }
 
@@ -1002,7 +1002,7 @@ export const CRYPTO_ONBOARDING_CONFIG: HubOnboardingConfig = {
         "A dollar-cost averaging strategy (e.g., $200/week into Bitcoin) removes the timing risk of lump-sum buying. Hold on a regulated Australian exchange for amounts under $50k; consider a hardware wallet (Ledger, Trezor) for self-custody above that. Australian tax: CGT discount applies after 12 months — do not sell before then unless you need the liquidity.",
       primaryCta: { label: "Compare Crypto Exchanges", href: "/crypto" },
       secondaryCta: { label: "Crypto Tax Guide", href: "/crypto" },
-      advisorCta: { href: "/get-matched", specialty: "financial adviser" },
+      advisorCta: { href: "/quiz", specialty: "financial adviser" },
     };
   },
 };
@@ -1058,7 +1058,7 @@ export const LUMP_SUM_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Genuine redundancy payments receive a tax-free component ($12,524 base + $6,264 per year of service in 2025–26). The taxable component qualifies as an ETP taxed at 32% (or 17% if above preservation age). You may have a 12-month window to make a concessional super contribution using the carry-forward rule if your TSB is under $500k — worth discussing with a tax agent before the financial year ends.",
         primaryCta: { label: "Redundancy Guide", href: "/lump-sum-investing/redundancy" },
         secondaryCta: { label: "Find a Tax Agent", href: "/advisors/tax-agents" },
-        advisorCta: { href: "/get-matched?vertical=tax", specialty: "tax agent" },
+        advisorCta: { href: "/quiz?vertical=tax", specialty: "tax agent" },
       };
     }
 
@@ -1069,7 +1069,7 @@ export const LUMP_SUM_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Australia has no inheritance tax. However, if you inherit super assets you must roll them into your own super or cash out within 3–6 months (the 'death benefit' rule). Inherited property sold within a trust carries embedded CGT. If the estate includes a family home, CGT principal-residence exemption can be claimed if you sell within 2 years of death.",
         primaryCta: { label: "Inheritance Tax Guide", href: "/lump-sum-investing/inheritance" },
         secondaryCta: { label: "Find a Financial Planner", href: "/advisors/financial-planners" },
-        advisorCta: { href: "/get-matched?vertical=estate_planning", specialty: "estate planning adviser" },
+        advisorCta: { href: "/quiz?vertical=estate_planning", specialty: "estate planning adviser" },
       };
     }
 
@@ -1080,7 +1080,7 @@ export const LUMP_SUM_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "After settlement, the first step is to park proceeds in a high-interest savings account while you plan. If the property was your principal residence, the CGT exemption applies. If it was investment property, CGT is due — the 50% discount applies if held over 12 months. From there, the options include paying down debt, investing in shares or super, or buying another property.",
         primaryCta: { label: "Lump-Sum Calculator", href: "/lump-sum-investing/calculator" },
         secondaryCta: { label: "Compare Savings Accounts", href: "/savings" },
-        advisorCta: { href: "/get-matched?vertical=investment", specialty: "financial planner" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "financial planner" },
       };
     }
 
@@ -1091,7 +1091,7 @@ export const LUMP_SUM_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Above $250k, the sequence matters: (1) clear high-interest debt; (2) top up super if concessional room exists; (3) build a 6-month emergency buffer in a high-interest account; (4) invest the remainder in a diversified portfolio. Dollar-cost averaging over 6–12 months reduces timing risk on the investing tranche. At this level, a one-off financial plan ($3,000–$6,000) typically pays for itself within 2 years.",
         primaryCta: { label: "Find a Financial Planner", href: "/advisors/financial-planners" },
         secondaryCta: { label: "Lump-Sum Calculator", href: "/lump-sum-investing/calculator" },
-        advisorCta: { href: "/get-matched?vertical=investment", specialty: "financial planner" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "financial planner" },
       };
     }
 
@@ -1102,7 +1102,7 @@ export const LUMP_SUM_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "For money needed within 3 years, a high-interest savings account or term deposit is the right vehicle — not the share market. A market correction (which happens every 3–5 years on average) could leave you unable to access the full amount when you need it. Compare savings accounts and term deposits to find the highest rate.",
         primaryCta: { label: "Compare Savings Accounts", href: "/savings" },
         secondaryCta: { label: "Compare Term Deposits", href: "/term-deposits" },
-        advisorCta: { href: "/get-matched?vertical=savings", specialty: "financial adviser" },
+        advisorCta: { href: "/quiz?vertical=savings", specialty: "financial adviser" },
       };
     }
 
@@ -1112,7 +1112,7 @@ export const LUMP_SUM_ONBOARDING_CONFIG: HubOnboardingConfig = {
         "Use the lump-sum calculator to model different scenarios — debt paydown vs. super contribution vs. investing — over your investment horizon. The general rule: clear high-rate debt first, build a 3-month buffer, then invest the rest in a low-cost diversified portfolio matched to your timeline.",
       primaryCta: { label: "Lump-Sum Calculator", href: "/lump-sum-investing/calculator" },
       secondaryCta: { label: "Find a Financial Planner", href: "/advisors/financial-planners" },
-      advisorCta: { href: "/get-matched?vertical=investment", specialty: "financial planner" },
+      advisorCta: { href: "/quiz?vertical=investment", specialty: "financial planner" },
     };
   },
 };
@@ -1168,7 +1168,7 @@ export const FOREIGN_INVESTMENT_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Foreign nationals (including temporary visa holders) generally must apply to the Foreign Investment Review Board (FIRB) before buying established residential property. FIRB fees range from $14,100 (under $1M) to $1.04M (over $40M). New dwellings have a simpler approval pathway. The 2024–25 ban on purchasing established dwellings (except for off-the-plan) is in effect — verify current rules before proceeding.",
         primaryCta: { label: "FIRB Application Guide", href: "/foreign-investment/guides/firb-application-guide" },
         secondaryCta: { label: "Property for Foreigners", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
-        advisorCta: { href: "/get-matched?vertical=property", specialty: "property adviser" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property adviser" },
       };
     }
 
@@ -1179,7 +1179,7 @@ export const FOREIGN_INVESTMENT_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Australian expats retain their super while living abroad; the fund continues to grow. DASP (Departing Australia Superannuation Payment) applies to temporary visa holders leaving Australia permanently — not Australian citizens or permanent residents. If you hold a temporary visa and are leaving for good, you can claim DASP after your visa expires. Tax on DASP is 35–65% depending on the component.",
         primaryCta: { label: "Expat Super Guide", href: "/foreign-investment/super" },
         secondaryCta: { label: "Compare Super Funds", href: "/super" },
-        advisorCta: { href: "/get-matched?vertical=super", specialty: "expat financial adviser" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "expat financial adviser" },
       };
     }
 
@@ -1190,7 +1190,7 @@ export const FOREIGN_INVESTMENT_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Non-resident shareholders pay 30% withholding tax on unfranked dividends; this drops to 15% for residents of DTA countries (e.g. USA, UK, NZ, Singapore). Fully franked dividends generally have no withholding tax. Capital gains from ASX shares are generally not taxable in Australia for non-residents unless the shares are in a land-rich company. Check the ATO's DTA table for your country.",
         primaryCta: { label: "Withholding Tax Guide", href: "/foreign-investment" },
         secondaryCta: { label: "Compare Brokers for Non-Residents", href: "/compare/non-residents" },
-        advisorCta: { href: "/get-matched?vertical=tax", specialty: "international tax adviser" },
+        advisorCta: { href: "/quiz?vertical=tax", specialty: "international tax adviser" },
       };
     }
 
@@ -1201,7 +1201,7 @@ export const FOREIGN_INVESTMENT_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "New migrants can open an Australian bank account online before arriving (CBA, ANZ, NAB, Westpac all offer migrant accounts). Apply for a Tax File Number (TFN) through myGov once you have your visa. Without a TFN, banks withhold 47% from interest earned. From there, superannuation enrolment and CHESS-sponsored share trading are straightforward.",
         primaryCta: { label: "Non-Resident Bank Account Guide", href: "/foreign-investment/guides/non-resident-bank-account" },
         secondaryCta: { label: "Foreign Investment Hub", href: "/foreign-investment" },
-        advisorCta: { href: "/get-matched?vertical=investment", specialty: "financial adviser" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "financial adviser" },
       };
     }
 
@@ -1210,8 +1210,8 @@ export const FOREIGN_INVESTMENT_ONBOARDING_CONFIG: HubOnboardingConfig = {
       summary:
         "Australian investment rules for overseas investors depend on your visa, residency status, and what you want to invest in. The foreign investment hub has dedicated guides for property (FIRB), shares (withholding tax + DTA), super (DASP), and banking — with per-country breakdowns for 20+ nationalities.",
       primaryCta: { label: "Foreign Investment Hub", href: "/foreign-investment" },
-      secondaryCta: { label: "Find an International Adviser", href: "/get-matched?vertical=investment" },
-      advisorCta: { href: "/get-matched?vertical=investment", specialty: "international financial adviser" },
+      secondaryCta: { label: "Find an International Adviser", href: "/quiz?vertical=investment" },
+      advisorCta: { href: "/quiz?vertical=investment", specialty: "international financial adviser" },
     };
   },
 };
@@ -1267,7 +1267,7 @@ export const SELL_BUSINESS_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "A rushed sale typically fetches 20–30% less than a prepared one. In 12 months you can: get a formal valuation, clean up financials (3 years of clean P&L is standard buyer due diligence), draft an information memorandum, and run a structured auction. A business broker with a live buyer database gets deals done faster than off-market approaches.",
         primaryCta: { label: "Find a Business Broker", href: "/sell-business" },
         secondaryCta: { label: "Business Sale Checklist", href: "/sell-business/checklist" },
-        advisorCta: { href: "/get-matched?vertical=business_sale", specialty: "business broker" },
+        advisorCta: { href: "/quiz?vertical=business_sale", specialty: "business broker" },
       };
     }
 
@@ -1278,7 +1278,7 @@ export const SELL_BUSINESS_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "The four small-business CGT concessions can eliminate or dramatically reduce CGT on the sale of an active business: 15-year exemption (fully tax-free if held 15+ years), 50% active-asset reduction, retirement exemption ($500k lifetime), and rollover. Accessing them requires meeting the basic conditions: active asset test, turnover under $2M or net assets under $6M. A tax agent specialising in business sales is essential.",
         primaryCta: { label: "CGT Concessions Guide", href: "/sell-business" },
         secondaryCta: { label: "Find a Tax Agent", href: "/advisors/tax-agents" },
-        advisorCta: { href: "/get-matched?vertical=business_sale", specialty: "business sale tax specialist" },
+        advisorCta: { href: "/quiz?vertical=business_sale", specialty: "business sale tax specialist" },
       };
     }
 
@@ -1289,7 +1289,7 @@ export const SELL_BUSINESS_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "For businesses over $5M revenue, a structured M&A process (strategic buyer targeting, management presentations, data room, competitive bidding) typically yields 20–40% more than a direct listing. Engage an M&A adviser or corporate finance specialist 18–24 months before your target exit date to maximise value and manage the process.",
         primaryCta: { label: "Find an M&A Adviser", href: "/sell-business" },
         secondaryCta: { label: "Business Valuation Guide", href: "/sell-business/valuation" },
-        advisorCta: { href: "/get-matched?vertical=business_sale", specialty: "M&A adviser" },
+        advisorCta: { href: "/quiz?vertical=business_sale", specialty: "M&A adviser" },
       };
     }
 
@@ -1300,7 +1300,7 @@ export const SELL_BUSINESS_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Legacy exits — selling to a management buyout (MBO), an employee ownership trust (EOT), or a strategic partner who values culture — typically involve a lower headline price but more certainty on fit. EOTs receive favourable CGT treatment from the ATO. MBOs require vendor finance or PE backing. Allow 2–3 years to identify and structure the right deal.",
         primaryCta: { label: "Business Sale Guide", href: "/sell-business" },
         secondaryCta: { label: "Find a Business Broker", href: "/sell-business" },
-        advisorCta: { href: "/get-matched?vertical=business_sale", specialty: "business sale adviser" },
+        advisorCta: { href: "/quiz?vertical=business_sale", specialty: "business sale adviser" },
       };
     }
 
@@ -1310,7 +1310,7 @@ export const SELL_BUSINESS_ONBOARDING_CONFIG: HubOnboardingConfig = {
         "A formal valuation (multiple of EBITDA, typically 2–5× for SMEs) tells you what the business is worth today, what levers increase it, and what price you need to retire comfortably. Most reputable brokers offer a free indication; a formal valuation ($3,000–$10,000) is worth it for businesses over $1M.",
       primaryCta: { label: "Business Valuation Guide", href: "/sell-business/valuation" },
       secondaryCta: { label: "Find a Business Broker", href: "/sell-business" },
-      advisorCta: { href: "/get-matched?vertical=business_sale", specialty: "business broker" },
+      advisorCta: { href: "/quiz?vertical=business_sale", specialty: "business broker" },
     };
   },
 };
@@ -1365,7 +1365,7 @@ export const HALAL_INVESTING_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Crescent Wealth Superannuation Fund is certified by AAOIFI (Accounting and Auditing Organisation for Islamic Financial Institutions) and screened by a Sharia supervisory board. Funds are invested in AAOIFI-screened equities, Sukuk (Islamic bonds), and real assets — no interest-bearing instruments, tobacco, alcohol, weapons, or pornography. Compare it against your current fund's performance and fees before switching.",
         primaryCta: { label: "Compare Super Funds", href: "/super" },
         secondaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
-        advisorCta: { href: "/get-matched?vertical=super", specialty: "Islamic finance adviser" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "Islamic finance adviser" },
       };
     }
 
@@ -1376,7 +1376,7 @@ export const HALAL_INVESTING_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Australian Islamic home finance providers (MCCA, Hejaz Financial Services, Islamic Co-operative Finance Australia) use diminishing musharakah: the lender and borrower co-own the property; the borrower makes monthly payments to buy out the lender's share. No riba (interest) is charged. Rates are comparable to conventional mortgages — compare carefully as the ATO treats rental/profit payments differently.",
         primaryCta: { label: "Halal Home Finance Guide", href: "/halal-investing" },
         secondaryCta: { label: "Find a Finance Adviser", href: "/advisors" },
-        advisorCta: { href: "/get-matched?vertical=mortgage", specialty: "Islamic finance broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "Islamic finance broker" },
       };
     }
 
@@ -1387,7 +1387,7 @@ export const HALAL_INVESTING_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "For self-directed halal stock screening on the ASX: use AAOIFI financial ratios — debt-to-market-cap under 33%, receivables under 33%, interest income under 5% of revenue. Exclude tobacco, alcohol, pork, weapons, entertainment, conventional banking/insurance. International ETFs: SPDR S&P 500 ESG, iShares MSCI World Islamic, and Wahed ETF (US-listed) apply AAOIFI screening. Purification: any haram-income percentage must be donated to charity.",
         primaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
         secondaryCta: { label: "Compare ETFs", href: "/etfs" },
-        advisorCta: { href: "/get-matched?vertical=investment", specialty: "Islamic finance adviser" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "Islamic finance adviser" },
       };
     }
 
@@ -1398,7 +1398,7 @@ export const HALAL_INVESTING_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "Rather than self-screening individual stocks (which requires understanding AAOIFI financial ratios), a Sharia-screened ETF delegates the screening. Options available to Australian investors: iShares MSCI World Islamic ETF (ISWD — London-listed, requires international broker), Wahed FTSE USA Shariah ETF (US-listed), and Saturna Amana funds. Locally, some managed accounts on Elbaite or Superhero apply Islamic screens.",
         primaryCta: { label: "Compare ETFs", href: "/etfs" },
         secondaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
-        advisorCta: { href: "/get-matched?vertical=investment", specialty: "Islamic finance adviser" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "Islamic finance adviser" },
       };
     }
 
@@ -1409,7 +1409,7 @@ export const HALAL_INVESTING_ONBOARDING_CONFIG: HubOnboardingConfig = {
           "At this level, a Sharia-supervised managed account or direct portfolio service can be tailored to your risk profile and zakat calculation needs. Some advisers specialising in Islamic finance (including those affiliated with ISRA and IFSB) offer discretionary portfolio management with annual Sharia supervisory board sign-off. Compare against ETF-based approaches on total cost.",
         primaryCta: { label: "Find an Islamic Finance Adviser", href: "/advisors" },
         secondaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
-        advisorCta: { href: "/get-matched?vertical=investment", specialty: "Islamic finance adviser" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "Islamic finance adviser" },
       };
     }
 
@@ -1419,7 +1419,7 @@ export const HALAL_INVESTING_ONBOARDING_CONFIG: HubOnboardingConfig = {
         "Halal investing in Australia has grown significantly — there are now Sharia-compliant options across superannuation (Crescent Wealth), home finance (MCCA, Hejaz), and shares (AAOIFI-screened ETFs via international brokers). The hub breaks down each pathway with independent comparisons and no sales incentives.",
       primaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
       secondaryCta: { label: "Find an Islamic Finance Adviser", href: "/advisors" },
-      advisorCta: { href: "/get-matched?vertical=investment", specialty: "Islamic finance adviser" },
+      advisorCta: { href: "/quiz?vertical=investment", specialty: "Islamic finance adviser" },
     };
   },
 };
@@ -1504,7 +1504,7 @@ export const FIRST_HOME_BUYER_ONBOARDING_CONFIG: HubOnboardingConfig = {
           .join(" "),
         primaryCta: { label: "Calculate Your FHSS Saving", href: "/tools/fhss-calculator" },
         secondaryCta: { label: "Find a Mortgage Broker", href: "/find/mortgage-broker" },
-        advisorCta: { href: "/get-matched?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
       };
     }
 
@@ -1522,7 +1522,7 @@ export const FIRST_HOME_BUYER_ONBOARDING_CONFIG: HubOnboardingConfig = {
           .join(" "),
         primaryCta: { label: "Find an FHB Mortgage Broker", href: "/find/mortgage-broker" },
         secondaryCta: { label: "FHSS Calculator", href: "/tools/fhss-calculator" },
-        advisorCta: { href: "/get-matched?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
       };
     }
 
@@ -1541,7 +1541,7 @@ export const FIRST_HOME_BUYER_ONBOARDING_CONFIG: HubOnboardingConfig = {
           .join(" "),
         primaryCta: { label: "Compare Savings Accounts", href: "/savings" },
         secondaryCta: { label: "Find a Mortgage Broker", href: "/find/mortgage-broker" },
-        advisorCta: { href: "/get-matched?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
       };
     }
 
@@ -1559,7 +1559,7 @@ export const FIRST_HOME_BUYER_ONBOARDING_CONFIG: HubOnboardingConfig = {
           .join(" "),
         primaryCta: { label: "Find an FHB Mortgage Broker", href: "/find/mortgage-broker" },
         secondaryCta: { label: "FHB Hub", href: "/first-home-buyer" },
-        advisorCta: { href: "/get-matched?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
       };
     }
 
@@ -1576,7 +1576,7 @@ export const FIRST_HOME_BUYER_ONBOARDING_CONFIG: HubOnboardingConfig = {
           .join(" "),
         primaryCta: { label: "FHSS Calculator", href: "/tools/fhss-calculator" },
         secondaryCta: { label: "Find an FHB Mortgage Broker", href: "/find/mortgage-broker" },
-        advisorCta: { href: "/get-matched?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
       };
     }
 
@@ -1593,7 +1593,7 @@ export const FIRST_HOME_BUYER_ONBOARDING_CONFIG: HubOnboardingConfig = {
           .join(" "),
         primaryCta: { label: "Calculate Your FHSS Saving", href: "/tools/fhss-calculator" },
         secondaryCta: { label: "FHB Hub", href: "/first-home-buyer" },
-        advisorCta: { href: "/get-matched?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
       };
     }
 
@@ -1610,7 +1610,7 @@ export const FIRST_HOME_BUYER_ONBOARDING_CONFIG: HubOnboardingConfig = {
         .join(" "),
       primaryCta: { label: "Calculate Your FHSS Saving", href: "/tools/fhss-calculator" },
       secondaryCta: { label: "Compare Savings Accounts", href: "/savings" },
-      advisorCta: { href: "/get-matched?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+      advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
     };
   },
 };

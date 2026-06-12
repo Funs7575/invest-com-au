@@ -43,7 +43,7 @@ const platformsMenu = {
     { label: "Compare All Platforms", href: "/compare" },
     { label: "Broker vs Broker", href: "/versus" },
     { label: "Current Deals", href: "/deals" },
-    ...(SHOW_MATCH_LANGUAGE ? [{ label: "Get Matched (60s)", href: "/get-matched" }] : []),
+    ...(SHOW_MATCH_LANGUAGE ? [{ label: "Get Matched (60s)", href: "/quiz" }] : []),
     { label: "Fee Calculator", href: "/calculators" },
     { label: "Financial Health Score", href: "/score" },
     { label: "My Wealth Stack", href: "/wealth-stack" },

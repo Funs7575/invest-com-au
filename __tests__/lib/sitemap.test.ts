@@ -215,7 +215,7 @@ describe("shard 0 — static pages", () => {
 
   it("contains key high-priority hubs", async () => {
     const urls = new Set(await getShardUrls(0));
-    for (const path of ["/compare", "/versus", "/get-matched", "/etfs", "/insurance", "/tax"]) {
+    for (const path of ["/compare", "/versus", "/quiz", "/etfs", "/insurance", "/tax"]) {
       expect(urls.has(`https://invest.com.au${path}`)).toBe(true);
     }
   });

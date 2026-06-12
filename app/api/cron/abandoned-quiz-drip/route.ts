@@ -121,7 +121,7 @@ async function handler(req: NextRequest) {
           type: "system",
           title: titleByStep[nextStep] || "Update on your quiz",
           body: "We've lined up your top match + a side-by-side compare. It takes 30 seconds to review.",
-          linkUrl: "/get-matched",
+          linkUrl: "/quiz",
           emailDeliveryKey: `abandoned_quiz:${lead.id}:${nextStep}`,
         });
         if (ok) stats.inboxed += 1;
@@ -192,7 +192,7 @@ const VERTICAL_TEMPLATES: Record<VerticalKey, [StepTemplate, StepTemplate, StepT
   broker: [
     {
       subject: "Your top broker match is waiting",
-      body: (name) => `${FOOT(name)}${para("You took our quiz a couple of days ago — your top platform match is still waiting. 30 seconds to review.")}${cta(`${getSiteUrl()}/get-matched`, "See my match →")}`,
+      body: (name) => `${FOOT(name)}${para("You took our quiz a couple of days ago — your top platform match is still waiting. 30 seconds to review.")}${cta(`${getSiteUrl()}/quiz`, "See my match →")}`,
     },
     {
       subject: "Still researching? Compare your top picks side-by-side",
@@ -207,7 +207,7 @@ const VERTICAL_TEMPLATES: Record<VerticalKey, [StepTemplate, StepTemplate, StepT
   super: [
     {
       subject: "Your retirement number — and the fund to get there",
-      body: (name) => `${FOOT(name)}${para("You took our quiz looking at super. Before switching funds, run our retirement calculator — it shows what your balance becomes by retirement, and how a fund switch shifts the number.")}${cta(`${getSiteUrl()}/retirement-calculator`, "Run the retirement calc →")}${link(`${getSiteUrl()}/get-matched`, "See your top fund match")}`,
+      body: (name) => `${FOOT(name)}${para("You took our quiz looking at super. Before switching funds, run our retirement calculator — it shows what your balance becomes by retirement, and how a fund switch shifts the number.")}${cta(`${getSiteUrl()}/retirement-calculator`, "Run the retirement calc →")}${link(`${getSiteUrl()}/quiz`, "See your top fund match")}`,
     },
     {
       subject: "Could an SMSF save you money? Run the numbers",
@@ -222,7 +222,7 @@ const VERTICAL_TEMPLATES: Record<VerticalKey, [StepTemplate, StepTemplate, StepT
   crypto: [
     {
       subject: "Your crypto exchange match — plus the tax angle",
-      body: (name) => `${FOOT(name)}${para("Your top crypto exchange match is waiting. One thing most beginners miss: ATO treats every disposal as a CGT event. Run our crypto-CGT calculator before tax time.")}${cta(`${getSiteUrl()}/get-matched`, "See my exchange match →")}${link(`${getSiteUrl()}/cgt-calculator`, "Crypto CGT calculator")}`,
+      body: (name) => `${FOOT(name)}${para("Your top crypto exchange match is waiting. One thing most beginners miss: ATO treats every disposal as a CGT event. Run our crypto-CGT calculator before tax time.")}${cta(`${getSiteUrl()}/quiz`, "See my exchange match →")}${link(`${getSiteUrl()}/cgt-calculator`, "Crypto CGT calculator")}`,
     },
     {
       subject: "Crypto tax getting complex? Get a specialist",
@@ -252,7 +252,7 @@ const VERTICAL_TEMPLATES: Record<VerticalKey, [StepTemplate, StepTemplate, StepT
   advisor: [
     {
       subject: "Your matched advisor is ready to talk",
-      body: (name) => `${FOOT(name)}${para("Your shortlisted advisor is still in your match queue. Most respond within 24 hours of contact — no obligation, no upfront fee for the first call.")}${cta(`${getSiteUrl()}/get-matched`, "See my advisor match →")}${link(`${getSiteUrl()}/find-advisor`, "Browse the full directory")}`,
+      body: (name) => `${FOOT(name)}${para("Your shortlisted advisor is still in your match queue. Most respond within 24 hours of contact — no obligation, no upfront fee for the first call.")}${cta(`${getSiteUrl()}/quiz`, "See my advisor match →")}${link(`${getSiteUrl()}/find-advisor`, "Browse the full directory")}`,
     },
     {
       subject: "Or post your situation — get quotes from verified pros",
@@ -267,7 +267,7 @@ const VERTICAL_TEMPLATES: Record<VerticalKey, [StepTemplate, StepTemplate, StepT
   international: [
     {
       subject: "Your Australian-investing specialist is waiting",
-      body: (name) => `${FOOT(name)}${para("Investing in Australia from overseas usually starts with a specialist — cross-border tax, FIRB, and visa rules dominate the decision. Your matched advisor is still in queue.")}${cta(`${getSiteUrl()}/get-matched`, "See my match →")}${link(`${getSiteUrl()}/find-advisor?intl=true`, "Browse all international specialists")}`,
+      body: (name) => `${FOOT(name)}${para("Investing in Australia from overseas usually starts with a specialist — cross-border tax, FIRB, and visa rules dominate the decision. Your matched advisor is still in queue.")}${cta(`${getSiteUrl()}/quiz`, "See my match →")}${link(`${getSiteUrl()}/find-advisor?intl=true`, "Browse all international specialists")}`,
     },
     {
       subject: "FIRB, non-resident tax, expat super — handled",
@@ -297,7 +297,7 @@ const VERTICAL_TEMPLATES: Record<VerticalKey, [StepTemplate, StepTemplate, StepT
   robo: [
     {
       subject: "Your robo-advisor match — set & forget",
-      body: (name) => `${FOOT(name)}${para("Your top robo-advisor match is still in queue. The pitch: lower fees than a financial planner, automatic rebalancing, no minimums on most. 30 seconds to review.")}${cta(`${getSiteUrl()}/get-matched`, "See my match →")}`,
+      body: (name) => `${FOOT(name)}${para("Your top robo-advisor match is still in queue. The pitch: lower fees than a financial planner, automatic rebalancing, no minimums on most. 30 seconds to review.")}${cta(`${getSiteUrl()}/quiz`, "See my match →")}`,
     },
     {
       subject: "Robo + super: the lazy-investor stack",
@@ -312,7 +312,7 @@ const VERTICAL_TEMPLATES: Record<VerticalKey, [StepTemplate, StepTemplate, StepT
   cfd: [
     {
       subject: "Your CFD/forex platform match — and the spread maths",
-      body: (name) => `${FOOT(name)}${para("CFD/forex margins live in spreads + commissions, not headline rates. Our trade-cost calculator shows real round-trip cost. Top match is still in queue.")}${cta(`${getSiteUrl()}/get-matched`, "See my match →")}${link(`${getSiteUrl()}/trade-cost-calculator`, "Trade cost calculator")}`,
+      body: (name) => `${FOOT(name)}${para("CFD/forex margins live in spreads + commissions, not headline rates. Our trade-cost calculator shows real round-trip cost. Top match is still in queue.")}${cta(`${getSiteUrl()}/quiz`, "See my match →")}${link(`${getSiteUrl()}/trade-cost-calculator`, "Trade cost calculator")}`,
     },
     {
       subject: "Active trader? Tax adds up — talk to a specialist",

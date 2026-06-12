@@ -24,7 +24,7 @@ const VERTICAL_CTAS: Record<string, VerticalCta> = {
   "share-trading": {
     headline: "Before you go",
     subtext: "Take our 60-second quiz to find your perfect broker",
-    href: "/get-matched",
+    href: "/quiz",
     ctaLabel: "Start Free Quiz",
     icon: "target",
   },

@@ -211,7 +211,7 @@ const scenarios: CostScenario[] = [
       { label: "Best for Beginners", href: "/best/beginners" },
       { label: "Fee Calculator", href: "/calculators" },
       { label: "Best for Low Fees", href: "/best/low-fees" },
-      { label: "Take the Quiz", href: "/get-matched" },
+      { label: "Take the Quiz", href: "/quiz" },
     ],
     faqs: [
       {

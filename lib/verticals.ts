@@ -401,7 +401,7 @@ const VERTICALS: VerticalConfig[] = [
     ],
     tools: [
       { label: "Compare Platforms", href: "/compare", icon: "bar-chart" },
-      { label: "Find Your Match", href: "/get-matched", icon: "target" },
+      { label: "Find Your Match", href: "/quiz", icon: "target" },
       { label: "Fee Impact Calculator", href: "/fee-impact", icon: "calculator" },
       { label: "Savings Calculator", href: "/savings-calculator", icon: "piggy-bank" },
       { label: "Switching Calculator", href: "/switching-calculator", icon: "refresh-cw" },
@@ -490,7 +490,7 @@ const VERTICALS: VerticalConfig[] = [
     ],
     tools: [
       { label: "Compare Crypto Platforms", href: "/compare?category=crypto", icon: "bar-chart" },
-      { label: "Find Your Match", href: "/get-matched", icon: "target" },
+      { label: "Find Your Match", href: "/quiz", icon: "target" },
     ],
     advisorTypes: [
       { type: "crypto_advisor", label: "Crypto Advisors", href: "/advisors/crypto-advisors" },
@@ -662,7 +662,7 @@ const VERTICALS: VerticalConfig[] = [
     ],
     tools: [
       { label: "Compare Super Funds", href: "/compare/super", icon: "bar-chart" },
-      { label: "Find Your Match", href: "/get-matched", icon: "target" },
+      { label: "Find Your Match", href: "/quiz", icon: "target" },
       { label: "Fee Impact Calculator", href: "/fee-impact", icon: "calculator" },
     ],
     advisorTypes: [
@@ -745,7 +745,7 @@ const VERTICALS: VerticalConfig[] = [
     ],
     tools: [
       { label: "Compare CFD Brokers", href: "/compare?category=cfd", icon: "bar-chart" },
-      { label: "Find Your Match", href: "/get-matched", icon: "target" },
+      { label: "Find Your Match", href: "/quiz", icon: "target" },
     ],
     advisorTypes: [
       { type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" },
@@ -1208,7 +1208,7 @@ export const SMSF_HUB_CONFIG: HubConfig = {
         stalesAt: "2027-06-30",
       },
     ],
-    primaryCta: { label: "Find an SMSF Specialist", href: "/get-matched?vertical=smsf", lever: "lead_routing" },
+    primaryCta: { label: "Find an SMSF Specialist", href: "/quiz?vertical=smsf", lever: "lead_routing" },
     secondaryCta: { label: "Read the SMSF Guide", href: "/invest/smsf", lever: "affiliate_cpa" },
   },
 
@@ -1483,7 +1483,7 @@ export const RETIREMENT_HUB_CONFIG: HubConfig = {
         stalesAt: "2028-06-30",
       },
     ],
-    primaryCta: { label: "Talk to a Retirement Planner", href: "/get-matched?vertical=retirement", lever: "lead_routing" },
+    primaryCta: { label: "Talk to a Retirement Planner", href: "/quiz?vertical=retirement", lever: "lead_routing" },
     secondaryCta: { label: "Use Retirement Calculator", href: "/retirement-calculator", lever: "affiliate_cpa" },
   },
 
@@ -1665,7 +1665,7 @@ export const AGED_CARE_HUB_CONFIG: HubConfig = {
         stalesAt: "2028-06-30",
       },
     ],
-    primaryCta: { label: "Find an Aged Care Adviser", href: "/get-matched?vertical=aged_care", lever: "lead_routing" },
+    primaryCta: { label: "Find an Aged Care Adviser", href: "/quiz?vertical=aged_care", lever: "lead_routing" },
     secondaryCta: { label: "Download Planning Checklist", href: "/lead-magnets/aged-care-planning-guide", lever: "lead_magnet" },
   },
 
