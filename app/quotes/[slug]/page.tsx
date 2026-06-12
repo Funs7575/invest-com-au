@@ -10,6 +10,14 @@ import CountdownPill from "./CountdownPill";
 import QuoteQAClient from "./QuoteQAClient";
 import InstantMatchPanel from "./InstantMatchPanel";
 import ReopenJobClient from "./ReopenJobClient";
+import {
+  getFeeBenchmark,
+  percentileInfoForBid,
+  type FeePercentileInfo,
+} from "@/lib/fee-benchmark";
+import { logger } from "@/lib/logger";
+
+const log = logger("quote-detail-page");
 
 export const dynamic = "force-dynamic";
 
@@ -134,6 +142,26 @@ export default async function QuoteDetailPage({ params, searchParams }: {
   const qa = (qaRaw ?? []) as unknown as Parameters<typeof QuoteQAClient>[0]["initial"];
 
   const excludeAdvisorIds = bids.map((b) => b.professionals?.id).filter((id): id is number => id != null);
+
+  // Fee-benchmark context per bid (only when the matching service-type ×
+  // state cell met the minimum sample). Never let benchmark issues break
+  // the quote page — the chip simply doesn't render.
+  const feeContext: Record<number, FeePercentileInfo> = {};
+  const primaryType = job.advisor_types?.[0];
+  if (primaryType && bids.length > 0) {
+    try {
+      const benchmark = await getFeeBenchmark();
+      for (const b of bids) {
+        const info = percentileInfoForBid(benchmark, primaryType, job.location, b.bid_amount);
+        if (info) feeContext[b.id] = info;
+      }
+    } catch (err) {
+      log.warn("Fee benchmark unavailable for quote page", {
+        slug: job.slug,
+        err: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -273,6 +301,7 @@ export default async function QuoteDetailPage({ params, searchParams }: {
                     }
                   : null,
               }))}
+              feeContext={feeContext}
               ownerEmailFromUrl={email || ""}
             />
 

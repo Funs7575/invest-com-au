@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
+import PricingPositionCard from "./PricingPositionCard";
 import type { Advisor, Stats, Lead, ProfileCompleteness, ViewType } from "./types";
 import type { BenchmarksResponse } from "@/app/api/advisor-auth/benchmarks/route";
 import type { ProfileScoreResponse } from "@/app/api/advisor-auth/profile-score/route";
@@ -473,6 +474,9 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
           </>
         )}
       </div>
+
+      {/* Pricing position — where your typical quote sits vs peers */}
+      <PricingPositionCard />
 
       {/* Profile Performance Score */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">

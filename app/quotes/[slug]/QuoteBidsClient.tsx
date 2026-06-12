@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
+import FeePercentileChip from "@/components/quotes/FeePercentileChip";
+import type { FeePercentileInfo } from "@/lib/fee-benchmark";
 
 interface BidAdvisor {
   id: number;
@@ -32,6 +34,9 @@ interface Props {
   winningBidId: number | null;
   isExpired: boolean;
   bids: Bid[];
+  /** Fee-benchmark percentile context per bid id — absent when the
+   *  matching benchmark cell didn't meet the minimum sample. */
+  feeContext?: Record<number, FeePercentileInfo>;
   /** When the consumer clicks the email link from their confirmation email,
    *  ?email=... is in the URL — pre-fill the verification field. */
   ownerEmailFromUrl: string;
@@ -41,7 +46,7 @@ function formatBid(cents: number): string {
   return `$${(cents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
 }
 
-export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpired, bids, ownerEmailFromUrl }: Props) {
+export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpired, bids, feeContext = {}, ownerEmailFromUrl }: Props) {
   const [email, setEmail] = useState(ownerEmailFromUrl);
   const [pendingBidId, setPendingBidId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -170,7 +175,9 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
               </button>
             </div>
             <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-              {compareBids.map((b) => (
+              {compareBids.map((b) => {
+                const compareFee = feeContext[b.id];
+                return (
                 <div key={b.id} className="border border-slate-200 rounded-xl p-4 flex flex-col">
                   <div className="flex items-center gap-2 mb-2">
                     {b.advisor?.photo_url ? (
@@ -184,6 +191,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                     </div>
                   </div>
                   <p className="text-2xl font-extrabold text-slate-900">{formatBid(b.bid_amount)}</p>
+                  {compareFee && <FeePercentileChip info={compareFee} />}
                   <dl className="mt-3 space-y-1.5 text-xs">
                     <div className="flex justify-between"><dt className="text-slate-500">Type</dt><dd className="text-slate-800 capitalize">{b.advisor?.type?.replace(/_/g, " ") ?? "—"}</dd></div>
                     <div className="flex justify-between"><dt className="text-slate-500">Rating</dt><dd className="text-slate-800">{(b.advisor?.review_count ?? 0) > 0 ? `${b.advisor?.rating?.toFixed(1)} (${b.advisor?.review_count})` : "No reviews"}</dd></div>
@@ -205,7 +213,8 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -215,6 +224,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
         {bids.map((bid) => {
           const isWinner = acceptedBidId === bid.id;
           const isLost = isAwarded && !isWinner;
+          const fee = feeContext[bid.id];
           return (
             <div
               key={bid.id}
@@ -287,6 +297,9 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                       <p className="text-[10px] text-slate-500 uppercase tracking-wide">Bid</p>
                     </div>
                   </div>
+
+                  {/* Price context — factual percentile vs the marketplace benchmark */}
+                  {fee && <FeePercentileChip info={fee} />}
 
                   {/* Action row */}
                   <div className="flex items-center justify-between gap-2 mt-3">
