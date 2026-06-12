@@ -16,6 +16,8 @@ import {
   type FeePercentileInfo,
 } from "@/lib/fee-benchmark";
 import { logger } from "@/lib/logger";
+import DecisionKit from "@/components/decision-kit/DecisionKit";
+import { loadDecisionKit } from "@/lib/decision-kit/load";
 
 const log = logger("quote-detail-page");
 
@@ -57,6 +59,7 @@ interface JobData {
   advisor_types: string[] | null;
   location: string | null;
   contact_name: string | null;
+  contact_email: string | null;
   status: string;
   ends_at: string;
   winning_bid_id: number | null;
@@ -94,14 +97,23 @@ export default async function QuoteDetailPage({ params, searchParams }: {
 
   const { data: jobRaw } = await supabase
     .from("advisor_auctions")
-    .select("id, slug, job_title, job_description, budget_band, advisor_types, location, contact_name, status, ends_at, winning_bid_id, created_at")
+    .select("id, slug, job_title, job_description, budget_band, advisor_types, location, contact_name, contact_email, status, ends_at, winning_bid_id, created_at")
     .eq("slug", slug)
     .eq("is_public", true)
     .eq("source", "public_job")
     .maybeSingle();
 
   if (!jobRaw) notFound();
-  const job = jobRaw as JobData;
+  const job = jobRaw as JobData & { contact_email: string | null };
+
+  // Decision Kit owner check — same email-as-key model as the accept flow:
+  // the verified owner is the visitor who arrived with ?email= matching the
+  // email they posted with. Drives the (flag-gated) scorecard surface; the
+  // comparison matrix + call scripts render for everyone.
+  const ownerEmail =
+    email && (job.contact_email ?? "").toLowerCase() === email.toLowerCase().trim()
+      ? email.toLowerCase().trim()
+      : null;
 
   const { data: bidsRaw } = await supabase
     .from("advisor_auction_bids")
@@ -162,6 +174,26 @@ export default async function QuoteDetailPage({ params, searchParams }: {
       });
     }
   }
+
+  // Decision Kit — compose a respondent comparison + intro-call scripts from
+  // the active bids (cheapest first, matching the bid list order). Fails soft;
+  // an empty kit simply doesn't render. Scorecards are flag-gated + owner-only.
+  const activeBids = bids.filter(
+    (b) => b.professionals?.id != null && b.status !== "withdrawn",
+  );
+  const decisionKit =
+    activeBids.length > 0
+      ? await loadDecisionKit({
+          briefId: job.id,
+          ownerEmail,
+          serviceType: job.advisor_types?.[0] ?? null,
+          inputs: activeBids.map((b) => ({
+            professionalId: b.professionals!.id,
+            amountCents: b.bid_amount,
+            bidId: b.id,
+          })),
+        })
+      : null;
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -304,6 +336,20 @@ export default async function QuoteDetailPage({ params, searchParams }: {
               feeContext={feeContext}
               ownerEmailFromUrl={email || ""}
             />
+
+            {/* Decision Kit — respondent comparison, intro-call scripts, and
+                (flag-gated, owner-only) post-call scorecards. */}
+            {decisionKit && decisionKit.respondents.length > 0 && (
+              <DecisionKit
+                slug={job.slug}
+                contactEmail={ownerEmail}
+                respondents={decisionKit.respondents}
+                script={decisionKit.script}
+                amountLabel="Quote"
+                scorecardsEnabled={decisionKit.scorecardsEnabled}
+                initialScorecards={decisionKit.initialScorecards}
+              />
+            )}
 
             {/* Public Q&A */}
             <QuoteQAClient slug={job.slug} initial={qa} ownerEmailFromUrl={email || ""} />

@@ -30,6 +30,8 @@ import {
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import DirectoryHero from "@/components/directory/DirectoryHero";
 import Icon from "@/components/Icon";
+import DecisionKit from "@/components/decision-kit/DecisionKit";
+import { loadDecisionKit } from "@/lib/decision-kit/load";
 
 import BookConsultationPanel from "./BookConsultationPanel";
 import BriefChatPanel from "./BriefChatPanel";
@@ -319,6 +321,29 @@ export default async function BriefTrackerPage({
 
   const showChat = brief.accepted_at !== null && (emailMatches || viewerIsAdvisor);
 
+  // Decision Kit — accept-flow briefs are claimed by a single provider, so the
+  // respondent comparison shows that one accepted adviser's signals alongside
+  // intro-call scripts and (flag-gated, owner-only) a post-call scorecard. The
+  // kit helps the consumer run a structured intro call and decide whether to
+  // proceed. Only assembled for the verified owner of an accepted brief; fails
+  // soft (an empty kit doesn't render). Briefs carry no per-provider quote, so
+  // the amount column is omitted (amountCents = null → honest gap).
+  let decisionKit: Awaited<ReturnType<typeof loadDecisionKit>> | null = null;
+  if (emailMatches && brief.accepted_by_professional_id) {
+    decisionKit = await loadDecisionKit({
+      briefId: brief.id,
+      ownerEmail: email,
+      serviceType: brief.brief_template ?? brief.advisor_types?.[0] ?? null,
+      inputs: [
+        {
+          professionalId: brief.accepted_by_professional_id,
+          amountCents: null,
+          bidId: null,
+        },
+      ],
+    });
+  }
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Match Requests", url: `${SITE_URL}/briefs` },
@@ -585,6 +610,21 @@ export default async function BriefTrackerPage({
                     team you engage — under their own licence and terms.
                   </p>
                 </div>
+              )}
+
+              {/* Decision Kit — intro-call questions + (flag-gated) a post-call
+                  scorecard for the accepted provider, so the consumer can run a
+                  structured first call before committing. Owner-only. */}
+              {decisionKit && decisionKit.respondents.length > 0 && (
+                <DecisionKit
+                  slug={brief.slug}
+                  contactEmail={emailMatches ? email : null}
+                  respondents={decisionKit.respondents}
+                  script={decisionKit.script}
+                  amountLabel="Estimate"
+                  scorecardsEnabled={decisionKit.scorecardsEnabled}
+                  initialScorecards={decisionKit.initialScorecards}
+                />
               )}
 
               {/* Book consultation — only shown once the brief is accepted.
