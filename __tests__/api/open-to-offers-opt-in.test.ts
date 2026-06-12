@@ -84,7 +84,7 @@ describe("POST /api/open-to-offers/opt-in — flag gating", () => {
 
   it("GET 404s when the flag is off", async () => {
     mockIsFlagEnabled.mockResolvedValue(false);
-    const res = await GET();
+    const res = await GET(new NextRequest("http://localhost/api/open-to-offers/opt-in"));
     expect(res.status).toBe(404);
   });
 });
