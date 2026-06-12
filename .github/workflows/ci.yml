@@ -112,15 +112,15 @@ jobs:
         # not exceed the budget. scripts/bundle-size-budget.mjs excludes
         # page-specific lazy splits, prints a top-10 chunk table, and
         # exits 1 on overage.
-        # Budget: 13000 kB (~12.7 MB raw uncompressed). Raised from 12000 kB.
-        # Two pressures converged: audit-remediation PRs pushed the baseline
-        # to ~12001 kB (calculator, careers, firm-portal, compliance pages),
-        # and this PR added ~2900 kB (questions-data.ts Q&A content imported
-        # by client quiz/scoring components + advisor course-creation, CPD,
-        # and certificate feature code). 13000 gives ~4% headroom; tighten
+        # Budget: 14000 kB. Raised from 13100 for the retention/marketplace
+        # 20-feature wave (PR #1570): +671 kB of genuinely new shared UI
+        # (scenario bar, quest shelf, decision kit, dossiers, embeds, pool
+        # panels, wrapped deck) — the per-route deltas were all <=2.1 kB and
+        # the totals diff was +3.6%. 14000 leaves ~1.7% headroom; tighten
         # once the post-merge baseline stabilises — see
         # scripts/bundle-size-budget.mjs for the metric definition.
-        run: node scripts/bundle-size-budget.mjs --budget-kb 13100
+        # (History: 12000 -> 13100 for the quiz/CPD wave, see git blame.)
+        run: node scripts/bundle-size-budget.mjs --budget-kb 14000
 
       # Upload .next so dependent jobs (e2e, a11y, lighthouse*) can
       # download instead of rebuilding from scratch. Each rebuild
