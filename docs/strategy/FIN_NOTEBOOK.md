@@ -53,8 +53,21 @@ Funding Pathway Finder + CR-02 /raise hub — fully lean-lane), commission the
 §9 legal memo bundled with the s708 brief, set Stage-1 BD order, decide CR-05
 (business-lending referrals) proceed-vs-park.
 
-**Revisit:** 2026-07-12 — founder verdicts on the five asks; if Priority 1
-greenlit, brief the build stream.
+**Update (same day) — founder greenlit via /goal ("build all of this, merged,
+highest quality → doc (1"); Priority 1 BUILT on PR #1564:** CR-01 Funding
+Pathway Finder (`/raise/pathway-finder` — 10 questions, pure scoring engine
+with regime gates + reasons/cautions, 16 tests, grants-quiz persistence
+pattern, HubLeadForm into the accountant funnel), CR-02 `/raise` hub + 7
+SSG pathway guides (answer-first, FAQPage JSON-LD), CR-03-lite factual CSF
+platform table (no-commercial-relationship disclosure), CAPITAL_RAISING_NOTE
+in lib/compliance.ts, sitemap + footer wiring. Escalator items (CR-05
+lending, CR-09 raising-status, CR-11 offer alerts, Stage 2+) deliberately
+NOT built per avoid-list. Remaining from Priority 1: CR-04a grant-writer
+professional type + CR-04b paid grant alerts (taxonomy + Stripe-price-ID
+dependent — next session).
+
+**Revisit:** 2026-07-12 — founder verdicts on the five asks; CR-04a/b
+build; first pathway-finder completion/lead numbers in PostHog.
 
 ### 2026-06-11 — Retail UX North Star: end-to-end emotional audit + "regulated delight" plan written
 
