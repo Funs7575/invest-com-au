@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { listPitchesForUser, effectiveStatus } from "@/lib/prospect-pool";
 
@@ -17,7 +18,10 @@ export const dynamic = "force-dynamic";
  * prospect_pool row (keyed by auth user id) and joins pitches server-side
  * (advisor_pitches is service-role-only, so there's no direct RLS read path).
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (!(await isAllowed("oto_inbox", ipKey(request), { max: 60, refillPerSec: 1 }))) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
   if (!(await isFlagEnabled("open_to_offers", { segment: "user" }))) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }

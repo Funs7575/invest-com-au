@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { getInvestorProfile } from "@/lib/investor-profiles";
@@ -44,7 +45,10 @@ async function resolveState(
  * GET — the consumer's current opt-in status for the dashboard block.
  * 404 when the feature flag is off (dormant).
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (!(await isAllowed("oto_status", ipKey(request), { max: 60, refillPerSec: 1 }))) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
   if (!(await isFlagEnabled("open_to_offers", { segment: "user" }))) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
