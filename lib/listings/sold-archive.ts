@@ -132,3 +132,62 @@ export function mergeComparables(
 ): ComparableSale[] {
   return [...platform, ...sellerStated].slice(0, cap);
 }
+
+/** A sold listing shaped for the "Recently sold" strip (idea #25). */
+export interface RecentlySoldRow {
+  id: number;
+  slug: string;
+  title: string;
+  location_state: string | null;
+  location_city: string | null;
+  images: string[] | null;
+  vertical: string;
+  sub_category: string | null;
+  listing_kind: string | null;
+  key_metrics: Record<string, unknown> | null;
+  asking_price_cents: number | null;
+  sold_price_cents: number | null;
+  sold_at: string | null;
+}
+
+/**
+ * Recent sales in a vertical for the lot page's "Recently sold" strip —
+ * the Zillow pattern that makes browsers trust the asking price. Includes
+ * undisclosed-price sales (they still say "this market moves"); the strip
+ * renders "Undisclosed" in that case. Fails soft to [] pre-migration.
+ */
+export async function fetchRecentlySold(
+  vertical: string,
+  opts: { excludeSlug?: string; limit?: number } = {},
+): Promise<RecentlySoldRow[]> {
+  const limit = opts.limit ?? 3;
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from("investment_listings")
+      .select(
+        "id, slug, title, location_state, location_city, images, vertical, sub_category, listing_kind, key_metrics, asking_price_cents, sold_price_cents, sold_at",
+      )
+      .eq("status", "sold")
+      .in("vertical", rawVerticalVariants(vertical))
+      .order("sold_at", { ascending: false, nullsFirst: false })
+      .limit(limit);
+    if (opts.excludeSlug) {
+      query = query.neq("slug", opts.excludeSlug);
+    }
+    const { data, error } = await query;
+    if (error) {
+      if (!isMissingSoldColumnsError(error.message)) {
+        log.warn("fetchRecentlySold failed", { vertical, error: error.message });
+      }
+      return [];
+    }
+    return (data ?? []) as RecentlySoldRow[];
+  } catch (err) {
+    log.warn("fetchRecentlySold threw", {
+      vertical,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return [];
+  }
+}

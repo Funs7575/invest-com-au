@@ -16,7 +16,8 @@ import LotLiquidityExit from "@/components/invest/lot/LotLiquidityExit";
 import LotComparables from "@/components/invest/lot/LotComparables";
 import LotListerCard from "@/components/invest/lot/LotListerCard";
 import { buildLotProfile } from "@/lib/listings/lot-profile";
-import { fetchSoldComparables, mergeComparables } from "@/lib/listings/sold-archive";
+import LotRecentlySold from "@/components/invest/lot/LotRecentlySold";
+import { fetchSoldComparables, mergeComparables, fetchRecentlySold } from "@/lib/listings/sold-archive";
 import { pricePerUnit } from "@/lib/listings/vertical-metrics";
 import { intelForCategory } from "@/lib/listings/vertical-intel";
 import { assessLotTransparency } from "@/lib/listings/lot-transparency";
@@ -78,7 +79,10 @@ export default async function ListingDetailView({
   // Platform-realised sales lead the comparables module — first-party comps
   // from the sold archive, ahead of seller-stated history. Fails soft to
   // seller comps only until the archive migration is applied.
-  const soldComps = await fetchSoldComparables(l.vertical, { excludeSlug: l.slug });
+  const [soldComps, recentlySold] = await Promise.all([
+    fetchSoldComparables(l.vertical, { excludeSlug: l.slug }),
+    fetchRecentlySold(l.vertical, { excludeSlug: l.slug }),
+  ]);
   const profileWithComps = {
     ...profile,
     comparables: mergeComparables(soldComps, profile.comparables),
@@ -256,6 +260,7 @@ export default async function ListingDetailView({
               <LotHoldingCosts profile={profile} intel={intel} />
               <LotLiquidityExit profile={profile} intel={intel} />
               <LotComparables profile={profileWithComps} />
+              <LotRecentlySold rows={recentlySold} categoryLabel={categoryLabel} />
 
               {l.firb_eligible && (
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 flex gap-4">
