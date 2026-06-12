@@ -14,6 +14,37 @@
 
 ## Active strategic decisions log
 
+### 2026-06-11 — Retail UX North Star: end-to-end emotional audit + "regulated delight" plan written
+
+Founder brief: make the platform feel like Robinhood/Revolut/Coinbase for a
+first-time retail investor — alive, personal, exciting — within our compliance
+walls. Full audit + plan: `docs/plans/RETAIL_UX_NORTHSTAR.md` (6 parallel
+surface audits + live mobile screenshot sweep of the mirror).
+
+Core thesis locked in the doc: **"celebrate readiness, not trades"** — we're
+not a broker, so the delight lane that got Robinhood in trouble (transaction
+gamification) doesn't apply; celebrating research milestones (saves, compares,
+learning, matches) is both ASIC-safe and differentiating. Headline audit
+finding: **the delight infrastructure is already built and dark** — full
+streak system live in prod (badge hidden in a dropdown), confetti/toast/
+count-up CSS used once each, fee-projection + reasons engines funnel-only,
+claim-on-signup wired with zero ceremony, signup page sells nothing while
+holding the user's anonymous shortlist. Plan = 12 signature "Delight Map"
+moments + 6 celebration primitives (~2-3 days) + 4 waves reconciled against
+GET_MATCHED_SHOWCASE (G4-G9 slotted), OS_FOR_INVESTING (overlaps cross-ref'd,
+several items found already shipped), COMMUNITY_MASTER_PLAN (belong-wave gated
+on its Phase 0). North-star metric proposed: Weekly Decision-Ready Returners
+(saved ≥1 + returned ≤7d).
+
+**Founder greenlit same-day: "build this end to end to the highest quality."**
+Build session 1 shipped Wave 1 + the cream of Wave 2/3 on PR #1558 (see the
+doc's Status ledger): celebration primitives, first-save/shortlist-of-three/
+streak-surfacing moments, mobile fold fixes, the compare cost-engine chip
+with animated personal dollars, path-completion ceremony, signup claim
+preview, and the /go/ send-off + return loop. Remaining (next sessions): D4
+arrival, D5 ring, D10 delta strip, D11 reasons sheets, G4-G9 remainder,
+account IA, Tier-C drips, D12 Wrapped.
+
 ### 2026-06-11 — Get Matched "showcase" upgrade greenlit (founder); root cause of "looks the same" found and fixed
 
 The P1–P9 Decision Engine was invisible in prod for two DB reasons (PR #1543):

@@ -97,12 +97,14 @@ export default function CookieBanner() {
       }`}
       style={{ boxShadow: "0 -4px 20px rgba(0,0,0,0.2)" }}
     >
-      <div className="container-custom py-4">
+      <div className="container-custom py-2.5 sm:py-4">
         {!showPrefs ? (
-          /* Standard banner */
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          /* Standard banner — slim on phones so the first screen stays the
+             product's, not the consent bar's (Northstar F1.3). Same legal
+             substance, tighter layout. */
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
             <div className="flex-1">
-              <p className="text-sm leading-relaxed">
+              <p className="text-xs sm:text-sm leading-snug sm:leading-relaxed">
                 We use cookies to enhance your experience, analyse site traffic, and track affiliate links.{" "}
                 <Link href="/privacy" className="text-slate-300 underline hover:text-white transition-colors">
                   Privacy Policy
@@ -110,22 +112,23 @@ export default function CookieBanner() {
                 .
               </p>
             </div>
-            <div className="flex gap-2 flex-shrink-0 flex-wrap">
+            <div className="flex gap-1.5 sm:gap-2 flex-shrink-0 flex-wrap items-center">
               <button
                 onClick={() => setShowPrefs(true)}
-                className="px-3 py-2.5 min-h-11 text-xs font-medium text-slate-400 hover:text-white transition-colors underline"
+                className="px-2.5 sm:px-3 py-2.5 min-h-11 text-xs font-medium text-slate-400 hover:text-white transition-colors underline"
               >
-                Manage Preferences
+                <span className="sm:hidden">Manage</span>
+                <span className="hidden sm:inline">Manage Preferences</span>
               </button>
               <button
                 onClick={handleDeclineAll}
-                className="px-4 py-2.5 min-h-11 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                className="px-3 sm:px-4 py-2.5 min-h-11 text-xs sm:text-sm font-medium text-slate-300 hover:text-white transition-colors"
               >
                 Essential Only
               </button>
               <button
                 onClick={handleAcceptAll}
-                className="px-6 py-2.5 min-h-11 bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-colors text-sm"
+                className="px-4 sm:px-6 py-2.5 min-h-11 bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-colors text-xs sm:text-sm"
               >
                 Accept All
               </button>

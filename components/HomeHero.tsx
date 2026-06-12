@@ -61,11 +61,12 @@ export default function HomeHero({
           margin: "0 auto",
           display: "grid",
           gridTemplateColumns: "minmax(0, 1fr)",
-          gap: 36,
+          gridTemplateAreas: '"text" "ctas" "reel"',
+          gap: 24,
           alignItems: "start",
         }}
       >
-        <div style={{ minWidth: 0, maxWidth: 720 }}>
+        <div style={{ gridArea: "text", minWidth: 0, maxWidth: 720 }}>
           <span
             className="iv2-pill"
             style={{
@@ -74,6 +75,9 @@ export default function HomeHero({
               border: "1px solid rgba(255,255,255,.14)",
               fontSize: 11.5,
               padding: "5px 12px",
+              maxWidth: "100%",
+              whiteSpace: "normal",
+              lineHeight: 1.45,
             }}
           >
             <span
@@ -106,7 +110,10 @@ export default function HomeHero({
             <span style={{ color: "var(--color-coral-400)" }}>all in one place.</span>
           </h1>
 
+          {/* Full subhead (tablet/desktop) — hidden on phones where it pushed
+              the CTA below the fold (Northstar F1.1). */}
           <p
+            className="hero-sub-full"
             style={{
               fontSize: 16.5,
               lineHeight: 1.55,
@@ -119,24 +126,61 @@ export default function HomeHero({
             Australian investment opportunities &mdash; businesses, farmland, mining, property.
             Find a verified expert. Or answer 4 questions to get matched. No jargon, no email.
           </p>
+          {/* One-line phone subhead — headline + this + the CTA all fit the first screen. */}
+          <p
+            className="hero-sub-short"
+            style={{
+              display: "none",
+              fontSize: 15.5,
+              lineHeight: 1.5,
+              color: "rgba(255,255,255,.78)",
+              margin: "16px 0 0",
+            }}
+          >
+            Brokers, super, crypto, property and experts &mdash; or answer 4 questions to get
+            matched. No jargon, no email.
+          </p>
 
-          <p style={{ marginTop: 36, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
+          <p className="hero-compliance" style={{ marginTop: 36, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
             General information only. Always check licensing, fees, risks and suitability before proceeding.
           </p>
         </div>
 
-        {/* Right column — pokie-reel visual + CTAs below */}
+        {/* CTAs — desktop: right-aligned under the reel (pokies-lever position);
+            phones: directly under the headline, above the fold. */}
         <div
-          className="hero-right"
+          className="hero-ctas"
           style={{
-            position: "relative",
-            width: "100%",
+            gridArea: "ctas",
             display: "flex",
-            flexDirection: "column",
-            gap: 28,
-            justifySelf: "end",
+            flexWrap: "wrap",
+            gap: 12,
+            alignItems: "center",
+            justifyContent: "flex-end",
           }}
         >
+          <Link
+            href="#routes"
+            style={{
+              fontSize: 14,
+              fontWeight: 700,
+              padding: "13px 20px",
+              borderRadius: 12,
+              border: "1px solid rgba(255,255,255,.18)",
+              color: "white",
+              background: "rgba(255,255,255,.04)",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            Explore options <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
+          </Link>
+          <HomeHeroCTA />
+        </div>
+
+        <div className="hero-reel" style={{ gridArea: "reel", position: "relative", width: "100%" }}>
           <HomeHeroReel
             brokers={topBrokers}
             listings={topListings}
@@ -145,48 +189,24 @@ export default function HomeHero({
             listingCount={listingCount}
             advisorCount={advisorCount}
           />
-
-          {/* CTAs — right-aligned, ghost first, orange on the far right (pokies-lever position) */}
-          <div
-            className="hero-ctas"
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 12,
-              alignItems: "center",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Link
-              href="#routes"
-              style={{
-                fontSize: 14,
-                fontWeight: 700,
-                padding: "13px 20px",
-                borderRadius: 12,
-                border: "1px solid rgba(255,255,255,.18)",
-                color: "white",
-                background: "rgba(255,255,255,.04)",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
-              Explore options <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
-            </Link>
-            <HomeHeroCTA />
-          </div>
         </div>
       </div>
 
       <style>{`
         @media (min-width: 1024px) {
-          .hero-shell { grid-template-columns: minmax(0, 1fr) minmax(420px, 480px) !important; }
+          .hero-shell {
+            grid-template-columns: minmax(0, 1fr) minmax(420px, 480px) !important;
+            grid-template-areas: "text reel" "text ctas" !important;
+            gap: 16px 36px !important;
+          }
         }
         @media (max-width: 1023px) {
-          .hero-right { justify-self: stretch !important; }
           .hero-ctas { justify-content: flex-start !important; }
+        }
+        @media (max-width: 767px) {
+          .hero-sub-full { display: none !important; }
+          .hero-sub-short { display: block !important; }
+          .hero-compliance { margin-top: 16px !important; }
         }
 
         /* Pokie-button breathing glow on the orange CTA */

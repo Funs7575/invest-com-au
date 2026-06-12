@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@/lib/hooks/useUser";
 import { getSessionId } from "@/lib/session";
+import { celebrateSave } from "@/lib/celebrate";
 
 interface Props {
   type: "article" | "broker" | "advisor" | "scenario" | "calculator" | "listing";
@@ -136,6 +137,7 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
           setSaved(!next);
         }
       }
+      celebrateSave({ saved: next, label });
     } catch {
       // Anonymous state lives in localStorage (already written above);
       // only revert when the server is the source of truth.
