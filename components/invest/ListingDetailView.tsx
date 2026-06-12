@@ -289,7 +289,32 @@ export default async function ListingDetailView({
                   enquiries — the sanctioned posture is factual listing +
                   "buy via your own broker" referral. The card keeps the
                   #enquire id so the mobile sticky bar's anchor lands here. */}
-              {kindMeta.externalCta ? (
+              {l.status === "sold" ? (
+                <div id="enquire" className="bg-white border border-emerald-200 rounded-xl p-6 lg:sticky lg:top-20 scroll-mt-24">
+                  <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-full mb-3">
+                    <Icon name="check-circle" size={12} />
+                    SOLD
+                  </span>
+                  <h2 className="text-base font-bold text-slate-900 mb-1">This listing has sold</h2>
+                  <p className="text-xs text-slate-500 mb-4">
+                    {(l as { sold_price_cents?: number | null }).sold_price_cents
+                      ? `Realised price: ${formatAudCompact((l as { sold_price_cents?: number | null }).sold_price_cents!)}. `
+                      : ""}
+                    It stays here as factual sales history — enquiries are closed.
+                  </p>
+                  <Link
+                    href={listingsHref}
+                    className="inline-flex w-full items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-4 py-2.5 rounded-xl transition-colors text-sm"
+                  >
+                    Browse live {categoryLabel} listings
+                    <Icon name="arrow-right" size={14} />
+                  </Link>
+                  <p className="mt-3 text-xs text-slate-500">
+                    Save a search on the listings page and we&apos;ll email you when
+                    similar opportunities go live.
+                  </p>
+                </div>
+              ) : kindMeta.externalCta ? (
                 <div id="enquire" className="bg-white border border-slate-200 rounded-xl p-6 lg:sticky lg:top-20 scroll-mt-24">
                   <h2 className="text-base font-bold text-slate-900 mb-1">How to invest</h2>
                   <p className="text-xs text-slate-500 mb-4">
@@ -375,7 +400,7 @@ export default async function ListingDetailView({
         sentinelId={HERO_SENTINEL_ID}
         priceLabel={price?.label ?? kindMeta.priceLabel}
         priceValue={price?.value ?? "POA"}
-        enquiryCta={kindMeta.externalCta ? "How to invest" : "Enquire"}
+        enquiryCta={l.status === "sold" ? "" : kindMeta.externalCta ? "How to invest" : "Enquire"}
         slug={l.slug}
         title={l.title}
         vertical={l.vertical}

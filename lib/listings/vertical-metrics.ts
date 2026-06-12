@@ -57,10 +57,12 @@ const COMMERCIAL_PROPERTY: readonly VerticalMetricDef[] = [
   { key: "yield_percent", label: "Net yield", kind: "percent", filter: "range", wizardStep: "financials", qualitySignal: true, help: "Annual net income as a percentage of the asking price." },
   { key: "wale_years", label: "WALE", kind: "number", unit: "yrs", filter: "range", wizardStep: "financials", qualitySignal: true, help: "Weighted average lease expiry across current tenancies." },
   { key: "sqm", label: "Floor area", kind: "number", unit: "m²", filter: "range", perUnitDenominator: true, wizardStep: "core", qualitySignal: true },
+  // Values match the stored vocabulary exactly ("single tenant" /
+  // "multi tenant" — space-separated in production rows).
   { key: "tenancy", label: "Tenancy", kind: "enum", filter: "multi", wizardStep: "core", enumValues: [
-    { value: "leased", label: "Leased" },
+    { value: "single tenant", label: "Single tenant" },
+    { value: "multi tenant", label: "Multi-tenant" },
     { value: "vacant", label: "Vacant possession" },
-    { value: "multi_tenant", label: "Multi-tenant" },
   ] },
   { key: "zoning", label: "Zoning", kind: "text", wizardStep: "details", forward: true, help: "Local planning zone, e.g. B3 Commercial Core." },
   { key: "building_class", label: "Building class", kind: "enum", filter: "select", wizardStep: "details", forward: true, enumValues: [

@@ -251,7 +251,12 @@ export async function GET(req: NextRequest) {
       "id, user_id, kind, label, filters, email_frequency, last_alerted_at, last_match_signature, created_at, updated_at",
     )
     .neq("email_frequency", "off")
-    .or(`last_alerted_at.is.null,last_alerted_at.lt.${cutoff}`)
+    // Gate weekly rows in the predicate — a 1–6-day-old weekly search must
+    // not consume batch capacity it can't use (it would be loop-skipped).
+    .or(
+      `and(email_frequency.eq.daily,or(last_alerted_at.is.null,last_alerted_at.lt.${cutoff})),` +
+        `and(email_frequency.eq.weekly,or(last_alerted_at.is.null,last_alerted_at.lt.${weeklyCutoff}))`,
+    )
     .limit(500);
 
   if (error) {

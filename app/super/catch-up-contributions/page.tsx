@@ -220,7 +220,7 @@ export default function CatchUpContributionsPage() {
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Step-by-step worked example</h2>
             <p className="text-sm text-slate-600 mb-6">
               Alex earns $130,000 and has had employer SG contributions of roughly $13,000 per year, leaving
-              roughly $14,500&ndash;$17,000 of the concessional cap unused each year. Her TSB at 30 June 2024  // dated-ok
+              roughly $14,500&ndash;$17,000 of the concessional cap unused each year. Her TSB at 30 June 2024  {/* // dated-ok */}
               is $120,000 &mdash; well below the $500,000 threshold.
             </p>
 
@@ -281,7 +281,7 @@ export default function CatchUpContributionsPage() {
                   </div>
                 ))}
               </div>
-              <p className="mt-4 text-xs text-slate-500">Illustrative only. Assumes Alex has TSB below $500K at 30 June 2025. Exact SG base and carry-forward amounts will vary.</p>{/* // dated-ok */}
+              <p className="mt-4 text-xs text-slate-500">Illustrative only. Assumes Alex has TSB below $500K at 30 June 2025. Exact SG base and carry-forward amounts will vary.</p>  {/* // dated-ok */}
             </div>
           </div>
         </section>

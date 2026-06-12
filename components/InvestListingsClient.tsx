@@ -259,6 +259,10 @@ export default function InvestListingsClient({
     ]) {
       next.delete(key);
     }
+    // Registry facets are dynamic (m_<key>) — sweep them all.
+    for (const key of Array.from(next.keys())) {
+      if (key.startsWith("m_")) next.delete(key);
+    }
     // View mode is a display preference, NOT a filter — preserve it.
     setSearchInput("");
     router.replace(`${pathname}?${next.toString()}`, { scroll: false });
@@ -422,8 +426,9 @@ export default function InvestListingsClient({
           return Number.isFinite(n) && n >= lo && n <= hi;
         }
         if (def.filter === "multi" || def.filter === "select") {
-          const wanted = new Set(raw.split(","));
-          return wanted.has(String(v ?? ""));
+          const norm = (x: string) => x.trim().toLowerCase().replace(/[\s_-]+/g, " ");
+          const wanted = new Set(raw.split(",").map(norm));
+          return wanted.has(norm(String(v ?? "")));
         }
         if (def.filter === "toggle") return v === true || v === "true";
         return true;

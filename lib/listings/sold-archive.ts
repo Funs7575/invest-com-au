@@ -224,9 +224,13 @@ export async function fetchSoldArchive(opts: {
       .eq("status", "sold")
       .order("sold_at", { ascending: false, nullsFirst: false })
       .limit(limit);
+    let derivedCategory: string | null = null;
     if (opts.category) {
       // Inverse of VERTICAL_TO_CATEGORY: every canonical vertical whose
-      // category matches, expanded to its drifted raw variants.
+      // category matches, expanded to its drifted raw variants. Derived
+      // categories (fund subcategories, listed-securities) have no inverse
+      // rows — those filter post-query via categoryForListing instead of
+      // silently showing everything.
       const verticals = Object.entries(VERTICAL_TO_CATEGORY)
         .filter(([, cat]) => cat === opts.category)
         .map(([vertical]) => vertical);
@@ -235,6 +239,8 @@ export async function fetchSoldArchive(opts: {
           "vertical",
           verticals.flatMap((v) => rawVerticalVariants(v)),
         );
+      } else {
+        derivedCategory = opts.category;
       }
     }
     const { data, error } = await query;
@@ -244,7 +250,10 @@ export async function fetchSoldArchive(opts: {
       }
       return [];
     }
-    return (data ?? []) as RecentlySoldRow[];
+    const rows = (data ?? []) as RecentlySoldRow[];
+    return derivedCategory
+      ? rows.filter((row) => categoryForListing(row) === derivedCategory).slice(0, limit)
+      : rows;
   } catch (err) {
     log.warn("fetchSoldArchive threw", {
       err: err instanceof Error ? err.message : String(err),

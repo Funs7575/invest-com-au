@@ -90,8 +90,9 @@ function matchesMetricParam(km: Record<string, unknown>, key: string, raw: strin
     return Number.isFinite(n) && n >= Number(range[1]) && n <= Number(range[2]);
   }
   if (raw === "1") return v === true || v === "true";
-  const wanted = new Set(raw.split(",").map((x) => x.trim()).filter(Boolean));
-  return wanted.has(String(v ?? ""));
+  const norm = (x: string) => x.trim().toLowerCase().replace(/[\s_-]+/g, " ");
+  const wanted = new Set(raw.split(",").map(norm).filter(Boolean));
+  return wanted.has(norm(String(v ?? "")));
 }
 
 export function matchesInvestFilters(
