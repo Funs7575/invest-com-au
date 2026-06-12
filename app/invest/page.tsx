@@ -21,7 +21,7 @@ import { listingUrl, categoryForListing, rawVerticalVariants } from "@/lib/listi
 import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { loadInvestPageContext } from "@/lib/listing-page-context";
-import { computeMatchBreakdown } from "@/lib/listing-match";
+import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
@@ -185,14 +185,10 @@ export default async function InvestMarketplacePage() {
   // per-card. Sparse map — only listings that beat the score floor
   // (50) end up keyed.
   const matchScores: Record<number, number> = {};
-  const matchReasons: Record<number, string[]> = {};
   if (ctx.investorProfile) {
     for (const l of listings) {
-      const breakdown = computeMatchBreakdown(l, ctx.investorProfile);
-      if (breakdown != null) {
-        matchScores[l.id] = breakdown.score;
-        if (breakdown.reasons.length > 0) matchReasons[l.id] = breakdown.reasons;
-      }
+      const score = computeMatchScore(l, ctx.investorProfile);
+      if (score != null) matchScores[l.id] = score;
     }
   }
 
@@ -337,7 +333,6 @@ export default async function InvestMarketplacePage() {
           listings={listings}
           categories={categoryTabs}
           matchScores={matchScores}
-          matchReasons={matchReasons}
           advisorOptInCounts={ctx.advisorOptInCounts}
           claimedSlugs={ctx.claimedSlugs}
           showActionPlanCta

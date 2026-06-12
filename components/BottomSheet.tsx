@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { createPortal } from "react-dom";
 
 interface BottomSheetProps {
   open: boolean;
@@ -71,10 +70,7 @@ export default function BottomSheet({ open, onClose, title, children, footer }: 
 
   if (!open) return null;
 
-  // Portal to <body>: sheets opened from inside Link-wrapped cards must not
-  // live inside the anchor (clicks would bubble into a navigation), and the
-  // fixed overlay must escape any transformed ancestor's stacking context.
-  return createPortal(
+  return (
     <>
       {/* Backdrop */}
       <div
@@ -119,7 +115,6 @@ export default function BottomSheet({ open, onClose, title, children, footer }: 
           </div>
         )}
       </div>
-    </>,
-    document.body,
+    </>
   );
 }

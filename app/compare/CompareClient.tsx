@@ -20,7 +20,6 @@ import CompareCrossSellBanner from "@/components/CompareCrossSellBanner";
 import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
 import AnimatedNumber from "@/components/ui/AnimatedNumber";
 import { celebrateMilestone } from "@/lib/celebrate";
-import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import SearchInput from "@/components/directory/SearchInput";
 import FilterChips, { type FilterChip } from "@/components/directory/FilterChips";
 import EmptyState from "@/components/directory/EmptyState";
@@ -205,7 +204,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
   const [costInputs, setCostInputs] = useState<CostInputs>(DEFAULT_COST_INPUTS);
   const scenarioPanelRef = useRef<HTMLDetailsElement>(null);
-  const [whyOrderOpen, setWhyOrderOpen] = useState(false);
 
   // Sync URL when filter, search or sort changes (for sharing/bookmarking).
   // Using replaceState (not push) so the back button doesn't get polluted
@@ -369,40 +367,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   }), [brokers, activeFilter, activeFeatures, maxFee, minRating, searchQuery, scenario]);
 
   const ranked = useMemo(() => rankBrokers(filtered, scenario, costInputs), [filtered, scenario, costInputs]);
-  // 1.8 (Northstar F2.4): when filters produce zero results, compute which
-  // single relaxation unlocks platforms and say so with real counts —
-  // an honest nearest-alternative instead of a generic dead end.
-  const zeroResultSuggestions = useMemo(() => {
-    if (filtered.length > 0) return [];
-    const base = { category: activeFilter, features: activeFeatures, maxFee, minRating, searchQuery, scenario };
-    const out: { label: string; onClick: () => void }[] = [];
-    if (searchQuery) {
-      const n = filterBrokers(brokers, { ...base, searchQuery: "" }).length;
-      if (n > 0) out.push({ label: `Clear search — ${n} platform${n === 1 ? "" : "s"}`, onClick: () => setSearchQuery("") });
-    }
-    if (activeFeatures.size > 0) {
-      const n = filterBrokers(brokers, { ...base, features: new Set<FeatureFilter>() }).length;
-      if (n > 0) out.push({ label: `Drop feature filters — ${n} platform${n === 1 ? "" : "s"}`, onClick: () => setActiveFeatures(new Set()) });
-    }
-    if (maxFee < 999) {
-      const n = filterBrokers(brokers, { ...base, maxFee: 999 }).length;
-      if (n > 0) out.push({ label: `Remove the fee cap — ${n} platform${n === 1 ? "" : "s"}`, onClick: () => setMaxFee(999) });
-    }
-    if (minRating > 0) {
-      const n = filterBrokers(brokers, { ...base, minRating: 0 }).length;
-      if (n > 0) out.push({ label: `Any rating — ${n} platform${n === 1 ? "" : "s"}`, onClick: () => setMinRating(0) });
-    }
-    if (activeFilter !== "all") {
-      const n = filterBrokers(brokers, { ...base, category: "all" }).length;
-      if (n > 0) out.push({ label: `All platform types — ${n} platform${n === 1 ? "" : "s"}`, onClick: () => setActiveFilter("all") });
-    }
-    out.push({
-      label: "Reset everything",
-      onClick: () => { setActiveFilter("all"); setActiveFeatures(new Set()); setMaxFee(999); setMinRating(0); setSearchQuery(""); },
-    });
-    return out.slice(0, 4);
-  }, [filtered.length, brokers, activeFilter, activeFeatures, maxFee, minRating, searchQuery, scenario]);
-
 
   // Any filter change restarts mobile paging from the first batch (guarded
   // render-time reset — equivalent to keying the list on the signature).
@@ -932,44 +896,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           </span>
           <span className="font-semibold underline">Change</span>
         </button>
-        {/* 1.8 (Northstar F2.3): every ranking explains itself in one tap. */}
-        <button
-          type="button"
-          onClick={() => setWhyOrderOpen(true)}
-          className="mb-2.5 ml-2 inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50"
-        >
-          Why this order?
-        </button>
-        <BottomSheet open={whyOrderOpen} onClose={() => setWhyOrderOpen(false)} title="Why this order?">
-          <ul className="space-y-2.5 text-sm text-slate-700 dark:text-slate-200">
-            <li>
-              <span className="font-semibold">Current sort:</span>{" "}
-              {schema.sortOptions.find((o) => o.col === sortCol)?.label ?? "Name"} (
-              {sortDir === 1 ? "lowest first" : "highest first"}) — tap any column header to
-              change it.
-            </li>
-            <li>
-              <span className="font-semibold">Estimated annual cost</span> is calculator output
-              from the inputs shown above the table — change them and the order re-ranks.
-            </li>
-            <li>{ADVERTISER_DISCLOSURE_SHORT} Commercial relationships never change the factual
-              data or this ordering.</li>
-          </ul>
-          <div className="mt-4 flex gap-2">
-            <Link
-              href="/methodology"
-              className="flex-1 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-600 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              Our methodology
-            </Link>
-            <Link
-              href="/how-we-earn"
-              className="flex-1 inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-600 px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              How we earn
-            </Link>
-          </div>
-        </BottomSheet>
 
         {/* Desktop Table */}
         <div ref={resultsRef} className="scroll-mt-16">
@@ -1116,8 +1042,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         {sorted.length === 0 && (
           <EmptyState
             title={searchQuery ? `No platforms match "${searchQuery}"` : "No platforms match this filter"}
-            body="Nothing matches all of that at once — here's the closest, with real counts:"
-            suggestions={zeroResultSuggestions}
+            body={searchQuery ? undefined : "Try a different platform category or remove some filters."}
+            suggestions={[
+              ...(searchQuery ? [{ label: "Clear search", onClick: () => { setSearchQuery(""); } }] : []),
+              ...(activeFilter !== 'all' || activeFeatures.size > 0 || maxFee < 999 || minRating > 0 ? [{ label: "Show all platforms", onClick: () => { setActiveFilter('all'); setActiveFeatures(new Set()); setMaxFee(999); setMinRating(0); setSearchQuery(''); } }] : []),
+            ]}
             className="my-4"
           />
         )}

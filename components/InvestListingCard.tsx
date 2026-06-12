@@ -13,7 +13,6 @@ import { humanizeTitle, listingDisplayMetrics } from "@/lib/listing-format";
 import Icon from "@/components/Icon";
 import EnquireButton from "@/components/marketplace/EnquireButton";
 import ListingShortlistButton from "@/components/invest/ListingShortlistButton";
-import MatchScorePill from "@/components/invest/MatchScorePill";
 import ListingClaimLink from "@/components/invest/ListingClaimLink";
 
 function formatLocation(state?: string, city?: string): string | null {
@@ -88,7 +87,6 @@ export default function InvestListingCard({
   variant = "grid",
   showFirbBadge = false,
   matchScore,
-  matchReasons,
   advisorOptInCount = 0,
   showClaimBadge = false,
 }: {
@@ -103,9 +101,6 @@ export default function InvestListingCard({
    *  a green pill bottom-left on the hero when set. Computed server-side
    *  per logged-in investor profile. */
   matchScore?: number | null;
-  /** Factual matched-criteria lines from `computeMatchBreakdown` — when
-   *  present the pill opens a why-this-score sheet (Northstar D11). */
-  matchReasons?: string[] | null;
   /** Number of distinct advisor types that have opted in to support
    *  this listing. Renders a small "X advisors" pill on the card when > 0. */
   advisorOptInCount?: number;
@@ -212,7 +207,11 @@ export default function InvestListingCard({
           <div className={`absolute inset-x-0 top-0 h-[3px] ${stripColor}`} />
           {/* Top-left kind badge */}
           <span className="absolute left-1.5 top-1.5">{kindBadge}</span>
-          {matchScore != null && <MatchScorePill score={matchScore} reasons={matchReasons} />}
+          {matchScore != null && (
+            <span className="iv2-pill absolute bottom-1.5 left-1.5 bg-emerald-500 text-white" style={{ fontSize: "10px" }}>
+              {matchScore}% match
+            </span>
+          )}
           {/* Top-right shortlist button */}
           <div className="absolute right-1 top-1">
             <ListingShortlistButton slug={listing.slug} size="sm" />
