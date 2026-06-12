@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
+import { buildSoldUpdates, isMissingSoldColumnsError } from "@/lib/listings/sold-archive";
 import { timingSafeEqual } from "crypto";
 
 const log = logger("listings-crud");
@@ -227,12 +228,33 @@ export async function PUT(
       );
     }
 
-    const { data: updated, error: updateError } = await admin
+    // Sold transition: stamp the archive columns (sold_at + optional
+    // disclosed price). Pre-migration environments retry status-only.
+    let soldExtras: Record<string, unknown> = {};
+    if (updates.status === "sold") {
+      const rawPrice = (body as Record<string, unknown>)["sold_price_cents"];
+      const priceNum = typeof rawPrice === "number" ? rawPrice : Number(rawPrice);
+      const { status: _status, ...extras } = buildSoldUpdates(
+        rawPrice == null ? null : priceNum,
+      );
+      soldExtras = extras;
+    }
+
+    let { data: updated, error: updateError } = await admin
       .from("investment_listings")
-      .update(updates)
+      .update({ ...updates, ...soldExtras })
       .eq("id", listingId)
       .select("*")
       .single();
+
+    if (updateError && Object.keys(soldExtras).length > 0 && isMissingSoldColumnsError(updateError.message)) {
+      ({ data: updated, error: updateError } = await admin
+        .from("investment_listings")
+        .update(updates)
+        .eq("id", listingId)
+        .select("*")
+        .single());
+    }
 
     if (updateError) {
       log.error("PUT listing update error", { error: updateError.message });

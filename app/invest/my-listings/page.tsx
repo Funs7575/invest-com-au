@@ -74,6 +74,9 @@ export default function MyListingsPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [enquiries, setEnquiries] = useState<Record<number, Enquiry[]>>({});
   const [expandedListing, setExpandedListing] = useState<number | null>(null);
+  const [soldFormListing, setSoldFormListing] = useState<number | null>(null);
+  const [soldPriceInput, setSoldPriceInput] = useState("");
+  const [markingSold, setMarkingSold] = useState(false);
 
   const resetToEmail = () => {
     setStage("email");
@@ -466,7 +469,81 @@ export default function MyListingsPage() {
                               {listingEnquiries.length === 1 ? "y" : "ies"}
                             </button>
                           )}
+                          {listing.status === "active" && (
+                            <button
+                              onClick={() => {
+                                setSoldPriceInput("");
+                                setSoldFormListing(
+                                  soldFormListing === listing.id ? null : listing.id,
+                                );
+                              }}
+                              className="text-sm text-emerald-700 hover:text-emerald-900 font-medium flex items-center gap-1"
+                            >
+                              <Icon name="check-circle" size={13} />
+                              Mark sold
+                            </button>
+                          )}
                         </div>
+
+                        {/* Mark-sold inline form: optional disclosed price.
+                            Disclosed sales feed the public comps archive;
+                            undisclosed ones still close the listing. */}
+                        {soldFormListing === listing.id && (
+                          <form
+                            className="mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex flex-wrap items-end gap-3"
+                            onSubmit={async (e) => {
+                              e.preventDefault();
+                              if (markingSold) return;
+                              setMarkingSold(true);
+                              setError(null);
+                              try {
+                                const dollars = Number(soldPriceInput.replace(/[,$\s]/g, ""));
+                                const res = await fetch("/api/listings/my-listings/mark-sold", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({
+                                    listing_id: listing.id,
+                                    sold_price_cents:
+                                      soldPriceInput.trim() && Number.isFinite(dollars) && dollars > 0
+                                        ? Math.round(dollars * 100)
+                                        : null,
+                                  }),
+                                });
+                                if (!res.ok) throw new Error("mark-sold failed");
+                                setSoldFormListing(null);
+                                await fetchListings(email);
+                              } catch {
+                                setError("Couldn't mark that listing sold. Try again?");
+                              } finally {
+                                setMarkingSold(false);
+                              }
+                            }}
+                          >
+                            <label className="flex flex-col text-xs font-semibold text-slate-700">
+                              Sale price (optional, AUD)
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                value={soldPriceInput}
+                                onChange={(e) => setSoldPriceInput(e.target.value)}
+                                placeholder="e.g. 450,000"
+                                className="mt-1 px-3 py-2 rounded-md border border-slate-300 text-sm font-normal w-44"
+                              />
+                            </label>
+                            <button
+                              type="submit"
+                              disabled={markingSold}
+                              className="bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-300 text-white text-sm font-bold px-4 py-2 rounded-md"
+                            >
+                              {markingSold ? "Saving…" : "Confirm sold"}
+                            </button>
+                            <p className="basis-full text-xs text-slate-500">
+                              Disclosing the price adds this sale to the public
+                              comparable-sales archive. Leave blank to keep it
+                              undisclosed.
+                            </p>
+                          </form>
+                        )}
                       </div>
 
                       {/* Enquiries panel */}
