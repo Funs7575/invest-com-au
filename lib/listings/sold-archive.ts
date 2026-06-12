@@ -19,7 +19,7 @@
  */
 
 import { createClient } from "@/lib/supabase/server";
-import { rawVerticalVariants, VERTICAL_TO_CATEGORY } from "@/lib/listing-url";
+import { categoryForListing, rawVerticalVariants, VERTICAL_TO_CATEGORY } from "@/lib/listing-url";
 import { formatAudCompact } from "@/lib/listing-kind";
 import type { ComparableSale } from "@/lib/listings/lot-profile";
 import { logger } from "@/lib/logger";
@@ -80,19 +80,19 @@ function monthYear(iso: string | null): string | undefined {
  */
 export async function fetchSoldComparables(
   vertical: string,
-  opts: { excludeSlug?: string; limit?: number } = {},
+  opts: { excludeSlug?: string; limit?: number; categorySlug?: string } = {},
 ): Promise<ComparableSale[]> {
   const limit = opts.limit ?? LOT_COMPS_LIMIT;
   try {
     const supabase = await createClient();
     let query = supabase
       .from("investment_listings")
-      .select("title, location_state, sold_price_cents, sold_at")
+      .select("title, location_state, sold_price_cents, sold_at, vertical, sub_category, listing_kind")
       .eq("status", "sold")
       .in("vertical", rawVerticalVariants(vertical))
       .not("sold_price_cents", "is", null)
       .order("sold_at", { ascending: false })
-      .limit(limit);
+      .limit(opts.categorySlug ? limit * 4 : limit);
     if (opts.excludeSlug) {
       query = query.neq("slug", opts.excludeSlug);
     }
@@ -105,7 +105,15 @@ export async function fetchSoldComparables(
       }
       return [];
     }
-    return ((data ?? []) as SoldRow[]).map((row) => ({
+    // Fund-subcategory categories (alternatives, private credit) share a
+    // vertical — scope comps to the lot's own category, never a sibling's.
+    const rows = (opts.categorySlug
+      ? ((data ?? []) as (SoldRow & { vertical: string; sub_category: string | null; listing_kind: string | null })[]).filter(
+          (row) => categoryForListing(row) === opts.categorySlug,
+        )
+      : ((data ?? []) as SoldRow[])
+    ).slice(0, limit);
+    return rows.map((row) => ({
       label: [row.title, row.location_state].filter(Boolean).join(" — "),
       price: row.sold_price_cents != null ? formatAudCompact(row.sold_price_cents) : undefined,
       when: monthYear(row.sold_at),
@@ -158,7 +166,7 @@ export interface RecentlySoldRow {
  */
 export async function fetchRecentlySold(
   vertical: string,
-  opts: { excludeSlug?: string; limit?: number } = {},
+  opts: { excludeSlug?: string; limit?: number; categorySlug?: string } = {},
 ): Promise<RecentlySoldRow[]> {
   const limit = opts.limit ?? 3;
   try {
@@ -171,7 +179,7 @@ export async function fetchRecentlySold(
       .eq("status", "sold")
       .in("vertical", rawVerticalVariants(vertical))
       .order("sold_at", { ascending: false, nullsFirst: false })
-      .limit(limit);
+      .limit(opts.categorySlug ? limit * 4 : limit);
     if (opts.excludeSlug) {
       query = query.neq("slug", opts.excludeSlug);
     }
@@ -182,7 +190,11 @@ export async function fetchRecentlySold(
       }
       return [];
     }
-    return (data ?? []) as RecentlySoldRow[];
+    const rows = (data ?? []) as RecentlySoldRow[];
+    return (opts.categorySlug
+      ? rows.filter((row) => categoryForListing(row) === opts.categorySlug)
+      : rows
+    ).slice(0, limit);
   } catch (err) {
     log.warn("fetchRecentlySold threw", {
       vertical,

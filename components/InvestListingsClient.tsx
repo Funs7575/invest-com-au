@@ -799,7 +799,13 @@ export default function InvestListingsClient({
             {/* Save current filter set as a named saved-search */}
             <SaveSearchButton
               activeChipsCount={activeChips.length}
-              filters={Object.fromEntries(searchParams.entries())}
+              filters={{
+                // Locked category pages (e.g. /invest/farmland/listings)
+                // scope via prop, not URL param — bake it into the saved
+                // filters or the alert cron would match across all sectors.
+                ...(lockedCategory ? { category: lockedCategory } : {}),
+                ...Object.fromEntries(searchParams.entries()),
+              }}
             />
           </div>
 

@@ -17,10 +17,14 @@
 import { categoryForListing } from "@/lib/listing-url";
 import { deriveListingKind, ticketBucketByKey } from "@/lib/listing-kind";
 
-/** Raw saved filters — URL-param strings, all optional. */
+/** Raw saved filters — URL-param strings, all optional. `metrics` carries
+ *  any registry facet params (`m_<key>`), interpreted by value shape. */
 export type InvestSearchFilters = Partial<
-  Record<"category" | "sub" | "state" | "price" | "kind" | "firb" | "q", string>
->;
+  Record<
+    "category" | "sub" | "state" | "price" | "kind" | "firb" | "siv" | "wholesale" | "investor" | "q",
+    string
+  >
+> & { metrics?: Record<string, string> };
 
 /** The slice of an investment_listings row the matcher needs. */
 export interface MatchableListing {
@@ -30,6 +34,7 @@ export interface MatchableListing {
   location_state?: string | null;
   asking_price_cents?: number | null;
   firb_eligible?: boolean | null;
+  siv_complying?: boolean | null;
   title?: string | null;
   description?: string | null;
   key_metrics?: Record<string, unknown> | null;
@@ -39,11 +44,54 @@ export interface MatchableListing {
 export function parseInvestFilters(raw: unknown): InvestSearchFilters {
   if (!raw || typeof raw !== "object") return {};
   const out: InvestSearchFilters = {};
-  for (const key of ["category", "sub", "state", "price", "kind", "firb", "q"] as const) {
+  for (const key of [
+    "category", "sub", "state", "price", "kind", "firb", "siv", "wholesale", "investor", "q",
+  ] as const) {
     const value = (raw as Record<string, unknown>)[key];
     if (typeof value === "string" && value.trim() !== "") out[key] = value.trim();
   }
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (key.startsWith("m_") && typeof value === "string" && value.trim() !== "") {
+      (out.metrics ??= {})[key.slice(2)] = value.trim();
+    }
+  }
   return out;
+}
+
+/** The ticket figure the browse surface ranks on: asking price, falling
+ *  back to a disclosed minimum investment (AUD keys are dollars; the
+ *  cents key is cents). Mirrors InvestListingsClient's ticket pipeline so
+ *  alerts match what the user saw when they saved the filter. */
+export function listingTicketCents(listing: MatchableListing): number | null {
+  if (listing.asking_price_cents != null && listing.asking_price_cents > 0) {
+    return listing.asking_price_cents;
+  }
+  const km = (listing.key_metrics ?? {}) as Record<string, unknown>;
+  for (const audKey of ["min_investment_aud", "min_commit_aud"]) {
+    const n = Number(km[audKey]);
+    if (Number.isFinite(n) && n > 0) return Math.round(n * 100);
+  }
+  const cents = Number(km["min_investment_cents"]);
+  if (Number.isFinite(cents) && cents > 0) return Math.round(cents);
+  return null;
+}
+
+function isWholesaleOnly(km: Record<string, unknown>): boolean {
+  return km["wholesale_only"] === true || km["s708_required"] === true || km["accredited_only"] === true;
+}
+
+/** Interpret one saved `m_<key>` facet by value shape: "lo-hi" numeric
+ *  range, "1" toggle, otherwise CSV membership. */
+function matchesMetricParam(km: Record<string, unknown>, key: string, raw: string): boolean {
+  const v = km[key];
+  const range = raw.match(/^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)$/);
+  if (range) {
+    const n = typeof v === "number" ? v : Number(v);
+    return Number.isFinite(n) && n >= Number(range[1]) && n <= Number(range[2]);
+  }
+  if (raw === "1") return v === true || v === "true";
+  const wanted = new Set(raw.split(",").map((x) => x.trim()).filter(Boolean));
+  return wanted.has(String(v ?? ""));
 }
 
 export function matchesInvestFilters(
@@ -64,7 +112,7 @@ export function matchesInvestFilters(
   if (filters.price) {
     const bucket = ticketBucketByKey(filters.price);
     if (bucket.key !== "") {
-      const price = listing.asking_price_cents;
+      const price = listingTicketCents(listing);
       if (price == null) return false; // POA never satisfies a ticket band
       if (price < bucket.min || price >= bucket.max) return false;
     }
@@ -75,6 +123,21 @@ export function matchesInvestFilters(
   }
   if (filters.firb === "eligible") {
     if (!listing.firb_eligible) return false;
+  }
+  const km = (listing.key_metrics ?? {}) as Record<string, unknown>;
+  if (filters.siv === "complying") {
+    if (!listing.siv_complying) return false;
+  }
+  if (filters.wholesale === "true") {
+    if (!isWholesaleOnly(km)) return false;
+  }
+  if (filters.investor === "retail") {
+    if (isWholesaleOnly(km) && km["open_to_retail"] !== true) return false;
+  }
+  if (filters.metrics) {
+    for (const [key, raw] of Object.entries(filters.metrics)) {
+      if (!matchesMetricParam(km, key, raw)) return false;
+    }
   }
   if (filters.q) {
     const haystack = `${listing.title ?? ""} ${listing.description ?? ""}`.toLowerCase();

@@ -235,7 +235,7 @@ export default function ListingSubmitForm() {
     if (step === "success" || resumeOffered) return;
     if (!form.vertical && !form.title && !form.description) return;
     try {
-      const { contact_email: _e, contact_phone: _p, ...safe } = form;
+      const { contact_email: _e, contact_phone: _p, contact_name: _n, ...safe } = form;
       localStorage.setItem(
         DRAFT_KEY,
         JSON.stringify({ savedAt: new Date().toISOString(), step, form: safe }),

@@ -81,6 +81,53 @@ describe("matchesInvestFilters", () => {
   it("ignores an unknown ticket-bucket key (defaults to any)", () => {
     expect(matchesInvestFilters(farm, { price: "not-a-bucket" })).toBe(true);
   });
+
+  it("falls back to disclosed minimum investment for ticket bands (browse parity)", () => {
+    const fund = {
+      ...farm,
+      asking_price_cents: null,
+      key_metrics: { min_investment_aud: 50_000 },
+    };
+    expect(matchesInvestFilters(fund, { price: "10k-100k" })).toBe(true);
+    expect(matchesInvestFilters(fund, { price: "1m-10m" })).toBe(false);
+    // Truly POA (no minimum either) still never matches a band.
+    expect(
+      matchesInvestFilters({ ...farm, asking_price_cents: null, key_metrics: {} }, { price: "10k-100k" }),
+    ).toBe(false);
+  });
+
+  it("honours the advanced browse params: siv, wholesale, investor=retail", () => {
+    expect(matchesInvestFilters({ ...farm, siv_complying: true }, { siv: "complying" })).toBe(true);
+    expect(matchesInvestFilters(farm, { siv: "complying" })).toBe(false);
+    const wholesale = { ...farm, key_metrics: { wholesale_only: true } };
+    expect(matchesInvestFilters(wholesale, { wholesale: "true" })).toBe(true);
+    expect(matchesInvestFilters(farm, { wholesale: "true" })).toBe(false);
+    expect(matchesInvestFilters(wholesale, { investor: "retail" })).toBe(false);
+    expect(
+      matchesInvestFilters(
+        { ...farm, key_metrics: { wholesale_only: true, open_to_retail: true } },
+        { investor: "retail" },
+      ),
+    ).toBe(true);
+  });
+
+  it("honours saved m_<key> registry facets by value shape", () => {
+    const lot = { ...farm, key_metrics: { hectares: 412, tenancy: "leased", territory_exclusive: true } };
+    expect(matchesInvestFilters(lot, { metrics: { hectares: "100-500" } })).toBe(true);
+    expect(matchesInvestFilters(lot, { metrics: { hectares: "500-900" } })).toBe(false);
+    expect(matchesInvestFilters(lot, { metrics: { tenancy: "leased,vacant" } })).toBe(true);
+    expect(matchesInvestFilters(lot, { metrics: { tenancy: "vacant" } })).toBe(false);
+    expect(matchesInvestFilters(lot, { metrics: { territory_exclusive: "1" } })).toBe(true);
+  });
+
+  it("parses m_<key> params out of raw saved filters", () => {
+    expect(
+      parseInvestFilters({ category: "farmland", m_hectares: "100-500", m_tenancy: "leased" }),
+    ).toEqual({
+      category: "farmland",
+      metrics: { hectares: "100-500", tenancy: "leased" },
+    });
+  });
 });
 
 describe("describeInvestFilters", () => {

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { requireListingOwnerSession } from "@/lib/require-listing-owner-session";
+import { LISTING_OWNER_COOKIE_NAME, verifyListingOwnerCookie } from "@/lib/listing-owner-cookie";
 import { buildSoldUpdates, isMissingSoldColumnsError } from "@/lib/listings/sold-archive";
 import { logger } from "@/lib/logger";
 
@@ -55,7 +56,21 @@ export async function POST(request: NextRequest) {
     .eq("id", listingId)
     .maybeSingle();
 
-  if (fetchError || !listing || (listing.contact_email ?? "").toLowerCase() !== email) {
+  let ownershipOk =
+    !fetchError && !!listing && (listing.contact_email ?? "").toLowerCase() === email;
+  if (!ownershipOk && !fetchError && listing) {
+    // A signed-in user whose account email differs from the listing's
+    // contact_email may still have OTP-verified that mailbox — the cookie
+    // wins when it vouches for the listing's own contact email.
+    const cookieValue = request.cookies.get(LISTING_OWNER_COOKIE_NAME)?.value;
+    const contactEmail = (listing.contact_email ?? "").toLowerCase();
+    if (cookieValue && contactEmail) {
+      ownershipOk = verifyListingOwnerCookie(cookieValue, {
+        expectedEmail: contactEmail,
+      }).ok;
+    }
+  }
+  if (!ownershipOk || !listing) {
     // Same generic shape for not-found and not-yours — no ownership oracle.
     return NextResponse.json({ error: "Listing not found" }, { status: 404 });
   }

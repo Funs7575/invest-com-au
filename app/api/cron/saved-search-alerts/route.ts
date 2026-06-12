@@ -38,6 +38,7 @@ import {
   type SavedSearchKind,
   type SavedSearchRow,
 } from "@/lib/saved-searches";
+import { rawVerticalVariants, VERTICAL_TO_CATEGORY } from "@/lib/listing-url";
 import {
   parseInvestFilters,
   matchesInvestFilters,
@@ -151,12 +152,21 @@ async function matchInvest(filters: Record<string, unknown>): Promise<MatchedPro
   let q = supabase
     .from("investment_listings")
     .select(
-      "id, slug, title, description, vertical, sub_category, listing_kind, location_state, asking_price_cents, firb_eligible, key_metrics",
+      "id, slug, title, description, vertical, sub_category, listing_kind, location_state, asking_price_cents, firb_eligible, siv_complying, key_metrics",
     )
     .eq("status", "active")
     .order("created_at", { ascending: false })
-    .limit(200);
+    .limit(500);
   if (parsed.state) q = q.ilike("location_state", parsed.state);
+  // Scope category-bound searches server-side so the recency cap can't
+  // starve a less-active category out of its matches.
+  if (parsed.category && parsed.category !== "all") {
+    const verticals = Object.entries(VERTICAL_TO_CATEGORY)
+      .filter(([, cat]) => cat === parsed.category)
+      .map(([vertical]) => vertical)
+      .flatMap((v) => rawVerticalVariants(v));
+    if (verticals.length > 0) q = q.in("vertical", verticals);
+  }
 
   const { data, error } = await q;
   if (error) {

@@ -82,8 +82,8 @@ export default async function ListingDetailView({
   // from the sold archive, ahead of seller-stated history. Fails soft to
   // seller comps only until the archive migration is applied.
   const [soldComps, recentlySold] = await Promise.all([
-    fetchSoldComparables(l.vertical, { excludeSlug: l.slug }),
-    fetchRecentlySold(l.vertical, { excludeSlug: l.slug }),
+    fetchSoldComparables(l.vertical, { excludeSlug: l.slug, categorySlug }),
+    fetchRecentlySold(l.vertical, { excludeSlug: l.slug, categorySlug }),
   ]);
   const profileWithComps = {
     ...profile,
