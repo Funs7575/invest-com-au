@@ -1,5 +1,6 @@
 "use client";
 
+import { journeySnapshot } from "@/lib/journey";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import EmptyState from "@/components/directory/EmptyState";
@@ -21,11 +22,12 @@ const TYPE_LABEL: Record<string, string> = {
   article: "Articles",
   broker: "Brokers",
   advisor: "Advisors",
+  listing: "Listings",
   scenario: "Scenarios",
   calculator: "Calculators",
 };
 
-const TYPE_ORDER = ["broker", "advisor", "article", "scenario", "calculator"];
+const TYPE_ORDER = ["broker", "advisor", "listing", "article", "scenario", "calculator"];
 
 function linkFor(type: string, ref: string): string {
   switch (type) {
@@ -35,6 +37,10 @@ function linkFor(type: string, ref: string): string {
       return `/broker/${ref}`;
     case "advisor":
       return `/advisor/${ref}`;
+    case "listing":
+      // Slug-only resolver — bookmarks store the listing slug, the route
+      // looks up the vertical and 307s to the canonical lot URL.
+      return `/invest/listings/${ref}`;
     case "scenario":
       return `/scenario/${ref}`;
     case "calculator":
@@ -58,11 +64,17 @@ export default function BookmarksList({ initialItems }: Props) {
   }, [items]);
 
   if (items.length === 0) {
+    // Journey-aware zero state: name the stage and point at the next step
+    // instead of presenting a void.
+    const journey = journeySnapshot();
     return (
       <EmptyState
         icon="file-text"
-        title="Your reading list is empty"
-        body="Tap the bookmark icon on any article, broker or advisor page to save it here for later."
+        title={`Stage ${journey.stage.level}: ${journey.stage.name} — nothing saved yet`}
+        body={
+          journey.stage.nextHint ??
+          "Tap the bookmark icon on any article, broker or advisor page to save it here for later."
+        }
         ctas={[
           { label: "Browse brokers", href: "/compare" },
           { label: "Explore guides", href: "/learn", variant: "secondary" },

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import ArrivalSequence from "@/components/onboarding/ArrivalSequence";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 import { useUser } from "@/lib/hooks/useUser";
@@ -211,6 +212,7 @@ export default function OnboardingClient() {
   const [form, setForm] = useState<OnboardingData>(emptyData);
   const [checking, setChecking] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [arrived, setArrived] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [direction, setDirection] = useState<"forward" | "back">("forward");
   const [animating, setAnimating] = useState(false);
@@ -294,6 +296,21 @@ export default function OnboardingClient() {
     return true; // Step 3 is all optional
   };
 
+  if (arrived) {
+    return (
+      <ArrivalSequence
+        name={form.display_name || null}
+        interests={form.interested_in}
+        experience={form.investing_experience || null}
+        goal={form.investment_goals || null}
+        onDone={() => {
+          router.replace("/account?welcome=1");
+          router.refresh();
+        }}
+      />
+    );
+  }
+
   const handleNext = () => {
     setSubmitError(null);
     if (step < TOTAL_STEPS) goTo(step + 1);
@@ -315,8 +332,9 @@ export default function OnboardingClient() {
       });
 
       if (res.ok) {
-        router.replace("/account?welcome=1");
-        router.refresh();
+        // D4 (Northstar): show the arrival sequence — the user watches their
+        // home being assembled from their answers — then land on the account.
+        setArrived(true);
         return;
       }
 

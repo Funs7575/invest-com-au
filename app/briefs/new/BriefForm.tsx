@@ -125,6 +125,12 @@ interface BriefFormProps {
   aiCopilotEnabled?: boolean;
   /** Server-resolved active workspace — drives the "Filing as" chip and prefills contact. */
   workspace?: WorkspaceContext | null;
+  /**
+   * Signed-in investor fallback prefill (Money Profile) — used when no
+   * business/listing workspace supplies contact details. Name/email come
+   * from the account; state from the Money Profile.
+   */
+  investorPrefill?: { name: string | null; email: string | null; state: string | null } | null;
   /** Server-resolved Investor Pro subscription state — unlocks the direct-route perk. */
   proSubscriber?: boolean;
   /** Honest count of active verified pros, for social proof. Null hides the number. */
@@ -134,6 +140,7 @@ interface BriefFormProps {
 export default function BriefForm({
   aiCopilotEnabled = false,
   workspace = null,
+  investorPrefill = null,
   proSubscriber = false,
   proSupply = null,
 }: BriefFormProps) {
@@ -163,9 +170,10 @@ export default function BriefForm({
     brief_template: (BRIEF_TEMPLATES.includes(presetTemplate as BriefTemplate)
       ? (presetTemplate as BriefTemplate)
       : "") as BriefTemplate | "",
-    contact_name: workspace?.prefillName ?? INITIAL.contact_name,
-    contact_email: workspace?.prefillEmail ?? INITIAL.contact_email,
+    contact_name: workspace?.prefillName ?? investorPrefill?.name ?? INITIAL.contact_name,
+    contact_email: workspace?.prefillEmail ?? investorPrefill?.email ?? INITIAL.contact_email,
     contact_phone: workspace?.prefillPhone ?? INITIAL.contact_phone,
+    location_state: investorPrefill?.state ?? INITIAL.location_state,
   }));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

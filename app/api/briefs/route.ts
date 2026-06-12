@@ -7,8 +7,8 @@ import { logger } from "@/lib/logger";
 import { CreateBriefRequest } from "@/lib/api-schemas";
 import { scanBrief } from "@/lib/briefs/risk-flags";
 import { getAcceptCost } from "@/lib/briefs/credits";
-import { resolveEligibleProviders } from "@/lib/briefs/routing";
-import { sendProviderNewMatchRequest } from "@/lib/marketplace-emails";
+import { notifyEligibleProviders } from "@/lib/briefs/notify";
+import { runStandingOrdersForBrief } from "@/lib/briefs/standing-orders";
 import { attributeBriefCreated } from "@/lib/pro-affiliate/track";
 import {
   BRIEF_TEMPLATE_SCHEMAS,
@@ -248,6 +248,15 @@ export async function POST(request: NextRequest) {
           err: err instanceof Error ? err.message : String(err),
         });
       });
+      // Standing orders — instant auto-accept for advisers with a matching
+      // standing rule. Flag-gated + capped inside the engine; failures must
+      // never block the brief response.
+      void runStandingOrdersForBrief(brief.id as number).catch((err) => {
+        log.warn("runStandingOrdersForBrief failed", {
+          briefId: brief.id,
+          err: err instanceof Error ? err.message : String(err),
+        });
+      });
     }
 
     return NextResponse.json({
@@ -262,82 +271,5 @@ export async function POST(request: NextRequest) {
       err: err instanceof Error ? err.message : String(err),
     });
     return NextResponse.json({ error: "Failed to create brief." }, { status: 500 });
-  }
-}
-
-// ─── Provider notification helper (N1) ───────────────────────────────────
-// Resolves up to 20 eligible providers for a brief via the routing engine,
-// hydrates their email + name, and fan-outs new-match-request emails.
-// Defensive: any sub-step that fails (routing tables missing, email send
-// errors, missing emails) is logged and swallowed.
-
-async function notifyEligibleProviders(
-  brief: BriefRow,
-  creditsCost: number,
-): Promise<void> {
-  try {
-    const eligible = await resolveEligibleProviders(brief);
-    if (eligible.length === 0) return;
-
-    const admin = createAdminClient();
-
-    // Hydrate professionals (individual + firm representatives ride on
-    // professionals too). Expert teams resolve to team_id; we'll fan-out
-    // to all team members.
-    const individualIds = eligible
-      .filter((p) => p.kind === "individual" || p.kind === "firm")
-      .map((p) => p.id);
-    const teamIds = eligible
-      .filter((p) => p.kind === "expert_team")
-      .map((p) => p.id);
-
-    const targetIds = new Set<number>(individualIds);
-    if (teamIds.length > 0) {
-      const { data: teamMembers } = await admin
-        .from("expert_team_members")
-        .select("professional_id")
-        .in("team_id", teamIds)
-        .eq("status", "active");
-      for (const m of teamMembers ?? []) {
-        if (m.professional_id) targetIds.add(m.professional_id as number);
-      }
-    }
-
-    if (targetIds.size === 0) return;
-
-    const { data: professionals } = await admin
-      .from("professionals")
-      .select("id, name, email, accepts_briefs, accepts_new_clients")
-      .in("id", Array.from(targetIds))
-      .eq("status", "active");
-
-    const sendable = (professionals ?? []).filter(
-      (p) =>
-        typeof p.email === "string" &&
-        p.email.includes("@") &&
-        // accepts_new_clients gates the individual; accepts_briefs (column
-        // added by PR #821) gates marketplace participation. Both must
-        // be true to receive notifications.
-        p.accepts_new_clients !== false &&
-        p.accepts_briefs !== false,
-    );
-
-    // Hard cap fan-out — 20 emails per brief keeps spam complaints tiny.
-    for (const p of sendable.slice(0, 20)) {
-      void sendProviderNewMatchRequest({
-        providerEmail: p.email as string,
-        providerName: (p.name as string) || "Pro",
-        briefTitle: brief.job_title || "New Match Request",
-        briefSlug: brief.slug,
-        acceptCreditsCost: creditsCost,
-        briefBudgetBand: brief.budget_band,
-        briefLocation: brief.location,
-      });
-    }
-  } catch (err) {
-    log.warn("notifyEligibleProviders threw", {
-      briefId: brief.id,
-      err: err instanceof Error ? err.message : String(err),
-    });
   }
 }

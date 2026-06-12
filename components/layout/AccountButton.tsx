@@ -115,7 +115,10 @@ export default function AccountButton() {
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
-    <div ref={ref} className="hidden lg:flex relative">
+    <div ref={ref} className="hidden lg:flex relative items-center gap-1.5">
+      {/* Interactive streak chip (D6) — sibling of the menu button, never
+          nested inside it (a button cannot contain a button). */}
+      <StreakBadge />
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-slate-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
@@ -129,7 +132,6 @@ export default function AccountButton() {
         <span className="text-sm font-semibold text-slate-700 max-w-30 truncate">
           {displayName}
         </span>
-        <StreakBadge />
         <svg
           className={`w-3.5 h-3.5 text-slate-500 transition-transform ${open ? "rotate-180" : ""}`}
           fill="none"

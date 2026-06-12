@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { celebrateMilestone } from "@/lib/celebrate";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -146,6 +147,20 @@ export default function GetMatchedClient(props: Props) {
   // pending), so we hold all state client-side and disable save / brief
   // creation until the DB is ready.
   const [ephemeral, setEphemeral] = useState(false);
+  // F4.1 (Northstar): remember the latest real plan so the header chip can
+  // re-find it after the user navigates away. Result-stage only; ephemeral
+  // plans (DB unavailable) have nothing durable to point at.
+  useEffect(() => {
+    if (!result || !shareToken || ephemeral) return;
+    try {
+      window.localStorage.setItem(
+        "iv_last_plan",
+        JSON.stringify({ token: shareToken, ts: Date.now() }),
+      );
+    } catch {
+      /* ignore */
+    }
+  }, [result, shareToken, ephemeral]);
 
   // Promote the analyzing result to `result` only once BOTH the 1.5s
   // timer AND the resolve fetch have finished — gives the perceived-
@@ -884,7 +899,10 @@ function ActionPlanScreen({
     setSaving(true);
     try {
       const url = await onSaveByEmail(email);
-      if (url) setSavedUrl(url);
+      if (url) {
+        setSavedUrl(url);
+        celebrateMilestone("first_plan_saved");
+      }
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : "Could not save.");
     } finally {

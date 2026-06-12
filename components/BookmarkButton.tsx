@@ -3,12 +3,21 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@/lib/hooks/useUser";
 import { getSessionId } from "@/lib/session";
+import { celebrateSave } from "@/lib/celebrate";
 
 interface Props {
-  type: "article" | "broker" | "advisor" | "scenario" | "calculator";
+  type: "article" | "broker" | "advisor" | "scenario" | "calculator" | "listing";
   ref: string;
   label?: string;
   className?: string;
+}
+
+/** fetch resolves on 4xx/5xx and the API can answer { ok: false } — treat
+ *  both as a failed write so authed optimistic state can be reverted. */
+async function responseOk(res: Response): Promise<boolean> {
+  if (!res.ok) return false;
+  const json = (await res.json().catch(() => ({ ok: false }))) as { ok?: boolean };
+  return json.ok === true;
 }
 
 /**
@@ -24,7 +33,7 @@ interface Props {
  * button just fires the "save" event.
  */
 export default function BookmarkButton({ type, ref, label, className }: Props) {
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -66,22 +75,17 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
   }, [user, type, ref]);
 
   const toggle = async () => {
-    if (busy) return;
+    // Until auth resolves, a signed-in user looks anonymous — saving would
+    // write a stale inv_anon_saves mirror the authed unsave never cleans.
+    if (busy || userLoading) return;
     setBusy(true);
     const next = !saved;
     setSaved(next);
     try {
       if (next) {
-        const body: Record<string, unknown> = { type, ref, label };
-        if (!user) body.session_id = getSessionId();
-        await fetch("/api/account/bookmarks", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        });
         if (!user) {
-          // Mirror into localStorage so the star persists between
-          // page loads even before the user signs in.
+          // Mirror into localStorage BEFORE the network call so the star
+          // persists between page loads even if the server write fails.
           try {
             const cached = localStorage.getItem("inv_anon_saves");
             const list = cached
@@ -95,27 +99,49 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
             /* ignore */
           }
         }
-      } else if (user) {
-        await fetch("/api/account/bookmarks", {
+        const body: Record<string, unknown> = { type, ref, label };
+        if (!user) body.session_id = getSessionId();
+        const res = await fetch("/api/account/bookmarks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (user && !(await responseOk(res))) {
+          setSaved(!next);
+        }
+      } else {
+        if (!user) {
+          // Drop the localStorage mirror first so the unsave survives a
+          // failed network call, then delete the server row — otherwise
+          // claim-on-signup resurrects the unsaved item.
+          try {
+            const cached = localStorage.getItem("inv_anon_saves");
+            if (cached) {
+              const list = (
+                JSON.parse(cached) as Array<{ type: string; ref: string }>
+              ).filter((i) => !(i.type === type && i.ref === ref));
+              localStorage.setItem("inv_anon_saves", JSON.stringify(list));
+            }
+          } catch {
+            /* ignore */
+          }
+        }
+        const body: Record<string, unknown> = { type, ref };
+        if (!user) body.session_id = getSessionId();
+        const res = await fetch("/api/account/bookmarks", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type, ref }),
+          body: JSON.stringify(body),
         });
-      } else {
-        try {
-          const cached = localStorage.getItem("inv_anon_saves");
-          if (cached) {
-            const list = (
-              JSON.parse(cached) as Array<{ type: string; ref: string }>
-            ).filter((i) => !(i.type === type && i.ref === ref));
-            localStorage.setItem("inv_anon_saves", JSON.stringify(list));
-          }
-        } catch {
-          /* ignore */
+        if (user && !(await responseOk(res))) {
+          setSaved(!next);
         }
       }
+      celebrateSave({ saved: next, label });
     } catch {
-      setSaved(!next);
+      // Anonymous state lives in localStorage (already written above);
+      // only revert when the server is the source of truth.
+      if (user) setSaved(!next);
     } finally {
       setBusy(false);
     }
@@ -127,7 +153,7 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
       onClick={toggle}
       aria-label={saved ? "Remove bookmark" : "Save for later"}
       aria-pressed={saved}
-      disabled={busy}
+      disabled={busy || userLoading}
       aria-busy={busy}
       className={
         className ||

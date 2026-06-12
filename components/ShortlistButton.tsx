@@ -2,8 +2,12 @@
 
 import { memo } from "react";
 import { useShortlist } from "@/lib/hooks/useShortlist";
-import { useToast } from "@/components/Toast";
+import { celebrateSave } from "@/lib/celebrate";
 import { trackEvent } from "@/lib/tracking";
+
+/** Fired when the shortlist first reaches three platforms (D2). */
+export const SHORTLIST_READY_EVENT = "iv-shortlist-ready";
+const READY_SHOWN_KEY = "iv_shortlist_ready_shown";
 
 export default memo(function ShortlistButton({
   slug,
@@ -14,8 +18,7 @@ export default memo(function ShortlistButton({
   name: string;
   size?: "sm" | "md";
 }) {
-  const { toggle, has } = useShortlist();
-  const { toast } = useToast();
+  const { toggle, has, slugs } = useShortlist();
   const saved = has(slug);
   const sizeClasses = size === "md" ? "w-9 h-9" : "w-7 h-7";
   const iconSize = size === "md" ? "w-4 h-4" : "w-3.5 h-3.5";
@@ -28,9 +31,22 @@ export default memo(function ShortlistButton({
         toggle(slug);
         if (!saved) {
           trackEvent("shortlist_add", { broker: slug });
-          toast(`Added ${name} to shortlist`, "success");
+          celebrateSave({ saved: true, label: name });
+          // Third comparable platform saved → "ready to decide" moment (D2),
+          // shown once ever, handled by ShortlistReadySheet at the layout root.
+          const nextSlugs = slugs.includes(slug) ? slugs : [...slugs, slug];
+          try {
+            if (nextSlugs.length === 3 && !localStorage.getItem(READY_SHOWN_KEY)) {
+              localStorage.setItem(READY_SHOWN_KEY, new Date().toISOString());
+              window.dispatchEvent(
+                new CustomEvent(SHORTLIST_READY_EVENT, { detail: nextSlugs }),
+              );
+            }
+          } catch {
+            /* storage blocked — skip the moment, never the save */
+          }
         } else {
-          toast(`Removed ${name} from shortlist`, "success");
+          celebrateSave({ saved: false, label: name });
         }
       }}
       className={`${sizeClasses} flex items-center justify-center rounded-full transition-all duration-200 shrink-0 ${

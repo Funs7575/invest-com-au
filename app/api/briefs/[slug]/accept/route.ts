@@ -7,8 +7,7 @@ import { logger } from "@/lib/logger";
 import { AcceptBriefRequest } from "@/lib/api-schemas";
 import { acceptBrief } from "@/lib/briefs/credits";
 import { isProfessionalOnTeam } from "@/lib/expert-teams";
-import { sendConsumerProviderAccepted } from "@/lib/marketplace-emails";
-import { enqueueUserNotificationByEmail } from "@/lib/user-notifications";
+import { notifyConsumerOfAcceptance } from "@/lib/briefs/notify";
 import { attributeBriefAccepted } from "@/lib/pro-affiliate/track";
 
 const log = logger("briefs:accept");
@@ -146,67 +145,5 @@ export async function POST(
       err: err instanceof Error ? err.message : String(err),
     });
     return NextResponse.json({ error: "Failed to accept brief." }, { status: 500 });
-  }
-}
-
-// ─── Consumer notification helper (N1) ───────────────────────────────────
-
-async function notifyConsumerOfAcceptance(input: {
-  consumerEmail: string;
-  consumerName: string;
-  briefTitle: string;
-  briefSlug: string;
-  professionalId: number;
-  teamId: number | null;
-}): Promise<void> {
-  const admin = createAdminClient();
-
-  // Look up provider name. Team route uses the team name; individual /
-  // firm route uses the professional name.
-  let providerName = "A verified pro";
-  let providerKind: "individual" | "firm" | "expert_team" = "individual";
-
-  if (input.teamId) {
-    const { data: team } = await admin
-      .from("expert_teams")
-      .select("name")
-      .eq("id", input.teamId)
-      .maybeSingle();
-    if (team?.name) providerName = team.name as string;
-    providerKind = "expert_team";
-  } else {
-    const { data: pro } = await admin
-      .from("professionals")
-      .select("name, firm_id")
-      .eq("id", input.professionalId)
-      .maybeSingle();
-    if (pro?.name) providerName = pro.name as string;
-    providerKind = pro?.firm_id ? "firm" : "individual";
-  }
-
-  await sendConsumerProviderAccepted({
-    consumerEmail: input.consumerEmail,
-    consumerName: input.consumerName,
-    briefTitle: input.briefTitle,
-    briefSlug: input.briefSlug,
-    providerName,
-    providerKind,
-  });
-
-  // ── In-app inbox (C1 / mm06) ─────────────────────────────────────
-  // Drop a `brief_accepted` row in the consumer's notification inbox
-  // alongside the email so users without inbox-monitoring habits still
-  // see the news on next visit. Anonymous-brief flows have a contact
-  // email that doesn't resolve to an auth.users row — the helper
-  // returns `false` in that case and we silently no-op.
-  try {
-    await enqueueUserNotificationByEmail(input.consumerEmail, {
-      kind: "brief_accepted",
-      title: `${providerName} accepted your Match Request`,
-      body: `Re: ${input.briefTitle}. Your contact details have been shared with the pro.`,
-      href: `/briefs/${input.briefSlug}`,
-    });
-  } catch {
-    /* silent — inbox failure must never break the accept response */
   }
 }

@@ -31,10 +31,11 @@ const SAMPLE_ITEMS = [
 
 describe("BookmarksList", () => {
   describe("empty state", () => {
-    it("shows the EmptyState heading when there are no bookmarks", () => {
+    it("shows the journey-aware EmptyState heading when there are no bookmarks", () => {
       render(<BookmarksList initialItems={[]} />);
+      // Fresh visitor (no journey milestones in this jsdom) → Stage 1: Curious.
       expect(
-        screen.getByText("Your reading list is empty"),
+        screen.getByText(/Stage 1: Curious — nothing saved yet/),
       ).toBeInTheDocument();
     });
 
@@ -53,6 +54,31 @@ describe("BookmarksList", () => {
     it("does not render any list items in the empty state", () => {
       render(<BookmarksList initialItems={[]} />);
       expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("listing bookmarks", () => {
+    it("groups saved listings under 'Listings' and links via the slug resolver", () => {
+      render(
+        <BookmarksList
+          initialItems={[
+            {
+              id: 7,
+              bookmark_type: "listing",
+              ref: "riverina-aggregation-412ha",
+              label: "Riverina Aggregation",
+              note: null,
+              created_at: "2026-06-01T00:00:00Z",
+            },
+          ]}
+        />,
+      );
+      expect(screen.getByText("Listings")).toBeInTheDocument();
+      const link = screen.getByRole("link", { name: "Riverina Aggregation" });
+      expect(link).toHaveAttribute(
+        "href",
+        "/invest/listings/riverina-aggregation-412ha",
+      );
     });
   });
 

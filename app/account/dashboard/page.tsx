@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import ProfileStrengthCard, { type ProfileField } from "@/components/account/ProfileStrengthCard";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { enforcePortalKind } from "@/lib/portal-gate";
 import { getInvestorProfile, type InvestorProfile } from "@/lib/investor-profiles";
+import {
+  loadMoneyProfileForUser,
+  moneyProfileCoverage,
+  type MoneyProfileQueryClient,
+} from "@/lib/money-profile";
 import { getInvestorAccountType, type InvestorAccountType } from "@/lib/account-types";
 import SmartRecommendationsStrip from "@/components/SmartRecommendationsStrip";
 
@@ -78,6 +84,17 @@ type UserProfile = {
   state: string | null;
   onboarding_completed: boolean | null;
 };
+
+function missingProfileFields(profile: UserProfile | null): ProfileField[] {
+  const all: [ProfileField, boolean][] = [
+    ["display_name", !!profile?.display_name],
+    ["investing_experience", !!profile?.investing_experience],
+    ["investment_goals", !!profile?.investment_goals],
+    ["portfolio_size", !!profile?.portfolio_size],
+    ["interested_in", !!(profile?.interested_in && profile.interested_in.length > 0)],
+  ];
+  return all.filter(([, present]) => !present).map(([key]) => key);
+}
 
 function profileCompleteness(profile: UserProfile | null): number {
   if (!profile) return 0;
@@ -269,6 +286,7 @@ export default async function PersonalDashboardPage() {
     watchlistRes,
     investorProfile,
     briefsRes,
+    moneyProfile,
   ] = await Promise.all([
     supabase.from("user_profiles").select("display_name, investing_experience, investment_goals, portfolio_size, interested_in, state, onboarding_completed").eq("id", user.id).maybeSingle(),
     supabase.from("investor_goals").select("id, label, goal_type, target_cents, current_balance_cents, target_date").order("target_date", { ascending: true }),
@@ -285,7 +303,9 @@ export default async function PersonalDashboardPage() {
           .select("id, tracker_status", { count: "exact" })
           .eq("contact_email", user.email)
       : Promise.resolve({ data: [], count: 0 }),
+    loadMoneyProfileForUser(user.id, supabase as unknown as MoneyProfileQueryClient),
   ]);
+  const moneyCoverage = moneyProfileCoverage(moneyProfile);
 
   const profile = profileRes.data as UserProfile | null;
   const goals = (goalsRes.data ?? []) as GoalRow[];
@@ -473,6 +493,31 @@ export default async function PersonalDashboardPage() {
             emptyHint="File your first brief"
           />
         </div>
+
+        {/* Money Profile coverage — the data that powers calculator prefill.
+            Hidden once complete; each missing chip deep-links to the single
+            place that field is maintained. */}
+        {moneyCoverage.missing.length > 0 && (
+          <div className="mt-3 rounded-xl border border-slate-200 bg-white px-4 py-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <p className="text-xs text-slate-600">
+                <span className="font-semibold text-slate-800">
+                  Money Profile {moneyCoverage.pct}% complete.
+                </span>{" "}
+                Calculators across the site pre-fill from it — add the rest:
+              </p>
+              {moneyCoverage.missing.slice(0, 5).map((m) => (
+                <Link
+                  key={m.label}
+                  href={m.href}
+                  className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-100"
+                >
+                  + {m.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Benchmarking strip — "how you compare" against anonymised
@@ -555,33 +600,9 @@ export default async function PersonalDashboardPage() {
         </section>
       )}
 
-      {/* Profile completeness nudge */}
-      {completeness < 100 && (
-        <section aria-labelledby="completeness-heading" className="mb-8">
-          <h2 id="completeness-heading" className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
-            Profile completeness
-          </h2>
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-blue-900">
-                {completeness}% complete
-              </span>
-              <Link href="/account/investor-profile" className="text-xs font-semibold text-blue-700 hover:underline">
-                Complete profile →
-              </Link>
-            </div>
-            <div className="h-2 bg-blue-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-600 rounded-full transition-all duration-700"
-                style={{ width: `${completeness}%` }}
-              />
-            </div>
-            <p className="text-xs text-blue-700 mt-2">
-              A complete profile unlocks personalised advisor matches, goal projections, and tailored content.
-            </p>
-          </div>
-        </section>
-      )}
+      {/* Profile strength ring + visible unlocks (Northstar D5). Fires the
+          profile_complete milestone client-side when it reaches 100. */}
+      <ProfileStrengthCard completeness={completeness} missing={missingProfileFields(profile)} />
 
       {/* Personalised quick actions */}
       <section aria-labelledby="actions-heading" className="mb-8">
@@ -708,6 +729,7 @@ export default async function PersonalDashboardPage() {
           <NavCard href="/account/watchlist" emoji="📈" label="Watchlist" desc="Stocks, ETFs, funds on your radar" />
           <NavCard href="/account/alerts" emoji="📉" label="Alerts" desc="Rate & fee alerts you've set" />
           <NavCard href="/account/bookmarks" emoji="🔖" label="Reading List" desc="Saved articles and guides" />
+          <NavCard href="/account/advisers" emoji="🤝" label="My Advisers" desc="Relationships from your Match Requests" />
           <NavCard href="/account/quizzes" emoji="📝" label="Quiz History" desc="Platform quiz results" />
           <NavCard href="/account/notifications" emoji="🔔" label="Notifications" desc="Email preferences and alerts" />
           <NavCard href="/account/referrals" emoji="🎁" label="Referrals" desc="Invite friends, earn rewards" />

@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/server";
 // eslint-disable-next-line no-restricted-imports -- cross-table workspace lookup: resolves the caller's active account kind label so the brief form can prefill business/listing-owner context. Reads only the user's own profile under service-role because business_accounts / listing_owner_accounts have no anon SELECT path.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getActiveKind, type WorkspaceKind } from "@/lib/account-kinds";
+import { getInvestorProfile } from "@/lib/investor-profiles";
+import { parseMoneyMeta } from "@/lib/money-profile";
 import DirectoryHero from "@/components/directory/DirectoryHero";
 import BriefForm from "./BriefForm";
 
@@ -84,6 +86,33 @@ async function loadWorkspaceContext(): Promise<WorkspaceContext | null> {
   }
 }
 
+/**
+ * Money Profile fallback prefill for signed-in investors: contact name /
+ * email from the account, location state from meta.money. The workspace
+ * context (business / listing owner) wins where both exist.
+ */
+async function loadInvestorPrefill(): Promise<{
+  name: string | null;
+  email: string | null;
+  state: string | null;
+} | null> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
+    const profile = await getInvestorProfile(user.id);
+    return {
+      name: profile?.displayName ?? null,
+      email: user.email ?? null,
+      state: parseMoneyMeta(profile?.meta).state,
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function isProSubscriber(): Promise<boolean> {
   try {
     const supabase = await createClient();
@@ -149,9 +178,15 @@ export default async function NewBriefPage({
   const aiCopilotEnabled = await isFlagEnabled("ai_match_request_copilot", {
     userKey: visitorIp,
   });
+  // Response-guarantee copy only renders while enforcement is actually on —
+  // advertising a guarantee the sweep isn't enforcing would be a false claim.
+  const responseGuaranteeEnabled = await isFlagEnabled("response_guarantee", {
+    segment: "advisor",
+  });
 
-  const [workspace, proSubscriber, proSupply] = await Promise.all([
+  const [workspace, investorPrefill, proSubscriber, proSupply] = await Promise.all([
     loadWorkspaceContext(),
+    loadInvestorPrefill(),
     isProSubscriber(),
     loadProviderSupply(),
   ]);
@@ -193,9 +228,32 @@ export default async function NewBriefPage({
       />
 
       <div className="container-custom max-w-6xl pb-12 pt-4 md:pt-5">
+        {responseGuaranteeEnabled && (
+          <div className="mb-4 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <svg
+              className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <p className="text-xs leading-relaxed text-emerald-900">
+              <span className="font-semibold">24-hour response guarantee.</span>{" "}
+              If a provider accepts your brief and doesn&apos;t respond within 24
+              hours, we automatically release it to other providers and let you
+              know — you never get stuck waiting on a silent accept.
+            </p>
+          </div>
+        )}
         <BriefForm
           aiCopilotEnabled={aiCopilotEnabled}
           workspace={workspace}
+          investorPrefill={investorPrefill}
           proSubscriber={proSubscriber}
           proSupply={proSupply}
         />
