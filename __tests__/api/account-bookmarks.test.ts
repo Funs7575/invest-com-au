@@ -31,12 +31,14 @@ const listBookmarksMock = vi.fn();
 const addBookmarkMock = vi.fn();
 const removeBookmarkMock = vi.fn();
 const addAnonymousSaveMock = vi.fn();
+const removeAnonymousSaveMock = vi.fn();
 
 vi.mock("@/lib/bookmarks", () => ({
   listBookmarks: (...a: unknown[]) => listBookmarksMock(...a),
   addBookmark: (...a: unknown[]) => addBookmarkMock(...a),
   removeBookmark: (...a: unknown[]) => removeBookmarkMock(...a),
   addAnonymousSave: (...a: unknown[]) => addAnonymousSaveMock(...a),
+  removeAnonymousSave: (...a: unknown[]) => removeAnonymousSaveMock(...a),
 }));
 
 import { GET, POST, DELETE } from "@/app/api/account/bookmarks/route";
@@ -189,7 +191,7 @@ describe("/api/account/bookmarks", () => {
     });
 
     it("returns 400 on invalid type", async () => {
-      mockGetUser.mockResolvedValueOnce({ data: { user: { id: "u1" } } });
+      // Body validation happens before auth — getUser is never reached.
       const res = await DELETE(
         jsonRequest("DELETE", { type: "nope", ref: "stake" }),
       );
@@ -197,7 +199,6 @@ describe("/api/account/bookmarks", () => {
     });
 
     it("returns 400 on missing ref", async () => {
-      mockGetUser.mockResolvedValueOnce({ data: { user: { id: "u1" } } });
       const res = await DELETE(jsonRequest("DELETE", { type: "broker" }));
       expect(res.status).toBe(400);
     });
@@ -216,6 +217,56 @@ describe("/api/account/bookmarks", () => {
         type: "broker",
         ref: "stake",
       });
+    });
+
+    it("removes the anonymous_saves row when an anonymous caller passes session_id", async () => {
+      mockGetUser.mockResolvedValueOnce({ data: { user: null } });
+      removeAnonymousSaveMock.mockResolvedValueOnce(true);
+      const res = await DELETE(
+        jsonRequest("DELETE", {
+          type: "listing",
+          ref: "riverina-aggregation-412ha",
+          session_id: "sess-123",
+        }),
+      );
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json).toEqual({ ok: true, anonymous: true });
+      expect(removeAnonymousSaveMock).toHaveBeenCalledWith({
+        sessionId: "sess-123",
+        type: "listing",
+        ref: "riverina-aggregation-412ha",
+      });
+      expect(removeBookmarkMock).not.toHaveBeenCalled();
+    });
+
+    it("rate-limits anonymous unsaves", async () => {
+      mockGetUser.mockResolvedValueOnce({ data: { user: null } });
+      isAllowedMock.mockResolvedValueOnce(false);
+      const res = await DELETE(
+        jsonRequest("DELETE", {
+          type: "listing",
+          ref: "riverina-aggregation-412ha",
+          session_id: "sess-123",
+        }),
+      );
+      expect(res.status).toBe(429);
+      expect(removeAnonymousSaveMock).not.toHaveBeenCalled();
+    });
+
+    it("prefers the authenticated path even when session_id is supplied", async () => {
+      mockGetUser.mockResolvedValueOnce({ data: { user: { id: "u1" } } });
+      removeBookmarkMock.mockResolvedValueOnce(true);
+      const res = await DELETE(
+        jsonRequest("DELETE", {
+          type: "listing",
+          ref: "riverina-aggregation-412ha",
+          session_id: "sess-123",
+        }),
+      );
+      expect(res.status).toBe(200);
+      expect(removeBookmarkMock).toHaveBeenCalled();
+      expect(removeAnonymousSaveMock).not.toHaveBeenCalled();
     });
   });
 });
