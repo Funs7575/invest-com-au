@@ -229,6 +229,7 @@ export const parseNabTradeCsv: BrokerCsvParser = (csvText: string): CsvParseResu
       acquired_at: acquiredAt,
       broker_slug: NABTRADE_BROKER_SLUG,
       notes: null,
+      sourceRow: rowIndex,
     });
   }
 

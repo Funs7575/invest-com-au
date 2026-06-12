@@ -7,7 +7,6 @@ import {
   buildSwitchingCoach,
   type BrokerForCoach,
 } from "@/lib/holdings/switching-coach";
-import CsvImportModal from "./CsvImportModal";
 import SharesightConnectButton from "./SharesightConnectButton";
 import TaxSummaryButton from "./TaxSummaryButton";
 
@@ -310,7 +309,12 @@ export default function HoldingsClient({
 
       {/* CSV import + Sharesight OAuth — bulk-load holdings without typing. */}
       <section className="space-y-3">
-        <CsvImportModal />
+        <Link
+          href="/account/holdings/import"
+          className="text-sm font-medium text-emerald-700 hover:text-emerald-900 underline underline-offset-2"
+        >
+          Import CSV from broker
+        </Link>
         <SharesightConnectButton initialStatus={sharesightStatus} />
       </section>
 

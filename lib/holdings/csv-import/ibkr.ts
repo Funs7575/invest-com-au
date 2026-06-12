@@ -284,6 +284,7 @@ export const parseIbkrCsv: BrokerCsvParser = (csvText: string): CsvParseResult =
       acquired_at: acquiredAt,
       broker_slug: IBKR_BROKER_SLUG,
       notes: null,
+      sourceRow: rowIndex,
     });
   }
 

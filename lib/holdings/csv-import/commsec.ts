@@ -262,6 +262,7 @@ export const parseCommSecCsv: BrokerCsvParser = (csvText: string): CsvParseResul
       acquired_at: acquiredAt,
       broker_slug: COMMSEC_BROKER_SLUG,
       notes: null,
+      sourceRow: rowIndex,
     });
   }
 
