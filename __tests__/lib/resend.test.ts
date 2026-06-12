@@ -125,6 +125,39 @@ describe("sendEmail", () => {
     expect(res).toEqual({ ok: false, error: "ETIMEDOUT" });
   });
 
+  it("passes attachments through to the Resend body with content_type", async () => {
+    const spy = vi.fn(
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
+    );
+    globalThis.fetch = spy as unknown as typeof fetch;
+    await sendEmail({
+      to: "a@x.com",
+      subject: "Booking",
+      html: "<p/>",
+      attachments: [
+        { filename: "booking.ics", content: "QkVHSU4=", contentType: "text/calendar; method=REQUEST" },
+      ],
+    });
+    const init = spy.mock.calls[0]?.[1] as RequestInit | undefined;
+    const body = JSON.parse(init?.body as string);
+    expect(body.attachments).toEqual([
+      { filename: "booking.ics", content: "QkVHSU4=", content_type: "text/calendar; method=REQUEST" },
+    ]);
+  });
+
+  it("omits the attachments field entirely when none are provided", async () => {
+    const spy = vi.fn(
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
+    );
+    globalThis.fetch = spy as unknown as typeof fetch;
+    await sendEmail({ to: "a@x.com", subject: "x", html: "<p/>" });
+    const init = spy.mock.calls[0]?.[1] as RequestInit | undefined;
+    const body = JSON.parse(init?.body as string);
+    expect("attachments" in body).toBe(false);
+  });
+
   it("sets bearer auth header + JSON content-type", async () => {
     const spy = vi.fn(
       async (_url: string, _init?: RequestInit) =>

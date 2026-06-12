@@ -7,6 +7,8 @@ import {
   BRIEF_MESSAGE_MAX_BODY_LENGTH,
   type BriefMessageRow,
 } from "@/lib/brief-messages";
+import { formatTimeLabel } from "@/lib/booking-v2/slots";
+import ProposeTimesComposer from "./ProposeTimesComposer";
 
 interface Props {
   slug: string;
@@ -18,6 +20,52 @@ interface Props {
   viewerName: string;
   /** Display name we show next to messages from the other side. */
   counterpartyName: string;
+  /**
+   * booking-v2 — when true the adviser sees a "Propose times" action and both
+   * sides render proposal messages with tappable slots. Fail-closed: false by
+   * default keeps the chat exactly as it was.
+   */
+  proposeTimesEnabled?: boolean;
+  /**
+   * The consumer's email (email-as-key) — passed only to the consumer viewer so
+   * tapping a proposed time can authorise the booking without a session.
+   */
+  consumerEmail?: string | null;
+}
+
+interface ProposeSlot {
+  id: number;
+  startsAt: string;
+  endsAt: string;
+}
+
+interface ProposePayload {
+  kind: "propose_times";
+  appointmentIds: number[];
+  slots: ProposeSlot[];
+  bookedAppointmentId?: number;
+}
+
+function isProposePayload(meta: unknown): meta is ProposePayload {
+  return (
+    typeof meta === "object" &&
+    meta !== null &&
+    (meta as { kind?: unknown }).kind === "propose_times" &&
+    Array.isArray((meta as { slots?: unknown }).slots)
+  );
+}
+
+function formatSlotLabel(startsAt: string): string {
+  const d = new Date(startsAt);
+  const date = d.toLocaleDateString("en-AU", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+  const hm = `${String(d.getHours()).padStart(2, "0")}:${String(
+    d.getMinutes(),
+  ).padStart(2, "0")}`;
+  return `${date}, ${formatTimeLabel(hm)}`;
 }
 
 interface DisplayMessage extends BriefMessageRow {
@@ -58,11 +106,49 @@ export default function BriefChatPanel({
   viewerSide,
   viewerName,
   counterpartyName,
+  proposeTimesEnabled = false,
+  consumerEmail = null,
 }: Props) {
   const [messages, setMessages] = useState<DisplayMessage[]>(initialMessages);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showProposer, setShowProposer] = useState(false);
+  const [bookingSlotId, setBookingSlotId] = useState<number | null>(null);
+  const [bookError, setBookError] = useState<string | null>(null);
+
+  async function acceptProposedTime(messageId: number, appointmentId: number) {
+    if (bookingSlotId !== null) return;
+    setBookingSlotId(appointmentId);
+    setBookError(null);
+    try {
+      const res = await fetch(`/api/briefs/${slug}/accept-proposed-time`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message_id: messageId,
+          appointment_id: appointmentId,
+          ...(consumerEmail ? { contact_email: consumerEmail } : {}),
+        }),
+      });
+      const json = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) throw new Error(json.error ?? "Could not confirm that time.");
+      // Optimistically mark the proposal booked so the buttons disable.
+      setMessages((prev) =>
+        prev.map((m) => {
+          if (m.id !== messageId || !isProposePayload(m.metadata)) return m;
+          return {
+            ...m,
+            metadata: { ...m.metadata, bookedAppointmentId: appointmentId },
+          };
+        }),
+      );
+    } catch (e) {
+      setBookError(e instanceof Error ? e.message : "Could not confirm that time.");
+    } finally {
+      setBookingSlotId(null);
+    }
+  }
 
   // Latest own message the counterpart has read (drives the "Seen" receipt).
   const lastSeenOwnMessageId = messages.reduce<number | null>((acc, m) => {
@@ -273,6 +359,55 @@ export default function BriefChatPanel({
                   {mine ? viewerName : counterpartyName}
                 </p>
                 <p className="whitespace-pre-line break-words">{m.body}</p>
+                {proposeTimesEnabled && isProposePayload(m.metadata) && (
+                  <div className="mt-2 space-y-1.5">
+                    {m.metadata.slots.map((slot) => {
+                      const isBooked =
+                        m.metadata &&
+                        isProposePayload(m.metadata) &&
+                        m.metadata.bookedAppointmentId === slot.id;
+                      const anyBooked =
+                        m.metadata &&
+                        isProposePayload(m.metadata) &&
+                        m.metadata.bookedAppointmentId !== undefined;
+                      // Consumers can tap to book; the adviser sees read-only status.
+                      const tappable = viewerSide === "consumer" && !anyBooked;
+                      return (
+                        <button
+                          key={slot.id}
+                          type="button"
+                          disabled={!tappable || bookingSlotId !== null}
+                          onClick={
+                            tappable
+                              ? () => void acceptProposedTime(m.id, slot.id)
+                              : undefined
+                          }
+                          className={`w-full text-left rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+                            isBooked
+                              ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                              : anyBooked
+                                ? "border-slate-200 bg-white/60 text-slate-400 line-through"
+                                : tappable
+                                  ? "border-slate-300 bg-white text-slate-800 hover:border-amber-400 hover:bg-amber-50 disabled:opacity-60"
+                                  : "border-slate-200 bg-white text-slate-600"
+                          }`}
+                        >
+                          {formatSlotLabel(slot.startsAt)}
+                          {isBooked && " · Booked ✓"}
+                          {bookingSlotId === slot.id && " · Booking…"}
+                        </button>
+                      );
+                    })}
+                    {viewerSide === "pro" &&
+                      m.metadata &&
+                      isProposePayload(m.metadata) &&
+                      m.metadata.bookedAppointmentId === undefined && (
+                        <p className="text-[10px] opacity-70">
+                          Waiting for the client to pick a time.
+                        </p>
+                      )}
+                  </div>
+                )}
                 <p className="text-[10px] mt-1 opacity-60">
                   {formatTime(m.created_at)}
                   {seen && <span className="font-semibold"> · Seen</span>}
@@ -282,6 +417,39 @@ export default function BriefChatPanel({
           );
         })}
       </div>
+
+      {bookError && (
+        <p role="alert" className="text-xs text-rose-600 mb-2">
+          {bookError}
+        </p>
+      )}
+
+      {proposeTimesEnabled && viewerSide === "pro" && (
+        <div className="mb-3">
+          {showProposer ? (
+            <ProposeTimesComposer
+              slug={slug}
+              onClose={() => setShowProposer(false)}
+              onProposed={(message) => {
+                setShowProposer(false);
+                setMessages((prev) =>
+                  prev.some((m) => m.id === message.id)
+                    ? prev
+                    : [...prev, message as DisplayMessage],
+                );
+              }}
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowProposer(true)}
+              className="rounded-xl border border-amber-300 bg-amber-50 text-amber-800 text-xs font-semibold px-3 py-2 hover:bg-amber-100"
+            >
+              Propose meeting times
+            </button>
+          )}
+        </div>
+      )}
 
       <form onSubmit={onSend} className="flex flex-col gap-2">
         <textarea

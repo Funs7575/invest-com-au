@@ -35,6 +35,7 @@ const FeedTab = dynamic(() => import("./FeedTab"));
 const CaseStudiesTab = dynamic(() => import("./CaseStudiesTab"));
 const ReviewsTab = dynamic(() => import("./ReviewsTab"));
 const EarnTab = dynamic(() => import("./EarnTab"));
+const SchedulingTab = dynamic(() => import("./SchedulingTab"));
 
 /** Score threshold below which new advisors are auto-redirected to the onboarding route. */
 const AUTO_ONBOARDING_SCORE_THRESHOLD = 40;
@@ -285,6 +286,7 @@ export default function AdvisorPortalPage() {
     { key: "reviews", label: "Reviews", icon: "star" },
     { key: "courses", label: "Courses", icon: "book-open" },
     { key: "events", label: "Events", icon: "calendar" },
+    { key: "scheduling", label: "Scheduling", icon: "clock" },
     { key: "badges", label: "Badges", icon: "award" },
     { key: "ideal-client", label: "Ideal Client", icon: "target" },
     { key: "profile", label: "Profile", icon: "user" },
@@ -649,6 +651,9 @@ export default function AdvisorPortalPage() {
         {view === "earn" && (
           <EarnTab advisor={advisor} />
         )}
+
+        {/* ─── SCHEDULING (booking-v2 — self-gates when flag off) ─── */}
+        {view === "scheduling" && <SchedulingTab advisor={advisor} />}
 
         {/* ─── TEAM (firm admins only) ─── */}
         {view === "team" && isFirmAdmin && (

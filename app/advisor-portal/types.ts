@@ -19,6 +19,7 @@ export type ViewType =
   | "case-studies"
   | "reviews"
   | "earn"
+  | "scheduling"
   | "ideal-client";
 
 export type Advisor = {

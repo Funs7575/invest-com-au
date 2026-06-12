@@ -38,6 +38,7 @@ import BriefChatPanel from "./BriefChatPanel";
 import WithdrawBriefButton from "./WithdrawBriefButton";
 import MarkCompleteButton from "./MarkCompleteButton";
 import DisputePanel from "./DisputePanel";
+import { isBookingV2Enabled } from "@/lib/booking-v2";
 
 export const dynamic = "force-dynamic";
 
@@ -343,6 +344,12 @@ export default async function BriefTrackerPage({
       ],
     });
   }
+
+  // booking-v2 "propose times" in chat — fail-closed. Keyed off the accepting
+  // adviser's email so the flag's allowlist can target specific advisers.
+  const bookingV2Enabled = showChat
+    ? await isBookingV2Enabled(accepted.professional?.email ?? null)
+    : false;
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -670,6 +677,8 @@ export default async function BriefTrackerPage({
                           accepted.team?.name ??
                           "Your advisor")
                     }
+                    proposeTimesEnabled={bookingV2Enabled}
+                    consumerEmail={!viewerIsAdvisor && emailMatches ? email : null}
                   />
                 </div>
               )}
