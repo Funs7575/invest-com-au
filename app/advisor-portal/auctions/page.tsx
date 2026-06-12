@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import BidCoachPanel, { type BidCoachAnalytics } from "./BidCoachPanel";
 
 const BUDGET_LABELS: Record<string, string> = {
   under_500: "Under $500", "500_2k": "$500–$2k", "2k_5k": "$2k–$5k",
@@ -84,6 +85,29 @@ export default function AdvisorAuctionsPage() {
   const [retractingBid, setRetractingBid] = useState<number | null>(null);
   const [pendingRetractId, setPendingRetractId] = useState<number | null>(null);
   const [retractReason, setRetractReason] = useState("");
+  const [coachAnalytics, setCoachAnalytics] = useState<BidCoachAnalytics | null>(null);
+
+  // Bid Coach data — fetched once on mount (slow-moving aggregates, no
+  // need to ride the 30s auction refresh loop). Optional: failures are
+  // silent and the coach simply doesn't render.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/advisor-portal/marketplace-analytics");
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && typeof data?.total_bids === "number") {
+          setCoachAnalytics(data as BidCoachAnalytics);
+        }
+      } catch {
+        // Coach is supplementary — never block the auctions screen.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const fetchAdvisor = useCallback(async () => {
     try {
@@ -238,7 +262,7 @@ export default function AdvisorAuctionsPage() {
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
-        <div className="container-custom max-w-4xl py-6">
+        <div className="container-custom max-w-5xl py-6">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -272,12 +296,29 @@ export default function AdvisorAuctionsPage() {
         </div>
       </div>
 
-      <div className="container-custom max-w-4xl py-8">
+      <div className="container-custom max-w-5xl py-8">
         {/* Framing disclosure — referral fee arrangement, not endorsement */}
         <p className="text-[0.65rem] text-slate-500 mb-5 leading-relaxed">
           Lead auctions are a paid referral service. Winning advisors pay a referral fee to access consumer contact details. Invest.com.au does not endorse, recommend, or accredit any advisor by virtue of their participation. {ADVERTISER_DISCLOSURE_SHORT}
         </p>
 
+        {/* Grid only engages when the coach has data — otherwise the page
+            keeps its original single-column layout. */}
+        <div
+          className={
+            coachAnalytics
+              ? "lg:grid lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-8 lg:items-start"
+              : ""
+          }
+        >
+        {/* Bid coach sidebar — DOM-first so it tops the page on mobile,
+            right column on desktop. Renders nothing until analytics load. */}
+        {coachAnalytics && (
+          <aside className="lg:order-2 mb-6 lg:mb-0 lg:sticky lg:top-6">
+            <BidCoachPanel analytics={coachAnalytics} />
+          </aside>
+        )}
+        <div className="lg:order-1 min-w-0">
         {/* Public consumer-job marketplace cross-link */}
         <div className="bg-gradient-to-br from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl p-4 mb-6 flex items-start sm:items-center gap-4 flex-col sm:flex-row">
           <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center shrink-0">
@@ -697,6 +738,8 @@ export default function AdvisorAuctionsPage() {
             </section>
           </>
         )}
+        </div>
+        </div>
       </div>
     </div>
   );

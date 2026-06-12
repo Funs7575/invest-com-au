@@ -3,6 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import {
+  medianOf,
+  suggestedResponseWindow,
+  SIMILAR_BRIEFS_MIN_SAMPLE,
+  ACCEPTED_MEDIAN_MIN_SAMPLE,
+} from "@/lib/brief-intel";
 
 const log = logger("advisor-marketplace-analytics");
 
@@ -84,12 +90,17 @@ export async function GET(req: NextRequest) {
           ) / 10
         : null;
 
-    // Category benchmark: win rate across all advisors of the same type
+    // Category benchmark: win rate across all advisors of the same type,
+    // plus Bid Coach aggregates (response-time + winning-bid medians).
+    // Anonymised: no advisor identities or individual bids leave this
+    // handler — only medians over the category, suppressed at small n.
     const { data: catBidsRaw } = await admin
       .from("advisor_auction_bids")
       .select(`
         status,
-        advisor_auctions:auction_id!inner ( source, advisor_types )
+        bid_amount,
+        created_at,
+        advisor_auctions:auction_id!inner ( source, advisor_types, created_at )
       `)
       .gte("created_at", since)
       .neq("status", "retracted")
@@ -97,7 +108,13 @@ export async function GET(req: NextRequest) {
 
     const catBids = (catBidsRaw ?? []) as unknown as {
       status: string;
-      advisor_auctions: { source: string; advisor_types: string[] | null } | null;
+      bid_amount: number | null;
+      created_at: string | null;
+      advisor_auctions: {
+        source: string;
+        advisor_types: string[] | null;
+        created_at: string | null;
+      } | null;
     }[];
     const myCategoryBids = catBids.filter(
       (b) =>
@@ -109,6 +126,49 @@ export async function GET(req: NextRequest) {
       ? Math.round((catWins / myCategoryBids.length) * 100)
       : 0;
 
+    // ── Bid Coach aggregates ────────────────────────────────────────────
+    const responseHoursOf = (b: (typeof myCategoryBids)[number]): number | null => {
+      if (!b.created_at || !b.advisor_auctions?.created_at) return null;
+      const h =
+        (new Date(b.created_at).getTime() -
+          new Date(b.advisor_auctions.created_at).getTime()) /
+        3_600_000;
+      return Number.isFinite(h) && h >= 0 ? h : null;
+    };
+    const round1 = (v: number | null): number | null =>
+      v === null ? null : Math.round(v * 10) / 10;
+
+    const categorySample = myCategoryBids.length;
+    const categoryResponseHours = myCategoryBids
+      .map(responseHoursOf)
+      .filter((h): h is number => h !== null);
+    const wonBids = myCategoryBids.filter((b) => b.status === "won");
+    const wonResponseHours = wonBids
+      .map(responseHoursOf)
+      .filter((h): h is number => h !== null);
+    const wonAmounts = wonBids
+      .map((b) => b.bid_amount)
+      .filter((a): a is number => typeof a === "number" && a > 0);
+
+    // Suppression: category-wide medians need ≥5 bids; winning-bid medians
+    // need ≥3 wins (same thresholds as the brief-dossier intel).
+    const categoryMedianResponseHours =
+      categorySample >= SIMILAR_BRIEFS_MIN_SAMPLE &&
+      categoryResponseHours.length >= SIMILAR_BRIEFS_MIN_SAMPLE
+        ? round1(medianOf(categoryResponseHours))
+        : null;
+    const winningMedianResponseHours =
+      wonResponseHours.length >= ACCEPTED_MEDIAN_MIN_SAMPLE
+        ? round1(medianOf(wonResponseHours))
+        : null;
+    const winningMedianBidCents =
+      wonAmounts.length >= ACCEPTED_MEDIAN_MIN_SAMPLE
+        ? medianOf(wonAmounts)
+        : null;
+    const responseSuggestion = suggestedResponseWindow(
+      winningMedianResponseHours ?? categoryMedianResponseHours,
+    );
+
     return NextResponse.json({
       window_days: 30,
       total_bids: total,
@@ -119,6 +179,13 @@ export async function GET(req: NextRequest) {
       win_rate_pct: winRate,
       median_response_hours: medianResponseHours,
       category_avg_win_rate_pct: catWinRate,
+      // Bid Coach extension (null = suppressed / not enough history):
+      category_sample_size: categorySample,
+      category_median_response_hours: categoryMedianResponseHours,
+      category_winning_median_response_hours: winningMedianResponseHours,
+      category_median_winning_bid_cents:
+        winningMedianBidCents === null ? null : Math.round(winningMedianBidCents),
+      suggested_response_window_hours: responseSuggestion?.windowHours ?? null,
     });
   } catch (err) {
     log.error("Analytics GET error", { err: err instanceof Error ? err.message : String(err) });
