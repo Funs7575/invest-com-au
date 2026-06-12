@@ -23,6 +23,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail } from "@/lib/resend";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { withCronRunLog } from "@/lib/cron-run-log";
+import { isFlagEnabled } from "@/lib/feature-flags";
+import { wrappedFyForDate } from "@/lib/wrapped";
 import { logger } from "@/lib/logger";
 
 export const runtime = "nodejs";
@@ -78,6 +80,13 @@ export async function GET(req: NextRequest) {
       month: "long",
       year: "numeric",
     });
+
+    // FY Money Wrapped block in the EOFY email — flag-gated, fail-closed
+    // (isFlagEnabled returns false when the flag row is absent, so this
+    // ships dormant until `fy_wrapped_email` is enabled in the admin UI).
+    const includeWrapped =
+      kind === "eofy_countdown" && (await isFlagEnabled("fy_wrapped_email"));
+    const wrappedFyLabel = wrappedFyForDate(now).label;
 
     // ── Opted-in users ────────────────────────────────────────────────────────
 
@@ -145,7 +154,10 @@ export async function GET(req: NextRequest) {
 
           const { subject, html } =
             kind === "eofy_countdown"
-              ? buildEofyEmail(email, dateStr, daysToEofy ?? 7)
+              ? buildEofyEmail(email, dateStr, daysToEofy ?? 7, {
+                  includeWrapped,
+                  wrappedFyLabel,
+                })
               : buildNewFyEmail(email, dateStr, year);
 
           const result = await sendEmail({
@@ -202,6 +214,7 @@ function buildEofyEmail(
   email: string,
   dateStr: string,
   daysToEofy: number,
+  wrapped: { includeWrapped: boolean; wrappedFyLabel: string },
 ): { subject: string; html: string } {
   const urgency =
     daysToEofy <= 1
@@ -212,6 +225,17 @@ function buildEofyEmail(
 
   const subject = `EOFY: ${urgency} — review your investment costs before 30 June`;
   const unsubUrl = `${BASE_URL}/unsubscribe?email=${encodeURIComponent(email)}`;
+
+  // Flag-gated FY Money Wrapped block (fy_wrapped_email) — dormant by default.
+  const wrappedBlock = wrapped.includeWrapped
+    ? `
+  <div style="background:white;border:1px solid #ddd6fe;border-radius:12px;padding:24px;margin-bottom:20px;text-align:center">
+    <p style="font-size:32px;margin:0 0 6px">🎁</p>
+    <h2 style="font-size:17px;font-weight:800;color:#0f172a;margin:0 0 6px">Your ${esc(wrapped.wrappedFyLabel)} Money Wrapped is ready</h2>
+    <p style="font-size:13px;color:#475569;margin:0 0 14px">Goals, balances, health score and streaks — your financial year, recapped from your own saved data. See it before the clock resets.</p>
+    <a href="${BASE_URL}/wrapped" style="display:inline-block;padding:10px 24px;background:#7c3aed;color:white;text-decoration:none;border-radius:8px;font-size:13px;font-weight:700">Unwrap my year →</a>
+  </div>`
+    : "";
 
   const html = `<!DOCTYPE html>
 <html>
@@ -228,7 +252,7 @@ function buildEofyEmail(
     <h1 style="font-size:24px;font-weight:900;color:white;margin:0 0 8px">${daysToEofy === 1 ? "Last day of the financial year!" : `${daysToEofy} days to 30 June`}</h1>
     <p style="font-size:15px;color:#c4b5fd;margin:0">Review your investment costs before the year closes.</p>
   </div>
-
+${wrappedBlock}
   <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:20px">
     <h2 style="font-size:16px;font-weight:700;color:#0f172a;margin:0 0 14px">EOFY investment checklist</h2>
     <ul style="padding-left:0;list-style:none;margin:0">

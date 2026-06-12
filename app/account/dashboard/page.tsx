@@ -735,6 +735,7 @@ export default async function PersonalDashboardPage() {
           <NavCard href="/account/referrals" emoji="🎁" label="Referrals" desc="Invite friends, earn rewards" />
           <NavCard href="/account/privacy" emoji="🔒" label="Privacy & Data" desc="Export, delete, GDPR rights" />
           <NavCard href="/account/annual-check" emoji="📅" label="Annual Check-up" desc="FY checklist: super, tax, insurance" />
+          <NavCard href="/wrapped" emoji="🎬" label="FY Money Wrapped" desc="Your year in money, recapped" />
           <NavCard href="/account/calendar" emoji="🗓️" label="Financial Calendar" desc="Key tax dates and deadlines" />
           <NavCard href="/account/vault" emoji="🗂️" label="Document Vault" desc="Store super, tax, insurance docs securely" />
           <NavCard href="/account/wholesale-cert" emoji="🏅" label="Wholesale Certification" desc="s708 or professional investor status" />
