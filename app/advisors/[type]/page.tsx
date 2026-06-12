@@ -40,6 +40,7 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "rural-property-agents": "rural_property_agent",
   "commercial-property-agents": "commercial_property_agent",
   "energy-consultants": "energy_consultant",
+  "grant-writers": "grant_writer",
   // New — oil-gas expansion (20260429)
   "energy-financial-planners": "energy_financial_planner",
   "resources-fund-managers": "resources_fund_manager",
@@ -71,6 +72,7 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
   "financial-planners": "Find a qualified financial planner for retirement planning, wealth management, super consolidation, and investment strategy.",
   "property-advisors": "Browse property investment advisors who can help with investment property analysis, SMSF property, and portfolio construction.",
   "tax-agents": "Find tax agents specialising in investment tax, CGT optimisation, crypto tax, and complex investment structures.",
+  "grant-writers": "Find grants and R&D incentive specialists who prepare R&D Tax Incentive claims, EMDG applications and federal/state grant submissions for Australian businesses.",
   "mortgage-brokers": "Compare mortgage brokers for investment property loans, refinancing, and home loan structuring.",
   "estate-planners": "Find estate planning specialists for wills, trusts, succession planning, and intergenerational wealth transfer.",
   "insurance-brokers": "Compare insurance brokers for life insurance, TPD, income protection, and general insurance across Australia.",
@@ -104,6 +106,11 @@ const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
     { q: "How much does an SMSF accountant cost?", a: "SMSF accountants typically charge $1,500–$5,000 per year for ongoing compliance, administration, and annual audit. Setup fees range from $1,000–$3,000." },
     { q: "Do I need a separate SMSF auditor?", a: "Yes. Australian law requires your SMSF to be audited annually by an independent ASIC-registered auditor. Your SMSF accountant will usually arrange this." },
     { q: "Can my regular accountant manage my SMSF?", a: "They can, but it's recommended to use a specialist. SMSF compliance is complex and penalties for non-compliance are severe. A specialist reduces your risk." },
+  ],
+  "grant-writers": [
+    { q: "How much does a grant writer cost?", a: "Market pricing runs roughly $500\u2013$5,000 per smaller application and $20,000+ for large or complex submissions, or $50\u2013$300+ per hour. R&D Tax Incentive specialists often work on a percentage of the claim \u2014 compare that against a fixed fee for your claim size." },
+    { q: "Do grant writers need a licence?", a: "Grant writing itself is unregulated consulting. The exception is the R&D Tax Incentive: preparing or lodging R&DTI claims for a fee is a tax agent service, so the specialist must be \u2014 or work under \u2014 a TPB-registered tax agent. Verify registration on the TPB public register." },
+    { q: "Can a grant writer guarantee my application succeeds?", a: "No \u2014 outcomes are decided by the administering agency (AusIndustry, Austrade or the state body), and no preparer can guarantee them. Judge specialists on their documented track record for the specific program, not on success promises." },
   ],
   "financial-planners": [
     { q: "How much does a financial planner charge?", a: "A Statement of Advice (SOA) typically costs $2,500–$5,500. Ongoing advice fees range from $2,000–$8,000 per year depending on complexity." },
@@ -253,6 +260,15 @@ const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
 };
 
 const TYPE_EDITORIAL: Record<string, { howToChoose: string[]; costGuide: string; industryInsight: string }> = {
+  "grant-writers": {
+    howToChoose: [
+      "Ask for a funded-application track record on the specific program you're targeting \u2014 R&DTI experience doesn't transfer automatically to EMDG or state programs",
+      "For R&D Tax Incentive work, verify TPB registration (preparing R&DTI claims for a fee is a tax agent service) and ask how they document technical uncertainty to survive an AusIndustry review",
+      "Compare fee structures honestly: a percentage of a large R&DTI claim can dwarf a fixed fee \u2014 and walk away from anyone guaranteeing outcomes the agency decides",
+    ],
+    costGuide: "Smaller grant applications: $500\u2013$5,000 fixed. Large or complex submissions (Industry Growth Program, major state programs): $20,000+. Hourly engagement: $50\u2013$300+. R&D Tax Incentive: commonly 10\u201320% of the claim benefit or a fixed fee \u2014 model both against your claim size.",
+    industryInsight: "Demand has shifted toward the R&D Tax Incentive and EMDG as the anchor programs, with state innovation grants cycling faster than federal ones. The ATO and AusIndustry have lifted scrutiny of software R&DTI claims \u2014 contemporaneous documentation of technical uncertainty now decides reviews, which is pushing businesses from DIY claims toward specialists.",
+  },
   "smsf-accountants": {
     howToChoose: [
       "Verify they're a registered SMSF auditor or work with one — your fund needs an independent audit annually",

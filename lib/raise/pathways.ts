@@ -76,6 +76,7 @@ export const PATHWAYS: Record<PathwayId, PathwayMeta> = {
     ],
     nextSteps: [
       { label: "Run the grants eligibility quiz", href: "/grants/eligibility-quiz" },
+      { label: "Find a grants & R&D specialist", href: "/advisors/grant-writers" },
       { label: "Browse the grants hub", href: "/startup/grants" },
     ],
     guideSlug: "government-grants",
