@@ -193,6 +193,122 @@ export async function sendQuoteExpiryReminderEmail(
   return ok;
 }
 
+/**
+ * Advisor: invited into a 24h best-and-final round (idea #11). The consumer
+ * shortlisted this advisor's quote and opened one final round — the advisor may
+ * submit a single revised quote. Factual price-discovery framing; no platform
+ * money movement.
+ */
+export async function sendFinalRoundInviteEmail(
+  advisorEmail: string,
+  advisorFirstName: string,
+  jobTitle: string,
+  jobSlug: string,
+  currentBidCents: number,
+  finalRoundEndsAt: string,
+): Promise<boolean> {
+  const jobUrl = `${SITE_URL}/quotes/${jobSlug}`;
+  const current = `$${(currentBidCents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
+  const endsLabel = new Date(finalRoundEndsAt).toLocaleString("en-AU", {
+    day: "numeric", month: "short", hour: "numeric", minute: "2-digit",
+  });
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: advisorEmail,
+    subject: `You're shortlisted — final round on "${jobTitle}"`,
+    html: wrap(
+      "You're in the Final Round",
+      `<p style="font-size:15px">Hi ${advisorFirstName},</p>
+      <p style="font-size:14px;color:#64748b">Good news — the consumer shortlisted your quote for <strong>${jobTitle}</strong> and opened a <strong>24-hour best-and-final round</strong>. You may submit one revised quote if you'd like to.</p>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:16px;margin:16px 0">
+        <p style="font-size:13px;color:#64748b;margin:0 0 4px 0">Your current quote</p>
+        <p style="font-size:18px;font-weight:700;color:#0f172a;margin:0">${current}</p>
+        <p style="font-size:12px;color:#94a3b8;margin:8px 0 0 0">Final round closes ${endsLabel}.</p>
+      </div>
+      <p style="font-size:14px;color:#64748b">Revising is optional — your existing quote stands if you do nothing. Any fee you quote is your own; Invest.com.au never takes a cut of what the consumer pays you.</p>
+      ${btn(jobUrl, "Review & Update Your Quote →", "#16a34a")}
+      <p style="font-size:12px;color:#94a3b8;margin-top:20px">You received this because you quoted on this request. <a href="${SITE_URL}/advisor-portal/auctions" style="color:#94a3b8">Manage auctions</a></p>`,
+    ),
+  });
+  return ok;
+}
+
+/**
+ * Advisor: the consumer countered this advisor's quote (idea #11) — "would you
+ * do it for $X?". The advisor accepts or declines from the portal. The counter
+ * is a factual price question, not a platform-set price.
+ */
+export async function sendCounterOfferToAdvisorEmail(
+  advisorEmail: string,
+  advisorFirstName: string,
+  jobTitle: string,
+  jobSlug: string,
+  currentBidCents: number,
+  counterAmountCents: number,
+): Promise<boolean> {
+  const portalUrl = `${SITE_URL}/advisor-portal/auctions`;
+  const current = `$${(currentBidCents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
+  const counter = `$${(counterAmountCents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: advisorEmail,
+    subject: `A consumer countered your quote — "${jobTitle}"`,
+    html: wrap(
+      "You Have a Counter-Offer",
+      `<p style="font-size:15px">Hi ${advisorFirstName},</p>
+      <p style="font-size:14px;color:#64748b">The consumer who posted <strong>${jobTitle}</strong> has responded to your quote with a counter — they've asked whether you'd do the work for a different figure.</p>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:16px;margin:16px 0">
+        <table style="width:100%;font-size:14px;color:#334155;border-collapse:collapse">
+          <tr><td style="padding:4px 8px 4px 0;color:#64748b">Your quote:</td><td style="font-weight:700;color:#0f172a">${current}</td></tr>
+          <tr><td style="padding:4px 8px 4px 0;color:#64748b">They asked for:</td><td style="font-weight:700;color:#16a34a">${counter}</td></tr>
+        </table>
+      </div>
+      <p style="font-size:14px;color:#64748b">Accept to update your quote to ${counter}, or decline to keep your current quote. It's entirely your call — the fee is yours and Invest.com.au never intermediates the payment between you and the client.</p>
+      ${btn(portalUrl, "Accept or Decline →", "#16a34a")}
+      <p style="font-size:12px;color:#94a3b8;margin-top:20px">Respond in your <a href="${portalUrl}" style="color:#2563eb">advisor portal</a>.</p>`,
+    ),
+  });
+  return ok;
+}
+
+/**
+ * Consumer: the advisor responded to their counter-offer (idea #11). Accepted →
+ * the quote was updated to the agreed figure; declined → the original stands.
+ */
+export async function sendCounterOfferResultEmail(
+  email: string,
+  firstName: string,
+  jobTitle: string,
+  jobSlug: string,
+  advisorName: string,
+  accepted: boolean,
+  agreedAmountCents: number,
+): Promise<boolean> {
+  const jobUrl = `${SITE_URL}/quotes/${jobSlug}`;
+  const agreed = `$${(agreedAmountCents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: email,
+    subject: accepted
+      ? `${advisorName} accepted your counter — ${jobTitle}`
+      : `${advisorName} kept their original quote — ${jobTitle}`,
+    html: wrap(
+      accepted ? "Your Counter Was Accepted" : "Counter Declined",
+      `<p style="font-size:15px">Hi ${firstName},</p>
+      ${accepted
+        ? `<p style="font-size:14px;color:#64748b"><strong>${advisorName}</strong> accepted your counter on <strong>${jobTitle}</strong>. Their quote is now <strong>${agreed}</strong>.</p>
+           <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:16px 0">
+             <p style="font-size:14px;color:#0f172a;margin:0;font-weight:600">Updated quote: ${agreed}</p>
+           </div>
+           <p style="font-size:14px;color:#64748b">You can now accept their quote to share your contact details and get started.</p>`
+        : `<p style="font-size:14px;color:#64748b"><strong>${advisorName}</strong> has kept their original quote on <strong>${jobTitle}</strong>. Their earlier quote still stands, and you can accept it any time before the request closes.</p>`}
+      ${btn(jobUrl, "View Your Quotes →", "#f59e0b")}
+      <p style="font-size:12px;color:#94a3b8;margin-top:20px">You received this because you posted a quote request on Invest.com.au.</p>`,
+    ),
+  });
+  return ok;
+}
+
 /** Consumer: 14 days after accepting a quote, ask them to leave a review. */
 export async function sendQuoteReviewRequestEmail(
   email: string,

@@ -13,6 +13,12 @@ const { mockRequireCronAuth, mockSendEmail, scenario } = vi.hoisted(() => ({
     awardClaim: (() => [{ id: 1 }]) as (auctionId: unknown) => { id: number }[],
     awardUpdates: [] as { id: unknown; guarded: boolean }[],
     expireUpdates: [] as { id: unknown; guarded: boolean }[],
+    // Idea #11 — bids that had revealed_at stamped (auction id), and the
+    // separate "settle expired final rounds" query result (+ optional error to
+    // simulate the columns being absent / dormant).
+    revealStamps: [] as unknown[],
+    finalRoundExpired: [] as Record<string, unknown>[],
+    finalRoundError: null as { message: string } | null,
   },
 }));
 
@@ -30,6 +36,8 @@ class QB {
   private op: "select" | "update" = "select";
   private payload: Record<string, unknown> | null = null;
   private eqs: Record<string, unknown> = {};
+  private isNullCols: string[] = [];
+  private notNullCols: string[] = [];
   constructor(private table: string) {}
   select() { return this; }
   update(p: Record<string, unknown>) { this.op = "update"; this.payload = p; return this; }
@@ -37,12 +45,15 @@ class QB {
   lt() { return this; }
   in() { return this; }
   order() { return this; }
+  is(c: string, _v: unknown) { this.isNullCols.push(c); return this; }
+  not(c: string, _op: string, _v: unknown) { this.notNullCols.push(c); return this; }
   limit() { return this.resolve(); }
   single() { return this.resolve(); }
+  maybeSingle() { return this.resolve(); }
   then(onF: (v: unknown) => unknown, onR?: (e: unknown) => unknown) {
     return this.resolve().then(onF, onR);
   }
-  private resolve(): Promise<{ data: unknown; error: null }> {
+  private resolve(): Promise<{ data: unknown; error: { message: string } | null }> {
     const guarded = this.eqs["status"] === "open";
     if (this.op === "update") {
       if (this.table === "advisor_auctions" && this.payload?.status === "awarded") {
@@ -52,7 +63,17 @@ class QB {
       if (this.table === "advisor_auctions" && this.payload?.status === "expired") {
         scenario.expireUpdates.push({ id: this.eqs["id"], guarded });
       }
+      // Idea #11 — reveal stamp: update advisor_auction_bids set revealed_at
+      // where revealed_at is null. Record the auction id it targeted.
+      if (this.table === "advisor_auction_bids" && this.payload?.revealed_at) {
+        scenario.revealStamps.push(this.eqs["auction_id"]);
+      }
       return Promise.resolve({ data: null, error: null });
+    }
+    // Idea #11 — the "settle expired final rounds" select is the only
+    // advisor_auctions read scoped to source=public_job.
+    if (this.table === "advisor_auctions" && this.eqs["source"] === "public_job") {
+      return Promise.resolve({ data: scenario.finalRoundExpired, error: scenario.finalRoundError });
     }
     if (this.table === "advisor_auctions") return Promise.resolve({ data: scenario.expired, error: null });
     if (this.table === "advisor_auction_bids")
@@ -77,6 +98,9 @@ describe("GET /api/cron/auction-close", () => {
     scenario.awardClaim = () => [{ id: 1 }];
     scenario.awardUpdates = [];
     scenario.expireUpdates = [];
+    scenario.revealStamps = [];
+    scenario.finalRoundExpired = [];
+    scenario.finalRoundError = null;
   });
 
   it("returns the cron-auth rejection and does no work when unauthorized", async () => {
@@ -136,5 +160,59 @@ describe("GET /api/cron/auction-close", () => {
     expect(body.expired).toBe(1);
     expect(scenario.expireUpdates).toEqual([{ id: 9, guarded: true }]);
     expect(mockSendEmail).not.toHaveBeenCalled();
+  });
+
+  // ── Idea #11 — sealed reveal + final-round settlement ──────────────────
+
+  it("stamps revealed_at on bids when AWARDING an auction (sealed reveal)", async () => {
+    mockRequireCronAuth.mockReturnValue(null);
+    scenario.expired = [
+      { id: 7, lead_type: "smsf", location: null, contact_name: "Jo", contact_email: "jo@x.com", contact_phone: null, slug: "a7" },
+    ];
+    scenario.bidsByAuction = { 7: [{ id: 11, advisor_id: 99, bid_amount: 5000 }] };
+    scenario.advisorsById = { 99: { name: "Adv One", email: "adv@x.com" } };
+
+    await GET(req());
+    expect(scenario.revealStamps).toContain(7);
+  });
+
+  it("stamps revealed_at on bids when EXPIRING a zero-bid auction", async () => {
+    mockRequireCronAuth.mockReturnValue(null);
+    scenario.expired = [
+      { id: 9, lead_type: "tax", location: null, contact_name: "X", contact_email: "x@x.com", contact_phone: null, slug: "a9" },
+    ];
+    scenario.bidsByAuction = { 9: [] };
+
+    await GET(req());
+    expect(scenario.revealStamps).toContain(9);
+  });
+
+  it("settles elapsed final rounds without auto-awarding them", async () => {
+    mockRequireCronAuth.mockReturnValue(null);
+    // No expired main auctions; just two public quotes with elapsed final rounds.
+    scenario.expired = [];
+    scenario.finalRoundExpired = [
+      { id: 21, slug: "fr-21" },
+      { id: 22, slug: "fr-22" },
+    ];
+
+    const out = (await GET(req())) as Response;
+    const body = await out.json();
+    expect(body.finalRoundsSettled).toBe(2);
+    // Settlement is non-destructive — no award/expire writes fired for them.
+    expect(scenario.awardUpdates).toHaveLength(0);
+    expect(scenario.expireUpdates).toHaveLength(0);
+  });
+
+  it("is fail-soft when the final_round columns are absent (query errors)", async () => {
+    mockRequireCronAuth.mockReturnValue(null);
+    scenario.expired = [];
+    scenario.finalRoundError = { message: 'column "final_round_started_at" does not exist' };
+
+    const out = (await GET(req())) as Response;
+    const body = await out.json();
+    // Cron still succeeds; settlement count is simply 0.
+    expect(out.status).toBe(200);
+    expect(body.finalRoundsSettled).toBe(0);
   });
 });

@@ -24,6 +24,8 @@ type Auction = {
   my_bid_cents: number | null;
   my_bid_id: number | null;
   is_leading: boolean;
+  /** Idea #11 — sealed: competing amounts hidden until close. */
+  sealed?: boolean;
 };
 
 type WonAuction = {
@@ -46,6 +48,10 @@ type PublicBid = {
   bid_amount: number;
   status: string;
   created_at: string;
+  // Idea #11 — counter / round fields (fail-soft; absent when dormant).
+  counter_status?: string | null;
+  counter_amount?: number | null;
+  round_number?: number | null;
   advisor_auctions: {
     id: number;
     slug: string;
@@ -86,6 +92,8 @@ export default function AdvisorAuctionsPage() {
   const [pendingRetractId, setPendingRetractId] = useState<number | null>(null);
   const [retractReason, setRetractReason] = useState("");
   const [coachAnalytics, setCoachAnalytics] = useState<BidCoachAnalytics | null>(null);
+  // Idea #11 — counter-offer responses.
+  const [counterRespondingId, setCounterRespondingId] = useState<number | null>(null);
 
   // Bid Coach data — fetched once on mount (slow-moving aggregates, no
   // need to ride the 30s auction refresh loop). Optional: failures are
@@ -164,6 +172,30 @@ export default function AdvisorAuctionsPage() {
       }
     } finally {
       setRetractingBid(null);
+    }
+  }
+
+  // Idea #11 — accept or decline a pending counter-offer.
+  async function handleCounterRespond(bidId: number, action: "accept" | "decline") {
+    setCounterRespondingId(bidId);
+    try {
+      const res = await fetch("/api/advisor-portal/counter-respond", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bid_id: bidId, action }),
+      });
+      if (res.ok) {
+        setPublicBids((prev) =>
+          prev.map((b) => {
+            if (b.id !== bidId) return b;
+            return action === "accept"
+              ? { ...b, counter_status: "accepted", bid_amount: b.counter_amount ?? b.bid_amount }
+              : { ...b, counter_status: "declined" };
+          }),
+        );
+      }
+    } finally {
+      setCounterRespondingId(null);
     }
   }
 
@@ -388,12 +420,18 @@ export default function AdvisorAuctionsPage() {
                             <h3 className="font-bold text-slate-900">
                               {auction.lead_type} Lead
                             </h3>
-                            {auction.is_leading && (
+                            {auction.sealed && (
+                              <span className="text-[0.65rem] font-bold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-full uppercase tracking-widest inline-flex items-center gap-1">
+                                <Icon name="lock" size={10} />
+                                Sealed
+                              </span>
+                            )}
+                            {!auction.sealed && auction.is_leading && (
                               <span className="text-[0.65rem] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full uppercase tracking-widest">
                                 Leading
                               </span>
                             )}
-                            {auction.my_bid_cents && !auction.is_leading && (
+                            {!auction.sealed && auction.my_bid_cents && !auction.is_leading && (
                               <span className="text-[0.65rem] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full uppercase tracking-widest">
                                 Outbid
                               </span>
@@ -436,14 +474,26 @@ export default function AdvisorAuctionsPage() {
                         </div>
 
                         <div className="text-right">
-                          <p className="text-xs text-slate-500 mb-1">
-                            Current high bid
-                          </p>
-                          <p className="text-lg font-extrabold text-slate-900">
-                            {auction.high_bid_cents
-                              ? formatCents(auction.high_bid_cents)
-                              : "No bids yet"}
-                          </p>
+                          {auction.sealed ? (
+                            <>
+                              <p className="text-xs text-slate-500 mb-1">Sealed request</p>
+                              <p className="text-sm font-bold text-indigo-700 inline-flex items-center gap-1 justify-end">
+                                <Icon name="lock" size={12} />
+                                Competing bids hidden
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-xs text-slate-500 mb-1">
+                                Current high bid
+                              </p>
+                              <p className="text-lg font-extrabold text-slate-900">
+                                {auction.high_bid_cents
+                                  ? formatCents(auction.high_bid_cents)
+                                  : "No bids yet"}
+                              </p>
+                            </>
+                          )}
                           {auction.my_bid_cents && (
                             <p className="text-xs text-slate-500 mt-1">
                               Your bid: {formatCents(auction.my_bid_cents)}
@@ -628,6 +678,10 @@ export default function AdvisorAuctionsPage() {
                     const isRetracted = bid.status === "retracted";
                     const isPending = bid.status === "active";
                     const jobExpired = job ? new Date(job.ends_at) < new Date() : false;
+                    // Idea #11 — counter / final-round state for this bid.
+                    const counterPending = bid.counter_status === "pending";
+                    const counterAccepted = bid.counter_status === "accepted";
+                    const isFinalRound = (bid.round_number ?? 1) >= 2;
 
                     return (
                       <div
@@ -662,6 +716,16 @@ export default function AdvisorAuctionsPage() {
                               >
                                 {isWon ? "Won" : isLost ? "Not selected" : isRetracted ? "Retracted" : jobExpired ? "Expired" : "Pending"}
                               </span>
+                              {isFinalRound && (
+                                <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest bg-amber-100 text-amber-800 inline-flex items-center gap-1">
+                                  <Icon name="zap" size={10} /> Final round
+                                </span>
+                              )}
+                              {counterAccepted && (
+                                <span className="text-[0.65rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest bg-emerald-100 text-emerald-800 inline-flex items-center gap-1">
+                                  <Icon name="check" size={10} /> Countered
+                                </span>
+                              )}
                             </div>
                             <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
                               {job?.location && <span><Icon name="map-pin" size={12} className="inline mr-1" />{job.location}</span>}
@@ -680,6 +744,37 @@ export default function AdvisorAuctionsPage() {
                         {isWon && (
                           <div className="mt-3 pt-3 border-t border-emerald-100 text-sm text-emerald-800">
                             Your bid was accepted. Check your email for the client&apos;s contact details.
+                          </div>
+                        )}
+
+                        {/* Idea #11 — pending counter-offer: accept or decline. */}
+                        {counterPending && !jobExpired && (
+                          <div className="mt-3 pt-3 border-t border-slate-100">
+                            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                              <p className="text-xs text-slate-700 mb-2">
+                                <span className="font-semibold text-slate-900">Counter-offer:</span> the consumer asked whether you&apos;d do this for{" "}
+                                <span className="font-bold text-emerald-700">${((bid.counter_amount ?? 0) / 100).toFixed(0)}</span>{" "}
+                                (your quote: ${(bid.bid_amount / 100).toFixed(0)}). Your fee stays your own.
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleCounterRespond(bid.id, "accept")}
+                                  disabled={counterRespondingId === bid.id}
+                                  className="text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded transition-colors disabled:opacity-50"
+                                >
+                                  {counterRespondingId === bid.id ? "Saving…" : `Accept $${((bid.counter_amount ?? 0) / 100).toFixed(0)}`}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleCounterRespond(bid.id, "decline")}
+                                  disabled={counterRespondingId === bid.id}
+                                  className="text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded border border-slate-200 transition-colors disabled:opacity-50"
+                                >
+                                  Keep my quote
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         )}
 

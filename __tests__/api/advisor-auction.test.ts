@@ -19,6 +19,14 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() })),
 }));
 
+// Idea #11 — the GET route now consults the auction_rounds flag to decide
+// whether to run the (additive) sealed-bid lookup. Default it OFF so these
+// existing tests see byte-identical behaviour (the lookup is fully skipped).
+const mockIsFlagEnabled = vi.fn().mockResolvedValue(false);
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...a: unknown[]) => mockIsFlagEnabled(...a),
+}));
+
 import { POST, GET } from "@/app/api/advisor-auction/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -31,6 +39,9 @@ beforeEach(() => {
   // gate at app/api/advisor-auction/route.ts:108. Tests that need to
   // exercise the unauthenticated path override with mockGetUser.mockResolvedValueOnce.
   mockGetUser.mockResolvedValue({ data: { user: { id: "test-user-1" } } });
+  // Default the auction_rounds flag OFF; the one sealed test opts in.
+  mockIsFlagEnabled.mockReset();
+  mockIsFlagEnabled.mockResolvedValue(false);
 });
 
 function makePost(body: unknown, headers: Record<string, string> = {}): NextRequest {
@@ -262,6 +273,69 @@ describe("GET /api/advisor-auction (getAuctions)", () => {
     // Regression guard: advisor resolved from `professionals`, not `advisors`.
     expect(mockAdminFrom).toHaveBeenCalledWith("professionals");
     expect(mockAdminFrom).not.toHaveBeenCalledWith("advisors");
+  });
+
+  it("idea #11 — hides the competing high bid on a SEALED open auction (flag on)", async () => {
+    mockIsFlagEnabled.mockResolvedValue(true);
+    let callCount = 0;
+    mockAdminFrom.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // advisor lookup
+        return makeSelectChain([
+          { data: { id: 99, type: "financial-advisor", location_state: "NSW", location_suburb: "Sydney" }, error: null },
+        ]);
+      }
+      if (callCount === 2) {
+        // open auctions — one auction id 1
+        const c: Record<string, unknown> = {};
+        c.select = vi.fn(() => c);
+        c.eq = vi.fn(() => c);
+        c.gt = vi.fn(() => c);
+        c.order = vi.fn(() => Promise.resolve({
+          data: [{ id: 1, lead_type: null, location: "Sydney", budget_range: null, status: "open", ends_at: "2099-01-01T00:00:00Z", created_at: "2026-04-28T00:00:00Z" }],
+          error: null,
+        }));
+        return c;
+      }
+      if (callCount === 3) {
+        // sealed-set lookup → auction 1 is sealed. select().in().eq().eq() awaited.
+        const c: Record<string, unknown> = {};
+        c.select = vi.fn(() => c);
+        c.in = vi.fn(() => c);
+        c.eq = vi.fn(() => c);
+        c.then = (resolve: (v: unknown) => void) => {
+          resolve({ data: [{ id: 1, bid_visibility: "sealed" }], error: null });
+          return Promise.resolve({ data: [{ id: 1, bid_visibility: "sealed" }], error: null });
+        };
+        return c;
+      }
+      if (callCount === 4) {
+        // bids for auction 1 — a competing high bid exists.
+        const c: Record<string, unknown> = {};
+        c.select = vi.fn(() => c);
+        c.eq = vi.fn(() => c);
+        c.order = vi.fn(() => c);
+        c.limit = vi.fn(() => Promise.resolve({ data: [{ id: 7, bid_amount: 99999, advisor_id: 42 }], error: null }));
+        return c;
+      }
+      // won bids
+      const c: Record<string, unknown> = {};
+      c.select = vi.fn(() => c);
+      c.eq = vi.fn(() => c);
+      c.then = (resolve: (v: unknown) => void) => { resolve({ data: [], error: null }); return Promise.resolve({ data: [], error: null }); };
+      return c;
+    });
+
+    const res = await GET(makeGet("99"));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    const auction = json.active[0];
+    expect(auction.sealed).toBe(true);
+    // The competing high bid is hidden; only the count is exposed.
+    expect(auction.high_bid_cents).toBeNull();
+    expect(auction.bid_count).toBe(1);
+    expect(auction.is_leading).toBe(false);
   });
 
   it("enriches active auctions with bid_count and my_bid_cents", async () => {

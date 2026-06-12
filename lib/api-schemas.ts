@@ -141,6 +141,9 @@ export const PostJobRequest = z.object({
   contact_name: z.string().min(1, "Name is required.").max(100),
   contact_email: z.string().email("A valid email is required.").max(200),
   contact_phone: z.string().max(20).optional(),
+  // Idea #11 — sealed bidding (optional; defaults to open). Only honoured when
+  // the `auction_rounds` flag is on; ignored otherwise so posting is unchanged.
+  bid_visibility: z.enum(["open", "sealed"]).optional(),
   website: z.string().optional(),
   fax: z.string().optional(),
 });
@@ -148,6 +151,34 @@ export const PostJobRequest = z.object({
 export const AcceptBidRequest = z.object({
   bid_id: z.number().int().positive("bid_id must be a positive integer."),
   contact_email: z.string().email("A valid email is required."),
+});
+
+// ─── Idea #11 — best-and-final rounds & counter-offers ─────────────
+
+/** Consumer opens ONE 24h best-and-final round among up to 3 chosen bids. */
+export const StartFinalRoundRequest = z.object({
+  contact_email: z.string().email("A valid email is required."),
+  bid_ids: z
+    .array(z.number().int().positive())
+    .min(1, "Pick at least one quote for the final round.")
+    .max(3, "Pick at most three quotes for the final round."),
+});
+
+/** Consumer counters a single bid ("would you do it for $X?"). Cents. */
+export const CounterBidRequest = z.object({
+  contact_email: z.string().email("A valid email is required."),
+  bid_id: z.number().int().positive("bid_id must be a positive integer."),
+  counter_amount: z
+    .number()
+    .int()
+    .min(5000, "Counter must be at least $50.")
+    .max(100_000_00, "Counter is too large."),
+});
+
+/** Advisor accepts or declines a pending counter-offer from the portal. */
+export const CounterRespondRequest = z.object({
+  bid_id: z.number().int().positive("bid_id must be a positive integer."),
+  action: z.enum(["accept", "decline"]),
 });
 
 export const PostJobResponse = z.object({
