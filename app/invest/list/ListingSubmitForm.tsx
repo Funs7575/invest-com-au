@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { buildLotProfile } from "@/lib/listings/lot-profile";
+import { assessLotTransparency, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
+import { metricsForCategory } from "@/lib/listings/vertical-metrics";
+import { categoryForListing } from "@/lib/listing-url";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { AdvisorOptInCheckboxes } from "@/components/AdvisorOptInCheckboxes";
@@ -106,6 +110,84 @@ const INITIAL_FORM: FormData = {
   contact_phone: "",
   agree_terms: false,
 };
+
+/**
+ * Live quality meter (idea #16) — the transparency assessment running as
+ * the seller types, with the same tier vocabulary buyers see as badges in
+ * browse. Renders the unmet checks as the to-do list, plus the chosen
+ * category's quality-signal metrics as guidance for what serious buyers
+ * filter on.
+ */
+function LiveQualityMeter({ form }: { form: FormData }) {
+  if (!form.vertical) return null;
+  const assessment = assessLotTransparency(
+    {
+      asking_price_cents: null,
+      price_display: form.asking_price_display || null,
+      description: form.description || null,
+      images: [],
+      location_state: form.location_state || null,
+      location_city: form.location_city || null,
+    },
+    buildLotProfile({}),
+  );
+  const category = categoryForListing({ vertical: form.vertical });
+  const signals = metricsForCategory(category).filter((m) => m.qualitySignal);
+  const pct = Math.round((assessment.metCount / assessment.total) * 100);
+
+  return (
+    <aside
+      aria-label="Listing quality"
+      className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-bold uppercase tracking-wider text-slate-600">
+          Listing quality
+        </p>
+        <span
+          className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+            assessment.level === "essential"
+              ? "bg-slate-200 text-slate-700"
+              : "bg-emerald-100 text-emerald-800"
+          }`}
+        >
+          {transparencyLevelLabel(assessment.level)}
+        </span>
+      </div>
+      <div className="h-1.5 w-full rounded-full bg-slate-200" role="presentation">
+        <div
+          className="h-1.5 rounded-full bg-emerald-500 transition-all"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <ul className="space-y-1">
+        {assessment.checks.map((check) => (
+          <li key={check.id} className="flex items-center gap-2 text-xs">
+            <span className={check.met ? "text-emerald-600" : "text-slate-400"}>
+              {check.met ? "✓" : "○"}
+            </span>
+            <span className={check.met ? "text-slate-700" : "text-slate-500"}>
+              {check.label}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="text-[11px] text-slate-500 leading-snug">
+        Buyers see this tier as a badge in browse — well-documented listings
+        stand out. Photos and documents can be added after publishing from
+        My Listings.
+      </p>
+      {signals.length > 0 && (
+        <p className="text-[11px] text-slate-500 leading-snug">
+          <span className="font-semibold text-slate-600">
+            What buyers filter on in this category:
+          </span>{" "}
+          {signals.map((m) => m.label).join(" · ")}.
+        </p>
+      )}
+    </aside>
+  );
+}
 
 export default function ListingSubmitForm() {
   const [step, setStep] = useState<Step>("plan");
@@ -504,6 +586,7 @@ export default function ListingSubmitForm() {
       {/* Step 2: Listing Details */}
       {step === "details" && (
         <div className="space-y-6">
+          <LiveQualityMeter form={form} />
           <div>
             <h2 className="text-lg font-bold text-slate-900 mb-1">Listing Details</h2>
             <p className="text-sm text-slate-500">Provide information about your {selectedVertical?.label ?? "opportunity"}.</p>
