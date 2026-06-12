@@ -20,7 +20,7 @@
  * or mutating.
  */
 
-const SW_VERSION = "v2";
+const SW_VERSION = "v3";
 const STATIC_CACHE = `invest-static-${SW_VERSION}`;
 const IMAGE_CACHE = `invest-images-${SW_VERSION}`;
 const HTML_CACHE = `invest-html-${SW_VERSION}`;
@@ -223,16 +223,47 @@ self.addEventListener("notificationclick", function (event) {
   }
 
   event.waitUntil(
-    // Try to focus an existing tab, otherwise open a new one
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then(function (clientList) {
+        // 1. Exact URL match already open → just focus it.
         for (let i = 0; i < clientList.length; i++) {
           const client = clientList[i];
           if (client.url === url && "focus" in client) {
             return client.focus();
           }
         }
+        // 2. Otherwise reuse an existing same-origin tab and navigate it to
+        //    the deep link (covers adviser lock-screen taps landing in an
+        //    already-open portal tab instead of spawning duplicates). Falls
+        //    back to a fresh window when navigate() isn't available. This is
+        //    backwards-compatible with consumer pushes — they share the path.
+        let targetOrigin = self.location.origin;
+        try {
+          targetOrigin = new URL(url).origin;
+        } catch {
+          // url was already absolute-from-origin above; keep the default.
+        }
+        for (let i = 0; i < clientList.length; i++) {
+          const client = clientList[i];
+          if (
+            client.url &&
+            client.url.indexOf(targetOrigin) === 0 &&
+            "focus" in client
+          ) {
+            if ("navigate" in client) {
+              return client.navigate(url).then(function (navigated) {
+                return navigated && "focus" in navigated
+                  ? navigated.focus()
+                  : client.focus();
+              }).catch(function () {
+                return client.focus();
+              });
+            }
+            return client.focus();
+          }
+        }
+        // 3. No tab to reuse → open a new window.
         if (self.clients.openWindow) {
           return self.clients.openWindow(url);
         }
