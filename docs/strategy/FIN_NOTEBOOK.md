@@ -14,6 +14,48 @@
 
 ## Active strategic decisions log
 
+### 2026-06-12 — Capital-raising / business-funding white space mapped (founder-requested exploration)
+
+Founder asked for a deep, creative-but-commercial exploration of capital-raising
+and crowdfunding-adjacent opportunities — business funding profiles, readiness
+scoring, EOI/waitlists, CSF-intermediary referrals, investor discovery — beyond
+advisor matching, with pre-licence vs licensed feasibility made explicit. Full
+staged strategy written: **`docs/strategy/CAPITAL_RAISING_OPPORTUNITIES.md`**
+(ideas CR-01..CR-14 + Stage 1 referral economy, Stage 2 post-AFSL wholesale,
+Stage 3 licensed bets).
+
+Key grounding findings (so future sessions don't re-scope): the **pre-raise
+layer is the unregulated white space** (pathway education, readiness scoring,
+raise-prep professional matching, grants, provider comparison, generic intent
+capture) while offer hosting/deal matching stays [E]-gated per the avoid-list;
+the `/grants` hub is **live but under-monetised** (no grant-writer marketplace,
+no paid alerts); `lib/verticals.ts` already types `startup`/`angel`/`wholesale`/
+`business_for_sale`/`private_markets` lead queues; `startupRaisesEnabled()`
+compliance gate + `WholesaleAttestationGate` already exist. Most of Stage 0 is
+activation of existing rails, not greenfield. Prior NEVER rulings (#16/#17/#18,
+no success fees/escrow) respected by design.
+
+Regulatory state web-verified same day (doc §2.2/§11, counsel to confirm):
+**business-introduction/matching relief is fully dead** (securities Oct 2022,
+MIS remnant expired 1 Apr 2025) — no unlicensed private-offer matching model
+exists; **CSF market halved in FY25** (~$33M/63 offers; Equitise in
+administration; Birchal ~70%+ share and pays third-party referral fees per its
+FSG); **s738ZG(6) prescribed-statement safe harbour** makes factual CSF-offer
+content/alerts lawful even pre-offer (gated on legal copy sign-off);
+**wholesale thresholds unchanged** (PJC Feb 2025: no indexation);
+**business-purpose lending confirmed outside NCCP** (no ACL to refer it). Net:
+revenue weight goes to grants + SME-debt referral + raise-prep services;
+CSF/equity is the positioning + data layer.
+
+**Pending founder (§10 of the doc):** ratify the staged corridor + avoid-list
+additions (§8), greenlight Priority 1 (CR-04 grants monetisation + CR-01
+Funding Pathway Finder + CR-02 /raise hub — fully lean-lane), commission the
+§9 legal memo bundled with the s708 brief, set Stage-1 BD order, decide CR-05
+(business-lending referrals) proceed-vs-park.
+
+**Revisit:** 2026-07-12 — founder verdicts on the five asks; if Priority 1
+greenlit, brief the build stream.
+
 ### 2026-06-11 — Retail UX North Star: end-to-end emotional audit + "regulated delight" plan written
 
 Founder brief: make the platform feel like Robinhood/Revolut/Coinbase for a
