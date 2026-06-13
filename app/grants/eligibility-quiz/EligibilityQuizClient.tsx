@@ -236,7 +236,7 @@ export default function EligibilityQuizClient() {
         <HubLeadForm
           heading="Get your free eligibility assessment from a specialist"
           subheading="A registered grants advisor will validate the result, sequence applications, and start the documentation work that survives an audit."
-          intent={{ need: "tax", context: ["tax_optimization"] }}
+          intent={{ need: "grants", context: ["grant_funding"] }}
           source="grants_eligibility_quiz"
           ctaLabel="Get my free assessment"
           extraFields={[

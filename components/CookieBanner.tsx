@@ -115,7 +115,7 @@ export default function CookieBanner() {
             <div className="flex gap-1.5 sm:gap-2 flex-shrink-0 flex-wrap items-center">
               <button
                 onClick={() => setShowPrefs(true)}
-                className="px-2.5 sm:px-3 py-2.5 min-h-11 text-xs font-medium text-slate-500 hover:text-white transition-colors underline"
+                className="px-2.5 sm:px-3 py-2.5 min-h-11 text-xs font-medium text-slate-300 hover:text-white transition-colors underline"
               >
                 <span className="sm:hidden">Manage</span>
                 <span className="hidden sm:inline">Manage Preferences</span>
@@ -143,7 +143,7 @@ export default function CookieBanner() {
               <label className="flex items-center justify-between gap-3 bg-slate-800 rounded-lg px-3 py-2.5">
                 <div>
                   <p className="text-sm font-medium">Essential Cookies</p>
-                  <p className="text-xs text-slate-500">Required for the site to function. Cannot be disabled.</p>
+                  <p className="text-xs text-slate-300">Required for the site to function. Cannot be disabled.</p>
                 </div>
                 <input type="checkbox" checked disabled className="rounded border-slate-600 text-amber-500" />
               </label>
@@ -152,7 +152,7 @@ export default function CookieBanner() {
               <label className="flex items-center justify-between gap-3 bg-slate-800 rounded-lg px-3 py-2.5 cursor-pointer">
                 <div>
                   <p className="text-sm font-medium">Analytics Cookies</p>
-                  <p className="text-xs text-slate-500">Google Analytics — helps us understand how visitors use our site.</p>
+                  <p className="text-xs text-slate-300">Google Analytics — helps us understand how visitors use our site.</p>
                 </div>
                 <input
                   type="checkbox"
@@ -166,7 +166,7 @@ export default function CookieBanner() {
               <label className="flex items-center justify-between gap-3 bg-slate-800 rounded-lg px-3 py-2.5 cursor-pointer">
                 <div>
                   <p className="text-sm font-medium">Affiliate & Advertising Cookies</p>
-                  <p className="text-xs text-slate-500">Track clicks to partner platforms so we can earn commissions that fund this free service.</p>
+                  <p className="text-xs text-slate-300">Track clicks to partner platforms so we can earn commissions that fund this free service.</p>
                 </div>
                 <input
                   type="checkbox"
@@ -180,7 +180,7 @@ export default function CookieBanner() {
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowPrefs(false)}
-                className="px-4 py-2.5 min-h-11 text-sm font-medium text-slate-500 hover:text-white transition-colors"
+                className="px-4 py-2.5 min-h-11 text-sm font-medium text-slate-300 hover:text-white transition-colors"
               >
                 Back
               </button>

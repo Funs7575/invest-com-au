@@ -77,7 +77,7 @@ async function getSupabase() {
 
 async function buildShard0(): Promise<MetadataRoute.Sitemap> {
   const base = baseUrl();
-  const highPriority = new Set(["/compare", "/get-matched", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer", "/redundancy", "/inheritance"]);
+  const highPriority = new Set(["/compare", "/get-matched", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer", "/redundancy", "/inheritance", "/raise"]);
   const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
     "/wealth-stack", "/startup/grants", "/lic-screener", "/tools/subscription-audit",
     "/questions", ...QUESTIONS.map((q) => `/questions/${q.slug}`)]);
@@ -182,6 +182,10 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     // Revenue-expansion hubs
     "/grants", "/grants/rd-tax-incentive", "/grants/emdg",
     "/grants/industry-growth-program", "/grants/eligibility-quiz",
+    "/raise", "/raise/pathway-finder",
+    "/raise/equity-crowdfunding", "/raise/angel-investment", "/raise/venture-capital",
+    "/raise/business-debt", "/raise/government-grants", "/raise/bootstrapping",
+    "/raise/selling-your-business",
     "/smsf/setup", "/smsf/crypto", "/smsf/property",
     "/smsf/investment-strategy", "/smsf/checklist", "/smsf/quiz",
     "/sell-business", "/sell-business/valuation", "/sell-business/checklist",
@@ -921,7 +925,7 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
     .slice(0, 2000);
 
   // Advisor type + state pages
-  const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners", "insurance-brokers", "buyers-agents", "real-estate-agents", "wealth-managers", "aged-care-advisors", "crypto-advisors", "debt-counsellors"];
+  const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners", "insurance-brokers", "buyers-agents", "real-estate-agents", "wealth-managers", "aged-care-advisors", "crypto-advisors", "debt-counsellors", "grant-writers"];
   const states = ["nsw", "vic", "qld", "wa", "sa", "tas", "act", "nt"];
 
   const advisorTypePages = advisorTypes.map((type) => ({

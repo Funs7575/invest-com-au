@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   categoryForListing,
+  categoryScope,
   listingUrl,
   normaliseVertical,
   rawVerticalVariants,
@@ -185,5 +186,49 @@ describe("listingUrl", () => {
         }),
       ),
     ).toBe("/invest/funds/listings/balanced-fund");
+  });
+});
+
+describe("categoryScope", () => {
+  it("maps direct categories to their vertical variants", () => {
+    expect(categoryScope("renewable-energy")).toEqual({
+      verticals: ["energy", "renewable-energy"],
+    });
+    expect(categoryScope("mining")).toEqual({ verticals: ["mining"] });
+    // private-equity merges two verticals.
+    expect(categoryScope("private-equity")?.verticals).toEqual(
+      expect.arrayContaining(["hedge-fund", "private-equity"]),
+    );
+  });
+
+  it("narrows derived fund categories by sub_category", () => {
+    const scope = categoryScope("private-credit");
+    expect(scope?.verticals).toEqual(expect.arrayContaining(["fund", "funds"]));
+    expect(scope?.subCategories).toEqual(["private_credit"]);
+    const alts = categoryScope("alternatives");
+    expect(alts?.subCategories).toEqual(
+      expect.arrayContaining(["art", "wine", "whisky"]),
+    );
+  });
+
+  it("narrows listed-securities by listing_kind (it spans verticals)", () => {
+    expect(categoryScope("listed-securities")).toEqual({
+      verticals: [],
+      listingKind: "listed_security",
+    });
+  });
+
+  it("returns null for unknown categories — callers keep unscoped behaviour", () => {
+    expect(categoryScope("not-a-category")).toBeNull();
+  });
+
+  it("is an over-fetch, never an under-fetch: every scoped row's true category is reachable", () => {
+    // A fund/private_credit row must be admitted by the private-credit
+    // scope AND classified back to it by categoryForListing.
+    const row = { vertical: "fund", sub_category: "private_credit" };
+    const scope = categoryScope("private-credit")!;
+    expect(scope.verticals).toContain(row.vertical);
+    expect(scope.subCategories).toContain(row.sub_category);
+    expect(categoryForListing(row)).toBe("private-credit");
   });
 });
