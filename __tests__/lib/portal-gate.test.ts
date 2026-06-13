@@ -16,6 +16,11 @@ vi.mock("@/lib/account-kinds", () => ({
   setActiveKind: (k: string) => mockSetActiveKind(k),
 }));
 
+const mockLinkProfessionalAuthUser = vi.fn();
+vi.mock("@/lib/professional-auth-link", () => ({
+  linkProfessionalAuthUser: (...a: unknown[]) => mockLinkProfessionalAuthUser(...a),
+}));
+
 // redirect() throws in Next; emulate so we can assert on it.
 const mockRedirect = vi.fn((url: string) => {
   throw new Error(`REDIRECT:${url}`);
@@ -29,8 +34,9 @@ import { enforcePortalKind } from "@/lib/portal-gate";
 describe("enforcePortalKind", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mockGetUser.mockResolvedValue({ data: { user: { id: "u1", email: "pro@example.com" } } });
     mockSetActiveKind.mockResolvedValue(undefined);
+    mockLinkProfessionalAuthUser.mockResolvedValue(0); // default: nothing to heal
   });
 
   it("allows a brand-new 0-kind user into the investor workspace (AJ-10)", async () => {
@@ -110,5 +116,34 @@ describe("enforcePortalKind", () => {
     mockGetKindsForUser.mockResolvedValue([]);
     mockSetActiveKind.mockRejectedValue(new Error("blocked"));
     await expect(enforcePortalKind("investor")).resolves.toBeUndefined();
+  });
+
+  // P0: ~98% of active advisors have a NULL auth_user_id, so the membership
+  // view reports zero kinds and the gate would lock them out of their own
+  // portal. The gate self-heals the link on email match and re-resolves.
+  it("self-heals an unlinked advisor (NULL auth_user_id) and lets them into the portal", async () => {
+    mockGetActiveKind.mockResolvedValue(null);
+    // First resolve: view still reports no kinds (unlinked). After the heal
+    // links the row, the second resolve surfaces the advisor kind.
+    mockGetKindsForUser
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([{ kind: "advisor" }]);
+    mockLinkProfessionalAuthUser.mockResolvedValue(1);
+
+    await expect(enforcePortalKind("advisor")).resolves.toBeUndefined();
+
+    expect(mockLinkProfessionalAuthUser).toHaveBeenCalledWith("u1", "pro@example.com");
+    expect(mockGetKindsForUser).toHaveBeenCalledTimes(2); // re-resolved after heal
+    expect(mockSetActiveKind).toHaveBeenCalledWith("advisor");
+    expect(mockRedirect).not.toHaveBeenCalled();
+  });
+
+  it("still bounces to the chooser when self-heal finds no matching professional", async () => {
+    mockGetActiveKind.mockResolvedValue(null);
+    mockGetKindsForUser.mockResolvedValue([]); // never resolves a kind
+    mockLinkProfessionalAuthUser.mockResolvedValue(0); // nothing to heal
+
+    await expect(enforcePortalKind("advisor")).rejects.toThrow(/select-workspace/);
+    expect(mockGetKindsForUser).toHaveBeenCalledTimes(1); // no re-resolve when 0 linked
   });
 });
