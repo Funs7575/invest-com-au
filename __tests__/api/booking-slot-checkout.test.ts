@@ -39,7 +39,7 @@ vi.mock("@/lib/url", () => ({
   getSiteUrl: (_host: unknown) => "https://invest.com.au",
 }));
 
-import { POST } from "@/app/api/booking/[slotId]/checkout/route";
+import { POST } from "@/app/api/booking/[token]/checkout/route";
 
 // ─── Builder helper ───────────────────────────────────────────────────────────
 
@@ -58,10 +58,11 @@ function makeBuilder(data: unknown = null, error: unknown = null) {
 }
 
 // The route awaits params as a Promise (Next.js dynamic route convention)
-type RouteParams = { params: Promise<{ slotId: string }> };
+type RouteParams = { params: Promise<{ token: string }> };
 
 function makeParams(slotId: string): RouteParams {
-  return { params: Promise.resolve({ slotId }) };
+  // The route segment is named `token`; for checkout its value is the slot id.
+  return { params: Promise.resolve({ token: slotId }) };
 }
 
 const FUTURE_DATE = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -100,7 +101,7 @@ const VALID_BODY = {
 
 // ─── Rate limiting ────────────────────────────────────────────────────────────
 
-describe("POST /api/booking/[slotId]/checkout — rate limiting", () => {
+describe("POST /api/booking/[token]/checkout — rate limiting", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("returns 429 when rate limited", async () => {
@@ -115,7 +116,7 @@ describe("POST /api/booking/[slotId]/checkout — rate limiting", () => {
 
 // ─── slotId validation ────────────────────────────────────────────────────────
 
-describe("POST /api/booking/[slotId]/checkout — slotId validation", () => {
+describe("POST /api/booking/[token]/checkout — slotId validation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
@@ -145,7 +146,7 @@ describe("POST /api/booking/[slotId]/checkout — slotId validation", () => {
 
 // ─── Body validation ──────────────────────────────────────────────────────────
 
-describe("POST /api/booking/[slotId]/checkout — body validation", () => {
+describe("POST /api/booking/[token]/checkout — body validation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
@@ -189,7 +190,7 @@ describe("POST /api/booking/[slotId]/checkout — body validation", () => {
 
 // ─── Slot lookups ─────────────────────────────────────────────────────────────
 
-describe("POST /api/booking/[slotId]/checkout — slot state checks", () => {
+describe("POST /api/booking/[token]/checkout — slot state checks", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
@@ -227,7 +228,7 @@ describe("POST /api/booking/[slotId]/checkout — slot state checks", () => {
 
 // ─── Advisor lookups ──────────────────────────────────────────────────────────
 
-describe("POST /api/booking/[slotId]/checkout — advisor checks", () => {
+describe("POST /api/booking/[token]/checkout — advisor checks", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
@@ -268,7 +269,7 @@ describe("POST /api/booking/[slotId]/checkout — advisor checks", () => {
 
 // ─── Checkout creation ────────────────────────────────────────────────────────
 
-describe("POST /api/booking/[slotId]/checkout — Stripe checkout", () => {
+describe("POST /api/booking/[token]/checkout — Stripe checkout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
@@ -351,7 +352,7 @@ describe("POST /api/booking/[slotId]/checkout — Stripe checkout", () => {
   });
 });
 
-describe("POST /api/booking/[slotId]/checkout — optional topic field", () => {
+describe("POST /api/booking/[token]/checkout — optional topic field", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
