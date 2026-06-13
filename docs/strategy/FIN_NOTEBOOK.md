@@ -14,6 +14,86 @@
 
 ## Active strategic decisions log
 
+### 2026-06-12 — Money-Machine Top 30: full-platform commercial analysis written (founder decisions pending)
+
+Founder asked for a fresh whole-platform analysis — business model, monetisation,
+marketplace economics, retention, compliance — and the top 30 highest-ROI moves.
+Full report: `docs/strategy/MONEY_MACHINE_TOP30.md` (diagnosis, ranked 30 with
+per-idea MVP/world-class/scores, scoring table, top-10, 90-day pre-cutover
+roadmap, 12–24mo flywheel, required codebase changes).
+
+Headline diagnosis: **the machine is built, the ignition is off** — 6 revenue
+channels live, 3 finished-but-dark (advisor Pro billing flag, API billing env
+vars, drips), lead pricing flat-$39 while quality/money-band scoring already
+exists, 5 disconnected B2B billing silos, brief marketplace primitives
+(`brief_credit_prices`, `response_guarantee`, `ai_brief_quality_scoring`) all
+dark, `/invest/startups` still a live s708 tripwire. Top-10 build order: (1)
+revenue activation sprint, (2) lead-pricing rate card, (3) one advisor SaaS
+ladder, (4) sponsorship inventory, (5) brief liquidity engine, (6) verified
+badge + embed, (7) cross-border Phase C BD, (8) priority auctions (RG 246
+packet week 1), (9) Fee X-Ray, (10) s708 gate. Four legal packets (RG 246,
+badge methodology, s708 D4, Fee X-Ray copy) are the critical path — send
+before building. 90-day window is hard-bounded by the Oct–Dec cutover freeze.
+
+**Revisit:** 2026-06-26 — founder verdicts on the top-10; which legal packets
+went out; did the activation sprint clear (deploy target, cron bridge, Stripe
+price IDs, drip flag)?
+
+### 2026-06-12 — Capital-raising / business-funding white space mapped (founder-requested exploration)
+
+Founder asked for a deep, creative-but-commercial exploration of capital-raising
+and crowdfunding-adjacent opportunities — business funding profiles, readiness
+scoring, EOI/waitlists, CSF-intermediary referrals, investor discovery — beyond
+advisor matching, with pre-licence vs licensed feasibility made explicit. Full
+staged strategy written: **`docs/strategy/CAPITAL_RAISING_OPPORTUNITIES.md`**
+(ideas CR-01..CR-14 + Stage 1 referral economy, Stage 2 post-AFSL wholesale,
+Stage 3 licensed bets).
+
+Key grounding findings (so future sessions don't re-scope): the **pre-raise
+layer is the unregulated white space** (pathway education, readiness scoring,
+raise-prep professional matching, grants, provider comparison, generic intent
+capture) while offer hosting/deal matching stays [E]-gated per the avoid-list;
+the `/grants` hub is **live but under-monetised** (no grant-writer marketplace,
+no paid alerts); `lib/verticals.ts` already types `startup`/`angel`/`wholesale`/
+`business_for_sale`/`private_markets` lead queues; `startupRaisesEnabled()`
+compliance gate + `WholesaleAttestationGate` already exist. Most of Stage 0 is
+activation of existing rails, not greenfield. Prior NEVER rulings (#16/#17/#18,
+no success fees/escrow) respected by design.
+
+Regulatory state web-verified same day (doc §2.2/§11, counsel to confirm):
+**business-introduction/matching relief is fully dead** (securities Oct 2022,
+MIS remnant expired 1 Apr 2025) — no unlicensed private-offer matching model
+exists; **CSF market halved in FY25** (~$33M/63 offers; Equitise in
+administration; Birchal ~70%+ share and pays third-party referral fees per its
+FSG); **s738ZG(6) prescribed-statement safe harbour** makes factual CSF-offer
+content/alerts lawful even pre-offer (gated on legal copy sign-off);
+**wholesale thresholds unchanged** (PJC Feb 2025: no indexation);
+**business-purpose lending confirmed outside NCCP** (no ACL to refer it). Net:
+revenue weight goes to grants + SME-debt referral + raise-prep services;
+CSF/equity is the positioning + data layer.
+
+**Pending founder (§10 of the doc):** ratify the staged corridor + avoid-list
+additions (§8), greenlight Priority 1 (CR-04 grants monetisation + CR-01
+Funding Pathway Finder + CR-02 /raise hub — fully lean-lane), commission the
+§9 legal memo bundled with the s708 brief, set Stage-1 BD order, decide CR-05
+(business-lending referrals) proceed-vs-park.
+
+**Update (same day) — founder greenlit via /goal ("build all of this, merged,
+highest quality → doc (1"); Priority 1 BUILT on PR #1564:** CR-01 Funding
+Pathway Finder (`/raise/pathway-finder` — 10 questions, pure scoring engine
+with regime gates + reasons/cautions, 16 tests, grants-quiz persistence
+pattern, HubLeadForm into the accountant funnel), CR-02 `/raise` hub + 7
+SSG pathway guides (answer-first, FAQPage JSON-LD), CR-03-lite factual CSF
+platform table (no-commercial-relationship disclosure), CAPITAL_RAISING_NOTE
+in lib/compliance.ts, sitemap + footer wiring. Escalator items (CR-05
+lending, CR-09 raising-status, CR-11 offer alerts, Stage 2+) deliberately
+NOT built per avoid-list. Remaining from Priority 1: CR-04a grant-writer
+professional type + CR-04b paid grant alerts (taxonomy + Stripe-price-ID
+dependent — next session).
+
+**Revisit:** 2026-07-12 — founder verdicts on the five asks; CR-04a/b
+build; first pathway-finder completion/lead numbers in PostHog.
+
 ### 2026-06-11 — Retail UX North Star: end-to-end emotional audit + "regulated delight" plan written
 
 Founder brief: make the platform feel like Robinhood/Revolut/Coinbase for a
@@ -1391,6 +1471,26 @@ Brainstormed list of self-contained builds (each one Claude session, no founder 
 - Remaining buildable-without-data items are thinning; most of the tail now waits on founder-run ingests (the four `data:*` commands) or founder decisions.
 
 **Pattern established (#1, #2):** file-backed JSON in `data/` + typed lib loader + alias-driven CSV ingest script + hub/detail ISR routes + synthetic preview with `meta.sample` → banner + noindex until real extract lands → one-command hydration, ships as PR diff. Egress from build sandboxes is blocked for AU data portals — run ingests locally.
+
+### 2026-06-11 — The Feel layer (founder directive: consumer-fintech energy)
+
+Directive: retail investor opens this on their phone and FEELS something — Robinhood/Revolut/Coinbase stickiness, not compliance-grey boxes. Compliance inversion that makes this safe for an AU comparison site: celebrate curiosity and decision-quality, never transactions (no trade-confetti conduct risk — we don't execute trades anyway).
+
+**v1 SHIPPED (journey layer):**
+- `lib/journey.ts` — PII-free localStorage milestone model (`inv_journey`): first_save / first_compare / quiz_complete / first_article / profile_complete → 5 named stages (Curious → Explorer → Comparer → Shortlister → Decision-ready), idempotent, SSR-safe, unit-tested.
+- `components/journey/journeyMoment.tsx` — imperative celebration card (house toast pattern, no providers): milestone + stage + progress dots + next-step hint; confetti only on stage advance and never under prefers-reduced-motion.
+- Wired: BookmarkButton (first save = the moment; repeats = quiet "Saved" toast — was previously SILENT), compare page (first_compare), quiz top-match (quiz_complete).
+
+**v2 backlog (in priority order):**
+1. Header stage chip ("N saved · Explorer") in the right cluster — persistent identity.
+2. Wire `first_article` (article pages currently only fire first_save via bookmark).
+3. Claim-sync moment: "your N saves are now in your account" on ClaimAnonymousOnAuth.
+4. Streak UI — lib/streak.ts math is DONE, no UI consumes it (daily check-in surface, at-risk nudge).
+5. Profile-completion meter on /account using the milestone model.
+6. Saved-state empty pages: /account/bookmarks zero-state should sell the journey, not show a void.
+7. Lifecycle journeys (lib/lifecycle-journeys.ts, 6 journeys, no UI) → stage visualisation on hub pages.
+
+Where delight lives: the save tap, the quiz reveal (shine/pulse exists), the first compare. Where trust builds: dated-stat badges, register links, "not advice" framing at decision moments — keep these adjacent to every celebration so excitement and honesty travel together.
 
 ## Open commitments / revisit-by dates
 

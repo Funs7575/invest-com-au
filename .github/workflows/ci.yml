@@ -112,14 +112,22 @@ jobs:
         # not exceed the budget. scripts/bundle-size-budget.mjs excludes
         # page-specific lazy splits, prints a top-10 chunk table, and
         # exits 1 on overage.
-        # Budget: 14000 kB. Raised from 13100 for the retention/marketplace
-        # 20-feature wave (PR #1570): +671 kB of genuinely new shared UI
-        # (scenario bar, quest shelf, decision kit, dossiers, embeds, pool
-        # panels, wrapped deck) — the per-route deltas were all <=2.1 kB and
-        # the totals diff was +3.6%. 14000 leaves ~1.7% headroom; tighten
-        # once the post-merge baseline stabilises — see
-        # scripts/bundle-size-budget.mjs for the metric definition.
-        # (History: 12000 -> 13100 for the quiz/CPD wave, see git blame.)
+        # Budget: 14000 kB. History, most recent first:
+        # - 2026-06-13 (#1570): 13300 → 14000 for the retention/marketplace
+        #   20-feature wave: +671 kB of genuinely new shared UI (scenario bar,
+        #   quest shelf, decision kit, dossiers, embeds, pool panels, wrapped
+        #   deck) — per-route deltas all ≤2.1 kB, totals diff +3.6%. ~1.7%
+        #   headroom; tighten once the post-merge baseline stabilises.
+        # - 2026-06-13: 13200 → 13300. Listings board (#1562) + grant-writer
+        #   marketplace (#1572) brought main to 13200.6 kB (0.6 kB over the
+        #   13200 gate); 13300 also fit the journey/Feel-layer re-land (#1568).
+        # - 2026-06-12: 13100 → 13200. The /raise vertical (9 routes) added
+        #   ~55.6 kB of route chunks → 13114.1 kB, over the 13100 interim raise.
+        # - 2026-06-12 (interim): 13000 → 13100 after the morning waves landed
+        #   main at 13058.5 kB and every PR inherited the red gate.
+        # - Earlier: 12000 → 13000 when audit-remediation PRs pushed the
+        #   baseline to ~12001 kB and the Q&A/CPD wave added ~2900 kB.
+        # See scripts/bundle-size-budget.mjs for the metric definition.
         run: node scripts/bundle-size-budget.mjs --budget-kb 14000
 
       # Upload .next so dependent jobs (e2e, a11y, lighthouse*) can

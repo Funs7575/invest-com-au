@@ -1,5 +1,15 @@
 -- ============================================================================
--- Migration: 20260611160000_gm08_questions_intents_seed.sql
+-- Migration: 20260613120000_gm08_questions_intents_seed.sql
+--
+-- RENAMED 2026-06-13 from 20260611160000_gm08_questions_intents_seed.sql to
+-- resolve a version collision: 20260611160000 was also used by
+-- 20260611160000_advisor_standing_orders.sql. Supabase keys the ledger on the
+-- 14-digit version, so the duplicate caused this seed to be silently skipped on
+-- push (only one 20260611160000 entry can exist). Re-timestamped to a unique,
+-- later version so it applies cleanly. Content is unchanged and idempotent, so
+-- re-applying is a no-op even if a prior partial apply occurred. Before pushing,
+-- run `supabase migration list` to confirm file↔ledger sync (DB Migration Rules).
+--
 -- Purpose: Seed `get_matched_questions` and `intent_taxonomy` to mirror the
 --          code-defined canonical sets in lib/getmatched/fallbacks.ts
 --          (FALLBACK_QUESTIONS + FALLBACK_INTENTS), one-for-one, INCLUDING the

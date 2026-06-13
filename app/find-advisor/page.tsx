@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { fireJourneyMoment } from "@/components/journey/journeyMoment";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -332,9 +331,6 @@ export default function FindAdvisorPage() {
 }
 
 function FindAdvisorQuiz() {
-  // Journey milestone: completing the matching flow = investor profile done.
-  // (Declared early so hook order is stable; fires once when step 6 confirms.)
-
   const searchParams = useSearchParams();
   const needParam = searchParams.get("need");
   const handoffToken = searchParams.get("handoff");
@@ -451,9 +447,6 @@ function FindAdvisorQuiz() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(!!savedMatch);
-  useEffect(() => {
-    if (quiz.step === 6 && submitted) fireJourneyMoment("profile_complete");
-  }, [quiz.step, submitted]);
   // ADV-008: whether the "Resume your quiz" banner should still show. Hidden
   // once the user resumes or dismisses it.
   const [showResumePrompt, setShowResumePrompt] = useState(!!resumableQuiz);
@@ -1187,7 +1180,7 @@ function Step1({ onSelect }: { onSelect: (intent: Intent) => void }) {
             <h3 className="text-base font-bold text-slate-900 mb-1">{opt.title}</h3>
             <p className="text-xs text-slate-600 leading-relaxed">{opt.desc}</p>
             <div className="absolute right-3.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-0.5">
-              <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </div>

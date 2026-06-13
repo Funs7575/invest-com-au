@@ -1,6 +1,5 @@
 "use client";
 
-import { journeySnapshot } from "@/lib/journey";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import EmptyState from "@/components/directory/EmptyState";
@@ -64,17 +63,11 @@ export default function BookmarksList({ initialItems }: Props) {
   }, [items]);
 
   if (items.length === 0) {
-    // Journey-aware zero state: name the stage and point at the next step
-    // instead of presenting a void.
-    const journey = journeySnapshot();
     return (
       <EmptyState
         icon="file-text"
-        title={`Stage ${journey.stage.level}: ${journey.stage.name} — nothing saved yet`}
-        body={
-          journey.stage.nextHint ??
-          "Tap the bookmark icon on any article, broker or advisor page to save it here for later."
-        }
+        title="Your reading list is empty"
+        body="Tap the bookmark icon on any article, broker or advisor page to save it here for later."
         ctas={[
           { label: "Browse brokers", href: "/compare" },
           { label: "Explore guides", href: "/learn", variant: "secondary" },

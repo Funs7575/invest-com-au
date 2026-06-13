@@ -4,6 +4,7 @@ import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import HubPage from "@/components/HubPage";
+import GrantAlertsSignup from "@/components/grants/GrantAlertsSignup";
 import RdTaxCalculator from "@/components/RdTaxCalculator";
 import { grantsHubConfig } from "@/lib/hub-configs/grants";
 
@@ -228,6 +229,27 @@ export default async function StartupGrantsHubPage() {
             registered advisor.
           </p>
           <RdTaxCalculator />
+        </div>
+      </section>
+
+      {/* Grant alerts + specialist matching (CR-04a/b) */}
+      <section className="py-12 bg-white">
+        <div className="container-custom max-w-4xl grid md:grid-cols-2 gap-4 items-start">
+          <GrantAlertsSignup sourcePage="/startup/grants" />
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 md:p-6">
+            <h3 className="font-extrabold text-slate-900 mb-1">Work with a grants specialist</h3>
+            <p className="text-sm text-slate-600 mb-4">
+              Grants &amp; R&amp;D incentive specialists prepare R&amp;D Tax Incentive claims, EMDG
+              applications and state-program submissions — and their fees are usually a fraction
+              of a successful claim.
+            </p>
+            <Link
+              href="/advisors/grant-writers"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-extrabold px-4 py-2.5"
+            >
+              Browse grants specialists <Icon name="arrow-right" size={14} />
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -42,6 +42,25 @@ export const GRANTS_WARNING =
   "determined by AusIndustry, Austrade or the relevant state agency. " +
   "Engage a registered R&D tax advisor or grants consultant before lodging.";
 
+/**
+ * Capital-raising / business-funding surfaces (/raise hub, Pathway Finder).
+ * Posture per docs/strategy/CAPITAL_RAISING_OPPORTUNITIES.md §2.3: we educate
+ * businesses about funding pathway CATEGORIES and refer onward — we never
+ * host, arrange or facilitate offers, and CSF offers exist only on licensed
+ * intermediary platforms (Corporations Act s738ZG context).
+ */
+export const CAPITAL_RAISING_NOTE =
+  "Invest.com.au provides general information about business funding pathways only. " +
+  "We do not host, arrange or facilitate investment offers, provide financial product, " +
+  "credit, legal or tax advice, or handle investor money. Crowd-sourced funding offers " +
+  "are made only through ASIC-licensed CSF intermediaries — always read the offer " +
+  "document and general risk warning on the intermediary's platform. Consider advice from " +
+  "a licensed adviser, accountant or lawyer before raising capital.";
+
+/** One-liner for inline placement near pathway results and CTAs. */
+export const CAPITAL_RAISING_NOTE_SHORT =
+  "General information about funding pathway types only — not financial, credit or legal advice, and not an offer or invitation to invest.";
+
 /** Short risk warning — placed near every outbound CTA button */
 export const RISK_WARNING_CTA =
   "General information only \u2014 not financial advice or a personal recommendation.";

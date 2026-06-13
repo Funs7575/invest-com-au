@@ -31,11 +31,10 @@ const SAMPLE_ITEMS = [
 
 describe("BookmarksList", () => {
   describe("empty state", () => {
-    it("shows the journey-aware EmptyState heading when there are no bookmarks", () => {
+    it("shows the EmptyState heading when there are no bookmarks", () => {
       render(<BookmarksList initialItems={[]} />);
-      // Fresh visitor (no journey milestones in this jsdom) → Stage 1: Curious.
       expect(
-        screen.getByText(/Stage 1: Curious — nothing saved yet/),
+        screen.getByText("Your reading list is empty"),
       ).toBeInTheDocument();
     });
 

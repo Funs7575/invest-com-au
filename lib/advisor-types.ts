@@ -61,6 +61,8 @@ export const ADVISOR_TYPES = [
   "wine_advisor",
   "art_advisor",
   "royalty_broker",
+  // New in 20260612 — CR-04a grants marketplace (CAPITAL_RAISING_OPPORTUNITIES.md)
+  "grant_writer",
 ] as const;
 
 export type AdvisorType = (typeof ADVISOR_TYPES)[number];

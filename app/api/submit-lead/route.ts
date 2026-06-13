@@ -32,6 +32,9 @@ const INTENT_TYPE_MAP: Record<string, string[]> = {
   agedcare: ["aged_care_advisor"],
   property: ["property_advisor", "buyers_agent"],
   crypto: ["crypto_advisor", "financial_planner"],
+  // CR-04a grants marketplace: grant specialists first, tax agents as the
+  // real-supply fallback (they do R&DTI work today).
+  grants: ["grant_writer", "tax_agent"],
 };
 
 /* ─── Context-aware type refinement ─── */
@@ -52,6 +55,7 @@ function resolveAdvisorTypes(need: string, context?: string[]): string[] {
     if (c === "aged_care") types.add("aged_care_advisor");
     if (c === "smsf_setup" || c === "smsf_manage") types.add("smsf_accountant");
     if (c === "tax_optimization") types.add("tax_agent");
+    if (c === "grant_funding") { types.add("grant_writer"); types.add("tax_agent"); }
     if (c === "crypto_tax") { types.add("crypto_advisor"); types.add("tax_agent"); }
     if (c === "retirement") types.add("financial_planner");
     // Commercial property buyers need finance + acquisition help, same as

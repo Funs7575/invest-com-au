@@ -130,7 +130,7 @@ export default function PropertyDepreciationPage() {
               <div className="rounded-xl border border-blue-200 bg-blue-50 p-5">
                 <span className="inline-block text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded mb-2">Division 43</span>
                 <h3 className="font-extrabold text-blue-900 mb-2">Building Allowance (Capital Works)</h3>
-                <p className="text-sm text-blue-800 leading-relaxed">The building structure — walls, floors, roof, windows, doors, fixed plumbing. Claimed at 2.5% per year on the original construction cost. Available for buildings built on or after 20 September 1987.</p> {/* dated-ok */}
+                <p className="text-sm text-blue-800 leading-relaxed">The building structure — walls, floors, roof, windows, doors, fixed plumbing. Claimed at 2.5% per year on the original construction cost. Available for buildings built on or after 20 September 1987.</p>  {/* // dated-ok */}
               </div>
               <div className="rounded-xl border border-violet-200 bg-violet-50 p-5">
                 <span className="inline-block text-xs font-bold bg-violet-600 text-white px-2 py-0.5 rounded mb-2">Division 40</span>
@@ -174,7 +174,7 @@ export default function PropertyDepreciationPage() {
               <div className="rounded-xl border border-slate-200 bg-white p-5">
                 <h3 className="font-extrabold text-slate-900 mb-2">Eligibility: the 1987 date rule</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  The building must have been constructed on or after <strong className="text-slate-800">20 September 1987</strong> to be eligible for Division 43 deductions. Properties built before this date have no entitlement to the building allowance — no matter when you purchased the property. If you are unsure of the construction date, a quantity surveyor can determine it from council records and other sources.  // dated-ok
+                  The building must have been constructed on or after <strong className="text-slate-800">20 September 1987</strong> to be eligible for Division 43 deductions. Properties built before this date have no entitlement to the building allowance — no matter when you purchased the property. If you are unsure of the construction date, a quantity surveyor can determine it from council records and other sources.  {/* // dated-ok */}
                 </p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-white p-5">
@@ -240,7 +240,7 @@ export default function PropertyDepreciationPage() {
                 <div>
                   <h3 className="font-extrabold text-red-900 mb-2">2017 Budget Rule Change — Second-Hand Properties</h3>
                   <p className="text-sm text-red-800 leading-relaxed mb-3">
-                    From <strong>7:30pm on 9 May 2017</strong> (Federal Budget night), investors who purchase existing residential properties can no longer claim Division 40 depreciation on plant and equipment that was already installed in the property at the time of purchase.  // dated-ok
+                    From <strong>7:30pm on 9 May 2017</strong> (Federal Budget night), investors who purchase existing residential properties can no longer claim Division 40 depreciation on plant and equipment that was already installed in the property at the time of purchase.  {/* // dated-ok */}
                   </p>
                   <ul className="space-y-1.5 text-sm text-red-800">
                     <li className="flex gap-2"><span className="shrink-0 font-bold text-red-600">&#x2717;</span>You buy an existing house with carpet, hot water system, and dishwasher already installed — <strong>no Div 40 on those items</strong></li>
