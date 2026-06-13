@@ -130,7 +130,7 @@ export default function PropertyDepreciationPage() {
               <div className="rounded-xl border border-blue-200 bg-blue-50 p-5">
                 <span className="inline-block text-xs font-bold bg-blue-600 text-white px-2 py-0.5 rounded mb-2">Division 43</span>
                 <h3 className="font-extrabold text-blue-900 mb-2">Building Allowance (Capital Works)</h3>
-                <p className="text-sm text-blue-800 leading-relaxed">The building structure — walls, floors, roof, windows, doors, fixed plumbing. Claimed at 2.5% per year on the original construction cost. Available for buildings built on or after 20 September 1987.</p>{/* // dated-ok */}
+                <p className="text-sm text-blue-800 leading-relaxed">The building structure — walls, floors, roof, windows, doors, fixed plumbing. Claimed at 2.5% per year on the original construction cost. Available for buildings built on or after 20 September 1987.</p>  {/* // dated-ok */}
               </div>
               <div className="rounded-xl border border-violet-200 bg-violet-50 p-5">
                 <span className="inline-block text-xs font-bold bg-violet-600 text-white px-2 py-0.5 rounded mb-2">Division 40</span>

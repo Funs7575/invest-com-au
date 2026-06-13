@@ -925,7 +925,7 @@ async function buildShard4(): Promise<MetadataRoute.Sitemap> {
     .slice(0, 2000);
 
   // Advisor type + state pages
-  const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners", "insurance-brokers", "buyers-agents", "real-estate-agents", "wealth-managers", "aged-care-advisors", "crypto-advisors", "debt-counsellors"];
+  const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners", "insurance-brokers", "buyers-agents", "real-estate-agents", "wealth-managers", "aged-care-advisors", "crypto-advisors", "debt-counsellors", "grant-writers"];
   const states = ["nsw", "vic", "qld", "wa", "sa", "tas", "act", "nt"];
 
   const advisorTypePages = advisorTypes.map((type) => ({

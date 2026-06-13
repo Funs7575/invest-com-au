@@ -14,6 +14,15 @@ import {
   formatListingPrice,
 } from "@/lib/listing-kind";
 import { useListingShortlist } from "@/lib/hooks/useListingShortlist";
+import { categoryForListing } from "@/lib/listing-url";
+import {
+  metricsForCategory,
+  formatMetricByDef,
+  pricePerUnit,
+  type VerticalMetricDef,
+} from "@/lib/listings/vertical-metrics";
+import { buildLotProfile } from "@/lib/listings/lot-profile";
+import { assessLotTransparency, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
 import Icon from "@/components/Icon";
 
 /**
@@ -103,17 +112,35 @@ function CompareTable({ listings, onRemove }: { listings: InvestmentListing[]; o
   // listings — we'll show a row per key, filling in "—" for the
   // listings that don't have that metric. Limits to 14 most-common
   // keys to keep the table tidy.
+  // First-class spec rows from the per-vertical registry (#7): union of
+  // the compared listings' categories, in registry order, properly
+  // labelled + formatted. The generic frequency rows below become the
+  // long-tail fallback only.
+  const registryDefs = useMemo(() => {
+    const seen = new Map<string, VerticalMetricDef>();
+    for (const l of listings) {
+      for (const def of metricsForCategory(categoryForListing(l))) {
+        if (!seen.has(def.key)) seen.set(def.key, def);
+      }
+    }
+    return Array.from(seen.values());
+  }, [listings]);
+
   const allMetricKeys = useMemo(() => {
+    const registryKeys = new Set(registryDefs.map((d) => d.key));
     const counts = new Map<string, number>();
     for (const l of listings) {
       const km = (l.key_metrics ?? {}) as Record<string, unknown>;
-      for (const k of Object.keys(km)) counts.set(k, (counts.get(k) ?? 0) + 1);
+      for (const k of Object.keys(km)) {
+        if (registryKeys.has(k)) continue;
+        counts.set(k, (counts.get(k) ?? 0) + 1);
+      }
     }
     return Array.from(counts.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 14)
       .map(([k]) => k);
-  }, [listings]);
+  }, [listings, registryDefs]);
 
   const rows: Array<{ label: string; render: (l: InvestmentListing) => React.ReactNode }> = [
     {
@@ -138,6 +165,17 @@ function CompareTable({ listings, onRemove }: { listings: InvestmentListing[]; o
             <div className="text-sm font-extrabold text-slate-900">{p.value}</div>
           </div>
         ) : <span className="text-slate-300">—</span>;
+      },
+    },
+    {
+      label: "$ per unit",
+      render: (l) => {
+        const pu = pricePerUnit(l);
+        return pu ? (
+          <span className="font-bold text-emerald-800">{pu.value}</span>
+        ) : (
+          <span className="text-slate-300">—</span>
+        );
       },
     },
     {
@@ -188,6 +226,23 @@ function CompareTable({ listings, onRemove }: { listings: InvestmentListing[]; o
       },
     },
     {
+      label: "Transparency",
+      render: (l) => {
+        const t = assessLotTransparency(
+          l,
+          buildLotProfile((l.key_metrics ?? {}) as Record<string, unknown>),
+        );
+        return t.level === "essential" ? (
+          <span className="text-xs text-slate-500">{transparencyLevelLabel(t.level)}</span>
+        ) : (
+          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[0.6rem] font-bold px-2 py-0.5 rounded-full">
+            <Icon name="shield-check" size={9} />
+            {transparencyLevelLabel(t.level)}
+          </span>
+        );
+      },
+    },
+    {
       label: "Listed",
       render: (l) => (
         <span className="text-xs text-slate-500">
@@ -197,7 +252,22 @@ function CompareTable({ listings, onRemove }: { listings: InvestmentListing[]; o
     },
   ];
 
-  // Append the metric rows.
+  // First-class per-vertical spec rows (registry order, real formatting).
+  for (const def of registryDefs) {
+    rows.push({
+      label: def.unit ? `${def.label} (${def.unit})` : def.label,
+      render: (l) => {
+        const formatted = formatMetricByDef(def, (l.key_metrics ?? {})[def.key]);
+        return formatted ? (
+          <span className="font-semibold text-slate-900">{formatted}</span>
+        ) : (
+          <span className="text-slate-300">—</span>
+        );
+      },
+    });
+  }
+
+  // Long-tail metric rows (keys outside the registry).
   for (const k of allMetricKeys) {
     rows.push({
       label: k.replace(/_/g, " "),

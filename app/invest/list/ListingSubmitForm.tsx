@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { assessLotTransparencyLite, transparencyLevelLabel } from "@/lib/listings/lot-transparency";
+import { metricsForCategory } from "@/lib/listings/vertical-metrics";
+import { categoryForListing } from "@/lib/listing-url";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { AdvisorOptInCheckboxes } from "@/components/AdvisorOptInCheckboxes";
@@ -71,6 +74,8 @@ const PLANS = [
 
 type Step = "plan" | "details" | "contact" | "review" | "success";
 
+const DRAFT_KEY = "inv_listing_draft_v1";
+
 interface FormData {
   plan: string;
   vertical: string;
@@ -105,9 +110,86 @@ const INITIAL_FORM: FormData = {
   agree_terms: false,
 };
 
+/**
+ * Live quality meter (idea #16) — the transparency assessment running as
+ * the seller types, with the same tier vocabulary buyers see as badges in
+ * browse. Renders the unmet checks as the to-do list, plus the chosen
+ * category's quality-signal metrics as guidance for what serious buyers
+ * filter on.
+ */
+function LiveQualityMeter({ form }: { form: FormData }) {
+  if (!form.vertical) return null;
+  const assessment = assessLotTransparencyLite({
+    asking_price_cents: null,
+    price_display: form.asking_price_display || null,
+    description: form.description || null,
+    images: [],
+    location_state: form.location_state || null,
+    location_city: form.location_city || null,
+    key_metrics: {},
+  });
+  const category = categoryForListing({ vertical: form.vertical });
+  const signals = metricsForCategory(category).filter((m) => m.qualitySignal);
+  const pct = Math.round((assessment.metCount / assessment.total) * 100);
+
+  return (
+    <aside
+      aria-label="Listing quality"
+      className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-bold uppercase tracking-wider text-slate-600">
+          Listing quality
+        </p>
+        <span
+          className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+            assessment.level === "essential"
+              ? "bg-slate-200 text-slate-700"
+              : "bg-emerald-100 text-emerald-800"
+          }`}
+        >
+          {transparencyLevelLabel(assessment.level)}
+        </span>
+      </div>
+      <div className="h-1.5 w-full rounded-full bg-slate-200" role="presentation">
+        <div
+          className="h-1.5 rounded-full bg-emerald-500 transition-all"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <ul className="space-y-1">
+        {assessment.checks.map((check) => (
+          <li key={check.id} className="flex items-center gap-2 text-xs">
+            <span className={check.met ? "text-emerald-600" : "text-slate-400"}>
+              {check.met ? "✓" : "○"}
+            </span>
+            <span className={check.met ? "text-slate-700" : "text-slate-500"}>
+              {check.label}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="text-[11px] text-slate-500 leading-snug">
+        Buyers see this tier as a badge in browse — well-documented listings
+        stand out. Photos and documents can be added after publishing from
+        My Listings.
+      </p>
+      {signals.length > 0 && (
+        <p className="text-[11px] text-slate-500 leading-snug">
+          <span className="font-semibold text-slate-600">
+            What buyers filter on in this category:
+          </span>{" "}
+          {signals.map((m) => m.label).join(" · ")}.
+        </p>
+      )}
+    </aside>
+  );
+}
+
 export default function ListingSubmitForm() {
   const [step, setStep] = useState<Step>("plan");
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
+  const [resumeOffered, setResumeOffered] = useState<null | { savedAt: string }>(null);
   const [advisorOptIns, setAdvisorOptIns] = useState<ProfessionalType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -115,6 +197,50 @@ export default function ListingSubmitForm() {
   // wizard on the client so we never lose a part-filled form to a 401 — the
   // submit route enforces the same requirement server-side as defence-in-depth.
   const [authed, setAuthed] = useState<boolean | null>(null);
+
+  // Draft autosave + resume (idea #18): the in-progress listing survives a
+  // refresh or an abandoned tab. Contact details are deliberately NOT
+  // persisted (no PII in localStorage — the quiz's rule); 7-day TTL;
+  // corrupt/expired saves are discarded silently. Server-side drafts land
+  // with the listing wizard.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as {
+        savedAt: string;
+        step: Step;
+        form: Partial<FormData>;
+      };
+      const age = Date.now() - new Date(saved.savedAt).getTime();
+      if (!saved.form?.vertical || age > 7 * 86400 * 1000) {
+        localStorage.removeItem(DRAFT_KEY);
+        return;
+      }
+      setResumeOffered({ savedAt: saved.savedAt });
+    } catch {
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch {
+        /* ignore */
+      }
+    }
+     
+  }, []);
+
+  useEffect(() => {
+    if (step === "success" || resumeOffered) return;
+    if (!form.vertical && !form.title && !form.description) return;
+    try {
+      const { contact_email: _e, contact_phone: _p, contact_name: _n, ...safe } = form;
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ savedAt: new Date().toISOString(), step, form: safe }),
+      );
+    } catch {
+      /* storage unavailable — drafts just don't persist */
+    }
+  }, [form, step, resumeOffered]);
 
   useEffect(() => {
     let active = true;
@@ -206,6 +332,11 @@ export default function ListingSubmitForm() {
       }
 
       setStep("success");
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch {
+        /* ignore */
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Submission failed. Please try again.");
     } finally {
@@ -275,6 +406,61 @@ export default function ListingSubmitForm() {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Progress steps */}
+      {resumeOffered && (
+        <div
+          role="status"
+          className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3"
+        >
+          <p className="text-sm text-slate-800">
+            <span className="font-semibold">Pick up where you left off?</span>{" "}
+            You have an unfinished listing from{" "}
+            {new Date(resumeOffered.savedAt).toLocaleDateString("en-AU", {
+              day: "numeric",
+              month: "short",
+            })}
+            .
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  const raw = localStorage.getItem(DRAFT_KEY);
+                  if (raw) {
+                    const saved = JSON.parse(raw) as {
+                      step: Step;
+                      form: Partial<FormData>;
+                    };
+                    setForm((prev) => ({ ...prev, ...saved.form }));
+                    setStep(saved.step === "success" ? "plan" : saved.step);
+                  }
+                } catch {
+                  /* corrupt — fall through to fresh */
+                }
+                setResumeOffered(null);
+              }}
+              className="rounded-lg bg-amber-500 hover:bg-amber-400 px-3 py-1.5 text-xs font-bold text-slate-900"
+            >
+              Continue draft
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  localStorage.removeItem(DRAFT_KEY);
+                } catch {
+                  /* ignore */
+                }
+                setResumeOffered(null);
+              }}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              Start fresh
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-2 mb-8">
         {(["plan", "details", "contact", "review"] as Step[]).map((s, i) => {
           const labels: Record<string, string> = {
@@ -397,6 +583,7 @@ export default function ListingSubmitForm() {
       {/* Step 2: Listing Details */}
       {step === "details" && (
         <div className="space-y-6">
+          <LiveQualityMeter form={form} />
           <div>
             <h2 className="text-lg font-bold text-slate-900 mb-1">Listing Details</h2>
             <p className="text-sm text-slate-500">Provide information about your {selectedVertical?.label ?? "opportunity"}.</p>

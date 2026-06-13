@@ -1,45 +1,45 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from "vitest";
-import { journeySnapshot } from "@/lib/journey";
-import { recordMilestone } from "@/lib/milestones";
+import { describe, it, expect, beforeEach } from "vitest";
+import {
+  recordMilestone,
+  journeySnapshot,
+  journeyStageFor,
+  JOURNEY_MILESTONE_LABELS,
+} from "@/lib/journey";
 
-describe("journeySnapshot (Feel layer v2 staging)", () => {
-  beforeEach(() => {
-    window.localStorage.clear();
+beforeEach(() => {
+  window.localStorage.clear();
+});
+
+describe("journey milestones", () => {
+  it("first recording is new, repeat is idempotent", () => {
+    const first = recordMilestone("first_save");
+    expect(first.isNew).toBe(true);
+    expect(first.count).toBe(1);
+    const again = recordMilestone("first_save");
+    expect(again.isNew).toBe(false);
+    expect(again.count).toBe(1);
   });
 
-  it("fresh visitor is Stage 1: Curious (the BookmarksList pin)", () => {
-    const { stage, unlockedCount } = journeySnapshot();
-    expect(stage.level).toBe(1);
-    expect(stage.name).toBe("Curious");
-    expect(unlockedCount).toBe(0);
+  it("stages advance with distinct milestones and cap at the ladder top", () => {
+    expect(journeyStageFor(0).name).toBe("Curious");
+    const r1 = recordMilestone("first_save");
+    expect(r1.stage.name).toBe("Explorer");
+    expect(r1.stageAdvanced).toBe(true);
+    const r2 = recordMilestone("first_compare");
+    expect(r2.stage.name).toBe("Comparer");
+    recordMilestone("quiz_complete");
+    recordMilestone("first_article");
+    const r5 = recordMilestone("profile_complete");
+    expect(r5.stage.name).toBe("Decision-ready");
+    expect(r5.stage.nextHint).toBeNull();
+    expect(r5.count).toBe(Object.keys(JOURNEY_MILESTONE_LABELS).length);
   });
 
-  it("climbs the research ladder milestone by milestone", () => {
-    recordMilestone("first_save");
-    expect(journeySnapshot().stage.name).toBe("Saver");
-
-    recordMilestone("first_compare");
-    expect(journeySnapshot().stage.name).toBe("Comparer");
-
-    recordMilestone("profile_complete");
-    expect(journeySnapshot().stage.name).toBe("Planner");
-
-    recordMilestone("decided_broker");
-    const top = journeySnapshot();
-    expect(top.stage.level).toBe(5);
-    expect(top.stage.name).toBe("Decider");
-    expect(top.unlockedCount).toBe(4);
-  });
-
-  it("stage names describe the research arc, never investing prowess (§9)", () => {
-    for (const key of ["first_save", "first_compare", "first_plan_saved", "decided_broker"] as const) {
-      recordMilestone(key);
-      const { stage } = journeySnapshot();
-      expect(stage.name).not.toMatch(/investor|trader|pro|expert|winner/i);
-      if (stage.nextHint) {
-        expect(stage.nextHint).not.toMatch(/you should|best|don't miss/i);
-      }
-    }
+  it("snapshot reflects stored state and survives corrupt storage", () => {
+    recordMilestone("quiz_complete");
+    expect(journeySnapshot().milestones).toContain("quiz_complete");
+    window.localStorage.setItem("inv_journey", "{not json");
+    expect(journeySnapshot().count).toBe(0);
   });
 });

@@ -251,7 +251,7 @@ export default function FringeBenefitsPage() {
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Minor benefits under $300 per occasion (infrequent and irregular — e.g., a Christmas gift)</span></li>
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Laptop or portable device provided primarily for work (one per function per year)</span></li>
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Briefcases, tools of trade</span></li>
-                  <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Eligible electric vehicles under $89,332 LMCT (from 1 July 2022)</span></li>{/* // dated-ok */}
+                  <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Eligible electric vehicles under $89,332 LMCT (from 1 July 2022)</span></li>  {/* // dated-ok */}
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Work-related protective clothing and uniforms</span></li>
                   <li className="flex gap-2"><span className="text-emerald-600 font-bold shrink-0">&#10003;</span><span>Emergency assistance (first aid, emergency accommodation)</span></li>
                 </ul>
@@ -327,7 +327,7 @@ export default function FringeBenefitsPage() {
               <div className="flex items-start gap-3">
                 <span className="text-xl shrink-0">&#9889;</span>
                 <div>
-                  <h3 className="font-extrabold text-blue-900 mb-1">Electric vehicle FBT exemption (from 1 July 2022)</h3>{/* // dated-ok */}
+                  <h3 className="font-extrabold text-blue-900 mb-1">Electric vehicle FBT exemption (from 1 July 2022)</h3>  {/* // dated-ok */}
                   <p className="text-sm text-blue-900 leading-relaxed">
                     Battery electric vehicles (BEVs) and hydrogen fuel cell vehicles with a first retail sale price at or below the luxury car tax threshold for fuel-efficient vehicles (<strong>$89,332 for 2024-25</strong>) are fully exempt from FBT when provided to employees. This makes EVs one of the most tax-effective salary packaging options available. Note: plug-in hybrid electric vehicles (PHEVs) were eligible until 31 March 2025, but are no longer exempt from 1 April 2025. The exempt benefit is still reportable — it counts toward the $2,000 RFBA threshold.  {/* // dated-ok */}
                   </p>

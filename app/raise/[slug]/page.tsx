@@ -7,6 +7,7 @@ import { faqJsonLd } from "@/lib/schema-markup";
 import { guideBySlug, GUIDE_SLUGS, CSF_PLATFORMS } from "@/lib/raise/guides";
 import { PATHWAYS } from "@/lib/raise/pathways";
 import { CAPITAL_RAISING_NOTE, GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import GrantAlertsSignup from "@/components/grants/GrantAlertsSignup";
 
 export const revalidate = 86400;
 export const dynamicParams = false;
@@ -143,6 +144,8 @@ export default async function RaiseGuidePage({ params }: { params: Promise<Param
                 </p>
               </div>
             )}
+
+            {guide.pathwayId === "grants" && <GrantAlertsSignup sourcePage={`/raise/${guide.slug}`} />}
 
             {/* FAQs */}
             <div>
