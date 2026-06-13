@@ -8,13 +8,11 @@ import BrokerLogo from "@/components/BrokerLogo";
 
 export default function StickyCTABar({ broker, detail, context = 'review' }: { broker: Broker; detail: string; context?: 'review' | 'versus' | 'calculator' }) {
   const [visible, setVisible] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, setDismissed] = useState(
+    () => typeof window !== "undefined" && sessionStorage.getItem("stickyCTADismissed") === "true"
+  );
 
   useEffect(() => {
-    // Check if already dismissed this session
-    if (sessionStorage.getItem("stickyCTADismissed") === "true") {
-      setDismissed(true);
-    }
     const handleScroll = () => {
       setVisible(window.scrollY > 500);
     };
