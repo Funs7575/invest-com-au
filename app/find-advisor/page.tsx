@@ -330,7 +330,7 @@ export default function FindAdvisorPage() {
 }
 
 function FindAdvisorQuiz() {
-    const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const needParam = searchParams.get("need");
   const handoffToken = searchParams.get("handoff");
   const prefilledIntent = needParam ? NEED_TO_INTENT[needParam] || null : null;
@@ -1170,7 +1170,7 @@ function Step1({ onSelect }: { onSelect: (intent: Intent) => void }) {
             <h3 className="text-base font-bold text-slate-900 mb-1">{opt.title}</h3>
             <p className="text-xs text-slate-600 leading-relaxed">{opt.desc}</p>
             <div className="absolute right-3.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-0.5">
-              <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </div>

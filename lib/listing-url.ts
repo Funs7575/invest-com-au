@@ -156,3 +156,51 @@ export function categoryForListing(listing: ListingUrlInput): string {
 export function listingUrl(listing: ListingUrlInput & { slug: string }): string {
   return `/invest/${categoryForListing(listing)}/listings/${listing.slug}`;
 }
+
+/**
+ * Server-side query narrowing for a category slug — the DB-column
+ * predicates that bound a category's candidate rows so capped queries
+ * (`.limit(N)`) can't starve the category out of its own results.
+ *
+ * The scope is a deliberate slight over-fetch, never an under-fetch:
+ * rows inside the scope may still belong to a sibling category (e.g. a
+ * `listed_security` row inside a sector vertical), so callers that need
+ * exactness post-filter with {@link categoryForListing}. Three shapes:
+ *
+ *  - direct categories (inverse of VERTICAL_TO_CATEGORY) → vertical
+ *    variants;
+ *  - fund-derived categories (alternatives, private-credit,
+ *    infrastructure) → the fund vertical's variants + the sub_category
+ *    values that map to the category;
+ *  - listed-securities → `listing_kind` alone (it spans verticals).
+ *
+ * Returns null for unknown categories — callers keep their unscoped
+ * behaviour.
+ */
+export interface CategoryScope {
+  /** Non-empty → `.in("vertical", verticals)`. */
+  verticals: string[];
+  /** Present → `.in("sub_category", subCategories)`. */
+  subCategories?: string[];
+  /** Present → `.eq("listing_kind", listingKind)`. */
+  listingKind?: string;
+}
+
+export function categoryScope(category: string): CategoryScope | null {
+  if (category === "listed-securities") {
+    return { verticals: [], listingKind: "listed_security" };
+  }
+  const direct = Object.entries(VERTICAL_TO_CATEGORY)
+    .filter(([, cat]) => cat === category)
+    .map(([vertical]) => vertical);
+  if (direct.length > 0) {
+    return { verticals: direct.flatMap((v) => rawVerticalVariants(v)) };
+  }
+  const subs = Object.entries(FUND_SUB_TO_CATEGORY)
+    .filter(([, cat]) => cat === category)
+    .map(([sub]) => sub);
+  if (subs.length > 0) {
+    return { verticals: rawVerticalVariants("fund"), subCategories: subs };
+  }
+  return null;
+}
