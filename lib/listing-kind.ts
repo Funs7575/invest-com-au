@@ -358,33 +358,26 @@ export function freshnessSignal(l: Pick<InvestmentListing, "created_at" | "expir
   return null;
 }
 
-/** Returns a price-display string for a listing, picking the right
- *  prefix for its kind. Falls back to `price_display` when set on the
- *  row (sellers can override), else formats `asking_price_cents`.
- *  Accepts the structural `DerivableListing` shape so callers holding
- *  raw DB rows (string vertical, drifted values) don't need a cast. */
-export function formatListingPrice(l: DerivableListing & { price_display?: string | null }): {
-  label: string;   // "Asking" / "Min investment" / "Raising" / "Market cap"
-  value: string;   // "$2.5M" / "$100k" / "ASX: TLS"
-} | null {
-  const kind = deriveListingKind(l);
-  const meta = listingKindMeta(kind);
+/** Free-text `price_display` strings that overload the price slot with a
+ *  second stat (price + yield / per-unit / tax-perks). When a clean numeric
+ *  price is derivable we ignore these — the return metric belongs in its own
+ *  slot (see `listingHeadlineStat`), not crammed into the big price number. */
+const COMPOUND_PRICE_DISPLAY = /yield|\/\s*(?:credit|unit)|·|≈|=|tax|cgt|esvclp|esic|upfront|exempt|stacked/i;
 
-  // Listed securities: show the ticker + market cap when available.
-  if (kind === "listed_security") {
-    const km = (l.key_metrics ?? {}) as Record<string, unknown>;
-    const ticker = km["asx_ticker"];
-    if (ticker) return { label: "ASX", value: String(ticker).toUpperCase() };
-    return null;
-  }
+/** Drop a redundant leading "AUD" / "A$" — the whole marketplace is AUD, so
+ *  `formatAudCompact` omits it and free-text overrides shouldn't re-add it. */
+function stripAudPrefix(s: string): string {
+  return s.replace(/^\s*(?:aud|au\$|a\$)\s*/i, "").trim();
+}
 
-  // Sellers can override the auto-formatted price via price_display.
-  if (l.price_display) {
-    return { label: meta.priceLabel, value: l.price_display };
-  }
-
-  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
-
+/** The structured, kind-aware numeric price (asking / min-commitment),
+ *  formatted compactly. Null when the row carries no priceable number. */
+function numericListingPrice(
+  l: DerivableListing,
+  kind: ListingKind,
+  meta: ListingKindMeta,
+  km: Record<string, unknown>,
+): { label: string; value: string } | null {
   // Franchise / business rows often state only a minimum entry cost
   // (key_metrics.min_investment_cents — already in cents). The bespoke
   // franchise page rendered it as "Total Investment From"; without this
@@ -412,6 +405,42 @@ export function formatListingPrice(l: DerivableListing & { price_display?: strin
   return null;
 }
 
+/** Returns a price-display string for a listing, picking the right prefix for
+ *  its kind. A seller's `price_display` override is honoured for simple values
+ *  ("$1.495M", "POA"); a *compound* override (price + yield/units/tax-perks) is
+ *  dropped in favour of the structured number when one exists, so the big price
+ *  number stays a single clean figure. Accepts the structural `DerivableListing`
+ *  shape so callers holding raw DB rows don't need a cast. */
+export function formatListingPrice(l: DerivableListing & { price_display?: string | null }): {
+  label: string;   // "Asking" / "Min investment" / "Raising" / "Market cap"
+  value: string;   // "$2.5M" / "$100k" / "ASX: TLS"
+} | null {
+  const kind = deriveListingKind(l);
+  const meta = listingKindMeta(kind);
+
+  // Listed securities: show the ticker + market cap when available.
+  if (kind === "listed_security") {
+    const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+    const ticker = km["asx_ticker"];
+    if (ticker) return { label: "ASX", value: String(ticker).toUpperCase() };
+    return null;
+  }
+
+  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+  const numeric = numericListingPrice(l, kind, meta, km);
+
+  // Honour a seller override unless it's a compound string we can replace with
+  // a clean structured number.
+  if (l.price_display) {
+    const compound = COMPOUND_PRICE_DISPLAY.test(l.price_display);
+    if (!compound || !numeric) {
+      return { label: meta.priceLabel, value: stripAudPrefix(l.price_display) };
+    }
+  }
+
+  return numeric;
+}
+
 /** "$2.5M" / "$100k" / "$300" — compact AUD formatter. Input is cents. */
 export function formatAudCompact(cents: number): string {
   const dollars = cents / 100;
@@ -420,7 +449,10 @@ export function formatAudCompact(cents: number): string {
     return `$${m >= 10 ? m.toFixed(0) : m.toFixed(1).replace(/\.0$/, "")}M`;
   }
   if (dollars >= 1_000) {
-    return `$${Math.round(dollars / 1_000)}k`;
+    const k = dollars / 1_000;
+    // Sub-$10k keeps one decimal so e.g. $3,500 reads "$3.5k", not "$4k";
+    // larger amounts round to whole thousands.
+    return `$${k < 10 ? k.toFixed(1).replace(/\.0$/, "") : Math.round(k)}k`;
   }
   return `$${Math.round(dollars).toLocaleString("en-AU")}`;
 }

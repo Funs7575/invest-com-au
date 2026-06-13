@@ -12,6 +12,10 @@ interface Props {
   ref: string;
   label?: string;
   className?: string;
+  /** Render just the bookmark glyph (no "Save"/"Saved" text) — for dense
+   *  card overlays where it sits beside other icon-only actions. The
+   *  aria-label still announces the action. */
+  iconOnly?: boolean;
 }
 
 /** fetch resolves on 4xx/5xx and the API can answer { ok: false } — treat
@@ -34,7 +38,7 @@ async function responseOk(res: Response): Promise<boolean> {
  * claim trigger is handled by ClaimAnonymousOnAuth — this
  * button just fires the "save" event.
  */
-export default function BookmarkButton({ type, ref, label, className }: Props) {
+export default function BookmarkButton({ type, ref, label, className, iconOnly }: Props) {
   const { user, loading: userLoading } = useUser();
   const { toast } = useToast();
   const [saved, setSaved] = useState(false);
@@ -181,7 +185,7 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
           d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
         />
       </svg>
-      {saved ? "Saved" : "Save"}
+      {!iconOnly && (saved ? "Saved" : "Save")}
     </button>
   );
 }

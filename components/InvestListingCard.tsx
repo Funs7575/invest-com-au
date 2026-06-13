@@ -9,7 +9,7 @@ import {
   formatListingPrice,
   freshnessSignal,
 } from "@/lib/listing-kind";
-import { humanizeTitle, listingDisplayMetrics } from "@/lib/listing-format";
+import { humanizeTitle, listingDisplayMetrics, listingHeadlineStat } from "@/lib/listing-format";
 import Icon from "@/components/Icon";
 import EnquireButton from "@/components/marketplace/EnquireButton";
 import ListingShortlistButton from "@/components/invest/ListingShortlistButton";
@@ -118,6 +118,7 @@ export default function InvestListingCard({
   const meta = listingKindMeta(kind);
   const fresh = freshnessSignal(listing);
   const price = formatListingPrice(listing);
+  const headline = listingHeadlineStat(listing);
   const location = formatLocation(listing.location_state, listing.location_city);
   const stripColor = KIND_STRIP[kind];
 
@@ -146,14 +147,23 @@ export default function InvestListingCard({
     </span>
   );
 
-  // Inline metric line ("3 bedrooms · 2025 build year · SIL provider").
+  // Inline metric line ("3 bedrooms · 2025 build year · ✓ SMSF eligible").
   const metricLine = displayMetrics.length > 0 && (
     <p className="text-xs leading-relaxed text-slate-600">
       {displayMetrics.map((m, i) => (
         <span key={m.key}>
           {i > 0 && <span className="text-slate-300"> · </span>}
-          <span className="font-bold text-ink-800">{m.value}</span>{" "}
-          <span className="text-slate-500">{m.label}</span>
+          {m.bool ? (
+            <span className="font-semibold text-ink-700">
+              <Icon name="check" size={11} className="mr-0.5 inline align-[-1px] text-emerald-600" />
+              {m.label}
+            </span>
+          ) : (
+            <>
+              <span className="font-bold text-ink-800">{m.value}</span>{" "}
+              <span className="text-slate-500">{m.label}</span>
+            </>
+          )}
         </span>
       ))}
     </p>
@@ -256,7 +266,16 @@ export default function InvestListingCard({
           {price ? (
             <div>
               <div className="iv2-mini">{price.label}</div>
-              <div className="iv2-bignum text-xl text-ink-900">{price.value}</div>
+              <div className="iv2-bignum whitespace-nowrap text-xl text-ink-900">{price.value}</div>
+              {headline && (
+                <div
+                  className={`mt-0.5 text-xs font-semibold ${
+                    headline.tone === "positive" ? "text-emerald-600" : "text-slate-500"
+                  }`}
+                >
+                  {headline.label} <span className="tabular-nums">{headline.value}</span>
+                </div>
+              )}
             </div>
           ) : (
             <span />
@@ -359,13 +378,25 @@ export default function InvestListingCard({
           </p>
         )}
 
-        {/* Price — the hero number */}
+        {/* Price + headline return stat — two distinct slots, never concatenated */}
         {price && (
-          <div className="flex items-end justify-between gap-2">
-            <div>
+          <div className="flex items-end justify-between gap-3">
+            <div className="min-w-0">
               <div className="iv2-mini">{price.label}</div>
-              <div className="iv2-bignum text-2xl text-ink-900">{price.value}</div>
+              <div className="iv2-bignum whitespace-nowrap text-2xl text-ink-900">{price.value}</div>
             </div>
+            {headline && (
+              <div className="shrink-0 text-right">
+                <div className="iv2-mini">{headline.label}</div>
+                <div
+                  className={`iv2-bignum whitespace-nowrap text-xl ${
+                    headline.tone === "positive" ? "text-emerald-600" : "text-ink-700"
+                  }`}
+                >
+                  {headline.value}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

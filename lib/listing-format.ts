@@ -14,6 +14,9 @@
  * detail view) — don't hand-roll `.replace(/_/g, " ")` at call sites.
  */
 
+import { deriveListingKind, formatAudCompact, type DerivableListing } from "@/lib/listing-kind";
+import { metricNumber } from "@/lib/listings/vertical-metrics";
+
 /**
  * Domain abbreviations that must stay uppercased when they appear as a
  * standalone token. Lowercased here; matched case-insensitively. Kept
@@ -25,9 +28,9 @@ const ACRONYMS = new Set([
   // Australian states / territories
   "nsw", "vic", "qld", "wa", "sa", "nt", "act", "tas",
   // Disability accommodation / NDIS
-  "sda", "sil", "ndis", "ohc",
+  "sda", "sil", "ndis", "ohc", "ndia", "sroa",
   // Schemes / tax / investor structures
-  "bcs", "esvclp", "esic", "siv", "firb", "cgt", "smsf", "fhog", "reit", "spv",
+  "bcs", "esvclp", "esic", "siv", "firb", "cgt", "smsf", "fhog", "reit", "spv", "lrba",
   // Finance / deal terms
   "asx", "im", "pds", "irr", "mer", "aum", "ppa", "jorc", "ebitda", "roi",
   "npv", "etf", "ipo", "nav", "ltv", "icr", "wale", "p2p",
@@ -40,8 +43,12 @@ const ACRONYMS = new Set([
 /** Field keys we never surface as a metric chip on a card: shown elsewhere
  *  (price line), used only for kind derivation, or pure noise. */
 const METRIC_SKIP = new Set([
-  // Yield / return — already shown on the price line for yield-bearing kinds.
-  "net_yield_pct", "gross_yield_pct", "yield_pct", "distribution_yield", "yield",
+  // Yield / return — shown as the headline stat beside the price (see
+  // listingHeadlineStat), so never repeated as a chip.
+  "net_yield_pct", "gross_yield_pct", "yield_pct", "yield_percent", "distribution_yield", "yield",
+  "target_irr_pct", "target_irr", "irr",
+  // Per-unit price — shown as the headline stat for environmental units.
+  "spot_price_aud", "unit_price_aud",
   // Price / ticket — shown as the hero price.
   "min_investment_aud", "min_commit_aud", "min_investment", "asking_price",
   "asking_price_aud", "price", "price_aud",
@@ -126,8 +133,12 @@ export interface DisplayMetric {
   key: string;
   /** Lowercase-with-acronyms label, e.g. "build year", "SIL provider". */
   label: string;
-  /** Presentable value, e.g. "2025", "Biodiversity credit", "12.5%". */
+  /** Presentable value, e.g. "2025", "Biodiversity credit", "12.5%". Empty
+   *  string for a presence chip (see `bool`). */
   value: string;
+  /** True when this is a present-and-true boolean, rendered as a label-only
+   *  presence chip ("SMSF eligible") rather than a "Yes <label>" value pair. */
+  bool?: boolean;
 }
 
 /**
@@ -144,8 +155,94 @@ export function listingDisplayMetrics(
   for (const [key, value] of Object.entries(km)) {
     if (value == null || value === "") continue;
     if (METRIC_SKIP.has(key)) continue;
-    out.push({ key, label: humanizeMetricLabel(key), value: formatMetricValue(key, value) });
+    // Booleans read badly as "Yes <label>" / "No <label>". Surface a true
+    // boolean as a label-only presence chip; drop false ones entirely rather
+    // than render "No SMSF eligible".
+    const isBool = typeof value === "boolean" || value === "true" || value === "false";
+    if (isBool) {
+      if (value !== true && value !== "true") continue;
+      out.push({ key, label: humanizeMetricLabel(key), value: "", bool: true });
+    } else {
+      out.push({ key, label: humanizeMetricLabel(key), value: formatMetricValue(key, value), bool: false });
+    }
     if (out.length >= limit) break;
   }
   return out;
+}
+
+// ─── Headline return stat (the card's second number) ──────────────────────
+
+export interface HeadlineStat {
+  /** Small label above the figure, e.g. "Net yield", "Target IRR", "Per credit". */
+  label: string;
+  /** The figure itself, e.g. "11.2%", "22%", "$1k". */
+  value: string;
+  /** `positive` → green (a yield / return); `neutral` → ink (a unit price). */
+  tone: "positive" | "neutral";
+}
+
+function pickMetricNumber(km: Record<string, unknown>, keys: string[]): number | null {
+  for (const k of keys) {
+    if (km[k] != null && km[k] !== "") {
+      const n = metricNumber(km[k]);
+      if (n != null) return n;
+    }
+  }
+  return null;
+}
+
+/** "11.2%", but "22%" — keep one decimal only when it carries information. */
+function formatPct(n: number): string {
+  return `${Number.isInteger(n) ? n.toFixed(0) : n.toFixed(1)}%`;
+}
+
+function perUnitLabel(km: Record<string, unknown>): string {
+  return String(km["unit_type"] ?? "").toLowerCase().includes("credit") ? "Per credit" : "Per unit";
+}
+
+/**
+ * The card's secondary "return" stat — the number a retail investor actually
+ * compares listings on (yield / IRR / unit price), rendered in its OWN slot
+ * beside the ticket price rather than concatenated into it. Read structurally
+ * from `key_metrics`; never parsed out of free-text `price_display`. Null when
+ * the listing has no meaningful headline metric (the card shows price alone).
+ *
+ *   - Funds            → "Target IRR 22%" (kept labelled forward-looking)
+ *   - Per-unit assets  → "Per credit $1k" (explicit unit price, or price ÷ units)
+ *   - Yield-bearing    → "Net yield 11.2%" (property / project / royalty / listed)
+ */
+export function listingHeadlineStat(
+  l: DerivableListing & { sub_category?: string | null },
+): HeadlineStat | null {
+  const kind = deriveListingKind(l);
+  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+
+  // Funds: forward-looking target IRR, with distribution yield as a fallback.
+  if (kind === "fund") {
+    const irr = pickMetricNumber(km, ["target_irr_pct"]);
+    if (irr != null) return { label: "Target IRR", value: formatPct(irr), tone: "positive" };
+    const dist = pickMetricNumber(km, ["distribution_yield", "yield_percent", "net_yield_pct"]);
+    if (dist != null) return { label: "Distribution", value: formatPct(dist), tone: "positive" };
+    return null;
+  }
+
+  // Per-unit environmental assets (ACCUs, biodiversity credits): the buyer's
+  // unit economics — prefer an explicit spot/unit price, else derive it from
+  // the ticket price over the unit count.
+  const explicitUnit = pickMetricNumber(km, ["spot_price_aud", "unit_price_aud"]);
+  if (explicitUnit != null && explicitUnit > 0) {
+    return { label: perUnitLabel(km), value: formatAudCompact(Math.round(explicitUnit * 100)), tone: "neutral" };
+  }
+  const units = pickMetricNumber(km, ["credits", "units"]);
+  if (units != null && units > 0 && l.asking_price_cents != null && l.asking_price_cents > 0) {
+    return { label: perUnitLabel(km), value: formatAudCompact(Math.round(l.asking_price_cents / units)), tone: "neutral" };
+  }
+
+  // Yield-bearing tangibles / projects / royalties / listed securities.
+  const yld = pickMetricNumber(km, ["net_yield_pct", "gross_yield_pct", "yield_percent", "yield_pct", "distribution_yield", "yield"]);
+  if (yld != null) {
+    return { label: km["net_yield_pct"] != null ? "Net yield" : "Yield", value: formatPct(yld), tone: "positive" };
+  }
+
+  return null;
 }

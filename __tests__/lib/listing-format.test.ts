@@ -3,7 +3,9 @@ import {
   humanizeTitle,
   formatMetricValue,
   listingDisplayMetrics,
+  listingHeadlineStat,
 } from "@/lib/listing-format";
+import type { InvestmentListing } from "@/lib/types";
 
 describe("humanizeTitle", () => {
   it("title-cases snake_case and preserves domain acronyms", () => {
@@ -44,9 +46,19 @@ describe("listingDisplayMetrics", () => {
     expect(
       listingDisplayMetrics({ bedrooms: 3, build_year: 2025, sil_provider: "Confidential" }),
     ).toEqual([
-      { key: "bedrooms", label: "bedrooms", value: "3" },
-      { key: "build_year", label: "build year", value: "2025" },
-      { key: "sil_provider", label: "SIL provider", value: "Confidential" },
+      { key: "bedrooms", label: "bedrooms", value: "3", bool: false },
+      { key: "build_year", label: "build year", value: "2025", bool: false },
+      { key: "sil_provider", label: "SIL provider", value: "Confidential", bool: false },
+    ]);
+  });
+
+  it("renders a true boolean as a label-only presence chip and drops false ones", () => {
+    expect(
+      listingDisplayMetrics({ smsf_eligible: true, lrba_compatible: false, bedrooms: 3 }),
+    ).toEqual([
+      { key: "smsf_eligible", label: "SMSF eligible", value: "", bool: true },
+      // lrba_compatible: false is dropped entirely (no "No LRBA compatible").
+      { key: "bedrooms", label: "bedrooms", value: "3", bool: false },
     ]);
   });
 
@@ -64,5 +76,58 @@ describe("listingDisplayMetrics", () => {
   it("returns [] for nullish metrics", () => {
     expect(listingDisplayMetrics(null)).toEqual([]);
     expect(listingDisplayMetrics(undefined)).toEqual([]);
+  });
+});
+
+describe("listingHeadlineStat", () => {
+  type Row = Parameters<typeof listingHeadlineStat>[0];
+  function row(over: Partial<Row>): Row {
+    return {
+      vertical: "commercial_property" as InvestmentListing["vertical"],
+      listing_kind: null,
+      asking_price_cents: null,
+      key_metrics: {},
+      sub_category: null,
+      ...over,
+    } as Row;
+  }
+
+  it("returns a fund's forward-looking target IRR", () => {
+    expect(
+      listingHeadlineStat(row({ listing_kind: "fund", key_metrics: { target_irr_pct: 22 } })),
+    ).toEqual({ label: "Target IRR", value: "22%", tone: "positive" });
+  });
+
+  it("returns net yield for a yield-bearing asset, one decimal when meaningful", () => {
+    expect(
+      listingHeadlineStat(row({ listing_kind: "for_sale_asset", key_metrics: { net_yield_pct: 11.2 } })),
+    ).toEqual({ label: "Net yield", value: "11.2%", tone: "positive" });
+    expect(
+      listingHeadlineStat(row({ listing_kind: "for_sale_asset", key_metrics: { net_yield_pct: 11 } }))?.value,
+    ).toBe("11%");
+  });
+
+  it("uses an explicit spot price for per-unit environmental assets", () => {
+    expect(
+      listingHeadlineStat(
+        row({ listing_kind: "for_sale_asset", key_metrics: { units: 100, spot_price_aud: 35, unit_type: "ACCU" } }),
+      ),
+    ).toEqual({ label: "Per unit", value: "$35", tone: "neutral" });
+  });
+
+  it("derives per-credit price from asking_price_cents / credits", () => {
+    expect(
+      listingHeadlineStat(
+        row({
+          listing_kind: "for_sale_asset",
+          asking_price_cents: 5_000_000,
+          key_metrics: { credits: 50, unit_type: "biodiversity_credit" },
+        }),
+      ),
+    ).toEqual({ label: "Per credit", value: "$1k", tone: "neutral" });
+  });
+
+  it("returns null when the listing has no headline metric", () => {
+    expect(listingHeadlineStat(row({ listing_kind: "project_equity", key_metrics: {} }))).toBeNull();
   });
 });
