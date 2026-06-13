@@ -33,9 +33,10 @@ describe("BookmarksList", () => {
   describe("empty state", () => {
     it("shows the EmptyState heading when there are no bookmarks", () => {
       render(<BookmarksList initialItems={[]} />);
-      expect(
-        screen.getByText("Your reading list is empty"),
-      ).toBeInTheDocument();
+      // Journey-aware copy reverts to the plain zero state until the
+      // journey lib re-lands (its importers were stripped when the lib
+      // went missing from main — see the 2026-06-12 merge commit).
+      expect(screen.getByText(/Nothing saved yet/)).toBeInTheDocument();
     });
 
     it("renders the 'Browse brokers' CTA link pointing to /compare", () => {

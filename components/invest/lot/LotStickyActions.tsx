@@ -71,7 +71,6 @@ export default function LotStickyActions({
           <p className="text-base font-extrabold text-slate-900 truncate">{priceValue}</p>
         </div>
         <LotSaveButton slug={slug} title={title} vertical={vertical} variant="bar" />
-        {enquiryCta && (
         <a
           href="#enquire"
           onClick={() => trackEvent("listing_sticky_enquire", { vertical, ref: slug })}
@@ -79,7 +78,6 @@ export default function LotStickyActions({
         >
           {enquiryCta}
         </a>
-        )}
       </div>
     </div>
   );
