@@ -397,6 +397,12 @@ describe("formatAudCompact", () => {
   it("rounds small amounts", () => {
     expect(formatAudCompact(99)).toBe("$1");
   });
+
+  it("keeps one decimal for sub-$10k thousands, rounds larger ones", () => {
+    expect(formatAudCompact(350_000)).toBe("$3.5k"); // $3,500 — not "$4k"
+    expect(formatAudCompact(300_000)).toBe("$3k"); // $3,000 — drops .0
+    expect(formatAudCompact(1_200_000)).toBe("$12k"); // $12,000 rounds
+  });
 });
 
 describe("formatListingPrice", () => {
@@ -490,6 +496,37 @@ describe("formatListingPrice", () => {
       }),
     );
     expect(res).toEqual({ label: "Asking", value: "$99k" });
+  });
+
+  it("ignores a compound price_display (price + yield) in favour of the numeric price", () => {
+    const res = formatListingPrice(
+      priceRow({
+        listing_kind: "for_sale_asset",
+        asking_price_cents: 85_000_000,
+        price_display: "AUD $850,000 — Net yield 11.2%",
+        key_metrics: { net_yield_pct: 11.2 },
+      }),
+    );
+    expect(res).toEqual({ label: "Asking", value: "$850k" });
+  });
+
+  it("ignores a compound min-investment price_display for funds", () => {
+    const res = formatListingPrice(
+      priceRow({
+        listing_kind: "fund",
+        price_display: "Min $250,000 · 10% upfront tax offset + 100% CGT exempt",
+        key_metrics: { min_investment_aud: 250000 },
+      }),
+    );
+    expect(res).toEqual({ label: "Min investment", value: "$250k" });
+  });
+
+  it("keeps a simple price_display but strips a redundant AUD prefix", () => {
+    expect(
+      formatListingPrice(
+        priceRow({ listing_kind: "for_sale_asset", asking_price_cents: 50_000_000, price_display: "AUD $1.495M" }),
+      ),
+    ).toEqual({ label: "Asking", value: "$1.495M" });
   });
 
   it("returns null when nothing priceable", () => {
