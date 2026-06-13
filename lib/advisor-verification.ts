@@ -738,6 +738,36 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
     disclosure: "Commercial property agents must hold a state real estate licence. Sales commissions typically 1–2% and leasing commissions 6–12% of first-year rent. Verify the agent on the relevant state Fair Trading register.",
   },
 
+  grant_writer: {
+    type: "grant_writer",
+    label: "Grants & R&D Incentive Specialist",
+    primaryLicence: {
+      code: "RTA",
+      name: "Registered Tax Agent (for R&D Tax Incentive claims)",
+      regulator: "Tax Practitioners Board",
+      regulatorShort: "TPB",
+      verifyUrl: "https://www.tpb.gov.au/public-register",
+      verifyLabel: "Verify on the TPB public register",
+      mandatory: false,
+      field: "registration_number",
+      description:
+        "Grant writing itself is unregulated consulting, but preparing or lodging R&D Tax Incentive claims for a fee is a tax agent service — specialists doing R&DTI work should hold (or work under) TPB registration.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Demonstrated track record of funded applications (programs and amounts)",
+      "R&D Tax Incentive experience with documented AusIndustry/ATO outcomes where claimed",
+      "Relevant sector or technical background for the programs they target",
+    ],
+    associations: [
+      { name: "Tax Practitioners Board", acronym: "TPB", url: "https://www.tpb.gov.au" },
+      { name: "Australian Grants Institute", acronym: "AGI", url: "https://grantsinstitute.com.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — market standard for paid application work; verify with the specialist",
+    edr: "No single statutory EDR — disputes resolved via contract / common law (TPB complaints process applies to R&DTI tax agent services)",
+    cpd: "TPB CPE requirements apply where TPB-registered; otherwise no statutory CPD",
+    disclosure: "Grant writing is not a regulated profession in Australia. Anyone preparing or lodging R&D Tax Incentive claims for a fee must be (or work under) a TPB-registered tax agent — verify on the TPB register. Check funded-application track record and beware of guaranteed-outcome claims; grant outcomes are decided by the administering agency.",
+  },
   energy_consultant: {
     type: "energy_consultant",
     label: "Energy Consultant",
