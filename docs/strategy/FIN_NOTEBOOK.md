@@ -14,6 +14,31 @@
 
 ## Active strategic decisions log
 
+### 2026-06-12 — Money-Machine Top 30: full-platform commercial analysis written (founder decisions pending)
+
+Founder asked for a fresh whole-platform analysis — business model, monetisation,
+marketplace economics, retention, compliance — and the top 30 highest-ROI moves.
+Full report: `docs/strategy/MONEY_MACHINE_TOP30.md` (diagnosis, ranked 30 with
+per-idea MVP/world-class/scores, scoring table, top-10, 90-day pre-cutover
+roadmap, 12–24mo flywheel, required codebase changes).
+
+Headline diagnosis: **the machine is built, the ignition is off** — 6 revenue
+channels live, 3 finished-but-dark (advisor Pro billing flag, API billing env
+vars, drips), lead pricing flat-$39 while quality/money-band scoring already
+exists, 5 disconnected B2B billing silos, brief marketplace primitives
+(`brief_credit_prices`, `response_guarantee`, `ai_brief_quality_scoring`) all
+dark, `/invest/startups` still a live s708 tripwire. Top-10 build order: (1)
+revenue activation sprint, (2) lead-pricing rate card, (3) one advisor SaaS
+ladder, (4) sponsorship inventory, (5) brief liquidity engine, (6) verified
+badge + embed, (7) cross-border Phase C BD, (8) priority auctions (RG 246
+packet week 1), (9) Fee X-Ray, (10) s708 gate. Four legal packets (RG 246,
+badge methodology, s708 D4, Fee X-Ray copy) are the critical path — send
+before building. 90-day window is hard-bounded by the Oct–Dec cutover freeze.
+
+**Revisit:** 2026-06-26 — founder verdicts on the top-10; which legal packets
+went out; did the activation sprint clear (deploy target, cron bridge, Stripe
+price IDs, drip flag)?
+
 ### 2026-06-12 — Capital-raising / business-funding white space mapped (founder-requested exploration)
 
 Founder asked for a deep, creative-but-commercial exploration of capital-raising

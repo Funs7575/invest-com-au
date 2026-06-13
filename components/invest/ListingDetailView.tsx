@@ -16,6 +16,11 @@ import LotLiquidityExit from "@/components/invest/lot/LotLiquidityExit";
 import LotComparables from "@/components/invest/lot/LotComparables";
 import LotListerCard from "@/components/invest/lot/LotListerCard";
 import { buildLotProfile } from "@/lib/listings/lot-profile";
+import LotRecentlySold from "@/components/invest/lot/LotRecentlySold";
+import LotMedia from "@/components/invest/lot/LotMedia";
+import LotDueDiligence from "@/components/invest/lot/LotDueDiligence";
+import { fetchSoldComparables, mergeComparables, fetchRecentlySold } from "@/lib/listings/sold-archive";
+import { pricePerUnit } from "@/lib/listings/vertical-metrics";
 import { intelForCategory } from "@/lib/listings/vertical-intel";
 import { assessLotTransparency } from "@/lib/listings/lot-transparency";
 import {
@@ -61,7 +66,7 @@ export interface ListingDetailViewProps {
   categoryLabel: string;
 }
 
-export default function ListingDetailView({
+export default async function ListingDetailView({
   listing: l,
   relatedListings,
   categorySlug,
@@ -73,10 +78,22 @@ export default function ListingDetailView({
 
   const intel = intelForCategory(categorySlug);
   const profile = buildLotProfile(km);
+  // Platform-realised sales lead the comparables module — first-party comps
+  // from the sold archive, ahead of seller-stated history. Fails soft to
+  // seller comps only until the archive migration is applied.
+  const [soldComps, recentlySold] = await Promise.all([
+    fetchSoldComparables(l.vertical, { excludeSlug: l.slug, categorySlug }),
+    fetchRecentlySold(l.vertical, { excludeSlug: l.slug, categorySlug }),
+  ]);
+  const profileWithComps = {
+    ...profile,
+    comparables: mergeComparables(soldComps, profile.comparables),
+  };
   const transparency = assessLotTransparency(l, profile);
   const kind = deriveListingKind(l);
   const kindMeta = listingKindMeta(kind);
   const price = formatListingPrice(l);
+  const perUnit = pricePerUnit(l);
   const fresh = freshnessSignal({
     created_at: l.created_at ?? "",
     expires_at: (l as { expires_at?: string }).expires_at,
@@ -187,6 +204,8 @@ export default function ListingDetailView({
             <div className="lg:col-span-2 space-y-5">
               <ListingImageGallery images={l.images} alt={l.title} vertical={l.vertical} listingId={l.id} subCategory={l.sub_category} />
 
+              <LotMedia km={km} />
+
               <div className="bg-white border border-slate-200 rounded-xl p-5">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
@@ -196,6 +215,11 @@ export default function ListingDetailView({
                     <p className="text-3xl font-extrabold text-slate-900">
                       {price?.value ?? "Price on application"}
                     </p>
+                    {perUnit && (
+                      <p className="text-sm font-semibold text-emerald-800 mt-0.5">
+                        ≈ {perUnit.value}
+                      </p>
+                    )}
                   </div>
                   {highlight && (
                     <div className="text-right">
@@ -239,7 +263,9 @@ export default function ListingDetailView({
               <LotTransparency assessment={transparency} />
               <LotHoldingCosts profile={profile} intel={intel} />
               <LotLiquidityExit profile={profile} intel={intel} />
-              <LotComparables profile={profile} />
+              <LotDueDiligence categorySlug={categorySlug} slug={l.slug} />
+              <LotComparables profile={profileWithComps} />
+              <LotRecentlySold rows={recentlySold} categoryLabel={categoryLabel} />
 
               {l.firb_eligible && (
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 flex gap-4">
@@ -263,7 +289,32 @@ export default function ListingDetailView({
                   enquiries — the sanctioned posture is factual listing +
                   "buy via your own broker" referral. The card keeps the
                   #enquire id so the mobile sticky bar's anchor lands here. */}
-              {kindMeta.externalCta ? (
+              {l.status === "sold" ? (
+                <div id="enquire" className="bg-white border border-emerald-200 rounded-xl p-6 lg:sticky lg:top-20 scroll-mt-24">
+                  <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-full mb-3">
+                    <Icon name="check-circle" size={12} />
+                    SOLD
+                  </span>
+                  <h2 className="text-base font-bold text-slate-900 mb-1">This listing has sold</h2>
+                  <p className="text-xs text-slate-500 mb-4">
+                    {(l as { sold_price_cents?: number | null }).sold_price_cents
+                      ? `Realised price: ${formatAudCompact((l as { sold_price_cents?: number | null }).sold_price_cents!)}. `
+                      : ""}
+                    It stays here as factual sales history — enquiries are closed.
+                  </p>
+                  <Link
+                    href={listingsHref}
+                    className="inline-flex w-full items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-4 py-2.5 rounded-xl transition-colors text-sm"
+                  >
+                    Browse live {categoryLabel} listings
+                    <Icon name="arrow-right" size={14} />
+                  </Link>
+                  <p className="mt-3 text-xs text-slate-500">
+                    Save a search on the listings page and we&apos;ll email you when
+                    similar opportunities go live.
+                  </p>
+                </div>
+              ) : kindMeta.externalCta ? (
                 <div id="enquire" className="bg-white border border-slate-200 rounded-xl p-6 lg:sticky lg:top-20 scroll-mt-24">
                   <h2 className="text-base font-bold text-slate-900 mb-1">How to invest</h2>
                   <p className="text-xs text-slate-500 mb-4">
@@ -349,7 +400,7 @@ export default function ListingDetailView({
         sentinelId={HERO_SENTINEL_ID}
         priceLabel={price?.label ?? kindMeta.priceLabel}
         priceValue={price?.value ?? "POA"}
-        enquiryCta={kindMeta.externalCta ? "How to invest" : "Enquire"}
+        enquiryCta={l.status === "sold" ? "" : kindMeta.externalCta ? "How to invest" : "Enquire"}
         slug={l.slug}
         title={l.title}
         vertical={l.vertical}

@@ -108,3 +108,73 @@ export function assessLotTransparency(
     total,
   };
 }
+
+// ─── Lite assessment (client-bundle-safe) ────────────────────────────────
+
+/** The slice of a listing row the lite assessment needs. */
+export interface TransparencyLiteInput extends TransparencyInput {
+  key_metrics?: Record<string, unknown> | null;
+}
+
+const LITE_STRUCTURED_KEYS = new Set([
+  "provenance_events", "documents", "comparable_sales", "holding_costs",
+]);
+const LITE_PAPER_TRAIL_KEY =
+  /provenance|document|certificat|grading|regauge|registr|title|assay|matching_numbers|chain_of_custody/i;
+
+/**
+ * Approximate transparency for listing CARDS without importing the
+ * zod-backed lot-profile parser — `buildLotProfile` would drag zod into
+ * the shared client chunks via ListingCard (the bundle budget caught
+ * exactly that). Same checks, heuristic facts/paper-trail/costs detection;
+ * the lot page keeps the exact assessment.
+ */
+export function assessLotTransparencyLite(listing: TransparencyLiteInput): LotTransparency {
+  const km = (listing.key_metrics ?? {}) as Record<string, unknown>;
+  const keys = Object.keys(km).filter((k) => km[k] != null && km[k] !== "");
+  const factishKeys = keys.filter(
+    (k) => !LITE_STRUCTURED_KEYS.has(k) && !LITE_PAPER_TRAIL_KEY.test(k),
+  );
+  const hasPaperTrailSignal =
+    Array.isArray(km["documents"]) && (km["documents"] as unknown[]).length > 0 ||
+    Array.isArray(km["provenance_events"]) && (km["provenance_events"] as unknown[]).length > 0 ||
+    keys.some((k) => LITE_PAPER_TRAIL_KEY.test(k));
+  const hasCosts =
+    Array.isArray(km["holding_costs"]) && (km["holding_costs"] as unknown[]).length > 0;
+  const hasLiquidity =
+    Boolean(km["typical_time_to_sell"]) || Boolean(km["liquidity_note"]);
+
+  const checks: TransparencyCheck[] = [
+    {
+      id: "pricing",
+      label: "Pricing stated",
+      met: Boolean(listing.price_display) || Boolean(listing.asking_price_cents),
+    },
+    {
+      id: "description",
+      label: "Detailed description",
+      met: (listing.description ?? "").trim().length >= 300,
+    },
+    {
+      id: "photos",
+      label: "Photos provided",
+      met: (listing.images ?? []).length >= 2,
+    },
+    {
+      id: "location",
+      label: "Location stated",
+      met: Boolean(listing.location_state) || Boolean(listing.location_city),
+    },
+    { id: "facts", label: "Key facts itemised", met: factishKeys.length >= 4 },
+    { id: "paper_trail", label: "Provenance / documents noted", met: hasPaperTrailSignal },
+    { id: "costs", label: "Holding costs disclosed", met: hasCosts },
+    { id: "liquidity", label: "Time-to-sell guidance", met: hasLiquidity },
+  ];
+
+  const metCount = checks.filter((c) => c.met).length;
+  const total = checks.length;
+  const level: TransparencyLevel =
+    metCount >= 7 ? "comprehensive" : metCount >= 4 ? "documented" : "essential";
+  return { level, score: Math.round((metCount / total) * 100), checks, metCount, total };
+}
+

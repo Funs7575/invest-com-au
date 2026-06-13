@@ -399,6 +399,14 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "Tenant Representation",
     "Property Valuations",
   ],
+  grant_writer: [
+    "R&D Tax Incentive Claims",
+    "EMDG Applications",
+    "Federal Grant Writing",
+    "State Grant Programs",
+    "Industry Growth Program",
+    "Grant Strategy & Eligibility Review",
+  ],
   energy_consultant: [
     "Solar Feasibility",
     "Battery Storage",

@@ -62,7 +62,7 @@ export async function generateMetadata({
       .from("investment_listings")
       .select("*")
       .eq("slug", subcategory)
-      .eq("status", "active")
+      .in("status", ["active", "sold"])
       .limit(5);
     const l = ((rows ?? []) as InvestmentListing[]).find(
       (r) => categoryForListing(r) === category,
@@ -125,7 +125,7 @@ export default async function InvestSubcategoryListingsPage({
       .from("investment_listings")
       .select("*")
       .eq("slug", subcategory)
-      .eq("status", "active")
+      .in("status", ["active", "sold"])
       .limit(5);
     const listing = ((rows ?? []) as InvestmentListing[]).find(
       (r) => categoryForListing(r) === category,

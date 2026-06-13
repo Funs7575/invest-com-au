@@ -43,7 +43,7 @@ function FooterLinkSection({
       >
         <h4 className="text-white font-semibold text-xs md:text-sm">{title}</h4>
         <svg
-          className={`w-4 h-4 shrink-0 text-slate-500 transition-transform duration-200 md:hidden ${open ? "rotate-180" : ""}`}
+          className={`w-4 h-4 shrink-0 text-slate-400 transition-transform duration-200 md:hidden ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -76,19 +76,19 @@ export default function Footer() {
             </svg>
             <div className="flex-1">
               <p className="text-xs font-bold text-slate-700 mb-0.5">General Advice Warning</p>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-400 leading-relaxed">
                 {GENERAL_ADVICE_WARNING}
               </p>
-              <p className="text-[0.69rem] text-slate-500 leading-relaxed mt-1.5">
+              <p className="text-[0.69rem] text-slate-400 leading-relaxed mt-1.5">
                 Consider your objectives, financial situation and needs before acting. See our{" "}
-                <Link href="/terms" className="underline hover:text-slate-700">Terms of Use</Link>,{" "}
-                <Link href="/privacy" className="underline hover:text-slate-700">Privacy Policy</Link>,{" "}
-                <Link href="/how-we-earn" className="underline hover:text-slate-700">How We Earn</Link>, and{" "}
-                <Link href="/fsg" className="underline hover:text-slate-700">FSG</Link>.
+                <Link href="/terms" className="underline hover:text-slate-200">Terms of Use</Link>,{" "}
+                <Link href="/privacy" className="underline hover:text-slate-200">Privacy Policy</Link>,{" "}
+                <Link href="/how-we-earn" className="underline hover:text-slate-200">How We Earn</Link>, and{" "}
+                <Link href="/fsg" className="underline hover:text-slate-200">FSG</Link>.
               </p>
-              <p className="text-[0.69rem] text-slate-500 mt-1.5 leading-relaxed">
+              <p className="text-[0.69rem] text-slate-400 mt-1.5 leading-relaxed">
                 {AFSL_STATUS_DISCLOSURE}{" "}
-                <Link href="/fsg" className="underline hover:text-slate-700">View Financial Services Guide →</Link>
+                <Link href="/fsg" className="underline hover:text-slate-200">View Financial Services Guide →</Link>
               </p>
             </div>
           </div>
@@ -99,17 +99,17 @@ export default function Footer() {
       <div className="bg-slate-50 border-b border-slate-200">
         <div className="container-custom">
           <div className="py-1">
-            <p className="text-[0.65rem] font-semibold text-slate-600 uppercase tracking-wider pt-2 pb-1">Additional Disclosures</p>
+            <p className="text-[0.65rem] font-semibold text-slate-400 uppercase tracking-wider pt-2 pb-1">Additional Disclosures</p>
             {collapsibleSections.map((section, i) => (
               <div key={i} className="border-t border-slate-200">
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                  className="w-full flex items-center justify-between py-2 text-[0.69rem] text-slate-500 hover:text-slate-700 transition-colors"
+                  className="w-full flex items-center justify-between py-2 text-[0.69rem] text-slate-400 hover:text-slate-200 transition-colors"
                   aria-expanded={openIndex === i}
                   aria-controls={`disclaimer-${i}`}
                   aria-label={`Toggle ${section.title}`}
                 >
-                  <span className="font-semibold text-slate-600">{section.title}</span>
+                  <span className="font-semibold text-slate-400">{section.title}</span>
                   <svg
                     className={`w-3 h-3 transition-transform duration-200 ${openIndex === i ? "rotate-180" : ""}`}
                     fill="none"
@@ -126,7 +126,7 @@ export default function Footer() {
                   className="overflow-hidden transition-all duration-200"
                   style={{ maxHeight: openIndex === i ? "300px" : "0" }}
                 >
-                  <p className="text-[0.69rem] text-slate-500 leading-relaxed pb-2 md:pb-3">
+                  <p className="text-[0.69rem] text-slate-400 leading-relaxed pb-2 md:pb-3">
                     {section.content}
                   </p>
                 </div>
@@ -147,9 +147,9 @@ export default function Footer() {
               <h3 className="text-white font-extrabold text-sm md:text-base mb-2 md:mb-3">
                 Invest<span className="text-amber-400">.com.au</span>
               </h3>
-              <p className="text-xs md:text-sm leading-relaxed text-slate-500">
+              <p className="text-xs md:text-sm leading-relaxed text-slate-400">
                 <span className="hidden md:inline">Australia&apos;s independent investing hub. Compare platforms, find verified advisors — shares, crypto, super, property &amp; more. Always free.</span>
-                <span className="md:hidden text-slate-500">Compare platforms &amp; find verified advisors. Always free.</span>
+                <span className="md:hidden text-slate-400">Compare platforms &amp; find verified advisors. Always free.</span>
               </p>
               <a
                 href={ASIC_REGISTER_URL}
@@ -270,7 +270,7 @@ export default function Footer() {
 
           <div className="border-t border-slate-700/40 mt-4 md:mt-8 pt-3 md:pt-6 text-xs md:text-sm text-center space-y-0.5 md:space-y-1">
             <p>&copy; {new Date().getFullYear()} {COMPANY_LEGAL_NAME}. All rights reserved.</p>
-            <p className="text-[0.62rem] md:text-xs text-slate-500">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
+            <p className="text-[0.62rem] md:text-xs text-slate-400">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
           </div>
         </div>
       </footer>

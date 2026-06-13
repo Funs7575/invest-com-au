@@ -12,11 +12,13 @@ vi.mock("@/lib/logger", () => ({
 
 const maybeSingleMock = vi.fn();
 const eqMock = vi.fn();
+const inMock = vi.fn();
 
-// Self-returning query chain: from().select().eq().eq().maybeSingle()
+// Self-returning query chain: from().select().eq().in().maybeSingle()
 const chain: Record<string, unknown> = {};
 chain.select = vi.fn(() => chain);
 chain.eq = eqMock.mockImplementation(() => chain);
+chain.in = inMock.mockImplementation(() => chain);
 chain.maybeSingle = maybeSingleMock;
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -72,14 +74,15 @@ describe("/invest/listings/[slug] resolver", () => {
     );
   });
 
-  it("only resolves active listings (stale bookmarks fall back to /invest)", async () => {
+  it("resolves active + sold lots only (other statuses fall back to /invest)", async () => {
     maybeSingleMock.mockResolvedValueOnce({ data: null });
-    const res = await GET(...request("sold-and-gone"));
+    const res = await GET(...request("withdrawn-and-gone"));
     expect(res.status).toBe(307);
     expect(res.headers.get("location")).toBe("http://localhost/invest");
-    // The lookup itself must be status-guarded — the lot pages 404 on
-    // inactive rows, so redirecting there would dead-end the bookmark.
-    expect(eqMock).toHaveBeenCalledWith("status", "active");
+    // The lookup is status-guarded: active lots have live pages, sold lots
+    // render the read-only archive state; anything else dead-ends, so the
+    // resolver falls back to the marketplace instead.
+    expect(inMock).toHaveBeenCalledWith("status", ["active", "sold"]);
   });
 
   it("falls back to /invest when the lookup throws", async () => {

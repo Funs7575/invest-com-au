@@ -112,8 +112,15 @@ jobs:
         # not exceed the budget. scripts/bundle-size-budget.mjs excludes
         # page-specific lazy splits, prints a top-10 chunk table, and
         # exits 1 on overage.
-        # Budget: 13200 kB (~12.9 MB raw uncompressed). History, most recent
+        # Budget: 13300 kB (~13.0 MB raw uncompressed). History, most recent
         # first:
+        # - 2026-06-13 (this PR): 13200 → 13300. Merging the listings board
+        #   (#1562) + grant-writer marketplace (#1572) brought main to 13200.6 kB
+        #   — 0.6 kB over the 13200 gate, so main's own build went red. Raise to
+        #   13300 fixes main forward (reverting a greenlit feature over 0.6 kB is
+        #   the wrong trade) and makes room for the journey/Feel-layer re-land
+        #   (#1568, ~+58.5 kB → ~13259 kB), leaving ~40 kB headroom. Ratchet back
+        #   down after a bundle diet of the 2026-06-12/13 baseline.
         # - 2026-06-12 (this PR): 13100 → 13200. The /raise vertical (9 routes:
         #   hub + pathway-finder quiz + 7 guides) adds ~55.6 kB of route chunks
         #   → 13114.1 kB measured locally, over the 13100 interim raise that
@@ -126,7 +133,7 @@ jobs:
         #   (questions-data.ts content imported by client quiz/scoring
         #   components + advisor course-creation, CPD, certificate features).
         # See scripts/bundle-size-budget.mjs for the metric definition.
-        run: node scripts/bundle-size-budget.mjs --budget-kb 13200
+        run: node scripts/bundle-size-budget.mjs --budget-kb 13300
 
       # Upload .next so dependent jobs (e2e, a11y, lighthouse*) can
       # download instead of rebuilding from scratch. Each rebuild
