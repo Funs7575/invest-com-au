@@ -6,6 +6,7 @@ import {
   getKindsForUser,
   setActiveKind,
 } from "@/lib/account-kinds";
+import { linkProfessionalAuthUser } from "@/lib/professional-auth-link";
 import { attributeSignupByToken } from "@/lib/pro-affiliate/track";
 
 const log = logger("auth-callback");
@@ -46,6 +47,11 @@ async function postAuthRedirectUrl(origin: string, fallbackNext: string): Promis
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new URL(fallbackNext, origin);
+    // Self-heal the professional ↔ auth-user link before resolving kinds, so a
+    // magic-link/password login by an advisor whose professionals row was never
+    // linked (NULL auth_user_id) routes straight to /advisor-portal instead of
+    // the empty-handed investor fallback. No-op for non-professionals.
+    await linkProfessionalAuthUser(user.id, user.email);
     const memberships = await getKindsForUser(user.id);
     const { redirect, setKind } = chooseCallbackRedirect(memberships, fallbackNext);
     if (setKind) await setActiveKind(setKind);

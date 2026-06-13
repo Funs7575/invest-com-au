@@ -35,6 +35,7 @@ import {
   setActiveKind,
   type WorkspaceKind,
 } from "@/lib/account-kinds";
+import { linkProfessionalAuthUser } from "@/lib/professional-auth-link";
 
 const CHOOSER = "/account/select-workspace";
 
@@ -79,11 +80,27 @@ export async function enforcePortalKind(
     redirect(`/auth/login?next=${encodeURIComponent(next)}`);
   }
 
-  const [active, memberships] = await Promise.all([
+  const [active, initialMemberships] = await Promise.all([
     getActiveKind(),
     getKindsForUser(user.id),
   ]);
-  const holdsExpected = memberships.some((m) => m.kind === expected);
+  let memberships = initialMemberships;
+  let holdsExpected = memberships.some((m) => m.kind === expected);
+
+  // Self-heal an unlinked professional. Rows created via the application/
+  // approval flow carry a NULL auth_user_id, so the membership view — which
+  // keys off auth_user_id — reports zero kinds and the gate would bounce a
+  // legitimate advisor out of their own portal (≈98% of active advisors were
+  // unlinked as of 2026-06). Link on the email Supabase verified for this
+  // session and re-resolve before making any redirect decision. No-op for a
+  // visitor who isn't a professional, so non-pro behaviour is unchanged.
+  if (!holdsExpected) {
+    const linked = await linkProfessionalAuthUser(user.id, user.email);
+    if (linked > 0) {
+      memberships = await getKindsForUser(user.id);
+      holdsExpected = memberships.some((m) => m.kind === expected);
+    }
+  }
 
   if (active === expected && holdsExpected) {
     return; // happy path
