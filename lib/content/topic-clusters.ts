@@ -93,7 +93,7 @@ export const TOPIC_CLUSTERS: TopicCluster[] = [
     supporting: [
       "/best",
       "/best-for",
-      "/quiz",
+      "/get-matched",
       "/etfs",
       "/insurance",
     ],
@@ -220,7 +220,7 @@ export const TOPIC_CLUSTERS: TopicCluster[] = [
     ],
     supporting: [
       "/find-advisor",
-      "/quiz",
+      "/get-matched",
       "/for-advisors",
       "/advisor-guides/financial-planner-vs-robo-advisor",
       "/advisor-guides/smsf-accountant-vs-diy",

@@ -344,7 +344,7 @@ export default function LeadsTab({
       {/* Search & Filter Bar */}
       <div className="flex gap-2 mb-4 flex-wrap">
         <div className="relative flex-1 min-w-45">
-          <Icon name="search" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Icon name="search" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500" />
           <input
             type="search" enterKeyHint="search"
             value={leadSearch}
@@ -465,7 +465,7 @@ export default function LeadsTab({
                   ))}
                 </select>
                 <div className="flex items-center gap-1">
-                  <Icon name="calendar" size={12} className="text-slate-400 shrink-0" />
+                  <Icon name="calendar" size={12} className="text-slate-500 shrink-0" />
                   <input
                     type="date"
                     value={lead.next_action_at ? lead.next_action_at.slice(0, 10) : ""}

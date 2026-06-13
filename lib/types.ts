@@ -1053,7 +1053,9 @@ export type ProfessionalType =
   | 'luxury_asset_broker'
   | 'wine_advisor'
   | 'art_advisor'
-  | 'royalty_broker';
+  | 'royalty_broker'
+  // New in 20260612 — CR-04a grants marketplace.
+  | 'grant_writer';
 
 export interface Professional {
   id: number;
@@ -1242,6 +1244,7 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   wine_advisor: "Wine Advisor",
   art_advisor: "Art Advisor",
   royalty_broker: "Royalty Broker",
+  grant_writer: "Grants & R&D Incentive Specialist",
 };
 
 export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
@@ -1283,6 +1286,7 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   wine_advisor: "wine",
   art_advisor: "palette",
   royalty_broker: "music",
+  grant_writer: "clipboard-list",
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;

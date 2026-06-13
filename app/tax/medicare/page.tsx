@@ -434,7 +434,7 @@ export default function MedicarePage() {
                   MLS = $123,000 &times; 1.25%
                 </p>
                 <p className="text-2xl font-black text-amber-400 mt-1">= $1,537.50</p>
-                <p className="text-xs text-slate-400 mt-2">
+                <p className="text-xs text-slate-500 mt-2">
                   Note her taxable income of $105,000 alone would have placed her in Tier 1 (1%). The add-backs
                   pushed her into the higher tier &mdash; and a basic hospital policy could often be bought for
                   less than this surcharge.
@@ -600,7 +600,7 @@ export default function MedicarePage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">▾</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

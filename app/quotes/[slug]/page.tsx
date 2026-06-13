@@ -196,11 +196,11 @@ export default async function QuoteDetailPage({ params, searchParams }: {
 
           <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs">
             <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 font-medium text-slate-700">
-              <Icon name="map-pin" size={12} className="text-slate-400" />
+              <Icon name="map-pin" size={12} className="text-slate-500" />
               {job.location || "AU"}
             </span>
             <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 font-medium text-slate-700">
-              <Icon name="wallet" size={12} className="text-slate-400" />
+              <Icon name="wallet" size={12} className="text-slate-500" />
               {BUDGET_LABELS[job.budget_band] || "Budget TBD"}
             </span>
             <CountdownPill endsAt={job.ends_at} status={job.status} />

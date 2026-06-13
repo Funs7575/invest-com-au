@@ -561,7 +561,7 @@ export default function InvestmentIncomeTaxPage() {
               </p>
               <div className="bg-slate-800 text-green-400 font-mono text-xs rounded-xl p-4">
                 <p>Deductible % = (days rented ÷ days in year) × (rented area ÷ total area)</p>
-                <p className="mt-2 text-slate-400">
+                <p className="mt-2 text-slate-500">
                   Example: 90 days rented, 1 of 3 bedrooms = (90/365) × (1/3) = 8.2% of total
                   expenses
                 </p>
@@ -930,7 +930,7 @@ export default function InvestmentIncomeTaxPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
                     &#9662;
                   </span>
                 </summary>

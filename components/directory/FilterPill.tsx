@@ -52,7 +52,7 @@ export function FilterPill({
       <Icon name={icon} size={13} />
       <span>{label}</span>
       {value && <span className="font-bold text-slate-900">· {value}</span>}
-      <Icon name="chevron-down" size={12} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
+      <Icon name="chevron-down" size={12} className={`text-slate-500 transition-transform ${open ? "rotate-180" : ""}`} />
     </button>
   );
 }

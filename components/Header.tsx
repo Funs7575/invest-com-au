@@ -9,7 +9,6 @@ import { CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import NotificationBell from "@/components/notifications/NotificationBell";
 import ThemeToggle from "@/components/ThemeToggle";
-import JourneyChip from "@/components/journey/JourneyChip";
 import WorkspaceSwitcher from "@/components/WorkspaceSwitcher";
 import { MegaMenu } from "@/components/MegaMenu";
 import type { MegaMenuSidebar } from "@/components/MegaMenu";
@@ -413,7 +412,7 @@ function DesktopDropdown({
         }`}
       >
         {label}
-        <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        <Icon name="chevron-down" size={14} className={`text-slate-500 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
@@ -447,7 +446,7 @@ export default function Header() {
     setMenuOpen(false);
   }, [pathname]);
 
-  const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/reviews", "/quiz"].some(
+  const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/reviews", "/get-matched"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
   const isPropertyActive = ["/property", "/advisors/mortgage-brokers", "/advisors/buyers-agents", "/advisors/real-estate-agents", "/find-advisor"].some(
@@ -504,7 +503,6 @@ export default function Header() {
 
           {/* Desktop CTA + Theme */}
           <div className="hidden lg:flex items-center gap-3">
-            <JourneyChip />
             <WorkspaceSwitcher />
             <ThemeToggle />
             <NotificationBell />

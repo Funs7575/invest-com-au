@@ -376,7 +376,7 @@ export default async function FeeTrackerPage() {
               <details key={faq.question} className="group bg-white rounded-xl border border-slate-200">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">⌄</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">⌄</span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                   {faq.answer}
@@ -392,7 +392,7 @@ export default async function FeeTrackerPage() {
         <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
           <div>
             <h2 className="text-lg font-extrabold text-white mb-1">Get Fee Change Alerts</h2>
-            <p className="text-slate-400 text-sm">Sign up to be notified when any tracked broker changes their fees — so you can act before your trading costs change.</p>
+            <p className="text-slate-500 text-sm">Sign up to be notified when any tracked broker changes their fees — so you can act before your trading costs change.</p>
           </div>
           <div className="flex gap-3 shrink-0 flex-wrap">
             <Link

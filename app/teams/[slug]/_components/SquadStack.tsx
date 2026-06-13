@@ -115,7 +115,7 @@ export default function SquadStack({ members }: Props) {
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 mb-1">
-                  <Icon name={roleIcon} size={11} className="inline mr-1 text-slate-400" />
+                  <Icon name={roleIcon} size={11} className="inline mr-1 text-slate-500" />
                   {m.public_title ?? role}
                   {typeof m.pro_rating === "number" &&
                     m.pro_rating > 0 &&

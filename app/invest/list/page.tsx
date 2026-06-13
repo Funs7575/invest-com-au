@@ -190,7 +190,7 @@ export default function ListInvestmentPage() {
               {/* Need help */}
               <div className="bg-slate-900 text-white rounded-xl p-6">
                 <h3 className="text-sm font-bold mb-2">Need help with your listing?</h3>
-                <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                <p className="text-xs text-slate-500 mb-4 leading-relaxed">
                   Our team can help you write a compelling listing description, choose the right category, and maximise your enquiry rate.
                 </p>
                 <a

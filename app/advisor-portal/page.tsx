@@ -680,7 +680,7 @@ export default function AdvisorPortalPage() {
                     <h2 id="dispute-modal-title" className="text-base font-bold text-slate-900">Dispute Lead</h2>
                     <p className="text-xs text-slate-500 mt-0.5">Lead from <strong>{disputeModal.leadName}</strong> · {disputeModal.daysLeft} day{disputeModal.daysLeft !== 1 ? "s" : ""} left to dispute</p>
                   </div>
-                  <button onClick={() => setDisputeModal(null)} aria-label="Close dispute modal" className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+                  <button onClick={() => setDisputeModal(null)} aria-label="Close dispute modal" className="text-slate-500 hover:text-slate-600 text-lg leading-none">✕</button>
                 </div>
 
                 <div className="mb-4">

@@ -210,7 +210,7 @@ export default function DecisionTree({
             data-testid={`decision-tree-option-${opt.next}`}
           >
             <span className="text-sm font-bold text-slate-900">{opt.label}</span>
-            <Icon name="arrow-right" size={14} className="text-slate-400 shrink-0" />
+            <Icon name="arrow-right" size={14} className="text-slate-500 shrink-0" />
           </button>
         ))}
       </div>

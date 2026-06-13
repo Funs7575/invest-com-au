@@ -151,7 +151,7 @@ export default function BuyerAgentsClient() {
                 <div key={agent.id} className="border border-slate-200 bg-white rounded-2xl p-5 hover:shadow-md hover:border-slate-300 transition-all">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center shrink-0">
-                      <Icon name="user" size={20} className="text-slate-400" />
+                      <Icon name="user" size={20} className="text-slate-500" />
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">

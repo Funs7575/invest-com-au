@@ -125,7 +125,7 @@ export default async function AdvisorJobsPage({ searchParams }: PageProps) {
         {/* Hero */}
         <div className="bg-slate-900 text-white py-10 md:py-16 px-4">
           <div className="container-custom max-w-4xl">
-            <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3">
+            <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
               <Link href="/" className="hover:text-white">
                 Home
               </Link>
@@ -236,7 +236,7 @@ export default async function AdvisorJobsPage({ searchParams }: PageProps) {
                 <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
                   <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
                     {faq.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                    <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                   </summary>
                   <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
                 </details>

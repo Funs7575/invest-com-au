@@ -389,7 +389,7 @@ export default function CampaignsPage() {
                     <div>
                       <h3 className="font-bold text-slate-900">{c.name}</h3>
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <Icon name={pObj?.inventory_type === "featured" ? "megaphone" : "target"} size={11} className="text-slate-400" />
+                        <Icon name={pObj?.inventory_type === "featured" ? "megaphone" : "target"} size={11} className="text-slate-500" />
                         {(() => {
                           const vis = getPlacementTypeVisual(placementName);
                           return (

@@ -8,6 +8,10 @@ export type EventName =
   // Get Matched showcase Wave 2 — result-page interactivity (G4 + G7)
   | 'whatif_used'
   | 'sharpen_answered'
+  // Get Matched showcase Wave 3 — question-phase intake + retention (G8 + G9)
+  | 'freetext_intent_used'
+  | 'stack_viewed'
+  | 'match_alert_subscribed'
   | 'advisor_viewed'
   | 'advisor_contacted'
   | 'lead_submitted'
@@ -103,6 +107,26 @@ export interface EventProps {
   sharpen_answered: {
     question_slug: string
     new_score: number | null
+  }
+  /**
+   * Get Matched Showcase G8 — user used the free-text intake on step 1.
+   * `matched` is whether the heuristic returned a confident intent;
+   * `intent` is the resolved goal slug or null.
+   */
+  freetext_intent_used: {
+    matched: boolean
+    intent: string | null
+  }
+  /**
+   * Get Matched Showcase G9 — the "full wealth stack" section rendered with
+   * at least one slot. `slot_count` is how many stack kinds were shown.
+   */
+  stack_viewed: {
+    slot_count: number
+  }
+  /** Get Matched Showcase G9 — user subscribed to match-change alerts. */
+  match_alert_subscribed: {
+    match_count: number
   }
   advisor_viewed: {
     advisor_id: number

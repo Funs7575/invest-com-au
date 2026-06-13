@@ -264,7 +264,7 @@ export default function AdminCampaignsPage() {
           <div className="bg-slate-900 text-white rounded-xl p-4 flex items-center justify-between flex-wrap gap-3 bounce-in-up">
             <div className="flex items-center gap-3">
               <span className="text-sm font-bold">{selected.size} campaign{selected.size !== 1 ? "s" : ""} selected</span>
-              <button onClick={() => setSelected(new Set())} className="text-xs text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setSelected(new Set())} className="text-xs text-slate-500 hover:text-white transition-colors">
                 Clear
               </button>
             </div>

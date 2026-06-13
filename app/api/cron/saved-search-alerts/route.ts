@@ -5,11 +5,14 @@
  * Cadence: daily; the Vercel cron schedule is configured in `vercel.json`.
  *
  * Algorithm:
- *   1. Pull every saved_search with email_frequency='daily' whose
- *      last_alerted_at is null or older than 23 hours.
+ *   1. Pull every due saved_search: daily rows whose last_alerted_at is
+ *      null or older than 23 hours, weekly rows older than 6.5 days (the
+ *      weekly frequency was previously accepted by the API but never
+ *      processed).
  *   2. Re-run its filter against the matching table (advisors → professionals,
- *      teams → expert_teams). The 'invest' kind is in the schema but skipped
- *      here because its filter shape isn't standardised yet.
+ *      teams → expert_teams, invest → investment_listings — the invest
+ *      filters are the /invest browse surface's raw URL params, interpreted
+ *      by lib/listings/saved-searches.ts).
  *   3. Compute a stable sha256 of the sorted match ids.
  *      - If equal to last_match_signature → skip (no change since last digest).
  *      - Otherwise send a Resend email + stamp the new signature +
@@ -35,6 +38,11 @@ import {
   type SavedSearchKind,
   type SavedSearchRow,
 } from "@/lib/saved-searches";
+import { categoryScope, listingUrl } from "@/lib/listing-url";
+import {
+  parseInvestFilters,
+  matchesInvestFilters,
+} from "@/lib/listings/saved-searches";
 
 const log = logger("cron:saved-search-alerts");
 
@@ -129,13 +137,66 @@ async function matchTeams(filters: Record<string, unknown>): Promise<MatchedProv
   }));
 }
 
+/**
+ * Re-run the saved filter for an `invest`-kind search. The stored filters
+ * are the /invest browse surface's raw URL params (category/sub/state/
+ * price-bucket/kind/firb/q); the DB query narrows on the indexed columns
+ * and the pure matcher applies the full vocabulary (ticket buckets, derived
+ * listing kinds, POA exclusion) in process.
+ */
+async function matchInvest(filters: Record<string, unknown>): Promise<MatchedProvider[]> {
+  const supabase = createAdminClient();
+  const parsed = parseInvestFilters(filters);
+
+  let q = supabase
+    .from("investment_listings")
+    .select(
+      "id, slug, title, description, vertical, sub_category, listing_kind, location_state, asking_price_cents, firb_eligible, siv_complying, key_metrics",
+    )
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(500);
+  if (parsed.state) q = q.ilike("location_state", parsed.state);
+  // Scope category-bound searches server-side so the recency cap can't
+  // starve a less-active category out of its matches. categoryScope
+  // covers derived categories too (alternatives/private-credit narrow on
+  // fund sub_categories, listed-securities on listing_kind) — without it
+  // those searches would scan the newest 500 rows across every sector and
+  // could stamp last_alerted_at having never seen their own matches. The
+  // scope over-fetches by design; matchesInvestFilters stays the arbiter.
+  if (parsed.category && parsed.category !== "all") {
+    const scope = categoryScope(parsed.category);
+    if (scope) {
+      if (scope.verticals.length > 0) q = q.in("vertical", scope.verticals);
+      if (scope.subCategories) q = q.in("sub_category", scope.subCategories);
+      if (scope.listingKind) q = q.eq("listing_kind", scope.listingKind);
+    }
+  }
+
+  const { data, error } = await q;
+  if (error) {
+    log.warn("matchInvest query failed", { error: error.message });
+    return [];
+  }
+  return (data ?? [])
+    .filter((row) => matchesInvestFilters(row, parsed))
+    .slice(0, 50)
+    .map((row) => ({
+      id: row.id as number,
+      name: (row.title as string) || "Listing",
+      slug: (row.slug as string) || "",
+      href: listingUrl(row as Parameters<typeof listingUrl>[0]),
+    }));
+}
+
 async function runMatch(
   kind: SavedSearchKind,
   filters: Record<string, unknown>,
 ): Promise<MatchedProvider[] | null> {
   if (kind === "advisors") return matchAdvisors(filters);
   if (kind === "teams") return matchTeams(filters);
-  // 'invest' filter shape isn't standardised yet — skip rather than misfire.
+  if (kind === "invest") return matchInvest(filters);
+  // Future kinds — skip rather than misfire.
   return null;
 }
 
@@ -165,7 +226,7 @@ function buildDigestHtml(
     </div>
     <div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:24px">
       <h1 style="font-size:18px;font-weight:700;color:#0f172a;margin:0 0 12px">${escapeHtml(row.label)}</h1>
-      <p style="font-size:14px;color:#64748b;margin:0 0 16px">${matches.length} new match${matches.length === 1 ? "" : "es"} for your saved ${row.kind === "advisors" ? "advisor" : "team"} search.</p>
+      <p style="font-size:14px;color:#64748b;margin:0 0 16px">${matches.length} new match${matches.length === 1 ? "" : "es"} for your saved ${row.kind === "advisors" ? "advisor" : row.kind === "teams" ? "team" : "listing"} search.</p>
       <ul style="padding-left:20px;margin:0">${items}</ul>
       ${more}
     </div>
@@ -183,17 +244,24 @@ export async function GET(req: NextRequest) {
 
   const supabase = createAdminClient();
   const cutoff = new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString();
+  const weeklyCutoff = new Date(Date.now() - 6.5 * 24 * 60 * 60 * 1000).toISOString();
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://invest.com.au";
 
   // Pull due rows. The 23-hour gate covers `null` last_alerted_at (PostgREST
-  // `or` filter: never-alerted rows are due immediately).
+  // `or` filter: never-alerted rows are due immediately). Weekly rows ride
+  // the same daily run and are gated to a 6.5-day gap below.
   const { data, error } = await supabase
     .from("saved_searches")
     .select(
       "id, user_id, kind, label, filters, email_frequency, last_alerted_at, last_match_signature, created_at, updated_at",
     )
-    .eq("email_frequency", "daily")
-    .or(`last_alerted_at.is.null,last_alerted_at.lt.${cutoff}`)
+    .neq("email_frequency", "off")
+    // Gate weekly rows in the predicate — a 1–6-day-old weekly search must
+    // not consume batch capacity it can't use (it would be loop-skipped).
+    .or(
+      `and(email_frequency.eq.daily,or(last_alerted_at.is.null,last_alerted_at.lt.${cutoff})),` +
+        `and(email_frequency.eq.weekly,or(last_alerted_at.is.null,last_alerted_at.lt.${weeklyCutoff}))`,
+    )
     .limit(500);
 
   if (error) {
@@ -229,6 +297,14 @@ export async function GET(req: NextRequest) {
 
   for (const row of rows) {
     try {
+      if (
+        row.email_frequency === "weekly" &&
+        row.last_alerted_at !== null &&
+        row.last_alerted_at >= weeklyCutoff
+      ) {
+        skipped += 1;
+        continue;
+      }
       const matches = await runMatch(row.kind, row.filters);
       if (matches === null) {
         // Unsupported kind (e.g. 'invest') — stamp last_alerted_at so we

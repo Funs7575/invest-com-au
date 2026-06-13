@@ -134,15 +134,15 @@ export default function FrankingCalculatorClient() {
         <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Franking credit</p>
+              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Franking credit</p>
               <p className="text-lg md:text-xl font-extrabold mt-1">{formatAUD(calc.frankingCredit, 2)}</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Grossed-up dividend</p>
+              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Grossed-up dividend</p>
               <p className="text-lg md:text-xl font-extrabold mt-1">{formatAUD(calc.grossedUp, 2)}</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Tax on grossed-up</p>
+              <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-500">Tax on grossed-up</p>
               <p className="text-lg md:text-xl font-extrabold mt-1">{formatAUD(calc.taxOnGrossedUp, 2)}</p>
             </div>
             <div>

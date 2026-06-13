@@ -585,7 +585,7 @@ export default function SuperConsolidationPage() {
               <p className="text-sm font-bold text-white">
                 {CASE_STUDY.name}&apos;s situation
               </p>
-              <p className="text-xs text-slate-400 mt-0.5">{CASE_STUDY.situation}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{CASE_STUDY.situation}</p>
             </div>
             <div className="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
               <div className="p-5">
@@ -788,7 +788,7 @@ export default function SuperConsolidationPage() {
             <h2 className="text-lg font-extrabold text-white mb-1">
               Ready to choose a better super fund?
             </h2>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-500 text-sm">
               Compare fees, performance, and insurance across Australia&apos;s top super funds.
             </p>
           </div>

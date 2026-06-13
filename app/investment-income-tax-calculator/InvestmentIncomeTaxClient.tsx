@@ -41,7 +41,7 @@ function MoneyField({ label, hint, value, onChange, placeholder }: MoneyFieldPro
         </p>
       )}
       <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" aria-hidden="true">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm" aria-hidden="true">
           $
         </span>
         <input
@@ -189,7 +189,7 @@ export default function InvestmentIncomeTaxClient() {
                     placeholder="100"
                     className="w-full pl-3 pr-7 py-2.5 border border-slate-200 rounded-lg text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" aria-hidden="true">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm" aria-hidden="true">
                     %
                   </span>
                 </div>

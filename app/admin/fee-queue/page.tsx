@@ -275,7 +275,7 @@ export default function AdminFeeQueuePage() {
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <span className="text-red-500 line-through">{item.old_value || "N/A"}</span>
-                          <Icon name="arrow-right" size={14} className="text-slate-400" />
+                          <Icon name="arrow-right" size={14} className="text-slate-500" />
                           <span className="text-emerald-600 font-bold">{item.new_value || "N/A"}</span>
                         </div>
                         <div className="text-[0.56rem] text-slate-500 mt-1">
@@ -336,7 +336,7 @@ export default function AdminFeeQueuePage() {
                       <button onClick={() => setPendingDeleteRuleId(null)} className="text-xs border border-slate-300 text-slate-600 hover:bg-slate-50 px-2 py-1 rounded">No</button>
                     </>
                   ) : (
-                    <button onClick={() => void deleteRule(rule.id)} aria-label="Delete rule" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
+                    <button onClick={() => void deleteRule(rule.id)} aria-label="Delete rule" className="p-1.5 text-slate-500 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
                   )}
                 </div>
               </div>

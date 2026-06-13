@@ -103,7 +103,7 @@ export default function FrankingCreditsPage() {
       <section className="bg-slate-900 text-white py-10 md:py-14">
         <div className="container-custom">
           <nav
-            className="flex items-center gap-1.5 text-xs text-slate-400 mb-5 flex-wrap"
+            className="flex items-center gap-1.5 text-xs text-slate-500 mb-5 flex-wrap"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="hover:text-white">
@@ -722,7 +722,7 @@ export default function FrankingCreditsPage() {
               <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-3">
                   <span>{faq.q}</span>
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">
                     &#9660;
                   </span>
                 </summary>

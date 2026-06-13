@@ -1,6 +1,5 @@
 "use client";
 
-import { fireJourneyMoment } from "@/components/journey/journeyMoment";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -39,9 +38,6 @@ export default function ArticleBookmarkButton({ slug, title }: Props) {
           action: next ? "add" : "remove",
         }),
       });
-      if (res.ok && next) {
-        fireJourneyMoment("first_save");
-      }
       if (!res.ok) {
         if (res.status === 401) {
           window.location.href = `/auth/login?next=${encodeURIComponent(window.location.pathname)}`;

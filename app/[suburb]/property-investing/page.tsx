@@ -282,7 +282,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
               <details key={faq.question} className="bg-white border border-slate-200 rounded-xl group">
                 <summary className="px-5 py-4 text-sm font-semibold text-slate-800 cursor-pointer list-none flex justify-between items-center">
                   {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <p className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
               </details>

@@ -2410,7 +2410,7 @@ export const IN_CONFIG: CountryConfig = {
 export const HK_CONFIG: CountryConfig = {
   code: "hk",
   defaultActions: [
-    { emoji: "🤝", label: "Get matched for HK investors", sublabel: "60-second quiz — broker, advisor, or property strategy", href: "/quiz?country=hong-kong" },
+    { emoji: "🤝", label: "Get matched for HK investors", sublabel: "60-second quiz — broker, advisor, or property strategy", href: "/get-matched?country=hong-kong" },
     { emoji: "🇭🇰", label: "Investing in Australia from Hong Kong", sublabel: "DTA, no HK CGT, FIRB, ASX brokers — full guide", href: "/foreign-investment/hong-kong" },
     { emoji: "📈", label: "Brokers that accept HK residents", sublabel: "IBKR HK + Saxo HK most common", href: "/compare/non-residents" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Sydney/Melbourne CBD apartments most popular with HK buyers", href: "/invest?firb=eligible" },

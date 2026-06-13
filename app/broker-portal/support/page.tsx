@@ -385,7 +385,7 @@ export default function SupportPage() {
                   #{ticket.id} · {CATEGORIES.find(c => c.value === ticket.category)?.label} · {new Date(ticket.updated_at).toLocaleDateString("en-AU")}
                 </p>
               </div>
-              <Icon name="chevron-right" size={16} className="text-slate-400 shrink-0" />
+              <Icon name="chevron-right" size={16} className="text-slate-500 shrink-0" />
             </button>
           ))}
         </div>

@@ -266,7 +266,7 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
         {/* ── Demographics ── */}
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-3">
-            <Icon name="users" size={18} className="inline -mt-0.5 mr-1.5 text-slate-400" />
+            <Icon name="users" size={18} className="inline -mt-0.5 mr-1.5 text-slate-500" />
             Demographics
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -328,7 +328,7 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
         {suburb.infrastructure_notes && (
           <section>
             <h2 className="text-lg font-bold text-slate-900 mb-2">
-              <Icon name="building" size={18} className="inline -mt-0.5 mr-1.5 text-slate-400" />
+              <Icon name="building" size={18} className="inline -mt-0.5 mr-1.5 text-slate-500" />
               Infrastructure &amp; Development
             </h2>
             <div className="bg-white border border-slate-200 rounded-xl p-5">
@@ -340,7 +340,7 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
         {/* ── Market Comparison vs State Average ── */}
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-3">
-            <Icon name="bar-chart" size={18} className="inline -mt-0.5 mr-1.5 text-slate-400" />
+            <Icon name="bar-chart" size={18} className="inline -mt-0.5 mr-1.5 text-slate-500" />
             {suburb.suburb} vs {suburb.state} State Average
           </h2>
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
@@ -392,7 +392,7 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
         {/* ── Nearby Properties ── */}
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-2">
-            <Icon name="home" size={18} className="inline -mt-0.5 mr-1.5 text-slate-400" />
+            <Icon name="home" size={18} className="inline -mt-0.5 mr-1.5 text-slate-500" />
             Property Listings in {suburb.suburb}
           </h2>
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-center">

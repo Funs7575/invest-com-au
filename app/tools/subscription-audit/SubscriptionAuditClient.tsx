@@ -383,18 +383,18 @@ export default function SubscriptionAuditClient() {
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   <div className="text-center">
                     <p className="text-xl font-extrabold">{activeSubs.length}</p>
-                    <p className="text-xs text-slate-400">Active</p>
+                    <p className="text-xs text-slate-500">Active</p>
                   </div>
                   <div className="text-center">
                     <p className="text-xl font-extrabold">{fmt(totalMonthly)}</p>
-                    <p className="text-xs text-slate-400">Per month</p>
+                    <p className="text-xs text-slate-500">Per month</p>
                   </div>
                   <div className="text-center">
                     <p className="text-xl font-extrabold">{fmt(totalAnnual)}</p>
-                    <p className="text-xs text-slate-400">Per year</p>
+                    <p className="text-xs text-slate-500">Per year</p>
                   </div>
                 </div>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   This is general information only — not financial advice. For a full budget review and advice on reducing discretionary spending, consider speaking with a financial adviser.
                 </p>
               </section>

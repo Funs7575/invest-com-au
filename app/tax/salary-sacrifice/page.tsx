@@ -144,7 +144,7 @@ const SETUP_STEPS = [
   {
     step: "4",
     title: "Check your SG base is protected",
-    body: "Since 1 January 2020 employers must calculate the super guarantee on your pre-sacrifice ordinary time earnings. Reducing the SG base because you salary sacrifice is illegal — confirm your payslip still shows SG on the full salary.",
+    body: "Since 1 January 2020 employers must calculate the super guarantee on your pre-sacrifice ordinary time earnings. Reducing the SG base because you salary sacrifice is illegal — confirm your payslip still shows SG on the full salary.",  // dated-ok
   },
   {
     step: "5",
@@ -220,7 +220,7 @@ Carry-forward unused cap. If your total super balance was under $500,000 on 30 J
 
 Because you receive a car as a benefit, Fringe Benefits Tax normally applies. There are two common ways to deal with it. The statutory formula method applies a flat 20% to the car's value to work out the taxable benefit, regardless of how far you drive. The Employee Contribution Method (ECM) has you pay part of the running costs from post-tax salary, which reduces the taxable value and can eliminate the FBT bill entirely.
 
-Electric vehicle exemption. Since 2022, eligible battery electric and plug-in hybrid vehicles first held and used on or after 1 July 2022, with a value below the luxury car tax threshold for fuel-efficient vehicles, are exempt from FBT when provided through a novated lease. This is a substantial saving and has made EV novated leases far more attractive — although the benefit is still reportable for income-test purposes. (Plug-in hybrid eligibility is being phased out, so confirm current rules before committing.)
+Electric vehicle exemption. Since 2022, eligible battery electric and plug-in hybrid vehicles first held and used on or after 1 July 2022, with a value below the luxury car tax threshold for fuel-efficient vehicles, are exempt from FBT when provided through a novated lease. This is a substantial saving and has made EV novated leases far more attractive — although the benefit is still reportable for income-test purposes. (Plug-in hybrid eligibility is being phased out, so confirm current rules before committing.)  // dated-ok
 
 A novated lease tends to beat buying outright when you drive a reasonable number of kilometres, want bundled running costs, and especially when the vehicle is an FBT-exempt EV. It works less well if you drive very little, because the finance and FBT costs are spread over fewer kilometres.`,
   },
@@ -252,11 +252,11 @@ const FAQS = [
   },
   {
     q: "Does salary sacrifice reduce my employer super contributions?",
-    a: "No. Since 1 January 2020, employers must calculate the compulsory Super Guarantee on your pre-sacrifice ordinary time earnings. Your employer cannot use your salary sacrifice to reduce the SG they must pay, and doing so is illegal. Check your payslip shows SG calculated on your full salary, and query payroll if it appears to be based on the reduced amount.",
+    a: "No. Since 1 January 2020, employers must calculate the compulsory Super Guarantee on your pre-sacrifice ordinary time earnings. Your employer cannot use your salary sacrifice to reduce the SG they must pay, and doing so is illegal. Check your payslip shows SG calculated on your full salary, and query payroll if it appears to be based on the reduced amount.",  // dated-ok
   },
   {
     q: "Can I salary sacrifice a car?",
-    a: "Yes, usually through a novated lease where your employer pays the lease and running costs from your pre-tax salary. Fringe Benefits Tax normally applies, managed via the statutory formula or the Employee Contribution Method. Eligible electric vehicles first used on or after 1 July 2022 and priced under the luxury car tax threshold for fuel-efficient vehicles are exempt from FBT, which makes an EV novated lease especially tax-effective.",
+    a: "Yes, usually through a novated lease where your employer pays the lease and running costs from your pre-tax salary. Fringe Benefits Tax normally applies, managed via the statutory formula or the Employee Contribution Method. Eligible electric vehicles first used on or after 1 July 2022 and priced under the luxury car tax threshold for fuel-efficient vehicles are exempt from FBT, which makes an EV novated lease especially tax-effective.",  // dated-ok
   },
   {
     q: "What is the salary sacrifice limit for super?",
@@ -290,7 +290,7 @@ export default function SalarySacrificePage() {
       {/* Hero */}
       <section className="relative bg-slate-900 text-white overflow-hidden py-10 md:py-14">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5 flex-wrap" aria-label="Breadcrumb">
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-5 flex-wrap" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-white">Home</Link>
             <span className="text-slate-600">/</span>
             <Link href="/tax" className="hover:text-white">Tax</Link>
@@ -623,7 +623,7 @@ export default function SalarySacrificePage() {
               <details key={item.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                   {item.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true">&#9662;</span>
                 </summary>
                 <p className="mt-3 text-sm text-slate-600 leading-relaxed">{item.a}</p>
               </details>

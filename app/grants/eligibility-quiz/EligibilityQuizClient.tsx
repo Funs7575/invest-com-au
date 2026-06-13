@@ -236,7 +236,7 @@ export default function EligibilityQuizClient() {
         <HubLeadForm
           heading="Get your free eligibility assessment from a specialist"
           subheading="A registered grants advisor will validate the result, sequence applications, and start the documentation work that survives an audit."
-          intent={{ need: "tax", context: ["tax_optimization"] }}
+          intent={{ need: "grants", context: ["grant_funding"] }}
           source="grants_eligibility_quiz"
           ctaLabel="Get my free assessment"
           extraFields={[
@@ -270,7 +270,7 @@ export default function EligibilityQuizClient() {
             className="w-full text-left px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 transition-colors flex items-center justify-between gap-2"
           >
             <span className="text-sm font-bold text-slate-900">{o.label}</span>
-            <Icon name="arrow-right" size={14} className="text-slate-400" />
+            <Icon name="arrow-right" size={14} className="text-slate-500" />
           </button>
         ))}
       </div>

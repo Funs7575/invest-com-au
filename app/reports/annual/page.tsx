@@ -135,7 +135,7 @@ export default async function AnnualReportPage() {
       <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 40%, white 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
         <div className="container-custom max-w-5xl relative py-12 md:py-20">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-6 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white">Home</Link>
             <span className="text-slate-600">/</span>
             <Link href="/reports" className="hover:text-white">Reports</Link>
@@ -257,7 +257,7 @@ export default async function AnnualReportPage() {
         <div className="grid sm:grid-cols-2 gap-4 mb-10">
           <div className="bg-white border border-slate-200 rounded-xl p-5">
             <h3 className="font-bold text-sm text-slate-900 mb-3 flex items-center gap-2">
-              <Icon name="pie-chart" size={16} className="text-slate-400" />
+              <Icon name="pie-chart" size={16} className="text-slate-500" />
               Platforms by Category
             </h3>
             <div className="space-y-2.5">
@@ -309,7 +309,7 @@ export default async function AnnualReportPage() {
         {/* Broker Landscape */}
         <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 mb-10">
           <h3 className="font-extrabold text-slate-900 text-lg mb-3 flex items-center gap-2">
-            <Icon name="map" size={20} className="text-slate-400" />
+            <Icon name="map" size={20} className="text-slate-500" />
             Broker Landscape
           </h3>
           <div className="grid sm:grid-cols-2 gap-6 text-sm text-slate-700 leading-relaxed">

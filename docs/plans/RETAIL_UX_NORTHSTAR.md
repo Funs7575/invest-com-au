@@ -438,7 +438,11 @@ Founder greenlit "build this end to end". Shipped on `claude/fervent-shannon-qxh
 | D4 arrival sequence (onboarding ends with the home assembling itself, skippable, reduced-motion-safe) | ✅ shipped | session 2 |
 | D5 profile-strength ring + visible unlocks + profile_complete milestone | ✅ shipped | `7db33587` |
 | F4.1 plan re-find ("Your plan" chip, header + mobile menu, 60-day stamp) + first_plan_saved + first_calculator wiring | ✅ shipped | `7db33587` |
-| D10 delta strip · D11 reasons sheets · G4/G6/G7 · account IA (2.6) · Wave-3 crons (drips, morning brief — Tier C) · D12 Wrapped | ⏳ next session(s) | — |
+| G4 + G6 + G7 (what-if panel, plan roadmap lanes, sharpen card) | ✅ found already shipped on main by a parallel session (grounding check before building — don't rebuild) | main |
+| 1.8 compare recovery: zero-result nearest-alternative with real counts + "Why this order?" sheet (live sort state + canonical disclosure copy) | ✅ shipped | session 3 |
+| D11 listings slice: `computeMatchBreakdown` emits factual reasons; match pill opens a why-this-score sheet with the profile-sharpening link (BottomSheet now portals to body so in-card sheets can't trigger card navigation) | ✅ shipped | session 3 |
+| 1.9 mobile fade-stall (F2.6) | ✅ verified NOT a bug — live probe: cards at opacity 1, animations complete, 4s post-load unscrolled; original capture was a mid-animation screenshot artifact | — |
+| D10 delta strip · account IA (2.5/2.6) · Wave-3 crons (drips, morning brief — Tier C, announce first) · D12 Wrapped (gated on milestone data) | ⏳ next session(s) | — |
 | 1.9 verify F2.6 mobile fade-stall via bot fleet | ⏳ open | — |
 
 ---

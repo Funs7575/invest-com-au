@@ -1018,7 +1018,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 />
               ) : (
                 <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                  <Icon name="book-open" size={24} className="text-slate-400" />
+                  <Icon name="book-open" size={24} className="text-slate-500" />
                 </div>
               )}
               <div className="flex-1 min-w-0">
@@ -1124,7 +1124,7 @@ function LessonGroupList({
                         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                           {lesson.video_url && (
                             <span className="text-[0.55rem] text-slate-500 flex items-center gap-0.5">
-                              <Icon name="play" size={10} className="text-slate-400" /> Video
+                              <Icon name="play" size={10} className="text-slate-500" /> Video
                             </span>
                           )}
                           {lesson.duration_minutes != null && (

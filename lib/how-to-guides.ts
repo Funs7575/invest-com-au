@@ -435,7 +435,7 @@ The hardest part of investing isn't picking the right stocks or timing the marke
     ],
     relatedBrokerFilter: (b: Broker) => (b.rating ?? 0) >= 4,
     relatedBestPages: [
-      { label: "Take the Broker Quiz", href: "/quiz" },
+      { label: "Take the Broker Quiz", href: "/get-matched" },
       { label: "Best Brokers for Beginners", href: "/best/beginners" },
       { label: "Share Trading Platforms", href: "/share-trading" },
     ],

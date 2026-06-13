@@ -201,7 +201,7 @@ export default function WalletPage() {
         {transactions.length === 0 ? (
           <div className="p-12 text-center">
             <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
-              <Icon name="wallet" size={20} className="text-slate-400" />
+              <Icon name="wallet" size={20} className="text-slate-500" />
             </div>
             <p className="text-sm font-medium text-slate-700 mb-1">No transactions yet</p>
             <p className="text-xs text-slate-500">Top up your wallet to get started.</p>

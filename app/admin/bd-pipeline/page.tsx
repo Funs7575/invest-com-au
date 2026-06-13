@@ -136,8 +136,8 @@ export default function BDPipelinePage() {
                     </>
                   ) : (
                     <>
-                      <button onClick={() => setEditing(deal)} aria-label="Edit deal" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="settings" size={14} /></button>
-                      <button onClick={() => setPendingDeleteId(deal.id)} aria-label="Delete deal" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="x-circle" size={14} /></button>
+                      <button onClick={() => setEditing(deal)} aria-label="Edit deal" className="p-1.5 text-slate-500 hover:text-slate-700"><Icon name="settings" size={14} /></button>
+                      <button onClick={() => setPendingDeleteId(deal.id)} aria-label="Delete deal" className="p-1.5 text-slate-500 hover:text-red-600"><Icon name="x-circle" size={14} /></button>
                     </>
                   )}
                 </div>

@@ -90,7 +90,7 @@ export default function WealthStackPage() {
               <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
                 <summary className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 font-semibold text-sm text-slate-900 list-none">
                   {faq.q}
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
+                  <span className="shrink-0 text-slate-500 group-open:rotate-180 transition-transform" aria-hidden="true">▾</span>
                 </summary>
                 <p className="px-4 pb-4 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>

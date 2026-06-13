@@ -102,7 +102,7 @@ function InterestPill({
           : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
       }`}
     >
-      <Icon name={icon} size={16} className={selected ? "text-white" : "text-slate-400"} />
+      <Icon name={icon} size={16} className={selected ? "text-white" : "text-slate-500"} />
       {label}
     </button>
   );

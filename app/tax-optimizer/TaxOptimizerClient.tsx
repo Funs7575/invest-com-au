@@ -235,8 +235,8 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
                     {(h.currentPrice - h.buyPrice) >= 0 ? "+" : ""}${((h.currentPrice - h.buyPrice) * h.quantity).toFixed(0)}
                   </span>
                   <div className="flex items-center gap-1 ml-2">
-                    <button onClick={() => startEdit(h)} aria-label={`Edit ${h.ticker}`} className="text-slate-400 hover:text-cyan-600 transition-colors"><Icon name="edit" size={13} /></button>
-                    <button onClick={() => removeHolding(h.id)} aria-label={`Remove ${h.ticker}`} className="text-slate-400 hover:text-red-500 transition-colors"><Icon name="x" size={13} /></button>
+                    <button onClick={() => startEdit(h)} aria-label={`Edit ${h.ticker}`} className="text-slate-500 hover:text-cyan-600 transition-colors"><Icon name="edit" size={13} /></button>
+                    <button onClick={() => removeHolding(h.id)} aria-label={`Remove ${h.ticker}`} className="text-slate-500 hover:text-red-500 transition-colors"><Icon name="x" size={13} /></button>
                   </div>
                 </div>
               ))}
