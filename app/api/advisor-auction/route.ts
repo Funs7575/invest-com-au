@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { logger } from "@/lib/logger";
+import { auctionRoundsEnabled } from "@/lib/auction-rounds";
 
 const log = logger("advisor-auction");
 
@@ -187,6 +188,28 @@ async function getAuctions(_request: NextRequest) {
       return a.lead_type.toLowerCase().includes(advisor.type?.toLowerCase() || "");
     });
 
+    // Idea #11 — sealed auctions must NOT leak the competing high bid to
+    // advisers while still open. Fetch the set of sealed-open auction ids in a
+    // separate, fail-soft query (only when the flag is on); for those we null
+    // `high_bid_cents`. Fully dormant otherwise.
+    const sealedOpenIds = new Set<number>();
+    if (matchingAuctions.length > 0 && (await auctionRoundsEnabled(user.email))) {
+      try {
+        const ids = matchingAuctions.map((a) => a.id);
+        const { data: sealedRows } = await admin
+          .from("advisor_auctions")
+          .select("id, bid_visibility")
+          .in("id", ids)
+          .eq("bid_visibility", "sealed")
+          .eq("status", "open");
+        for (const r of sealedRows ?? []) sealedOpenIds.add(r.id as number);
+      } catch (err) {
+        log.warn("Sealed-set lookup failed (dormant)", {
+          err: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+
     // For each auction, fetch the current high bid and advisor's own bid
     const enrichedAuctions = await Promise.all(
       matchingAuctions.map(async (auction) => {
@@ -198,17 +221,22 @@ async function getAuctions(_request: NextRequest) {
           .order("bid_amount", { ascending: false })
           .limit(5);
 
-        const highBid = bids?.[0]?.bid_amount ?? null;
+        const isSealed = sealedOpenIds.has(auction.id);
+        // Sealed + open: hide the competing high bid; show only the count.
+        const highBid = isSealed ? null : (bids?.[0]?.bid_amount ?? null);
         const bidCount = bids?.length ?? 0;
         const myBid = bids?.find((b) => b.advisor_id === advisor.id);
 
         return {
           ...auction,
+          sealed: isSealed,
           high_bid_cents: highBid,
           bid_count: bidCount,
           my_bid_cents: myBid?.bid_amount ?? null,
           my_bid_id: myBid?.id ?? null,
-          is_leading: myBid ? myBid.id === bids?.[0]?.id : false,
+          // Sealed + open: don't reveal leading status either (it implies the
+          // advisor is the high bidder). The advisor still sees their own bid.
+          is_leading: !isSealed && myBid ? myBid.id === bids?.[0]?.id : false,
         };
       })
     );

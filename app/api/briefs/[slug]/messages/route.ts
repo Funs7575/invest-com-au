@@ -11,6 +11,7 @@ import {
   type BriefMessageSenderKind,
 } from "@/lib/brief-messages";
 import { isProfessionalOnTeam } from "@/lib/expert-teams";
+import { dispatchPushToAdvisor } from "@/lib/advisor-push";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:briefs:messages");
@@ -117,6 +118,19 @@ export async function POST(
       senderTeamId: sender.teamId,
       body: parsed.data.body,
     });
+
+    // ── Push the accepted adviser (Adviser Push Command Centre) ──────────
+    // Only consumer → adviser direction; an adviser's own message must not
+    // ping themselves. Flag-gated + preference-gated + fail-soft in the
+    // helper. Deep-links to the shared brief tracker chat.
+    if (sender.kind === "consumer" && brief.accepted_by_professional_id) {
+      void dispatchPushToAdvisor(brief.accepted_by_professional_id, "new_message", {
+        title: "New message on your brief",
+        body: "A consumer replied — open the chat to respond.",
+        url: `/briefs/${slug}`,
+        tag: `advisor-new_message-${brief.id}`,
+      });
+    }
 
     return NextResponse.json({ message: row });
   } catch (err) {

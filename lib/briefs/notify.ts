@@ -18,6 +18,7 @@ import {
   sendConsumerProviderAccepted,
 } from "@/lib/marketplace-emails";
 import { enqueueUserNotificationByEmail } from "@/lib/user-notifications";
+import { dispatchPushToAdvisor } from "@/lib/advisor-push";
 
 import type { BriefRow } from "./types";
 
@@ -91,6 +92,21 @@ export async function notifyEligibleProviders(
         briefBudgetBand: brief.budget_band,
         briefLocation: brief.location,
       });
+
+      // Push the same fan-out to the adviser's phone (Adviser Push Command
+      // Centre). Flag-gated + preference-gated + fail-soft inside the helper —
+      // a no-op when `advisor_push` is off, the adviser hasn't subscribed, or
+      // they've muted "new matching brief". Deep-links into the briefs inbox.
+      if (typeof p.id === "number") {
+        void dispatchPushToAdvisor(p.id, "new_brief", {
+          title: "New matching brief",
+          body: brief.job_title
+            ? `${brief.job_title}${brief.location ? ` · ${brief.location}` : ""}`
+            : "A new brief matches your profile — accept it first.",
+          url: "/advisor-portal/briefs",
+          tag: `advisor-new_brief-${brief.id}`,
+        });
+      }
     }
   } catch (err) {
     log.warn("notifyEligibleProviders threw", {
@@ -107,6 +123,8 @@ export async function notifyConsumerOfAcceptance(input: {
   consumerName: string;
   briefTitle: string;
   briefSlug: string;
+  /** Enables reply-by-email into the brief chat on the consumer email. */
+  briefId?: number;
   professionalId: number;
   teamId: number | null;
 }): Promise<void> {
@@ -140,6 +158,7 @@ export async function notifyConsumerOfAcceptance(input: {
     consumerName: input.consumerName,
     briefTitle: input.briefTitle,
     briefSlug: input.briefSlug,
+    briefId: input.briefId,
     providerName,
     providerKind,
   });

@@ -12,6 +12,9 @@ import {
 } from "@/lib/money-profile";
 import { getInvestorAccountType, type InvestorAccountType } from "@/lib/account-types";
 import SmartRecommendationsStrip from "@/components/SmartRecommendationsStrip";
+import { isFlagEnabled } from "@/lib/feature-flags";
+import QuestShelf from "@/app/account/_components/QuestShelf";
+import OptInBlock from "@/components/open-to-offers/OptInBlock";
 
 export const dynamic = "force-dynamic";
 
@@ -394,6 +397,19 @@ export default async function PersonalDashboardPage() {
   const displayName = profile?.display_name ?? investorProfile?.displayName ?? null;
   const firstName = displayName?.split(" ")[0] ?? null;
 
+  // Monthly Money Review tile — flag-gated; renders nothing when off.
+  const monthlyReviewOn = await isFlagEnabled("monthly_review", {
+    userKey: user.email ?? user.id,
+    segment: "user",
+  });
+
+  // Open to Offers block — flag-gated; OptInBlock self-fetches status and
+  // renders nothing until the flag is on AND a status resolves.
+  const openToOffersOn = await isFlagEnabled("open_to_offers", {
+    userKey: user.email ?? user.id,
+    segment: "user",
+  });
+
   // Nearest goal with a real target date
   const nearestGoal = goals.find((g) => daysUntil(g.target_date) > 0) ?? goals[0] ?? null;
 
@@ -519,6 +535,53 @@ export default async function PersonalDashboardPage() {
           </div>
         )}
       </section>
+
+      {/* Open to Offers (flag: open_to_offers). Small isolated block; the
+          client component self-hides until the flag-gated API resolves a
+          status. */}
+      {openToOffersOn && (
+        <section aria-label="Open to offers" className="mb-8">
+          <OptInBlock variant="dashboard" />
+        </section>
+      )}
+
+      {/* Monthly Money Review tile (flag: monthly_review). Self-contained,
+          rendered only when the flag is on. */}
+      {monthlyReviewOn && (
+        <section aria-labelledby="monthly-review-heading" className="mb-8">
+          <Link
+            href="/account/review"
+            className="block bg-gradient-to-br from-violet-600 to-violet-700 rounded-xl p-5 text-white hover:from-violet-700 hover:to-violet-800 transition-colors group"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h2
+                  id="monthly-review-heading"
+                  className="text-base font-extrabold flex items-center gap-2"
+                >
+                  <span aria-hidden="true">🗓️</span> Your Monthly Money Review
+                </h2>
+                <p className="text-sm text-violet-100 mt-1">
+                  10 minutes — net worth, goals, rates and open decisions, with
+                  a completion streak.
+                </p>
+              </div>
+              <span
+                aria-hidden="true"
+                className="shrink-0 text-2xl group-hover:translate-x-0.5 transition-transform"
+              >
+                →
+              </span>
+            </div>
+          </Link>
+        </section>
+      )}
+
+      {/* Setup milestones (Consumer Quests, idea #19). Self-gating server
+          component: renders nothing when the `consumer_quests` flag is off
+          or the table is absent. Isolated single block — do not merge other
+          dashboard tiles into this one. */}
+      <QuestShelf userId={user.id} />
 
       {/* Benchmarking strip — "how you compare" against anonymised
           aggregate community stats. Hidden when no signal (new
@@ -735,6 +798,7 @@ export default async function PersonalDashboardPage() {
           <NavCard href="/account/referrals" emoji="🎁" label="Referrals" desc="Invite friends, earn rewards" />
           <NavCard href="/account/privacy" emoji="🔒" label="Privacy & Data" desc="Export, delete, GDPR rights" />
           <NavCard href="/account/annual-check" emoji="📅" label="Annual Check-up" desc="FY checklist: super, tax, insurance" />
+          <NavCard href="/wrapped" emoji="🎬" label="FY Money Wrapped" desc="Your year in money, recapped" />
           <NavCard href="/account/calendar" emoji="🗓️" label="Financial Calendar" desc="Key tax dates and deadlines" />
           <NavCard href="/account/vault" emoji="🗂️" label="Document Vault" desc="Store super, tax, insurance docs securely" />
           <NavCard href="/account/wholesale-cert" emoji="🏅" label="Wholesale Certification" desc="s708 or professional investor status" />

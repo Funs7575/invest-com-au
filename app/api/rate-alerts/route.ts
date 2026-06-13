@@ -9,6 +9,7 @@ import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
 import { isSuppressed } from "@/lib/email-suppression";
+import { awardIfEligible } from "@/lib/quests-server";
 
 const log = logger("rate-alerts");
 
@@ -138,6 +139,10 @@ export async function POST(request: NextRequest) {
       log.error("rate-alert subscribe upsert failed", { err: upsertErr.message });
       return NextResponse.json({ error: "Failed to subscribe." }, { status: 500 });
     }
+    // Quest: first-rate-alert. Authenticated subscribers only. Fire-and-
+    // forget — flag-gated + fail-soft inside; never affects the subscribe
+    // response or the verification email below.
+    void awardIfEligible(user.id, "first-rate-alert");
   } else {
     // Anonymous path: INSERT only. A 23505 means the (email, product_kind)
     // pair already exists — already subscribed, so report success rather than

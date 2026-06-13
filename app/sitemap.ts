@@ -237,7 +237,7 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/fsg", "/legal", "/developer-terms", "/consultations",
     "/courses", "/reports", "/portfolio",
     "/advisor-signup",
-    "/quotes", "/quotes/post", "/quotes/recent-wins",
+    "/quotes", "/quotes/post", "/quotes/recent-wins", "/advice-fees",
     "/press",
     "/about/careers",
     // More advisor-guides

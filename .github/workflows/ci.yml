@@ -112,28 +112,23 @@ jobs:
         # not exceed the budget. scripts/bundle-size-budget.mjs excludes
         # page-specific lazy splits, prints a top-10 chunk table, and
         # exits 1 on overage.
-        # Budget: 13300 kB (~13.0 MB raw uncompressed). History, most recent
-        # first:
-        # - 2026-06-13 (this PR): 13200 → 13300. Merging the listings board
-        #   (#1562) + grant-writer marketplace (#1572) brought main to 13200.6 kB
-        #   — 0.6 kB over the 13200 gate, so main's own build went red. Raise to
-        #   13300 fixes main forward (reverting a greenlit feature over 0.6 kB is
-        #   the wrong trade) and makes room for the journey/Feel-layer re-land
-        #   (#1568, ~+58.5 kB → ~13259 kB), leaving ~40 kB headroom. Ratchet back
-        #   down after a bundle diet of the 2026-06-12/13 baseline.
-        # - 2026-06-12 (this PR): 13100 → 13200. The /raise vertical (9 routes:
-        #   hub + pathway-finder quiz + 7 guides) adds ~55.6 kB of route chunks
-        #   → 13114.1 kB measured locally, over the 13100 interim raise that
-        #   landed on main the same day. 13200 leaves ~85 kB headroom; ratchet
-        #   back down after a bundle diet of the 2026-06-12 baseline.
-        # - 2026-06-12 (main, interim): 13000 → 13100 after the morning waves
-        #   landed main at 13058.5 kB and every PR inherited the red gate.
+        # Budget: 14000 kB. History, most recent first:
+        # - 2026-06-13 (#1570): 13300 → 14000 for the retention/marketplace
+        #   20-feature wave: +671 kB of genuinely new shared UI (scenario bar,
+        #   quest shelf, decision kit, dossiers, embeds, pool panels, wrapped
+        #   deck) — per-route deltas all ≤2.1 kB, totals diff +3.6%. ~1.7%
+        #   headroom; tighten once the post-merge baseline stabilises.
+        # - 2026-06-13: 13200 → 13300. Listings board (#1562) + grant-writer
+        #   marketplace (#1572) brought main to 13200.6 kB (0.6 kB over the
+        #   13200 gate); 13300 also fit the journey/Feel-layer re-land (#1568).
+        # - 2026-06-12: 13100 → 13200. The /raise vertical (9 routes) added
+        #   ~55.6 kB of route chunks → 13114.1 kB, over the 13100 interim raise.
+        # - 2026-06-12 (interim): 13000 → 13100 after the morning waves landed
+        #   main at 13058.5 kB and every PR inherited the red gate.
         # - Earlier: 12000 → 13000 when audit-remediation PRs pushed the
-        #   baseline to ~12001 kB and the Q&A/CPD wave added ~2900 kB
-        #   (questions-data.ts content imported by client quiz/scoring
-        #   components + advisor course-creation, CPD, certificate features).
+        #   baseline to ~12001 kB and the Q&A/CPD wave added ~2900 kB.
         # See scripts/bundle-size-budget.mjs for the metric definition.
-        run: node scripts/bundle-size-budget.mjs --budget-kb 13300
+        run: node scripts/bundle-size-budget.mjs --budget-kb 14000
 
       # Upload .next so dependent jobs (e2e, a11y, lighthouse*) can
       # download instead of rebuilding from scratch. Each rebuild

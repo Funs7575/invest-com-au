@@ -44,6 +44,7 @@ import {
 import { CENTS_PER_CREDIT } from "./credits";
 import { notifyEligibleProviders } from "./notify";
 import { runStandingOrdersForBrief } from "./standing-orders";
+import { dispatchPushToAdvisor } from "@/lib/advisor-push";
 
 import type { BriefRow } from "./types";
 
@@ -201,21 +202,31 @@ async function processBrief(
       event_type: "warning",
       credits_refunded: 0,
     });
+    const hoursLeft = Math.max(
+      1,
+      Math.round(
+        RESPONSE_SLA_HOURS -
+          (now.getTime() - new Date(brief.accepted_at as string).getTime()) / 3_600_000,
+      ),
+    );
     void notifyProvider(professionalId, (email, name) =>
       sendProviderSlaWarning({
         providerEmail: email,
         providerName: name,
         briefTitle: brief.job_title || "Match Request",
         briefSlug: brief.slug,
-        hoursLeft: Math.max(
-          1,
-          Math.round(
-            RESPONSE_SLA_HOURS -
-              (now.getTime() - new Date(brief.accepted_at as string).getTime()) / 3_600_000,
-          ),
-        ),
+        briefId: brief.id,
+        hoursLeft,
       }),
     );
+    // Push the SLA countdown to the adviser's phone (Adviser Push Command
+    // Centre). Flag-gated + preference-gated + fail-soft in the helper.
+    void dispatchPushToAdvisor(professionalId, "sla_warning", {
+      title: `${hoursLeft}h left to respond`,
+      body: `Send a first message on "${brief.job_title || "your brief"}" or the credits are refunded and it reopens.`,
+      url: `/briefs/${brief.slug}`,
+      tag: `advisor-sla_warning-${brief.id}`,
+    });
     return "warned";
   }
 

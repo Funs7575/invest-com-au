@@ -26,6 +26,7 @@ const BillingTab = dynamic(() => import("./BillingTab"));
 const SettingsTab = dynamic(() => import("./SettingsTab"));
 const TeamTab = dynamic(() => import("./TeamTab"));
 const WidgetBuilderTab = dynamic(() => import("./WidgetBuilderTab"));
+const EmbedKitTab = dynamic(() => import("./EmbedKitTab"));
 const CourseBuilderTab = dynamic(() => import("./CourseBuilderTab"));
 const EventsTab = dynamic(() => import("./EventsTab"));
 const BadgesTab = dynamic(() => import("./BadgesTab"));
@@ -34,6 +35,7 @@ const FeedTab = dynamic(() => import("./FeedTab"));
 const CaseStudiesTab = dynamic(() => import("./CaseStudiesTab"));
 const ReviewsTab = dynamic(() => import("./ReviewsTab"));
 const EarnTab = dynamic(() => import("./EarnTab"));
+const SchedulingTab = dynamic(() => import("./SchedulingTab"));
 
 /** Score threshold below which new advisors are auto-redirected to the onboarding route. */
 const AUTO_ONBOARDING_SCORE_THRESHOLD = 40;
@@ -284,6 +286,7 @@ export default function AdvisorPortalPage() {
     { key: "reviews", label: "Reviews", icon: "star" },
     { key: "courses", label: "Courses", icon: "book-open" },
     { key: "events", label: "Events", icon: "calendar" },
+    { key: "scheduling", label: "Scheduling", icon: "clock" },
     { key: "badges", label: "Badges", icon: "award" },
     { key: "ideal-client", label: "Ideal Client", icon: "target" },
     { key: "profile", label: "Profile", icon: "user" },
@@ -292,6 +295,7 @@ export default function AdvisorPortalPage() {
     { key: "earn", label: "Earn", icon: "gift" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
     { key: "widgets", label: "Widgets", icon: "code-2" },
+    { key: "embed-kit", label: "Embed Kit", icon: "link" },
     { key: "settings", label: "Settings", icon: "settings" },
   ];
 
@@ -356,6 +360,13 @@ export default function AdvisorPortalPage() {
             Marketplace
           </Link>
           <Link
+            href="/advisor-portal/prospects"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+          >
+            <Icon name="inbox" size={16} />
+            Prospects
+          </Link>
+          <Link
             href="/advisor-portal/teams"
             className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
@@ -399,6 +410,7 @@ export default function AdvisorPortalPage() {
                   { href: "/advisor-portal/briefs", icon: "briefcase", label: "Briefs" },
                   { href: "/advisor-portal/auctions", icon: "activity", label: "Auctions" },
                   { href: "/advisor-portal/marketplace", icon: "store", label: "Marketplace" },
+                  { href: "/advisor-portal/prospects", icon: "inbox", label: "Prospects" },
                   { href: "/advisor-portal/teams", icon: "users", label: "Expert Teams" },
                 ].map(link => (
                   <Link
@@ -648,6 +660,9 @@ export default function AdvisorPortalPage() {
           <EarnTab advisor={advisor} />
         )}
 
+        {/* ─── SCHEDULING (booking-v2 — self-gates when flag off) ─── */}
+        {view === "scheduling" && <SchedulingTab advisor={advisor} />}
+
         {/* ─── TEAM (firm admins only) ─── */}
         {view === "team" && isFirmAdmin && (
           <TeamTab advisor={advisor} />
@@ -656,6 +671,11 @@ export default function AdvisorPortalPage() {
         {/* ─── WIDGETS ─── */}
         {view === "widgets" && (
           <WidgetBuilderTab />
+        )}
+
+        {/* ─── EMBED KIT ─── */}
+        {view === "embed-kit" && (
+          <EmbedKitTab />
         )}
 
       </div>

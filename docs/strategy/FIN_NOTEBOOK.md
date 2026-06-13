@@ -1420,7 +1420,34 @@ block, Founding-Experts BD motion.
 
 ---
 
-### 2026-06-11 — The 25 mega-sessions: pure-code compounding-value backlog
+### 2026-06-12 — Retention/marketplace 25: backlog fully built (PR #1570 + #1547)
+
+The second 25-list (`docs/strategy/RETENTION_MARKETPLACE_MEGA_SESSIONS.md`) is
+now **100% built**: ideas #1–#5 shipped in PR #1547 (merged 2026-06-12 AM),
+ideas #6–#25 in PR #1570 (one wave, ~20 parallel agent builds, ~1,200 new
+tests). Pattern locked in: every schema-bearing feature ships its migration
+**file-only** and the whole surface dormant behind a fail-closed flag, so
+merge ≠ launch — activation is a deliberate founder step per feature.
+
+**Founder activation queue (in rough revenue order):** apply the 12 new
+migrations (timestamp order), then enable flags deliberately:
+`open_to_offers`, `auction_rounds`, `decision_kit`, `firm_routing` (+
+`firm_seat_billing` only with `STRIPE_FIRM_SEAT_PRICE_ID` set),
+`lead_sequences`, `demand_pools`, `advisor_push`, `booking_v2`,
+`scenario_workspace`, `consumer_quests`, `monthly_review`,
+`cohort_challenges`, `households`, `demand_alerts`, `fy_wrapped_email`
+(Wrapped page itself is live on merge — EOFY June 30 timing). Reply-by-email
+needs Resend inbound pointed at `/api/inbound/brief-reply` +
+`BRIEF_REPLY_SECRET`.
+
+**Ops flags raised during the build (fix separately):**
+- `20260611160000_gm08_questions_intents_seed.sql` on main reuses the
+  already-applied standing-orders version — Supabase will silently skip it;
+  rename per the `c2baec61` precedent.
+- The stale #1540 merge broke main (deleted journey modules + lint errors);
+  PR #1570 heals it.
+- `advisor_auction_bids` baseline status CHECK is stale vs the `won`/`lost`
+  convention prod writes.
 
 Brainstormed list of self-contained builds (each one Claude session, no founder input, no new licences, no schema): the agreed execution order is **top-down**. Status tags maintained here as sessions complete.
 

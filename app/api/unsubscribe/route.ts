@@ -98,7 +98,22 @@ export async function POST(request: NextRequest) {
     updated = true;
   }
 
-  // 5. Sync unsubscribe to Resend Contacts (fire-and-forget)
+  // 5. Demand-board alert prospects (POST /api/demand-alerts captures).
+  // Scoped to the demand-alert external_id prefix so BD-agent-owned
+  // pipeline rows in `prospects` are never trampled by a consumer
+  // unsubscribe. The weekly digest cron skips status='unsubscribed'.
+  const { data: demandAlerts } = await supabase
+    .from("prospects")
+    .update({ status: "unsubscribed", updated_at: new Date().toISOString() })
+    .eq("source", "other")
+    .like("external_id", "demand-alert:%")
+    .eq("contact_email", sanitizedEmail)
+    .select("id");
+  if (demandAlerts && demandAlerts.length > 0) {
+    updated = true;
+  }
+
+  // 6. Sync unsubscribe to Resend Contacts (fire-and-forget)
   if (process.env.RESEND_API_KEY) {
     try {
       await fetch("https://api.resend.com/contacts", {

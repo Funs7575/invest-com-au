@@ -17,8 +17,21 @@
 
 import { sendEmail } from "@/lib/resend";
 import { SITE_URL } from "@/lib/seo";
+import { buildBriefReplyAddress } from "@/lib/briefs/reply-address";
 
 const FROM = "Invest.com.au <hello@invest.com.au>";
+
+/**
+ * Reply-by-Email Bridge: emails that point a party at the brief chat set
+ * Reply-To to the brief's HMAC reply address, so answering the email
+ * lands the reply in `brief_messages` (see /api/inbound/brief-reply).
+ * Returns undefined when briefId is absent or BRIEF_REPLY_SECRET is not
+ * configured — the header is simply omitted.
+ */
+function briefReplyTo(briefId: number | undefined): string | undefined {
+  if (!briefId) return undefined;
+  return buildBriefReplyAddress(briefId) ?? undefined;
+}
 
 function wrap(title: string, body: string): string {
   return `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#334155"><div style="background:#0f172a;padding:20px 24px;border-radius:12px 12px 0 0"><h1 style="color:white;margin:0;font-size:18px">${title}</h1></div><div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">${body}</div></div>`;
@@ -91,6 +104,8 @@ export async function sendProviderStandingOrderAccepted(input: {
   creditsSpent: number;
   briefBudgetBand: string | null;
   briefLocation: string | null;
+  /** Enables reply-by-email into the brief chat when provided. */
+  briefId?: number;
 }): Promise<boolean> {
   const inboxUrl = `${SITE_URL}/advisor-portal/briefs`;
   const budgetLine = input.briefBudgetBand
@@ -106,6 +121,7 @@ export async function sendProviderStandingOrderAccepted(input: {
   const { ok } = await sendEmail({
     from: FROM,
     to: input.providerEmail,
+    replyTo: briefReplyTo(input.briefId),
     subject: `Standing order matched — ${input.briefTitle}`,
     html: wrap(
       "Your standing order claimed a Match Request",
@@ -136,11 +152,14 @@ export async function sendProviderSlaWarning(input: {
   briefTitle: string;
   briefSlug: string;
   hoursLeft: number;
+  /** Enables reply-by-email into the brief chat when provided. */
+  briefId?: number;
 }): Promise<boolean> {
   const inboxUrl = `${SITE_URL}/advisor-portal/briefs`;
   const { ok } = await sendEmail({
     from: FROM,
     to: input.providerEmail,
+    replyTo: briefReplyTo(input.briefId),
     subject: `${input.hoursLeft}h left to respond — ${input.briefTitle}`,
     html: wrap(
       "A brief you accepted is waiting on you",
@@ -339,6 +358,8 @@ export async function sendConsumerProviderAccepted(input: {
   briefSlug: string;
   providerName: string;
   providerKind: "individual" | "firm" | "expert_team";
+  /** Enables reply-by-email into the brief chat when provided. */
+  briefId?: number;
 }): Promise<boolean> {
   const trackerUrl = `${SITE_URL}/briefs/${input.briefSlug}`;
   const kindLabel =
@@ -350,6 +371,7 @@ export async function sendConsumerProviderAccepted(input: {
   const { ok } = await sendEmail({
     from: FROM,
     to: input.consumerEmail,
+    replyTo: briefReplyTo(input.briefId),
     subject: `${input.providerName} accepted your Match Request`,
     html: wrap(
       "You have a match",
@@ -508,6 +530,80 @@ export async function sendConsumerConsultationConfirmed(input: {
         ${meetingLine}
       </div>
       ${btn(trackerUrl, "View status →")}
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}
+
+// ─── Group Briefs (demand pools, idea #17) ───────────────────────────────
+
+/**
+ * A member of a demand pool is told a verified pro posted a GROUP OFFER on
+ * their pool. Each member individually accepts or declines on their tracker —
+ * the email is purely a routing nudge to the brief's Quote Status page (which
+ * already gates by email-as-key). Group "rates" are the pro's own quoted
+ * package pricing; the platform never intermediates the money.
+ */
+export async function sendPoolOfferReceived(input: {
+  consumerEmail: string;
+  briefSlug: string;
+  advisorName: string;
+  templateKey: string;
+  memberCount: number;
+}): Promise<boolean> {
+  const trackerUrl = `${SITE_URL}/briefs/${input.briefSlug}`;
+  const need = input.templateKey.replace(/_/g, " ");
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.consumerEmail,
+    subject: `A group offer arrived on your Match Request`,
+    html: wrap(
+      "A verified pro made a group offer",
+      `<p style="font-size:15px">Hi there,</p>
+      <p style="font-size:14px;color:#475569">You joined a group of <strong>${input.memberCount}</strong> ${input.memberCount === 1 ? "person" : "people"} with a similar ${need} need this month. <strong>${input.advisorName}</strong> has posted a group offer — a package and availability you can take up or pass on. Each person decides individually; nothing is shared until you accept.</p>
+      ${btn(trackerUrl, "View the offer →")}
+      <p style="font-size:12px;color:#64748b">The package rate shown is the pro's own quoted pricing. Invest.com.au provides marketplace introductions only — the service is delivered by the professional under their own licence.</p>
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}
+
+/**
+ * A pro is told a pool member accepted their group offer — their contact
+ * details are unlocked and the brief chat is open. Reply-by-email lands in the
+ * brief chat when BRIEF_REPLY_SECRET is configured.
+ */
+export async function sendProviderPoolOfferAccepted(input: {
+  providerEmail: string;
+  providerName: string;
+  briefTitle: string;
+  briefSlug: string;
+  creditsSpent: number;
+  /** Enables reply-by-email into the brief chat when provided. */
+  briefId?: number;
+}): Promise<boolean> {
+  const inboxUrl = `${SITE_URL}/advisor-portal/briefs`;
+  const chargeLine =
+    input.creditsSpent > 0
+      ? `<p style="font-size:13px;color:#475569;margin:8px 0 0 0"><strong>Charged:</strong> ${input.creditsSpent} credits (group rate — volume discount applied)</p>`
+      : "";
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.providerEmail,
+    replyTo: briefReplyTo(input.briefId),
+    subject: `Group offer accepted — ${input.briefTitle}`,
+    html: wrap(
+      "A member accepted your group offer",
+      `<p style="font-size:15px">Hi ${input.providerName},</p>
+      <p style="font-size:14px;color:#475569">A member of your demand pool accepted your group offer. Their contact details are unlocked in your inbox and the chat is open — they've been told you accepted, so a fast first response matters.</p>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:16px 0">
+        <p style="font-size:14px;font-weight:600;color:#0f172a;margin:0">${input.briefTitle}</p>
+        ${chargeLine}
+      </div>
+      ${btn(inboxUrl, "Open the brief →")}
+      <p style="font-size:12px;color:#64748b">Other members may still accept your offer separately — each acceptance is its own engagement.</p>
       ${disclosure()}`,
     ),
   });

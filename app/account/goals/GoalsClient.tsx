@@ -13,10 +13,17 @@ export interface GoalRow {
   monthlyContributionCents: number;
   expectedReturnPct: number;
   notes: string | null;
+  /** Whether this goal is shared with the user's household (household_id set). */
+  shared?: boolean;
 }
 
 interface Props {
   initialItems: GoalRow[];
+  /**
+   * When true (households flag on AND the user has an accepted partner), each
+   * goal card shows a "Share with household" toggle. Off → no toggle at all.
+   */
+  householdEnabled?: boolean;
 }
 
 const GOAL_TYPES = [
@@ -35,12 +42,30 @@ const fmt = (cents: number) =>
     maximumFractionDigits: 0,
   });
 
-export default function GoalsClient({ initialItems }: Props) {
+export default function GoalsClient({ initialItems, householdEnabled = false }: Props) {
   const [items, setItems] = useState<GoalRow[]>(initialItems);
   const [adding, setAdding] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [defaultGoalType, setDefaultGoalType] = useState<typeof GOAL_TYPES[number]["value"]>("house_deposit");
+
+  // Optimistically flip a goal's shared state, calling the share API. Rolls
+  // back on failure. Owner-only write — enforced server-side.
+  const handleToggleShare = async (id: number, shared: boolean) => {
+    const snapshot = items;
+    setItems((prev) => prev.map((g) => (g.id === id ? { ...g, shared } : g)));
+    try {
+      const res = await fetch("/api/account/household/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "goal", item_id: id, shared }),
+      });
+      if (!res.ok) throw new Error("share_failed");
+    } catch {
+      setItems(snapshot);
+      setError("Could not update sharing. Try again.");
+    }
+  };
 
   const handleAdd = async (form: FormData) => {
     setError(null);
@@ -88,6 +113,7 @@ export default function GoalsClient({ initialItems }: Props) {
         monthlyContributionCents: Number(r.monthly_contribution_cents),
         expectedReturnPct: Number(r.expected_return_pct),
         notes: (r.notes as string | null) ?? null,
+        shared: false,
       };
       setItems((prev) => [...prev, newRow].sort((a, b) => a.targetDate.localeCompare(b.targetDate)));
     } catch (e) {
@@ -211,7 +237,14 @@ export default function GoalsClient({ initialItems }: Props) {
         ) : (
           <ul className="space-y-3">
             {items.map((g) => (
-              <GoalCard key={g.id} goal={g} onDelete={() => void handleDelete(g.id)} deleting={deletingId === g.id} />
+              <GoalCard
+                key={g.id}
+                goal={g}
+                onDelete={() => void handleDelete(g.id)}
+                deleting={deletingId === g.id}
+                householdEnabled={householdEnabled}
+                onToggleShare={(shared) => void handleToggleShare(g.id, shared)}
+              />
             ))}
           </ul>
         )}
@@ -224,10 +257,14 @@ function GoalCard({
   goal,
   onDelete,
   deleting,
+  householdEnabled,
+  onToggleShare,
 }: {
   goal: GoalRow;
   onDelete: () => void;
   deleting: boolean;
+  householdEnabled: boolean;
+  onToggleShare: (shared: boolean) => void;
 }) {
   const projection = useMemo(
     () =>
@@ -286,14 +323,27 @@ function GoalCard({
         Pure projection. Returns are not guaranteed. General information only — see your financial planner for advice.
       </p>
 
-      <button
-        type="button"
-        onClick={onDelete}
-        disabled={deleting}
-        className="text-xs text-red-700 hover:text-red-900 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {deleting ? "Removing…" : "Remove goal"}
-      </button>
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={onDelete}
+          disabled={deleting}
+          className="text-xs text-red-700 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {deleting ? "Removing…" : "Remove goal"}
+        </button>
+        {householdEnabled && (
+          <label className="flex cursor-pointer items-center gap-2 text-xs text-slate-600">
+            <input
+              type="checkbox"
+              checked={goal.shared ?? false}
+              onChange={(e) => onToggleShare(e.target.checked)}
+              className="h-3.5 w-3.5 accent-violet-600"
+            />
+            <span>Share with household</span>
+          </label>
+        )}
+      </div>
     </li>
   );
 }

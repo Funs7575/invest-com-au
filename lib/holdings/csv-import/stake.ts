@@ -264,6 +264,7 @@ export const parseStakeCsv: BrokerCsvParser = (csvText: string): CsvParseResult 
       acquired_at: acquiredAt,
       broker_slug: STAKE_BROKER_SLUG,
       notes: null,
+      sourceRow: rowIndex,
     });
   }
 

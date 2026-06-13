@@ -3,6 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getInvestorProfile } from "@/lib/investor-profiles";
+import { isFlagEnabled } from "@/lib/feature-flags";
+import { HOUSEHOLDS_FLAG, getHouseholdContextForUser } from "@/lib/households";
 import WatchlistAlertsToggle from "./WatchlistAlertsToggle";
 import WatchlistClient from "./WatchlistClient";
 import DigestToggle from "./DigestToggle";
@@ -24,25 +26,39 @@ export default async function WatchlistPage() {
     redirect("/auth/login?next=/account/watchlist");
   }
 
-  const [watchlistRes, investorProfile] = await Promise.all([
+  // Household sharing is dormant unless the flag is on AND an accepted partner
+  // exists. When on, select household_id too so we can seed the share toggle.
+  const householdFlag = await isFlagEnabled(HOUSEHOLDS_FLAG, {
+    userKey: user.email ?? null,
+    segment: "user",
+  });
+
+  const [watchlistRes, investorProfile, householdCtx] = await Promise.all([
     supabase
       .from("user_watchlist_items")
-      .select("id, item_type, item_slug, display_name, added_at")
+      .select(
+        householdFlag
+          ? "id, item_type, item_slug, display_name, added_at, household_id"
+          : "id, item_type, item_slug, display_name, added_at",
+      )
       .eq("user_id", user.id)
       .order("added_at", { ascending: false }),
     getInvestorProfile(user.id),
+    householdFlag ? getHouseholdContextForUser(user.id) : Promise.resolve(null),
   ]);
 
   const { data } = watchlistRes;
   const digestMeta = investorProfile?.meta ?? {};
   const watchlistDigestEnabled = digestMeta.watchlist_digest === true;
+  const householdEnabled = householdFlag && !!householdCtx?.partner;
 
-  const rawItems = (data ?? []).map((row) => ({
+  const rawItems = ((data ?? []) as unknown as Record<string, unknown>[]).map((row) => ({
     id: row.id as number,
     item_type: row.item_type as string,
     item_slug: row.item_slug as string,
-    display_name: row.display_name as string | null,
+    display_name: (row.display_name as string | null) ?? null,
     added_at: row.added_at as string,
+    shared: householdFlag ? row.household_id != null : false,
   }));
 
   // Enrich watched brokers with their current best-rate snapshot when
@@ -117,7 +133,7 @@ export default async function WatchlistPage() {
 
         <WatchlistAlertsToggle initialOptedIn={alertsOptedIn} hasItems={items.length > 0} />
 
-        <WatchlistClient initialItems={items} />
+        <WatchlistClient initialItems={items} householdEnabled={householdEnabled} />
 
         <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
           <h2 className="text-sm font-semibold text-slate-800 mb-4">Email notifications</h2>

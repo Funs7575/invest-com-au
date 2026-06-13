@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import PushCommandCentre from "./PushCommandCentre";
 import type { Advisor } from "./types";
 
 type NotifPrefs = { new_lead: boolean; weekly_summary: boolean; billing_alerts: boolean; review_new: boolean };
@@ -131,6 +132,10 @@ export default function SettingsTab({ advisor }: Props) {
     <div className="max-w-xl">
       <h1 className="text-xl font-bold text-slate-900 mb-1">Settings</h1>
       <p className="text-sm text-slate-500 mb-6">Manage your notification preferences.</p>
+
+      {/* Adviser Push Command Centre — renders only when the advisor_push flag
+          is on for this advisor (the component self-hides otherwise). */}
+      <PushCommandCentre />
 
       <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5">
         <h2 className="text-sm font-bold text-slate-900 mb-1">Email Notifications</h2>

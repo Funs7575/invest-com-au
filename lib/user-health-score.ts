@@ -101,7 +101,8 @@ function scoreEngagement({ activeCheckinsLast30d, currentStreak }: HealthScoreIn
   return clamp(base + streakBonus, 0, 100);
 }
 
-function gradeFor(score: number): HealthScore["grade"] {
+/** Letter grade for a 0–100 overall score (exported for FY Wrapped). */
+export function gradeFor(score: number): HealthScore["grade"] {
   if (score >= 90) return "A";
   if (score >= 75) return "B";
   if (score >= 60) return "C";

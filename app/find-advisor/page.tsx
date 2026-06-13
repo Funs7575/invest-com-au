@@ -18,6 +18,7 @@ import { browseAdvisorsHref } from "@/lib/find-advisor/browse-link";
 import { formatCountdown, secondsRemaining } from "@/lib/format-countdown";
 import EligibilityQuizSkipBanner from "@/components/EligibilityQuizSkipBanner";
 import CountryRuleAlerts from "@/components/CountryRuleAlerts";
+import OptInBlock from "@/components/open-to-offers/OptInBlock";
 import {
   SHOW_GENERIC_VERIFIED,
   SHOW_ADVISOR_RATINGS,
@@ -1126,6 +1127,15 @@ function FindAdvisorQuiz() {
             confirming={confirming}
             confirmedAdvisorId={confirmedAdvisorId}
           />
+        )}
+
+        {/* Open to Offers — let advisers come to them. Self-hides unless the
+            open_to_offers flag is on (the opt-in API 404s when off). Shown once
+            the user has reached results. */}
+        {quiz.step === 6 && submitted && (
+          <div className="mt-6">
+            <OptInBlock variant="results" />
+          </div>
         )}
 
         {/* Legal footer */}

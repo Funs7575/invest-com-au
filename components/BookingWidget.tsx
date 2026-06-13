@@ -25,6 +25,7 @@ export default function BookingWidget({
 }) {
   const [schedule, setSchedule] = useState<BookingSlot[]>([]);
   const [bookingEnabled, setBookingEnabled] = useState(false);
+  const [bookingV2, setBookingV2] = useState(false);
   const [bookingIntro, setBookingIntro] = useState("");
   const [bookingLink, setBookingLink] = useState("");
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -41,6 +42,7 @@ export default function BookingWidget({
       .then(r => r.json())
       .then(data => {
         setBookingEnabled(data.bookingEnabled);
+        setBookingV2(Boolean(data.bookingV2));
         setSchedule(data.schedule || []);
         setBookingIntro(data.advisor?.booking_intro || "");
         setBookingLink(data.advisor?.booking_link || "");
@@ -224,7 +226,9 @@ export default function BookingWidget({
           {new Date(selectedDate).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" })} at {formatTime(selectedTime)} AEST
         </p>
         <p className="text-xs text-emerald-600">
-          {advisorName} will contact you to confirm the meeting details. Check your email for a confirmation.
+          {bookingV2
+            ? `${advisorName} will be in touch. We've emailed you a calendar invite plus a link to reschedule or cancel.`
+            : `${advisorName} will contact you to confirm the meeting details. Check your email for a confirmation.`}
         </p>
       </div>
     );

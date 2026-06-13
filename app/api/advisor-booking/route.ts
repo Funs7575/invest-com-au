@@ -10,6 +10,14 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
+import {
+  isBookingV2Enabled,
+  newBookingToken,
+  sendBookingPartiesEmail,
+  DEFAULT_BOOKING_TZ,
+} from "@/lib/booking-v2";
+import { bookingStartUtc } from "@/lib/booking-v2/time";
+import type { AdvisorBookingRow } from "@/lib/booking-v2/types";
 
 const log = logger("advisor-booking");
 
@@ -49,10 +57,13 @@ export async function GET(request: NextRequest) {
   if (!advisor) return NextResponse.json({ error: "Advisor not found" }, { status: 404 });
   if (!advisor.booking_enabled) return NextResponse.json({ advisor, slots: [], bookingEnabled: false });
 
-  // Get their availability schedule
+  // Get their availability schedule.
+  // NOTE: column is `slot_duration_minutes` (was previously mis-selected as
+  // `slot_duration_mins`, which errored → schedule came back null and the
+  // first-party picker silently rendered nothing). Fixed as part of booking-v2.
   const { data: schedule } = await supabase
     .from("advisor_booking_slots")
-    .select("id, professional_id, day_of_week, start_time, end_time, slot_duration_mins, is_active")
+    .select("id, professional_id, day_of_week, start_time, end_time, slot_duration_minutes, is_active")
     .eq("professional_id", advisor.id)
     .eq("is_active", true)
     .order("day_of_week")
@@ -70,11 +81,26 @@ export async function GET(request: NextRequest) {
     existingBookings = (booked || []).map(b => b.booking_time);
   }
 
+  // booking-v2 surfaces an ICS invite + reschedule/cancel link in the
+  // confirmation. The widget uses this to show the right copy. Fail-closed.
+  let bookingV2 = false;
+  try {
+    const { data: proEmail } = await createAdminClient()
+      .from("professionals")
+      .select("email")
+      .eq("id", advisor.id)
+      .maybeSingle();
+    bookingV2 = await isBookingV2Enabled((proEmail?.email as string) ?? null);
+  } catch {
+    bookingV2 = false;
+  }
+
   return NextResponse.json({
     advisor: { id: advisor.id, name: advisor.name, booking_intro: advisor.booking_intro, booking_link: advisor.booking_link },
     schedule: schedule || [],
     existingBookings,
     bookingEnabled: true,
+    bookingV2,
   });
 }
 
@@ -123,6 +149,17 @@ export async function POST(request: NextRequest) {
 
     if (existing) return NextResponse.json({ error: "This time slot is no longer available" }, { status: 409 });
 
+    // Scheduling-v2 gate (fail-closed). When on, we stamp the precise UTC
+    // instant + reschedule/cancel tokens and send an ICS-attaching confirmation
+    // via lib/booking-v2. When off, behaviour is exactly as before.
+    const bookingV2 = await isBookingV2Enabled(advisor.email);
+    const tz = DEFAULT_BOOKING_TZ;
+    const startUtc = bookingV2
+      ? bookingStartUtc(bookingDate as string, bookingTime as string, tz)
+      : null;
+    const confirmationToken = bookingV2 ? newBookingToken() : null;
+    const rescheduleToken = bookingV2 ? newBookingToken() : null;
+
     // Create booking
     const { data: booking, error } = await admin
       .from("advisor_bookings")
@@ -135,8 +172,16 @@ export async function POST(request: NextRequest) {
         booking_time: bookingTime,
         topic: topic || null,
         source_page: body.sourcePage || null,
+        ...(bookingV2
+          ? {
+              starts_at_utc: startUtc!.toISOString(),
+              booking_tz: tz,
+              confirmation_token: confirmationToken,
+              reschedule_token: rescheduleToken,
+            }
+          : {}),
       })
-      .select("id")
+      .select("*")
       .single();
 
     if (error) return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
@@ -152,7 +197,19 @@ export async function POST(request: NextRequest) {
       status: "new",
     });
 
-    // Send confirmation emails
+    // Send confirmation emails.
+    // v2: route through lib/booking-v2 so both parties get an .ics invite and a
+    // reschedule/cancel link. v1 (flag off): keep the existing plain-HTML sends.
+    if (bookingV2 && booking) {
+      await sendBookingPartiesEmail({
+        booking: booking as AdvisorBookingRow,
+        advisorName: advisor.name as string,
+        advisorEmail: (advisor.email as string) ?? null,
+        method: "REQUEST",
+      });
+      return NextResponse.json({ success: true, bookingId: booking.id });
+    }
+
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
     const siteUrl = getSiteUrl();
     if (RESEND_API_KEY && advisor.email) {

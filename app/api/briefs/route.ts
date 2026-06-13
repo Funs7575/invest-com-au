@@ -9,7 +9,9 @@ import { scanBrief } from "@/lib/briefs/risk-flags";
 import { getAcceptCost } from "@/lib/briefs/credits";
 import { notifyEligibleProviders } from "@/lib/briefs/notify";
 import { runStandingOrdersForBrief } from "@/lib/briefs/standing-orders";
+import { assignBriefToPool } from "@/lib/briefs/demand-pools";
 import { attributeBriefCreated } from "@/lib/pro-affiliate/track";
+import { awardByEmail } from "@/lib/quests-server";
 import {
   BRIEF_TEMPLATE_SCHEMAS,
   isBriefTemplate,
@@ -169,7 +171,15 @@ export async function POST(request: NextRequest) {
       status: "open",
       ends_at: endsAt,
       brief_template: body.brief_template,
-      brief_payload: payloadParsed.data,
+      // Group Briefs opt-in is recorded on the payload (read by the clustering
+      // step). Only stamped when the consumer ticked the box — anonymous /
+      // unticked briefs never join a pool. Harmless when the flag is off.
+      brief_payload: body.join_demand_pool
+        ? {
+            ...(payloadParsed.data as Record<string, unknown>),
+            pool_opt_in: true,
+          }
+        : payloadParsed.data,
       provider_preference: body.provider_preference,
       routing_mode: body.routing_mode,
       target_team_id: targetTeamId,
@@ -237,6 +247,19 @@ export async function POST(request: NextRequest) {
       });
     });
 
+    // ── Quest: first-brief-posted (email-keyed) ──
+    // Resolves the contact email to a registered user and awards if one
+    // exists. Anonymous posters are a clean no-op. Flag-gated + fail-soft
+    // inside; failures must never block the brief response.
+    void awardByEmail(body.contact_email.toLowerCase().trim(), "first-brief-posted", {
+      meta: { brief_id: brief.id },
+    }).catch((err) => {
+      log.warn("brief quest award failed", {
+        briefId: brief.id,
+        err: err instanceof Error ? err.message : String(err),
+      });
+    });
+
     // ── Notify eligible providers (N1) ──
     // Fire-and-forget: failures must never block the response. Held briefs
     // (risk_severity ≥ review) are skipped — they only route after admin
@@ -253,6 +276,16 @@ export async function POST(request: NextRequest) {
       // never block the brief response.
       void runStandingOrdersForBrief(brief.id as number).catch((err) => {
         log.warn("runStandingOrdersForBrief failed", {
+          briefId: brief.id,
+          err: err instanceof Error ? err.message : String(err),
+        });
+      });
+      // Group Briefs clustering — assign opted-in briefs to the current
+      // period's demand pool (template × state × month). Flag-gated +
+      // fail-soft inside; a no-op when the consumer didn't opt in. Same
+      // create-clear hook point as standing orders; never blocks the response.
+      void assignBriefToPool(brief.id as number).catch((err) => {
+        log.warn("assignBriefToPool failed", {
           briefId: brief.id,
           err: err instanceof Error ? err.message : String(err),
         });

@@ -21,9 +21,9 @@
  * per-handler cron entries, copy the arrays below back into vercel.json.
  */
 export const CRON_GROUPS: Record<string, readonly string[]> = {
-  "hourly-0": ["/api/cron/auto-resolve-disputes", "/api/cron/cron-health-alert", "/api/cron/hub-silence-check"],
+  "hourly-0": ["/api/cron/auto-resolve-disputes", "/api/cron/cron-health-alert", "/api/cron/hub-silence-check", "/api/cron/booking-reminders"],
   "hourly-5": ["/api/cron/broker-snapshot"],
-  "hourly-15": ["/api/cron/automation-verdict-rollup", "/api/cron/quote-expiry-reminders", "/api/cron/brief-sla-sweep"],
+  "hourly-15": ["/api/cron/automation-verdict-rollup", "/api/cron/quote-expiry-reminders", "/api/cron/brief-sla-sweep", "/api/cron/lead-sequence-engine"],
   "hourly-20": ["/api/cron/cron-freshness"],
   "hourly-30": ["/api/cron/embeddings-refresh", "/api/cron/slo-monitor"],
 
@@ -111,6 +111,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/marketplace-stale-briefs",
     "/api/cron/lead-followup-reminders",
     "/api/cron/office-hours-reminders",
+    "/api/cron/challenge-daily-nudge",
   ],
   "daily-9-30": ["/api/cron/enforce-lead-sla"],
 
@@ -160,6 +161,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/personalized-digest",
     "/api/cron/firm-performance-digest",
     "/api/cron/premium-digest",
+    "/api/cron/demand-alerts-digest",
   ],
   "weekly-mon-9": ["/api/cron/fee-digest", "/api/cron/content-freshness", "/api/cron/stale-fee-editorial", "/api/cron/check-secret-rotation", "/api/cron/country-rule-alerts-digest", "/api/cron/watchlist-alerts", "/api/cron/life-event-wizard-nudge", "/api/cron/advisor-match-scores", "/api/cron/cpd-reminder"],
   "weekly-mon-11": ["/api/cron/advisor-dormant-nudge", "/api/cron/advisor-winback"],
@@ -171,6 +173,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/monthly-advisor-reports",
     "/api/cron/annual-review-reminder",
     "/api/cron/review-social-loop",
+    "/api/cron/monthly-review-invites",
   ],
   "monthly-1-10": ["/api/cron/winback-drip"],
   "monthly-2-3": ["/api/cron/month-end-close"],

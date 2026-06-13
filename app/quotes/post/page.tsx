@@ -3,6 +3,7 @@ import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import JobPostForm from "./JobPostForm";
+import { auctionRoundsEnabled } from "@/lib/auction-rounds";
 
 export const revalidate = 3600;
 
@@ -20,7 +21,11 @@ const TRUST = [
   { icon: "users", title: "You pick the winner", desc: "Compare quotes, advisor profiles, ratings, and credentials side-by-side. Choose on your terms." },
 ];
 
-export default function PostJobPage() {
+export default async function PostJobPage() {
+  // Idea #11 — gate the sealed-bidding option in the form. The server route
+  // /api/quotes re-checks this flag on submit, so the UI is purely cosmetic;
+  // ISR staleness (revalidate=3600) can't let a sealed auction through when off.
+  const sealedOptionEnabled = await auctionRoundsEnabled();
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Quotes", url: `${SITE_URL}/quotes` },
@@ -66,7 +71,7 @@ export default function PostJobPage() {
       {/* Form */}
       <section className="bg-slate-50 py-8">
         <div className="max-w-3xl mx-auto px-4">
-          <JobPostForm />
+          <JobPostForm sealedOptionEnabled={sealedOptionEnabled} />
         </div>
       </section>
 

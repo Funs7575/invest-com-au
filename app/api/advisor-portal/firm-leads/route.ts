@@ -156,6 +156,31 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Target advisor not in your firm." }, { status: 403 });
   }
 
+  // Capture the lead's CURRENT assignee before we overwrite it, so the audit
+  // row can record reassigned_from. Also confirms the lead exists + belongs
+  // to a member of this firm (a firm admin must not move another firm's lead).
+  const { data: existingLead } = await admin
+    .from("professional_leads")
+    .select("professional_id")
+    .eq("id", parsed.data.lead_id)
+    .maybeSingle();
+
+  const previousProfessionalId =
+    (existingLead as { professional_id: number } | null)?.professional_id ?? null;
+
+  // Verify the lead currently belongs to a member of the caller's firm.
+  if (previousProfessionalId !== null) {
+    const { data: prevOwner } = await admin
+      .from("professionals")
+      .select("id")
+      .eq("id", previousProfessionalId)
+      .eq("firm_id", caller.firm_id)
+      .maybeSingle();
+    if (!prevOwner) {
+      return NextResponse.json({ error: "Lead not in your firm." }, { status: 403 });
+    }
+  }
+
   const { error } = await admin
     .from("professional_leads")
     .update({ professional_id: parsed.data.professional_id })
@@ -164,6 +189,29 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
   if (error) {
     log.error("lead reassign failed", { error: error.message });
     return NextResponse.json({ error: "Failed to reassign." }, { status: 500 });
+  }
+
+  // ── Assignment audit trail (mega-session #13) ──
+  // Record the manual reassignment. Best-effort: a missing audit row must not
+  // fail the reassignment that already succeeded.
+  try {
+    const { writeAssignment } = await import("@/lib/firm-routing-runtime");
+    await writeAssignment(admin, {
+      firmId: caller.firm_id,
+      leadRef: String(parsed.data.lead_id),
+      professionalId: parsed.data.professional_id,
+      assignedBy: "manual",
+      reassignedFrom:
+        previousProfessionalId !== null &&
+        previousProfessionalId !== parsed.data.professional_id
+          ? previousProfessionalId
+          : null,
+    });
+  } catch (auditErr) {
+    log.warn("lead reassign audit write failed", {
+      error: auditErr instanceof Error ? auditErr.message : String(auditErr),
+      leadId: parsed.data.lead_id,
+    });
   }
 
   // ── Best-effort: notify the newly assigned advisor ───────────────────

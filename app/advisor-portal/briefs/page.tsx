@@ -3,6 +3,7 @@ import Link from "next/link";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import BriefsInboxClient from "./BriefsInboxClient";
 import StandingOrdersPanel from "./StandingOrdersPanel";
+import DemandPoolsPanel from "./DemandPoolsPanel";
 
 export const metadata: Metadata = {
   title: "Brief inbox — Advisor Portal",
@@ -40,6 +41,7 @@ export default async function AdvisorPortalBriefsPage() {
           )}
         </p>
         <StandingOrdersPanel />
+        <DemandPoolsPanel />
         <BriefsInboxClient />
       </div>
     </div>

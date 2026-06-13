@@ -43,6 +43,23 @@ describe("CalculatorShell", () => {
     expect(screen.getByTestId("icon-calculator")).toBeInTheDocument();
   });
 
+  it("renders an optional scenario slot when provided", () => {
+    render(
+      <CalculatorShell
+        title="Calc"
+        scenario={<div data-testid="scenario-slot">bar</div>}
+      >
+        body
+      </CalculatorShell>
+    );
+    expect(screen.getByTestId("scenario-slot")).toBeInTheDocument();
+  });
+
+  it("renders no scenario slot by default (zero footprint)", () => {
+    render(<CalculatorShell title="Calc">body</CalculatorShell>);
+    expect(screen.queryByTestId("scenario-slot")).not.toBeInTheDocument();
+  });
+
   it("renders a custom icon name", () => {
     render(<CalculatorShell title="Calc" iconName="bar-chart">x</CalculatorShell>);
     expect(screen.getByTestId("icon-bar-chart")).toBeInTheDocument();

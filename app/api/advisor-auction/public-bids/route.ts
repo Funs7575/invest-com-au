@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import { auctionRoundsEnabled } from "@/lib/auction-rounds";
 
 const log = logger("advisor-auction:public-bids");
 
@@ -66,7 +67,35 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch bids." }, { status: 500 });
     }
 
-    return NextResponse.json({ bids: bids || [] });
+    const baseBids = (bids || []) as Array<Record<string, unknown>>;
+
+    // Idea #11 — enrich with counter / round fields in a SEPARATE, fail-soft
+    // query (only when the flag is on) so the base list never breaks if the
+    // columns are absent. Lets the portal surface a "respond to counter" action.
+    if (baseBids.length > 0 && (await auctionRoundsEnabled(user.email))) {
+      try {
+        const ids = baseBids.map((b) => b.id as number);
+        const { data: extra } = await admin
+          .from("advisor_auction_bids")
+          .select("id, counter_status, counter_amount, round_number")
+          .in("id", ids);
+        const byId = new Map(
+          (extra ?? []).map((e) => [e.id as number, e as Record<string, unknown>]),
+        );
+        for (const b of baseBids) {
+          const e = byId.get(b.id as number);
+          b.counter_status = e?.counter_status ?? null;
+          b.counter_amount = e?.counter_amount ?? null;
+          b.round_number = e?.round_number ?? 1;
+        }
+      } catch (err) {
+        log.warn("Counter/round enrichment failed (dormant)", {
+          err: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+
+    return NextResponse.json({ bids: baseBids });
   } catch (err) {
     log.error("Public bids GET error", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to fetch bids." }, { status: 500 });

@@ -200,6 +200,7 @@ export const parseSelfWealthCsv: BrokerCsvParser = (csvText: string): CsvParseRe
       acquired_at: acquiredAt,
       broker_slug: SELFWEALTH_BROKER_SLUG,
       notes: null,
+      sourceRow: rowIndex,
     });
   }
 

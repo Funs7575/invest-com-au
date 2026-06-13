@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { resolveEligibleProviders } from "@/lib/briefs/routing";
 import { runStandingOrdersForBrief } from "@/lib/briefs/standing-orders";
+import { assignBriefToPool } from "@/lib/briefs/demand-pools";
 import { sendProviderNewMatchRequest } from "@/lib/marketplace-emails";
 import { sendEmail } from "@/lib/resend";
 import { SITE_URL } from "@/lib/seo";
@@ -94,6 +95,15 @@ export async function POST(
       // Flag-gated + capped inside the engine; never blocks the response.
       void runStandingOrdersForBrief(briefId).catch((err) => {
         log.warn("runStandingOrdersForBrief failed", {
+          briefId,
+          err: err instanceof Error ? err.message : String(err),
+        });
+      });
+      // Group Briefs clustering — same approve hook point. Opted-in briefs
+      // held for review join their demand pool once cleared. Flag-gated +
+      // fail-soft; no-op otherwise. Never blocks the response.
+      void assignBriefToPool(briefId).catch((err) => {
+        log.warn("assignBriefToPool failed", {
           briefId,
           err: err instanceof Error ? err.message : String(err),
         });

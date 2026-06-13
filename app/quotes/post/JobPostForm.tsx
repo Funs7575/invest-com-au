@@ -56,6 +56,8 @@ interface JobForm {
   contact_email: string;
   contact_phone: string;
   agree_terms: boolean;
+  /** Idea #11 — sealed bidding (advisers can't see competing amounts until close). */
+  sealed: boolean;
 }
 
 const INITIAL: JobForm = {
@@ -67,9 +69,10 @@ const INITIAL: JobForm = {
   contact_email: "",
   contact_phone: "",
   agree_terms: false,
+  sealed: false,
 };
 
-export default function JobPostForm() {
+export default function JobPostForm({ sealedOptionEnabled = false }: { sealedOptionEnabled?: boolean }) {
   const searchParams = useSearchParams();
   const [step, setStep] = useState<Step>("details");
   const [form, setForm] = useState<JobForm>(INITIAL);
@@ -154,6 +157,9 @@ export default function JobPostForm() {
           contact_name: form.contact_name,
           contact_email: form.contact_email,
           contact_phone: form.contact_phone || undefined,
+          // Idea #11 — only send when the option is enabled AND chosen. The
+          // server re-checks the auction_rounds flag before honouring it.
+          ...(sealedOptionEnabled && form.sealed ? { bid_visibility: "sealed" } : {}),
         }),
       });
       const data = await res.json();
@@ -327,6 +333,27 @@ export default function JobPostForm() {
               <p className="text-xs text-slate-500 mt-1">Total project budget. SOA from ~$1,500 · Hourly from ~$250/hr</p>
             </div>
           </div>
+
+          {/* Idea #11 — sealed bidding option (flag-gated). */}
+          {sealedOptionEnabled && (
+            <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-slate-200 bg-slate-50 p-3.5 hover:border-slate-300 transition-colors">
+              <input
+                type="checkbox"
+                checked={form.sealed}
+                onChange={(e) => set("sealed", e.target.checked)}
+                className="mt-0.5 w-4 h-4 accent-indigo-500 shrink-0"
+              />
+              <span className="min-w-0">
+                <span className="flex items-center gap-1.5 text-sm font-semibold text-slate-800">
+                  <Icon name="lock" size={13} className="text-indigo-600" />
+                  Sealed bids
+                </span>
+                <span className="mt-0.5 block text-xs text-slate-500 leading-relaxed">
+                  Advisers can&apos;t see each other&apos;s quote amounts until your request closes — only the number of quotes. You still see every amount. Encourages each adviser to price on the merits.
+                </span>
+              </span>
+            </label>
+          )}
 
           <div className="flex justify-end">
             <button

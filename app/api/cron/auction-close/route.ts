@@ -89,11 +89,84 @@ async function sendConsumerAuctionMatchedEmail(
 }
 
 /**
+/**
+ * Idea #11 — sealed reveal. Stamp `revealed_at` on every still-unrevealed bid
+ * of a closing auction so sealed amounts become universally visible exactly at
+ * close. Best-effort + fail-soft: if the column is absent (migration not yet
+ * applied) the update simply errors and we swallow it — closing must never fail
+ * because of the reveal stamp.
+ */
+async function stampRevealed(
+  admin: ReturnType<typeof createAdminClient>,
+  auctionId: number,
+  nowIso: string,
+): Promise<void> {
+  try {
+    await admin
+      .from("advisor_auction_bids")
+      .update({ revealed_at: nowIso })
+      .eq("auction_id", auctionId)
+      .is("revealed_at", null);
+  } catch (err) {
+    log.warn("Reveal stamp failed (non-fatal)", {
+      auctionId,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+/**
+ * Idea #11 — best-and-final round settlement. Find public quote auctions whose
+ * 24h final-round window has elapsed while the auction is still open, and record
+ * the settlement. The window itself is enforced time-based in the bid route
+ * (`finalRoundActive`), so this pass is intentionally non-destructive: it does
+ * NOT auto-award (the consumer always picks the winner on public quotes) and it
+ * does NOT reveal sealed amounts (the auction is still open). It exists so stale
+ * final rounds are visibly settled in the heartbeat logs and is fully fail-soft
+ * — the whole pass is skipped if the final_round_* columns are absent.
+ */
+async function settleExpiredFinalRounds(
+  admin: ReturnType<typeof createAdminClient>,
+  nowIso: string,
+): Promise<number> {
+  try {
+    const { data: rows, error } = await admin
+      .from("advisor_auctions")
+      .select("id, slug")
+      .eq("status", "open")
+      .eq("source", "public_job")
+      .not("final_round_started_at", "is", null)
+      .lt("final_round_ends_at", nowIso)
+      .limit(200);
+    if (error) {
+      // Column-absent / dormant: treat as nothing to settle.
+      log.warn("Final-round settle query failed (non-fatal)", { error: error.message });
+      return 0;
+    }
+    const settled = rows ?? [];
+    for (const r of settled) {
+      log.info("Final round settled (window elapsed; consumer still chooses)", {
+        auctionId: r.id,
+        slug: r.slug,
+      });
+    }
+    return settled.length;
+  } catch (err) {
+    log.warn("Final-round settle pass threw (non-fatal)", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return 0;
+  }
+}
+
+/**
  * GET /api/cron/auction-close
  *
  * Closes expired advisor auctions (status='open', ends_at < NOW(), flow_type='auction').
  * Awards to the highest active bid; sends winner + consumer match emails.
- * No-bid auctions are marked 'expired'.
+ * No-bid auctions are marked 'expired'. On close, stamps `revealed_at` on bids
+ * so sealed-bid auctions reveal their amounts at close (idea #11). Also settles
+ * elapsed best-and-final-round windows (idea #11) without auto-awarding.
  *
  * Registered in cron-groups.ts under 'every-30m' — runs every 30 minutes.
  * Max 60s runtime handles up to ~200 expiring auctions in a single fire.
@@ -104,6 +177,9 @@ export async function GET(req: NextRequest) {
 
   const admin = createAdminClient();
   const now = new Date().toISOString();
+
+  // Idea #11 — settle elapsed best-and-final rounds first (non-destructive).
+  const finalRoundsSettled = await settleExpiredFinalRounds(admin, now);
 
   const { data: expired, error: fetchErr } = await admin
     .from("advisor_auctions")
@@ -138,6 +214,7 @@ export async function GET(req: NextRequest) {
           .update({ status: "expired" })
           .eq("id", auction.id)
           .eq("status", "open");
+        await stampRevealed(admin, auction.id, now);
         expired_count++;
         log.info("Auction expired (no bids)", { auctionId: auction.id });
         continue;
@@ -176,6 +253,9 @@ export async function GET(req: NextRequest) {
           .update({ status: "expired" })
           .in("id", loserIds);
       }
+
+      // Idea #11 — reveal sealed bid amounts now the auction has closed.
+      await stampRevealed(admin, auction.id, now);
 
       // Fetch advisor details for winner notification
       const { data: advisor } = await admin
@@ -226,8 +306,9 @@ export async function GET(req: NextRequest) {
     processed: (expired ?? []).length,
     awarded,
     expired: expired_count,
+    finalRoundsSettled,
     errors,
   });
 
-  return NextResponse.json({ awarded, expired: expired_count, errors });
+  return NextResponse.json({ awarded, expired: expired_count, finalRoundsSettled, errors });
 }

@@ -120,6 +120,7 @@ export async function POST(
         consumerName: (brief.contact_name as string) ?? "",
         briefTitle: (brief.job_title as string) ?? "Your Match Request",
         briefSlug: brief.slug as string,
+        briefId: brief.id as number,
         professionalId: advisorId,
         teamId,
       }).catch((err) => {

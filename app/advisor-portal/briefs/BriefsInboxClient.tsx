@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Icon from "@/components/Icon";
+import BriefDossierPanel from "./BriefDossierPanel";
 import type { MaskedBrief } from "@/lib/briefs/types";
+import type { BriefDossier } from "@/lib/brief-intel";
 
 interface AcceptedBrief {
   id: number;
@@ -45,6 +47,12 @@ export default function BriefsInboxClient() {
   // Full masked details per slug, fetched lazily on "View details".
   const [details, setDetails] = useState<Record<string, MaskedBrief | "loading" | undefined>>({});
   const [openDetails, setOpenDetails] = useState<Record<string, boolean>>({});
+  // Intelligence dossiers per slug, fetched lazily on "Dossier" expand —
+  // one GET per expanded brief, never bulk-loaded with the inbox.
+  const [dossiers, setDossiers] = useState<
+    Record<string, BriefDossier | "loading" | "error" | undefined>
+  >({});
+  const [openDossiers, setOpenDossiers] = useState<Record<string, boolean>>({});
 
   const load = useCallback(async () => {
     try {
@@ -101,6 +109,22 @@ export default function BriefsInboxClient() {
     } catch {
       setDetails((prev) => ({ ...prev, [slug]: undefined }));
       setOpenDetails((prev) => ({ ...prev, [slug]: false }));
+    }
+  }
+
+  async function toggleDossier(slug: string) {
+    const nowOpen = !openDossiers[slug];
+    setOpenDossiers((prev) => ({ ...prev, [slug]: nowOpen }));
+    const cached = dossiers[slug];
+    if (!nowOpen || (cached && cached !== "error")) return;
+    setDossiers((prev) => ({ ...prev, [slug]: "loading" }));
+    try {
+      const res = await fetch(`/api/briefs/${slug}/dossier`);
+      const json = await res.json();
+      if (!res.ok || !json?.dossier) throw new Error(json?.error ?? "Could not load dossier");
+      setDossiers((prev) => ({ ...prev, [slug]: json.dossier as BriefDossier }));
+    } catch {
+      setDossiers((prev) => ({ ...prev, [slug]: "error" }));
     }
   }
 
@@ -213,6 +237,38 @@ export default function BriefsInboxClient() {
                       ))}
                   </dl>
                 )}
+                {openDossiers[b.slug] && (
+                  <div
+                    id={`dossier-${b.id}`}
+                    role="region"
+                    aria-label={`Dossier for ${b.job_title}`}
+                    className="mb-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
+                  >
+                    {dossiers[b.slug] === "loading" ? (
+                      <div className="space-y-2 animate-pulse" aria-busy="true" aria-label="Loading dossier">
+                        <div className="h-3 w-32 bg-slate-200 rounded" />
+                        <div className="h-3 w-full bg-slate-200 rounded" />
+                        <div className="h-3 w-2/3 bg-slate-200 rounded" />
+                      </div>
+                    ) : dossiers[b.slug] === "error" || !dossiers[b.slug] ? (
+                      <p className="text-xs text-slate-500" role="status">
+                        Couldn&apos;t load the dossier right now.{" "}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setOpenDossiers((prev) => ({ ...prev, [b.slug]: false }));
+                            void toggleDossier(b.slug);
+                          }}
+                          className="font-semibold text-slate-700 underline underline-offset-2 hover:text-slate-900"
+                        >
+                          Try again
+                        </button>
+                      </p>
+                    ) : (
+                      <BriefDossierPanel dossier={dossiers[b.slug] as BriefDossier} />
+                    )}
+                  </div>
+                )}
                 <div className="flex flex-wrap items-center gap-3">
                   <button
                     type="button"
@@ -224,6 +280,16 @@ export default function BriefsInboxClient() {
                       : openDetails[b.slug]
                         ? "Hide details"
                         : "View details"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleDossier(b.slug)}
+                    aria-expanded={Boolean(openDossiers[b.slug])}
+                    aria-controls={`dossier-${b.id}`}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 underline underline-offset-2 hover:text-slate-900"
+                  >
+                    <Icon name="bar-chart-2" size={12} aria-hidden />
+                    {openDossiers[b.slug] ? "Hide dossier" : "Dossier"}
                   </button>
                   <span className="text-xs text-slate-500">
                     Accept cost:{" "}

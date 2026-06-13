@@ -30,12 +30,18 @@ import {
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import DirectoryHero from "@/components/directory/DirectoryHero";
 import Icon from "@/components/Icon";
+import DecisionKit from "@/components/decision-kit/DecisionKit";
+import { loadDecisionKit } from "@/lib/decision-kit/load";
+
+import { getMemberPoolView } from "@/lib/briefs/demand-pools-actions";
 
 import BookConsultationPanel from "./BookConsultationPanel";
 import BriefChatPanel from "./BriefChatPanel";
 import WithdrawBriefButton from "./WithdrawBriefButton";
 import MarkCompleteButton from "./MarkCompleteButton";
 import DisputePanel from "./DisputePanel";
+import { isBookingV2Enabled } from "@/lib/booking-v2";
+import PoolOffersPanel from "./PoolOffersPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -319,6 +325,41 @@ export default async function BriefTrackerPage({
 
   const showChat = brief.accepted_at !== null && (emailMatches || viewerIsAdvisor);
 
+  // Decision Kit — accept-flow briefs are claimed by a single provider, so the
+  // respondent comparison shows that one accepted adviser's signals alongside
+  // intro-call scripts and (flag-gated, owner-only) a post-call scorecard. The
+  // kit helps the consumer run a structured intro call and decide whether to
+  // proceed. Only assembled for the verified owner of an accepted brief; fails
+  // soft (an empty kit doesn't render). Briefs carry no per-provider quote, so
+  // the amount column is omitted (amountCents = null → honest gap).
+  let decisionKit: Awaited<ReturnType<typeof loadDecisionKit>> | null = null;
+  if (emailMatches && brief.accepted_by_professional_id) {
+    decisionKit = await loadDecisionKit({
+      briefId: brief.id,
+      ownerEmail: email,
+      serviceType: brief.brief_template ?? brief.advisor_types?.[0] ?? null,
+      inputs: [
+        {
+          professionalId: brief.accepted_by_professional_id,
+          amountCents: null,
+          bidId: null,
+        },
+      ],
+    });
+  }
+
+  // booking-v2 "propose times" in chat — fail-closed. Keyed off the accepting
+  // adviser's email so the flag's allowlist can target specific advisers.
+  const bookingV2Enabled = showChat
+    ? await isBookingV2Enabled(accepted.professional?.email ?? null)
+    : false;
+
+  // ── Group Briefs (idea #17) — pool status for the verified owner ────
+  // Flag-gated + fail-soft inside getMemberPoolView; returns null when the
+  // demand_pools flag is off, the brief isn't pooled, or on any error, so the
+  // section simply doesn't render. Only the verified owner sees it.
+  const poolView = emailMatches ? await getMemberPoolView(brief.id) : null;
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Match Requests", url: `${SITE_URL}/briefs` },
@@ -491,6 +532,13 @@ export default async function BriefTrackerPage({
 
             {/* ── Main column ── */}
             <div className="space-y-4 lg:order-1">
+              {/* Group Briefs (idea #17) — pool status + group offers for the
+                  verified owner. Rendered only when the brief is in a pool and
+                  the demand_pools flag is on (poolView is null otherwise). */}
+              {poolView && (
+                <PoolOffersPanel slug={slug} email={email} data={poolView} />
+              )}
+
               {/* Intake-question prompt — surfaces unanswered required questions
                   that the accepting provider published. Skipped silently when
                   questions are zero or all answered. */}
@@ -587,6 +635,21 @@ export default async function BriefTrackerPage({
                 </div>
               )}
 
+              {/* Decision Kit — intro-call questions + (flag-gated) a post-call
+                  scorecard for the accepted provider, so the consumer can run a
+                  structured first call before committing. Owner-only. */}
+              {decisionKit && decisionKit.respondents.length > 0 && (
+                <DecisionKit
+                  slug={brief.slug}
+                  contactEmail={emailMatches ? email : null}
+                  respondents={decisionKit.respondents}
+                  script={decisionKit.script}
+                  amountLabel="Estimate"
+                  scorecardsEnabled={decisionKit.scorecardsEnabled}
+                  initialScorecards={decisionKit.initialScorecards}
+                />
+              )}
+
               {/* Book consultation — only shown once the brief is accepted.
                   id="book" is the rail nudge's anchor target. */}
               {accepted.professional?.slug && (
@@ -630,6 +693,8 @@ export default async function BriefTrackerPage({
                           accepted.team?.name ??
                           "Your advisor")
                     }
+                    proposeTimesEnabled={bookingV2Enabled}
+                    consumerEmail={!viewerIsAdvisor && emailMatches ? email : null}
                   />
                 </div>
               )}

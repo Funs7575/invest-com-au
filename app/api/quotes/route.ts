@@ -5,6 +5,7 @@ import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 import { processAdvisorOptIns } from "@/lib/advisor-opt-ins";
 import { PostJobRequest } from "@/lib/api-schemas";
+import { auctionRoundsEnabled } from "@/lib/auction-rounds";
 import {
   sendJobPostedConfirmation,
   sendAdvisorNewPublicJobEmail,
@@ -143,6 +144,17 @@ export async function POST(request: NextRequest) {
     const baseSlug = slugify(body.job_title);
     const slug = `${baseSlug}-${Date.now().toString(36)}`;
 
+    // Idea #11 — only honour a sealed selection when the auction_rounds flag is
+    // ON (keyed by the poster's email for sticky rollout). Flag off ⇒ we omit
+    // the column entirely so the insert is byte-identical to today and stays
+    // fail-soft if the migration hasn't been applied yet.
+    const sealedRequested = body.bid_visibility === "sealed";
+    const roundsOn = sealedRequested
+      ? await auctionRoundsEnabled(body.contact_email)
+      : false;
+    const visibilityField =
+      sealedRequested && roundsOn ? { bid_visibility: "sealed" as const } : {};
+
     const { data: auction, error: insertError } = await admin
       .from("advisor_auctions")
       .insert({
@@ -160,6 +172,7 @@ export async function POST(request: NextRequest) {
         status: "open",
         ends_at: endsAt,
         referrer_advisor_id: referrerAdvisorId,
+        ...visibilityField,
       })
       .select("id, slug")
       .single();

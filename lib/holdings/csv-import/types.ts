@@ -29,6 +29,12 @@ export interface ParsedHoldingRow {
   acquired_at: string;
   broker_slug: string;
   notes: string | null;
+  /**
+   * 1-based source-file row this holding came from. Optional — set by
+   * parsers for the import-wizard preview (lib/holdings/import); the
+   * route handlers and Sharesight sync ignore it.
+   */
+  sourceRow?: number;
 }
 
 /**

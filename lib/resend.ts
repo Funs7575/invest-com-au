@@ -19,6 +19,10 @@ interface SendEmailOptions {
    *  and lets the recipient's client pick — good practice for
    *  deliverability and accessibility. */
   text?: string;
+  /** Optional Reply-To header — used by the Reply-by-Email Bridge to
+   *  route replies to brief notification emails into the brief chat
+   *  (see lib/briefs/reply-address.ts). */
+  replyTo?: string;
   /**
    * Set to true for transactional sends that legally MUST reach the
    * recipient even if their address is on the suppression list — e.g.
@@ -28,6 +32,20 @@ interface SendEmailOptions {
    * pass this.
    */
   bypassSuppression?: boolean;
+  /**
+   * Optional file attachments. Resend accepts an `attachments` array of
+   * `{ filename, content }` where `content` is a base64 string (preferred for
+   * our serverless paths — no filesystem) or a remote `path` URL. We pass an
+   * optional `content_type` through too so calendar invites are tagged
+   * `text/calendar`. Used by booking confirmations to attach the .ics invite.
+   */
+  attachments?: Array<{
+    filename: string;
+    /** base64-encoded file content. */
+    content: string;
+    /** MIME type, e.g. "text/calendar; method=REQUEST". */
+    contentType?: string;
+  }>;
 }
 
 /**
@@ -88,6 +106,16 @@ export async function sendEmail(
         subject: opts.subject,
         html: opts.html,
         ...(opts.text ? { text: opts.text } : {}),
+        ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
+        ...(opts.attachments && opts.attachments.length > 0
+          ? {
+              attachments: opts.attachments.map((a) => ({
+                filename: a.filename,
+                content: a.content,
+                ...(a.contentType ? { content_type: a.contentType } : {}),
+              })),
+            }
+          : {}),
       }),
       signal: AbortSignal.timeout(RESEND_TIMEOUT_MS),
     });

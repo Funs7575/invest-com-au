@@ -11,6 +11,7 @@ import { z } from "zod";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import { createClient } from "@/lib/supabase/server";
 import { addBookmark, removeBookmark } from "@/lib/bookmarks";
+import { awardIfEligible } from "@/lib/quests-server";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 
@@ -63,6 +64,8 @@ export const POST = withValidatedBody(Body, async (req: NextRequest, body) => {
       log.error("bookmark add failed", { type, ref });
       return NextResponse.json({ error: "Failed to save bookmark" }, { status: 500 });
     }
+    // Quest: first-bookmark. Fire-and-forget — flag-gated + fail-soft.
+    void awardIfEligible(user.id, "first-bookmark");
     return NextResponse.json({ bookmarked: true });
   }
 

@@ -337,4 +337,81 @@ describe("PATCH /api/advisor-portal/firm-leads", () => {
     // Reassignment succeeded; email failure should not affect HTTP status.
     expect(res.status).toBe(200);
   });
+
+  it("writes a lead_assignments audit row with reassigned_from on manual reassign", async () => {
+    const auditInserts: Record<string, unknown>[] = [];
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    const adminMock = createAdminClient as ReturnType<typeof vi.fn>;
+    let profCall = 0;
+    adminMock.mockImplementation(() => ({
+      from: vi.fn((table: string) => {
+        if (table === "professionals") {
+          profCall++;
+          // 1: caller (firm admin), 2: target-in-firm, 3: prev-owner-in-firm,
+          // 4+: notification email lookup. All firm-scoped lookups resolve.
+          if (profCall === 1) {
+            return {
+              select: vi.fn().mockReturnThis(),
+              eq: vi.fn().mockReturnThis(),
+              maybeSingle: vi.fn(() => Promise.resolve({ data: { firm_id: 10, is_firm_admin: true } })),
+            };
+          }
+          if (profCall === 2) {
+            return {
+              select: vi.fn().mockReturnThis(),
+              eq: vi.fn().mockReturnThis(),
+              maybeSingle: vi.fn(() => Promise.resolve({ data: { id: 2, firm_id: 10 } })),
+            };
+          }
+          if (profCall === 3) {
+            // prev-owner verification (lead currently belongs to #1)
+            return {
+              select: vi.fn().mockReturnThis(),
+              eq: vi.fn().mockReturnThis(),
+              maybeSingle: vi.fn(() => Promise.resolve({ data: { id: 1 } })),
+            };
+          }
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            maybeSingle: vi.fn(() => Promise.resolve({ data: { name: "Bob", email: "bob@t.com" } })),
+          };
+        }
+        if (table === "professional_leads") {
+          return {
+            update: vi.fn(() => ({ eq: vi.fn(() => Promise.resolve({ error: null })) })),
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            // existingLead lookup (current assignee #1) + later lead detail lookup
+            maybeSingle: vi.fn(() => Promise.resolve({ data: { professional_id: 1, user_name: "Jane", user_email: "j@t.com", user_phone: null, source_page: null, message: null, status: "new" } })),
+          };
+        }
+        if (table === "lead_assignments") {
+          return {
+            insert: vi.fn((row: Record<string, unknown>) => {
+              auditInserts.push(row);
+              return Promise.resolve({ error: null });
+            }),
+          };
+        }
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          maybeSingle: vi.fn(() => Promise.resolve({ data: null })),
+        };
+      }),
+    }));
+
+    const res = await PATCH(makePatch({ lead_id: 7, professional_id: 2 }) as never);
+    expect(res.status).toBe(200);
+    // Allow the awaited writeAssignment to settle.
+    expect(auditInserts).toHaveLength(1);
+    expect(auditInserts[0]).toMatchObject({
+      firm_id: 10,
+      lead_ref: "7",
+      professional_id: 2,
+      assigned_by: "manual",
+      reassigned_from: 1,
+    });
+  });
 });

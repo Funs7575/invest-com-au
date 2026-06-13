@@ -129,14 +129,18 @@ export function isInDatedBadgeContext(lines, lineIndex) {
 
 /**
  * Returns true if the matching line or the immediately preceding line
- * carries a `// dated-ok` escape-hatch comment.
+ * carries a `// dated-ok` (or JSX-comment `{/* dated-ok *​/}`) escape hatch.
+ * Both forms are accepted because raw `// dated-ok` inside JSX children is
+ * itself an eslint error (react/jsx-no-comment-textnodes) — JSX call sites
+ * must use the brace-comment form.
  *
  * @param {string[]} lines
  * @param {number}   lineIndex
  */
 export function hasEscapeHatch(lines, lineIndex) {
   const prev = lineIndex > 0 ? lines[lineIndex - 1] : "";
-  return lines[lineIndex].includes("// dated-ok") || prev.includes("// dated-ok");
+  const marked = (line) => line.includes("// dated-ok") || line.includes("/* dated-ok");
+  return marked(lines[lineIndex]) || marked(prev);
 }
 
 /**

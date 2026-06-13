@@ -45,6 +45,12 @@ export interface BriefMessageRow {
   read_by_consumer_at: string | null;
   read_by_pro_at: string | null;
   created_at: string;
+  /**
+   * Optional structured payload (booking-v2 "propose times" etc.). NULL for
+   * ordinary text messages. Typed loosely here; consumers narrow via the
+   * `kind` discriminator (see lib/booking-v2/types ProposeTimesPayload).
+   */
+  metadata?: Record<string, unknown> | null;
 }
 
 export interface SendMessageInput {
@@ -54,6 +60,8 @@ export interface SendMessageInput {
   senderProfessionalId?: number | null;
   senderTeamId?: number | null;
   body: string;
+  /** Optional structured payload stored in brief_messages.metadata. */
+  metadata?: Record<string, unknown> | null;
 }
 
 export interface MarkReadInput {
@@ -88,7 +96,7 @@ export async function listMessagesForBrief(
   const { data, error } = await admin
     .from("brief_messages")
     .select(
-      "id, brief_id, sender_kind, sender_user_id, sender_professional_id, sender_team_id, body, read_by_consumer_at, read_by_pro_at, created_at",
+      "id, brief_id, sender_kind, sender_user_id, sender_professional_id, sender_team_id, body, read_by_consumer_at, read_by_pro_at, created_at, metadata",
     )
     .eq("brief_id", briefId)
     .order("created_at", { ascending: true });
@@ -145,6 +153,7 @@ export async function sendMessage(
       sender_professional_id: input.senderProfessionalId ?? null,
       sender_team_id: input.senderTeamId ?? null,
       body,
+      ...(input.metadata !== undefined ? { metadata: input.metadata } : {}),
     })
     .select()
     .single();

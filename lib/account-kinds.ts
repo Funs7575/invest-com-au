@@ -16,6 +16,13 @@
  * navigating to `/account/holdings` is redirected back to the chooser.
  * RLS already isolates each table by auth.uid(); the cookie + redirect
  * is the UX gate.
+ *
+ * Households (idea #6) are deliberately NOT a workspace kind. A household is an
+ * OVERLAY on the investor surface (shared goals/balances/watchlist within
+ * /account), not a separate portal you switch into — so it has no entry here,
+ * no `portalForKind` case, and no cookie. Its entry point is the flag-gated
+ * `HouseholdAccountTile` on the account home + `/account/household`. Keeping it
+ * out of the kind registry avoids polluting the cookie-switched portal model.
  */
 
 import { cookies } from "next/headers";

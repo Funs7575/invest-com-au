@@ -5,6 +5,7 @@ import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { isAllowed } from "@/lib/rate-limit-db";
 import { sendConsumerBidReceivedEmail } from "@/lib/quote-emails";
+import { auctionRoundsEnabled, finalRoundActive } from "@/lib/auction-rounds";
 
 const log = logger("advisor-auction-bid");
 
@@ -73,10 +74,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify auction exists and is still open
+    // Verify auction exists and is still open. final_round_* are selected for
+    // idea #11 — best-and-final rounds; reads are fail-soft (undefined when the
+    // columns are absent / the migration hasn't run).
     const { data: auction } = await admin
       .from("advisor_auctions")
-      .select("id, status, ends_at, source, contact_email, contact_name, job_title, slug")
+      .select(
+        "id, status, ends_at, source, contact_email, contact_name, job_title, slug, final_round_ends_at, final_round_started_at",
+      )
       .eq("id", auction_id)
       .single();
 
@@ -110,8 +115,19 @@ export async function POST(request: NextRequest) {
       .maybeSingle();
 
     if (existingBid) {
-      // Update existing bid if new amount is higher
-      if (bid_amount <= existingBid.bid_amount) {
+      // Idea #11 — best-and-final round. On a PUBLIC quote with an active final
+      // round (and the auction_rounds flag on), the advisor may submit ONE
+      // revised quote in EITHER direction (a final round sharpens pricing, often
+      // downward — the "must exceed" rule is lead-auction logic and would block
+      // that). Outside a final round, the original "must exceed" rule is
+      // unchanged, so non-public auctions and ordinary public re-bids behave
+      // exactly as today.
+      const inFinalRound =
+        auction.source === "public_job" &&
+        finalRoundActive(auction as { final_round_ends_at?: string | null }) &&
+        (await auctionRoundsEnabled(auction.contact_email as string | null));
+
+      if (!inFinalRound && bid_amount <= existingBid.bid_amount) {
         return NextResponse.json(
           {
             error: `Your new bid must exceed your current bid of $${(existingBid.bid_amount / 100).toFixed(2)}.`,
@@ -122,7 +138,7 @@ export async function POST(request: NextRequest) {
 
       const { error: updateError } = await admin
         .from("advisor_auction_bids")
-        .update({ bid_amount })
+        .update(inFinalRound ? { bid_amount, round_number: 2 } : { bid_amount })
         .eq("id", existingBid.id);
 
       if (updateError) {

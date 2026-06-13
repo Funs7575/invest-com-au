@@ -11,6 +11,7 @@ import {
   type DisputeOpenedByKind,
 } from "@/lib/disputes";
 import { isProfessionalOnTeam } from "@/lib/expert-teams";
+import { dispatchPushToAdvisor } from "@/lib/advisor-push";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:briefs:disputes:open");
@@ -90,6 +91,19 @@ export async function POST(
       reason: parsed.data.reason,
       evidenceUrls: parsed.data.evidence_urls ?? [],
     });
+
+    // ── Push the accepted adviser (Adviser Push Command Centre) ──────────
+    // Only when the CONSUMER opens — a pro/team opening a dispute is their own
+    // action and must not self-ping. Flag-gated + preference-gated + fail-soft
+    // in the helper. Deep-links to the shared brief tracker (dispute surface).
+    if (opener.kind === "consumer" && brief.accepted_by_professional_id) {
+      void dispatchPushToAdvisor(brief.accepted_by_professional_id, "dispute", {
+        title: "Dispute opened on your brief",
+        body: "A consumer raised a dispute — open the brief to respond.",
+        url: `/briefs/${slug}`,
+        tag: `advisor-dispute-${brief.id}`,
+      });
+    }
 
     return NextResponse.json({ dispute: row });
   } catch (err) {
