@@ -1445,6 +1445,26 @@ Brainstormed list of self-contained builds (each one Claude session, no founder 
 
 **Pattern established (#1, #2):** file-backed JSON in `data/` + typed lib loader + alias-driven CSV ingest script + hub/detail ISR routes + synthetic preview with `meta.sample` → banner + noindex until real extract lands → one-command hydration, ships as PR diff. Egress from build sandboxes is blocked for AU data portals — run ingests locally.
 
+### 2026-06-11 — The Feel layer (founder directive: consumer-fintech energy)
+
+Directive: retail investor opens this on their phone and FEELS something — Robinhood/Revolut/Coinbase stickiness, not compliance-grey boxes. Compliance inversion that makes this safe for an AU comparison site: celebrate curiosity and decision-quality, never transactions (no trade-confetti conduct risk — we don't execute trades anyway).
+
+**v1 SHIPPED (journey layer):**
+- `lib/journey.ts` — PII-free localStorage milestone model (`inv_journey`): first_save / first_compare / quiz_complete / first_article / profile_complete → 5 named stages (Curious → Explorer → Comparer → Shortlister → Decision-ready), idempotent, SSR-safe, unit-tested.
+- `components/journey/journeyMoment.tsx` — imperative celebration card (house toast pattern, no providers): milestone + stage + progress dots + next-step hint; confetti only on stage advance and never under prefers-reduced-motion.
+- Wired: BookmarkButton (first save = the moment; repeats = quiet "Saved" toast — was previously SILENT), compare page (first_compare), quiz top-match (quiz_complete).
+
+**v2 backlog (in priority order):**
+1. Header stage chip ("N saved · Explorer") in the right cluster — persistent identity.
+2. Wire `first_article` (article pages currently only fire first_save via bookmark).
+3. Claim-sync moment: "your N saves are now in your account" on ClaimAnonymousOnAuth.
+4. Streak UI — lib/streak.ts math is DONE, no UI consumes it (daily check-in surface, at-risk nudge).
+5. Profile-completion meter on /account using the milestone model.
+6. Saved-state empty pages: /account/bookmarks zero-state should sell the journey, not show a void.
+7. Lifecycle journeys (lib/lifecycle-journeys.ts, 6 journeys, no UI) → stage visualisation on hub pages.
+
+Where delight lives: the save tap, the quiz reveal (shine/pulse exists), the first compare. Where trust builds: dated-stat badges, register links, "not advice" framing at decision moments — keep these adjacent to every celebration so excitement and honesty travel together.
+
 ## Open commitments / revisit-by dates
 
 Time-bound items that need a check-in at a specific date. Don't delete — strike through and timestamp when resolved so we keep the trail.
