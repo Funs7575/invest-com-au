@@ -17,10 +17,13 @@ const BodySchema = z.object({
   topic: z.string().max(500).optional(),
 });
 
-type Params = { params: Promise<{ slotId: string }> };
+// The dynamic segment is named `token` to match the sibling
+// /api/booking/[token]/{cancel,reschedule} routes (Next.js requires one slug
+// name per path position). For checkout the value is the numeric slot id.
+type Params = { params: Promise<{ token: string }> };
 
 /**
- * POST /api/booking/[slotId]/checkout
+ * POST /api/booking/[token]/checkout
  *
  * Creates a Stripe Checkout session for a paid advisor session booking.
  * The slot is NOT claimed until the webhook confirms payment — prevents
@@ -37,7 +40,7 @@ export async function POST(req: NextRequest, { params }: Params): Promise<Respon
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
 
-  const { slotId: slotIdRaw } = await params;
+  const { token: slotIdRaw } = await params;
   const slotId = Number.parseInt(slotIdRaw, 10);
   if (!Number.isFinite(slotId) || slotId <= 0) {
     return NextResponse.json({ error: "Invalid slot." }, { status: 400 });
