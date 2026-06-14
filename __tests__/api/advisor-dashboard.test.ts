@@ -27,6 +27,7 @@ vi.mock("@/lib/require-advisor-session", () => ({
 
 import { GET } from "@/app/api/advisor-dashboard/route";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -545,5 +546,72 @@ describe("GET /api/advisor-dashboard", () => {
     expect(data.stats.leads7d).toBe(2); // yesterday + 5 days ago both within 7d
     expect(data.stats.leadsThisMonth).toBe(expectedThisMonth);
     expect(data.stats.leadsLastMonth).toBeGreaterThanOrEqual(1); // prevMonthMid
+  });
+
+  // ── Resilience: a missing service-role key or one failed slice must NOT
+  //    500 the whole dashboard (the bug behind "Some data couldn't be loaded"). ──
+
+  it("degrades to 200 (not 500) when the service-role key is missing", async () => {
+    // createAdminClient() throws without SUPABASE_SERVICE_ROLE_KEY. Previously
+    // that throw — inline in Promise.all — rejected the entire route → 500 →
+    // every KPI 0 + the load-error banner. Now it degrades to bookings = 0.
+    vi.mocked(createAdminClient).mockImplementationOnce(() => {
+      throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variable");
+    });
+    mockFrom.mockImplementation(
+      makeFromWithLeads([makeLead(new Date().toISOString(), "new", 80)]),
+    );
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.stats.totalLeads).toBe(1); // leads still load via the user client
+    expect(data.stats.bookingClicks30d).toBe(0); // bookings degrade, not crash
+  });
+
+  it("degrades to 200 when one slice (leads) rejects", async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "advisor_sessions") {
+        const b = createChainableBuilder("advisor_sessions");
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { professional_id: ADVISOR_ID, expires_at: new Date(Date.now() + 86400000).toISOString() },
+            error: null,
+          }),
+        );
+        return b;
+      }
+      if (table === "professionals") {
+        const b = createChainableBuilder("professionals");
+        b.single = vi.fn(() => Promise.resolve({ data: makeAdvisor(), error: null }));
+        return b;
+      }
+      if (table === "professional_leads") {
+        // Simulate an RLS denial / network reject for this slice only.
+        const b = createChainableBuilder("professional_leads");
+        b.then = vi.fn((_ok: unknown, rej?: (e: unknown) => void) => {
+          rej?.(new Error("RLS denied"));
+          return Promise.resolve();
+        });
+        return b;
+      }
+      if (table === "lead_pricing") {
+        const b = createChainableBuilder("lead_pricing");
+        b.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+        return b;
+      }
+      const b = createChainableBuilder(table);
+      b.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+        cb({ data: [], error: null });
+        return Promise.resolve();
+      });
+      return b;
+    });
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.stats.totalLeads).toBe(0); // the failed slice degrades to empty
+    expect(data.advisor.name).toBe("Jane Smith"); // the rest still loads
   });
 });
