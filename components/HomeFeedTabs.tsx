@@ -2,10 +2,12 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
+import Icon from "@/components/Icon";
 import {
   FEED_TAB_LABELS,
   feedEventHref,
   type FeedEvent,
+  type FeedEventType,
   type FeedTab,
 } from "@/lib/feed-ranking";
 
@@ -32,20 +34,17 @@ const DEFAULT_TAB_STATE: TabState = {
   loaded: false,
 };
 
-function eventIcon(type: FeedEvent["event_type"]): string {
-  switch (type) {
-    case "rate_change":
-      return "📈";
-    case "advisor_post":
-      return "💬";
-    case "community_thread":
-      return "🗣️";
-    case "article":
-      return "📄";
-    case "deal":
-      return "🎁";
-  }
-}
+/** Per-event-type visual identity — house Icon + tinted badge, never emoji. */
+const EVENT_META: Record<
+  FeedEventType,
+  { icon: string; label: string; badge: string; ring: string }
+> = {
+  rate_change: { icon: "trending-up", label: "Rate", badge: "bg-emerald-50 text-emerald-600", ring: "ring-emerald-100" },
+  advisor_post: { icon: "message-circle", label: "Advisor", badge: "bg-blue-50 text-blue-600", ring: "ring-blue-100" },
+  community_thread: { icon: "help-circle", label: "Community", badge: "bg-violet-50 text-violet-600", ring: "ring-violet-100" },
+  article: { icon: "file-text", label: "Insight", badge: "bg-amber-50 text-amber-600", ring: "ring-amber-100" },
+  deal: { icon: "party-popper", label: "Deal", badge: "bg-rose-50 text-rose-600", ring: "ring-rose-100" },
+};
 
 function timeAgo(iso: string): string {
   const secs = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -57,42 +56,104 @@ function timeAgo(iso: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-function FeedEventCard({ event }: { event: FeedEvent }) {
+/** <1h old — kept out of the render body so the purity lint stays happy. */
+function isFresh(iso: string): boolean {
+  return Date.now() - new Date(iso).getTime() < 3_600_000;
+}
+
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+/** Leading visual: actor photo → initials → category icon badge. */
+function EventVisual({ event }: { event: FeedEvent }) {
+  const meta = EVENT_META[event.event_type];
+  if (event.image_url) {
+    return (
+      <span className="relative shrink-0">
+        {/* eslint-disable-next-line @next/next/no-img-element -- remote, unknown-host feed thumbnails */}
+        <img src={event.image_url} alt="" className="h-10 w-10 rounded-lg object-cover ring-1 ring-slate-200" />
+        <span className={`absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-md ring-2 ring-white ${meta.badge}`}>
+          <Icon name={meta.icon} size={12} />
+        </span>
+      </span>
+    );
+  }
+  if (event.actor_name) {
+    return (
+      <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg text-xs font-bold ring-1 ${meta.badge} ${meta.ring}`}>
+        {initials(event.actor_name)}
+      </span>
+    );
+  }
+  return (
+    <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg ${meta.badge}`}>
+      <Icon name={meta.icon} size={18} />
+    </span>
+  );
+}
+
+function FeedEventCard({ event, index }: { event: FeedEvent; index: number }) {
   const href = feedEventHref(event);
+  const meta = EVENT_META[event.event_type];
+  const fresh = isFresh(event.published_at);
   return (
     <Link
       href={href}
-      className="block group px-4 py-3.5 border-b border-slate-100 hover:bg-slate-50 transition-colors last:border-0"
+      className="group relative flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+      style={{ animation: "fadeInUp 0.4s ease-out both", animationDelay: `${Math.min(index, 6) * 55}ms` }}
     >
-      <div className="flex items-start gap-3">
-        <span className="text-lg shrink-0 mt-0.5" aria-hidden="true">
-          {eventIcon(event.event_type)}
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-slate-800 group-hover:text-blue-700 leading-snug line-clamp-2">
-            {event.headline}
-          </p>
-          {event.summary && event.event_type === "advisor_post" && (
-            <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">
-              {event.summary}
-            </p>
-          )}
-          <div className="flex items-center gap-2 mt-1">
-            {event.actor_name && (
-              <span className="text-[11px] text-slate-500 font-medium">
-                {event.actor_name}
+      <EventVisual event={event} />
+      <div className="min-w-0 flex-1">
+        <div className="mb-1 flex items-center gap-2">
+          <span className={`inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${meta.badge}`}>
+            {meta.label}
+          </span>
+          {fresh && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
               </span>
-            )}
-            <span className="text-[11px] text-slate-500">
-              {timeAgo(event.published_at)}
+              New
             </span>
-          </div>
+          )}
         </div>
-        <span className="text-slate-300 group-hover:text-blue-400 shrink-0 mt-1" aria-hidden="true">
-          →
-        </span>
+        <p className="line-clamp-2 text-sm font-semibold leading-snug text-slate-900 group-hover:text-blue-700">
+          {event.headline}
+        </p>
+        {event.summary && (
+          <p className="mt-0.5 line-clamp-1 text-xs text-slate-500">{event.summary}</p>
+        )}
+        <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-slate-400">
+          {event.actor_name && <span className="font-medium text-slate-500">{event.actor_name}</span>}
+          {event.actor_name && <span aria-hidden="true">·</span>}
+          <span>{timeAgo(event.published_at)}</span>
+        </div>
       </div>
+      <Icon
+        name="arrow-right"
+        size={16}
+        className="mt-1 shrink-0 text-slate-300 transition-all group-hover:translate-x-0.5 group-hover:text-blue-500"
+      />
     </Link>
+  );
+}
+
+function CardSkeleton() {
+  return (
+    <div className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
+      <div className="h-10 w-10 shrink-0 animate-pulse rounded-lg bg-slate-100" />
+      <div className="min-w-0 flex-1 space-y-2 py-0.5">
+        <div className="h-3 w-16 animate-pulse rounded bg-slate-100" />
+        <div className="h-3.5 w-full animate-pulse rounded bg-slate-100" />
+        <div className="h-3 w-2/3 animate-pulse rounded bg-slate-100" />
+      </div>
+    </div>
   );
 }
 
@@ -183,16 +244,32 @@ export default function HomeFeedTabs({ initialEvents, initialCursor }: Props) {
   const hasMore = currentTab?.hasMore ?? true;
 
   return (
-    <section className="container-custom max-w-2xl my-6">
+    <section className="container-custom max-w-2xl my-6 md:my-8">
+      {/* Header */}
+      <div className="mb-3 flex items-end justify-between gap-3">
+        <div>
+          <h2 className="text-base font-bold text-slate-900">Your feed</h2>
+          <p className="text-xs text-slate-500">
+            What&apos;s moved across your shortlists, advisors and the market.
+          </p>
+        </div>
+        <Link
+          href="/feed"
+          className="shrink-0 text-xs font-semibold text-blue-600 hover:text-blue-700"
+        >
+          See all →
+        </Link>
+      </div>
+
       {/* Tab bar */}
-      <div className="flex gap-0.5 mb-0 bg-slate-100 rounded-xl p-1" role="tablist">
+      <div className="mb-3 flex gap-0.5 rounded-xl bg-slate-100 p-1" role="tablist">
         {TABS.map((tab) => (
           <button
             key={tab}
             role="tab"
             aria-selected={activeTab === tab}
             onClick={() => switchTab(tab)}
-            className={`flex-1 text-xs font-semibold py-1.5 rounded-lg transition-colors ${
+            className={`flex-1 rounded-lg py-1.5 text-xs font-semibold transition-colors ${
               activeTab === tab
                 ? "bg-white text-slate-900 shadow-sm"
                 : "text-slate-500 hover:text-slate-700"
@@ -203,37 +280,36 @@ export default function HomeFeedTabs({ initialEvents, initialCursor }: Props) {
         ))}
       </div>
 
-      {/* Feed events */}
-      <div
-        className="bg-white border border-slate-200 rounded-xl overflow-hidden mt-2 shadow-sm"
-        role="tabpanel"
-      >
+      {/* Events */}
+      <div role="tabpanel" className="space-y-2">
         {events.length === 0 && !loading ? (
-          <div className="px-4 py-8 text-center text-sm text-slate-500">
-            {currentTab?.loaded
-              ? "Nothing here yet — check back soon."
-              : "Loading…"}
-          </div>
+          currentTab?.loaded ? (
+            <div className="rounded-xl border border-dashed border-slate-200 bg-white px-4 py-10 text-center">
+              <div className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-full bg-slate-100 text-slate-400">
+                <Icon name="check-circle" size={18} />
+              </div>
+              <p className="text-sm font-medium text-slate-600">You&apos;re all caught up</p>
+              <p className="text-xs text-slate-400">New activity will land here.</p>
+            </div>
+          ) : (
+            <>
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+            </>
+          )
         ) : (
           <>
-            {events.map((event) => (
-              <FeedEventCard key={event.id} event={event} />
+            {events.map((event, i) => (
+              <FeedEventCard key={event.id} event={event} index={i} />
             ))}
             {/* Infinite scroll sentinel */}
-            {hasMore && (
-              <div ref={sentinelRef} className="h-1" aria-hidden="true" />
+            {hasMore && <div ref={sentinelRef} className="h-1" aria-hidden="true" />}
+            {loading && <CardSkeleton />}
+            {!hasMore && events.length > 0 && (
+              <p className="py-2 text-center text-xs text-slate-400">You&apos;re all caught up.</p>
             )}
           </>
-        )}
-        {loading && (
-          <div className="px-4 py-3 text-xs text-slate-500 text-center border-t border-slate-100">
-            Loading…
-          </div>
-        )}
-        {!hasMore && events.length > 0 && (
-          <div className="px-4 py-3 text-xs text-slate-500 text-center border-t border-slate-100">
-            You&apos;re all caught up.
-          </div>
         )}
       </div>
     </section>

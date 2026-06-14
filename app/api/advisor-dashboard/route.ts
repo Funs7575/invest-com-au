@@ -1,26 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-// advisor_bookings is non-anon RLS; this route authenticates via the custom
-// advisor_session cookie (no Supabase JWT), so its booking read uses the
+// advisor_bookings is non-anon RLS; the booking read below uses the
 // service-role client, scoped in-query to the validated advisorId.
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { deriveProfileCompleteness } from "@/lib/advisor-portal/profile-completeness";
 
-async function getAdvisorId(request: NextRequest): Promise<number | null> {
-  const sessionToken = request.cookies.get("advisor_session")?.value;
-  if (!sessionToken) return null;
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("advisor_sessions")
-    .select("professional_id, expires_at")
-    .eq("session_token", sessionToken)
-    .single();
-  if (!data || new Date(data.expires_at) < new Date()) return null;
-  return data.professional_id;
-}
-
 export async function GET(request: NextRequest) {
-  const advisorId = await getAdvisorId(request);
+  // Accept BOTH auth schemes — the Supabase JWT minted by magic-link/password
+  // login AND the legacy advisor_session cookie — via the shared resolver. The
+  // previous cookie-only check 401'd every advisor who logged in with a JWT,
+  // which blanked the dashboard stats and tripped the load-error banner.
+  const advisorId = await requireAdvisorSession(request);
   if (!advisorId)
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 

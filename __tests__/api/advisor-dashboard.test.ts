@@ -19,7 +19,14 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
 
+// The route now delegates auth to the shared resolver (JWT + legacy cookie);
+// mock it at the boundary instead of the underlying session lookup.
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: vi.fn(),
+}));
+
 import { GET } from "@/app/api/advisor-dashboard/route";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -108,6 +115,8 @@ function makeReview(rating: number) {
 describe("GET /api/advisor-dashboard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default: authenticated as ADVISOR_ID. The 401 tests override to null.
+    vi.mocked(requireAdvisorSession).mockResolvedValue(ADVISOR_ID);
     // advisor_bookings is fetched via createAdminClient — default to empty result
     adminFromMock.mockImplementation(() => {
       const b = createChainableBuilder("advisor_bookings");
@@ -120,8 +129,7 @@ describe("GET /api/advisor-dashboard", () => {
   });
 
   it("returns 401 when no advisor_session cookie", async () => {
-    // Session lookup returns null (no cookie → no session)
-    mockFrom.mockImplementation(() => createChainableBuilder("advisor_sessions"));
+    vi.mocked(requireAdvisorSession).mockResolvedValue(null);
 
     const res = await GET(makeGet());
     expect(res.status).toBe(401);
@@ -129,35 +137,15 @@ describe("GET /api/advisor-dashboard", () => {
     expect(data.error).toMatch(/not authenticated/i);
   });
 
-  it("returns 401 when session token is invalid", async () => {
-    mockFrom.mockImplementation((table: string) => {
-      if (table === "advisor_sessions") {
-        return createChainableBuilder("advisor_sessions");
-      }
-      return createChainableBuilder(table);
-    });
+  it("returns 401 when the shared resolver rejects the session", async () => {
+    vi.mocked(requireAdvisorSession).mockResolvedValue(null);
 
     const res = await GET(makeGet(SESSION_TOKEN));
     expect(res.status).toBe(401);
   });
 
-  it("returns 401 when session is expired", async () => {
-    mockFrom.mockImplementation((table: string) => {
-      if (table === "advisor_sessions") {
-        const builder = createChainableBuilder("advisor_sessions");
-        builder.single = vi.fn(() =>
-          Promise.resolve({
-            data: {
-              professional_id: ADVISOR_ID,
-              expires_at: new Date(Date.now() - 86400000).toISOString(), // yesterday
-            },
-            error: null,
-          }),
-        );
-        return builder;
-      }
-      return createChainableBuilder(table);
-    });
+  it("returns 401 when the session has expired (resolver returns null)", async () => {
+    vi.mocked(requireAdvisorSession).mockResolvedValue(null);
 
     const res = await GET(makeGet(SESSION_TOKEN));
     expect(res.status).toBe(401);

@@ -60,9 +60,19 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
   const termWords = entry.term.toLowerCase().split(/\s+/).filter((w) => w.length > 3);
   const categoryTag = entry.category?.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "").replace(/\//g, "-") || "";
   const searchTags = [...termWords, categoryTag].filter(Boolean);
-  const { data: relatedArticles } = searchTags.length > 0
-    ? await supabase.from("articles").select("slug, title, read_time").eq("status", "published").overlaps("tags", searchTags).limit(3)
-    : { data: [] };
+  const relatedArticles = await (async (): Promise<{ slug: string; title: string; read_time: number }[]> => {
+    if (searchTags.length === 0) return [];
+    const { data } = await supabase
+      .from("articles")
+      .select("slug, title, read_time, tags")
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(60);
+    // articles.tags is jsonb — filter overlap in JS (PostgREST && errors).
+    return ((data as { slug: string; title: string; read_time: number; tags?: unknown }[]) || [])
+      .filter((r) => Array.isArray(r.tags) && (r.tags as string[]).some((t) => searchTags.includes(t)))
+      .slice(0, 3);
+  })();
 
 
   // WebPage + Speakable + DefinedTerm (mainEntity). Speakable selectors point
