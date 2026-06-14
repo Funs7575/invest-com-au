@@ -529,6 +529,17 @@ describe("formatListingPrice", () => {
     ).toEqual({ label: "Asking", value: "$1.495M" });
   });
 
+  it("ignores a '$Xmin (wholesale only)' price_display, using the structured min commitment", () => {
+    const res = formatListingPrice(
+      priceRow({
+        listing_kind: "project_equity",
+        price_display: "$3M min (wholesale only)",
+        key_metrics: { min_commit_aud: 3000000 },
+      }),
+    );
+    expect(res).toEqual({ label: "Min commitment", value: "$3M" });
+  });
+
   it("returns null when nothing priceable", () => {
     expect(formatListingPrice(priceRow({ listing_kind: "for_sale_business" }))).toBeNull();
   });

@@ -1436,23 +1436,21 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                       </div>
                     )}
 
-                    {/* Fees + Availability stat grid */}
-                    <div className="grid grid-cols-2 gap-2 mt-3">
-                      <div className="rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">
+                    {/* Fees gets the full width (up to 2 lines, no mid-word clip);
+                        availability is a compact status pill alongside it. */}
+                    <div className="mt-3 flex items-start justify-between gap-2 rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-2">
+                      <div className="min-w-0">
                         <div className="iv2-mini text-[0.55rem] text-slate-500">Fees</div>
-                        <div className="text-[0.68rem] font-bold text-slate-800 truncate" title={feeText}>{feeText}</div>
+                        <div className="text-[0.72rem] font-bold leading-snug text-slate-800 line-clamp-2" title={feeText}>{feeText}</div>
                       </div>
-                      <div className="rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">
-                        <div className="iv2-mini text-[0.55rem] text-slate-500">Availability</div>
-                        <div className={`text-[0.68rem] font-bold flex items-center gap-1 ${
-                          availability === "open" ? "text-emerald-700" : availability === "waitlist" ? "text-amber-700" : "text-red-600"
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                            availability === "open" ? "bg-emerald-500" : availability === "waitlist" ? "bg-amber-500" : "bg-red-500"
-                          }`} />
-                          {availability === "open" ? "Accepting" : availability === "waitlist" ? "Waitlist" : "Closed"}
-                        </div>
-                      </div>
+                      <span className={`mt-0.5 shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.58rem] font-bold ${
+                        availability === "open" ? "bg-emerald-100 text-emerald-700" : availability === "waitlist" ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-600"
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${
+                          availability === "open" ? "bg-emerald-500" : availability === "waitlist" ? "bg-amber-500" : "bg-red-500"
+                        }`} />
+                        {availability === "open" ? "Accepting" : availability === "waitlist" ? "Waitlist" : "Closed"}
+                      </span>
                     </div>
 
                     {/* Offer */}

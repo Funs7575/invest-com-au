@@ -362,7 +362,7 @@ export function freshnessSignal(l: Pick<InvestmentListing, "created_at" | "expir
  *  second stat (price + yield / per-unit / tax-perks). When a clean numeric
  *  price is derivable we ignore these — the return metric belongs in its own
  *  slot (see `listingHeadlineStat`), not crammed into the big price number. */
-const COMPOUND_PRICE_DISPLAY = /yield|\/\s*(?:credit|unit)|·|≈|=|tax|cgt|esvclp|esic|upfront|exempt|stacked/i;
+const COMPOUND_PRICE_DISPLAY = /yield|\/\s*(?:credit|unit)|·|≈|=|tax|cgt|esvclp|esic|upfront|exempt|stacked|wholesale|\bmin\b|\bonly\b|\(/i;
 
 /** Drop a redundant leading "AUD" / "A$" — the whole marketplace is AUD, so
  *  `formatAudCompact` omits it and free-text overrides shouldn't re-add it. */
