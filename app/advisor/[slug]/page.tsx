@@ -220,7 +220,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     id: string;
     name: string;
     issuer: string | null;
-    issued_year: number | null;
+    issued_at: string | null;
     credential_url: string | null;
   };
   type AdvisorCaseStudy = {
@@ -247,7 +247,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         .order("sort_order"),
       supabase
         .from("advisor_certifications")
-        .select("id, name, issuer, issued_year, credential_url")
+        .select("id, name, issuer, issued_at, credential_url")
         .eq("professional_id", pro.id),
       supabase
         .from("advisor_case_studies")
@@ -540,7 +540,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
                       <div className="flex flex-col gap-px">
                         <span className="text-[13px] font-bold text-slate-900">{cert.name}</span>
                         <span className="text-[11px] text-slate-500">
-                          {[cert.issuer, cert.issued_year].filter(Boolean).join(" · ")}
+                          {[cert.issuer, cert.issued_at ? new Date(cert.issued_at).getFullYear() : null].filter(Boolean).join(" · ")}
                         </span>
                       </div>
                     );

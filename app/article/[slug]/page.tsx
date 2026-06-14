@@ -150,7 +150,23 @@ export default async function ArticlePage({
     : Promise.resolve({ data: null });
 
   const crossCategoryPromise = (a.tags && a.tags.length > 0)
-    ? supabase.from("articles").select("slug, title, category, read_time, id, tags").eq("status", "published").neq("category", a.category || "").neq("slug", slug).overlaps("tags", a.tags).order("published_at", { ascending: false }).limit(3)
+    ? (async () => {
+        const { data } = await supabase
+          .from("articles")
+          .select("slug, title, category, read_time, id, tags")
+          .eq("status", "published")
+          .neq("category", a.category || "")
+          .neq("slug", slug)
+          .order("published_at", { ascending: false })
+          .limit(40);
+        // articles.tags is jsonb, so PostgREST array-overlap (&&) errors;
+        // filter the tag overlap in JS instead.
+        const selfTags = (a.tags as string[]) || [];
+        const matched = ((data as { tags?: unknown }[]) || [])
+          .filter((r) => Array.isArray(r.tags) && (r.tags as string[]).some((t) => selfTags.includes(t)))
+          .slice(0, 3);
+        return { data: matched };
+      })()
     : Promise.resolve({ data: null });
 
   const [relatedBrokersRes, fxBrokersRes, allActiveBrokersRes, relatedArticlesRes, crossCategoryRes, linkInjectionEnabled] = await Promise.all([

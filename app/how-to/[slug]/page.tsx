@@ -92,12 +92,19 @@ export default async function HowToGuidePage({
 
   // Fetch related articles based on guide slug keywords
   const guideKeywords = guide.slug.split("-").filter((w) => w.length > 3);
-  const { data: relatedArticlesData } = await supabase
-    .from("articles")
-    .select("slug, title, category, read_time")
-    .eq("status", "published")
-    .overlaps("tags", guideKeywords)
-    .limit(4);
+  const { data: relatedArticlesData } = await (async () => {
+    const { data } = await supabase
+      .from("articles")
+      .select("slug, title, category, read_time, tags")
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(60);
+    // articles.tags is jsonb — filter overlap in JS (PostgREST && errors).
+    const matched = ((data as { tags?: unknown }[]) || [])
+      .filter((r) => Array.isArray(r.tags) && (r.tags as string[]).some((t) => guideKeywords.includes(t)))
+      .slice(0, 4);
+    return { data: matched };
+  })();
   const relatedArticles = (relatedArticlesData as { slug: string; title: string; category: string; read_time: number }[]) || [];
 
   // JSON-LD
