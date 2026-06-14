@@ -580,6 +580,7 @@ export default function Header() {
                 {SHOW_MATCH_LANGUAGE ? "Get Matched" : "Take the quiz"}
               </Link>
               <YourPlanChip variant="menu-row" />
+              <WorkspaceSwitcher />
               <div className="flex gap-2">
                 <Link
                   href="/advisors"

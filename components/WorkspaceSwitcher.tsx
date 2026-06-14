@@ -36,6 +36,19 @@ const KIND_ICON: Record<string, string> = {
   listing_owner: "🏷️",
 };
 
+// Direct portal path per kind — mirrors lib/account-kinds.portalForKind, kept
+// client-side so this component doesn't pull the server-only account-kinds
+// module (it imports the service-role client) into the browser bundle. Investor
+// is intentionally absent: it has no portal, so investor-only users get nothing.
+const KIND_PORTAL: Record<string, string> = {
+  advisor: "/advisor-portal",
+  broker_partner: "/broker-portal",
+  business_owner: "/business-portal",
+  listing_owner: "/invest/my-listings",
+  startup: "/startup-portal",
+  org_admin: "/org-portal",
+};
+
 interface Membership {
   kind: string;
   kind_id: string;
@@ -83,7 +96,33 @@ export default function WorkspaceSwitcher() {
     return () => document.removeEventListener("mousedown", onDocClick);
   }, [open]);
 
-  if (!data || data.memberships.length < 2) return null;
+  if (!data) return null;
+
+  // Single workspace that's a portal kind → a direct link to that portal. The
+  // switcher proper only renders for 2+ memberships, so without this an advisor
+  // (commonly advisor-only) would have NO way to reach their portal from the
+  // site — the navigation gap this closes.
+  if (data.memberships.length === 1) {
+    const only = data.memberships[0];
+    const portal = only ? KIND_PORTAL[only.kind] : undefined;
+    if (only && portal) {
+      return (
+        <Link
+          href={portal}
+          data-testid="portal-link"
+          title={`Go to your ${KIND_LABEL[only.kind] ?? only.kind} portal`}
+          className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-slate-900 text-white hover:bg-slate-800 transition-colors"
+        >
+          <span aria-hidden>{KIND_ICON[only.kind] ?? "•"}</span>
+          <span>{KIND_LABEL[only.kind] ?? only.kind} portal</span>
+          <span aria-hidden>→</span>
+        </Link>
+      );
+    }
+    return null;
+  }
+
+  if (data.memberships.length < 2) return null;
 
   const label = data.active ? KIND_LABEL[data.active] : "Choose workspace";
   const icon = data.active ? KIND_ICON[data.active] : "⇄";
