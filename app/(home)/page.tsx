@@ -233,12 +233,6 @@ export default async function HomePage() {
           latest rate changes in a single card (was three stacked strips). */}
       <HomeMarketToday />
 
-      {/* Social feed — personalised for logged-in users; streams in
-          dynamically so the ISR shell remains cacheable. */}
-      <Suspense fallback={null}>
-        <HomeFeedSection />
-      </Suspense>
-
       <ScrollFadeIn>
         <HomeRouteCards
           listingCount={totalListingCount}
@@ -296,6 +290,14 @@ export default async function HomePage() {
       <ScrollFadeIn>
         <CountryToolsStripWrapper />
       </ScrollFadeIn>
+
+      {/* Social/activity feed — personalised for logged-in users; streams in
+          dynamically so the ISR shell stays cacheable. Sits low on the page so
+          the hero + product bands (compare / listings / experts) lead, instead
+          of a 20-row feed wall in the hero's slot. */}
+      <Suspense fallback={null}>
+        <HomeFeedSection />
+      </Suspense>
 
       <ScrollFadeIn>
         <HomeFridayBriefing />

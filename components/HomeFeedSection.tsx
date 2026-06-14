@@ -4,8 +4,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import HomeFeedTabs from "@/components/HomeFeedTabs";
 import { rankFeedEvents, type FeedEvent } from "@/lib/feed-ranking";
 
-const INITIAL_LIMIT = 20;
-const FETCH_LIMIT = 40; // fetch 2× to allow ranking without losing pagination accuracy
+const INITIAL_LIMIT = 6; // homepage teaser — "load more" + the /feed page carry the rest
+const FETCH_LIMIT = 24; // fetch wider than we show so ranking has a pool to sort
 
 export default async function HomeFeedSection() {
   const supabase = await createClient();
