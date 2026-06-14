@@ -73,7 +73,13 @@ describe("advisor-embed-token", () => {
     const parts = token.split(".");
     // Flip the last char of the HMAC segment.
     const sig = parts[2]!;
-    const flipped = sig.slice(0, -1) + (sig.endsWith("A") ? "B" : "A");
+    // Tamper the FIRST char of the HMAC segment, not the last: base64url's
+    // final char of a 32-byte HMAC carries only 4 significant bits (the low 2
+    // are padding), so an ±1 flip there can change only ignored bits — the
+    // decoded signature stays identical and the tamper goes undetected ~1 run
+    // in 16 (the source of this test's flakiness). The first char always
+    // carries significant bits, so this is a deterministic tamper.
+    const flipped = (sig[0] === "A" ? "B" : "A") + sig.slice(1);
     const tampered = `${parts[0]}.${parts[1]}.${flipped}`;
     const result = verifyAdvisorEmbedToken(tampered);
     expect(result.ok).toBe(false);
