@@ -16,6 +16,7 @@ import CountryListingsPreview from "@/components/country-mode/CountryListingsPre
 import CountryExpertsPreview from "@/components/country-mode/CountryExpertsPreview";
 import CountryComparePreview from "@/components/country-mode/CountryComparePreview";
 import CountryPopularLinks from "@/components/country-mode/CountryPopularLinks";
+import HideWhenCountryStrip from "@/components/country-mode/HideWhenCountryStrip";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import HomepagePersonalisedStrip from "@/components/HomepagePersonalisedStrip";
 import HomeMarketToday from "@/components/HomeMarketToday";
@@ -265,7 +266,12 @@ export default async function HomePage() {
       <CountryListingsPreview />
 
       <ScrollFadeIn>
-        <HomeListingsTeaser listings={listingList} totalCount={totalListingCount} />
+        {/* Hidden client-side when CountryListingsPreview rendered its tailored
+            strip above, so foreign-investor mode shows one opportunities
+            section, not two (ISR of this teaser is unchanged). */}
+        <HideWhenCountryStrip strip="listings">
+          <HomeListingsTeaser listings={listingList} totalCount={totalListingCount} />
+        </HideWhenCountryStrip>
       </ScrollFadeIn>
 
       {/* Single consolidated get-matched band — the one catch-all funnel,
@@ -282,7 +288,11 @@ export default async function HomePage() {
           upcoming-events strip and post-a-request strip dock underneath
           as one visual unit. */}
       <ScrollFadeIn>
-        <HomeAdvisorsTeaser advisors={advisorList} totalCount={totalProfessionalCount} />
+        {/* Hidden client-side when CountryExpertsPreview rendered above (one
+            experts section in foreign-investor mode, not two). */}
+        <HideWhenCountryStrip strip="experts">
+          <HomeAdvisorsTeaser advisors={advisorList} totalCount={totalProfessionalCount} />
+        </HideWhenCountryStrip>
       </ScrollFadeIn>
 
       <HomeSquadOfTheMonth />

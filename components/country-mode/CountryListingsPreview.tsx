@@ -72,6 +72,7 @@ export default async function CountryListingsPreview() {
   return (
     <section
       aria-label={`Listings tailored for ${meta.label}`}
+      data-country-strip="listings"
       className="bg-white border-y border-amber-100"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
