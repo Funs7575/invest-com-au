@@ -14,7 +14,7 @@
  * detail view) — don't hand-roll `.replace(/_/g, " ")` at call sites.
  */
 
-import { deriveListingKind, formatAudCompact, type DerivableListing } from "@/lib/listing-kind";
+import { formatAudCompact, type DerivableListing } from "@/lib/listing-kind";
 import { metricNumber } from "@/lib/listings/vertical-metrics";
 
 /**
@@ -46,14 +46,15 @@ const METRIC_SKIP = new Set([
   // Yield / return — shown as the headline stat beside the price (see
   // listingHeadlineStat), so never repeated as a chip.
   "net_yield_pct", "gross_yield_pct", "yield_pct", "yield_percent", "distribution_yield", "yield",
-  "target_irr_pct", "target_irr", "irr",
+  "target_irr_pct", "target_irr", "irr", "target_yield_pct", "target_yield",
   // Per-unit price — shown as the headline stat for environmental units.
   "spot_price_aud", "unit_price_aud",
   // Price / ticket — shown as the hero price.
   "min_investment_aud", "min_commit_aud", "min_investment", "asking_price",
   "asking_price_aud", "price", "price_aud",
   // Identifiers / derivation inputs / eligibility flags (rendered elsewhere).
-  "asx_ticker", "commodity", "structure", "stage", "royalty_type",
+  // `sub_category` is already shown in the card's category line — skip the dup.
+  "asx_ticker", "commodity", "structure", "stage", "royalty_type", "sub_category",
   "wholesale_only", "s708_required", "accredited_only", "open_to_retail",
   "retail_eligible",
 ]);
@@ -196,6 +197,18 @@ function formatPct(n: number): string {
   return `${Number.isInteger(n) ? n.toFixed(0) : n.toFixed(1)}%`;
 }
 
+/** Format an IRR/yield that may be a number (11.2) or a string range
+ *  ("7-9", "12-15%"): numbers → "11.2%"; strings get an en-dash and a
+ *  trailing % ("7-9" → "7–9%"). Null when blank/unparseable. */
+function formatReturnRange(raw: unknown): string | null {
+  if (typeof raw === "number") return Number.isFinite(raw) ? formatPct(raw) : null;
+  if (typeof raw !== "string") return null;
+  const s = raw.trim();
+  if (!s) return null;
+  const dashed = s.replace(/\s*[-–]\s*/g, "–");
+  return /%/.test(dashed) ? dashed : `${dashed}%`;
+}
+
 function perUnitLabel(km: Record<string, unknown>): string {
   return String(km["unit_type"] ?? "").toLowerCase().includes("credit") ? "Per credit" : "Per unit";
 }
@@ -214,17 +227,7 @@ function perUnitLabel(km: Record<string, unknown>): string {
 export function listingHeadlineStat(
   l: DerivableListing & { sub_category?: string | null },
 ): HeadlineStat | null {
-  const kind = deriveListingKind(l);
   const km = (l.key_metrics ?? {}) as Record<string, unknown>;
-
-  // Funds: forward-looking target IRR, with distribution yield as a fallback.
-  if (kind === "fund") {
-    const irr = pickMetricNumber(km, ["target_irr_pct"]);
-    if (irr != null) return { label: "Target IRR", value: formatPct(irr), tone: "positive" };
-    const dist = pickMetricNumber(km, ["distribution_yield", "yield_percent", "net_yield_pct"]);
-    if (dist != null) return { label: "Distribution", value: formatPct(dist), tone: "positive" };
-    return null;
-  }
 
   // Per-unit environmental assets (ACCUs, biodiversity credits): the buyer's
   // unit economics — prefer an explicit spot/unit price, else derive it from
@@ -238,11 +241,17 @@ export function listingHeadlineStat(
     return { label: perUnitLabel(km), value: formatAudCompact(Math.round(l.asking_price_cents / units)), tone: "neutral" };
   }
 
-  // Yield-bearing tangibles / projects / royalties / listed securities.
-  const yld = pickMetricNumber(km, ["net_yield_pct", "gross_yield_pct", "yield_percent", "yield_pct", "distribution_yield", "yield"]);
-  if (yld != null) {
-    return { label: km["net_yield_pct"] != null ? "Net yield" : "Yield", value: formatPct(yld), tone: "positive" };
-  }
+  // Return metric — IRR (target) then yield (net / target / distribution).
+  // Accepts numeric values AND string ranges ("12-15%", "7-9"), so project
+  // listings whose returns are forecast bands still get a headline stat.
+  const irr = formatReturnRange(km["target_irr_pct"] ?? km["target_irr"] ?? km["irr"]);
+  if (irr) return { label: "Target IRR", value: irr, tone: "positive" };
+  const net = formatReturnRange(km["net_yield_pct"]);
+  if (net) return { label: "Net yield", value: net, tone: "positive" };
+  const target = formatReturnRange(km["target_yield_pct"] ?? km["target_yield"]);
+  if (target) return { label: "Target yield", value: target, tone: "positive" };
+  const other = formatReturnRange(km["gross_yield_pct"] ?? km["yield_percent"] ?? km["yield_pct"] ?? km["distribution_yield"] ?? km["yield"]);
+  if (other) return { label: km["distribution_yield"] != null ? "Distribution" : "Yield", value: other, tone: "positive" };
 
   return null;
 }

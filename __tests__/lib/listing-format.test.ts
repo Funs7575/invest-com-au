@@ -73,6 +73,15 @@ describe("listingDisplayMetrics", () => {
     expect(metrics.map((m) => m.key)).toEqual(["bedrooms", "build_year", "scheme"]);
   });
 
+  it("skips sub_category (already shown in the card's category line) and target-yield", () => {
+    const metrics = listingDisplayMetrics({
+      sub_category: "subsea_cable",
+      target_yield_pct: "7-9",
+      route: "Perth Singapore Jakarta",
+    });
+    expect(metrics.map((m) => m.key)).toEqual(["route"]);
+  });
+
   it("returns [] for nullish metrics", () => {
     expect(listingDisplayMetrics(null)).toEqual([]);
     expect(listingDisplayMetrics(undefined)).toEqual([]);
@@ -125,6 +134,18 @@ describe("listingHeadlineStat", () => {
         }),
       ),
     ).toEqual({ label: "Per credit", value: "$1k", tone: "neutral" });
+  });
+
+  it("shows a project's target IRR given as a string range (en-dashed)", () => {
+    expect(
+      listingHeadlineStat(row({ listing_kind: "project_equity", key_metrics: { target_irr: "12-15%" } })),
+    ).toEqual({ label: "Target IRR", value: "12–15%", tone: "positive" });
+  });
+
+  it("shows a target yield range, appending % when the string omits it", () => {
+    expect(
+      listingHeadlineStat(row({ listing_kind: "project_equity", key_metrics: { target_yield_pct: "7-9" } })),
+    ).toEqual({ label: "Target yield", value: "7–9%", tone: "positive" });
   });
 
   it("returns null when the listing has no headline metric", () => {

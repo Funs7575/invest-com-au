@@ -383,7 +383,19 @@ export default function InvestListingCard({
           <div className="flex items-end justify-between gap-3">
             <div className="min-w-0">
               <div className="iv2-mini">{price.label}</div>
-              <div className="iv2-bignum whitespace-nowrap text-2xl text-ink-900">{price.value}</div>
+              <div
+                className={`iv2-bignum truncate text-ink-900 ${
+                  price.value.length > 18
+                    ? "text-sm"
+                    : price.value.length > 13
+                      ? "text-base"
+                      : price.value.length > 9
+                        ? "text-xl"
+                        : "text-2xl"
+                }`}
+              >
+                {price.value}
+              </div>
             </div>
             {headline && (
               <div className="shrink-0 text-right">
