@@ -229,6 +229,14 @@ export default async function HomePage() {
       {/* Temporarily hidden for the next few months. Keep the component intact
           so the homepage AI concierge entry can be restored without rebuilding it. */}
 
+      {/* Decision Cockpit (Phase 0) — personalised activity feed for logged-in
+          users, directly under the hero (renders null for anonymous visitors,
+          who get the marketing hero alone). Streams in via Suspense so the ISR
+          shell stays cacheable. See docs/plans/DECISION_COCKPIT.md. */}
+      <Suspense fallback={null}>
+        <HomeFeedSection />
+      </Suspense>
+
       {/* One "Today's market" band — Invest Score gauge, standout rate and
           latest rate changes in a single card (was three stacked strips). */}
       <HomeMarketToday />
@@ -290,14 +298,6 @@ export default async function HomePage() {
       <ScrollFadeIn>
         <CountryToolsStripWrapper />
       </ScrollFadeIn>
-
-      {/* Social/activity feed — personalised for logged-in users; streams in
-          dynamically so the ISR shell stays cacheable. Sits low on the page so
-          the hero + product bands (compare / listings / experts) lead, instead
-          of a 20-row feed wall in the hero's slot. */}
-      <Suspense fallback={null}>
-        <HomeFeedSection />
-      </Suspense>
 
       <ScrollFadeIn>
         <HomeFridayBriefing />
