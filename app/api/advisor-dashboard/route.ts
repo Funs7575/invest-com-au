@@ -19,14 +19,23 @@ export async function GET(request: NextRequest) {
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString();
 
-  const [
-    { data: advisor },
-    { data: leads },
-    { data: billing },
-    { data: views },
-    { data: reviews },
-    { data: bookings },
-  ] = await Promise.all([
+  // advisor_bookings is non-anon RLS, so it needs the service-role client.
+  // Guard its construction: in preview envs without SUPABASE_SERVICE_ROLE_KEY,
+  // createAdminClient() throws — and because it was called inline inside the
+  // Promise.all, that throw rejected the ENTIRE dashboard fetch (500 → every KPI
+  // 0 + the "couldn't be loaded" banner). Degrade to a null admin client so the
+  // rest of the dashboard still loads.
+  let admin: ReturnType<typeof createAdminClient> | null = null;
+  try {
+    admin = createAdminClient();
+  } catch {
+    admin = null;
+  }
+
+  // allSettled (not all): one failing slice degrades that one card rather than
+  // blanking the whole dashboard.
+  const [advisorR, leadsR, billingR, viewsR, reviewsR, bookingsR] =
+    await Promise.allSettled([
     // Advisor profile (for completeness check + billing)
     supabase
       .from("professionals")
@@ -67,14 +76,24 @@ export async function GET(request: NextRequest) {
       .eq("professional_id", advisorId)
       .eq("status", "approved")
       .order("created_at", { ascending: false }),
-    // Bookings count (for booking clicks stat) — service-role: non-anon table,
-    // scoped to the validated advisorId.
-    createAdminClient()
-      .from("advisor_bookings")
-      .select("id, created_at")
-      .eq("professional_id", advisorId)
-      .gte("created_at", thirtyDaysAgo),
+    // Bookings count (booking-clicks stat) — service-role, scoped to the
+    // validated advisorId; resolves to [] when no admin client is available.
+    admin
+      ? admin
+          .from("advisor_bookings")
+          .select("id, created_at")
+          .eq("professional_id", advisorId)
+          .gte("created_at", thirtyDaysAgo)
+      : Promise.resolve({ data: [] as { id: string; created_at: string }[] }),
   ]);
+
+  // Unwrap each settled slice → data (or null/[] on failure).
+  const advisor = advisorR.status === "fulfilled" ? advisorR.value.data : null;
+  const leads = leadsR.status === "fulfilled" ? leadsR.value.data : null;
+  const billing = billingR.status === "fulfilled" ? billingR.value.data : null;
+  const views = viewsR.status === "fulfilled" ? viewsR.value.data : null;
+  const reviews = reviewsR.status === "fulfilled" ? reviewsR.value.data : null;
+  const bookings = bookingsR.status === "fulfilled" ? bookingsR.value.data : null;
 
   // Fetch category pricing for this advisor's type
   let categoryPricing = null;
